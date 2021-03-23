@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30804.86
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LevelImposter-BepInEx", "LevelImposter-BepInEx\LevelImposter-BepInEx.csproj", "{11FBC798-BAF5-4EE5-9511-BE6DB0592F99}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LevelImposter-Installer", "LevelImposter-Installer\LevelImposter-Installer.csproj", "{50797D4A-8716-4BFB-99E8-24D9F42B92CC}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{11FBC798-BAF5-4EE5-9511-BE6DB0592F99}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{11FBC798-BAF5-4EE5-9511-BE6DB0592F99}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{11FBC798-BAF5-4EE5-9511-BE6DB0592F99}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{11FBC798-BAF5-4EE5-9511-BE6DB0592F99}.Release|Any CPU.Build.0 = Release|Any CPU
+		{50797D4A-8716-4BFB-99E8-24D9F42B92CC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{50797D4A-8716-4BFB-99E8-24D9F42B92CC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{50797D4A-8716-4BFB-99E8-24D9F42B92CC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{50797D4A-8716-4BFB-99E8-24D9F42B92CC}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {900EDCA2-9009-41C6-AD8B-05F615316F09}
+	EndGlobalSection
+EndGlobal
