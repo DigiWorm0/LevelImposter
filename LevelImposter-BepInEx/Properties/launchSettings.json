@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "LevelImposter-BepInEx": {
+      "commandName": "Executable",
+      "executablePath": "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Modded Among Us\\Among Us.exe"
+    }
+  }
+}

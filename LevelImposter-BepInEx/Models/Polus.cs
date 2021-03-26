@@ -13,7 +13,7 @@ namespace LevelImposter.Models
         public Polus(PolusShipStatus shipStatus)
         {
             this.shipStatus = shipStatus;
-            this.gameObject = GameObject.Find("PolusShip");
+            this.gameObject = GameObject.Find("PolusShip(Clone)");
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using LevelImposter.Models;
+﻿using LevelImposter.Builders;
+using LevelImposter.Models;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -8,12 +9,6 @@ namespace LevelImposter.Map
 {
     class MapApplicator
     {
-
-        public MapApplicator()
-        {
-
-        }
-
         public void Apply(PolusShipStatus shipStatus)
         {
             if (!MapHandler.Load())
@@ -22,12 +17,26 @@ namespace LevelImposter.Map
             MapData map = MapHandler.GetMap();
             Polus polus = new Polus(shipStatus);
 
-            ClearMap(polus);
-        }
+            // Move Map to Temp Storage
+            TempHandler.Create(polus);
 
-        private void ClearMap(Polus polus)
-        {
-            polus.shipStatus.AllDoors = new UnhollowerBaseLib.Il2CppReferenceArray<PlainDoor>(0);
+            // Add Asset
+            foreach (MapAsset asset in map.objs)
+            {
+                // Generate Object
+                GameObject obj;
+                if (asset.type.Equals("existing"))
+                    obj = TaskBuilder.Build(asset.data);
+                else
+                    obj = CustomBuilder.Build(asset.data);
+
+                // Add To Polus
+                obj.transform.SetParent(polus.gameObject.transform);
+                obj.transform.position = new Vector3(asset.x,asset.y,asset.z);
+            }
+            
+            // Clear Temp Storage
+            TempHandler.Clear();
         }
     }
 }

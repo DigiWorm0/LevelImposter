@@ -18,4 +18,13 @@ namespace LevelImposter
             mapApplicator.Apply(__instance);
         }
     }
+
+    [HarmonyPatch(typeof(SoundManager), nameof(SoundManager.Update))]
+    public static class SoundPatch
+    {
+        public static bool Prefix()
+        {
+            return false;
+        }
+    }
 }

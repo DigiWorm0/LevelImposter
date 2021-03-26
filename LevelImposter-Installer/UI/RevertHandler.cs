@@ -1,5 +1,4 @@
-﻿using LevelImposter.Unity;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -21,7 +20,7 @@ namespace LevelImposter.UI
         public void onClick(object sender, EventArgs e)
         {
             this.revertButton.Enabled = false;
-            AssetFileHandler.Revert();
+            //AssetFileHandler.Revert();
             this.revertButton.Enabled = true;
         }
     }

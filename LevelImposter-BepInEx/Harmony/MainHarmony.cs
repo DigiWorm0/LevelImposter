@@ -2,6 +2,8 @@
 using BepInEx.Configuration;
 using BepInEx.IL2CPP;
 using HarmonyLib;
+using LevelImposter.Map;
+using LevelImposter.Models;
 using Reactor;
 
 namespace LevelImposter
@@ -9,7 +11,7 @@ namespace LevelImposter
     [BepInPlugin(ID)]
     [BepInProcess("Among Us.exe")]
     [BepInDependency(ReactorPlugin.Id)]
-    public class Main : BasePlugin
+    public class MainHarmony : BasePlugin
     {
         public const string ID = "com.DigiWorm.LevelImposter";
 
@@ -17,7 +19,11 @@ namespace LevelImposter
 
         public override void Load()
         {
+            // Init
             LILogger.Init();
+            ItemDB.Init();
+
+            // Patch
             Harmony.PatchAll();
             LILogger.LogMsg("LevelImposter Initialized.");
         }

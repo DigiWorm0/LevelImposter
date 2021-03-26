@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace LevelImposter.Models
 {
+    [Serializable]
     class Point
     {
         public Point()

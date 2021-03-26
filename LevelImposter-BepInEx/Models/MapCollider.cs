@@ -6,9 +6,10 @@ using System.Threading.Tasks;
 
 namespace LevelImposter.Models
 {
+    [Serializable]
     class MapCollider
     {
         public bool blocksLight;
-        public List<Point> points;
+        public Point[] points;
     }
 }

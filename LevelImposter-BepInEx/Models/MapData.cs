@@ -6,9 +6,10 @@ using System.Threading.Tasks;
 
 namespace LevelImposter.Models
 {
+    [Serializable]
     class MapData
     {
         public string name;
-        public List<MapAsset> objs;
+        public MapAsset[] objs;
     }
 }

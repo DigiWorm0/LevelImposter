@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace LevelImposter.Models
 {
+    [Serializable]
     class MapAsset
     {
         public string name;
@@ -18,6 +19,6 @@ namespace LevelImposter.Models
         public float yScale;
         public float rotation;
 
-        public List<MapCollider> colliders;
+        public MapCollider[] colliders;
     }
 }

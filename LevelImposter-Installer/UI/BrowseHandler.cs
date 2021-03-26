@@ -30,7 +30,7 @@ namespace LevelImposter.UI
             {
                 string dir = browseDialog.FileName;
                 MapHandler.Load(dir);
-                this.mapLabel.Text = MapHandler.map.name;
+                //this.mapLabel.Text = MapHandler.map.name;
             }
         }
     }

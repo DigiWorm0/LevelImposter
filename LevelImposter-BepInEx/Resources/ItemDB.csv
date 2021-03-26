@@ -1,0 +1,17 @@
+ Record Temp 1,task-temp1,panel_temphot,41,short
+ Record Temp 2,task-temp2,panel_tempcold,41,short
+ Telescope,task-telescope,telescope,40,short
+ Drill,task-drill,drill,39,short
+ Water Wheel,task-waterwheel,panel_waterwheel,37,long
+ Scan Pass,task-pass,panel_boardingpass,36,common
+ Keys,task-keys,panel_keys,34,common
+ Node,task-node,panel_node_ca,33,long
+ O2 Canisters,task-oxygen,panel_02,32,short
+ Store Artifacts,task-artifacts,panel_cooler1,31,short
+ Tree Monitor,task-tree,panel_Tree,30,short
+ Unlock Manifolds,task-counting,panel_manifolds,15,short
+ Inspect Samples,task-samples,panel_samples,8,short
+ Swipe Card,task-id,panel_scanID,5,common
+ Simon Says,task-simonsays,panel_simonsays,4,long
+ Chart Course,task-chart,panel_nav,3,short
+ Medscan,task-medscan,panel_medplatform,0,short
