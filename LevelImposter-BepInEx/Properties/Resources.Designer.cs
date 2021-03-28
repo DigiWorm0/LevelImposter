@@ -61,23 +61,12 @@ namespace LevelImposter.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Name,LevelImposter ID,Sprite,Task ID
-        /// Record Temp 1,task-temp1,panel_temphot,41
-        /// Record Temp 2,task-temp2,panel_tempcold,41
-        /// Telescope,task-telescope,panel_observatory,40
-        /// Drill,task-drill,panel_drill,39
-        /// Water Wheel,task-waterwheel,panel_waterwheel,37
-        /// Scan Pass,task-pass,panel_boardingpass,36
-        /// Keys,task-keys,panel_keys,34
-        /// Node,task-node,panel_node,33
-        /// O2 Canisters,task-oxygen,panel_02,32
-        /// Store Artifacts,task-artifacts,panel_cooler1,31
-        /// Tree Monitor,task-tree,panel_Tree,30
-        /// Unlock Manifolds,t [rest of string was truncated]&quot;;.
+        ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
-        internal static string ItemDB {
+        internal static byte[] AssetDB {
             get {
-                return ResourceManager.GetString("ItemDB", resourceCulture);
+                object obj = ResourceManager.GetObject("AssetDB", resourceCulture);
+                return ((byte[])(obj));
             }
         }
     }

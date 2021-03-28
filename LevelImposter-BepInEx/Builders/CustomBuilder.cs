@@ -7,23 +7,30 @@ using UnityEngine;
 
 namespace LevelImposter.Builders
 {
-    static class CustomBuilder
+    class CustomBuilder : Builder
     {
-        public static GameObject Build(string base64)
+        private PolusHandler polus;
+
+        public CustomBuilder(PolusHandler polus)
+        {
+            this.polus = polus;
+        }
+
+        public bool Build(MapAsset asset)
         {
             GameObject obj = new GameObject("Custom Asset");
 
-            // Base64 Decode
-            string newBase64 = base64.Substring(base64.IndexOf(",") + 1);
+            // Base64
+            string base64 = asset.data.Substring(asset.data.IndexOf(",") + 1);
             byte[] data;
             try
             {
-                data = System.Convert.FromBase64String(newBase64);
+                data = System.Convert.FromBase64String(base64);
             }
             catch
             {
                 LILogger.LogError("Could not parse custom asset texture");
-                return obj;
+                return false;
             }
 
             // Texture
@@ -34,7 +41,9 @@ namespace LevelImposter.Builders
             SpriteRenderer spriteRenderer = obj.AddComponent<SpriteRenderer>();
             spriteRenderer.sprite = Sprite.Create(tex, new Rect(0.0f, 0.0f, tex.width, tex.height), new Vector2(0.5f, 0.5f), 100.0f);
 
-            return obj;
+            // Polus
+            polus.Add(obj, asset);
+            return true;
         }
     }
 }

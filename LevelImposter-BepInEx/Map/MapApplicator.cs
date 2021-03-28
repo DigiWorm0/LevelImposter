@@ -14,29 +14,22 @@ namespace LevelImposter.Map
             if (!MapHandler.Load())
                 return;
 
-            MapData map = MapHandler.GetMap();
-            Polus polus = new Polus(shipStatus);
+            MapData      map     = MapHandler.GetMap();
+            PolusHandler polus   = new PolusHandler(shipStatus);
+            AssetBuilder builder = new AssetBuilder(polus);
+            
+            polus.ClearTasks();
+            polus.MoveToTemp();
 
-            // Move Map to Temp Storage
-            TempHandler.Create(polus);
-
-            // Add Asset
             foreach (MapAsset asset in map.objs)
             {
-                // Generate Object
-                GameObject obj;
-                if (asset.type.Equals("existing"))
-                    obj = TaskBuilder.Build(asset.data);
-                else
-                    obj = CustomBuilder.Build(asset.data);
-
-                // Add To Polus
-                obj.transform.SetParent(polus.gameObject.transform);
-                obj.transform.position = new Vector3(asset.x,asset.y,asset.z);
+                bool success = builder.Build(asset);
+                if (!success)
+                    LILogger.LogError("Failed to build " + asset.name);
             }
-            
-            // Clear Temp Storage
-            TempHandler.Clear();
+
+            polus.DeleteTemp();
+            LILogger.LogInfo("Applied Map Data");
         }
     }
 }

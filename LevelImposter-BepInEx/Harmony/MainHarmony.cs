@@ -2,6 +2,7 @@
 using BepInEx.Configuration;
 using BepInEx.IL2CPP;
 using HarmonyLib;
+using LevelImposter.DB;
 using LevelImposter.Map;
 using LevelImposter.Models;
 using Reactor;
@@ -19,11 +20,9 @@ namespace LevelImposter
 
         public override void Load()
         {
-            // Init
             LILogger.Init();
-            ItemDB.Init();
+            AssetDB.Init();
 
-            // Patch
             Harmony.PatchAll();
             LILogger.LogMsg("LevelImposter Initialized.");
         }

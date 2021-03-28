@@ -7,7 +7,7 @@ namespace LevelImposter
 {
     static class LILogger
     {
-        private const bool PRINT_STACK = false;
+        private const bool PRINT_STACK = true;
         private static ManualLogSource logger;
 
         public static void Init()
@@ -16,9 +16,6 @@ namespace LevelImposter
             UnityEngine.Application.add_logMessageReceived(
                 new Action<string, string, UnityEngine.LogType>(OnUnityLog)
             );
-
-            var runtimeVer = System.Runtime.InteropServices.RuntimeInformation.FrameworkDescription;
-            LogInfo(runtimeVer);
         }
 
         private static void OnUnityLog(string msg, string stackTrace, UnityEngine.LogType type)

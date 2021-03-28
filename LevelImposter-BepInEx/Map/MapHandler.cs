@@ -18,6 +18,10 @@ namespace LevelImposter.Map
 
         public static bool Load()
         {
+            if (mapLoaded)
+                return true;
+
+            // Get Directory
             string dllDir = System.Reflection.Assembly.GetAssembly(typeof(LevelImposter.MainHarmony)).Location;
             mapDir = Path.Combine(Path.GetDirectoryName(dllDir), "map.json");
 
@@ -32,6 +36,7 @@ namespace LevelImposter.Map
             // Deserialize
             mapData = Newtonsoft.Json.JsonConvert.DeserializeObject<MapData>(mapJson);
 
+            // Return
             mapLoaded = true;
             LILogger.LogInfo("Found and Deserialized Map Data");
             return true;
