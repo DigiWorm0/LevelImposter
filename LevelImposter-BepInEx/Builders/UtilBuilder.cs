@@ -21,6 +21,7 @@ namespace LevelImposter.Builders
 
         public bool Build(MapAsset asset)
         {
+            /*
             AssetData original = AssetDB.Get(asset.data);
 
             // Object
@@ -71,6 +72,8 @@ namespace LevelImposter.Builders
             polus.Add(obj, asset);
 
             return obj;
+            */
+            return false;
         }
     }
 }

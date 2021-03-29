@@ -1,290 +1,212 @@
 {
-  "task-id": {
-    "name": "Card Swipe",
-    "map": 2,
-    "objType": 1,
-    "spriteRendererName": "panel_scanID",
-    "mapObjName": "panel_scanID",
-    "shipBehaviorName": "OfficeSwipeCardTask"
-  },
-  "task-keys": {
-    "name": "Keys",
-    "map": 2,
-    "objType": 1,
-    "spriteRendererName": "panel_keys",
-    "mapObjName": "panel_keys",
-    "shipBehaviorName": "InsertKeys"
-  },
-  "task-pass": {
-    "name": "Scan Pass",
-    "map": 2,
-    "objType": 1,
-    "spriteRendererName": "panel_boardingpass",
-    "mapObjName": "panel_boardingpass",
-    "shipBehaviorName": "ScanBoardingPass"
-  },
-  "task-wires": {
-    "name": "Wires",
-    "map": 2,
-    "objType": 1,
-    "spriteRendererName": "panel_electrical_elec",
-    "mapObjName": "panel_electrical_elec",
-    "shipBehaviorName": "FixWiring"
-  },
-  "task-download": {
-    "name": "Download",
-    "map": 2,
-    "objType": 2,
-    "spriteRendererName": "panel_data",
-    "mapObjName": "panel_data",
-    "shipBehaviorName": "UploadWeaponsPb"
-  },
-  "task-simonsays": {
-    "name": "Simon Says",
-    "map": 2,
-    "objType": 3,
-    "spriteRendererName": "panel_simonsays",
-    "mapObjName": "panel_simonsays",
-    "shipBehaviorName": "StartReactorTaskPb"
-  },
-  "task-fuel": {
-    "name": "Fuel Engines",
-    "map": 2,
-    "objType": 3,
-    "spriteRendererName": "panel_gascan",
-    "mapObjName": "panel_gascan",
-    "shipBehaviorName": "RefuelTask"
-  },
-  "task-waterwheel": {
-    "name": "Water Wheel",
-    "map": 2,
-    "objType": 3,
-    "spriteRendererName": "panel_waterwheel",
-    "mapObjName": "panel_waterwheel",
-    "shipBehaviorName": "OpenWaterways"
-  },
-  "task-samples": {
-    "name": "Inspect Samples",
-    "map": 2,
-    "objType": 3,
-    "spriteRendererName": "panel_samples",
-    "mapObjName": "panel_samples",
-    "shipBehaviorName": "InspectSample"
-  },
-  "task-waterjug1": {
-    "name": "Water Jug 1",
-    "map": 2,
-    "objType": 3,
-    "spriteRendererName": "panel_waterjug",
-    "mapObjName": "panel_waterjug",
-    "shipBehaviorName": "ReplaceWater"
-  },
-  "task-waterjug2": {
-    "name": "Water Jug 2",
-    "map": 2,
-    "objType": 3,
-    "spriteRendererName": "panel_waterjug",
-    "mapObjName": "panel_waterjug",
-    "shipBehaviorName": "ReplaceWater"
-  },
-  "task-node": {
-    "name": "Weather Node",
-    "map": 2,
-    "objType": 3,
-    "spriteRendererName": "panel_node_ca",
-    "mapObjName": "panel_node_ca",
-    "shipBehaviorName": "WeatherCA"
-  },
-  "task-router": {
-    "name": "Reboot Router",
-    "map": 2,
-    "objType": 3,
-    "spriteRendererName": "panel_wifi",
-    "mapObjName": "panel_wifi",
-    "shipBehaviorName": "RebootWifi"
-  },
-  "task-tree": {
-    "name": "Monitor Tree",
-    "map": 2,
-    "objType": 2,
-    "spriteRendererName": "panel_Tree",
-    "mapObjName": "panel_Tree",
-    "shipBehaviorName": "MonitorOxy"
-  },
-  "task-counting": {
-    "name": "Unlock Manifolds",
-    "map": 2,
-    "objType": 2,
-    "spriteRendererName": "panel_manifolds",
-    "mapObjName": "panel_manifolds",
-    "shipBehaviorName": "UnlockManifoldsTaskPb"
-  },
-  "task-artifacts": {
-    "name": "Sort Artifacts",
-    "map": 2,
-    "objType": 2,
-    "spriteRendererName": "panel_cooler1",
-    "mapObjName": "panel_cooler2",
-    "shipBehaviorName": "StoreArtifacts"
-  },
-  "task-oxygen": {
-    "name": "O2 Canisters",
-    "map": 2,
-    "objType": 2,
-    "spriteRendererName": "panel_fill02",
-    "mapObjName": "panel_fill02",
-    "shipBehaviorName": "FillCanisters"
-  },
-  "task-garbage": {
-    "name": "Garbage",
-    "map": 2,
-    "objType": 2,
-    "spriteRendererName": "panel_garbage",
-    "mapObjName": "panel_garbage",
-    "shipBehaviorName": "EmptyOneGarbageLifeSupp"
-  },
-  "task-chart": {
-    "name": "Chart Course",
-    "map": 2,
-    "objType": 2,
-    "spriteRendererName": "panel_nav",
-    "mapObjName": "panel_nav",
-    "shipBehaviorName": "DShipChartCourseTask"
-  },
-  "task-medscan": {
-    "name": "Medscan",
-    "map": 2,
-    "objType": 2,
-    "spriteRendererName": "panel_medplatform",
-    "mapObjName": "panel_medplatform",
-    "shipBehaviorName": "MedScanTask"
-  },
-  "task-weapons": {
-    "name": "Weapons",
-    "map": 2,
-    "objType": 2,
-    "spriteRendererName": "panel_weapons",
-    "mapObjName": "panel_weapons",
-    "shipBehaviorName": "ClearAsteroids"
-  },
-  "task-telescope": {
-    "name": "Telescope",
-    "map": 2,
-    "objType": 2,
-    "spriteRendererName": "telescope",
-    "mapObjName": "panel_telescope",
-    "shipBehaviorName": "AlignTelescope"
-  },
-  "task-drill": {
-    "name": "Drill",
-    "map": 2,
-    "objType": 2,
-    "spriteRendererName": "panel_drill_real",
-    "mapObjName": "panel_drill_real",
-    "shipBehaviorName": "RepairDrill"
-  },
-  "task-temp1": {
-    "name": "Temp 1",
-    "map": 2,
-    "objType": 2,
-    "spriteRendererName": "panel_temphot",
-    "mapObjName": "panel_temphot",
-    "shipBehaviorName": "RecordHotTemperature"
-  },
-  "task-temp2": {
-    "name": "Temp 2",
-    "map": 2,
-    "objType": 2,
-    "spriteRendererName": "panel_tempcold",
-    "mapObjName": "panel_tempcold",
-    "shipBehaviorName": "RecordColdTemperature"
-  },
-  "task-nodeswitch": {
-    "name": "Node Switches",
-    "map": 2,
-    "objType": 3,
-    "spriteRendererName": "panel_weather",
-    "mapObjName": "panel_weather",
-    "shipBehaviorName": "WeatherCA"
-  },
-  "util-button": {
-    "name": "Button",
-    "map": 2,
-    "objType": 0,
-    "spriteRendererName": "EmergencyButton",
-    "mapObjName": "EmergencyButton",
-    "shipBehaviorName": ""
-  },
-  "util-admin": {
-    "name": "Admin Table",
-    "map": 2,
-    "objType": 0,
-    "spriteRendererName": "panel_map",
-    "mapObjName": "panel_map",
-    "shipBehaviorName": ""
-  },
-  "util-vitals": {
-    "name": "Vitals",
-    "map": 2,
-    "objType": 0,
-    "spriteRendererName": "panel_vitals",
-    "mapObjName": "panel_vitals",
-    "shipBehaviorName": ""
-  },
-  "util-cams1": {
-    "name": "Polus Cam Panel",
-    "map": 2,
-    "objType": 0,
-    "spriteRendererName": "Surv_Panel",
-    "mapObjName": "Surv_Panel",
-    "shipBehaviorName": ""
-  },
-  "util-computer": {
-    "name": "Freeplay Laptop",
-    "map": 2,
-    "objType": 0,
-    "spriteRendererName": "TaskAddConsole",
-    "mapObjName": "TaskAddConsole",
-    "shipBehaviorName": ""
-  },
-  "util-player": {
-    "name": "Spawn",
-    "map": 2,
-    "objType": 0,
-    "spriteRendererName": "",
-    "mapObjName": "",
-    "shipBehaviorName": ""
-  },
-  "util-vent2": {
-    "name": "Polus Vent",
-    "map": 2,
-    "objType": 0,
-    "spriteRendererName": "ElectricalVent",
-    "mapObjName": "ElectricalVent",
-    "shipBehaviorName": "ElectricalVent"
-  },
-  "util-door1": {
-    "name": "Polus Door 1",
-    "map": 2,
-    "objType": 0,
-    "spriteRendererName": "RightDoor",
-    "mapObjName": "RightDoor",
-    "shipBehaviorName": ""
-  },
-  "util-door2": {
-    "name": "Polus Door 2",
-    "map": 2,
-    "objType": 0,
-    "spriteRendererName": "BottomDoor",
-    "mapObjName": "BottomDoor",
-    "shipBehaviorName": ""
-  },
-  "util-cam": {
-    "name": "Camera",
-    "map": 2,
-    "objType": 0,
-    "spriteRendererName": "camera_off",
-    "mapObjName": "camera_off",
-    "shipBehaviorName": ""
+  "tasks": {
+    "task-id": {
+      "Name": "Card Swipe",
+      "MapType": 2,
+      "SpriteRendererName": "panel_scanID",
+      "TaskType": 0,
+      "GameObjName": "panel_scanID",
+      "BehaviorName": "OfficeSwipeCardTask"
+    },
+    "task-keys": {
+      "Name": "Keys",
+      "MapType": 2,
+      "SpriteRendererName": "panel_keys",
+      "TaskType": 0,
+      "GameObjName": "panel_keys",
+      "BehaviorName": "InsertKeys"
+    },
+    "task-pass": {
+      "Name": "Scan Pass",
+      "MapType": 2,
+      "SpriteRendererName": "panel_boardingpass",
+      "TaskType": 0,
+      "GameObjName": "panel_boardingpass",
+      "BehaviorName": "ScanBoardingPass"
+    },
+    "task-wires": {
+      "Name": "Wires",
+      "MapType": 2,
+      "SpriteRendererName": "panel_electrical_elec",
+      "TaskType": 0,
+      "GameObjName": "panel_electrical_elec",
+      "BehaviorName": "FixWiring"
+    },
+    "task-download": {
+      "Name": "Download",
+      "MapType": 2,
+      "SpriteRendererName": "panel_data",
+      "TaskType": 2,
+      "GameObjName": "panel_data",
+      "BehaviorName": "UploadWeaponsPb"
+    },
+    "task-simonsays": {
+      "Name": "Simon Says",
+      "MapType": 2,
+      "SpriteRendererName": "panel_simonsays",
+      "TaskType": 2,
+      "GameObjName": "panel_simonsays",
+      "BehaviorName": "StartReactorTaskPb"
+    },
+    "task-fuel": {
+      "Name": "Fuel Engines",
+      "MapType": 2,
+      "SpriteRendererName": "panel_gascan",
+      "TaskType": 2,
+      "GameObjName": "panel_gascan",
+      "BehaviorName": "RefuelTask"
+    },
+    "task-waterwheel": {
+      "Name": "Water Wheel",
+      "MapType": 2,
+      "SpriteRendererName": "panel_waterwheel",
+      "TaskType": 2,
+      "GameObjName": "panel_waterwheel",
+      "BehaviorName": "OpenWaterways"
+    },
+    "task-samples": {
+      "Name": "Inspect Samples",
+      "MapType": 2,
+      "SpriteRendererName": "panel_samples",
+      "TaskType": 2,
+      "GameObjName": "panel_samples",
+      "BehaviorName": "InspectSample"
+    },
+    "task-waterjug1": {
+      "Name": "Water Jug 1",
+      "MapType": 2,
+      "SpriteRendererName": "panel_waterjug",
+      "TaskType": 2,
+      "GameObjName": "panel_waterjug",
+      "BehaviorName": "ReplaceWater"
+    },
+    "task-waterjug2": {
+      "Name": "Water Jug 2",
+      "MapType": 2,
+      "SpriteRendererName": "panel_waterjug",
+      "TaskType": 2,
+      "GameObjName": "panel_waterjug",
+      "BehaviorName": "ReplaceWater"
+    },
+    "task-node": {
+      "Name": "Weather Node",
+      "MapType": 2,
+      "SpriteRendererName": "panel_node_ca",
+      "TaskType": 2,
+      "GameObjName": "panel_node_ca",
+      "BehaviorName": "WeatherGi"
+    },
+    "task-router": {
+      "Name": "Reboot Router",
+      "MapType": 2,
+      "SpriteRendererName": "panel_wifi",
+      "TaskType": 2,
+      "GameObjName": "panel_wifi",
+      "BehaviorName": "RebootWifi"
+    },
+    "task-tree": {
+      "Name": "Monitor Tree",
+      "MapType": 2,
+      "SpriteRendererName": "panel_Tree",
+      "TaskType": 1,
+      "GameObjName": "panel_Tree",
+      "BehaviorName": "MonitorOxy"
+    },
+    "task-counting": {
+      "Name": "Unlock Manifolds",
+      "MapType": 2,
+      "SpriteRendererName": "panel_manifolds",
+      "TaskType": 1,
+      "GameObjName": "panel_manifolds",
+      "BehaviorName": "UnlockManifoldsTaskPb"
+    },
+    "task-artifacts": {
+      "Name": "Sort Artifacts",
+      "MapType": 2,
+      "SpriteRendererName": "panel_cooler1",
+      "TaskType": 1,
+      "GameObjName": "panel_cooler2",
+      "BehaviorName": "StoreArtifacts"
+    },
+    "task-oxygen": {
+      "Name": "O2 Canisters",
+      "MapType": 2,
+      "SpriteRendererName": "panel_fill02",
+      "TaskType": 1,
+      "GameObjName": "panel_fill02",
+      "BehaviorName": "FillCanisters"
+    },
+    "task-garbage": {
+      "Name": "Garbage",
+      "MapType": 2,
+      "SpriteRendererName": "panel_garbage",
+      "TaskType": 1,
+      "GameObjName": "panel_garbage",
+      "BehaviorName": "EmptyOneGarbageLifeSupp"
+    },
+    "task-chart": {
+      "Name": "Chart Course",
+      "MapType": 2,
+      "SpriteRendererName": "panel_nav",
+      "TaskType": 1,
+      "GameObjName": "panel_nav",
+      "BehaviorName": "DShipChartCourseTask"
+    },
+    "task-medscan": {
+      "Name": "Medscan",
+      "MapType": 2,
+      "SpriteRendererName": "panel_medplatform",
+      "TaskType": 1,
+      "GameObjName": "panel_medplatform",
+      "BehaviorName": "MedScanTask"
+    },
+    "task-weapons": {
+      "Name": "Weapons",
+      "MapType": 2,
+      "SpriteRendererName": "panel_weapons",
+      "TaskType": 1,
+      "GameObjName": "panel_weapons",
+      "BehaviorName": "ClearAsteroids"
+    },
+    "task-telescope": {
+      "Name": "Telescope",
+      "MapType": 2,
+      "SpriteRendererName": "telescope",
+      "TaskType": 1,
+      "GameObjName": "panel_telescope",
+      "BehaviorName": "AlignTelescope"
+    },
+    "task-drill": {
+      "Name": "Drill",
+      "MapType": 2,
+      "SpriteRendererName": "panel_drill_real",
+      "TaskType": 1,
+      "GameObjName": "panel_drill_real",
+      "BehaviorName": "RepairDrill"
+    },
+    "task-temp1": {
+      "Name": "Temp 1",
+      "MapType": 2,
+      "SpriteRendererName": "panel_temphot",
+      "TaskType": 1,
+      "GameObjName": "panel_temphot",
+      "BehaviorName": "RecordHotTemperature"
+    },
+    "task-temp2": {
+      "Name": "Temp 2",
+      "MapType": 2,
+      "SpriteRendererName": "panel_tempcold",
+      "TaskType": 1,
+      "GameObjName": "panel_tempcold",
+      "BehaviorName": "RecordColdTemperature"
+    },
+    "task-nodeswitch": {
+      "Name": "Node Switches",
+      "MapType": 2,
+      "SpriteRendererName": "panel_weather",
+      "TaskType": 2,
+      "GameObjName": "panel_weather",
+      "BehaviorName": "WeatherGi"
+    }
   }
 }

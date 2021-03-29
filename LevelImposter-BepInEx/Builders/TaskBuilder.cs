@@ -23,18 +23,18 @@ namespace LevelImposter.Builders
 
         public bool Build(MapAsset asset)
         {
-            AssetData original = AssetDB.Get(asset.data);
+            TaskData taskData = AssetDB.tasks[asset.data];
 
             // Object
             GameObject obj = new GameObject(asset.data);
 
             // Sprite Renderer
             SpriteRenderer spriteRenderer = obj.AddComponent<SpriteRenderer>();
-            spriteRenderer.sprite = original.spriteRenderer.sprite;
-            spriteRenderer.material = original.spriteRenderer.material;
+            spriteRenderer.sprite = taskData.SpriteRenderer.sprite;
+            spriteRenderer.material = taskData.SpriteRenderer.material;
 
             // Console
-            Console origConsole = original.mapObj.GetComponent<Console>();
+            Console origConsole = taskData.GameObj.GetComponent<Console>();
             Console console = obj.AddComponent<Console>();
             console.ConsoleId = origConsole.ConsoleId;
             console.AllowImpostor = false;
@@ -49,9 +49,9 @@ namespace LevelImposter.Builders
             polus.Add(obj, asset);
 
             // Box Collider
-            if (original.mapObj.GetComponent<CircleCollider2D>() != null)
+            if (taskData.GameObj.GetComponent<CircleCollider2D>() != null)
             {
-                CircleCollider2D origBox = original.mapObj.GetComponent<CircleCollider2D>();
+                CircleCollider2D origBox = taskData.GameObj.GetComponent<CircleCollider2D>();
                 CircleCollider2D box = obj.AddComponent<CircleCollider2D>();
                 box.radius = origBox.radius;
                 box.offset = origBox.offset;
@@ -59,7 +59,7 @@ namespace LevelImposter.Builders
             }
             else
             {
-                BoxCollider2D origBox = original.mapObj.GetComponent<BoxCollider2D>();
+                BoxCollider2D origBox = taskData.GameObj.GetComponent<BoxCollider2D>();
                 BoxCollider2D box = obj.AddComponent<BoxCollider2D>();
                 box.size = origBox.size;
                 box.offset = origBox.offset;
@@ -67,7 +67,7 @@ namespace LevelImposter.Builders
             }
 
             // Button
-            PassiveButton origBtn = original.mapObj.GetComponent<PassiveButton>();
+            PassiveButton origBtn = taskData.GameObj.GetComponent<PassiveButton>();
             PassiveButton btn = obj.AddComponent<PassiveButton>();
             btn.ClickMask = origBtn.ClickMask;
             btn.OnMouseOver = new UnityEvent();
@@ -76,7 +76,7 @@ namespace LevelImposter.Builders
             btn.OnClick.AddListener(action);
 
             // Task
-            NormalPlayerTask origTask = (NormalPlayerTask)original.shipBehavior;
+            NormalPlayerTask origTask = taskData.Behavior;
             NormalPlayerTask task = taskMgr.AddComponent<NormalPlayerTask>();
             //task.Arrow = origTask.Arrow;
             task.taskStep = origTask.taskStep;
@@ -94,11 +94,11 @@ namespace LevelImposter.Builders
 
             // Apply to Task List
             polus.shipStatus.AllConsoles = AssetBuilder.AddToArr(polus.shipStatus.AllConsoles, console);
-            if (original.objType == ObjType.CommonTask)
+            if (taskData.TaskType == TaskType.Common)
                 polus.shipStatus.CommonTasks = AssetBuilder.AddToArr(polus.shipStatus.CommonTasks, task);
-            if (original.objType == ObjType.ShortTask)
+            if (taskData.TaskType == TaskType.Short)
                 polus.shipStatus.NormalTasks = AssetBuilder.AddToArr(polus.shipStatus.NormalTasks, task);
-            if (original.objType == ObjType.LongTask)
+            if (taskData.TaskType == TaskType.Long)
                 polus.shipStatus.LongTasks = AssetBuilder.AddToArr(polus.shipStatus.LongTasks, task);
             
             return true;

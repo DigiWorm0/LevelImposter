@@ -3,28 +3,13 @@ using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
 
-namespace LevelImposter.Models
+namespace LevelImposter.DB
 {
-    class AssetData
+    abstract class AssetData
     {
-        public ShipStatus.MapType map;
-        public ObjType objType;
+        public string Name { get; set; }
+        public ShipStatus.MapType MapType { get; set; }
 
-        public string name;
-        public string spriteRendererName;
-        public string mapObjName;
-        public string shipBehaviorName;
-
-        public SpriteRenderer spriteRenderer;
-        public GameObject mapObj;
-        public MonoBehaviour shipBehavior;
-    }
-
-    enum ObjType
-    {
-        Other,
-        CommonTask,
-        ShortTask,
-        LongTask
+        public abstract void ImportMap(GameObject map, ShipStatus shipStatus);
     }
 }

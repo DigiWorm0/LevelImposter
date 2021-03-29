@@ -8,6 +8,7 @@
         <Authors>DigiWorm</Authors>
         <OutputType>Library</OutputType>
         <Platforms>AnyCPU</Platforms>
+        <RootNamespace>LevelImposter</RootNamespace>
     </PropertyGroup>
 
     <PropertyGroup Condition="'$(GamePlatform)' == 'Steam'">
