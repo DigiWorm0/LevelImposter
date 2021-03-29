@@ -21,19 +21,18 @@ namespace LevelImposter.Builders
 
         public bool Build(MapAsset asset)
         {
-            /*
-            AssetData original = AssetDB.Get(asset.data);
+            UtilData utilData = AssetDB.utils[asset.data];
 
             // Object
             GameObject obj = new GameObject(asset.data);
 
             // Sprite Renderer
             SpriteRenderer spriteRenderer = obj.AddComponent<SpriteRenderer>();
-            spriteRenderer.sprite = original.spriteRenderer.sprite;
-            spriteRenderer.material = original.spriteRenderer.material;
+            spriteRenderer.sprite = utilData.SpriteRenderer.sprite;
+            spriteRenderer.material = utilData.SpriteRenderer.material;
 
             // Console
-            SystemConsole origConsole = original.mapObj.GetComponent<SystemConsole>();
+            SystemConsole origConsole = utilData.GameObj.GetComponent<SystemConsole>();
             SystemConsole console = obj.AddComponent<SystemConsole>();
             console.Image = spriteRenderer;
             console.FreeplayOnly = origConsole.FreeplayOnly;
@@ -43,9 +42,9 @@ namespace LevelImposter.Builders
             console.useIcon = origConsole.useIcon;
 
             // Box Collider
-            if (original.mapObj.GetComponent<CircleCollider2D>() != null)
+            if (utilData.GameObj.GetComponent<CircleCollider2D>() != null)
             {
-                CircleCollider2D origBox = original.mapObj.GetComponent<CircleCollider2D>();
+                CircleCollider2D origBox = utilData.GameObj.GetComponent<CircleCollider2D>();
                 CircleCollider2D box = obj.AddComponent<CircleCollider2D>();
                 box.radius = origBox.radius;
                 box.offset = origBox.offset;
@@ -53,7 +52,7 @@ namespace LevelImposter.Builders
             }
             else
             {
-                BoxCollider2D origBox = original.mapObj.GetComponent<BoxCollider2D>();
+                BoxCollider2D origBox = utilData.GameObj.GetComponent<BoxCollider2D>();
                 BoxCollider2D box = obj.AddComponent<BoxCollider2D>();
                 box.size = origBox.size;
                 box.offset = origBox.offset;
@@ -61,7 +60,7 @@ namespace LevelImposter.Builders
             }
 
             // Button
-            PassiveButton origBtn = original.mapObj.GetComponent<PassiveButton>();
+            PassiveButton origBtn = utilData.GameObj.GetComponent<PassiveButton>();
             PassiveButton btn = obj.AddComponent<PassiveButton>();
             btn.ClickMask = origBtn.ClickMask;
             btn.OnMouseOver = new UnityEvent();
@@ -72,8 +71,6 @@ namespace LevelImposter.Builders
             polus.Add(obj, asset);
 
             return obj;
-            */
-            return false;
         }
     }
 }

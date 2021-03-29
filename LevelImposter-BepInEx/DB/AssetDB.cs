@@ -8,6 +8,7 @@ namespace LevelImposter.DB
     static class AssetDB
     {
         public static Dictionary<string, TaskData> tasks;
+        public static Dictionary<string, UtilData> utils;
 
         public static void Init()
         {
@@ -18,6 +19,7 @@ namespace LevelImposter.DB
                 );
 
                 tasks = tempDB.tasks;
+                utils = tempDB.utils;
             }
             catch
             {
@@ -42,6 +44,7 @@ namespace LevelImposter.DB
 
             // Import Map to Lists
             ImportMap(map, shipStatus, mapType, tasks);
+            ImportMap(map, shipStatus, mapType, utils);
         }
 
         private static void ImportMap<T>(GameObject map, ShipStatus shipStatus, ShipStatus.MapType mapType, Dictionary<string, T> list) where T : AssetData
@@ -57,5 +60,6 @@ namespace LevelImposter.DB
     class TempDB
     {
         public Dictionary<string, TaskData> tasks;
+        public Dictionary<string, UtilData> utils;
     }
 }

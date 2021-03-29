@@ -208,5 +208,37 @@
       "GameObjName": "panel_weather",
       "BehaviorName": "WeatherGi"
     }
+  },
+  "utils": {
+    "util-button": {
+      "Name": "Button",
+      "MapType": 2,
+      "SpriteRendererName": "EmergencyButton",
+      "GameObjName": "EmergencyButton"
+    },
+    "util-admin": {
+      "Name": "Admin Table",
+      "MapType": 2,
+      "SpriteRendererName": "panel_map",
+      "GameObjName": "panel_map"
+    },
+    "util-vitals": {
+      "Name": "Vitals",
+      "MapType": 2,
+      "SpriteRendererName": "panel_vitals",
+      "GameObjName": "panel_vitals"
+    },
+    "util-cams1": {
+      "Name": "Polus Cam Panel",
+      "MapType": 2,
+      "SpriteRendererName": "Surv_Panel",
+      "GameObjName": "Surv_Panel"
+    },
+    "util-computer": {
+      "Name": "Freeplay Laptop",
+      "MapType": 2,
+      "SpriteRendererName": "TaskAddConsole",
+      "GameObjName": "TaskAddConsole"
+    }
   }
 }

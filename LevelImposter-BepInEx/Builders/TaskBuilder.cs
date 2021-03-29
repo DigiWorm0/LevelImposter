@@ -18,7 +18,7 @@ namespace LevelImposter.Builders
         {
             this.polus = polus;
             taskMgr = new GameObject("TaskManager");
-            taskMgr.transform.parent = polus.gameObject.transform;
+            //taskMgr.transform.parent = polus.gameObject.transform;
         }
 
         public bool Build(MapAsset asset)
