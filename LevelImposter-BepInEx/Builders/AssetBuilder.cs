@@ -12,7 +12,7 @@ namespace LevelImposter.Builders
         private PolusHandler  polus;
         private TaskBuilder   taskBuilder;
         private CustomBuilder customBuilder;
-        private SpawnBuilder  spawnBuilder;
+        private DummyBuilder  spawnBuilder;
         private UtilBuilder   utilBuilder;
 
         public AssetBuilder(PolusHandler polus)
@@ -21,7 +21,7 @@ namespace LevelImposter.Builders
 
             taskBuilder   = new TaskBuilder(polus);
             customBuilder = new CustomBuilder(polus);
-            spawnBuilder  = new SpawnBuilder(polus);
+            spawnBuilder  = new DummyBuilder(polus);
             utilBuilder   = new UtilBuilder(polus);
         }
 
