@@ -14,18 +14,21 @@ namespace LevelImposter.Map
             if (!MapHandler.Load())
                 return;
 
-            MapData      map     = MapHandler.GetMap();
-            PolusHandler polus   = new PolusHandler(shipStatus);
-            AssetBuilder builder = new AssetBuilder(polus);
-            
+            MapData         map     = MapHandler.GetMap();
+            PolusHandler    polus   = new PolusHandler(shipStatus);
+            AssetBuilder    builder = new AssetBuilder(polus);
+
             polus.ClearTasks();
             polus.MoveToTemp();
 
-            foreach (MapAsset asset in map.objs)
+            for (int i = 0; i < map.objs.Length; i++)
             {
+                MapAsset asset = map.objs[i];
                 bool success = builder.Build(asset);
                 if (!success)
                     LILogger.LogError("Failed to build " + asset.name);
+                else if (i % 1000 == 0)
+                    LILogger.LogMsg(i + " - Objects");
             }
 
             polus.DeleteTemp();

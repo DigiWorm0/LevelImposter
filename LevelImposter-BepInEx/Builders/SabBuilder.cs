@@ -10,18 +10,20 @@ using UnityEngine.Events;
 
 namespace LevelImposter.Builders
 {
-    class UtilBuilder : Builder
+    class SabBuilder : Builder
     {
         private PolusHandler polus;
 
-        public UtilBuilder(PolusHandler polus)
+        public SabBuilder(PolusHandler polus)
         {
             this.polus = polus;
+            
+
         }
 
         public bool Build(MapAsset asset)
         {
-            UtilData utilData = AssetDB.utils[asset.data];
+            SabData utilData = AssetDB.sabs[asset.data];
 
             // Object
             GameObject obj = new GameObject(asset.data);
@@ -32,30 +34,14 @@ namespace LevelImposter.Builders
             spriteRenderer.material = utilData.SpriteRenderer.material;
 
             // Console
-            Action action;
-            if (utilData.GameObj.GetComponent<SystemConsole>() != null)
-            {
-                SystemConsole origConsole = utilData.GameObj.GetComponent<SystemConsole>();
-                SystemConsole console = obj.AddComponent<SystemConsole>();
-                console.Image = spriteRenderer;
-                console.FreeplayOnly = origConsole.FreeplayOnly;
-                console.onlyFromBelow = origConsole.onlyFromBelow;
-                console.usableDistance = origConsole.usableDistance;
-                console.MinigamePrefab = origConsole.MinigamePrefab;
-                console.useIcon = origConsole.useIcon;
-                action = console.Use;
-            }
-            else
-            {
-                MapConsole origConsole = utilData.GameObj.GetComponent<MapConsole>();
-                MapConsole console = obj.AddComponent<MapConsole>();
-                console.Image = spriteRenderer;
-                console.useIcon = origConsole.useIcon;
-                console.usableDistance = origConsole.usableDistance;
-                console.useIcon = origConsole.useIcon;
-                action = console.Use;
-            }
-            
+            SystemConsole origConsole = utilData.GameObj.GetComponent<SystemConsole>();
+            SystemConsole console = obj.AddComponent<SystemConsole>();
+            console.Image = spriteRenderer;
+            console.FreeplayOnly = origConsole.FreeplayOnly;
+            console.onlyFromBelow = origConsole.onlyFromBelow;
+            console.usableDistance = origConsole.usableDistance;
+            console.MinigamePrefab = origConsole.MinigamePrefab;
+            console.useIcon = origConsole.useIcon;
 
             // Box Collider
             if (utilData.GameObj.GetComponent<CircleCollider2D>() != null)
@@ -81,6 +67,7 @@ namespace LevelImposter.Builders
             btn.ClickMask = origBtn.ClickMask;
             btn.OnMouseOver = new UnityEvent();
             btn.OnMouseOut = new UnityEvent();
+            Action action = console.Use;
             btn.OnClick.AddListener(action);
 
             polus.Add(obj, asset);

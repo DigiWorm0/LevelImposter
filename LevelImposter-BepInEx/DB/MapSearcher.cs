@@ -16,6 +16,24 @@ namespace LevelImposter.DB
             return default(T);
         }
 
+        public static SpriteRenderer SearchSprites(GameObject parent, string name, string spriteName)
+        {
+            List<Transform> output = new List<Transform>();
+            SearchChildren(parent.transform, name, output);
+
+            foreach (Transform t in output)
+            {
+                SpriteRenderer r = t.gameObject.GetComponent<SpriteRenderer>();
+                if (r == null)
+                    continue;
+                if (r.sprite == null)
+                    continue;
+                if (r.sprite.name == spriteName)
+                    return r;
+            }
+            return null;
+        }
+
         public static GameObject SearchChildren(GameObject parent, string name)
         {
             List<Transform> output = new List<Transform>();

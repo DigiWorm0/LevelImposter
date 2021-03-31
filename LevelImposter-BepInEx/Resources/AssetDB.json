@@ -48,12 +48,20 @@
       "GameObjName": "panel_simonsays",
       "BehaviorName": "StartReactorTaskPb"
     },
-    "task-fuel": {
-      "Name": "Fuel Engines",
+    "task-fuel1": {
+      "Name": "Gas Canister",
       "MapType": 2,
       "SpriteRendererName": "panel_gascan",
       "TaskType": 2,
       "GameObjName": "panel_gascan",
+      "BehaviorName": "RefuelTask"
+    },
+    "task-fuel2": {
+      "Name": "Gas Output",
+      "MapType": 2,
+      "SpriteRendererName": "panel_fuel",
+      "TaskType": 2,
+      "GameObjName": "panel_fuel",
       "BehaviorName": "RefuelTask"
     },
     "task-waterwheel": {
@@ -207,12 +215,130 @@
       "TaskType": 2,
       "GameObjName": "panel_weather",
       "BehaviorName": "WeatherGi"
+    },
+    "task-code": {
+      "Name": "Enter ID Code",
+      "MapType": 1,
+      "SpriteRendererName": "EnterCodeConsole",
+      "TaskType": 0,
+      "GameObjName": "EnterCodeConsole",
+      "BehaviorName": "EnterCodeTask"
+    },
+    "task-divert": {
+      "Name": "Divert Power",
+      "MapType": 1,
+      "SpriteRendererName": "DivertPowerConsoleAdmin",
+      "TaskType": 1,
+      "GameObjName": "DivertPowerConsoleAdmin",
+      "BehaviorName": "DivertLabPower"
+    },
+    "task-plants1": {
+      "Name": "Get Water Can",
+      "MapType": 1,
+      "SpriteRendererName": "StorageConsole",
+      "TaskType": 2,
+      "GameObjName": "StorageConsole",
+      "BehaviorName": "WaterPlants"
+    },
+    "task-plants2": {
+      "Name": "Water Plants",
+      "MapType": 1,
+      "SpriteRendererName": "PlantConsole",
+      "TaskType": 2,
+      "GameObjName": "PlantConsole",
+      "BehaviorName": "WaterPlants"
+    },
+    "task-crystal": {
+      "Name": "Assemble Artifact",
+      "MapType": 1,
+      "SpriteRendererName": "AssembleArtifactConsole",
+      "TaskType": 1,
+      "GameObjName": "AssembleArtifactConsole",
+      "BehaviorName": "AssembleArtifact"
+    },
+    "task-sort": {
+      "Name": "Sort Samples",
+      "MapType": 1,
+      "SpriteRendererName": "SortSamplesConsole",
+      "TaskType": 1,
+      "GameObjName": "SortSamplesConsole",
+      "BehaviorName": "SortSamples"
+    },
+    "task-shields": {
+      "Name": "Prime Shields",
+      "MapType": 0,
+      "SpriteRendererName": "ShieldConsole",
+      "TaskType": 1,
+      "GameObjName": "ShieldConsole",
+      "BehaviorName": "PrimeShieldsTask"
+    },
+    "task-weather": {
+      "Name": "Measure Weather",
+      "MapType": 1,
+      "SpriteRendererName": "weatherPanel",
+      "TaskType": 1,
+      "GameObjName": "WeatherConsole",
+      "BehaviorName": "MeasureWeather"
+    },
+    "task-vending": {
+      "Name": "Vending Machine",
+      "MapType": 1,
+      "SpriteRendererName": "VendingMachineConsole",
+      "TaskType": 1,
+      "GameObjName": "VendingMachineConsole",
+      "BehaviorName": "BuyBeverage"
+    },
+    "task-process": {
+      "Name": "Process Data",
+      "MapType": 1,
+      "SpriteRendererName": "DataConsole",
+      "TaskType": 1,
+      "GameObjName": "DataConsole",
+      "BehaviorName": "ProcessData"
+    },
+    "task-diagnostics": {
+      "Name": "Run Diagnostics",
+      "MapType": 1,
+      "SpriteRendererName": "CalibrateConsole",
+      "TaskType": 1,
+      "GameObjName": "CalibrateConsole",
+      "BehaviorName": "RunDiagnostic"
+    },
+    "task-align1": {
+      "Name": "Align Engine 1",
+      "MapType": 0,
+      "SpriteRendererName": "AlignEngineConsole",
+      "TaskType": 2,
+      "GameObjName": "AlignEngineConsole",
+      "BehaviorName": "AlignEnginesTask"
+    },
+    "task-align2": {
+      "Name": "Align Engine 2",
+      "MapType": 0,
+      "SpriteRendererName": "AlignEngineConsole",
+      "TaskType": 2,
+      "GameObjName": "AlignEngineConsole",
+      "BehaviorName": "AlignEnginesTask"
+    },
+    "task-stabilize": {
+      "Name": "Stabilize Steering",
+      "MapType": 0,
+      "SpriteRendererName": "StabilizeSteeringConsole",
+      "TaskType": 1,
+      "GameObjName": "StabilizeSteeringConsole",
+      "BehaviorName": "StabilizeSteeringTask"
     }
   },
   "utils": {
-    "util-button": {
-      "Name": "Button",
+    "util-button1": {
+      "Name": "Skeld/Polus Button",
       "MapType": 2,
+      "SpriteRendererName": "EmergencyButton",
+      "GameObjName": "EmergencyButton"
+    },
+    "util-button2": {
+      "Name": "Mira Button",
+      "MapType": 1,
       "SpriteRendererName": "EmergencyButton",
       "GameObjName": "EmergencyButton"
     },
@@ -228,17 +354,442 @@
       "SpriteRendererName": "panel_vitals",
       "GameObjName": "panel_vitals"
     },
-    "util-cams1": {
-      "Name": "Polus Cam Panel",
-      "MapType": 2,
-      "SpriteRendererName": "Surv_Panel",
-      "GameObjName": "Surv_Panel"
-    },
     "util-computer": {
       "Name": "Freeplay Laptop",
       "MapType": 2,
       "SpriteRendererName": "TaskAddConsole",
       "GameObjName": "TaskAddConsole"
+    }
+  },
+  "sabs": {
+    "sab-electric": {
+      "Name": "Lights Panel",
+      "MapType": 2,
+      "SpriteRendererName": "panel_switches",
+      "GameObjName": "panel_switches",
+      "BehaviorName": "FixLightsTask",
+      "SystemTypes": ""
+    },
+    "sab-reactorleft": {
+      "Name": "Left Reactor",
+      "MapType": 2,
+      "SpriteRendererName": "panel_hand_left",
+      "GameObjName": "panel_hand_left",
+      "BehaviorName": "ResetReactorTask",
+      "SystemTypes": "ResetReactor"
+    },
+    "sab-reactorright": {
+      "Name": "Right Reactor",
+      "MapType": 2,
+      "SpriteRendererName": "panel_hand_right",
+      "GameObjName": "panel_hand_right",
+      "BehaviorName": "ResetReactorTask",
+      "SystemTypes": "ResetReactor"
+    },
+    "sab-oxygen1": {
+      "Name": "O2 Panel 1",
+      "MapType": 0,
+      "SpriteRendererName": "NoOxyConsole",
+      "GameObjName": "NoOxyConsole",
+      "BehaviorName": "NoOxyTask",
+      "SystemTypes": "RestoreOxy"
+    },
+    "sab-oxygen2": {
+      "Name": "O2 Panel 2",
+      "MapType": 0,
+      "SpriteRendererName": "NoOxyConsole",
+      "GameObjName": "NoOxyConsole",
+      "BehaviorName": "NoOxyTask",
+      "SystemTypes": "RestoreOxy"
+    },
+    "sab-comms": {
+      "Name": "Comms Panel",
+      "MapType": 2,
+      "SpriteRendererName": "panel_comms",
+      "GameObjName": "panel_comms",
+      "BehaviorName": "FixComms",
+      "SystemTypes": "FixComms"
+    }
+  },
+  "dec": {
+    "dec-barrier": {
+      "Name": "Barrier",
+      "MapType": 2,
+      "SpriteRendererName": "barrier"
+    },
+    "dec-bathroom": {
+      "Name": "Bathroom Stalls",
+      "MapType": 2,
+      "SpriteRendererName": "bathroomabove"
+    },
+    "dec-bed1": {
+      "Name": "Bed 1",
+      "MapType": 1,
+      "SpriteRendererName": "medBayBed"
+    },
+    "dec-bed2": {
+      "Name": "Bed 2",
+      "MapType": 1,
+      "SpriteRendererName": "medBayBedHort"
+    },
+    "dec-bench1": {
+      "Name": "Bench 1",
+      "MapType": 1,
+      "SpriteRendererName": "lockersBench"
+    },
+    "dec-bench2": {
+      "Name": "Bench 2",
+      "MapType": 1,
+      "SpriteRendererName": "locker-bench-left-side"
+    },
+    "dec-box1": {
+      "Name": "Box 1",
+      "MapType": 0,
+      "SpriteRendererName": "storage_box-boxtumble0001"
+    },
+    "dec-box2": {
+      "Name": "Box 2",
+      "MapType": 1,
+      "SpriteRendererName": "launchPadNearShip"
+    },
+    "dec-box3": {
+      "Name": "Box 3",
+      "MapType": 1,
+      "SpriteRendererName": "launch-front"
+    },
+    "dec-box4": {
+      "Name": "Box 4",
+      "MapType": 2,
+      "SpriteRendererName": "boxclust2"
+    },
+    "dec-box5": {
+      "Name": "Box 5",
+      "MapType": 2,
+      "SpriteRendererName": "boxcluster"
+    },
+    "dec-box6": {
+      "Name": "Box 6",
+      "MapType": 2,
+      "SpriteRendererName": "storagebox"
+    },
+    "dec-box7": {
+      "Name": "Box 7",
+      "MapType": 0,
+      "SpriteRendererName": "storage_Boxes"
+    },
+    "dec-box8": {
+      "Name": "Box 8",
+      "MapType": 1,
+      "SpriteRendererName": "storage-boxes1"
+    },
+    "dec-box9": {
+      "Name": "Box 9",
+      "MapType": 1,
+      "SpriteRendererName": "storage-box2"
+    },
+    "dec-divingboard": {
+      "Name": "Diving Board",
+      "MapType": 2,
+      "SpriteRendererName": "divingboard"
+    },
+    "dec-engine1": {
+      "Name": "Skeld Engine",
+      "MapType": 0,
+      "SpriteRendererName": "engineRight"
+    },
+    "dec-projector": {
+      "Name": "Projector",
+      "MapType": 2,
+      "SpriteRendererName": "projector"
+    },
+    "dec-rock1": {
+      "Name": "Rock 1",
+      "MapType": 2,
+      "SpriteRendererName": "rock1"
+    },
+    "dec-rock2": {
+      "Name": "Rock 2",
+      "MapType": 2,
+      "SpriteRendererName": "rock2"
+    },
+    "dec-rock3": {
+      "Name": "Rock 3",
+      "MapType": 2,
+      "SpriteRendererName": "rock3"
+    },
+    "dec-rock4": {
+      "Name": "Rock 4",
+      "MapType": 2,
+      "SpriteRendererName": "rockblock1"
+    },
+    "dec-rock5": {
+      "Name": "Rock 5",
+      "MapType": 2,
+      "SpriteRendererName": "bigRock"
+    },
+    "dec-snowman": {
+      "Name": "Snowman",
+      "MapType": 2,
+      "SpriteRendererName": "snowman"
+    },
+    "dec-snowmanded": {
+      "Name": "Dead Snowman",
+      "MapType": 2,
+      "SpriteRendererName": "snowmanded.png"
+    },
+    "dec-table1": {
+      "Name": "Table 1",
+      "MapType": 2,
+      "SpriteRendererName": "sciencetable"
+    },
+    "dec-table2": {
+      "Name": "Table 2",
+      "MapType": 0,
+      "SpriteRendererName": "admin_bridge"
+    },
+    "dec-table3": {
+      "Name": "Table 3",
+      "MapType": 1,
+      "SpriteRendererName": "comms-top"
+    },
+    "dec-table4": {
+      "Name": "Table 4",
+      "MapType": 1,
+      "SpriteRendererName": "computerTableB"
+    },
+    "dec-table5": {
+      "Name": "Table 5",
+      "MapType": 1,
+      "SpriteRendererName": "office-mid"
+    },
+    "dec-table6": {
+      "Name": "Table 6",
+      "MapType": 1,
+      "SpriteRendererName": "computerTableM"
+    },
+    "dec-table7": {
+      "Name": "Table 7",
+      "MapType": 1,
+      "SpriteRendererName": "comms-side"
+    },
+    "dec-table8": {
+      "Name": "Table 8",
+      "MapType": 1,
+      "SpriteRendererName": "labTable"
+    },
+    "dec-table9": {
+      "Name": "Table 9",
+      "MapType": 1,
+      "SpriteRendererName": "lab-right"
+    },
+    "dec-table10": {
+      "Name": "Table 10",
+      "MapType": 1,
+      "SpriteRendererName": "Table (1)"
+    },
+    "dec-vending2": {
+      "Name": "Vending Machine 1",
+      "MapType": 1,
+      "SpriteRendererName": "cafVendMachbottom"
+    },
+    "dec-vending3": {
+      "Name": "Vending Machine 2",
+      "MapType": 1,
+      "SpriteRendererName": "cafVendingMachRight"
+    }
+  },
+  "room": {
+    "room-polusadmin": {
+      "Name": "Polus Admin",
+      "MapType": 2,
+      "SpriteRendererName": "Walls",
+      "SpriteName": "room_admin"
+    },
+    "room-poluscomms": {
+      "Name": "Polus Comms",
+      "MapType": 2,
+      "SpriteRendererName": "Walls",
+      "SpriteName": "room_broadcast"
+    },
+    "room-poluselectric": {
+      "Name": "Polus Electric",
+      "MapType": 2,
+      "SpriteRendererName": "Walls",
+      "SpriteName": "room_electric"
+    },
+    "room-polusmedbay": {
+      "Name": "Polus Medbay",
+      "MapType": 2,
+      "SpriteRendererName": "Walls",
+      "SpriteName": "room_science"
+    },
+    "room-poluso2": {
+      "Name": "Polus O2",
+      "MapType": 2,
+      "SpriteRendererName": "Walls",
+      "SpriteName": "room_O2"
+    },
+    "room-polusspecimen": {
+      "Name": "Polus Specimen",
+      "MapType": 2,
+      "SpriteRendererName": "Walls",
+      "SpriteName": "room_specimen"
+    },
+    "room-polusspecimenhallway1": {
+      "Name": "Polus Spec Hall 1",
+      "MapType": 2,
+      "SpriteRendererName": "Walls",
+      "SpriteName": "room_tunnel1"
+    },
+    "room-polusspecimenhallway2": {
+      "Name": "Polus Spec Hall 2",
+      "MapType": 2,
+      "SpriteRendererName": "Walls",
+      "SpriteName": "room_tunnel2"
+    },
+    "room-polusstorage": {
+      "Name": "Polus Storage",
+      "MapType": 2,
+      "SpriteRendererName": "Walls",
+      "SpriteName": "room_storage"
+    },
+    "room-polusweapons": {
+      "Name": "Polus Weapons",
+      "MapType": 2,
+      "SpriteRendererName": "Walls",
+      "SpriteName": "room_weapon"
+    },
+    "room-skeldcafe": {
+      "Name": "Skeld Cafe",
+      "MapType": 0,
+      "SpriteRendererName": "Ground",
+      "SpriteName": "room_cafeteria"
+    },
+    "room-skeldelectric": {
+      "Name": "Skeld Electric",
+      "MapType": 0,
+      "SpriteRendererName": "Ground",
+      "SpriteName": "room_electrical"
+    },
+    "room-skeldengine1": {
+      "Name": "Skeld Engine 1",
+      "MapType": 0,
+      "SpriteRendererName": "Ground",
+      "SpriteName": "room_LEng"
+    },
+    "room-skeldengine2": {
+      "Name": "Skeld Engine 2",
+      "MapType": 0,
+      "SpriteRendererName": "Ground",
+      "SpriteName": "room_REng"
+    },
+    "room-skeldmedbay": {
+      "Name": "Skeld Medbay",
+      "MapType": 0,
+      "SpriteRendererName": "Ground",
+      "SpriteName": "room_med"
+    },
+    "room-skeldadminhallway": {
+      "Name": "Skeld Admin Hall",
+      "MapType": 0,
+      "SpriteRendererName": "AdminHallway",
+      "SpriteName": "room_hallwaydown"
+    },
+    "room-skeldnavhallway": {
+      "Name": "Skeld Nav Hall",
+      "MapType": 0,
+      "SpriteRendererName": "BigYHallway",
+      "SpriteName": "room_hallwaycloset"
+    },
+    "room-skeldo2": {
+      "Name": "Skeld O2",
+      "MapType": 0,
+      "SpriteRendererName": "Ground",
+      "SpriteName": "room_lifeSupport"
+    },
+    "room-skeldreactorhallway": {
+      "Name": "Skeld Reactor Hall",
+      "MapType": 0,
+      "SpriteRendererName": "CrossHallway",
+      "SpriteName": "room_hallwaycros"
+    },
+    "room-skeldsecurity": {
+      "Name": "Skeld Security",
+      "MapType": 0,
+      "SpriteRendererName": "Ground",
+      "SpriteName": "room_security"
+    },
+    "room-skeldstorage": {
+      "Name": "Skeld Storage",
+      "MapType": 0,
+      "SpriteRendererName": "Ground",
+      "SpriteName": "room_storage"
+    },
+    "room-skeldshieldhall": {
+      "Name": "Skeld Shields Hall",
+      "MapType": 0,
+      "SpriteRendererName": "shields_floor",
+      "SpriteName": "shields_walkway"
+    },
+    "room-miramedbaycomms": {
+      "Name": "Mira Medbay / Comms",
+      "MapType": 1,
+      "SpriteRendererName": "EntryWalls",
+      "SpriteName": "medBayCommsLockersWalls"
+    },
+    "room-mirayhall": {
+      "Name": "Mira Y Hall",
+      "MapType": 1,
+      "SpriteRendererName": "skyBridgeWalls",
+      "SpriteName": "skyBridgeWalls"
+    },
+    "room-mirareactor": {
+      "Name": "Mira Reactor",
+      "MapType": 1,
+      "SpriteRendererName": "decontamLabReactorWalls",
+      "SpriteName": "decontamLabReactorWalls"
+    },
+    "room-miralaunchpad": {
+      "Name": "Mira Launchpad",
+      "MapType": 1,
+      "SpriteRendererName": "launchPadWalls",
+      "SpriteName": "launchPadWalls"
+    },
+    "room-mirao2admin": {
+      "Name": "Mira O2 / Admin",
+      "MapType": 1,
+      "SpriteRendererName": "compLabGreenHouseAdminWalls",
+      "SpriteName": "compLabGreenHouseAdminWalls"
+    },
+    "room-miracafe": {
+      "Name": "Mira Cafe",
+      "MapType": 1,
+      "SpriteRendererName": "CafeteriaWalls",
+      "SpriteName": "cafeteriaWalls"
+    },
+    "room-dropship": {
+      "Name": "Dropship",
+      "MapType": 1,
+      "SpriteRendererName": "Dropship",
+      "SpriteName": "Dropship"
+    },
+    "room-dropshiptop": {
+      "Name": "Dropship Top",
+      "MapType": 1,
+      "SpriteRendererName": "dropshipTop",
+      "SpriteName": "dropshipTop"
+    },
+    "room-dropshiprear": {
+      "Name": "Dropship Rear",
+      "MapType": 1,
+      "SpriteRendererName": "dropship_rear",
+      "SpriteName": "dropship_rear"
+    },
+    "room-dropshipramp": {
+      "Name": "Dropship Ramp",
+      "MapType": 2,
+      "SpriteRendererName": "ramp",
+      "SpriteName": "ramp"
     }
   }
 }

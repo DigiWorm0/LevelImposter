@@ -10,11 +10,12 @@ namespace LevelImposter.Map
     {
         public PolusShipStatus shipStatus;
         public GameObject gameObject;
+        public MapBehaviour map;
 
         public PolusHandler(PolusShipStatus shipStatus)
         {
             this.shipStatus = shipStatus;
-            this.gameObject = GameObject.Find("PolusShip(Clone)");
+            this.gameObject = shipStatus.gameObject;
         }
 
         public void Add(GameObject obj, MapAsset asset)

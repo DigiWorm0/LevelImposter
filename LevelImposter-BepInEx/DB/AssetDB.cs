@@ -9,6 +9,9 @@ namespace LevelImposter.DB
     {
         public static Dictionary<string, TaskData> tasks;
         public static Dictionary<string, UtilData> utils;
+        public static Dictionary<string, SabData> sabs;
+        public static Dictionary<string, DecData> dec;
+        public static Dictionary<string, RoomData> room;
 
         public static void Init()
         {
@@ -20,6 +23,9 @@ namespace LevelImposter.DB
 
                 tasks = tempDB.tasks;
                 utils = tempDB.utils;
+                sabs = tempDB.sabs;
+                dec = tempDB.dec;
+                room = tempDB.room;
             }
             catch
             {
@@ -45,6 +51,9 @@ namespace LevelImposter.DB
             // Import Map to Lists
             ImportMap(map, shipStatus, mapType, tasks);
             ImportMap(map, shipStatus, mapType, utils);
+            ImportMap(map, shipStatus, mapType, sabs);
+            ImportMap(map, shipStatus, mapType, dec);
+            ImportMap(map, shipStatus, mapType, room);
         }
 
         private static void ImportMap<T>(GameObject map, ShipStatus shipStatus, ShipStatus.MapType mapType, Dictionary<string, T> list) where T : AssetData
@@ -52,7 +61,9 @@ namespace LevelImposter.DB
             foreach (var elem in list)
             {
                 if (elem.Value.MapType == mapType)
+                {
                     elem.Value.ImportMap(map, shipStatus);
+                }
             }
         }
     }
@@ -61,5 +72,8 @@ namespace LevelImposter.DB
     {
         public Dictionary<string, TaskData> tasks;
         public Dictionary<string, UtilData> utils;
+        public Dictionary<string, SabData> sabs;
+        public Dictionary<string, DecData> dec;
+        public Dictionary<string, RoomData> room;
     }
 }

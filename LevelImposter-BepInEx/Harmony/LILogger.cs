@@ -7,7 +7,7 @@ namespace LevelImposter
 {
     static class LILogger
     {
-        private const bool PRINT_STACK = true;
+        private const bool PRINT_STACK = false;
         private static ManualLogSource logger;
 
         public static void Init()

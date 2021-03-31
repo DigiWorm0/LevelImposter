@@ -14,6 +14,8 @@ namespace LevelImposter.Builders
         private CustomBuilder customBuilder;
         private DummyBuilder  spawnBuilder;
         private UtilBuilder   utilBuilder;
+        private DecBuilder    decBuilder;
+        private RoomBuilder   roomBuilder;
 
         public AssetBuilder(PolusHandler polus)
         {
@@ -23,6 +25,8 @@ namespace LevelImposter.Builders
             customBuilder = new CustomBuilder(polus);
             spawnBuilder  = new DummyBuilder(polus);
             utilBuilder   = new UtilBuilder(polus);
+            decBuilder    = new DecBuilder(polus);
+            roomBuilder   = new RoomBuilder(polus);
         }
 
         public bool Build(MapAsset asset)
@@ -33,9 +37,15 @@ namespace LevelImposter.Builders
                 {
                     if (asset.data == "util-player")
                         return spawnBuilder.Build(asset);
+                    else if (asset.data == "util-room")
+                        return true;
                     else if (asset.data.StartsWith("util-"))
                         return utilBuilder.Build(asset);
-                    else
+                    else if (asset.data.StartsWith("dec-"))
+                        return decBuilder.Build(asset);
+                    else if (asset.data.StartsWith("room-"))
+                        return roomBuilder.Build(asset);
+                    else if (asset.data.StartsWith("task-"))
                         return taskBuilder.Build(asset);
                 }
                 else if (asset.type == "custom")

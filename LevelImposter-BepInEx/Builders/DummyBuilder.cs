@@ -19,7 +19,7 @@ namespace LevelImposter.Builders
         public bool Build(MapAsset asset)
         {
             GameObject dummy = new GameObject("Dummy");
-            dummy.transform.parent = polus.gameObject.transform;
+            dummy.transform.SetParent(polus.gameObject.transform);
             dummy.transform.position = new Vector2(asset.x, asset.y);
 
             polus.shipStatus.DummyLocations = AssetBuilder.AddToArr(polus.shipStatus.DummyLocations, dummy.transform);
