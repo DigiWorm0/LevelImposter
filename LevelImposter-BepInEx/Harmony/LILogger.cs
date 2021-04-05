@@ -45,5 +45,10 @@ namespace LevelImposter
         {
             Log(LogLevel.Error, data);
         }
+
+        public static void LogWarn(object data)
+        {
+            Log(LogLevel.Warning, data);
+        }
     }
 }

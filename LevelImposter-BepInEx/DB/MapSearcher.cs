@@ -13,6 +13,7 @@ namespace LevelImposter.DB
             GameObject obj = SearchChildren(parent, name);
             if (obj != null)
                 return obj.GetComponent<T>();
+            LILogger.LogWarn("Could not find " + name);
             return default(T);
         }
 
@@ -31,6 +32,7 @@ namespace LevelImposter.DB
                 if (r.sprite.name == spriteName)
                     return r;
             }
+            LILogger.LogWarn("Could not find " + spriteName + " (" + name + ")");
             return null;
         }
 
@@ -39,9 +41,11 @@ namespace LevelImposter.DB
             List<Transform> output = new List<Transform>();
             SearchChildren(parent.transform, name, output);
 
-            if (output.Count() <= 0)
-                return null;
-            return output[0].gameObject;
+            if (output.Count() > 0)
+                return output[0].gameObject;
+            LILogger.LogWarn("Could not find " + name);
+            return null;
+            
         }
 
         private static void SearchChildren(Transform parent, string name, List<Transform> output)
@@ -62,6 +66,7 @@ namespace LevelImposter.DB
             IEnumerable<T> elem = list.Where(t => t.name == name);
             if (elem.Count() > 0)
                 return elem.First();
+            LILogger.LogWarn("Could not find " + name);
             return null;
         }
     }

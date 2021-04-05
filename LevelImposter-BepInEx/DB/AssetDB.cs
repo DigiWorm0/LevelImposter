@@ -1,7 +1,9 @@
-﻿using System;
+﻿using LevelImposter.Models;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
+using UnityEngine.ResourceManagement.AsyncOperations;
 
 namespace LevelImposter.DB
 {
@@ -39,14 +41,16 @@ namespace LevelImposter.DB
             ShipStatus shipStatus = map.GetComponent<ShipStatus>();
 
             // Determine Map Type
-            ShipStatus.MapType mapType = ShipStatus.MapType.Pb;
+            MapType mapType = MapType.Skeld;
             if (map.name == "AprilShip")
                 return;
             if (map.name == "MiraShip")
-                mapType = ShipStatus.MapType.Hq;
-            if (map.name == "SkeldShip")
-                mapType = ShipStatus.MapType.Ship;
-            
+                mapType = MapType.Mira;
+            if (map.name == "PolusShip")
+                mapType = MapType.Polus;
+            if (map.name == "Airship")
+                mapType = MapType.Airship;
+
 
             // Import Map to Lists
             ImportMap(map, shipStatus, mapType, tasks);
@@ -54,9 +58,11 @@ namespace LevelImposter.DB
             ImportMap(map, shipStatus, mapType, sabs);
             ImportMap(map, shipStatus, mapType, dec);
             ImportMap(map, shipStatus, mapType, room);
+
+            LILogger.LogInfo("Loaded " + map.name);
         }
 
-        private static void ImportMap<T>(GameObject map, ShipStatus shipStatus, ShipStatus.MapType mapType, Dictionary<string, T> list) where T : AssetData
+        private static void ImportMap<T>(GameObject map, ShipStatus shipStatus, MapType mapType, Dictionary<string, T> list) where T : AssetData
         {
             foreach (var elem in list)
             {

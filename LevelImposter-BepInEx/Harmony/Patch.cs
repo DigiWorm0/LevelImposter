@@ -3,11 +3,16 @@ using BepInEx.Configuration;
 using BepInEx.IL2CPP;
 using HarmonyLib;
 using Il2CppSystem.Collections.Generic;
+using Il2CppSystem.Threading;
+using Il2CppSystem.Threading.Tasks;
 using LevelImposter.DB;
 using LevelImposter.Map;
 using Reactor;
+using System;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
+using UnityEngine.Events;
+using UnityEngine.ResourceManagement.AsyncOperations;
 
 namespace LevelImposter
 {
@@ -16,6 +21,15 @@ namespace LevelImposter
     {
         public static void Postfix(PolusShipStatus __instance)
         {
+            // Load Asset DB
+            var client = GameObject.Find("NetworkManager").GetComponent<AmongUsClient>();
+            foreach (AssetReference assetRef in client.ShipPrefabs)
+            {
+                if (assetRef.IsDone)
+                    AssetDB.ImportMap(assetRef.Asset.Cast<GameObject>());
+            }
+
+            // Apply Map
             MapApplicator mapApplicator = new MapApplicator();
             mapApplicator.Apply(__instance);
         }
@@ -35,13 +49,11 @@ namespace LevelImposter
     {
         public static void Postfix(AmongUsClient __instance)
         {
-            
-            foreach (AssetReference objRef in __instance.ShipPrefabs)
+            LILogger.LogInfo("Loading Ship Prefabs...");
+            foreach (AssetReference assetRef in __instance.ShipPrefabs)
             {
-                GameObject obj = (GameObject)objRef.Asset;
-                AssetDB.ImportMap(obj);
+                assetRef.LoadAsset<GameObject>();
             }
-            LILogger.LogInfo("Found and stored prefabs");
         }
     }
 }
