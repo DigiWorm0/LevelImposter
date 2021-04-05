@@ -33,22 +33,22 @@ namespace LevelImposter.Builders
         {
             try
             {
-                if (asset.type == "existing")
+                if (asset.spriteType == "existing")
                 {
-                    if (asset.data == "util-player")
+                    if (asset.type == "util-player")
                         return spawnBuilder.Build(asset);
-                    else if (asset.data == "util-room")
+                    else if (asset.type == "util-room")
                         return true;
-                    else if (asset.data.StartsWith("util-"))
+                    else if (asset.type.StartsWith("util-"))
                         return utilBuilder.Build(asset);
-                    else if (asset.data.StartsWith("dec-"))
+                    else if (asset.type.StartsWith("dec-"))
                         return decBuilder.Build(asset);
-                    else if (asset.data.StartsWith("room-"))
+                    else if (asset.type.StartsWith("room-"))
                         return roomBuilder.Build(asset);
-                    else if (asset.data.StartsWith("task-"))
+                    else if (asset.type.StartsWith("task-"))
                         return taskBuilder.Build(asset);
                 }
-                else if (asset.type == "custom")
+                else if (asset.spriteType == "custom")
                     return customBuilder.Build(asset);
                 return false;
             }

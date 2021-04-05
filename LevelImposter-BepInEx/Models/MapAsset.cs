@@ -10,8 +10,8 @@ namespace LevelImposter.Models
     class MapAsset
     {
         public string name;
+        public string spriteType;
         public string type;
-        public string data;
         public float x;
         public float y;
         public float z;

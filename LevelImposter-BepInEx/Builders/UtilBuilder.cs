@@ -21,10 +21,10 @@ namespace LevelImposter.Builders
 
         public bool Build(MapAsset asset)
         {
-            UtilData utilData = AssetDB.utils[asset.data];
+            UtilData utilData = AssetDB.utils[asset.type];
 
             // Object
-            GameObject obj = new GameObject(asset.data);
+            GameObject obj = new GameObject(asset.type);
 
             // Sprite Renderer
             SpriteRenderer spriteRenderer = obj.AddComponent<SpriteRenderer>();

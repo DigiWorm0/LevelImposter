@@ -7,6 +7,7 @@ using LevelImposter.DB;
 using LevelImposter.Map;
 using Reactor;
 using UnityEngine;
+using UnityEngine.AddressableAssets;
 
 namespace LevelImposter
 {
@@ -34,8 +35,10 @@ namespace LevelImposter
     {
         public static void Postfix(AmongUsClient __instance)
         {
-            foreach (GameObject obj in __instance.NonAddressableShipPrefabs)
+            
+            foreach (AssetReference objRef in __instance.ShipPrefabs)
             {
+                GameObject obj = (GameObject)objRef.Asset;
                 AssetDB.ImportMap(obj);
             }
             LILogger.LogInfo("Found and stored prefabs");

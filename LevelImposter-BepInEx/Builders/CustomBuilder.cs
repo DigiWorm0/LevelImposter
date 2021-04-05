@@ -21,7 +21,7 @@ namespace LevelImposter.Builders
             GameObject obj = new GameObject("Custom Asset");
 
             // Base64
-            string base64 = asset.data.Substring(asset.data.IndexOf(",") + 1);
+            string base64 = asset.type.Substring(asset.type.IndexOf(",") + 1);
             byte[] data;
             try
             {
