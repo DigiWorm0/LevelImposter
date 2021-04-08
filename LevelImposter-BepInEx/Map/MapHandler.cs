@@ -21,6 +21,8 @@ namespace LevelImposter.Map
             if (mapLoaded)
                 return true;
 
+            LILogger.LogInfo("Deserializing Map Data...");
+
             // Get Directory
             string dllDir = System.Reflection.Assembly.GetAssembly(typeof(LevelImposter.MainHarmony)).Location;
             mapDir = Path.Combine(Path.GetDirectoryName(dllDir), "map.json");
@@ -38,13 +40,18 @@ namespace LevelImposter.Map
 
             // Return
             mapLoaded = true;
-            LILogger.LogInfo("Found and Deserialized Map Data");
+            LILogger.LogInfo("Map Data has been Loaded!");
             return true;
         }
 
         public static MapData GetMap()
         {
             return mapData;
+        }
+
+        public static MapAsset GetById(UInt64 id)
+        {
+            return mapData.objs.FirstOrDefault(obj => obj.id == id);
         }
     }
 }

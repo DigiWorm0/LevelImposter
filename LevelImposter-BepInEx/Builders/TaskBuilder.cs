@@ -44,6 +44,7 @@ namespace LevelImposter.Builders
             console.onlyFromBelow = true;
             console.onlySameRoom = false;
             console.usableDistance = 1;
+            console.Room       = origConsole.Room;
             console.TaskTypes  = origConsole.TaskTypes;
             console.ValidTasks = origConsole.ValidTasks;
             polus.Add(obj, asset);
@@ -57,7 +58,7 @@ namespace LevelImposter.Builders
                 box.offset = origBox.offset;
                 box.isTrigger = true;
             }
-            else
+            else if (taskData.GameObj.GetComponent<BoxCollider2D>() != null)
             {
                 BoxCollider2D origBox = taskData.GameObj.GetComponent<BoxCollider2D>();
                 BoxCollider2D box = obj.AddComponent<BoxCollider2D>();
@@ -65,42 +66,90 @@ namespace LevelImposter.Builders
                 box.offset = origBox.offset;
                 box.isTrigger = true;
             }
+            else if (taskData.GameObj.GetComponent<PolygonCollider2D>() != null)
+            {
+                PolygonCollider2D origBox = taskData.GameObj.GetComponent<PolygonCollider2D>();
+                PolygonCollider2D box = obj.AddComponent<PolygonCollider2D>();
+                box.points = origBox.points;
+                box.pathCount = origBox.pathCount;
+                box.offset = origBox.offset;
+                box.isTrigger = true;
+            }
 
             // Button
             PassiveButton origBtn = taskData.GameObj.GetComponent<PassiveButton>();
-            PassiveButton btn = obj.AddComponent<PassiveButton>();
-            btn.ClickMask = origBtn.ClickMask;
-            btn.OnMouseOver = new UnityEvent();
-            btn.OnMouseOut = new UnityEvent();
-            Action action = console.Use;
-            btn.OnClick.AddListener(action);
+            if (origBtn != null)
+            {
+                PassiveButton btn = obj.AddComponent<PassiveButton>();
+                btn.ClickMask = origBtn.ClickMask;
+                btn.OnMouseOver = new UnityEvent();
+                btn.OnMouseOut = new UnityEvent();
+                Action action = console.Use;
+                btn.OnClick.AddListener(action);
+            }
+
+            // Medscan
+            if (asset.type == "task-medscan")
+            {
+                MedScannerBehaviour medscan = obj.AddComponent<MedScannerBehaviour>();
+                MedScannerBehaviour origscan = taskData.GameObj.GetComponent<MedScannerBehaviour>();
+
+                medscan.Offset = origscan.Offset;
+
+                polus.shipStatus.MedScanner = medscan;
+            }
 
             // Task
-            NormalPlayerTask origTask = taskData.Behavior;
-            NormalPlayerTask task = taskMgr.AddComponent<NormalPlayerTask>();
-            //task.Arrow = origTask.Arrow;
-            task.taskStep = origTask.taskStep;
-            task.MaxStep = origTask.MaxStep;
-            task.arrowSuspended = origTask.arrowSuspended;
-            task.ShowTaskTimer = origTask.ShowTaskTimer;
-            task.ShowTaskStep = origTask.ShowTaskStep;
-            task.TaskTimer = origTask.TaskTimer;
-            task.TimerStarted = origTask.TimerStarted;
-            task.StartAt = origTask.StartAt;
-            task.TaskType = origTask.TaskType;
-            task.MinigamePrefab = origTask.MinigamePrefab;
-            task.HasLocation = origTask.HasLocation;
-            task.LocationDirty = origTask.LocationDirty;
+            if (!string.IsNullOrEmpty(taskData.BehaviorName))
+            {
+                NormalPlayerTask origTask = taskData.Behavior;
+                NormalPlayerTask task;
+                if (asset.type.StartsWith("task-divert"))
+                {
+                    task = taskMgr.AddComponent<DivertPowerTask>();
 
-            // Apply to Task List
+                    DivertPowerTask taskNode = task.Cast<DivertPowerTask>();
+                    DivertPowerTask origNode = origTask.Cast<DivertPowerTask>();
+
+                    taskNode.TargetSystem = origNode.TargetSystem;
+                }
+                else if (asset.type.StartsWith("task-node"))
+                {
+                    task = taskMgr.AddComponent<WeatherNodeTask>();
+
+                    WeatherNodeTask taskNode = task.Cast<WeatherNodeTask>();
+                    WeatherNodeTask origNode = origTask.Cast<WeatherNodeTask>();
+
+                    taskNode.Stage2Prefab = origNode.Stage2Prefab;
+                    taskNode.NodeId = origNode.NodeId;
+                }
+                else
+                {
+                    task = taskMgr.AddComponent<NormalPlayerTask>();
+                }
+                task.taskStep = origTask.taskStep;
+                task.MaxStep = origTask.MaxStep;
+                task.arrowSuspended = origTask.arrowSuspended;
+                task.ShowTaskTimer = origTask.ShowTaskTimer;
+                task.ShowTaskStep = origTask.ShowTaskStep;
+                task.TaskTimer = origTask.TaskTimer;
+                task.TimerStarted = origTask.TimerStarted;
+                task.StartAt = origTask.StartAt;
+                task.TaskType = origTask.TaskType;
+                task.MinigamePrefab = origTask.MinigamePrefab;
+                task.HasLocation = origTask.HasLocation;
+                task.LocationDirty = origTask.LocationDirty;
+
+                if (taskData.TaskType == TaskType.Common)
+                    polus.shipStatus.CommonTasks = AssetBuilder.AddToArr(polus.shipStatus.CommonTasks, task);
+                if (taskData.TaskType == TaskType.Short)
+                    polus.shipStatus.NormalTasks = AssetBuilder.AddToArr(polus.shipStatus.NormalTasks, task);
+                if (taskData.TaskType == TaskType.Long)
+                    polus.shipStatus.LongTasks = AssetBuilder.AddToArr(polus.shipStatus.LongTasks, task);
+            }
+
+            // Add to Polus
             polus.shipStatus.AllConsoles = AssetBuilder.AddToArr(polus.shipStatus.AllConsoles, console);
-            if (taskData.TaskType == TaskType.Common)
-                polus.shipStatus.CommonTasks = AssetBuilder.AddToArr(polus.shipStatus.CommonTasks, task);
-            if (taskData.TaskType == TaskType.Short)
-                polus.shipStatus.NormalTasks = AssetBuilder.AddToArr(polus.shipStatus.NormalTasks, task);
-            if (taskData.TaskType == TaskType.Long)
-                polus.shipStatus.LongTasks = AssetBuilder.AddToArr(polus.shipStatus.LongTasks, task);
-            
             return true;
         }
     }

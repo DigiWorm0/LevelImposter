@@ -21,8 +21,9 @@ namespace LevelImposter
         public override void Load()
         {
             LILogger.Init();
+            VersionCheck.CheckVersion();
+            VersionCheck.CheckNewtonsoft();
             AssetDB.Init();
-
             Harmony.PatchAll();
             LILogger.LogMsg("LevelImposter Initialized.");
         }

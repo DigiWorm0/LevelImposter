@@ -17,8 +17,6 @@ namespace LevelImposter.Builders
         public RoomBuilder(PolusHandler polus)
         {
             this.polus = polus;
-            
-
         }
 
         public bool Build(MapAsset asset)

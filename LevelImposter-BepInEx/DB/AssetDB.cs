@@ -59,7 +59,7 @@ namespace LevelImposter.DB
             ImportMap(map, shipStatus, mapType, dec);
             ImportMap(map, shipStatus, mapType, room);
 
-            LILogger.LogInfo("Loaded " + map.name);
+            LILogger.LogInfo("..." + map.name + " Loaded");
         }
 
         private static void ImportMap<T>(GameObject map, ShipStatus shipStatus, MapType mapType, Dictionary<string, T> list) where T : AssetData

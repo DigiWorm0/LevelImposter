@@ -18,21 +18,38 @@ namespace LevelImposter.Map
             PolusHandler    polus   = new PolusHandler(shipStatus);
             AssetBuilder    builder = new AssetBuilder(polus);
 
+            LILogger.LogInfo("...Clearing Polus");
             polus.ClearTasks();
             polus.MoveToTemp();
 
+            // Rooms
+            LILogger.LogInfo("...Building Rooms");
             for (int i = 0; i < map.objs.Length; i++)
             {
+                if (map.objs[i].type != "util-room")
+                    continue;
                 MapAsset asset = map.objs[i];
                 bool success = builder.Build(asset);
                 if (!success)
                     LILogger.LogError("Failed to build " + asset.name);
-                else if (i % 1000 == 0)
-                    LILogger.LogMsg(i + " - Objects");
+            }
+            
+            // Objects
+            LILogger.LogInfo("...Building Objects");
+            for (int i = 0; i < map.objs.Length; i++)
+            {
+                if (map.objs[i].type == "util-room")
+                    continue;
+                MapAsset asset = map.objs[i];
+                bool success = builder.Build(asset);
+                if (!success)
+                    LILogger.LogError("Failed to build " + asset.name);
+                else if (i % 100 == 0 && i != 0)
+                    LILogger.LogInfo("..." + i + " Objects Built");
             }
 
             polus.DeleteTemp();
-            LILogger.LogInfo("Applied Map Data");
+            LILogger.LogInfo("Finished!");
         }
     }
 }

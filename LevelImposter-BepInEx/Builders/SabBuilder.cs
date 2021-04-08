@@ -13,62 +13,108 @@ namespace LevelImposter.Builders
     class SabBuilder : Builder
     {
         private PolusHandler polus;
+        private GameObject sabMgr;
 
         public SabBuilder(PolusHandler polus)
         {
             this.polus = polus;
-            
-
+            sabMgr = new GameObject("SabManager");
         }
 
         public bool Build(MapAsset asset)
         {
-            SabData utilData = AssetDB.sabs[asset.type];
+            SabData sabData = AssetDB.sabs[asset.type];
 
             // Object
             GameObject obj = new GameObject(asset.type);
 
             // Sprite Renderer
             SpriteRenderer spriteRenderer = obj.AddComponent<SpriteRenderer>();
-            spriteRenderer.sprite = utilData.SpriteRenderer.sprite;
-            spriteRenderer.material = utilData.SpriteRenderer.material;
+            spriteRenderer.sprite = sabData.SpriteRenderer.sprite;
+            spriteRenderer.material = sabData.SpriteRenderer.material;
 
             // Console
-            SystemConsole origConsole = utilData.GameObj.GetComponent<SystemConsole>();
-            SystemConsole console = obj.AddComponent<SystemConsole>();
+            Console origConsole = sabData.GameObj.GetComponent<Console>();
+            Console console = obj.AddComponent<Console>();
+            console.ConsoleId = origConsole.ConsoleId;
+            console.AllowImpostor = false;
+            console.checkWalls = false;
+            console.GhostsIgnored = false;
             console.Image = spriteRenderer;
-            console.FreeplayOnly = origConsole.FreeplayOnly;
-            console.onlyFromBelow = origConsole.onlyFromBelow;
-            console.usableDistance = origConsole.usableDistance;
-            console.MinigamePrefab = origConsole.MinigamePrefab;
-            console.useIcon = origConsole.useIcon;
+            console.onlyFromBelow = true;
+            console.onlySameRoom = false;
+            console.usableDistance = 1;
+            console.Room = origConsole.Room;
+            console.TaskTypes = origConsole.TaskTypes;
+            console.ValidTasks = origConsole.ValidTasks;
+            polus.Add(obj, asset);
 
             // Box Collider
-            if (utilData.GameObj.GetComponent<CircleCollider2D>() != null)
+            if (sabData.GameObj.GetComponent<CircleCollider2D>() != null)
             {
-                CircleCollider2D origBox = utilData.GameObj.GetComponent<CircleCollider2D>();
+                CircleCollider2D origBox = sabData.GameObj.GetComponent<CircleCollider2D>();
                 CircleCollider2D box = obj.AddComponent<CircleCollider2D>();
                 box.radius = origBox.radius;
                 box.offset = origBox.offset;
                 box.isTrigger = true;
             }
-            else
+            else if (sabData.GameObj.GetComponent<BoxCollider2D>() != null)
             {
-                BoxCollider2D origBox = utilData.GameObj.GetComponent<BoxCollider2D>();
+                BoxCollider2D origBox = sabData.GameObj.GetComponent<BoxCollider2D>();
                 BoxCollider2D box = obj.AddComponent<BoxCollider2D>();
                 box.size = origBox.size;
                 box.offset = origBox.offset;
                 box.isTrigger = true;
             }
+            else if (sabData.GameObj.GetComponent<PolygonCollider2D>() != null)
+            {
+                PolygonCollider2D origBox = sabData.GameObj.GetComponent<PolygonCollider2D>();
+                PolygonCollider2D box = obj.AddComponent<PolygonCollider2D>();
+                box.points = origBox.points;
+                box.pathCount = origBox.pathCount;
+                box.offset = origBox.offset;
+                box.isTrigger = true;
+            }
 
-            // Button
-            PassiveButton origBtn = utilData.GameObj.GetComponent<PassiveButton>();
-            PassiveButton btn = obj.AddComponent<PassiveButton>();
-            btn.ClickMask = origBtn.ClickMask;
-            btn.OnMouseOver = new UnityEvent();
-            btn.OnMouseOut = new UnityEvent();
-            Action action = console.Use;
-            btn.OnClick.AddListener(action);
+            polus.shipStatus.AllConsoles = AssetBuilder.AddToArr(polus.shipStatus.AllConsoles, console);
+
+            // Target Room
+            SystemTypes target = 0;
+            if (asset.targetIds.Length <= 0)
+                LILogger.LogWarn(asset.name + " has no target room");
+            else
+                target = ShipRoomBuilder.db[asset.targetIds[0]];
+            
+
+            // Special Task
+            if (asset.type == "sab-electric")
+            {
+                ElectricTask task = sabMgr.AddComponent<ElectricTask>();
+                ElectricTask origTask = sabData.Behavior.Cast<ElectricTask>();
+
+                task.even = origTask.even;
+                task.isComplete = origTask.isComplete;
+                task.didContribute = origTask.didContribute;
+                task.Id = origTask.Id;
+                task.Index = origTask.Index;
+                task.LocationDirty = origTask.LocationDirty;
+                task.HasLocation = origTask.HasLocation;
+                task.MinigamePrefab = origTask.MinigamePrefab;
+                task.TaskType = origTask.TaskType;
+                task.StartAt = target;
+                task.system = new SwitchSystem();
+
+                polus.shipStatus.SpecialTasks = AssetBuilder.AddToArr(polus.shipStatus.SpecialTasks, task);
+
+                List<StringNames> list = new List<StringNames>(polus.shipStatus.SystemNames);
+                list.Add(StringNames.FixLights);
+                polus.shipStatus.SystemNames = list.ToArray();
+                
+            }
+            else
+            {
+                throw new Exception();
+            }
 
             polus.Add(obj, asset);
 

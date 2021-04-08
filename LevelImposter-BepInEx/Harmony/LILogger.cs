@@ -7,7 +7,7 @@ namespace LevelImposter
 {
     static class LILogger
     {
-        private const bool PRINT_STACK = false;
+        private const bool PRINT_STACK = true;
         private static ManualLogSource logger;
 
         public static void Init()
@@ -22,7 +22,7 @@ namespace LevelImposter
         {
             if (PRINT_STACK)
             {
-                LogInfo("Unity Stack Trace:\n" + stackTrace);
+                LogInfo("Unity Stack Trace:\n" + msg + "\n" + stackTrace);
             }
         }
 

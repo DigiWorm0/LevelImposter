@@ -57,12 +57,20 @@
       "BehaviorName": "RefuelTask"
     },
     "task-fuel2": {
-      "Name": "Gas Output",
+      "Name": "Gas Output 1",
+      "MapType": 2,
+      "SpriteRendererName": "panel_fuel",
+      "TaskType": 2,
+      "GameObjName": "panel_fuel (1)",
+      "BehaviorName": ""
+    },
+    "task-fuel3": {
+      "Name": "Gas Output 2",
       "MapType": 2,
       "SpriteRendererName": "panel_fuel",
       "TaskType": 2,
       "GameObjName": "panel_fuel",
-      "BehaviorName": "RefuelTask"
+      "BehaviorName": ""
     },
     "task-waterwheel": {
       "Name": "Water Wheel",
@@ -133,7 +141,7 @@
       "MapType": 2,
       "SpriteRendererName": "panel_cooler1",
       "TaskType": 1,
-      "GameObjName": "panel_cooler2",
+      "GameObjName": "panel_cooler1",
       "BehaviorName": "StoreArtifacts"
     },
     "task-oxygen": {
@@ -214,7 +222,7 @@
       "SpriteRendererName": "panel_weather",
       "TaskType": 2,
       "GameObjName": "panel_weather",
-      "BehaviorName": "WeatherGi"
+      "BehaviorName": ""
     },
     "task-code": {
       "Name": "Enter ID Code",
@@ -224,8 +232,16 @@
       "GameObjName": "EnterCodeConsole",
       "BehaviorName": "EnterCodeTask"
     },
-    "task-divert": {
-      "Name": "Divert Power",
+    "task-divert1": {
+      "Name": "Divert Power 1",
+      "MapType": 1,
+      "SpriteRendererName": "DivertPowerConsoleMain",
+      "TaskType": 1,
+      "GameObjName": "DivertPowerConsoleMain",
+      "BehaviorName": "DivertLabPower"
+    },
+    "task-divert2": {
+      "Name": "Divert Power 2",
       "MapType": 1,
       "SpriteRendererName": "DivertPowerConsoleAdmin",
       "TaskType": 1,
@@ -275,7 +291,7 @@
     "task-weather": {
       "Name": "Measure Weather",
       "MapType": 1,
-      "SpriteRendererName": "weatherPanel",
+      "SpriteRendererName": "WeatherConsole",
       "TaskType": 1,
       "GameObjName": "WeatherConsole",
       "BehaviorName": "MeasureWeather"
@@ -339,8 +355,8 @@
     "util-button2": {
       "Name": "Mira Button",
       "MapType": 1,
-      "SpriteRendererName": "EmergencyButton",
-      "GameObjName": "EmergencyButton"
+      "SpriteRendererName": "EmergencyConsole",
+      "GameObjName": "EmergencyConsole"
     },
     "util-admin": {
       "Name": "Admin Table",

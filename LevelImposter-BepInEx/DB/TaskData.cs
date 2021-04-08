@@ -22,12 +22,16 @@ namespace LevelImposter.DB
             SpriteRenderer = MapSearcher.SearchComponent<SpriteRenderer>(map, SpriteRendererName);
             GameObj = MapSearcher.SearchChildren(map, GameObjName);
 
-            if (TaskType == TaskType.Common)
-                Behavior = MapSearcher.SearchList(shipStatus.CommonTasks, BehaviorName);
-            if (TaskType == TaskType.Short)
-                Behavior = MapSearcher.SearchList(shipStatus.NormalTasks, BehaviorName);
-            if (TaskType == TaskType.Long)
-                Behavior = MapSearcher.SearchList(shipStatus.LongTasks, BehaviorName);
+            if (!string.IsNullOrEmpty(BehaviorName))
+            {
+                if (TaskType == TaskType.Common)
+                    Behavior = MapSearcher.SearchList(shipStatus.CommonTasks, BehaviorName);
+                if (TaskType == TaskType.Short)
+                    Behavior = MapSearcher.SearchList(shipStatus.NormalTasks, BehaviorName);
+                if (TaskType == TaskType.Long)
+                    Behavior = MapSearcher.SearchList(shipStatus.LongTasks, BehaviorName);
+            }
+            
         }
     }
 
