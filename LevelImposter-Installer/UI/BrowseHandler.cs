@@ -21,6 +21,7 @@ namespace LevelImposter.UI
 
             this.browseButton.Click += new System.EventHandler(this.onClick);
             this.browseDialog = new OpenFileDialog();
+            MapHandler.onLoad += this.onLoad;
         }
 
         public void onClick(object sender, EventArgs e)
@@ -30,8 +31,12 @@ namespace LevelImposter.UI
             {
                 string dir = browseDialog.FileName;
                 MapHandler.Load(dir);
-                //this.mapLabel.Text = MapHandler.map.name;
             }
+        }
+
+        public void onLoad(object sender, EventArgs e)
+        {
+            this.mapLabel.Text = MapHandler.name;
         }
     }
 }

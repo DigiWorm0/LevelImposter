@@ -59,5 +59,25 @@ namespace LevelImposter.Properties {
                 resourceCulture = value;
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] LevelImposter {
+            get {
+                object obj = ResourceManager.GetObject("LevelImposter", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] Newtonsoft {
+            get {
+                object obj = ResourceManager.GetObject("Newtonsoft", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
     }
 }

@@ -25,7 +25,7 @@ namespace LevelImposter.UI
         public void onClick(object sender, EventArgs e)
         {
             this.applyButton.Enabled = false;
-            //mapApplicator.Apply(MapHandler.map);
+            mapApplicator.Apply();
             this.applyButton.Enabled = true;
         }
 
