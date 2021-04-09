@@ -20,7 +20,7 @@ namespace LevelImposter.Builders
         {
             GameObject dummy = new GameObject("Dummy");
             dummy.transform.SetParent(polus.gameObject.transform);
-            dummy.transform.position = new Vector2(asset.x, -asset.y);
+            dummy.transform.position = new Vector2(asset.x, -asset.y - PolusHandler.Y_OFFSET);
 
             polus.shipStatus.DummyLocations = AssetBuilder.AddToArr(polus.shipStatus.DummyLocations, dummy.transform);
             return true;

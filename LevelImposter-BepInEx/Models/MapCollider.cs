@@ -18,7 +18,9 @@ namespace LevelImposter.Models
             var list = new Il2CppSystem.Collections.Generic.List<Vector2>(points.Length);
             
             foreach (Vector2 point in points)
-                list.Add(point);
+                list.Add(new Vector2(point.x, -point.y));
+            if (points.Length > 0)
+                list.Add(new Vector2(points[0].x, -points[0].y));
 
             return list;
         }

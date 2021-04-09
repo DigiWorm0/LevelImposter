@@ -13,12 +13,16 @@ namespace LevelImposter.Models
         public string spriteType;
         public string type;
         public ulong id;
+
         public float x;
         public float y;
         public float z;
         public float xScale;
         public float yScale;
         public float rotation;
+
+        public bool flipX;
+        public bool flipY;
         public ulong[] targetIds;
 
         public MapCollider[] colliders;

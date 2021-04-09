@@ -71,5 +71,24 @@ namespace LevelImposter.Builders
             list.Add(value);
             return list.ToArray();
         }
+
+        public static void BuildColliders(MapAsset asset, GameObject obj)
+        {
+            // Colliders
+            GameObject shadowObj = new GameObject("Shadows");
+            shadowObj.layer = (int)Layer.Shadow;
+            shadowObj.transform.SetParent(obj.transform);
+            foreach (MapCollider collider in asset.colliders)
+            {
+                EdgeCollider2D edgeCollider = obj.AddComponent<EdgeCollider2D>();
+                edgeCollider.SetPoints(collider.GetPoints());
+
+                if (collider.blocksLight)
+                {
+                    EdgeCollider2D lightCollider = shadowObj.AddComponent<EdgeCollider2D>();
+                    lightCollider.SetPoints(collider.GetPoints());
+                }
+            }
+        }
     }
 }

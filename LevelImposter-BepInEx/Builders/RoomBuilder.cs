@@ -30,6 +30,10 @@ namespace LevelImposter.Builders
             SpriteRenderer spriteRenderer = obj.AddComponent<SpriteRenderer>();
             spriteRenderer.sprite = utilData.SpriteRenderer.sprite;
             spriteRenderer.material = utilData.SpriteRenderer.material;
+            obj.layer = (int)Layer.Ship;
+
+            // Colliders
+            AssetBuilder.BuildColliders(asset, obj);
 
             polus.Add(obj, asset);
 

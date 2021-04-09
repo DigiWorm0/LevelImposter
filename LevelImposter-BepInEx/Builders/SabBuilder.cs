@@ -32,6 +32,7 @@ namespace LevelImposter.Builders
             SpriteRenderer spriteRenderer = obj.AddComponent<SpriteRenderer>();
             spriteRenderer.sprite = sabData.SpriteRenderer.sprite;
             spriteRenderer.material = sabData.SpriteRenderer.material;
+            obj.layer = (int)Layer.ShortObjects;
 
             // Console
             Console origConsole = sabData.GameObj.GetComponent<Console>();
@@ -115,6 +116,9 @@ namespace LevelImposter.Builders
             {
                 throw new Exception();
             }
+
+            // Colliders
+            AssetBuilder.BuildColliders(asset, obj);
 
             polus.Add(obj, asset);
 

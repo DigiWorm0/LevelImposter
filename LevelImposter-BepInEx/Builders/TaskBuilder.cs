@@ -32,6 +32,7 @@ namespace LevelImposter.Builders
             SpriteRenderer spriteRenderer = obj.AddComponent<SpriteRenderer>();
             spriteRenderer.sprite = taskData.SpriteRenderer.sprite;
             spriteRenderer.material = taskData.SpriteRenderer.material;
+            obj.layer = (int)Layer.ShortObjects;
 
             // Console
             Console origConsole = taskData.GameObj.GetComponent<Console>();
@@ -147,6 +148,9 @@ namespace LevelImposter.Builders
                 if (taskData.TaskType == TaskType.Long)
                     polus.shipStatus.LongTasks = AssetBuilder.AddToArr(polus.shipStatus.LongTasks, task);
             }
+
+            // Colliders
+            AssetBuilder.BuildColliders(asset, obj);
 
             // Add to Polus
             polus.shipStatus.AllConsoles = AssetBuilder.AddToArr(polus.shipStatus.AllConsoles, console);

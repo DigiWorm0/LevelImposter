@@ -11,6 +11,7 @@ namespace LevelImposter.Map
         public PolusShipStatus shipStatus;
         public GameObject gameObject;
         public MapBehaviour map;
+        public const int Y_OFFSET = 100; // Fixes Rendering Bug
 
         public PolusHandler(PolusShipStatus shipStatus)
         {
@@ -20,8 +21,12 @@ namespace LevelImposter.Map
 
         public void Add(GameObject obj, MapAsset asset)
         {
-            obj.transform.position = new Vector3(asset.x, -asset.y, asset.z);
-            obj.transform.localScale = new Vector3(asset.xScale, asset.yScale, 1.0f);
+            obj.transform.position = new Vector3(asset.x, -asset.y - Y_OFFSET, asset.z);
+            obj.transform.localScale = new Vector3(
+                asset.xScale * (asset.flipX ? -1 : 1),
+                asset.yScale * (asset.flipY ? -1 : 1),
+                1.0f
+            );
             obj.transform.rotation = Quaternion.Euler(new Vector3(0, 0, -asset.rotation));
             obj.transform.SetParent(gameObject.transform);
         }
@@ -42,8 +47,8 @@ namespace LevelImposter.Map
             shipStatus.FastRooms = new Il2CppSystem.Collections.Generic.Dictionary<SystemTypes, PlainShipRoom>();
             //shipStatus.Systems = new Il2CppSystem.Collections.Generic.Dictionary<SystemTypes, ISystemType>();
             shipStatus.SystemNames = new UnhollowerBaseLib.Il2CppStructArray<StringNames>(0);
-            shipStatus.MeetingSpawnCenter = new Vector2(0, 0);
-            shipStatus.MeetingSpawnCenter2 = new Vector2(0, 0);
+            shipStatus.MeetingSpawnCenter = new Vector2(0, -Y_OFFSET);
+            shipStatus.MeetingSpawnCenter2 = new Vector2(0, -Y_OFFSET);
         }
 
         public void MoveToTemp()

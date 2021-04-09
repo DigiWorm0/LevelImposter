@@ -30,6 +30,7 @@ namespace LevelImposter.Builders
             SpriteRenderer spriteRenderer = obj.AddComponent<SpriteRenderer>();
             spriteRenderer.sprite = utilData.SpriteRenderer.sprite;
             spriteRenderer.material = utilData.SpriteRenderer.material;
+            obj.layer = (int)Layer.ShortObjects;
 
             // Console
             Action action;
@@ -82,6 +83,9 @@ namespace LevelImposter.Builders
             btn.OnMouseOver = new UnityEvent();
             btn.OnMouseOut = new UnityEvent();
             btn.OnClick.AddListener(action);
+
+            // Colliders
+            AssetBuilder.BuildColliders(asset, obj);
 
             polus.Add(obj, asset);
 
