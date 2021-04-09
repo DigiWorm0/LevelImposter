@@ -29,9 +29,9 @@ namespace LevelImposter.DB
                 dec = tempDB.dec;
                 room = tempDB.room;
             }
-            catch
+            catch (Exception e)
             {
-                LILogger.LogError("Error during AssetDB JSON Deserialization");
+                LILogger.LogError("Error during AssetDB JSON Deserialization:\n" + e.Message);
             }
         }
 

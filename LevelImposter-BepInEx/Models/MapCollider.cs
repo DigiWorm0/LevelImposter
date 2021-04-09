@@ -11,6 +11,7 @@ namespace LevelImposter.Models
     class MapCollider
     {
         public bool blocksLight;
+        public bool isClosed;
         public Vector2[] points;
 
         public Il2CppSystem.Collections.Generic.List<Vector2> GetPoints()
@@ -19,7 +20,7 @@ namespace LevelImposter.Models
             
             foreach (Vector2 point in points)
                 list.Add(new Vector2(point.x, -point.y));
-            if (points.Length > 0)
+            if (points.Length > 0 && isClosed)
                 list.Add(new Vector2(points[0].x, -points[0].y));
 
             return list;
