@@ -11,11 +11,9 @@ namespace LevelImposter.UI
     class ApplyHandler
     {
         private Button applyButton;
-        private MapApplicator mapApplicator;
 
         public ApplyHandler(Button applyButton)
         {
-            this.mapApplicator = new MapApplicator();
 
             this.applyButton = applyButton;
             this.applyButton.Click += new System.EventHandler(this.onClick);
@@ -25,7 +23,7 @@ namespace LevelImposter.UI
         public void onClick(object sender, EventArgs e)
         {
             this.applyButton.Enabled = false;
-            mapApplicator.Apply();
+            MapApplicator.Apply();
             this.applyButton.Enabled = true;
         }
 

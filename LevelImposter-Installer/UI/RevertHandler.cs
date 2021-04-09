@@ -1,4 +1,5 @@
-﻿using System;
+﻿using LevelImposter.Map;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -20,7 +21,7 @@ namespace LevelImposter.UI
         public void onClick(object sender, EventArgs e)
         {
             this.revertButton.Enabled = false;
-            //AssetFileHandler.Revert();
+            MapApplicator.Revert();
             this.revertButton.Enabled = true;
         }
     }
