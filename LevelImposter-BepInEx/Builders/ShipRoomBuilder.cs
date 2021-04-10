@@ -14,13 +14,13 @@ namespace LevelImposter.Builders
     {
         private PolusHandler polus;
         private int roomId;
-        public static Dictionary<ulong, SystemTypes> db;
+        public static Dictionary<long, SystemTypes> db;
 
         public ShipRoomBuilder(PolusHandler polus)
         {
             this.polus = polus;
             roomId = 1;
-            db = new Dictionary<ulong, SystemTypes>();
+            db = new Dictionary<long, SystemTypes>();
 
             // Make Default Room
             GameObject defaultObj = new GameObject("Default Room");

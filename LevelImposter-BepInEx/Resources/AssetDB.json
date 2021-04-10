@@ -375,6 +375,18 @@
       "MapType": 2,
       "SpriteRendererName": "TaskAddConsole",
       "GameObjName": "TaskAddConsole"
+    },
+    "util-vent1": {
+      "Name": "Skeld/Mira Vent",
+      "MapType": 0,
+      "SpriteRendererName": "CafeVent",
+      "GameObjName": "CafeVent"
+    },
+    "util-vent2": {
+      "Name": "Polus Vent",
+      "MapType": 2,
+      "SpriteRendererName": "OfficeVent",
+      "GameObjName": "OfficeVent"
     }
   },
   "sabs": {

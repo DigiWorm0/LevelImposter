@@ -36,7 +36,15 @@ namespace LevelImposter.Map
             string mapJson = File.ReadAllText(mapDir);
 
             // Deserialize
-            mapData = Newtonsoft.Json.JsonConvert.DeserializeObject<MapData>(mapJson);
+            try
+            {
+                mapData = Newtonsoft.Json.JsonConvert.DeserializeObject<MapData>(mapJson);
+            }
+            catch (Exception e)
+            {
+                LILogger.LogError("There was an error deserializing map data:\n" + e.Message);
+                return false;
+            }
 
             // Return
             mapLoaded = true;
@@ -49,7 +57,7 @@ namespace LevelImposter.Map
             return mapData;
         }
 
-        public static MapAsset GetById(UInt64 id)
+        public static MapAsset GetById(long id)
         {
             return mapData.objs.FirstOrDefault(obj => obj.id == id);
         }

@@ -12,7 +12,7 @@ namespace LevelImposter.Models
         public string name;
         public string spriteType;
         public string type;
-        public ulong id;
+        public long id;
 
         public float x;
         public float y;
@@ -23,7 +23,7 @@ namespace LevelImposter.Models
 
         public bool flipX;
         public bool flipY;
-        public ulong[] targetIds;
+        public long[] targetIds;
 
         public MapCollider[] colliders;
     }

@@ -48,6 +48,9 @@ namespace LevelImposter.Map
                     LILogger.LogInfo("..." + i + " Objects Built");
             }
 
+            // Post Build
+            LILogger.LogInfo("...Wrapping Up");
+            VentBuilder.ConnectVents();
             polus.DeleteTemp();
             LILogger.LogInfo("Finished!");
         }
