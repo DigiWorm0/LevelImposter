@@ -11,7 +11,7 @@ namespace LevelImposter.Map
         public PolusShipStatus shipStatus;
         public GameObject gameObject;
         public MapBehaviour map;
-        public const int Y_OFFSET = 100; // Fixes Rendering Bug
+        public const int Y_OFFSET = 25; // Must be 0 < Y_OFFSET < 50
 
         public PolusHandler(PolusShipStatus shipStatus)
         {
@@ -47,6 +47,7 @@ namespace LevelImposter.Map
             shipStatus.FastRooms = new Il2CppSystem.Collections.Generic.Dictionary<SystemTypes, PlainShipRoom>();
             //shipStatus.Systems = new Il2CppSystem.Collections.Generic.Dictionary<SystemTypes, ISystemType>();
             shipStatus.SystemNames = new UnhollowerBaseLib.Il2CppStructArray<StringNames>(0);
+            shipStatus.InitialSpawnCenter = new Vector2(0, -Y_OFFSET);
             shipStatus.MeetingSpawnCenter = new Vector2(0, -Y_OFFSET);
             shipStatus.MeetingSpawnCenter2 = new Vector2(0, -Y_OFFSET);
         }

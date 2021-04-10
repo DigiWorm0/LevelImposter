@@ -1,31 +1,52 @@
-![LevelImposter](https://levelimposter.net/img/logo.png)
+<p align="center">
+  <img align="center" src="https://levelimposter.net/img/logo.png">
+</p>
+<p align="center">
+World's first custom Among Us Map Maker
+</p>
 
-## About
-Level Imposter is the world's first custom Among Us map maker. It modifys the Among Us files in order to store custom assets, rooms, tasks, and sabatages. As fun as the original four maps are, we feel like giving the community the ability to create their own maps would make Among Us much more entertaining for everyone involved.
+## Warning
+**LevelImposter is still in early beta is not yet production ready!!!**
 
-## Installation
-### Windows / Linux:
-1. Close Among Us
-2. Download a Map file. Some are available [here](https://levelimposter.net/Map).
-3. Download and run LevelImposter.exe client [here](https://github.com/DigiWorm0/LevelImposter/releases).
-4. Click "Browse" and select the Map.zip you downloaded.
-5. Hit "Apply"
-6. Open an Among Us lobby under Polus
-    - It is recommended you run under your own private server
-7. Ensure all players joining are using the same map
+## Features
+- Easy-to-use Map Editor
+- Custom Sprites / Assets
+- Choice of Tasks, Vents, and other Utilities
+- Official Sharing Platform for Maps
+- Support for Other Mods
 
-### Mobile:
-Mobile in not yet supported.
+## How to Install
+### Run a Map
+1. Install BepInEx / Reactor. (Guides for this can be found [here](https://docs.reactor.gg/docs/basic/install_bepinex) and [here](https://docs.reactor.gg/docs/basic/install_reactor))
+2. Download LevelImposter.exe and Newtonsoft.Json.dll in [releases](https://github.com/DigiWorm0/LevelImposter/releases)
+3. Run LevelImposter.exe
+4. Browse for a Map JSON file. (Some can be found at [LevelImposter.net](https://levelimposter.net/Map))
+5. Hit Apply and Restart Among Us
+
+#### Notes:
+- All players in the lobby must use the same map
+- It is recommended to use an [Impostor Server](https://github.com/Impostor/Impostor)
+- Mobile is not yet supported
+
+### Make a Map
+1. Open the editor at [LevelImposter.net](https://levelimposter.net/Home/Editor)
+2. Add corresponding tasks / assets / etc. using the editor tool
+3. Export to JSON file
+4. *(Optional)* Upload JSON to [LevelImposter Maps](https://levelimposter.net/Map)
 
 ## Building:
-- LevelImposter-BepInEx: BepInEx Plugin (DLL)
-- LevelImposter-Installer: Windows Forms Application
+- **LevelImposter-BepInEx:** BepInEx Plugin (DLL)
+- **LevelImposter-Installer:** Windows Forms Application
+
 Simply download and open the sln in Visual Studio. Requires Among Us with BepInEx and Reactor to be installed
 
-## Acknowledgments
+## Credits
 - [Newtonsoft.Json](https://www.newtonsoft.com/json)
 - [Reactor](https://github.com/NuclearPowered/Reactor)
 - [BepInEx](https://github.com/BepInEx/BepInEx)
 
-### Disclaimer
+## Disclaimer
 LevelImposter is in no way associated with Among Us or Innersloth LLC. Among Us, Among Us sprites, and other InnerSloth trademarks are trademarks or registered trademarks of InnerSloth or its affiliates in the U.S. and elsewhere.
+
+## License
+This software is distributed under the GNU GPLv3 License

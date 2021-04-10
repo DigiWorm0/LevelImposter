@@ -45,7 +45,7 @@ namespace LevelImposter.Builders
             console.onlyFromBelow = true;
             console.onlySameRoom = false;
             console.usableDistance = 1;
-            console.Room       = origConsole.Room;
+            console.Room       = 0;
             console.TaskTypes  = origConsole.TaskTypes;
             console.ValidTasks = origConsole.ValidTasks;
             polus.Add(obj, asset);
@@ -135,7 +135,7 @@ namespace LevelImposter.Builders
                 task.ShowTaskStep = origTask.ShowTaskStep;
                 task.TaskTimer = origTask.TaskTimer;
                 task.TimerStarted = origTask.TimerStarted;
-                task.StartAt = origTask.StartAt;
+                task.StartAt = 0;
                 task.TaskType = origTask.TaskType;
                 task.MinigamePrefab = origTask.MinigamePrefab;
                 task.HasLocation = origTask.HasLocation;
