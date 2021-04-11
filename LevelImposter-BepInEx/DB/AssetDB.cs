@@ -14,6 +14,7 @@ namespace LevelImposter.DB
         public static Dictionary<string, SabData> sabs;
         public static Dictionary<string, DecData> dec;
         public static Dictionary<string, RoomData> room;
+        public static Dictionary<string, SSData> ss;
 
         public static void Init()
         {
@@ -28,6 +29,7 @@ namespace LevelImposter.DB
                 sabs = tempDB.sabs;
                 dec = tempDB.dec;
                 room = tempDB.room;
+                ss = tempDB.ss;
             }
             catch (Exception e)
             {
@@ -58,6 +60,7 @@ namespace LevelImposter.DB
             ImportMap(map, shipStatus, mapType, sabs);
             ImportMap(map, shipStatus, mapType, dec);
             ImportMap(map, shipStatus, mapType, room);
+            ImportMap(map, shipStatus, mapType, ss);
 
             LILogger.LogInfo("..." + map.name + " Loaded");
         }
@@ -81,5 +84,6 @@ namespace LevelImposter.DB
         public Dictionary<string, SabData> sabs;
         public Dictionary<string, DecData> dec;
         public Dictionary<string, RoomData> room;
+        public Dictionary<string, SSData> ss;
     }
 }

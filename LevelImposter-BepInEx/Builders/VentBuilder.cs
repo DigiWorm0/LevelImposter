@@ -135,14 +135,18 @@ namespace LevelImposter.Builders
                 Vent vent = ventDb[targetData.Key];
                 long[] targets = targetData.Value;
 
+                LILogger.LogInfo(targetData.Key + ":" + targetData.Value[0]);
+                LILogger.LogInfo(targetData.Key + ":" + targetData.Value[1]);
+                LILogger.LogInfo(targetData.Key + ":" + targetData.Value[2]);
+
                 if (targets.Length < 3)
                     continue;
                 if (ventDb.ContainsKey(targets[0]))
-                    vent.Left = ventDb[targets[0]];
+                    vent.Right = ventDb[targets[0]];
                 if (ventDb.ContainsKey(targets[1]))
-                    vent.Center = ventDb[targets[1]];
+                    vent.Left = ventDb[targets[1]];
                 if (ventDb.ContainsKey(targets[2]))
-                    vent.Right = ventDb[targets[2]];
+                    vent.Center = ventDb[targets[2]];
             }
         }
     }

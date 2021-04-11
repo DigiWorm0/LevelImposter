@@ -1,4 +1,5 @@
 ﻿using LevelImposter.Builders;
+using LevelImposter.DB;
 using LevelImposter.Models;
 using System;
 using System.Collections.Generic;
@@ -18,9 +19,11 @@ namespace LevelImposter.Map
             PolusHandler    polus   = new PolusHandler(shipStatus);
             AssetBuilder    builder = new AssetBuilder(polus);
 
+            // Clear
             LILogger.LogInfo("...Clearing Polus");
             polus.ClearTasks();
             polus.MoveToTemp();
+            polus.AddMissingProps(AssetDB.ss["ss-skeld"].ShipStatus);
 
             // Rooms
             LILogger.LogInfo("...Building Rooms");

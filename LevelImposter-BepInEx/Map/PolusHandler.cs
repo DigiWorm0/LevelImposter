@@ -70,5 +70,11 @@ namespace LevelImposter.Map
                 GameObject.Find("temp")
             );
         }
+
+        public void AddMissingProps(ShipStatus shipStatus)
+        {
+            this.shipStatus.VentEnterSound = shipStatus.VentEnterSound;
+            this.shipStatus.VentMoveSounds = shipStatus.VentMoveSounds;
+        }
     }
 }

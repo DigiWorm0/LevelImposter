@@ -819,5 +819,23 @@
       "SpriteRendererName": "ramp",
       "SpriteName": "ramp"
     }
+  },
+  "ss": {
+    "ss-skeld": {
+      "Name": "Skeld",
+      "MapType": 0
+    },
+    "ss-mira": {
+      "Name": "Mira",
+      "MapType": 1
+    },
+    "ss-polus": {
+      "Name": "Polus",
+      "MapType": 2
+    },
+    "ss-airship": {
+      "Name": "Airship",
+      "MapType": 3
+    }
   }
 }
