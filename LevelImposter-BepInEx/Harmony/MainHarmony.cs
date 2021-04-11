@@ -9,7 +9,7 @@ using Reactor;
 
 namespace LevelImposter
 {
-    [BepInPlugin(ID, "LevelImposter", "0.1.2")]
+    [BepInPlugin(ID, "LevelImposter", "0.1.3")]
     [BepInProcess("Among Us.exe")]
     [BepInDependency(ReactorPlugin.Id)]
     public class MainHarmony : BasePlugin

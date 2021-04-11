@@ -23,6 +23,10 @@ namespace LevelImposter.Builders
 
         public bool Build(MapAsset asset)
         {
+            LILogger.LogError("Sabotages are not yet supported!");
+            return false;
+
+            /*
             SabData sabData = AssetDB.sabs[asset.type];
 
             // Object
@@ -45,7 +49,8 @@ namespace LevelImposter.Builders
             console.onlyFromBelow = true;
             console.onlySameRoom = false;
             console.usableDistance = 1;
-            console.Room = origConsole.Room;
+            //console.Room = origConsole.Room;
+            console.Room = SystemTypes.Electrical;
             console.TaskTypes = origConsole.TaskTypes;
             console.ValidTasks = origConsole.ValidTasks;
             polus.Add(obj, asset);
@@ -123,6 +128,7 @@ namespace LevelImposter.Builders
             polus.Add(obj, asset);
 
             return true;
+            */
         }
     }
 }
