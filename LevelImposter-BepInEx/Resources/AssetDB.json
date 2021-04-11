@@ -72,13 +72,29 @@
       "GameObjName": "panel_fuel",
       "BehaviorName": ""
     },
-    "task-waterwheel": {
+    "task-waterwheel1": {
       "Name": "Water Wheel",
       "MapType": 2,
       "SpriteRendererName": "panel_waterwheel",
       "TaskType": 2,
       "GameObjName": "panel_waterwheel",
       "BehaviorName": "OpenWaterways"
+    },
+    "task-waterwheel2": {
+      "Name": "Water Wheel",
+      "MapType": 2,
+      "SpriteRendererName": "panel_waterwheel",
+      "TaskType": 2,
+      "GameObjName": "panel_waterwheel",
+      "BehaviorName": ""
+    },
+    "task-waterwheel3": {
+      "Name": "Water Wheel",
+      "MapType": 2,
+      "SpriteRendererName": "panel_waterwheel",
+      "TaskType": 2,
+      "GameObjName": "panel_waterwheel",
+      "BehaviorName": ""
     },
     "task-samples": {
       "Name": "Inspect Samples",
@@ -102,7 +118,7 @@
       "SpriteRendererName": "panel_waterjug",
       "TaskType": 2,
       "GameObjName": "panel_waterjug",
-      "BehaviorName": "ReplaceWater"
+      "BehaviorName": ""
     },
     "task-node": {
       "Name": "Weather Node",
@@ -262,7 +278,7 @@
       "SpriteRendererName": "PlantConsole",
       "TaskType": 2,
       "GameObjName": "PlantConsole",
-      "BehaviorName": "WaterPlants"
+      "BehaviorName": ""
     },
     "task-crystal": {
       "Name": "Assemble Artifact",

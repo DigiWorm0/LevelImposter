@@ -135,10 +135,6 @@ namespace LevelImposter.Builders
                 Vent vent = ventDb[targetData.Key];
                 long[] targets = targetData.Value;
 
-                LILogger.LogInfo(targetData.Key + ":" + targetData.Value[0]);
-                LILogger.LogInfo(targetData.Key + ":" + targetData.Value[1]);
-                LILogger.LogInfo(targetData.Key + ":" + targetData.Value[2]);
-
                 if (targets.Length < 3)
                     continue;
                 if (ventDb.ContainsKey(targets[0]))

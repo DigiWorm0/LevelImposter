@@ -14,6 +14,19 @@ namespace LevelImposter.Builders
         private PolusHandler polus;
         private GameObject taskMgr;
 
+        private int nodeId = 0;
+        private int divertId = 0;
+        private readonly SystemTypes[] DIVERT_SYSTEMS = {
+            SystemTypes.Launchpad,
+            SystemTypes.MedBay,
+            SystemTypes.Comms,
+            SystemTypes.Office,
+            SystemTypes.Laboratory,
+            SystemTypes.Greenhouse,
+            SystemTypes.Admin,
+            SystemTypes.Cafeteria
+        };
+
         public TaskBuilder(PolusHandler polus)
         {
             this.polus = polus;
@@ -34,6 +47,25 @@ namespace LevelImposter.Builders
             spriteRenderer.material = taskData.SpriteRenderer.material;
             obj.layer = (int)Layer.ShortObjects;
 
+            // Target Room
+            SystemTypes target = 0;
+            if (asset.targetIds.Length > 0)
+                if (asset.targetIds[0] > 0)
+                    target = ShipRoomBuilder.db[asset.targetIds[0]];
+
+            // Divert Power
+            if (asset.type == "task-divert2")
+            {
+                if (divertId >= DIVERT_SYSTEMS.Length)
+                {
+                    LILogger.LogError("Hit Divert Power's Max System Limit");
+                    return false;
+                }
+
+                target = DIVERT_SYSTEMS[divertId];
+                divertId++;
+            }
+
             // Console
             Console origConsole = taskData.GameObj.GetComponent<Console>();
             Console console = obj.AddComponent<Console>();
@@ -45,7 +77,7 @@ namespace LevelImposter.Builders
             console.onlyFromBelow = true;
             console.onlySameRoom = false;
             console.usableDistance = 1;
-            console.Room       = 0;
+            console.Room       = target;
             console.TaskTypes  = origConsole.TaskTypes;
             console.ValidTasks = origConsole.ValidTasks;
             polus.Add(obj, asset);
@@ -100,6 +132,35 @@ namespace LevelImposter.Builders
                 polus.shipStatus.MedScanner = medscan;
             }
 
+            // Multipart Tasks
+            if (asset.type.StartsWith("task-waterwheel"))
+            {
+                int id = int.Parse(asset.type.Substring(15));
+                if (1 <= id && id <= 3)
+                    console.ConsoleId = id - 1;
+            }
+            else if (asset.type.StartsWith("task-waterjug"))
+            {
+                int id = int.Parse(asset.type.Substring(13));
+                if (1 <= id && id <= 2)
+                {
+                    console.ValidTasks    = new UnhollowerBaseLib.Il2CppReferenceArray<TaskSet>(1);
+                    console.ValidTasks[0] = new TaskSet();
+                    console.ValidTasks[0].taskType = TaskTypes.ReplaceWaterJug;
+                    console.ValidTasks[0].taskStep = new IntRange(id - 1, id - 1);
+                }
+            }
+            else if (asset.type == "task-node")
+            {
+                if (nodeId >= 6)
+                {
+                    LILogger.LogError("Hit Weather Node's Max System Limit");
+                    return false;
+                }
+                    
+                console.ConsoleId = nodeId;
+            }
+
             // Task
             if (!string.IsNullOrEmpty(taskData.BehaviorName))
             {
@@ -112,9 +173,9 @@ namespace LevelImposter.Builders
                     DivertPowerTask taskNode = task.Cast<DivertPowerTask>();
                     DivertPowerTask origNode = origTask.Cast<DivertPowerTask>();
 
-                    taskNode.TargetSystem = origNode.TargetSystem;
+                    taskNode.TargetSystem = target;
                 }
-                else if (asset.type.StartsWith("task-node"))
+                else if (asset.type == "task-node")
                 {
                     task = taskMgr.AddComponent<WeatherNodeTask>();
 
@@ -122,7 +183,12 @@ namespace LevelImposter.Builders
                     WeatherNodeTask origNode = origTask.Cast<WeatherNodeTask>();
 
                     taskNode.Stage2Prefab = origNode.Stage2Prefab;
-                    taskNode.NodeId = origNode.NodeId;
+                    taskNode.NodeId = nodeId;
+                    nodeId++;
+                }
+                else if (asset.type.StartsWith("task-waterwheel"))
+                {
+                    task = taskMgr.AddComponent<WaterWayTask>();
                 }
                 else
                 {
