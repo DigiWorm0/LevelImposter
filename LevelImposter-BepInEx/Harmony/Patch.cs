@@ -1,4 +1,4 @@
-﻿using BepInEx;
+using BepInEx;
 using BepInEx.Configuration;
 using BepInEx.IL2CPP;
 using HarmonyLib;
@@ -57,6 +57,15 @@ namespace LevelImposter
             {
                 assetRef.LoadAsset<GameObject>();
             }
+        }
+    }
+
+    [HarmonyPatch(typeof(VersionShower), nameof(VersionShower.Start))]
+    public static class VersionPatch
+    {
+        public static void Postfix(VersionShower __instance)
+        {
+            __instance.text.Text += "\n\n\n\n\n\n\n[3399FFFF]Level[FF0000FF]Imposter[] v" + MainHarmony.VERSION + " by DigiWorm";
         }
     }
 }

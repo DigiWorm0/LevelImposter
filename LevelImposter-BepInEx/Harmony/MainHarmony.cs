@@ -9,11 +9,12 @@ using Reactor;
 
 namespace LevelImposter
 {
-    [BepInPlugin(ID, "LevelImposter", "0.1.3")]
+    [BepInPlugin(ID, "LevelImposter", VERSION)]
     [BepInProcess("Among Us.exe")]
     [BepInDependency(ReactorPlugin.Id)]
     public class MainHarmony : BasePlugin
     {
+        public const string VERSION = "0.1.3";
         public const string ID = "com.DigiWorm.LevelImposter";
 
         public Harmony Harmony { get; } = new Harmony(ID);
