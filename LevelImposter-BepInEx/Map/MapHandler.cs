@@ -14,6 +14,7 @@ namespace LevelImposter.Map
     {
         public static MapData mapData;
         public static string mapDir;
+        public static string checksum = "";
         public static bool mapLoaded = false;
 
         public static bool Load()
@@ -45,6 +46,14 @@ namespace LevelImposter.Map
                 LILogger.LogError("There was an error deserializing map data:\n" + e.Message);
                 return false;
             }
+
+            // Checksum
+            int checkNum = 0;
+            foreach (char c in mapJson)
+            {
+                checkNum += Convert.ToByte(c);
+            }
+            checksum = checkNum.ToString("X4");
 
             // Return
             mapLoaded = true;
