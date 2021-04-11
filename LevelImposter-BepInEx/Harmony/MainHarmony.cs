@@ -14,7 +14,7 @@ namespace LevelImposter
     [BepInDependency(ReactorPlugin.Id)]
     public class MainHarmony : BasePlugin
     {
-        public const string VERSION = "0.1.3";
+        public const string VERSION = "0.1.4";
         public const string ID = "com.DigiWorm.LevelImposter";
 
         public Harmony Harmony { get; } = new Harmony(ID);
