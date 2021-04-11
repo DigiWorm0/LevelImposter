@@ -14,14 +14,14 @@ namespace LevelImposter.Models
         public bool isClosed;
         public Vector2[] points;
 
-        public Il2CppSystem.Collections.Generic.List<Vector2> GetPoints()
+        public Il2CppSystem.Collections.Generic.List<Vector2> GetPoints(float xScale = 1.0f, float yScale = 1.0f)
         {
             var list = new Il2CppSystem.Collections.Generic.List<Vector2>(points.Length);
             
             foreach (Vector2 point in points)
-                list.Add(new Vector2(point.x, -point.y));
+                list.Add(new Vector2(point.x / xScale, -point.y / yScale));
             if (points.Length > 0 && isClosed)
-                list.Add(new Vector2(points[0].x, -points[0].y));
+                list.Add(new Vector2(points[0].x / xScale, -points[0].y / yScale));
 
             return list;
         }
