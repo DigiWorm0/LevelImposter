@@ -42,8 +42,8 @@ World's first custom Among Us Map Maker
 Simply download and open the sln in Visual Studio. Requires Among Us with BepInEx and Reactor to be installed
 
 ## Support
-**Discord:** https://discord.gg/9jJEBQ4qJs
-**Issues:** https://github.com/DigiWorm0/LevelImposter/issues
+- **Discord:** https://discord.gg/9jJEBQ4qJs
+- **Issues:** https://github.com/DigiWorm0/LevelImposter/issues
 
 ## Credits
 - [Newtonsoft.Json](https://www.newtonsoft.com/json)

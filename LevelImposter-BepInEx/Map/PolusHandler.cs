@@ -10,13 +10,14 @@ namespace LevelImposter.Map
     {
         public PolusShipStatus shipStatus;
         public GameObject gameObject;
-        public MapBehaviour map;
+
         public const int Y_OFFSET = 25; // Must be 0 < Y_OFFSET < 50
 
         public PolusHandler(PolusShipStatus shipStatus)
         {
             this.shipStatus = shipStatus;
             this.gameObject = shipStatus.gameObject;
+            PolusMapBehavior.Init(shipStatus.MapPrefab);
         }
 
         public void Add(GameObject obj, MapAsset asset)

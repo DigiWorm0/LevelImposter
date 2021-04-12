@@ -90,7 +90,7 @@ namespace LevelImposter
             string checksum = reader.ReadString();
             if (checksum != MapHandler.checksum)
             {
-                LILogger.LogWarn("Received map checksum does not match!\n" + checksum + " => " + MapHandler.checksum);
+                LILogger.LogWarn("Received map checksum does not match! (" + checksum + " => " + MapHandler.checksum + ")");
 
                 AmongUsClient client = AmongUsClient.Instance;
                 client.LastDisconnectReason = DisconnectReasons.Custom;
