@@ -14,6 +14,7 @@ namespace LevelImposter.Map
         private static MapBehaviour mapBehaviour;
 
         private static Mesh bgMesh;
+        private static GameObject background;
         private static GameObject roomNames;
         private static GameObject roomNameBackup;
 
@@ -48,7 +49,7 @@ namespace LevelImposter.Map
             ClearChildren(roomNames.transform);
 
             // Background
-            GameObject background = prefab.transform.FindChild("Background").gameObject;
+            background = prefab.transform.FindChild("Background").gameObject;
             background.transform.position = new Vector3(0, 0, 0);
             background.GetComponent<AlphaPulse>().rend = null;
             GameObject.DestroyImmediate(background.GetComponent<SpriteRenderer>());
@@ -97,11 +98,33 @@ namespace LevelImposter.Map
             {
                 // Get Points
                 var points = c.GetPoints(asset.xScale, asset.yScale);
+                var points2 = new List<Vector3>();
                 points.RemoveAt(points._size - 1);
                 for (int i = 0; i < points.Count; i++)
                 {
+                    //points2[i] = new Vector3(points[i].x * MAP_SCALE, -points[i].y * MAP_SCALE);
                     points[i] = new Vector2((points[i].x + asset.x) * MAP_SCALE, (points[i].y - asset.y) * MAP_SCALE);
+                    points2.Add(new Vector3(points[i].x, points[i].y));
+                    points2.Add(new Vector3(points[i].x, points[i].y));
+                    points2.Add(new Vector3(points[i].x, points[i].y));
+                    points2.Add(new Vector3(points[i].x, points[i].y));
                 }
+
+                // Line
+                var lineObj = new GameObject("Line");
+                lineObj.transform.SetParent(background.transform);
+                lineObj.transform.position += new Vector3(0, 0, -1.0f);
+                lineObj.layer = (int)Layer.UI;
+                LineRenderer lineRenderer = lineObj.AddComponent<LineRenderer>();
+                lineRenderer.startColor = Color.white;
+                lineRenderer.endColor = Color.white;
+                lineRenderer.startWidth = 0.03f;
+                lineRenderer.endWidth = 0.03f;
+                lineRenderer.positionCount = points2.Count;
+                lineRenderer.useWorldSpace = false;
+                lineRenderer.loop = true;
+                lineRenderer.material = new Material(Shader.Find("Sprites/Default"));
+                lineRenderer.SetPositions(points2.ToArray());
 
                 // Triangulate
                 var triangulator = new Triangulator(points.ToArray());
