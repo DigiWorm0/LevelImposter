@@ -403,6 +403,18 @@
       "MapType": 2,
       "SpriteRendererName": "OfficeVent",
       "GameObjName": "OfficeVent"
+    },
+    "util-cam": {
+      "Name": "Cameras",
+      "MapType": 2,
+      "SpriteRendererName": "camera_off",
+      "GameObjName": "camera_off"
+    },
+    "util-cams": {
+      "Name": "Camera Panel",
+      "MapType": 2,
+      "SpriteRendererName": "Surv_Panel",
+      "GameObjName": "Surv_Panel"
     }
   },
   "sabs": {

@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace LevelImposter.Map
 {
-    static class PolusMapBehavior
+    static class MapGenerator
     {
         public const float MAP_SCALE = 1.0f / 5.0f;
 
@@ -29,7 +29,7 @@ namespace LevelImposter.Map
             if (hasInit)
                 return;
 
-            PolusMapBehavior.mapBehaviour = mapBehaviour;
+            MapGenerator.mapBehaviour = mapBehaviour;
             prefab = mapBehaviour.gameObject;
 
             bgMesh = new Mesh();
@@ -104,10 +104,8 @@ namespace LevelImposter.Map
                 {
                     //points2[i] = new Vector3(points[i].x * MAP_SCALE, -points[i].y * MAP_SCALE);
                     points[i] = new Vector2((points[i].x + asset.x) * MAP_SCALE, (points[i].y - asset.y) * MAP_SCALE);
-                    points2.Add(new Vector3(points[i].x, points[i].y));
-                    points2.Add(new Vector3(points[i].x, points[i].y));
-                    points2.Add(new Vector3(points[i].x, points[i].y));
-                    points2.Add(new Vector3(points[i].x, points[i].y));
+                    for (int o = 0; o < 5; o++)
+                        points2.Add(new Vector3(points[i].x, points[i].y));
                 }
 
                 // Line

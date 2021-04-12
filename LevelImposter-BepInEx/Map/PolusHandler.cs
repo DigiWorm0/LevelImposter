@@ -17,7 +17,7 @@ namespace LevelImposter.Map
         {
             this.shipStatus = shipStatus;
             this.gameObject = shipStatus.gameObject;
-            PolusMapBehavior.Init(shipStatus.MapPrefab);
+            MapGenerator.Init(shipStatus.MapPrefab);
         }
 
         public void Add(GameObject obj, MapAsset asset)

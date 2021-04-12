@@ -19,6 +19,7 @@ namespace LevelImposter.Builders
         private SabBuilder      sabBuilder;
         private ShipRoomBuilder shipRoomBuilder;
         private VentBuilder     ventBuilder;
+        private CamBuilder      camBuilder;
 
         public AssetBuilder(PolusHandler polus)
         {
@@ -33,6 +34,7 @@ namespace LevelImposter.Builders
             sabBuilder      = new SabBuilder(polus);
             shipRoomBuilder = new ShipRoomBuilder(polus);
             ventBuilder     = new VentBuilder(polus);
+            camBuilder      = new CamBuilder(polus);
         }
 
         public bool Build(MapAsset asset)
@@ -47,6 +49,8 @@ namespace LevelImposter.Builders
                         return shipRoomBuilder.Build(asset);
                     else if (asset.type.StartsWith("util-vent"))
                         return ventBuilder.Build(asset);
+                    else if (asset.type == "util-cam")
+                        return camBuilder.Build(asset);
                     else if (asset.type.StartsWith("util-"))
                         return utilBuilder.Build(asset);
                     else if (asset.type.StartsWith("dec-"))
