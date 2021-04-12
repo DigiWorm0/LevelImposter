@@ -1,4 +1,5 @@
-﻿using LevelImposter.Models;
+﻿using LevelImposter.Builders;
+using LevelImposter.Models;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -10,17 +11,22 @@ namespace LevelImposter.Map
     {
         public const float MAP_SCALE = 1.0f / 5.0f;
 
+        private static string mapColor = "";
+
         private static GameObject prefab;
         private static MapBehaviour mapBehaviour;
 
         private static Mesh bgMesh;
         private static GameObject background;
+        private static GameObject countObj;
+        private static MapCountOverlay count;
         private static GameObject roomNames;
         private static GameObject roomNameBackup;
 
-        private static float averageX = 0;
-        private static float averageY = 0;
-        private static int averageCount = 0;
+        private static float maxX = 0;
+        private static float minX = 0;
+        private static float maxY = 0;
+        private static float minY = 0;
 
         private static bool hasInit = false;
 
@@ -58,6 +64,12 @@ namespace LevelImposter.Map
             MeshRenderer meshRenderer = background.AddComponent<MeshRenderer>();
             background.GetComponent<AlphaPulse>().mesh = meshRenderer;
             meshRenderer.material = new Material(Shader.Find("Sprites/Default"));
+
+            // Admin
+            countObj = prefab.transform.FindChild("CountOverlay").gameObject;
+            count = countObj.GetComponent<MapCountOverlay>();
+            count.CountAreas = new UnhollowerBaseLib.Il2CppReferenceArray<CounterArea>(0);
+            ClearChildren(countObj.transform);
 
             // Indicator
             prefab.transform.FindChild("HereIndicatorParent").position = new Vector3(0, 5.0f, -0.1f);
@@ -99,17 +111,17 @@ namespace LevelImposter.Map
                 // Get Points
                 var points = c.GetPoints(asset.xScale, asset.yScale);
                 var points2 = new List<Vector3>();
-                points.RemoveAt(points._size - 1);
+                if (c.isClosed)
+                    points.RemoveAt(points._size - 1);
                 for (int i = 0; i < points.Count; i++)
                 {
-                    //points2[i] = new Vector3(points[i].x * MAP_SCALE, -points[i].y * MAP_SCALE);
                     points[i] = new Vector2((points[i].x + asset.x) * MAP_SCALE, (points[i].y - asset.y) * MAP_SCALE);
                     for (int o = 0; o < 5; o++)
                         points2.Add(new Vector3(points[i].x, points[i].y));
                 }
 
                 // Line
-                var lineObj = new GameObject("Line");
+                var lineObj = new GameObject(asset.name + "Line");
                 lineObj.transform.SetParent(background.transform);
                 lineObj.transform.position += new Vector3(0, 0, -1.0f);
                 lineObj.layer = (int)Layer.UI;
@@ -138,7 +150,7 @@ namespace LevelImposter.Map
                 {
                     vertices.Add(point);
                     uv.Add(point);
-                    colors.Add(new Color(0, 0, 255, 200));
+                    colors.Add(new Color(0, 0, 1.0f, 0.6f));
                 }
             }
             bgMesh.vertices = vertices.ToArray();
@@ -146,10 +158,37 @@ namespace LevelImposter.Map
             bgMesh.triangles = triangles.ToArray();
             bgMesh.colors = colors.ToArray();
 
+            // Admin Counters
+            GameObject counterObj = new GameObject(asset.name);
+            counterObj.transform.position = new Vector3(asset.x * MAP_SCALE, -asset.y * MAP_SCALE, -25.0f);
+            counterObj.transform.SetParent(countObj.transform);
+            CounterArea counterArea = counterObj.AddComponent<CounterArea>();
+            counterArea.RoomType = ShipRoomBuilder.db[asset.id];
+            counterArea.MaxWidth = 5;
+            counterArea.XOffset = 0.3f;
+            counterArea.YOffset = 0.3f;
+            count.CountAreas = AssetBuilder.AddToArr(count.CountAreas, counterArea);
+
             // Avg Position
-            averageX += asset.x * MAP_SCALE;
-            averageY += -asset.y * MAP_SCALE;
-            averageCount++;
+            if (asset.x * MAP_SCALE > maxX)
+                maxX = asset.x * MAP_SCALE;
+            if (asset.x * MAP_SCALE < minX)
+                minX = asset.x * MAP_SCALE;
+            if (asset.y * MAP_SCALE > maxY)
+                maxY = asset.y * MAP_SCALE;
+            if (asset.y * MAP_SCALE < minY)
+                minY = asset.y * MAP_SCALE;
+        }
+
+        public static void SetColor(Color color)
+        {
+            if (color.ToString() == mapColor)
+                return;
+            List<Color> colors = new List<Color>();
+            for (int i = 0; i < bgMesh.vertices.Count; i++)
+                colors.Add(color);
+            bgMesh.colors = colors.ToArray();
+            mapColor = color.ToString();
         }
 
         public static void SetPosition()
@@ -157,8 +196,8 @@ namespace LevelImposter.Map
             if (hasInit)
                 return;
 
-            float deltaX = averageX / averageCount;
-            float deltaY = averageY / averageCount;
+            float deltaX = (minX + maxX) / 2;
+            float deltaY = (minY + maxY) / -2;
 
             for (int i = 0; i < prefab.transform.childCount; i++)
             {

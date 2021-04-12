@@ -1,10 +1,7 @@
 ﻿using BepInEx;
-using BepInEx.Configuration;
 using BepInEx.IL2CPP;
 using HarmonyLib;
 using LevelImposter.DB;
-using LevelImposter.Map;
-using LevelImposter.Models;
 using Reactor;
 
 namespace LevelImposter
@@ -14,10 +11,10 @@ namespace LevelImposter
     [BepInDependency(ReactorPlugin.Id)]
     public class MainHarmony : BasePlugin
     {
-        public const string VERSION = "0.1.4";
+        public const string VERSION = "0.2.1";
         public const string ID = "com.DigiWorm.LevelImposter";
 
-        public Harmony Harmony { get; } = new Harmony(ID);
+        public HarmonyLib.Harmony Harmony { get; } = new HarmonyLib.Harmony(ID);
 
         public override void Load()
         {
