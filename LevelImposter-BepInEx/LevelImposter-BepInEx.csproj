@@ -12,19 +12,19 @@
     </PropertyGroup>
 
     <PropertyGroup Condition="'$(GamePlatform)' == 'Steam'">
-        <GameVersion>2021.3.31.3s</GameVersion>
+        <GameVersion>2021.4.12s</GameVersion>
+		<Mappings>C:\Users\aus43\Repositories\2021.4.12s.json</Mappings>
         <DefineConstants>$(DefineConstants);STEAM</DefineConstants>
     </PropertyGroup>
 
     <PropertyGroup Condition="'$(GamePlatform)' == 'Itch'">
-        <GameVersion>2021.3.31.3i</GameVersion>
+        <GameVersion>2021.4.12i</GameVersion>
         <DefineConstants>$(DefineConstants);ITCH</DefineConstants>
     </PropertyGroup>
 
     <ItemGroup>
-        <Deobfuscate Include="$(AmongUs)\BepInEx\plugins\Reactor-$(GameVersion).dll" />
         <PackageReference Include="Reactor.OxygenFilter.MSBuild" Version="0.3.0" />
-		<PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+		    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     </ItemGroup>
 
     <ItemGroup>

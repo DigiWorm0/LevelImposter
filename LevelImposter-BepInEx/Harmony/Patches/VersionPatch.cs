@@ -5,12 +5,12 @@ using System.Text;
 
 namespace LevelImposter.Harmony.Patches
 {
-    [HarmonyPatch(typeof(VersionShower), nameof(VersionShower.Start))]
+    [HarmonyPatch(typeof(PingTracker), nameof(PingTracker.Update))]
     public static class VersionPatch
     {
-        public static void Postfix(VersionShower __instance)
+        public static void Postfix(PingTracker __instance)
         {
-            __instance.text.Text += "\n\n\n\n\n\n\n[3399FFFF]Level[FF0000FF]Imposter[] v" + MainHarmony.VERSION + " by DigiWorm";
+            __instance.text.text += "\n<color=#3399FF>Level<color=#FF0000>Imposter<color=#FFFFFF>\nv" + MainHarmony.VERSION + "\nby DigiWorm";
         }
     }
 }

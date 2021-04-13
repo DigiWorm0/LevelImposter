@@ -8,7 +8,6 @@ namespace LevelImposter
 {
     [BepInPlugin(ID, "LevelImposter", VERSION)]
     [BepInProcess("Among Us.exe")]
-    [BepInDependency(ReactorPlugin.Id)]
     public class MainHarmony : BasePlugin
     {
         public const string VERSION = "0.2.1";

@@ -3,6 +3,7 @@ using LevelImposter.Models;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using TMPro;
 using UnityEngine;
 
 namespace LevelImposter.Map
@@ -96,8 +97,8 @@ namespace LevelImposter.Map
 
             // Label Text
             GameObject.Destroy(label.GetComponent<TextTranslator>());
-            TextRenderer text = label.GetComponent<TextRenderer>();
-            text.Text = asset.name;
+            TextMeshPro text = label.GetComponent<TextMeshPro>();
+            text.text = asset.name;
             text.enabled = true;
 
             // Mesh
