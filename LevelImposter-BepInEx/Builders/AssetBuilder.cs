@@ -12,7 +12,7 @@ namespace LevelImposter.Builders
         private PolusHandler    polus;
         private TaskBuilder     taskBuilder;
         private CustomBuilder   customBuilder;
-        private DummyBuilder    spawnBuilder;
+        private DummyBuilder    dummyBuilder;
         private UtilBuilder     utilBuilder;
         private DecBuilder      decBuilder;
         private RoomBuilder     roomBuilder;
@@ -20,6 +20,7 @@ namespace LevelImposter.Builders
         private ShipRoomBuilder shipRoomBuilder;
         private VentBuilder     ventBuilder;
         private CamBuilder      camBuilder;
+        private SpawnBuilder    spawnBuilder;
 
         public AssetBuilder(PolusHandler polus)
         {
@@ -27,7 +28,7 @@ namespace LevelImposter.Builders
 
             taskBuilder     = new TaskBuilder(polus);
             customBuilder   = new CustomBuilder(polus);
-            spawnBuilder    = new DummyBuilder(polus);
+            dummyBuilder    = new DummyBuilder(polus);
             utilBuilder     = new UtilBuilder(polus);
             decBuilder      = new DecBuilder(polus);
             roomBuilder     = new RoomBuilder(polus);
@@ -35,6 +36,7 @@ namespace LevelImposter.Builders
             shipRoomBuilder = new ShipRoomBuilder(polus);
             ventBuilder     = new VentBuilder(polus);
             camBuilder      = new CamBuilder(polus);
+            spawnBuilder    = new SpawnBuilder(polus);
         }
 
         public bool Build(MapAsset asset)
@@ -48,6 +50,8 @@ namespace LevelImposter.Builders
                     else if (asset.type == "util-room")
                         return shipRoomBuilder.Build(asset);
                     else if (asset.type.StartsWith("util-vent"))
+                        return ventBuilder.Build(asset);
+                    else if (asset.type.StartsWith("util-spawn"))
                         return ventBuilder.Build(asset);
                     else if (asset.type == "util-cam")
                         return camBuilder.Build(asset);

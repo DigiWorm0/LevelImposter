@@ -1,4 +1,5 @@
-﻿using LevelImposter.Models;
+﻿using LevelImposter.MinimapGen;
+using LevelImposter.Models;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -10,6 +11,7 @@ namespace LevelImposter.Map
     {
         public PolusShipStatus shipStatus;
         public GameObject gameObject;
+        public MinimapGenerator minimap;
 
         public const int Y_OFFSET = 25; // Must be 0 < Y_OFFSET < 50
 
@@ -17,7 +19,7 @@ namespace LevelImposter.Map
         {
             this.shipStatus = shipStatus;
             this.gameObject = shipStatus.gameObject;
-            MapGenerator.Init(shipStatus.MapPrefab);
+            minimap = new MinimapGenerator(shipStatus.MapPrefab);
         }
 
         public void Add(GameObject obj, MapAsset asset)

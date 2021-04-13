@@ -1,5 +1,6 @@
 ﻿using HarmonyLib;
 using LevelImposter.Map;
+using LevelImposter.MinimapGen;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -30,7 +31,7 @@ namespace LevelImposter.Harmony.Patches
     {
         public static void Prefix(HudManager __instance)
         {
-            MapGenerator.SetColor(new Color(0, 0, 1.0f, 0.6f));
+            BGGenerator.SetColor(new Color(0, 0, 1.0f, 0.6f));
         }
     }
 }
