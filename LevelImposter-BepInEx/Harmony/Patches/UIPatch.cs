@@ -12,7 +12,7 @@ namespace LevelImposter.Harmony.Patches
     {
         public static bool Prefix()
         {
-            return false; // TODO
+            return false;
         }
     }
 
@@ -22,24 +22,6 @@ namespace LevelImposter.Harmony.Patches
         public static bool Prefix()
         {
             return false; // TODO
-        }
-    }
-
-    [HarmonyPatch(typeof(InfectedOverlay), nameof(InfectedOverlay.FixedUpdate))]
-    public static class SabPatch2
-    {
-        public static bool Prefix()
-        {
-            return false; // TODO
-        }
-    }
-
-    [HarmonyPatch(typeof(MapConsole), nameof(MapConsole.Use))]
-    public static class AdminPatch
-    {
-        public static void Prefix()
-        {
-            MapGenerator.SetColor(new Color(0.5f, 1.0f, 0.5f, 0.8f));
         }
     }
 

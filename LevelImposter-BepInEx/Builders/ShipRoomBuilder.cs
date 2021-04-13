@@ -44,14 +44,20 @@ namespace LevelImposter.Builders
             GameObject obj = new GameObject(asset.name);
 
             // Collider
-            EdgeCollider2D collider = obj.AddComponent<EdgeCollider2D>();
-            collider.SetPoints(asset.colliders[0].GetPoints());
-            collider.isTrigger = true;
+            PolygonCollider2D mainCollider = null;
+            foreach (MapCollider collider in asset.colliders)
+            {
+                PolygonCollider2D polyCollider = obj.AddComponent<PolygonCollider2D>();
+                polyCollider.isTrigger = true;
+                polyCollider.SetPath(0, collider.GetPoints(asset.xScale, asset.yScale));
+                mainCollider = polyCollider;
+            }
 
             // Room
             PlainShipRoom room = obj.AddComponent<PlainShipRoom>();
             room.RoomId = (SystemTypes)roomId;
-            room.roomArea = collider;
+            if (asset.colliders.Length > 0)
+                room.roomArea = mainCollider;
 
             // Room DB
             db.Add(asset.id, (SystemTypes)roomId);

@@ -2,17 +2,17 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using UnityEngine;
 
 namespace LevelImposter
 {
     static class LILogger
     {
-        private const bool PRINT_STACK = false;
         private static ManualLogSource logger;
 
         public static void Init()
         {
-            logger = Logger.CreateLogSource("LevelImposter");
+            logger = BepInEx.Logging.Logger.CreateLogSource("LevelImposter");
             UnityEngine.Application.add_logMessageReceived(
                 new Action<string, string, UnityEngine.LogType>(OnUnityLog)
             );
@@ -20,7 +20,7 @@ namespace LevelImposter
 
         private static void OnUnityLog(string msg, string stackTrace, UnityEngine.LogType type)
         {
-            if (PRINT_STACK)
+            if (Input.GetKey(KeyCode.L) && Input.GetKey(KeyCode.P))
             {
                 LogInfo("Unity Stack Trace:\n" + msg + "\n" + stackTrace);
             }

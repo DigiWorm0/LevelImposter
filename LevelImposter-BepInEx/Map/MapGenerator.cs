@@ -166,13 +166,14 @@ namespace LevelImposter.Map
 
             // Admin Counters
             GameObject counterObj = new GameObject(asset.name);
-            counterObj.transform.position = new Vector3(asset.x * MAP_SCALE, -asset.y * MAP_SCALE, -25.0f);
+            counterObj.transform.position = new Vector3(asset.x * MAP_SCALE, -asset.y * MAP_SCALE - 0.25f, -25.0f);
             counterObj.transform.SetParent(countObj.transform);
             CounterArea counterArea = counterObj.AddComponent<CounterArea>();
             counterArea.RoomType = ShipRoomBuilder.db[asset.id];
             counterArea.MaxWidth = 5;
             counterArea.XOffset = 0.3f;
             counterArea.YOffset = 0.3f;
+            counterArea.pool = countObj.GetComponent<ObjectPoolBehavior>();
             count.CountAreas = AssetBuilder.AddToArr(count.CountAreas, counterArea);
 
             // Avg Position
