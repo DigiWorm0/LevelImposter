@@ -72,6 +72,11 @@ namespace LevelImposter.Map
             count.CountAreas = new UnhollowerBaseLib.Il2CppReferenceArray<CounterArea>(0);
             ClearChildren(countObj.transform);
 
+            // Sabotages
+            GameObject sabMap = prefab.transform.FindChild("InfectedOverlay").gameObject;
+            ClearChildren(sabMap.transform);
+
+
             // Indicator
             prefab.transform.FindChild("HereIndicatorParent").position = new Vector3(0, 5.0f, -0.1f);
         }

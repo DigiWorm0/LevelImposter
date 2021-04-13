@@ -18,7 +18,7 @@ World's first custom Among Us Map Maker
 
 ## How to Install
 ### Run a Map
-1. Install BepInEx / Reactor. (Guides for this can be found [here](https://docs.reactor.gg/docs/basic/install_bepinex) and [here](https://docs.reactor.gg/docs/basic/install_reactor))
+1. Install [BepInEx](https://docs.reactor.gg/docs/basic/install_bepinex)
 2. Download LevelImposter.exe and Newtonsoft.Json.dll in [releases](https://github.com/DigiWorm0/LevelImposter/releases)
 3. Run LevelImposter.exe
 4. Browse for a Map JSON file. (Some can be found at [LevelImposter.net](https://levelimposter.net/Map))
@@ -39,7 +39,7 @@ World's first custom Among Us Map Maker
 - **LevelImposter-BepInEx:** BepInEx Plugin (DLL)
 - **LevelImposter-Installer:** Windows Forms Application
 
-Simply download and open the sln in Visual Studio. Requires Among Us with BepInEx and Reactor to be installed
+Simply download and open the sln in Visual Studio. Requires Among Us with BepInEx to be installed
 
 ## Support
 - **Discord:** https://discord.gg/9jJEBQ4qJs
@@ -47,7 +47,6 @@ Simply download and open the sln in Visual Studio. Requires Among Us with BepInE
 
 ## Credits
 - [Newtonsoft.Json](https://www.newtonsoft.com/json)
-- [Reactor](https://github.com/NuclearPowered/Reactor)
 - [BepInEx](https://github.com/BepInEx/BepInEx)
 
 ## Disclaimer

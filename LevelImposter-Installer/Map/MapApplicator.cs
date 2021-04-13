@@ -96,11 +96,11 @@ namespace LevelImposter.Map
             string jsonDir = Path.Combine(installDir, "Newtonsoft.Json.dll");
             string liDir = Path.Combine(installDir, "LevelImposter.dll");
 
-            // BepInEx / Reactor
-            // TODO Install Reactor/BepInEx on the fly
+            // BepInEx
+            // TODO Install BepInEx on the fly
             if (!Directory.Exists(installDir))
             {
-                Error("BepInEx Not Installed", "BepInEx and Reactor are required for LevelImposter. \nBepInEx: https://docs.reactor.gg/docs/basic/install_bepinex \nReactor: https://docs.reactor.gg/docs/basic/install_reactor");
+                Error("BepInEx Not Installed", "BepInEx is required for LevelImposter. \nBepInEx: https://docs.reactor.gg/docs/basic/install_bepinex");
                 return;
             }
 

@@ -12,7 +12,25 @@ namespace LevelImposter.Harmony.Patches
     {
         public static bool Prefix()
         {
-            return false;
+            return false; // TODO
+        }
+    }
+
+    [HarmonyPatch(typeof(InfectedOverlay), nameof(InfectedOverlay.OnEnable))]
+    public static class SabPatch1
+    {
+        public static bool Prefix()
+        {
+            return false; // TODO
+        }
+    }
+
+    [HarmonyPatch(typeof(InfectedOverlay), nameof(InfectedOverlay.FixedUpdate))]
+    public static class SabPatch2
+    {
+        public static bool Prefix()
+        {
+            return false; // TODO
         }
     }
 
