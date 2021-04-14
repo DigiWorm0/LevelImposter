@@ -24,6 +24,7 @@ namespace LevelImposter.Builders
         public bool Build(MapAsset asset)
         {
             LILogger.LogError("Sabotages are not yet supported!");
+            MinimapGen.SabGenerator.AddSabotage(asset);
             return false;
 
             /*

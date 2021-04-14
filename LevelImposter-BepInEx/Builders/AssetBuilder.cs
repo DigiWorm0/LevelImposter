@@ -46,13 +46,13 @@ namespace LevelImposter.Builders
                 if (asset.spriteType == "existing")
                 {
                     if (asset.type == "util-player")
-                        return spawnBuilder.Build(asset);
+                        return dummyBuilder.Build(asset);
                     else if (asset.type == "util-room")
                         return shipRoomBuilder.Build(asset);
                     else if (asset.type.StartsWith("util-vent"))
                         return ventBuilder.Build(asset);
                     else if (asset.type.StartsWith("util-spawn"))
-                        return ventBuilder.Build(asset);
+                        return spawnBuilder.Build(asset);
                     else if (asset.type == "util-cam")
                         return camBuilder.Build(asset);
                     else if (asset.type.StartsWith("util-"))

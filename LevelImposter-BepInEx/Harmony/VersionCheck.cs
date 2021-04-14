@@ -1,4 +1,5 @@
 ﻿using LevelImposter.Models;
+using System;
 using UnityEngine;
 
 namespace LevelImposter
@@ -17,19 +18,12 @@ namespace LevelImposter
             return true;
         }
 
-        public static bool CheckNewtonsoft()
+        public static void CheckNewtonsoft()
         {
             var sampleObj = new Point();
-            try
-            {
-                Newtonsoft.Json.JsonConvert.SerializeObject(sampleObj);
-                return true;
-            }
-            catch
-            {
-                LILogger.LogError("Cannot detect Json.Newtonsoft. Map files may not import correctly.");
-                return false;
-            }
+
+            // Errors if dll isn't loaded, continues if it is
+            Newtonsoft.Json.JsonConvert.SerializeObject(sampleObj);
         }
     }
 }

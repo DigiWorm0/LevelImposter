@@ -19,16 +19,20 @@ namespace LevelImposter.MinimapGen
         private LabelGenerator  labelGen;
         private BGGenerator     bgGen;
         private AdminGenerator  adminGen;
+        private SabGenerator    sabGen;
 
         public MinimapGenerator(MapBehaviour mapBehaviour)
         {
             if (hasGenerated)
                 return;
 
+            mapBehaviour.gameObject.transform.FindChild("HereIndicatorParent").position = new Vector3(0, 5.0f, -0.1f);
+
             map = new Minimap(mapBehaviour);
             labelGen    = new LabelGenerator(map);
             bgGen       = new BGGenerator(map);
             adminGen    = new AdminGenerator(map);
+            sabGen      = new SabGenerator(map);
         }
 
         public static void ClearChildren(Transform obj)
@@ -45,6 +49,7 @@ namespace LevelImposter.MinimapGen
             labelGen.Generate(asset);
             bgGen   .Generate(asset);
             adminGen.Generate(asset);
+            sabGen  .Generate(asset);
 
             // Scaling
             if (asset.x * MAP_SCALE > maxX)

@@ -22,7 +22,7 @@ namespace LevelImposter.Builders
 
         public bool Build(MapAsset asset)
         {
-            Vector2 pos = new Vector2(asset.x, -asset.y);
+            Vector2 pos = new Vector2(asset.x, -asset.y - 25.0f);
             if (asset.type == "util-spawn1")
             {
                 polus.shipStatus.InitialSpawnCenter = pos;
