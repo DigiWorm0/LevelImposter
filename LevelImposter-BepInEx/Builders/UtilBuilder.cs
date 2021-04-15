@@ -43,6 +43,8 @@ namespace LevelImposter.Builders
                 console.onlyFromBelow = origConsole.onlyFromBelow;
                 console.usableDistance = origConsole.usableDistance;
                 console.MinigamePrefab = origConsole.MinigamePrefab;
+                if (asset.type == "util-cams2") // Convert Skeld Cams -> Polus/Airship Cams
+                    console.MinigamePrefab = AssetDB.utils["util-cams"].GameObj.GetComponent<SystemConsole>().MinigamePrefab;
                 console.useIcon = origConsole.useIcon;
                 action = console.Use;
             }
@@ -67,11 +69,20 @@ namespace LevelImposter.Builders
                 box.offset = origBox.offset;
                 box.isTrigger = true;
             }
-            else
+            else if (utilData.GameObj.GetComponent<BoxCollider2D>() != null)
             {
                 BoxCollider2D origBox = utilData.GameObj.GetComponent<BoxCollider2D>();
                 BoxCollider2D box = obj.AddComponent<BoxCollider2D>();
                 box.size = origBox.size;
+                box.offset = origBox.offset;
+                box.isTrigger = true;
+            }
+            else if (utilData.GameObj.GetComponent<PolygonCollider2D>() != null)
+            {
+                PolygonCollider2D origBox = utilData.GameObj.GetComponent<PolygonCollider2D>();
+                PolygonCollider2D box = obj.AddComponent<PolygonCollider2D>();
+                box.points = origBox.points;
+                box.pathCount = origBox.pathCount;
                 box.offset = origBox.offset;
                 box.isTrigger = true;
             }
@@ -87,7 +98,7 @@ namespace LevelImposter.Builders
             // Colliders
             AssetBuilder.BuildColliders(asset, obj);
 
-            polus.Add(obj, asset);
+            polus.Add(obj, asset, utilData.MapType);
 
             return true;
         }

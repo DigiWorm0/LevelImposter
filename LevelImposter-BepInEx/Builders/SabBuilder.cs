@@ -23,11 +23,7 @@ namespace LevelImposter.Builders
 
         public bool Build(MapAsset asset)
         {
-            LILogger.LogError("Sabotages are not yet supported!");
-            MinimapGen.SabGenerator.AddSabotage(asset);
-            return false;
-
-            /*
+           
             SabData sabData = AssetDB.sabs[asset.type];
 
             // Object
@@ -51,10 +47,9 @@ namespace LevelImposter.Builders
             console.onlySameRoom = false;
             console.usableDistance = 1;
             //console.Room = origConsole.Room;
-            console.Room = SystemTypes.Electrical;
+            console.Room = SystemTypes.Admin;
             console.TaskTypes = origConsole.TaskTypes;
             console.ValidTasks = origConsole.ValidTasks;
-            polus.Add(obj, asset);
 
             // Box Collider
             if (sabData.GameObj.GetComponent<CircleCollider2D>() != null)
@@ -108,7 +103,7 @@ namespace LevelImposter.Builders
                 task.HasLocation = origTask.HasLocation;
                 task.MinigamePrefab = origTask.MinigamePrefab;
                 task.TaskType = origTask.TaskType;
-                task.StartAt = target;
+                task.StartAt = SystemTypes.Admin;
                 task.system = new SwitchSystem();
 
                 polus.shipStatus.SpecialTasks = AssetBuilder.AddToArr(polus.shipStatus.SpecialTasks, task);
@@ -126,10 +121,11 @@ namespace LevelImposter.Builders
             // Colliders
             AssetBuilder.BuildColliders(asset, obj);
 
-            polus.Add(obj, asset);
-
+            // Add to Polus
+            MinimapGen.SabGenerator.AddSabotage(asset);
+            polus.Add(obj, asset, sabData.MapType);
             return true;
-            */
+            
         }
     }
 }

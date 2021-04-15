@@ -66,7 +66,7 @@ namespace LevelImposter.Builders
             polus.shipStatus.AllRooms = AssetBuilder.AddToArr(polus.shipStatus.AllRooms, room);
             polus.shipStatus.FastRooms.Add((SystemTypes)roomId, room);
             polus.minimap.Generate(asset);
-            polus.Add(obj, asset);
+            polus.Add(obj, asset, MapType.Skeld);
 
             roomId++;
             return true;

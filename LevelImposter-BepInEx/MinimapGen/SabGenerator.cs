@@ -76,9 +76,11 @@ namespace LevelImposter.MinimapGen
             {
                 // TODO
             }
+            
 
             // GameObject
             GameObject parent = sabDb[asset.targetIds[0]];
+            MapRoom mapRoom = parent.GetComponent<MapRoom>();
             GameObject button = new GameObject(asset.name);
             button.transform.SetParent(parent.transform);
             button.transform.position = new Vector3(asset.x * MinimapGenerator.MAP_SCALE, -asset.y * MinimapGenerator.MAP_SCALE, -25.0f);
@@ -88,24 +90,46 @@ namespace LevelImposter.MinimapGen
             spriteRenderer.material = commsBackup.GetComponent<SpriteRenderer>().material;
             button.layer = (int)Layer.UI;
 
+            // Collider
+            CircleCollider2D colliderClone = commsBackup.GetComponent<CircleCollider2D>();
+            CircleCollider2D collider = button.AddComponent<CircleCollider2D>();
+            collider.radius = colliderClone.radius;
+            collider.offset = colliderClone.offset;
+            collider.isTrigger = true;
+
+            // Sabotage Type
+            ButtonBehavior behaviour;
+
             switch (asset.type)
             {
                 case "sab-electric":
                     spriteRenderer.sprite = lightsBackup.GetComponent<SpriteRenderer>().sprite;
+                    behaviour = lightsBackup.GetComponent<ButtonBehavior>();
                     break;
                 case "sab-reactorleft":
                     spriteRenderer.sprite = reactorBackup.GetComponent<SpriteRenderer>().sprite;
+                    behaviour = reactorBackup.GetComponent<ButtonBehavior>();
                     break;
                 case "sab-oxygen1":
                     spriteRenderer.sprite = oxygenBackup.GetComponent<SpriteRenderer>().sprite;
+                    behaviour = oxygenBackup.GetComponent<ButtonBehavior>();
                     break;
                 case "sab-comms":
                     spriteRenderer.sprite = commsBackup.GetComponent<SpriteRenderer>().sprite;
+                    behaviour = commsBackup.GetComponent<ButtonBehavior>();
                     break;
                 case "sab-doors":
                     spriteRenderer.sprite = doorsBackup.gameObject.GetComponent<SpriteRenderer>().sprite;
+                    behaviour = doorsBackup.GetComponent<ButtonBehavior>();
                     break;
+                default:
+                    return;
             }
+            
+            // Button Behaviour
+            ButtonBehavior btnBehaviour = button.AddComponent<ButtonBehavior>();
+            btnBehaviour.OnClick = behaviour.OnClick;
+            btnBehaviour.OnClick.m_PersistentCalls.m_Calls[0].m_Target = mapRoom;
         }
     }
 }

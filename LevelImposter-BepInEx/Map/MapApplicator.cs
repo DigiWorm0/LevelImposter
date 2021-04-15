@@ -54,6 +54,7 @@ namespace LevelImposter.Map
             // Post Build
             LILogger.LogInfo("...Wrapping Up");
             VentBuilder.ConnectVents();
+            builder.Finish();
             polus.DeleteTemp();
             polus.minimap.Finish();
             LILogger.LogInfo("Finished!");

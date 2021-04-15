@@ -120,14 +120,6 @@
       "GameObjName": "panel_waterjug",
       "BehaviorName": ""
     },
-    "task-node": {
-      "Name": "Weather Node",
-      "MapType": 2,
-      "SpriteRendererName": "panel_node_ca",
-      "TaskType": 2,
-      "GameObjName": "panel_node_ca",
-      "BehaviorName": "WeatherGi"
-    },
     "task-router": {
       "Name": "Reboot Router",
       "MapType": 2,
@@ -169,7 +161,7 @@
       "BehaviorName": "FillCanisters"
     },
     "task-garbage": {
-      "Name": "Garbage",
+      "Name": "Trash (Polus)",
       "MapType": 2,
       "SpriteRendererName": "panel_garbage",
       "TaskType": 1,
@@ -217,7 +209,7 @@
       "BehaviorName": "RepairDrill"
     },
     "task-temp1": {
-      "Name": "Temp 1",
+      "Name": "Hot Temp",
       "MapType": 2,
       "SpriteRendererName": "panel_temphot",
       "TaskType": 1,
@@ -225,12 +217,20 @@
       "BehaviorName": "RecordHotTemperature"
     },
     "task-temp2": {
-      "Name": "Temp 2",
+      "Name": "Cold Temp",
       "MapType": 2,
       "SpriteRendererName": "panel_tempcold",
       "TaskType": 1,
       "GameObjName": "panel_tempcold",
       "BehaviorName": "RecordColdTemperature"
+    },
+    "task-node": {
+      "Name": "Weather Node",
+      "MapType": 2,
+      "SpriteRendererName": "panel_node_ca",
+      "TaskType": 2,
+      "GameObjName": "panel_node_ca",
+      "BehaviorName": "WeatherGi"
     },
     "task-nodeswitch": {
       "Name": "Node Switches",
@@ -262,7 +262,7 @@
       "SpriteRendererName": "DivertPowerConsoleAdmin",
       "TaskType": 1,
       "GameObjName": "DivertPowerConsoleAdmin",
-      "BehaviorName": "DivertLabPower"
+      "BehaviorName": ""
     },
     "task-plants1": {
       "Name": "Get Water Can",
@@ -337,7 +337,7 @@
       "BehaviorName": "RunDiagnostic"
     },
     "task-align1": {
-      "Name": "Align Engine 1",
+      "Name": "Align Engine",
       "MapType": 0,
       "SpriteRendererName": "AlignEngineConsole",
       "TaskType": 2,
@@ -345,20 +345,252 @@
       "BehaviorName": "AlignEnginesTask"
     },
     "task-align2": {
-      "Name": "Align Engine 2",
+      "Name": "Align Engine",
       "MapType": 0,
       "SpriteRendererName": "AlignEngineConsole",
       "TaskType": 2,
       "GameObjName": "AlignEngineConsole",
-      "BehaviorName": "AlignEnginesTask"
+      "BehaviorName": ""
     },
     "task-stabilize": {
-      "Name": "Stabilize Steering",
+      "Name": "Steering (Skeld)",
       "MapType": 0,
       "SpriteRendererName": "StabilizeSteeringConsole",
       "TaskType": 1,
       "GameObjName": "StabilizeSteeringConsole",
       "BehaviorName": "StabilizeSteeringTask"
+    },
+    "task-showers": {
+      "Name": "Fix Showers",
+      "MapType": 3,
+      "SpriteRendererName": "task_shower",
+      "TaskType": 1,
+      "GameObjName": "task_shower",
+      "BehaviorName": "FixShowerTask"
+    },
+    "task-burger": {
+      "Name": "Make Burger",
+      "MapType": 3,
+      "SpriteRendererName": "task_burgah",
+      "TaskType": 1,
+      "GameObjName": "task_burgah",
+      "BehaviorName": "BurgerTask"
+    },
+    "task-decontaminate": {
+      "Name": "Decontaminate",
+      "MapType": 3,
+      "SpriteRendererName": "task_hose",
+      "TaskType": 1,
+      "GameObjName": "task_hose",
+      "BehaviorName": "WashUpTask"
+    },
+    "task-rifles1": {
+      "Name": "Rifles 1",
+      "MapType": 3,
+      "SpriteRendererName": "task_rifles2",
+      "TaskType": 1,
+      "GameObjName": "task_rifles2",
+      "BehaviorName": "StowRifles"
+    },
+    "task-rifles2": {
+      "Name": "Rifles 2",
+      "MapType": 3,
+      "SpriteRendererName": "task_rifles",
+      "TaskType": 1,
+      "GameObjName": "task_rifles",
+      "BehaviorName": ""
+    },
+    "task-pistols1": {
+      "Name": "Pistols 1",
+      "MapType": 3,
+      "SpriteRendererName": "task_Handguns2",
+      "TaskType": 1,
+      "GameObjName": "task_Handguns2",
+      "BehaviorName": "StowGuns"
+    },
+    "task-pistols2": {
+      "Name": "Pistols 2",
+      "MapType": 3,
+      "SpriteRendererName": "Task_Handguns",
+      "TaskType": 1,
+      "GameObjName": "Task_Handguns",
+      "BehaviorName": ""
+    },
+    "task-records1": {
+      "Name": "Records Folder",
+      "MapType": 3,
+      "SpriteRendererName": "task_records_folder",
+      "TaskType": 1,
+      "GameObjName": "task_records_folder",
+      "BehaviorName": "FileRecords"
+    },
+    "task-records2": {
+      "Name": "Records Shelf",
+      "MapType": 3,
+      "SpriteRendererName": "task_records3",
+      "TaskType": 1,
+      "GameObjName": "task_records3",
+      "BehaviorName": ""
+    },
+    "task-mannequin": {
+      "Name": "Dress Mannequin",
+      "MapType": 3,
+      "SpriteRendererName": "panel_dummy",
+      "TaskType": 1,
+      "GameObjName": "panel_dummy",
+      "BehaviorName": "DressMannequin"
+    },
+    "task-toilet": {
+      "Name": "Clean Toilet",
+      "MapType": 3,
+      "SpriteRendererName": "task_toilet",
+      "TaskType": 1,
+      "GameObjName": "task_toilet",
+      "BehaviorName": "PlungeToilet"
+    },
+    "task-towels1": {
+      "Name": "Towel Basket",
+      "MapType": 3,
+      "SpriteRendererName": "task_towelbasket",
+      "TaskType": 1,
+      "GameObjName": "task_towelbasket",
+      "BehaviorName": "PickUpTowelsTask"
+    },
+    "task-towels2": {
+      "Name": "Wet Towel",
+      "MapType": 3,
+      "SpriteRendererName": "task_towelwet",
+      "TaskType": 1,
+      "GameObjName": "task_towelwet",
+      "BehaviorName": ""
+    },
+    "task-towels3": {
+      "Name": "Dry Towel",
+      "MapType": 3,
+      "SpriteRendererName": "task_towelflat",
+      "TaskType": 1,
+      "GameObjName": "task_towelflat",
+      "BehaviorName": ""
+    },
+    "task-towels4": {
+      "Name": "Bunched Towel",
+      "MapType": 3,
+      "SpriteRendererName": "task_towelbunched",
+      "TaskType": 1,
+      "GameObjName": "task_towelbunched",
+      "BehaviorName": ""
+    },
+    "task-towels5": {
+      "Name": "Hanging Towel",
+      "MapType": 3,
+      "SpriteRendererName": "task_towelhang",
+      "TaskType": 1,
+      "GameObjName": "task_towelhang",
+      "BehaviorName": ""
+    },
+    "task-stabilize2": {
+      "Name": "Steering (Airship)",
+      "MapType": 3,
+      "SpriteRendererName": "panel_cockpit_steering",
+      "TaskType": 1,
+      "GameObjName": "panel_cockpit_steering",
+      "BehaviorName": "AlignAirshipEnginesTask"
+    },
+    "task-ruby": {
+      "Name": "Polish Ruby",
+      "MapType": 3,
+      "SpriteRendererName": "RubyTask",
+      "TaskType": 1,
+      "GameObjName": "RubyTask",
+      "BehaviorName": "PolishRubyTask"
+    },
+    "task-tapes": {
+      "Name": "Rewind Tapes",
+      "MapType": 3,
+      "SpriteRendererName": "task_tapes_right",
+      "TaskType": 2,
+      "GameObjName": "task_tapes_right",
+      "BehaviorName": "RewindTape"
+    },
+    "task-photos": {
+      "Name": "Develop Photos",
+      "MapType": 3,
+      "SpriteRendererName": "task_developphotos",
+      "TaskType": 2,
+      "GameObjName": "task_developphotos",
+      "BehaviorName": "DevelopPhotos"
+    },
+    "task-garbage2": {
+      "Name": "Blue Trash (Airship)",
+      "MapType": 3,
+      "SpriteRendererName": "task_garbage2",
+      "TaskType": 2,
+      "GameObjName": "task_garbage2",
+      "BehaviorName": "HallGarbage"
+    },
+    "task-garbage3": {
+      "Name": "Grey Trash (Airship)",
+      "MapType": 3,
+      "SpriteRendererName": "task_garbage1",
+      "TaskType": 2,
+      "GameObjName": "task_garbage1",
+      "BehaviorName": "MedGarbage"
+    },
+    "task-garbage4": {
+      "Name": "Green Trash (Airship)",
+      "MapType": 3,
+      "SpriteRendererName": "task_garbage3",
+      "TaskType": 2,
+      "GameObjName": "task_garbage3",
+      "BehaviorName": "KitchenGarbage"
+    },
+    "task-garbage5": {
+      "Name": "Trash Part 2 (Airship)",
+      "MapType": 3,
+      "SpriteRendererName": "panel_garbagelever",
+      "TaskType": 2,
+      "GameObjName": "panel_garbagelever",
+      "BehaviorName": ""
+    },
+    "task-safe": {
+      "Name": "Unlock Safe",
+      "MapType": 3,
+      "SpriteRendererName": "task_safe",
+      "TaskType": 2,
+      "GameObjName": "task_safe",
+      "BehaviorName": "OpenSafeTask"
+    },
+    "task-breakers": {
+      "Name": "Reset Breakers",
+      "MapType": 3,
+      "SpriteRendererName": "task_electriclever",
+      "TaskType": 2,
+      "GameObjName": "task_electriclever",
+      "BehaviorName": "ResetBreakers"
+    },
+    "task-fans1": {
+      "Name": "Start Fans 1",
+      "MapType": 3,
+      "SpriteRendererName": "task_fans",
+      "TaskType": 2,
+      "GameObjName": "task_fans",
+      "BehaviorName": "StartFans"
+    },
+    "task-fans2": {
+      "Name": "Start Fans 2",
+      "MapType": 3,
+      "SpriteRendererName": "task_fans (1)",
+      "TaskType": 2,
+      "GameObjName": "task_fans (1)",
+      "BehaviorName": ""
+    },
+    "task-distributor": {
+      "Name": "Calibrate Distributer",
+      "MapType": 3,
+      "SpriteRendererName": "task_calibrate",
+      "TaskType": 1,
+      "GameObjName": "task_calibrate",
+      "BehaviorName": "CalibrateDistributorTask"
     }
   },
   "utils": {
@@ -415,6 +647,18 @@
       "MapType": 2,
       "SpriteRendererName": "Surv_Panel",
       "GameObjName": "Surv_Panel"
+    },
+    "util-cams2": {
+      "Name": "Skeld Cams",
+      "MapType": 0,
+      "SpriteRendererName": "SurvConsole",
+      "GameObjName": "SurvConsole"
+    },
+    "util-cams3": {
+      "Name": "Airship Cams",
+      "MapType": 3,
+      "SpriteRendererName": "task_cams",
+      "GameObjName": "task_cams"
     }
   },
   "sabs": {
@@ -498,6 +742,21 @@
       "MapType": 1,
       "SpriteRendererName": "locker-bench-left-side"
     },
+    "dec-bench3": {
+      "Name": "Bench 3",
+      "MapType": 3,
+      "SpriteRendererName": "showers_bench3"
+    },
+    "dec-bench4": {
+      "Name": "Bench 4",
+      "MapType": 3,
+      "SpriteRendererName": "shower_bench1"
+    },
+    "dec-bench5": {
+      "Name": "Bench 5",
+      "MapType": 3,
+      "SpriteRendererName": "shower_bench2"
+    },
     "dec-box1": {
       "Name": "Box 1",
       "MapType": 0,
@@ -549,9 +808,14 @@
       "SpriteRendererName": "divingboard"
     },
     "dec-engine1": {
-      "Name": "Skeld Engine",
+      "Name": "Skeld Engines",
       "MapType": 0,
       "SpriteRendererName": "engineRight"
+    },
+    "dec-engine2": {
+      "Name": "Airship Engines",
+      "MapType": 3,
+      "SpriteRendererName": "engine_enginetop (1)"
     },
     "dec-projector": {
       "Name": "Projector",
@@ -643,6 +907,26 @@
       "MapType": 1,
       "SpriteRendererName": "Table (1)"
     },
+    "dec-table11": {
+      "Name": "Table 11",
+      "MapType": 3,
+      "SpriteRendererName": "armory_table"
+    },
+    "dec-table12": {
+      "Name": "Table 12",
+      "MapType": 3,
+      "SpriteRendererName": "meeting_table"
+    },
+    "dec-table13": {
+      "Name": "Table 13",
+      "MapType": 3,
+      "SpriteRendererName": "medbay_table"
+    },
+    "dec-table14": {
+      "Name": "Table 14",
+      "MapType": 3,
+      "SpriteRendererName": "records_table"
+    },
     "dec-vending2": {
       "Name": "Vending Machine 1",
       "MapType": 1,
@@ -652,6 +936,81 @@
       "Name": "Vending Machine 2",
       "MapType": 1,
       "SpriteRendererName": "cafVendingMachRight"
+    },
+    "dec-cargo1": {
+      "Name": "Airship Cargo",
+      "MapType": 3,
+      "SpriteRendererName": "storage_cargo1"
+    },
+    "dec-chair1": {
+      "Name": "Chair 1",
+      "MapType": 3,
+      "SpriteRendererName": "cockpit_chair"
+    },
+    "dec-chair2": {
+      "Name": "Chair 2",
+      "MapType": 3,
+      "SpriteRendererName": "records_chair_left"
+    },
+    "dec-chair3": {
+      "Name": "Chair 3",
+      "MapType": 3,
+      "SpriteRendererName": "lounge_stool"
+    },
+    "dec-panel1": {
+      "Name": "Panel 1",
+      "MapType": 3,
+      "SpriteRendererName": "cockpit_comms"
+    },
+    "dec-panel2": {
+      "Name": "Panel 2",
+      "MapType": 3,
+      "SpriteRendererName": "cockpit_elect"
+    },
+    "dec-pool1": {
+      "Name": "Pool Table 1",
+      "MapType": 3,
+      "SpriteRendererName": "lounge_pooltable1"
+    },
+    "dec-pool2": {
+      "Name": "Pool Table 2",
+      "MapType": 3,
+      "SpriteRendererName": "lounge_pooltable2"
+    },
+    "dec-scale": {
+      "Name": "Scale",
+      "MapType": 3,
+      "SpriteRendererName": "medbay_scale"
+    },
+    "dec-shelf1": {
+      "Name": "Kitchen Shelf",
+      "MapType": 3,
+      "SpriteRendererName": "kitchen_shelf"
+    },
+    "dec-shelf2": {
+      "Name": "Bookshelf",
+      "MapType": 3,
+      "SpriteRendererName": "records_left"
+    },
+    "dec-statue1": {
+      "Name": "Gun Statue",
+      "MapType": 3,
+      "SpriteRendererName": "vault_gun"
+    },
+    "dec-statue2": {
+      "Name": "Sword Statue",
+      "MapType": 3,
+      "SpriteRendererName": "vault_sword"
+    },
+    "dec-stove1": {
+      "Name": "Stove 1",
+      "MapType": 3,
+      "SpriteRendererName": "kitchen_table1"
+    },
+    "dec-stove2": {
+      "Name": "Stove 2",
+      "MapType": 3,
+      "SpriteRendererName": "kitchen_table2"
     }
   },
   "room": {
@@ -846,6 +1205,144 @@
       "MapType": 2,
       "SpriteRendererName": "ramp",
       "SpriteName": "ramp"
+    },
+    "room-airshiparmory": {
+      "Name": "Airship Armory",
+      "MapType": 3,
+      "SpriteRendererName": "armory_main",
+      "SpriteName": "armory_main"
+    },
+    "room-airshipbrig": {
+      "Name": "Airship Brig",
+      "MapType": 3,
+      "SpriteRendererName": "brig_main",
+      "SpriteName": "brig_main"
+    },
+    "room-airshipcockpit": {
+      "Name": "Airship Cockpit",
+      "MapType": 3,
+      "SpriteRendererName": "cockpit_bg",
+      "SpriteName": "cockpit_bg"
+    },
+    "room-airshipcomms": {
+      "Name": "Airship Comms",
+      "MapType": 3,
+      "SpriteRendererName": "comms_main",
+      "SpriteName": "comms_main"
+    },
+    "room-airshipejection": {
+      "Name": "Airship Plank",
+      "MapType": 3,
+      "SpriteRendererName": "Ejectionroom_main",
+      "SpriteName": "Ejectionroom_main"
+    },
+    "room-airshipelctrical": {
+      "Name": "Airship Electrical",
+      "MapType": 3,
+      "SpriteRendererName": "Electrical_main",
+      "SpriteName": "Electrical_main"
+    },
+    "room-airshipengines": {
+      "Name": "Airship Engines",
+      "MapType": 3,
+      "SpriteRendererName": "engine_main",
+      "SpriteName": "engine_main"
+    },
+    "room-airshipgap": {
+      "Name": "Airship Gap",
+      "MapType": 3,
+      "SpriteRendererName": "gap_main",
+      "SpriteName": "gap_main"
+    },
+    "room-airshiphallway": {
+      "Name": "Airship Hallway 1",
+      "MapType": 3,
+      "SpriteRendererName": "HallwayL_main",
+      "SpriteName": "HallwayL_main"
+    },
+    "room-airshipkitchen": {
+      "Name": "Airship Kitchen",
+      "MapType": 3,
+      "SpriteRendererName": "kitchen_main",
+      "SpriteName": "kitchen_main"
+    },
+    "room-airshiplounge": {
+      "Name": "Airship Lounge",
+      "MapType": 3,
+      "SpriteRendererName": "lounge_main",
+      "SpriteName": "lounge_main"
+    },
+    "room-airshipmainhall": {
+      "Name": "Airship Hallway 2",
+      "MapType": 3,
+      "SpriteRendererName": "halls_main",
+      "SpriteName": "halls_main"
+    },
+    "room-airshipmedbay": {
+      "Name": "Airship Medbay",
+      "MapType": 3,
+      "SpriteRendererName": "medbay_main",
+      "SpriteName": "medbay_main"
+    },
+    "room-airshipmeeting": {
+      "Name": "Airship Meeting",
+      "MapType": 3,
+      "SpriteRendererName": "meeting_main",
+      "SpriteName": "meeting_main"
+    },
+    "room-airshipmeeting2": {
+      "Name": "Airship Meeting 2",
+      "MapType": 3,
+      "SpriteRendererName": "meeting_side",
+      "SpriteName": "meeting_side"
+    },
+    "room-airshipoutside": {
+      "Name": "Airship Balcony",
+      "MapType": 3,
+      "SpriteRendererName": "security_outside",
+      "SpriteName": "security_outside"
+    },
+    "room-airshipportraits": {
+      "Name": "Airship Portraits",
+      "MapType": 3,
+      "SpriteRendererName": "hallportrait_main",
+      "SpriteName": "hallportrait_main"
+    },
+    "room-airshipsecurity": {
+      "Name": "Airship Security",
+      "MapType": 3,
+      "SpriteRendererName": "security_main",
+      "SpriteName": "security_main"
+    },
+    "room-airshipshowers": {
+      "Name": "Airship Showers",
+      "MapType": 3,
+      "SpriteRendererName": "showers_main",
+      "SpriteName": "showers_main"
+    },
+    "room-airshipstorage": {
+      "Name": "Airship Storage",
+      "MapType": 3,
+      "SpriteRendererName": "storage_main",
+      "SpriteName": "storage_main"
+    },
+    "room-airshipvault": {
+      "Name": "Airship Vault",
+      "MapType": 3,
+      "SpriteRendererName": "vault_main",
+      "SpriteName": "vault_main"
+    },
+    "room-airshipvent": {
+      "Name": "Airship Shaft",
+      "MapType": 3,
+      "SpriteRendererName": "ventilation_main",
+      "SpriteName": "ventilation_main"
+    },
+    "room-airshiprecords": {
+      "Name": "Airship Records",
+      "MapType": 3,
+      "SpriteRendererName": "records_main",
+      "SpriteName": "records_main"
     }
   },
   "ss": {

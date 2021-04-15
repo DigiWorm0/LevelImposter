@@ -123,7 +123,7 @@ namespace LevelImposter.Builders
             ventDb.Add(asset.id, vent);
             targetDb.Add(asset.id, asset.targetIds);
             polus.shipStatus.AllVents = AssetBuilder.AddToArr(polus.shipStatus.AllVents, vent);
-            polus.Add(obj, asset);
+            polus.Add(obj, asset, utilData.MapType);
 
             return true;
         }

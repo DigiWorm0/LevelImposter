@@ -22,12 +22,12 @@ namespace LevelImposter.Map
             minimap = new MinimapGenerator(shipStatus.MapPrefab);
         }
 
-        public void Add(GameObject obj, MapAsset asset)
+        public void Add(GameObject obj, MapAsset asset, MapType map)
         {
             obj.transform.position = new Vector3(asset.x, -asset.y - Y_OFFSET, asset.z);
             obj.transform.localScale = new Vector3(
-                asset.xScale * (asset.flipX ? -1 : 1),
-                asset.yScale * (asset.flipY ? -1 : 1),
+                asset.xScale * (asset.flipX ? -1 : 1) * (map == MapType.Airship ? 0.75f : 1),
+                asset.yScale * (asset.flipY ? -1 : 1) * (map == MapType.Airship ? 0.75f : 1),
                 1.0f
             );
             obj.transform.rotation = Quaternion.Euler(new Vector3(0, 0, -asset.rotation));

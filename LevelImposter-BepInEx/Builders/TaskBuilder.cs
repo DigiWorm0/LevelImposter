@@ -16,6 +16,7 @@ namespace LevelImposter.Builders
 
         private int nodeId = 0;
         private int divertId = 0;
+        private int recordsId = 1;
         private readonly SystemTypes[] DIVERT_SYSTEMS = {
             SystemTypes.Launchpad,
             SystemTypes.MedBay,
@@ -67,8 +68,23 @@ namespace LevelImposter.Builders
             }
 
             // Console
+            Console console;
             Console origConsole = taskData.GameObj.GetComponent<Console>();
-            Console console = obj.AddComponent<Console>();
+            if (asset.type == "task-pistols1" || asset.type == "task-rifles1")
+            {
+                console = obj.AddComponent<StoreArmsTaskConsole>();
+                StoreArmsTaskConsole specialConsole = console.Cast<StoreArmsTaskConsole>();
+                StoreArmsTaskConsole origSpecialConsole = origConsole.Cast<StoreArmsTaskConsole>();
+
+                specialConsole.timesUsed = origSpecialConsole.timesUsed;
+                specialConsole.Images = origSpecialConsole.Images;
+                specialConsole.useSound = origSpecialConsole.useSound;
+                specialConsole.usesPerStep = origSpecialConsole.usesPerStep;
+            }
+            else
+            {
+                console = obj.AddComponent<Console>();
+            }
             console.ConsoleId = origConsole.ConsoleId;
             console.AllowImpostor = false;
             console.checkWalls = false;
@@ -80,7 +96,6 @@ namespace LevelImposter.Builders
             console.Room       = target;
             console.TaskTypes  = origConsole.TaskTypes;
             console.ValidTasks = origConsole.ValidTasks;
-            polus.Add(obj, asset);
 
             // Box Collider
             if (taskData.GameObj.GetComponent<CircleCollider2D>() != null)
@@ -160,6 +175,17 @@ namespace LevelImposter.Builders
                     
                 console.ConsoleId = nodeId;
             }
+            else if (asset.type == "task-records2")
+            {
+                if (recordsId >= 6)
+                {
+                    LILogger.LogError("Hit Records's Max System Limit");
+                    return false;
+                }
+
+                console.ConsoleId = recordsId;
+                recordsId++;
+            }
 
             // Task
             if (!string.IsNullOrEmpty(taskData.BehaviorName))
@@ -220,7 +246,20 @@ namespace LevelImposter.Builders
 
             // Add to Polus
             polus.shipStatus.AllConsoles = AssetBuilder.AddToArr(polus.shipStatus.AllConsoles, console);
+            polus.Add(obj, asset, taskData.MapType);
             return true;
+        }
+
+        public void Finish()
+        {
+            if (recordsId > 1)
+            {
+                var tasks = taskMgr.GetComponents<NormalPlayerTask>();
+                foreach (var task in tasks)
+                    if (task.TaskType == TaskTypes.SortRecords)
+                        task.MaxStep = recordsId - 1;
+                
+            }
         }
     }
 }
