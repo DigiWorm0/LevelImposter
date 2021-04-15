@@ -14,9 +14,14 @@ namespace LevelImposter.Builders
         private PolusHandler polus;
         private GameObject taskMgr;
 
+        // Multipart Tasks
         private int nodeId = 0;
         private int divertId = 0;
         private int recordsId = 1;
+        private int toiletId = 0;
+        private int breakersId = 0;
+        private int towelsId = 0;
+
         private readonly SystemTypes[] DIVERT_SYSTEMS = {
             SystemTypes.Launchpad,
             SystemTypes.MedBay,
@@ -52,7 +57,8 @@ namespace LevelImposter.Builders
             SystemTypes target = 0;
             if (asset.targetIds.Length > 0)
                 if (asset.targetIds[0] > 0)
-                    target = ShipRoomBuilder.db[asset.targetIds[0]];
+                    if (ShipRoomBuilder.db.ContainsKey(asset.targetIds[0]))
+                        target = ShipRoomBuilder.db[asset.targetIds[0]];
 
             // Divert Power
             if (asset.type == "task-divert2")
@@ -80,6 +86,14 @@ namespace LevelImposter.Builders
                 specialConsole.Images = origSpecialConsole.Images;
                 specialConsole.useSound = origSpecialConsole.useSound;
                 specialConsole.usesPerStep = origSpecialConsole.usesPerStep;
+            }
+            else if (asset.type.StartsWith("task-towels") && asset.type != "task-towels1")
+            {
+                console = obj.AddComponent<TowelTaskConsole>();
+                TowelTaskConsole specialConsole = console.Cast<TowelTaskConsole>();
+                TowelTaskConsole origSpecialConsole = origConsole.Cast<TowelTaskConsole>();
+
+                specialConsole.useSound = origSpecialConsole.useSound;
             }
             else
             {
@@ -177,7 +191,7 @@ namespace LevelImposter.Builders
             }
             else if (asset.type == "task-records2")
             {
-                if (recordsId >= 6)
+                if (recordsId >= 9)
                 {
                     LILogger.LogError("Hit Records's Max System Limit");
                     return false;
@@ -185,6 +199,39 @@ namespace LevelImposter.Builders
 
                 console.ConsoleId = recordsId;
                 recordsId++;
+            }
+            else if (asset.type == "task-toilet")
+            {
+                if (toiletId >= 4)
+                {
+                    LILogger.LogError("Hit Toilet's Max System Limit");
+                    return false;
+                }
+
+                console.ConsoleId = toiletId;
+                toiletId++;
+            }
+            else if (asset.type == "task-breakers")
+            {
+                if (breakersId >= 7)
+                {
+                    LILogger.LogError("Hit Breakers's Max System Limit");
+                    return false;
+                }
+
+                console.ConsoleId = breakersId;
+                breakersId++;
+            }
+            else if (asset.type.StartsWith("task-towels") && asset.type != "task-towels1")
+            {
+                if (towelsId >= 14)
+                {
+                    LILogger.LogError("Hit Towels's Max System Limit");
+                    return false;
+                }
+
+                console.ConsoleId = towelsId;
+                towelsId++;
             }
 
             // Task
@@ -215,6 +262,10 @@ namespace LevelImposter.Builders
                 else if (asset.type.StartsWith("task-waterwheel"))
                 {
                     task = taskMgr.AddComponent<WaterWayTask>();
+                }
+                else if (asset.type == "task-towels1")
+                {
+                    task = taskMgr.AddComponent<TowelTask>();
                 }
                 else
                 {
@@ -248,18 +299,6 @@ namespace LevelImposter.Builders
             polus.shipStatus.AllConsoles = AssetBuilder.AddToArr(polus.shipStatus.AllConsoles, console);
             polus.Add(obj, asset, taskData.MapType);
             return true;
-        }
-
-        public void Finish()
-        {
-            if (recordsId > 1)
-            {
-                var tasks = taskMgr.GetComponents<NormalPlayerTask>();
-                foreach (var task in tasks)
-                    if (task.TaskType == TaskTypes.SortRecords)
-                        task.MaxStep = recordsId - 1;
-                
-            }
         }
     }
 }

@@ -588,7 +588,7 @@
       "Name": "Calibrate Distributer",
       "MapType": 3,
       "SpriteRendererName": "task_calibrate",
-      "TaskType": 1,
+      "TaskType": 2,
       "GameObjName": "task_calibrate",
       "BehaviorName": "CalibrateDistributorTask"
     }
@@ -1222,7 +1222,7 @@
       "Name": "Airship Cockpit",
       "MapType": 3,
       "SpriteRendererName": "cockpit_bg",
-      "SpriteName": "cockpit_bg"
+      "SpriteName": "cockpit_main"
     },
     "room-airshipcomms": {
       "Name": "Airship Comms",

@@ -79,7 +79,7 @@ namespace LevelImposter.Builders
 
         public void Finish()
         {
-            taskBuilder.Finish();
+            // TODO
         }
 
         public static UnhollowerBaseLib.Il2CppReferenceArray<T> AddToArr<T>(UnhollowerBaseLib.Il2CppReferenceArray<T> arr, T value) where T : UnhollowerBaseLib.Il2CppObjectBase
