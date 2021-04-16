@@ -104,7 +104,7 @@
             this.logoBeta.ForeColor = System.Drawing.SystemColors.ActiveCaptionText;
             this.logoBeta.Location = new System.Drawing.Point(326, 33);
             this.logoBeta.Name = "logoBeta";
-            this.logoBeta.Size = new System.Drawing.Size(74, 35);
+            this.logoBeta.Size = new System.Drawing.Size(48, 23);
             this.logoBeta.TabIndex = 11;
             this.logoBeta.Text = "Beta";
             // 
@@ -139,7 +139,7 @@
             // 
             // LevelImposter
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 21F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;
             this.ClientSize = new System.Drawing.Size(421, 177);
@@ -157,7 +157,7 @@
             this.MinimumSize = new System.Drawing.Size(437, 216);
             this.Name = "LevelImposter";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Level Imposter v0.1.0";
+            this.Text = "Level Imposter";
             ((System.ComponentModel.ISupportInitialize)(this.logo)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();

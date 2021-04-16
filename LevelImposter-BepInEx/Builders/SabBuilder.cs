@@ -23,7 +23,10 @@ namespace LevelImposter.Builders
 
         public bool Build(MapAsset asset)
         {
-           
+            LILogger.LogWarn("Sabotages are not yet supported!");
+            return false;
+
+            /*
             SabData sabData = AssetDB.sabs[asset.type];
 
             // Object
@@ -124,7 +127,7 @@ namespace LevelImposter.Builders
             // Add to Polus
             MinimapGen.SabGenerator.AddSabotage(asset);
             polus.Add(obj, asset, sabData.MapType);
-            return true;
+            return true;*/
             
         }
     }

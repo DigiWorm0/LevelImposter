@@ -17,26 +17,6 @@ namespace LevelImposter.Harmony.Patches
         }
     }
 
-    /*
-    [HarmonyPatch(typeof(MainMenuManager), nameof(MainMenuManager.Start))]
-    public static class SkipAuth
-    {
-        public static void Postfix()
-        {
-            GameObject.Find("AccountManager").transform.FindChild("Loading").gameObject.active = false;
-        }
-    }*/
-
-    [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.AddSystemTask))]
-    public static class SabPatch1
-    {
-        public static void Prefix(ref SystemTypes ENHDELNCBNG)
-        {
-            LILogger.LogInfo(ENHDELNCBNG);
-            //ENHDELNCBNG = SystemTypes.Admin;
-        }
-    }
-
     [HarmonyPatch(typeof(MapCountOverlay), nameof(MapCountOverlay.OnEnable))]
     public static class AdminTablePatch
     {
