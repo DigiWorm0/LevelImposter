@@ -19,10 +19,9 @@ World's first custom Among Us Map Maker
 ## How to Install
 ### Run a Map
 1. Install [BepInEx](https://docs.reactor.gg/docs/basic/install_bepinex)
-2. Download LevelImposter.exe and Newtonsoft.Json.dll in [releases](https://github.com/DigiWorm0/LevelImposter/releases)
-3. Run LevelImposter.exe
-4. Browse for a Map JSON file. (Some can be found at [LevelImposter.net](https://levelimposter.net/Map))
-5. Hit Apply and Restart Among Us
+2. Download / Run LevelImposter.exe in [releases](https://github.com/DigiWorm0/LevelImposter/releases)
+3. Browse for a Map JSON file. (Some can be found at [LevelImposter.net](https://levelimposter.net/Map))
+4. Hit Apply and Restart Among Us
 
 #### Notes:
 - All players in the lobby must use the same map
