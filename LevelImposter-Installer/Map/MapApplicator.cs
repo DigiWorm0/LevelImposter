@@ -11,15 +11,18 @@ namespace LevelImposter.Map
 {
     class MapApplicator
     {
-        const string DEFAULT_GAME_DIR = "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Among Us\\Among Us.exe";
+        const string STEAM_GAME_DIR = "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Among Us\\Among Us.exe";
+        const string EPIC_GAME_DIR = "C:\\Program Files\\Epic Games\\AmongUs";
 
         public static void Revert()
         {
             // Game Directory
-            string gameExeDir = DEFAULT_GAME_DIR;
+            string gameExeDir = STEAM_GAME_DIR;
+            if (!File.Exists(gameExeDir))
+                gameExeDir = EPIC_GAME_DIR;
             if (!File.Exists(gameExeDir))
             {
-                Error("Among Us Not Found", "Either Among Us is not installed or it is in a different location than Steam's default location.\nPlease find and select your Among Us.exe.");
+                Error("Among Us Not Found", "Either Among Us is not installed or it is in a different location than default.\nPlease find and select your Among Us.exe.");
 
                 OpenFileDialog browseDialog = new OpenFileDialog();
                 DialogResult result = browseDialog.ShowDialog();
@@ -69,10 +72,12 @@ namespace LevelImposter.Map
         public static void Apply()
         {
             // Game Directory
-            string gameExeDir = DEFAULT_GAME_DIR;
+            string gameExeDir = STEAM_GAME_DIR;
+            if (!File.Exists(gameExeDir))
+                gameExeDir = EPIC_GAME_DIR;
             if (!File.Exists(gameExeDir))
             {
-                Error("Among Us Not Found", "Either Among Us is not installed or it is in a different location than Steam's default location.\nPlease find and select your Among Us.exe.");
+                Error("Among Us Not Found", "Either Among Us is not installed or it is in a different location than default.\nPlease find and select your Among Us.exe.");
 
                 OpenFileDialog browseDialog = new OpenFileDialog();
                 DialogResult result = browseDialog.ShowDialog();
