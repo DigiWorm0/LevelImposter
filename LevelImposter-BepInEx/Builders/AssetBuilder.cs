@@ -107,5 +107,33 @@ namespace LevelImposter.Builders
                 }
             }
         }
+
+        public static Sprite SpriteFromBase64(byte[] data)
+        {
+            Texture2D tex = new Texture2D(1, 1);
+            ImageConversion.LoadImage(tex, data);
+            return Sprite.Create(tex, new Rect(0.0f, 0.0f, tex.width, tex.height), new Vector2(0.5f, 0.5f), 100.0f);
+        }
+
+        public static Sprite SpriteFromBase64(string b64)
+        {
+            if (string.IsNullOrEmpty(b64))
+                return null;
+
+            // Base64
+            string base64 = b64.Substring(b64.IndexOf(",") + 1);
+            byte[] data;
+            try
+            {
+                data = System.Convert.FromBase64String(base64);
+                return SpriteFromBase64(data);
+            }
+            catch
+            {
+                LILogger.LogError("Could not parse custom asset texture");
+                return null;
+            }
+
+         }
     }
 }

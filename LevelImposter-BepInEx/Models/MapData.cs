@@ -10,6 +10,8 @@ namespace LevelImposter.Models
     class MapData
     {
         public string name;
+        public string btn;
+        public string map;
         public MapAsset[] objs;
     }
 }
