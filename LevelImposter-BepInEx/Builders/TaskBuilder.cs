@@ -271,6 +271,7 @@ namespace LevelImposter.Builders
                 {
                     task = taskMgr.AddComponent<NormalPlayerTask>();
                 }
+                task.StartAt = target;
                 task.taskStep = origTask.taskStep;
                 task.MaxStep = origTask.MaxStep;
                 task.arrowSuspended = origTask.arrowSuspended;
@@ -278,7 +279,6 @@ namespace LevelImposter.Builders
                 task.ShowTaskStep = origTask.ShowTaskStep;
                 task.TaskTimer = origTask.TaskTimer;
                 task.TimerStarted = origTask.TimerStarted;
-                task.StartAt = 0;
                 task.TaskType = origTask.TaskType;
                 task.MinigamePrefab = origTask.MinigamePrefab;
                 task.HasLocation = origTask.HasLocation;
