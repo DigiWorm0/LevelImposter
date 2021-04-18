@@ -104,7 +104,7 @@ namespace LevelImposter.Builders
             console.checkWalls = false;
             console.GhostsIgnored = false;
             console.Image = spriteRenderer;
-            console.onlyFromBelow = true;
+            console.onlyFromBelow = asset.onlyFromBottom;
             console.onlySameRoom = false;
             console.usableDistance = 1;
             console.Room       = target;

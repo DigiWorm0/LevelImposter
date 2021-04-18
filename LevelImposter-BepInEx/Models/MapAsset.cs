@@ -23,6 +23,7 @@ namespace LevelImposter.Models
 
         public bool flipX;
         public bool flipY;
+        public bool onlyFromBottom;
         public long[] targetIds;
 
         public MapCollider[] colliders;
