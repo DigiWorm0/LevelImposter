@@ -12,6 +12,7 @@ namespace LevelImposter.DB
         public string SpriteRendererName { get; set; }
         public string GameObjName { get; set; }
         public string BehaviorName { get; set; }
+        public float Scale { get; set; }
 
         public SpriteRenderer SpriteRenderer { get; set; }
         public GameObject GameObj { get; set; }

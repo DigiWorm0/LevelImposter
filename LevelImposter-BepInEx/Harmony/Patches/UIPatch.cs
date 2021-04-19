@@ -43,4 +43,13 @@ namespace LevelImposter.Harmony.Patches
             BGGenerator.SetColor(new Color(0, 0, 1.0f, 0.6f));
         }
     }
+
+    [HarmonyPatch(typeof(MainMenuManager), nameof(MainMenuManager.Start))]
+    public static class SkipAuth
+    {
+        public static void Postfix()
+        {
+            GameObject.Find("AccountManager").transform.FindChild("Loading").gameObject.active = false;
+        }
+    }
 }

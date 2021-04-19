@@ -8,6 +8,7 @@ namespace LevelImposter.DB
     class DecData : AssetData
     {
         public string SpriteRendererName { get; set; }
+        public float Scale { get; set; }
 
         public SpriteRenderer SpriteRenderer { get; set; }
 

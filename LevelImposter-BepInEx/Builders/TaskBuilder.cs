@@ -293,11 +293,11 @@ namespace LevelImposter.Builders
             }
 
             // Colliders
-            AssetBuilder.BuildColliders(asset, obj);
+            AssetBuilder.BuildColliders(asset, obj, taskData.Scale);
 
             // Add to Polus
             polus.shipStatus.AllConsoles = AssetBuilder.AddToArr(polus.shipStatus.AllConsoles, console);
-            polus.Add(obj, asset, taskData.MapType);
+            polus.Add(obj, asset, taskData.Scale);
             return true;
         }
     }

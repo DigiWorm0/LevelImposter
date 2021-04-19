@@ -89,7 +89,7 @@ namespace LevelImposter.Builders
             return list.ToArray();
         }
 
-        public static void BuildColliders(MapAsset asset, GameObject obj)
+        public static void BuildColliders(MapAsset asset, GameObject obj, float scale = 1.0f)
         {
             // Colliders
             GameObject shadowObj = new GameObject("Shadows");
@@ -98,12 +98,12 @@ namespace LevelImposter.Builders
             foreach (MapCollider collider in asset.colliders)
             {
                 EdgeCollider2D edgeCollider = obj.AddComponent<EdgeCollider2D>();
-                edgeCollider.SetPoints(collider.GetPoints(asset.xScale, asset.yScale));
+                edgeCollider.SetPoints(collider.GetPoints(asset.xScale * scale, asset.yScale * scale));
 
                 if (collider.blocksLight)
                 {
                     EdgeCollider2D lightCollider = shadowObj.AddComponent<EdgeCollider2D>();
-                    lightCollider.SetPoints(collider.GetPoints(asset.xScale, asset.yScale));
+                    lightCollider.SetPoints(collider.GetPoints(asset.xScale * scale, asset.yScale * scale));
                 }
             }
         }

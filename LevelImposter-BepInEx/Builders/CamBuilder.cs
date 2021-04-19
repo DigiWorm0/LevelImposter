@@ -50,7 +50,7 @@ namespace LevelImposter.Builders
             AssetBuilder.BuildColliders(asset, obj);
 
             // Add to Polus
-            polus.Add(obj, asset, utilData.MapType);
+            polus.Add(obj, asset);
 
             return true;
         }

@@ -9,6 +9,7 @@ namespace LevelImposter.DB
     {
         public string SpriteRendererName { get; set; }
         public string SpriteName { get; set; }
+        public float Scale { get; set; }
 
         public SpriteRenderer SpriteRenderer { get; set; }
 

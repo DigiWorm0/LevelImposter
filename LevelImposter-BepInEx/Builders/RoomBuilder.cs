@@ -33,9 +33,9 @@ namespace LevelImposter.Builders
             obj.layer = (int)Layer.Ship;
 
             // Colliders
-            AssetBuilder.BuildColliders(asset, obj);
+            AssetBuilder.BuildColliders(asset, obj, utilData.Scale);
 
-            polus.Add(obj, asset, utilData.MapType);
+            polus.Add(obj, asset, utilData.Scale);
 
             return true;
         }

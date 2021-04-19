@@ -98,7 +98,7 @@ namespace LevelImposter.Builders
             // Colliders
             AssetBuilder.BuildColliders(asset, obj);
 
-            polus.Add(obj, asset, utilData.MapType);
+            polus.Add(obj, asset);
 
             return true;
         }
