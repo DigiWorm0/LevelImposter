@@ -36,10 +36,16 @@ namespace LevelImposter.Map
             }
             string mapJson = File.ReadAllText(mapDir);
 
+            // Settings
+            var settings = new Newtonsoft.Json.JsonSerializerSettings { 
+                NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore,
+                MissingMemberHandling = Newtonsoft.Json.MissingMemberHandling.Ignore
+            };
+
             // Deserialize
             try
             {
-                mapData = Newtonsoft.Json.JsonConvert.DeserializeObject<MapData>(mapJson);
+                mapData = Newtonsoft.Json.JsonConvert.DeserializeObject<MapData>(mapJson, settings);
             }
             catch (Exception e)
             {
