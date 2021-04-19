@@ -35,7 +35,9 @@ namespace LevelImposter.Builders
             // Colliders
             AssetBuilder.BuildColliders(asset, obj, utilData.Scale);
 
-            polus.Add(obj, asset, utilData.Scale);
+            // Add to Polus
+            Vector3 bounds = spriteRenderer.sprite.bounds.center;
+            polus.Add(obj, asset, utilData.Scale, bounds.x, bounds.y);
 
             return true;
         }

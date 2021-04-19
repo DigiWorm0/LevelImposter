@@ -1,4 +1,4 @@
-using LevelImposter.MinimapGen;
+﻿using LevelImposter.MinimapGen;
 using LevelImposter.Models;
 using System;
 using System.Collections.Generic;
@@ -22,15 +22,14 @@ namespace LevelImposter.Map
             minimap = new MinimapGenerator(shipStatus.MapPrefab);
         }
 
-        public void Add(GameObject obj, MapAsset asset, float scale = 1.0f)
+        public void Add(GameObject obj, MapAsset asset, float scale = 1.0f, float xOffset = 0, float yOffset = 0)
         {
-            obj.transform.position = new Vector3(asset.x, -asset.y - Y_OFFSET, asset.z);
+            obj.transform.position = new Vector3(asset.x - xOffset, -asset.y - Y_OFFSET - yOffset, asset.z);
             obj.transform.localScale = new Vector3(
                 asset.xScale * (asset.flipX ? -1 : 1) * scale,
                 asset.yScale * (asset.flipY ? -1 : 1) * scale,
                 1.0f
             );
-                obj.transform.localScale = new Vector3(0.91f, 0.91f, 1.0f);
             obj.transform.rotation = Quaternion.Euler(new Vector3(0, 0, -asset.rotation));
             obj.transform.SetParent(gameObject.transform);
         }

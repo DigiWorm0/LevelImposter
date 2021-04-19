@@ -1349,7 +1349,7 @@
       "MapType": 1,
       "SpriteRendererName": "Dropship",
       "SpriteName": "Dropship",
-      "Scale": 1
+      "Scale": 0.91
     },
     "room-dropshiptop": {
       "Name": "Dropship Top",
@@ -1363,7 +1363,7 @@
       "MapType": 1,
       "SpriteRendererName": "dropship_rear",
       "SpriteName": "dropship_rear",
-      "Scale": 1
+      "Scale": 0.91
     },
     "room-dropshipramp": {
       "Name": "Dropship Ramp",
