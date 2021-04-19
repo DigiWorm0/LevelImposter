@@ -12,6 +12,7 @@ namespace LevelImposter.Models
         public string name;
         public string btn;
         public string map;
+        public MapType exile;
         public MapAsset[] objs;
     }
 }

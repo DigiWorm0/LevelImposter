@@ -56,6 +56,7 @@ namespace LevelImposter.Map
             VentBuilder.ConnectVents();
             builder.Finish();
             polus.DeleteTemp();
+            polus.SetExile(MapHandler.mapData.exile);
             polus.minimap.Finish();
             LILogger.LogInfo("Finished!");
         }

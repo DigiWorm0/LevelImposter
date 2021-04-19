@@ -1,4 +1,5 @@
-﻿using LevelImposter.MinimapGen;
+﻿using LevelImposter.DB;
+using LevelImposter.MinimapGen;
 using LevelImposter.Models;
 using System;
 using System.Collections.Generic;
@@ -78,6 +79,17 @@ namespace LevelImposter.Map
         {
             this.shipStatus.VentEnterSound = shipStatus.VentEnterSound;
             this.shipStatus.VentMoveSounds = shipStatus.VentMoveSounds;
+        }
+
+        public void SetExile(MapType type)
+        {
+            foreach (var ssKey in AssetDB.ss)
+            {
+                if (ssKey.Value.MapType == type)
+                {
+                    this.shipStatus.ExileCutscenePrefab = ssKey.Value.ShipStatus.ExileCutscenePrefab;
+                }
+            }
         }
     }
 }
