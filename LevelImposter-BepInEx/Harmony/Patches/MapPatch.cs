@@ -12,7 +12,7 @@ namespace LevelImposter.Harmony.Patches
     [HarmonyPatch(typeof(PolusShipStatus), nameof(PolusShipStatus.OnEnable))]
     public static class MapPatch
     {
-        public static void Prefix(PolusShipStatus __instance)
+        public static void Postfix(PolusShipStatus __instance)
         {
             // Load Asset DB
             LILogger.LogInfo("Loading Asset Database...");
@@ -28,5 +28,6 @@ namespace LevelImposter.Harmony.Patches
             MapApplicator mapApplicator = new MapApplicator();
             mapApplicator.Apply(__instance);
         }
+
     }
 }

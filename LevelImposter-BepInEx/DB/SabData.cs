@@ -10,12 +10,10 @@ namespace LevelImposter.DB
         public string SpriteRendererName { get; set; }
         public string GameObjName { get; set; }
         public string BehaviorName { get; set; }
-        public string SystemName { get; set; }
 
         public SpriteRenderer SpriteRenderer { get; set; }
         public GameObject GameObj { get; set; }
         public PlayerTask Behavior { get; set; }
-        public ISystemType System { get; set; }
 
         public override void ImportMap(GameObject map, ShipStatus shipStatus)
         {

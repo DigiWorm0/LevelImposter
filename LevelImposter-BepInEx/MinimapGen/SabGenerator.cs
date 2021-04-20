@@ -16,13 +16,19 @@ namespace LevelImposter.MinimapGen
         private static GameObject lightsBackup;
         private static GameObject oxygenBackup;
 
-        private GameObject overlayObj;
-        private InfectedOverlay overlay;
-        private static Dictionary<long, GameObject> sabDb;
+        private static GameObject overlayObj;
+        private static InfectedOverlay overlay;
+        private static Dictionary<SystemTypes, MapRoom> sabDb;
+
+        public static readonly Dictionary<string, SystemTypes> SABOTAGE_IDS = new Dictionary<string, SystemTypes>()
+        {
+            { "sab-electric", SystemTypes.Electrical },
+            { "sab-comms", SystemTypes.Comms }
+        };
 
         public SabGenerator(Minimap map)
         {
-            sabDb = new Dictionary<long, GameObject>();
+            sabDb = new Dictionary<SystemTypes, MapRoom>();
             overlayObj = map.prefab.transform.FindChild("InfectedOverlay").gameObject;
             overlay = overlayObj.GetComponent<InfectedOverlay>();
             overlay.rooms = new UnhollowerBaseLib.Il2CppReferenceArray<MapRoom>(0);
@@ -59,36 +65,47 @@ namespace LevelImposter.MinimapGen
             sabMapRoom.Parent = overlay;
             overlay.rooms = AssetBuilder.AddToArr(overlay.rooms, sabMapRoom);
 
-            sabDb.Add(asset.id, sabRoomObj);
+            sabDb.Add(sabMapRoom.room, sabMapRoom);
+        }
+
+        private static MapRoom GetRoom(SystemTypes sys)
+        {
+            if (sabDb.ContainsKey(sys))
+                return sabDb[sys];
+
+            // GameObject
+            GameObject sabRoomObj = new GameObject(sys.ToString());
+            sabRoomObj.transform.SetParent(overlayObj.transform);
+
+            // Map Room
+            MapRoom sabMapRoom = sabRoomObj.AddComponent<MapRoom>();
+            sabMapRoom.room = sys;
+            sabMapRoom.Parent = overlay;
+            overlay.rooms = AssetBuilder.AddToArr(overlay.rooms, sabMapRoom);
+            
+            sabDb.Add(sabMapRoom.room, sabMapRoom);
+            return sabMapRoom;
         }
 
         public static void AddSabotage(MapAsset asset)
         {
-            if (asset.type == "sab-oxygen2" || asset.type == "sab-reactorright")
-            {
+            if (!SABOTAGE_IDS.ContainsKey(asset.type))
                 return;
-            }
-            if (asset.targetIds.Length <= 0)
-            {
-                throw new Exception(asset.name + " has no Target Room");
-            }
-            if (asset.targetIds[0] <= 0)
-            {
-                // TODO
-            }
-            
+
+            // System
+            SystemTypes sys = SABOTAGE_IDS[asset.type];
+            MapRoom mapRoom = GetRoom(sys);
 
             // GameObject
-            GameObject parent = sabDb[asset.targetIds[0]];
-            MapRoom mapRoom = parent.GetComponent<MapRoom>();
             GameObject button = new GameObject(asset.name);
-            button.transform.SetParent(parent.transform);
+            button.transform.SetParent(mapRoom.gameObject.transform);
             button.transform.position = new Vector3(asset.x * MinimapGenerator.MAP_SCALE, -asset.y * MinimapGenerator.MAP_SCALE, -25.0f);
 
             // Sprite Renderer
             SpriteRenderer spriteRenderer = button.AddComponent<SpriteRenderer>();
             spriteRenderer.material = commsBackup.GetComponent<SpriteRenderer>().material;
             button.layer = (int)Layer.UI;
+            mapRoom.special = spriteRenderer;
 
             // Collider
             CircleCollider2D colliderClone = commsBackup.GetComponent<CircleCollider2D>();
@@ -130,6 +147,11 @@ namespace LevelImposter.MinimapGen
             ButtonBehavior btnBehaviour = button.AddComponent<ButtonBehavior>();
             btnBehaviour.OnClick = behaviour.OnClick;
             btnBehaviour.OnClick.m_PersistentCalls.m_Calls[0].m_Target = mapRoom;
+            btnBehaviour.colliders = new UnhollowerBaseLib.Il2CppReferenceArray<Collider2D>(1);
+            btnBehaviour.colliders[0] = collider;
+            
+
+            overlay.allButtons = AssetBuilder.AddToArr(overlay.allButtons, btnBehaviour);
         }
     }
 }
