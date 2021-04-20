@@ -16,7 +16,7 @@ namespace LevelImposter.Harmony.Patches
 
             GameObject logo = new GameObject("LevelImposterLogo");
             logo.transform.position = __instance.text.transform.position;
-            logo.transform.position += new Vector3(0.68f, -0.3f, 0);
+            logo.transform.position += new Vector3(2.2f, -0.015f, 0);
             logo.transform.localScale = new Vector3(0.5f, 0.5f, 1.0f);
             logo.layer = (int)Layer.UI;
 
@@ -25,8 +25,7 @@ namespace LevelImposter.Harmony.Patches
             SpriteRenderer spriteRenderer = logo.AddComponent<SpriteRenderer>();
             spriteRenderer.sprite = Sprite.Create(tex, new Rect(0.0f, 0.0f, tex.width, tex.height), new Vector2(0.5f, 0.5f), 100.0f);
 
-            __instance.text.text += "\n\t\t  <size=65%>v" + MainHarmony.VERSION + "<size=100%>";
-            __instance.text.transform.position += new Vector3(0, -0.15f, 0);
+            __instance.text.text += "\t\t\t      <size=65%>v" + MainHarmony.VERSION + "<size=100%>";
         }
     }
 }

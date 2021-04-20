@@ -10,7 +10,7 @@ namespace LevelImposter
     [BepInProcess("Among Us.exe")]
     public class MainHarmony : BasePlugin
     {
-        public const string VERSION = "0.3.1";
+        public const string VERSION = "0.3.2";
         public const string ID = "com.DigiWorm.LevelImposter";
 
         public HarmonyLib.Harmony Harmony { get; } = new HarmonyLib.Harmony(ID);
