@@ -30,6 +30,7 @@ namespace LevelImposter.Builders
             defaultRoom.RoomId = 0;
             defaultRoom.roomArea = defaultCollider;
             defaultObj.transform.SetParent(polus.gameObject.transform);
+            TextHandler.Add((SystemTypes)0, "Default Room");
         }
 
         public bool Build(MapAsset asset)
