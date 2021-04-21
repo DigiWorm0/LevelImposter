@@ -8,15 +8,6 @@ using UnityEngine;
 
 namespace LevelImposter.Harmony.Patches
 {
-    [HarmonyPatch(typeof(AspectSize), nameof(AspectSize.OnEnable))]
-    public static class AspectPatch
-    {
-        public static bool Prefix()
-        {
-            return false;
-        }
-    }
-
     [HarmonyPatch(typeof(MapCountOverlay), nameof(MapCountOverlay.OnEnable))]
     public static class AdminTablePatch
     {
@@ -41,15 +32,6 @@ namespace LevelImposter.Harmony.Patches
         public static void Prefix(HudManager __instance)
         {
             BGGenerator.SetColor(new Color(0, 0, 1.0f, 0.6f));
-        }
-    }
-
-    [HarmonyPatch(typeof(MainMenuManager), nameof(MainMenuManager.Start))]
-    public static class SkipAuth
-    {
-        public static void Postfix()
-        {
-            GameObject.Find("AccountManager").transform.FindChild("Loading").gameObject.active = false;
         }
     }
 }

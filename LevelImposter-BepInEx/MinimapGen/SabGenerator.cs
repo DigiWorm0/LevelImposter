@@ -90,9 +90,11 @@ namespace LevelImposter.MinimapGen
 
         public static void AddSabotage(MapAsset asset)
         {
+            if (MinimapGenerator.hasGenerated)
+                return;
             if (!SABOTAGE_IDS.ContainsKey(asset.type))
                 return;
-
+            
             // System
             SystemTypes sys = SABOTAGE_IDS[asset.type];
             MapRoom mapRoom = GetRoom(sys);

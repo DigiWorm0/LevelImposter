@@ -749,7 +749,7 @@
       "MapType": 2,
       "SpriteRendererName": "panel_hand_left",
       "GameObjName": "panel_hand_left",
-      "BehaviorName": "ResetReactorTask",
+      "BehaviorName": "SeismicTask",
       "SystemTypes": "ResetReactor"
     },
     "sab-reactorright": {
@@ -757,7 +757,7 @@
       "MapType": 2,
       "SpriteRendererName": "panel_hand_right",
       "GameObjName": "panel_hand_right",
-      "BehaviorName": "ResetReactorTask",
+      "BehaviorName": "SeismicTask",
       "SystemTypes": "ResetReactor"
     },
     "sab-oxygen1": {

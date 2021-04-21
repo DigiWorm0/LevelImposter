@@ -8,7 +8,7 @@ namespace LevelImposter.MinimapGen
 {
     class MinimapGenerator : Generator
     {
-        private static bool hasGenerated = false;
+        public static bool hasGenerated = false;
         public const float MAP_SCALE = 1.0f / 5.0f;
         private float maxX = 0;
         private float minX = 0;

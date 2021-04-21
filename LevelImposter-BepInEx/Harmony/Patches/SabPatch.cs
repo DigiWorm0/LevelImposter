@@ -8,6 +8,15 @@ using UnityEngine;
 
 namespace LevelImposter.Harmony.Patches
 {
+    [HarmonyPatch(typeof(ReactorTask), nameof(ReactorTask.Awake))]
+    public static class ReactorPatch
+    {
+        public static void Prefix(ReactorTask __instance)
+        {
+            __instance.StartAt = SystemTypes.Laboratory;
+        }
+    }
+
     [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.AddSystemTask))]
     public static class SabPatch
     {

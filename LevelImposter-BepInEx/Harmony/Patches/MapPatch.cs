@@ -9,6 +9,16 @@ using UnityEngine.AddressableAssets;
 
 namespace LevelImposter.Harmony.Patches
 {
+    
+    [HarmonyPatch(typeof(AspectSize), nameof(AspectSize.OnEnable))]
+    public static class AspectPatch
+    {
+        public static bool Prefix()
+        {
+            return ShipStatus.Instance.name != "PolusShip(Clone)";
+        }
+    }
+    
     [HarmonyPatch(typeof(PolusShipStatus), nameof(PolusShipStatus.OnEnable))]
     public static class MapPatch
     {

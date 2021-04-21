@@ -9,6 +9,7 @@ namespace LevelImposter
     static class LILogger
     {
         private static ManualLogSource logger;
+        private const bool PRINT_STACK_TRACE = true;
 
         public static void Init()
         {
@@ -20,7 +21,7 @@ namespace LevelImposter
 
         private static void OnUnityLog(string msg, string stackTrace, UnityEngine.LogType type)
         {
-            if (Input.GetKey(KeyCode.L) && Input.GetKey(KeyCode.P))
+            if ((Input.GetKey(KeyCode.L) && Input.GetKey(KeyCode.P)) || PRINT_STACK_TRACE)
             {
                 LogInfo("Unity Stack Trace:\n" + msg + "\n" + stackTrace);
             }

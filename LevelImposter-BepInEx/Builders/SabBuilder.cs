@@ -15,16 +15,18 @@ namespace LevelImposter.Builders
     {
         private PolusHandler polus;
         private GameObject sabMgr;
-        private ArrowBehaviour sabArrow;
+        private ArrowBehaviour sabArrow1;
+        private ArrowBehaviour sabArrow2;
 
         public SabBuilder(PolusHandler polus)
         {
             this.polus = polus;
             sabMgr = new GameObject("SabManager");
-            MakeArrow();
+            sabArrow1 = MakeArrow();
+            sabArrow2 = MakeArrow();
         }
 
-        private void MakeArrow()
+        private ArrowBehaviour MakeArrow()
         {
             // Arrow Buttons
             GameObject arrowClone = AssetDB.sabs["sab-comms"].Behavior.gameObject.transform.FindChild("Arrow").gameObject;
@@ -40,12 +42,13 @@ namespace LevelImposter.Builders
             // Arrow Behaviour
             ArrowBehaviour arrowBehaviour = arrowObj.AddComponent<ArrowBehaviour>();
             arrowBehaviour.image = arrowSprite;
-            sabArrow = arrowBehaviour;
 
             // Transform
             arrowObj.transform.SetParent(sabMgr.transform);
             arrowObj.transform.localScale = new Vector3(0.4f, 0.4f, 1.0f);
             arrowObj.active = false;
+
+            return arrowBehaviour;
         }
 
         public bool Build(MapAsset asset)
@@ -154,26 +157,27 @@ namespace LevelImposter.Builders
             if (name != StringNames.ExitButton)
             {
                 SabotageTask origTask = sabData.Behavior.Cast<SabotageTask>();
-                task.Arrows = new UnhollowerBaseLib.Il2CppReferenceArray<ArrowBehaviour>(1);
-                task.Arrows[0] = sabArrow;
+                task.Arrows = new UnhollowerBaseLib.Il2CppReferenceArray<ArrowBehaviour>(2);
+                task.Arrows[0] = sabArrow1;
+                task.Arrows[1] = sabArrow2;
                 task.didContribute = origTask.didContribute;
                 task.Id = origTask.Id;
                 task.Index = origTask.Index;
                 task.LocationDirty = origTask.LocationDirty;
                 task.HasLocation = origTask.HasLocation;
                 task.MinigamePrefab = origTask.MinigamePrefab;
-                task.TaskType = origTask.TaskType;
                 task.StartAt = sys;
+                task.TaskType = origTask.TaskType;
 
                 polus.shipStatus.SpecialTasks = AssetBuilder.AddToArr(polus.shipStatus.SpecialTasks, task);
                 List<StringNames> list = new List<StringNames>(polus.shipStatus.SystemNames);
                 list.Add(name);
                 polus.shipStatus.SystemNames = list.ToArray();
+                MinimapGen.SabGenerator.AddSabotage(asset);
             }
 
             // Add to Polus
             AssetBuilder.BuildColliders(asset, obj);
-            MinimapGen.SabGenerator.AddSabotage(asset);
             polus.Add(obj, asset);
 
             return true;

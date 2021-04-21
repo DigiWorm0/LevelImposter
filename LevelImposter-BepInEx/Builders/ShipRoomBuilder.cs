@@ -1,5 +1,6 @@
 ﻿using HarmonyLib;
 using LevelImposter.DB;
+using LevelImposter.Harmony.Patches;
 using LevelImposter.Map;
 using LevelImposter.Models;
 using System;
@@ -61,6 +62,9 @@ namespace LevelImposter.Builders
 
             // Room DB
             db.Add(asset.id, (SystemTypes)roomId);
+
+            // Text DB
+            TextHandler.Add((SystemTypes)roomId, asset.name);
 
             // Polus
             polus.shipStatus.AllRooms = AssetBuilder.AddToArr(polus.shipStatus.AllRooms, room);
