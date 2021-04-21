@@ -14,7 +14,6 @@ namespace LevelImposter.MinimapGen
         private static GameObject reactorBackup;
         private static GameObject doorsBackup;
         private static GameObject lightsBackup;
-        private static GameObject oxygenBackup;
 
         private static GameObject overlayObj;
         private static InfectedOverlay overlay;
@@ -23,7 +22,10 @@ namespace LevelImposter.MinimapGen
         public static readonly Dictionary<string, SystemTypes> SABOTAGE_IDS = new Dictionary<string, SystemTypes>()
         {
             { "sab-electric", SystemTypes.Electrical },
-            { "sab-comms", SystemTypes.Comms }
+            { "sab-comms", SystemTypes.Comms },
+            { "sab-reactorleft", SystemTypes.Laboratory },
+            { "sab-reactorright", SystemTypes.Laboratory },
+            { "sab-doors", SystemTypes.Doors }
         };
 
         public SabGenerator(Minimap map)
@@ -37,7 +39,6 @@ namespace LevelImposter.MinimapGen
             reactorBackup = BackupRoom("Laboratory", "meltdown");
             doorsBackup = BackupRoom("Office", "Doors");
             lightsBackup = BackupRoom("Electrical", "lightsOut");
-            //oxygenBackup = BackupRoom("Comms", "bomb");
 
             MinimapGenerator.ClearChildren(overlayObj.transform);
         }
@@ -127,10 +128,6 @@ namespace LevelImposter.MinimapGen
                     spriteRenderer.sprite = reactorBackup.GetComponent<SpriteRenderer>().sprite;
                     behaviour = reactorBackup.GetComponent<ButtonBehavior>();
                     break;
-                case "sab-oxygen1":
-                    spriteRenderer.sprite = oxygenBackup.GetComponent<SpriteRenderer>().sprite;
-                    behaviour = oxygenBackup.GetComponent<ButtonBehavior>();
-                    break;
                 case "sab-comms":
                     spriteRenderer.sprite = commsBackup.GetComponent<SpriteRenderer>().sprite;
                     behaviour = commsBackup.GetComponent<ButtonBehavior>();
@@ -150,7 +147,6 @@ namespace LevelImposter.MinimapGen
             btnBehaviour.colliders = new UnhollowerBaseLib.Il2CppReferenceArray<Collider2D>(1);
             btnBehaviour.colliders[0] = collider;
             
-
             overlay.allButtons = AssetBuilder.AddToArr(overlay.allButtons, btnBehaviour);
         }
     }
