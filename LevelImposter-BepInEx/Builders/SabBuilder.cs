@@ -22,6 +22,7 @@ namespace LevelImposter.Builders
         {
             this.polus = polus;
             sabMgr = new GameObject("SabManager");
+            
             sabArrow1 = MakeArrow();
             sabArrow2 = MakeArrow();
         }

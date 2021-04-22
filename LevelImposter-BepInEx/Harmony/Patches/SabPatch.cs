@@ -17,6 +17,31 @@ namespace LevelImposter.Harmony.Patches
         }
     }
 
+    /*[HarmonyPatch(typeof(HudOverrideTask), nameof(HudOverrideTask.FixedUpdate))]
+    public static class SabCompleteFix1
+    {
+        public static bool Prefix()
+        {
+            return PlayerControl.LocalPlayer != null;
+        }
+    }
+    [HarmonyPatch(typeof(ElectricTask), nameof(ElectricTask.FixedUpdate))]
+    public static class SabCompleteFix2
+    {
+        public static bool Prefix()
+        {
+            return PlayerControl.LocalPlayer != null;
+        }
+    }
+    [HarmonyPatch(typeof(ReactorTask), nameof(ReactorTask.FixedUpdate))]
+    public static class SabCompleteFix3
+    {
+        public static bool Prefix()
+        {
+            return PlayerControl.LocalPlayer != null;
+        }
+    }*/
+
     [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.AddSystemTask))]
     public static class SabPatch
     {

@@ -6,7 +6,7 @@ namespace LevelImposter
 {
     public static class VersionCheck
     {
-        public const string AMONG_US_VERSION = "2021.4.12";
+        public const string AMONG_US_VERSION = "2021.4.14";
 
         public static bool CheckVersion()
         {

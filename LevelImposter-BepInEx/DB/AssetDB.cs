@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
+using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
 
 namespace LevelImposter.DB
@@ -36,8 +37,20 @@ namespace LevelImposter.DB
                 LILogger.LogError("Error during AssetDB JSON Deserialization:\n" + e.Message);
             }
         }
+        
+        public static void FinishImport()
+        {
+            LILogger.LogInfo("Loading Asset Database...");
+            var client = GameObject.Find("NetworkManager").GetComponent<AmongUsClient>();
+            foreach (AssetReference assetRef in client.ShipPrefabs)
+            {
+                if (assetRef.IsDone)
+                    AssetDB.Import(assetRef.Asset.Cast<GameObject>());
+            }
+            LILogger.LogInfo("Asset Database has been Loaded!");
+        }
 
-        public static void ImportMap(GameObject map)
+        private static void Import(GameObject map)
         {
             // Ship Status
             ShipStatus shipStatus = map.GetComponent<ShipStatus>();
@@ -55,17 +68,17 @@ namespace LevelImposter.DB
 
 
             // Import Map to Lists
-            ImportMap(map, shipStatus, mapType, tasks);
-            ImportMap(map, shipStatus, mapType, utils);
-            ImportMap(map, shipStatus, mapType, sabs);
-            ImportMap(map, shipStatus, mapType, dec);
-            ImportMap(map, shipStatus, mapType, room);
-            ImportMap(map, shipStatus, mapType, ss);
+            Import(map, shipStatus, mapType, tasks);
+            Import(map, shipStatus, mapType, utils);
+            Import(map, shipStatus, mapType, sabs);
+            Import(map, shipStatus, mapType, dec);
+            Import(map, shipStatus, mapType, room);
+            Import(map, shipStatus, mapType, ss);
 
             LILogger.LogInfo("..." + map.name + " Loaded");
         }
 
-        private static void ImportMap<T>(GameObject map, ShipStatus shipStatus, MapType mapType, Dictionary<string, T> list) where T : AssetData
+        private static void Import<T>(GameObject map, ShipStatus shipStatus, MapType mapType, Dictionary<string, T> list) where T : AssetData
         {
             foreach (var elem in list)
             {
