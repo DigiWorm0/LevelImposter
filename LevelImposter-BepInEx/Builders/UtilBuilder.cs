@@ -66,7 +66,6 @@ namespace LevelImposter.Builders
                 console.useIcon = origConsole.useIcon;
                 action = console.Use;
             }
-            
 
             // Box Collider
             if (utilData.GameObj.GetComponent<CircleCollider2D>() != null)

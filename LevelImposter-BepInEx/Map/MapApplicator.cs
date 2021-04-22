@@ -31,7 +31,7 @@ namespace LevelImposter.Map
             LILogger.LogInfo("...Clearing Polus");
             polus.ClearShip();
             polus.MoveToTemp();
-            polus.AddMissingProps(AssetDB.ss["ss-skeld"].ShipStatus);
+            polus.AddSystems();
 
             // Rooms
             LILogger.LogInfo("...Building Rooms");

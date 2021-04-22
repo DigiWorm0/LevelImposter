@@ -14,4 +14,14 @@ namespace LevelImposter.Harmony.Patches
             return false;
         }
     }
+
+    [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.PlayStepSound))]
+    public static class StepPatch
+    {
+        public static bool Prefix()
+        {
+            // TODO Add Sounds / Fix Sound Bug
+            return false;
+        }
+    }
 }
