@@ -71,6 +71,8 @@ namespace LevelImposter.Builders
             TextHandler.Add((SystemTypes)roomId, asset.name);
 
             // Polus
+            polus.shipStatus.AllRooms = AssetHelper.AddToArr(polus.shipStatus.AllRooms, room);
+            polus.shipStatus.FastRooms.Add((SystemTypes)roomId, room);
             polus.minimap.Generate(asset);
             polus.Add(obj, asset);
 
