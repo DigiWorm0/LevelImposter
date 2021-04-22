@@ -239,11 +239,14 @@ namespace LevelImposter.Builders
             // Task
             if (!string.IsNullOrEmpty(taskData.BehaviorName))
             {
+                GameObject taskHolder = new GameObject(asset.id.ToString());
+                taskHolder.transform.SetParent(taskMgr.transform);
+
                 NormalPlayerTask origTask = taskData.Behavior;
                 NormalPlayerTask task;
                 if (asset.type.StartsWith("task-divert"))
                 {
-                    task = taskMgr.AddComponent<DivertPowerTask>();
+                    task = taskHolder.AddComponent<DivertPowerTask>();
 
                     DivertPowerTask taskNode = task.Cast<DivertPowerTask>();
                     DivertPowerTask origNode = origTask.Cast<DivertPowerTask>();
@@ -252,7 +255,7 @@ namespace LevelImposter.Builders
                 }
                 else if (asset.type == "task-node")
                 {
-                    task = taskMgr.AddComponent<WeatherNodeTask>();
+                    task = taskHolder.AddComponent<WeatherNodeTask>();
 
                     WeatherNodeTask taskNode = task.Cast<WeatherNodeTask>();
                     WeatherNodeTask origNode = origTask.Cast<WeatherNodeTask>();
@@ -263,15 +266,15 @@ namespace LevelImposter.Builders
                 }
                 else if (asset.type.StartsWith("task-waterwheel"))
                 {
-                    task = taskMgr.AddComponent<WaterWayTask>();
+                    task = taskHolder.AddComponent<WaterWayTask>();
                 }
                 else if (asset.type == "task-towels1")
                 {
-                    task = taskMgr.AddComponent<TowelTask>();
+                    task = taskHolder.AddComponent<TowelTask>();
                 }
                 else
                 {
-                    task = taskMgr.AddComponent<NormalPlayerTask>();
+                    task = taskHolder.AddComponent<NormalPlayerTask>();
                 }
                 task.StartAt = target;
                 task.taskStep = origTask.taskStep;

@@ -74,6 +74,7 @@ namespace LevelImposter.Map
         {
             this.shipStatus.Systems.Add(SystemTypes.Security, new SecurityCameraSystemType().Cast<ISystemType>());
             this.shipStatus.Systems.Add(SystemTypes.Electrical, new SwitchSystem().Cast<ISystemType>());
+            this.shipStatus.Systems.Add(SystemTypes.MedBay, new MedScanSystem().Cast<ISystemType>());
         }
 
         public void SetExile(MapType type)
