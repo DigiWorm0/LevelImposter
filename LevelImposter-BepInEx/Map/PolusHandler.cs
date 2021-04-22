@@ -39,7 +39,15 @@ namespace LevelImposter.Map
         // Clear Ship
         public void ClearShip()
         {
-            // Arrays
+            // Delete Children
+            Transform polusTransform = gameObject.transform;
+            for (int i = polusTransform.childCount - 1; i >= 0; i--)
+            {
+                Transform child = polusTransform.GetChild(i);
+                GameObject.Destroy(child.gameObject);
+            }
+
+            // Ship Status
             shipStatus.AllCameras = new UnhollowerBaseLib.Il2CppReferenceArray<SurvCamera>(0);
             shipStatus.AllDoors = new UnhollowerBaseLib.Il2CppReferenceArray<PlainDoor>(0);
             shipStatus.AllConsoles = new UnhollowerBaseLib.Il2CppReferenceArray<Console>(0);
@@ -66,25 +74,6 @@ namespace LevelImposter.Map
         {
             this.shipStatus.Systems.Add(SystemTypes.Security, new SecurityCameraSystemType().Cast<ISystemType>());
             this.shipStatus.Systems.Add(SystemTypes.Electrical, new SwitchSystem().Cast<ISystemType>());
-        }
-
-        // Temp Storage
-        public void MoveToTemp()
-        {
-            Transform polusTransform = gameObject.transform;
-            GameObject temp = new GameObject("temp");
-            for (int i = polusTransform.childCount - 1; i >= 0; i--)
-            {
-                Transform child = polusTransform.GetChild(i);
-                child.SetParent(temp.transform);
-            }
-            temp.transform.SetParent(polusTransform);
-        }
-        public void DeleteTemp()
-        {
-            GameObject.Destroy(
-                GameObject.Find("temp")
-            );
         }
 
         public void SetExile(MapType type)

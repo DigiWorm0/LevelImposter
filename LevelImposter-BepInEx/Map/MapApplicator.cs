@@ -30,7 +30,6 @@ namespace LevelImposter.Map
             // Clear
             LILogger.LogInfo("...Clearing Polus");
             polus.ClearShip();
-            polus.MoveToTemp();
             polus.AddSystems();
 
             // Rooms
@@ -65,7 +64,7 @@ namespace LevelImposter.Map
             // Post Build
             LILogger.LogInfo("...Wrapping Up");
             builder.PostBuild();
-            polus.DeleteTemp();
+            
             polus.SetExile(MapHandler.mapData.exile);
             polus.minimap.Finish();
             LILogger.LogInfo("Finished!");
