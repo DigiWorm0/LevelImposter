@@ -64,7 +64,7 @@ namespace LevelImposter.MinimapGen
             MapRoom sabMapRoom = sabRoomObj.AddComponent<MapRoom>();
             sabMapRoom.room = ShipRoomBuilder.db[asset.id];
             sabMapRoom.Parent = overlay;
-            overlay.rooms = AssetBuilder.AddToArr(overlay.rooms, sabMapRoom);
+            overlay.rooms = AssetHelper.AddToArr(overlay.rooms, sabMapRoom);
 
             sabDb.Add(sabMapRoom.room, sabMapRoom);
         }
@@ -82,7 +82,7 @@ namespace LevelImposter.MinimapGen
             MapRoom sabMapRoom = sabRoomObj.AddComponent<MapRoom>();
             sabMapRoom.room = sys;
             sabMapRoom.Parent = overlay;
-            overlay.rooms = AssetBuilder.AddToArr(overlay.rooms, sabMapRoom);
+            overlay.rooms = AssetHelper.AddToArr(overlay.rooms, sabMapRoom);
             
             sabDb.Add(sabMapRoom.room, sabMapRoom);
             return sabMapRoom;
@@ -149,7 +149,7 @@ namespace LevelImposter.MinimapGen
             btnBehaviour.colliders = new UnhollowerBaseLib.Il2CppReferenceArray<Collider2D>(1);
             btnBehaviour.colliders[0] = collider;
             
-            overlay.allButtons = AssetBuilder.AddToArr(overlay.allButtons, btnBehaviour);
+            overlay.allButtons = AssetHelper.AddToArr(overlay.allButtons, btnBehaviour);
         }
     }
 }

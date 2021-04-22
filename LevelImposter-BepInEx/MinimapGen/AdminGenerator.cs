@@ -38,7 +38,7 @@ namespace LevelImposter.MinimapGen
             counterArea.XOffset = 0.3f;
             counterArea.YOffset = 0.3f;
             counterArea.pool = countObj.GetComponent<ObjectPoolBehavior>();
-            count.CountAreas = AssetBuilder.AddToArr(count.CountAreas, counterArea);
+            count.CountAreas = AssetHelper.AddToArr(count.CountAreas, counterArea);
         }
     }
 }

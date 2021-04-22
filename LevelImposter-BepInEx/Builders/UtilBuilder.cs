@@ -19,8 +19,16 @@ namespace LevelImposter.Builders
             this.polus = polus;
         }
 
-        public bool Build(MapAsset asset)
+        public bool PreBuild(MapAsset asset)
         {
+            if (!asset.type.StartsWith("util-") ||
+                asset.type.StartsWith("util-vent") ||
+                asset.type.StartsWith("util-spawn") ||
+                asset.type == "util-room" ||
+                asset.type == "util-player" ||
+                asset.type == "util-cam")
+                return true;
+
             UtilData utilData = AssetDB.utils[asset.type];
 
             // Object
@@ -96,10 +104,15 @@ namespace LevelImposter.Builders
             btn.OnClick.AddListener(action);
 
             // Colliders
-            AssetBuilder.BuildColliders(asset, obj);
+            AssetHelper.BuildColliders(asset, obj);
 
             polus.Add(obj, asset);
 
+            return true;
+        }
+
+        public bool PostBuild()
+        {
             return true;
         }
     }

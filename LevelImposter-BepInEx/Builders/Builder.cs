@@ -9,6 +9,14 @@ namespace LevelImposter.Builders
 {
     interface Builder
     {
-        public bool Build(MapAsset asset);
+        /**
+         *  Builds MapAsset before ShipStatus.OnEnable
+         */
+        public bool PreBuild(MapAsset asset);
+
+        /**
+         *  Wraps up every up after ShipStatus.OnEnable
+         */
+        public bool PostBuild();
     }
 }

@@ -19,8 +19,10 @@ namespace LevelImposter.Builders
             this.polus = polus;
         }
 
-        public bool Build(MapAsset asset)
+        public bool PreBuild(MapAsset asset)
         {
+            if (!asset.type.StartsWith("dec-"))
+                return true;
             DecData utilData = AssetDB.dec[asset.type];
 
             // Object
@@ -33,10 +35,15 @@ namespace LevelImposter.Builders
             obj.layer = (int)Layer.ShortObjects;
 
             // Colliders
-            AssetBuilder.BuildColliders(asset, obj, utilData.Scale);
+            AssetHelper.BuildColliders(asset, obj, utilData.Scale);
             
             polus.Add(obj, asset, utilData.Scale);
 
+            return true;
+        }
+
+        public bool PostBuild()
+        {
             return true;
         }
     }

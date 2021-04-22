@@ -52,8 +52,11 @@ namespace LevelImposter.Builders
             return arrowBehaviour;
         }
 
-        public bool Build(MapAsset asset)
+        public bool PreBuild(MapAsset asset)
         {
+            if (!asset.type.StartsWith("sab-"))
+                return true;
+
             // System Type
             if (!SabGenerator.SABOTAGE_IDS.ContainsKey(asset.type))
             {
@@ -87,7 +90,7 @@ namespace LevelImposter.Builders
             console.TaskTypes = origConsole.TaskTypes;
             console.ValidTasks = origConsole.ValidTasks;
 
-            polus.shipStatus.AllConsoles = AssetBuilder.AddToArr(polus.shipStatus.AllConsoles, console);
+            polus.shipStatus.AllConsoles = AssetHelper.AddToArr(polus.shipStatus.AllConsoles, console);
 
             // Box Collider
             if (sabData.GameObj.GetComponent<CircleCollider2D>() != null)
@@ -170,7 +173,7 @@ namespace LevelImposter.Builders
                 task.StartAt = sys;
                 task.TaskType = origTask.TaskType;
 
-                polus.shipStatus.SpecialTasks = AssetBuilder.AddToArr(polus.shipStatus.SpecialTasks, task);
+                polus.shipStatus.SpecialTasks = AssetHelper.AddToArr(polus.shipStatus.SpecialTasks, task);
                 List<StringNames> list = new List<StringNames>(polus.shipStatus.SystemNames);
                 list.Add(name);
                 polus.shipStatus.SystemNames = list.ToArray();
@@ -178,9 +181,14 @@ namespace LevelImposter.Builders
             }
 
             // Add to Polus
-            AssetBuilder.BuildColliders(asset, obj);
+            AssetHelper.BuildColliders(asset, obj);
             polus.Add(obj, asset);
 
+            return true;
+        }
+
+        public bool PostBuild()
+        {
             return true;
         }
     }

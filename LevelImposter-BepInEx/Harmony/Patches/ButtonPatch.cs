@@ -22,9 +22,9 @@ namespace LevelImposter.Harmony.Patches
 
             Sprite sprite;
             if (string.IsNullOrEmpty(customBtn))
-                sprite = AssetBuilder.SpriteFromBase64(defaultBtn);
+                sprite = AssetHelper.SpriteFromBase64(defaultBtn);
             else
-                sprite = AssetBuilder.SpriteFromBase64(customBtn);
+                sprite = AssetHelper.SpriteFromBase64(customBtn);
             if (sprite == null)
                 return;
 
@@ -51,9 +51,9 @@ namespace LevelImposter.Harmony.Patches
 
             Sprite sprite;
             if (string.IsNullOrEmpty(customBtn))
-                sprite = AssetBuilder.SpriteFromBase64(defaultBtn);
+                sprite = AssetHelper.SpriteFromBase64(defaultBtn);
             else
-                sprite = AssetBuilder.SpriteFromBase64(customBtn);
+                sprite = AssetHelper.SpriteFromBase64(customBtn);
             if (sprite == null)
                 return;
 

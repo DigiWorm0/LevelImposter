@@ -40,8 +40,10 @@ namespace LevelImposter.Builders
             //taskMgr.transform.SetParent(polus.gameObject.transform);
         }
 
-        public bool Build(MapAsset asset)
+        public bool PreBuild(MapAsset asset)
         {
+            if (!asset.type.StartsWith("task-"))
+                return true;
             TaskData taskData = AssetDB.tasks[asset.type];
 
             // Object
@@ -285,19 +287,24 @@ namespace LevelImposter.Builders
                 task.LocationDirty = origTask.LocationDirty;
 
                 if (taskData.TaskType == TaskType.Common)
-                    polus.shipStatus.CommonTasks = AssetBuilder.AddToArr(polus.shipStatus.CommonTasks, task);
+                    polus.shipStatus.CommonTasks = AssetHelper.AddToArr(polus.shipStatus.CommonTasks, task);
                 if (taskData.TaskType == TaskType.Short)
-                    polus.shipStatus.NormalTasks = AssetBuilder.AddToArr(polus.shipStatus.NormalTasks, task);
+                    polus.shipStatus.NormalTasks = AssetHelper.AddToArr(polus.shipStatus.NormalTasks, task);
                 if (taskData.TaskType == TaskType.Long)
-                    polus.shipStatus.LongTasks = AssetBuilder.AddToArr(polus.shipStatus.LongTasks, task);
+                    polus.shipStatus.LongTasks = AssetHelper.AddToArr(polus.shipStatus.LongTasks, task);
             }
 
             // Colliders
-            AssetBuilder.BuildColliders(asset, obj, taskData.Scale);
+            AssetHelper.BuildColliders(asset, obj, taskData.Scale);
 
             // Add to Polus
-            polus.shipStatus.AllConsoles = AssetBuilder.AddToArr(polus.shipStatus.AllConsoles, console);
+            polus.shipStatus.AllConsoles = AssetHelper.AddToArr(polus.shipStatus.AllConsoles, console);
             polus.Add(obj, asset, taskData.Scale);
+            return true;
+        }
+
+        public bool PostBuild()
+        {
             return true;
         }
     }

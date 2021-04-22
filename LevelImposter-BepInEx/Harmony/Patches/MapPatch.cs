@@ -24,9 +24,10 @@ namespace LevelImposter.Harmony.Patches
     {
         private static MapApplicator mapApplicator = new MapApplicator();
 
-        public static void Prefix(PolusShipStatus __instance)
+        public static bool Prefix(PolusShipStatus __instance)
         {
             mapApplicator.PreBuild(__instance);
+            return true;
         }
 
         public static void Postfix(PolusShipStatus __instance)

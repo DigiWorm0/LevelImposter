@@ -38,16 +38,23 @@ namespace LevelImposter.DB
             }
         }
         
-        public static void FinishImport()
+        public static bool Import()
         {
-            LILogger.LogInfo("Loading Asset Database...");
+            LILogger.LogInfo("...Loading Asset Database");
             var client = GameObject.Find("NetworkManager").GetComponent<AmongUsClient>();
             foreach (AssetReference assetRef in client.ShipPrefabs)
             {
                 if (assetRef.IsDone)
+                {
                     AssetDB.Import(assetRef.Asset.Cast<GameObject>());
+                }
+                else
+                {
+                    LILogger.LogError("There was an error loading the Asset Database!");
+                    return false;
+                }
             }
-            LILogger.LogInfo("Asset Database has been Loaded!");
+            return true;
         }
 
         private static void Import(GameObject map)

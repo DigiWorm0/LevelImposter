@@ -17,7 +17,8 @@ namespace LevelImposter.Map
         public void PreBuild(PolusShipStatus shipStatus)
         {
             // Load Map and AssetDB
-            AssetDB.FinishImport();
+            if (!AssetDB.Import())
+                return;
             if (!MapHandler.Load())
                 return;
 
@@ -28,7 +29,7 @@ namespace LevelImposter.Map
 
             // Clear
             LILogger.LogInfo("...Clearing Polus");
-            polus.ClearTasks();
+            polus.ClearShip();
             polus.MoveToTemp();
             polus.AddMissingProps(AssetDB.ss["ss-skeld"].ShipStatus);
 
@@ -39,7 +40,7 @@ namespace LevelImposter.Map
                 if (map.objs[i].type != "util-room")
                     continue;
                 MapAsset asset = map.objs[i];
-                bool success = builder.Build(asset);
+                bool success = builder.PreBuild(asset);
                 if (!success)
                     LILogger.LogError("Failed to build " + asset.name);
             }
@@ -51,7 +52,7 @@ namespace LevelImposter.Map
                 if (map.objs[i].type == "util-room")
                     continue;
                 MapAsset asset = map.objs[i];
-                bool success = builder.Build(asset);
+                bool success = builder.PreBuild(asset);
                 if (!success)
                     LILogger.LogError("Failed to build " + asset.name);
                 else if (i % 100 == 0 && i != 0)
@@ -63,8 +64,7 @@ namespace LevelImposter.Map
         {
             // Post Build
             LILogger.LogInfo("...Wrapping Up");
-            VentBuilder.ConnectVents();
-            builder.Finish();
+            builder.PostBuild();
             polus.DeleteTemp();
             polus.SetExile(MapHandler.mapData.exile);
             polus.minimap.Finish();
