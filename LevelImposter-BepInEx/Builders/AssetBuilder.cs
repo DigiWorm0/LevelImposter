@@ -98,12 +98,12 @@ namespace LevelImposter.Builders
             foreach (MapCollider collider in asset.colliders)
             {
                 EdgeCollider2D edgeCollider = obj.AddComponent<EdgeCollider2D>();
-                edgeCollider.SetPoints(collider.GetPoints(asset.xScale * scale, asset.yScale * scale));
+                edgeCollider.SetPoints(collider.GetPoints(scale, scale));
 
                 if (collider.blocksLight)
                 {
                     EdgeCollider2D lightCollider = shadowObj.AddComponent<EdgeCollider2D>();
-                    lightCollider.SetPoints(collider.GetPoints(asset.xScale * scale, asset.yScale * scale));
+                    lightCollider.SetPoints(collider.GetPoints(scale, scale));
                 }
             }
         }

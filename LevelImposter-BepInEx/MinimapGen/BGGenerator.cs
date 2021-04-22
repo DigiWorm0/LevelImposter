@@ -48,7 +48,7 @@ namespace LevelImposter.MinimapGen
             foreach (MapCollider c in asset.colliders)
             {
                 // Get Points
-                var points = c.GetPoints(asset.xScale, asset.yScale);
+                var points = c.GetPoints();
                 var points2 = new List<Vector3>();
                 if (c.isClosed)
                     points.RemoveAt(points._size - 1);

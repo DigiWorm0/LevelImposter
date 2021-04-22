@@ -51,7 +51,7 @@ namespace LevelImposter.Builders
             {
                 PolygonCollider2D polyCollider = obj.AddComponent<PolygonCollider2D>();
                 polyCollider.isTrigger = true;
-                polyCollider.SetPath(0, collider.GetPoints(asset.xScale, asset.yScale));
+                polyCollider.SetPath(0, collider.GetPoints());
                 mainCollider = polyCollider;
             }
 
