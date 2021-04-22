@@ -20,6 +20,8 @@ namespace LevelImposter.Map
         {
             this.shipStatus = shipStatus;
             this.gameObject = shipStatus.gameObject;
+            this.ClearShip();
+            this.AddSystems();
             minimap = new MinimapGenerator(shipStatus.MapPrefab);
         }
 
@@ -37,7 +39,7 @@ namespace LevelImposter.Map
         }
 
         // Clear Ship
-        public void ClearShip()
+        private void ClearShip()
         {
             // Delete Children
             Transform polusTransform = gameObject.transform;
@@ -70,10 +72,21 @@ namespace LevelImposter.Map
         }
 
         // Systems
-        public void AddSystems()
+        private void AddSystems()
         {
-            this.shipStatus.Systems.Add(SystemTypes.Security, new SecurityCameraSystemType().Cast<ISystemType>());
+            // Sabotages
             this.shipStatus.Systems.Add(SystemTypes.Electrical, new SwitchSystem().Cast<ISystemType>());
+            this.shipStatus.Systems.Add(SystemTypes.Comms, new HudOverrideSystemType().Cast<ISystemType>());
+            this.shipStatus.Systems.Add(SystemTypes.Laboratory, new ReactorSystemType(60f, SystemTypes.Laboratory).Cast<ISystemType>());
+            this.shipStatus.Systems.Add(SystemTypes.Doors, new DoorsSystemType().Cast<ISystemType>());
+            this.shipStatus.Systems.Add(SystemTypes.Sabotage, new SabotageSystemType(new IActivatable[] {
+                this.shipStatus.Systems[SystemTypes.Electrical].Cast<IActivatable>(),
+                this.shipStatus.Systems[SystemTypes.Comms].Cast<IActivatable>(),
+                this.shipStatus.Systems[SystemTypes.Laboratory].Cast<IActivatable>()
+            }).Cast<ISystemType>());
+
+            // Other
+            this.shipStatus.Systems.Add(SystemTypes.Security, new SecurityCameraSystemType().Cast<ISystemType>());
             this.shipStatus.Systems.Add(SystemTypes.MedBay, new MedScanSystem().Cast<ISystemType>());
         }
 

@@ -28,11 +28,11 @@ namespace LevelImposter.Harmony.Patches
     [HarmonyPatch(typeof(ElectricTask), nameof(ElectricTask.FixedUpdate))]
     public static class SabCompleteFix2
     {
-        public static bool Prefix()
+        public static bool Prefix(ElectricTask __instance)
         {
-            return PlayerControl.LocalPlayer != null;
+            return __instance.system != null;
         }
-    }
+    }*
     [HarmonyPatch(typeof(ReactorTask), nameof(ReactorTask.FixedUpdate))]
     public static class SabCompleteFix3
     {

@@ -19,14 +19,7 @@ namespace LevelImposter.MinimapGen
         private static InfectedOverlay overlay;
         private static Dictionary<SystemTypes, MapRoom> sabDb;
 
-        public static readonly Dictionary<string, SystemTypes> SABOTAGE_IDS = new Dictionary<string, SystemTypes>()
-        {
-            { "sab-electric", SystemTypes.Electrical },
-            { "sab-comms", SystemTypes.Comms },
-            { "sab-reactorleft", SystemTypes.Laboratory },
-            { "sab-reactorright", SystemTypes.Laboratory },
-            { "sab-doors", SystemTypes.Doors }
-        };
+        private static List<IActivatable> sabList;
 
         public SabGenerator(Minimap map)
         {
@@ -34,6 +27,7 @@ namespace LevelImposter.MinimapGen
             overlayObj = map.prefab.transform.FindChild("InfectedOverlay").gameObject;
             overlay = overlayObj.GetComponent<InfectedOverlay>();
             overlay.rooms = new UnhollowerBaseLib.Il2CppReferenceArray<MapRoom>(0);
+            //overlay.doors = ShipStatus.Instance.Systems[SystemTypes.Doors].Cast<IActivatable>();
 
             commsBackup = BackupRoom("Comms", "bomb"); // um...BOMB!?
             reactorBackup = BackupRoom("Laboratory", "meltdown");
@@ -92,11 +86,11 @@ namespace LevelImposter.MinimapGen
         {
             if (MinimapGenerator.hasGenerated)
                 return;
-            if (!SABOTAGE_IDS.ContainsKey(asset.type))
+            if (!SabBuilder.SAB_SYSTEMS.ContainsKey(asset.type))
                 return;
-            
+
             // System
-            SystemTypes sys = SABOTAGE_IDS[asset.type];
+            SystemTypes sys = SabBuilder.SAB_SYSTEMS[asset.type];
             MapRoom mapRoom = GetRoom(sys);
 
             // GameObject

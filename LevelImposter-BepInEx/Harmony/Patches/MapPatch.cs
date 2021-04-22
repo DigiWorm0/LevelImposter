@@ -26,9 +26,9 @@ namespace LevelImposter.Harmony.Patches
 
         public static bool Prefix(PolusShipStatus __instance)
         {
+            ShipStatus.Instance = __instance;
             mapApplicator.PreBuild(__instance);
             __instance.AssignTaskIndexes();
-            ShipStatus.Instance = __instance;
             return false;
         }
 

@@ -27,11 +27,6 @@ namespace LevelImposter.Map
             polus   = new PolusHandler(shipStatus);
             builder = new AssetBuilder(polus);
 
-            // Clear
-            LILogger.LogInfo("...Clearing Polus");
-            polus.ClearShip();
-            polus.AddSystems();
-
             // Rooms
             LILogger.LogInfo("...Building Rooms");
             for (int i = 0; i < map.objs.Length; i++)
