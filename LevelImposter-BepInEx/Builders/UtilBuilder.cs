@@ -48,7 +48,7 @@ namespace LevelImposter.Builders
                 SystemConsole console = obj.AddComponent<SystemConsole>();
                 console.Image = spriteRenderer;
                 console.FreeplayOnly = origConsole.FreeplayOnly;
-                console.onlyFromBelow = origConsole.onlyFromBelow;
+                console.onlyFromBelow = asset.onlyFromBottom;
                 console.usableDistance = origConsole.usableDistance;
                 console.MinigamePrefab = origConsole.MinigamePrefab;
                 if (asset.type == "util-cams2") // Convert Skeld Cams -> Polus/Airship Cams

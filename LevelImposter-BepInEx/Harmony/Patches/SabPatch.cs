@@ -17,30 +17,33 @@ namespace LevelImposter.Harmony.Patches
         }
     }
 
-    /*[HarmonyPatch(typeof(HudOverrideTask), nameof(HudOverrideTask.FixedUpdate))]
-    public static class SabCompleteFix1
+    [HarmonyPatch(typeof(ReactorTask), nameof(ReactorTask.Complete))]
+    public static class SabArrowFix1
     {
-        public static bool Prefix()
+        public static void Postfix()
         {
-            return PlayerControl.LocalPlayer != null;
+            GameObject.Find("SabManager").transform.GetChild(0).gameObject.SetActive(false);
+            GameObject.Find("SabManager").transform.GetChild(1).gameObject.SetActive(false);
         }
     }
-    [HarmonyPatch(typeof(ElectricTask), nameof(ElectricTask.FixedUpdate))]
-    public static class SabCompleteFix2
+    [HarmonyPatch(typeof(ElectricTask), nameof(ElectricTask.Complete))]
+    public static class SabArrowFix2
     {
-        public static bool Prefix(ElectricTask __instance)
+        public static void Postfix()
         {
-            return __instance.system != null;
+            GameObject.Find("SabManager").transform.GetChild(0).gameObject.SetActive(false);
+            GameObject.Find("SabManager").transform.GetChild(1).gameObject.SetActive(false);
         }
-    }*
-    [HarmonyPatch(typeof(ReactorTask), nameof(ReactorTask.FixedUpdate))]
-    public static class SabCompleteFix3
+    }
+    [HarmonyPatch(typeof(HudOverrideTask), nameof(HudOverrideTask.Complete))]
+    public static class SabArrowFix3
     {
-        public static bool Prefix()
+        public static void Postfix()
         {
-            return PlayerControl.LocalPlayer != null;
+            GameObject.Find("SabManager").transform.GetChild(0).gameObject.SetActive(false);
+            GameObject.Find("SabManager").transform.GetChild(1).gameObject.SetActive(false);
         }
-    }*/
+    }
 
     [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.AddSystemTask))]
     public static class SabPatch

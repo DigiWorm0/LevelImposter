@@ -177,6 +177,7 @@ namespace LevelImposter.Builders
                 task.MinigamePrefab = origTask.MinigamePrefab;
                 task.StartAt = sys;
                 task.TaskType = origTask.TaskType;
+                task.Owner = PlayerControl.LocalPlayer;
 
                 polus.shipStatus.SpecialTasks = AssetHelper.AddToArr(polus.shipStatus.SpecialTasks, task);
                 List<StringNames> list = new List<StringNames>(polus.shipStatus.SystemNames);
