@@ -13,11 +13,9 @@ namespace LevelImposter.Harmony.Patches
     {
         public static bool Prefix(SystemTypes PAECGDHCGJC, ref string __result)
         {
-            LILogger.LogInfo("Translation Fix:" + PAECGDHCGJC);
             if (TextHandler.Contains(PAECGDHCGJC))
             {
                 __result = TextHandler.Get(PAECGDHCGJC);
-                LILogger.LogInfo("Fixed! " + __result);
                 return false;
             }
             return true;

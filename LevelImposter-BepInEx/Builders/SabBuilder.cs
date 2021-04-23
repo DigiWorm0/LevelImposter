@@ -15,23 +15,34 @@ namespace LevelImposter.Builders
     {
         private PolusHandler polus;
         private GameObject sabMgr;
+
         private ArrowBehaviour sabArrow1;
         private ArrowBehaviour sabArrow2;
+
+        public static readonly Dictionary<string, SystemTypes> SAB_SYSTEMS = new Dictionary<string, SystemTypes>()
+        {
+            { "sab-electric", SystemTypes.Electrical },
+            { "sab-comms", SystemTypes.Comms },
+            { "sab-reactorleft", SystemTypes.Laboratory },
+            { "sab-reactorright", SystemTypes.Laboratory },
+            { "sab-doors", SystemTypes.Doors }
+        };
 
         public SabBuilder(PolusHandler polus)
         {
             this.polus = polus;
             sabMgr = new GameObject("SabManager");
-            sabArrow1 = MakeArrow();
-            sabArrow2 = MakeArrow();
+
+            sabArrow1 = MakeArrow(1);
+            sabArrow2 = MakeArrow(2);
         }
 
-        private ArrowBehaviour MakeArrow()
+        private ArrowBehaviour MakeArrow(int id)
         {
             // Arrow Buttons
             GameObject arrowClone = AssetDB.sabs["sab-comms"].Behavior.gameObject.transform.FindChild("Arrow").gameObject;
             SpriteRenderer arrowCloneSprite = arrowClone.GetComponent<SpriteRenderer>();
-            GameObject arrowObj = new GameObject("Sabotage Arrow");
+            GameObject arrowObj = new GameObject("Sabotage Arrow " + id);
 
             // Sprite
             SpriteRenderer arrowSprite = arrowObj.AddComponent<SpriteRenderer>();
@@ -51,15 +62,11 @@ namespace LevelImposter.Builders
             return arrowBehaviour;
         }
 
-        public bool Build(MapAsset asset)
+        public bool PreBuild(MapAsset asset)
         {
-            // System Type
-            if (!SabGenerator.SABOTAGE_IDS.ContainsKey(asset.type))
-            {
-                LILogger.LogError("Invalid Sabotage");
-                return false;
-            }
-            SystemTypes sys = SabGenerator.SABOTAGE_IDS[asset.type];
+            if (!SAB_SYSTEMS.ContainsKey(asset.type))
+                return true;
+            SystemTypes sys = SAB_SYSTEMS[asset.type];
 
             // GameObject
             SabData sabData = AssetDB.sabs[asset.type];
@@ -86,7 +93,7 @@ namespace LevelImposter.Builders
             console.TaskTypes = origConsole.TaskTypes;
             console.ValidTasks = origConsole.ValidTasks;
 
-            polus.shipStatus.AllConsoles = AssetBuilder.AddToArr(polus.shipStatus.AllConsoles, console);
+            polus.shipStatus.AllConsoles = AssetHelper.AddToArr(polus.shipStatus.AllConsoles, console);
 
             // Box Collider
             if (sabData.GameObj.GetComponent<CircleCollider2D>() != null)
@@ -118,9 +125,11 @@ namespace LevelImposter.Builders
             // Task
             SabotageTask task = null;
             StringNames name = StringNames.ExitButton;
+            GameObject sabHolder = new GameObject(asset.id.ToString());
+            sabHolder.transform.SetParent(sabMgr.transform);
             if (asset.type == "sab-comms")
             {
-                task = sabMgr.AddComponent<HudOverrideTask>();
+                task = sabHolder.AddComponent<HudOverrideTask>();
                 HudOverrideTask castTask = task.Cast<HudOverrideTask>();
                 HudOverrideTask taskClone = sabData.Behavior.Cast<HudOverrideTask>();
 
@@ -132,7 +141,7 @@ namespace LevelImposter.Builders
             }
             else if (asset.type == "sab-electric")
             {
-                task = sabMgr.AddComponent<ElectricTask>();
+                task = sabHolder.AddComponent<ElectricTask>();
                 ElectricTask castTask = task.Cast<ElectricTask>();
                 ElectricTask taskClone = sabData.Behavior.Cast<ElectricTask>();
 
@@ -144,7 +153,7 @@ namespace LevelImposter.Builders
             }
             else if (asset.type == "sab-reactorleft")
             {
-                task = sabMgr.AddComponent<ReactorTask>();
+                task = sabHolder.AddComponent<ReactorTask>();
                 ReactorTask castTask = task.Cast<ReactorTask>();
                 ReactorTask taskClone = sabData.Behavior.Cast<ReactorTask>();
 
@@ -169,17 +178,22 @@ namespace LevelImposter.Builders
                 task.StartAt = sys;
                 task.TaskType = origTask.TaskType;
 
-                polus.shipStatus.SpecialTasks = AssetBuilder.AddToArr(polus.shipStatus.SpecialTasks, task);
+                polus.shipStatus.SpecialTasks = AssetHelper.AddToArr(polus.shipStatus.SpecialTasks, task);
                 List<StringNames> list = new List<StringNames>(polus.shipStatus.SystemNames);
                 list.Add(name);
                 polus.shipStatus.SystemNames = list.ToArray();
-                MinimapGen.SabGenerator.AddSabotage(asset);
+                SabGenerator.AddSabotage(asset);
             }
 
             // Add to Polus
-            AssetBuilder.BuildColliders(asset, obj);
+            AssetHelper.BuildColliders(asset, obj);
             polus.Add(obj, asset);
 
+            return true;
+        }
+
+        public bool PostBuild()
+        {
             return true;
         }
     }

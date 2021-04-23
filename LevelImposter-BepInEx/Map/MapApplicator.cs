@@ -1,5 +1,6 @@
 ﻿using LevelImposter.Builders;
 using LevelImposter.DB;
+using LevelImposter.MinimapGen;
 using LevelImposter.Models;
 using System;
 using System.Collections.Generic;
@@ -10,20 +11,23 @@ namespace LevelImposter.Map
 {
     class MapApplicator
     {
-        public void Apply(PolusShipStatus shipStatus)
+        public PolusHandler polus;
+        public AssetBuilder builder;
+        public MapData      map;
+
+        public void PreBuild(PolusShipStatus shipStatus)
         {
+            // Load Map and AssetDB
+            if (!AssetDB.Import())
+                return;
             if (!MapHandler.Load())
                 return;
 
-            MapData         map     = MapHandler.GetMap();
-            PolusHandler    polus   = new PolusHandler(shipStatus);
-            AssetBuilder    builder = new AssetBuilder(polus);
-
-            // Clear
-            LILogger.LogInfo("...Clearing Polus");
-            polus.ClearTasks();
-            polus.MoveToTemp();
-            polus.AddMissingProps(AssetDB.ss["ss-skeld"].ShipStatus);
+            // Vars
+            map     = MapHandler.GetMap();
+            polus   = new PolusHandler(shipStatus);
+            builder = new AssetBuilder(polus);
+            MinimapGenerator.Reset();
 
             // Rooms
             LILogger.LogInfo("...Building Rooms");
@@ -32,7 +36,7 @@ namespace LevelImposter.Map
                 if (map.objs[i].type != "util-room")
                     continue;
                 MapAsset asset = map.objs[i];
-                bool success = builder.Build(asset);
+                bool success = builder.PreBuild(asset);
                 if (!success)
                     LILogger.LogError("Failed to build " + asset.name);
             }
@@ -44,20 +48,20 @@ namespace LevelImposter.Map
                 if (map.objs[i].type == "util-room")
                     continue;
                 MapAsset asset = map.objs[i];
-                bool success = builder.Build(asset);
+                bool success = builder.PreBuild(asset);
                 if (!success)
                     LILogger.LogError("Failed to build " + asset.name);
                 else if (i % 100 == 0 && i != 0)
                     LILogger.LogInfo("..." + i + " Objects Built");
             }
+        }
 
+        public void PostBuild(PolusShipStatus shipStatus)
+        {
             // Post Build
             LILogger.LogInfo("...Wrapping Up");
-            VentBuilder.ConnectVents();
-            builder.Finish();
-            polus.DeleteTemp();
+            builder.PostBuild();
             polus.SetExile(MapHandler.mapData.exile);
-            polus.minimap.Finish();
             LILogger.LogInfo("Finished!");
         }
     }

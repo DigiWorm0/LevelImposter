@@ -18,26 +18,42 @@ namespace LevelImposter.Harmony.Patches
             return ShipStatus.Instance.name != "PolusShip(Clone)";
         }
     }
-    
+
     [HarmonyPatch(typeof(PolusShipStatus), nameof(PolusShipStatus.OnEnable))]
     public static class MapPatch
     {
-        public static void Postfix(PolusShipStatus __instance)
-        {
-            // Load Asset DB
-            LILogger.LogInfo("Loading Asset Database...");
-            var client = GameObject.Find("NetworkManager").GetComponent<AmongUsClient>();
-            foreach (AssetReference assetRef in client.ShipPrefabs)
-            {
-                if (assetRef.IsDone)
-                    AssetDB.ImportMap(assetRef.Asset.Cast<GameObject>());
-            }
-            LILogger.LogInfo("Asset Database has been Loaded!");
+        private static MapApplicator mapApplicator = new MapApplicator();
 
-            // Apply Map
-            MapApplicator mapApplicator = new MapApplicator();
-            mapApplicator.Apply(__instance);
+        public static bool Prefix(PolusShipStatus __instance)
+        {
+            ShipStatus.Instance = __instance;
+            mapApplicator.PreBuild(__instance);
+            __instance.AssignTaskIndexes();
+            return false;
         }
 
+        public static void Postfix(PolusShipStatus __instance)
+        {
+            mapApplicator.PostBuild(__instance);
+        }
+    }
+
+    [HarmonyPatch(typeof(PolusShipStatus), nameof(PolusShipStatus.OnEnable))]
+    public static class ShipEnableFix
+    {
+        public static bool Prefix(PolusShipStatus __instance)
+        {
+            Camera main = Camera.main;
+            main.backgroundColor = __instance.CameraColor;
+            FollowerCamera component = main.GetComponent<FollowerCamera>();
+            DestroyableSingleton<HudManager>.Instance.ShadowQuad.material.SetInt("_Mask", 7);
+            if (component)
+            {
+                component.shakeAmount = 0f;
+                component.shakePeriod = 0f;
+            }
+
+            return false;
+        }
     }
 }

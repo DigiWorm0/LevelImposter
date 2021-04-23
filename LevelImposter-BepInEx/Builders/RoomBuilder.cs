@@ -19,8 +19,10 @@ namespace LevelImposter.Builders
             this.polus = polus;
         }
 
-        public bool Build(MapAsset asset)
+        public bool PreBuild(MapAsset asset)
         {
+            if (!asset.type.StartsWith("room-"))
+                return true;
             RoomData utilData = AssetDB.room[asset.type];
 
             // Object
@@ -33,12 +35,17 @@ namespace LevelImposter.Builders
             obj.layer = (int)Layer.Ship;
 
             // Colliders
-            AssetBuilder.BuildColliders(asset, obj, utilData.Scale);
+            AssetHelper.BuildColliders(asset, obj, utilData.Scale);
 
             // Add to Polus
             Vector3 bounds = spriteRenderer.sprite.bounds.center;
             polus.Add(obj, asset, utilData.Scale, bounds.x, bounds.y);
 
+            return true;
+        }
+
+        public bool PostBuild()
+        {
             return true;
         }
     }

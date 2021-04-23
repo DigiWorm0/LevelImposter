@@ -40,8 +40,10 @@ namespace LevelImposter.Builders
             //taskMgr.transform.SetParent(polus.gameObject.transform);
         }
 
-        public bool Build(MapAsset asset)
+        public bool PreBuild(MapAsset asset)
         {
+            if (!asset.type.StartsWith("task-"))
+                return true;
             TaskData taskData = AssetDB.tasks[asset.type];
 
             // Object
@@ -237,11 +239,14 @@ namespace LevelImposter.Builders
             // Task
             if (!string.IsNullOrEmpty(taskData.BehaviorName))
             {
+                GameObject taskHolder = new GameObject(asset.id.ToString());
+                taskHolder.transform.SetParent(taskMgr.transform);
+
                 NormalPlayerTask origTask = taskData.Behavior;
                 NormalPlayerTask task;
                 if (asset.type.StartsWith("task-divert"))
                 {
-                    task = taskMgr.AddComponent<DivertPowerTask>();
+                    task = taskHolder.AddComponent<DivertPowerTask>();
 
                     DivertPowerTask taskNode = task.Cast<DivertPowerTask>();
                     DivertPowerTask origNode = origTask.Cast<DivertPowerTask>();
@@ -250,7 +255,7 @@ namespace LevelImposter.Builders
                 }
                 else if (asset.type == "task-node")
                 {
-                    task = taskMgr.AddComponent<WeatherNodeTask>();
+                    task = taskHolder.AddComponent<WeatherNodeTask>();
 
                     WeatherNodeTask taskNode = task.Cast<WeatherNodeTask>();
                     WeatherNodeTask origNode = origTask.Cast<WeatherNodeTask>();
@@ -261,15 +266,15 @@ namespace LevelImposter.Builders
                 }
                 else if (asset.type.StartsWith("task-waterwheel"))
                 {
-                    task = taskMgr.AddComponent<WaterWayTask>();
+                    task = taskHolder.AddComponent<WaterWayTask>();
                 }
                 else if (asset.type == "task-towels1")
                 {
-                    task = taskMgr.AddComponent<TowelTask>();
+                    task = taskHolder.AddComponent<TowelTask>();
                 }
                 else
                 {
-                    task = taskMgr.AddComponent<NormalPlayerTask>();
+                    task = taskHolder.AddComponent<NormalPlayerTask>();
                 }
                 task.StartAt = target;
                 task.taskStep = origTask.taskStep;
@@ -285,19 +290,24 @@ namespace LevelImposter.Builders
                 task.LocationDirty = origTask.LocationDirty;
 
                 if (taskData.TaskType == TaskType.Common)
-                    polus.shipStatus.CommonTasks = AssetBuilder.AddToArr(polus.shipStatus.CommonTasks, task);
+                    polus.shipStatus.CommonTasks = AssetHelper.AddToArr(polus.shipStatus.CommonTasks, task);
                 if (taskData.TaskType == TaskType.Short)
-                    polus.shipStatus.NormalTasks = AssetBuilder.AddToArr(polus.shipStatus.NormalTasks, task);
+                    polus.shipStatus.NormalTasks = AssetHelper.AddToArr(polus.shipStatus.NormalTasks, task);
                 if (taskData.TaskType == TaskType.Long)
-                    polus.shipStatus.LongTasks = AssetBuilder.AddToArr(polus.shipStatus.LongTasks, task);
+                    polus.shipStatus.LongTasks = AssetHelper.AddToArr(polus.shipStatus.LongTasks, task);
             }
 
             // Colliders
-            AssetBuilder.BuildColliders(asset, obj, taskData.Scale);
+            AssetHelper.BuildColliders(asset, obj, taskData.Scale);
 
             // Add to Polus
-            polus.shipStatus.AllConsoles = AssetBuilder.AddToArr(polus.shipStatus.AllConsoles, console);
+            polus.shipStatus.AllConsoles = AssetHelper.AddToArr(polus.shipStatus.AllConsoles, console);
             polus.Add(obj, asset, taskData.Scale);
+            return true;
+        }
+
+        public bool PostBuild()
+        {
             return true;
         }
     }

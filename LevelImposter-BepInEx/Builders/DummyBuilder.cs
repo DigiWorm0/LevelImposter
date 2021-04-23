@@ -16,13 +16,20 @@ namespace LevelImposter.Builders
             this.polus = polus;
         }
 
-        public bool Build(MapAsset asset)
+        public bool PreBuild(MapAsset asset)
         {
+            if (asset.type != "util-player")
+                return true;
             GameObject dummy = new GameObject("Dummy");
             dummy.transform.SetParent(polus.gameObject.transform);
             dummy.transform.position = new Vector2(asset.x, -asset.y - PolusHandler.Y_OFFSET);
 
-            polus.shipStatus.DummyLocations = AssetBuilder.AddToArr(polus.shipStatus.DummyLocations, dummy.transform);
+            polus.shipStatus.DummyLocations = AssetHelper.AddToArr(polus.shipStatus.DummyLocations, dummy.transform);
+            return true;
+        }
+
+        public bool PostBuild()
+        {
             return true;
         }
     }

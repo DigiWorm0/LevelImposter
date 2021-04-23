@@ -2,6 +2,7 @@
 using LevelImposter.DB;
 using LevelImposter.Harmony.Patches;
 using LevelImposter.Map;
+using LevelImposter.MinimapGen;
 using LevelImposter.Models;
 using System;
 using System.Collections.Generic;
@@ -30,11 +31,14 @@ namespace LevelImposter.Builders
             defaultRoom.RoomId = 0;
             defaultRoom.roomArea = defaultCollider;
             defaultObj.transform.SetParent(polus.gameObject.transform);
-            TextHandler.Add((SystemTypes)0, "Default Room");
+            TextHandler.Add(SystemTypes.Hallway, "Default Room");
         }
 
-        public bool Build(MapAsset asset)
+        public bool PreBuild(MapAsset asset)
         {
+            if (asset.type != "util-room")
+                return true;
+
             // Check Collider Count
             if (asset.colliders.Length <= 0)
             {
@@ -62,18 +66,24 @@ namespace LevelImposter.Builders
                 room.roomArea = mainCollider;
 
             // Room DB
-            db.Add(asset.id, (SystemTypes)roomId);
+            if (!db.ContainsKey(asset.id))
+                db.Add(asset.id, (SystemTypes)roomId);
 
             // Text DB
             TextHandler.Add((SystemTypes)roomId, asset.name);
 
             // Polus
-            polus.shipStatus.AllRooms = AssetBuilder.AddToArr(polus.shipStatus.AllRooms, room);
+            polus.shipStatus.AllRooms = AssetHelper.AddToArr(polus.shipStatus.AllRooms, room);
             polus.shipStatus.FastRooms.Add((SystemTypes)roomId, room);
-            polus.minimap.Generate(asset);
+            MinimapGenerator.AddRoom(asset);
             polus.Add(obj, asset);
 
             roomId++;
+            return true;
+        }
+
+        public bool PostBuild()
+        {
             return true;
         }
     }

@@ -14,6 +14,7 @@ namespace LevelImposter.Builders
     class VentBuilder : Builder
     {
         private PolusHandler polus;
+        private bool hasSounds = false;
         private int id;
         private static Dictionary<long, Vent> ventDb;
         private static Dictionary<long, long[]> targetDb;
@@ -26,8 +27,10 @@ namespace LevelImposter.Builders
             targetDb = new Dictionary<long, long[]>();
         }
 
-        public bool Build(MapAsset asset)
+        public bool PreBuild(MapAsset asset)
         {
+            if (!asset.type.StartsWith("util-vent"))
+                return true;
             UtilData utilData = AssetDB.utils[asset.type];
 
             // Object
@@ -103,7 +106,7 @@ namespace LevelImposter.Builders
                 arrowBtn.OnClick.AddListener(action);
 
                 // Transform
-                vent.Buttons = AssetBuilder.AddToArr(vent.Buttons, arrowBtn);
+                vent.Buttons = AssetHelper.AddToArr(vent.Buttons, arrowBtn);
                 arrowObj.transform.SetParent(obj.transform);
                 arrowObj.transform.localScale = new Vector3(0.4f, 0.4f, 1.0f);
                 arrowObj.active = false;
@@ -117,18 +120,26 @@ namespace LevelImposter.Builders
             box.isTrigger = true;
 
             // Colliders
-            AssetBuilder.BuildColliders(asset, obj);
+            AssetHelper.BuildColliders(asset, obj);
 
             // Polus
             ventDb.Add(asset.id, vent);
             targetDb.Add(asset.id, asset.targetIds);
-            polus.shipStatus.AllVents = AssetBuilder.AddToArr(polus.shipStatus.AllVents, vent);
+            polus.shipStatus.AllVents = AssetHelper.AddToArr(polus.shipStatus.AllVents, vent);
             polus.Add(obj, asset);
 
+            // Sounds
+            if (!hasSounds)
+            {
+                polus.shipStatus.VentEnterSound = AssetDB.ss["ss-skeld"].ShipStatus.VentEnterSound;
+                polus.shipStatus.VentMoveSounds = AssetDB.ss["ss-skeld"].ShipStatus.VentMoveSounds;
+                hasSounds = true;
+            }
+            
             return true;
         }
 
-        public static void ConnectVents()
+        public bool PostBuild()
         {
             foreach (var targetData in targetDb)
             {
@@ -144,6 +155,8 @@ namespace LevelImposter.Builders
                 if (ventDb.ContainsKey(targets[2]))
                     vent.Center = ventDb[targets[2]];
             }
+
+            return true;
         }
     }
 }

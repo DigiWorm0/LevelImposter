@@ -16,19 +16,27 @@ namespace LevelImposter.Builders
             this.polus = polus;
         }
 
-        public bool Build(MapAsset asset)
+        public bool PreBuild(MapAsset asset)
         {
+            if (asset.type != "custom" && asset.spriteType != "custom")
+                return true;
+
             GameObject obj = new GameObject("Custom Asset");
 
             SpriteRenderer render = obj.AddComponent<SpriteRenderer>();
-            render.sprite = AssetBuilder.SpriteFromBase64(asset.type);
+            render.sprite = AssetHelper.SpriteFromBase64(asset.type);
             obj.layer = (int)Layer.Ship;
 
             // Colliders
-            AssetBuilder.BuildColliders(asset, obj);
+            AssetHelper.BuildColliders(asset, obj);
 
             // Polus
             polus.Add(obj, asset);
+            return true;
+        }
+
+        public bool PostBuild()
+        {
             return true;
         }
     }

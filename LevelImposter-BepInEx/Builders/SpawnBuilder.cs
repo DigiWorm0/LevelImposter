@@ -20,8 +20,10 @@ namespace LevelImposter.Builders
             this.polus = polus;
         }
 
-        public bool Build(MapAsset asset)
+        public bool PreBuild(MapAsset asset)
         {
+            if (!asset.type.StartsWith("util-spawn"))
+                return true;
             Vector2 pos = new Vector2(asset.x, -asset.y - 25.0f);
             if (asset.type == "util-spawn1")
             {
@@ -38,6 +40,11 @@ namespace LevelImposter.Builders
                 return false;
             }
 
+            return true;
+        }
+
+        public bool PostBuild()
+        {
             return true;
         }
     }

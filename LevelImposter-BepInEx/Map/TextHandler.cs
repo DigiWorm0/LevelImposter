@@ -14,7 +14,8 @@ namespace LevelImposter.Map
 
         public static void Add(SystemTypes system, string name)
         {
-            renames.Add(system, name);
+            if (!renames.ContainsKey(system))
+                renames.Add(system, name);
         }
 
         public static bool Contains(SystemTypes system)

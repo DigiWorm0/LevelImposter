@@ -12,17 +12,17 @@ namespace LevelImposter.Map
     {
         public PolusShipStatus shipStatus;
         public GameObject gameObject;
-        public MinimapGenerator minimap;
-
-        public const int Y_OFFSET = 25; // Must be 0 < Y_OFFSET < 50
+        public const int Y_OFFSET = 25; // Multiplayer Bug, Must be 0 < Y_OFFSET < 50
 
         public PolusHandler(PolusShipStatus shipStatus)
         {
             this.shipStatus = shipStatus;
             this.gameObject = shipStatus.gameObject;
-            minimap = new MinimapGenerator(shipStatus.MapPrefab);
+            this.ClearShip();
+            this.AddSystems();
         }
 
+        // Add Objs
         public void Add(GameObject obj, MapAsset asset, float scale = 1.0f, float xOffset = 0, float yOffset = 0)
         {
             obj.transform.position = new Vector3(asset.x - xOffset, -asset.y - Y_OFFSET - yOffset, asset.z);
@@ -35,8 +35,18 @@ namespace LevelImposter.Map
             obj.transform.SetParent(gameObject.transform);
         }
 
-        public void ClearTasks()
+        // Clear Ship
+        private void ClearShip()
         {
+            // Delete Children
+            Transform polusTransform = gameObject.transform;
+            for (int i = polusTransform.childCount - 1; i >= 0; i--)
+            {
+                Transform child = polusTransform.GetChild(i);
+                GameObject.Destroy(child.gameObject);
+            }
+
+            // Ship Status
             shipStatus.AllCameras = new UnhollowerBaseLib.Il2CppReferenceArray<SurvCamera>(0);
             shipStatus.AllDoors = new UnhollowerBaseLib.Il2CppReferenceArray<PlainDoor>(0);
             shipStatus.AllConsoles = new UnhollowerBaseLib.Il2CppReferenceArray<Console>(0);
@@ -49,36 +59,32 @@ namespace LevelImposter.Map
             shipStatus.LongTasks = new UnhollowerBaseLib.Il2CppReferenceArray<NormalPlayerTask>(0);
             shipStatus.NormalTasks = new UnhollowerBaseLib.Il2CppReferenceArray<NormalPlayerTask>(0);
             shipStatus.FastRooms = new Il2CppSystem.Collections.Generic.Dictionary<SystemTypes, PlainShipRoom>();
-            //shipStatus.Systems = new Il2CppSystem.Collections.Generic.Dictionary<SystemTypes, ISystemType>();
             shipStatus.SystemNames = new UnhollowerBaseLib.Il2CppStructArray<StringNames>(0);
+            shipStatus.Systems = new Il2CppSystem.Collections.Generic.Dictionary<SystemTypes, ISystemType>();
+
+            // Spawn
             shipStatus.InitialSpawnCenter = new Vector2(0, -Y_OFFSET);
             shipStatus.MeetingSpawnCenter = new Vector2(0, -Y_OFFSET);
             shipStatus.MeetingSpawnCenter2 = new Vector2(0, -Y_OFFSET);
         }
 
-        public void MoveToTemp()
+        // Systems
+        private void AddSystems()
         {
-            Transform polusTransform = gameObject.transform;
-            GameObject temp = new GameObject("temp");
-            for (int i = polusTransform.childCount - 1; i >= 0; i--)
-            {
-                Transform child = polusTransform.GetChild(i);
-                child.SetParent(temp.transform);
-            }
-            temp.transform.SetParent(polusTransform);
-        }
+            // Sabotages
+            this.shipStatus.Systems.Add(SystemTypes.Electrical, new SwitchSystem().Cast<ISystemType>());
+            this.shipStatus.Systems.Add(SystemTypes.Comms, new HudOverrideSystemType().Cast<ISystemType>());
+            this.shipStatus.Systems.Add(SystemTypes.Laboratory, new ReactorSystemType(60f, SystemTypes.Laboratory).Cast<ISystemType>());
+            this.shipStatus.Systems.Add(SystemTypes.Doors, new DoorsSystemType().Cast<ISystemType>());
+            this.shipStatus.Systems.Add(SystemTypes.Sabotage, new SabotageSystemType(new IActivatable[] {
+                this.shipStatus.Systems[SystemTypes.Electrical].Cast<IActivatable>(),
+                this.shipStatus.Systems[SystemTypes.Comms].Cast<IActivatable>(),
+                this.shipStatus.Systems[SystemTypes.Laboratory].Cast<IActivatable>()
+            }).Cast<ISystemType>());
 
-        public void DeleteTemp()
-        {
-            GameObject.Destroy(
-                GameObject.Find("temp")
-            );
-        }
-
-        public void AddMissingProps(ShipStatus shipStatus)
-        {
-            this.shipStatus.VentEnterSound = shipStatus.VentEnterSound;
-            this.shipStatus.VentMoveSounds = shipStatus.VentMoveSounds;
+            // Other
+            this.shipStatus.Systems.Add(SystemTypes.Security, new SecurityCameraSystemType().Cast<ISystemType>());
+            this.shipStatus.Systems.Add(SystemTypes.MedBay, new MedScanSystem().Cast<ISystemType>());
         }
 
         public void SetExile(MapType type)

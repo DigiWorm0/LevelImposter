@@ -10,5 +10,6 @@ namespace LevelImposter.MinimapGen
     interface Generator
     {
         public void Generate(MapAsset asset);
+        public void Finish();
     }
 }

@@ -22,7 +22,7 @@ namespace LevelImposter.Map
             if (mapLoaded)
                 return true;
 
-            LILogger.LogInfo("Deserializing Map Data...");
+            LILogger.LogInfo("...Deserializing Map Data");
 
             // Get Directory
             string dllDir = System.Reflection.Assembly.GetAssembly(typeof(LevelImposter.MainHarmony)).Location;
@@ -63,7 +63,6 @@ namespace LevelImposter.Map
 
             // Return
             mapLoaded = true;
-            LILogger.LogInfo("Map Data has been Loaded!");
             return true;
         }
 
