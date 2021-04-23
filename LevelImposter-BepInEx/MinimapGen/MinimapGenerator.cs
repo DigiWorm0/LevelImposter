@@ -6,50 +6,33 @@ using UnityEngine;
 
 namespace LevelImposter.MinimapGen
 {
-    class MinimapGenerator : Generator
+    class MinimapGenerator
     {
-        public static bool hasGenerated = false;
-        public const float MAP_SCALE = 1.0f / 5.0f;
-        private float maxX = 0;
-        private float minX = 0;
-        private float maxY = 0;
-        private float minY = 0;
-
         private Minimap map;
-        private LabelGenerator  labelGen;
-        private BGGenerator     bgGen;
-        private AdminGenerator  adminGen;
-        private SabGenerator    sabGen;
+        public Generator[] generators;
 
-        public MinimapGenerator(MapBehaviour mapBehaviour)
+        public const float MAP_SCALE = 0.2f;
+        public const float OFFSET_X = 14.5f;
+        public const float OFFSET_Y = 21.4f;
+
+        public static List<MapAsset> shipRooms;
+        private static float maxX = 0;
+        private static float minX = 0;
+        private static float maxY = 0;
+        private static float minY = 0;
+
+        public static void Reset()
         {
-            if (hasGenerated)
-                return;
-
-            mapBehaviour.gameObject.transform.FindChild("HereIndicatorParent").position = new Vector3(0, 5.0f, -0.1f);
-
-            map = new Minimap(mapBehaviour);
-            labelGen    = new LabelGenerator(map);
-            bgGen       = new BGGenerator(map);
-            adminGen    = new AdminGenerator(map);
-            sabGen      = new SabGenerator(map);
+            shipRooms = new List<MapAsset>();
+            maxX = 0;
+            minX = 0;
+            maxY = 0;
+            minY = 0;
         }
 
-        public static void ClearChildren(Transform obj)
+        public static void AddRoom(MapAsset asset)
         {
-            for (int i = 0; i < obj.childCount; i++)
-                GameObject.Destroy(obj.GetChild(i).gameObject);
-        }
-
-        public void Generate(MapAsset asset)
-        {
-            if (hasGenerated)
-                return;
-
-            labelGen.Generate(asset);
-            bgGen   .Generate(asset);
-            adminGen.Generate(asset);
-            sabGen  .Generate(asset);
+            shipRooms.Add(asset);
 
             // Scaling
             if (asset.x * MAP_SCALE > maxX)
@@ -62,23 +45,50 @@ namespace LevelImposter.MinimapGen
                 minY = asset.y * MAP_SCALE;
         }
 
+        public void PreGen(MapBehaviour mapBehaviour)
+        {
+            // Player Position
+            mapBehaviour.gameObject.transform.FindChild("HereIndicatorParent").position = new Vector3(0, 5.0f, -0.1f);
+
+            // Map
+            map = new Minimap(mapBehaviour);
+
+            // Generators
+            generators = new Generator[]
+            {
+                new BGGenerator(map),
+                new LabelGenerator(map),
+                new AdminGenerator(map),
+                new SabGenerator(map)
+            };
+
+            // Generate
+            foreach (Generator gen in generators)
+            {
+                foreach (MapAsset asset in shipRooms)
+                {
+                    gen.Generate(asset);
+                }
+            }
+        }
+
         public void Finish()
         {
-            if (hasGenerated)
-                return;
-
             // Scaling
             float deltaX = (minX + maxX) / 2;
             float deltaY = (minY + maxY) / -2;
+
             for (int i = 0; i < map.prefab.transform.childCount; i++)
             {
                 Transform child = map.prefab.transform.GetChild(i);
                 if (child.name != "CloseButton")
-                    child.position -= new Vector3(deltaX, deltaY, 0);
+                    child.position -= new Vector3(deltaX + OFFSET_X, deltaY + OFFSET_Y, 0);
             }
 
-            bgGen.Finish();
-            hasGenerated = true;
+            foreach (var generator in generators)
+            {
+                generator.Finish();
+            }
         }
     }
 }

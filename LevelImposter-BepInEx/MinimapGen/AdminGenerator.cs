@@ -17,7 +17,7 @@ namespace LevelImposter.MinimapGen
             countObj = map.prefab.transform.FindChild("CountOverlay").gameObject;
             count = countObj.GetComponent<MapCountOverlay>();
             count.CountAreas = new UnhollowerBaseLib.Il2CppReferenceArray<CounterArea>(0);
-            MinimapGenerator.ClearChildren(countObj.transform);
+            AssetHelper.ClearChildren(countObj.transform);
         }
 
         public void Generate(MapAsset asset)
@@ -40,5 +40,7 @@ namespace LevelImposter.MinimapGen
             counterArea.pool = countObj.GetComponent<ObjectPoolBehavior>();
             count.CountAreas = AssetHelper.AddToArr(count.CountAreas, counterArea);
         }
+
+        public void Finish() { }
     }
 }

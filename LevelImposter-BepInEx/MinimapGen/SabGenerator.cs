@@ -10,20 +10,23 @@ namespace LevelImposter.MinimapGen
 {
     class SabGenerator : Generator
     {
-        private static GameObject commsBackup;
-        private static GameObject reactorBackup;
-        private static GameObject doorsBackup;
-        private static GameObject lightsBackup;
+        private GameObject commsBackup;
+        private GameObject reactorBackup;
+        private GameObject doorsBackup;
+        private GameObject lightsBackup;
 
-        private static GameObject overlayObj;
-        private static InfectedOverlay overlay;
-        private static Dictionary<SystemTypes, MapRoom> sabDb;
+        private GameObject overlayObj;
+        private InfectedOverlay overlay;
+        private Dictionary<SystemTypes, MapRoom> sabDb;
+        private List<long> addedIds;
 
-        private static List<IActivatable> sabList;
+        public static SabGenerator Instance;
 
         public SabGenerator(Minimap map)
         {
+            Instance = this;
             sabDb = new Dictionary<SystemTypes, MapRoom>();
+            addedIds = new List<long>();
             overlayObj = map.prefab.transform.FindChild("InfectedOverlay").gameObject;
             overlay = overlayObj.GetComponent<InfectedOverlay>();
             overlay.rooms = new UnhollowerBaseLib.Il2CppReferenceArray<MapRoom>(0);
@@ -34,7 +37,7 @@ namespace LevelImposter.MinimapGen
             doorsBackup = BackupRoom("Office", "Doors");
             lightsBackup = BackupRoom("Electrical", "lightsOut");
 
-            MinimapGenerator.ClearChildren(overlayObj.transform);
+            AssetHelper.ClearChildren(overlayObj.transform);
         }
 
         private GameObject BackupRoom(string parent, string child)
@@ -63,7 +66,7 @@ namespace LevelImposter.MinimapGen
             sabDb.Add(sabMapRoom.room, sabMapRoom);
         }
 
-        private static MapRoom GetRoom(SystemTypes sys)
+        private MapRoom GetRoom(SystemTypes sys)
         {
             if (sabDb.ContainsKey(sys))
                 return sabDb[sys];
@@ -84,14 +87,15 @@ namespace LevelImposter.MinimapGen
 
         public static void AddSabotage(MapAsset asset)
         {
-            if (MinimapGenerator.hasGenerated)
-                return;
             if (!SabBuilder.SAB_SYSTEMS.ContainsKey(asset.type))
                 return;
+            if (Instance.addedIds.Contains(asset.id))
+                return;
+            Instance.addedIds.Add(asset.id);
 
             // System
             SystemTypes sys = SabBuilder.SAB_SYSTEMS[asset.type];
-            MapRoom mapRoom = GetRoom(sys);
+            MapRoom mapRoom = Instance.GetRoom(sys);
 
             // GameObject
             GameObject button = new GameObject(asset.name);
@@ -100,12 +104,12 @@ namespace LevelImposter.MinimapGen
 
             // Sprite Renderer
             SpriteRenderer spriteRenderer = button.AddComponent<SpriteRenderer>();
-            spriteRenderer.material = commsBackup.GetComponent<SpriteRenderer>().material;
+            spriteRenderer.material = Instance.commsBackup.GetComponent<SpriteRenderer>().material;
             button.layer = (int)Layer.UI;
             mapRoom.special = spriteRenderer;
 
             // Collider
-            CircleCollider2D colliderClone = commsBackup.GetComponent<CircleCollider2D>();
+            CircleCollider2D colliderClone = Instance.commsBackup.GetComponent<CircleCollider2D>();
             CircleCollider2D collider = button.AddComponent<CircleCollider2D>();
             collider.radius = colliderClone.radius;
             collider.offset = colliderClone.offset;
@@ -117,20 +121,20 @@ namespace LevelImposter.MinimapGen
             switch (asset.type)
             {
                 case "sab-electric":
-                    spriteRenderer.sprite = lightsBackup.GetComponent<SpriteRenderer>().sprite;
-                    behaviour = lightsBackup.GetComponent<ButtonBehavior>();
+                    spriteRenderer.sprite = Instance.lightsBackup.GetComponent<SpriteRenderer>().sprite;
+                    behaviour = Instance.lightsBackup.GetComponent<ButtonBehavior>();
                     break;
                 case "sab-reactorleft":
-                    spriteRenderer.sprite = reactorBackup.GetComponent<SpriteRenderer>().sprite;
-                    behaviour = reactorBackup.GetComponent<ButtonBehavior>();
+                    spriteRenderer.sprite = Instance.reactorBackup.GetComponent<SpriteRenderer>().sprite;
+                    behaviour = Instance.reactorBackup.GetComponent<ButtonBehavior>();
                     break;
                 case "sab-comms":
-                    spriteRenderer.sprite = commsBackup.GetComponent<SpriteRenderer>().sprite;
-                    behaviour = commsBackup.GetComponent<ButtonBehavior>();
+                    spriteRenderer.sprite = Instance.commsBackup.GetComponent<SpriteRenderer>().sprite;
+                    behaviour = Instance.commsBackup.GetComponent<ButtonBehavior>();
                     break;
                 case "sab-doors":
-                    spriteRenderer.sprite = doorsBackup.gameObject.GetComponent<SpriteRenderer>().sprite;
-                    behaviour = doorsBackup.GetComponent<ButtonBehavior>();
+                    spriteRenderer.sprite = Instance.doorsBackup.gameObject.GetComponent<SpriteRenderer>().sprite;
+                    behaviour = Instance.doorsBackup.GetComponent<ButtonBehavior>();
                     break;
                 default:
                     return;
@@ -142,8 +146,10 @@ namespace LevelImposter.MinimapGen
             btnBehaviour.OnClick.m_PersistentCalls.m_Calls[0].m_Target = mapRoom;
             btnBehaviour.colliders = new UnhollowerBaseLib.Il2CppReferenceArray<Collider2D>(1);
             btnBehaviour.colliders[0] = collider;
-            
-            overlay.allButtons = AssetHelper.AddToArr(overlay.allButtons, btnBehaviour);
+
+            Instance.overlay.allButtons = AssetHelper.AddToArr(Instance.overlay.allButtons, btnBehaviour);
         }
+
+        public void Finish() { }
     }
 }

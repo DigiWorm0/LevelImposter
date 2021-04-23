@@ -62,5 +62,11 @@ namespace LevelImposter.Builders
             }
 
          }
+
+        public static void ClearChildren(Transform obj)
+        {
+            for (int i = 0; i < obj.childCount; i++)
+                GameObject.Destroy(obj.GetChild(i).gameObject);
+        }
     }
 }

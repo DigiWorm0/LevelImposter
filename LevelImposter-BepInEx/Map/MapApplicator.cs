@@ -1,5 +1,6 @@
 ﻿using LevelImposter.Builders;
 using LevelImposter.DB;
+using LevelImposter.MinimapGen;
 using LevelImposter.Models;
 using System;
 using System.Collections.Generic;
@@ -26,6 +27,7 @@ namespace LevelImposter.Map
             map     = MapHandler.GetMap();
             polus   = new PolusHandler(shipStatus);
             builder = new AssetBuilder(polus);
+            MinimapGenerator.Reset();
 
             // Rooms
             LILogger.LogInfo("...Building Rooms");
@@ -59,9 +61,7 @@ namespace LevelImposter.Map
             // Post Build
             LILogger.LogInfo("...Wrapping Up");
             builder.PostBuild();
-            
             polus.SetExile(MapHandler.mapData.exile);
-            polus.minimap.Finish();
             LILogger.LogInfo("Finished!");
         }
     }

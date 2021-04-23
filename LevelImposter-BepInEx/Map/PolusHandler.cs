@@ -12,9 +12,7 @@ namespace LevelImposter.Map
     {
         public PolusShipStatus shipStatus;
         public GameObject gameObject;
-        public MinimapGenerator minimap;
-
-        public const int Y_OFFSET = 25; // Must be 0 < Y_OFFSET < 50
+        public const int Y_OFFSET = 25; // Multiplayer Bug, Must be 0 < Y_OFFSET < 50
 
         public PolusHandler(PolusShipStatus shipStatus)
         {
@@ -22,7 +20,6 @@ namespace LevelImposter.Map
             this.gameObject = shipStatus.gameObject;
             this.ClearShip();
             this.AddSystems();
-            minimap = new MinimapGenerator(shipStatus.MapPrefab);
         }
 
         // Add Objs

@@ -2,6 +2,7 @@
 using LevelImposter.DB;
 using LevelImposter.Harmony.Patches;
 using LevelImposter.Map;
+using LevelImposter.MinimapGen;
 using LevelImposter.Models;
 using System;
 using System.Collections.Generic;
@@ -65,7 +66,8 @@ namespace LevelImposter.Builders
                 room.roomArea = mainCollider;
 
             // Room DB
-            db.Add(asset.id, (SystemTypes)roomId);
+            if (!db.ContainsKey(asset.id))
+                db.Add(asset.id, (SystemTypes)roomId);
 
             // Text DB
             TextHandler.Add((SystemTypes)roomId, asset.name);
@@ -73,7 +75,7 @@ namespace LevelImposter.Builders
             // Polus
             polus.shipStatus.AllRooms = AssetHelper.AddToArr(polus.shipStatus.AllRooms, room);
             polus.shipStatus.FastRooms.Add((SystemTypes)roomId, room);
-            polus.minimap.Generate(asset);
+            MinimapGenerator.AddRoom(asset);
             polus.Add(obj, asset);
 
             roomId++;
