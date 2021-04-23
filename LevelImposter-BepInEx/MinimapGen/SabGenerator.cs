@@ -19,12 +19,10 @@ namespace LevelImposter.MinimapGen
         private InfectedOverlay overlay;
         private Dictionary<SystemTypes, MapRoom> sabDb;
         private List<long> addedIds;
-
-        public static SabGenerator Instance;
+        private static List<MapAsset> sabObjs = new List<MapAsset>();
 
         public SabGenerator(Minimap map)
         {
-            Instance = this;
             sabDb = new Dictionary<SystemTypes, MapRoom>();
             addedIds = new List<long>();
             overlayObj = map.prefab.transform.FindChild("InfectedOverlay").gameObject;
@@ -50,12 +48,8 @@ namespace LevelImposter.MinimapGen
             // Object
             GameObject sabRoomObj = new GameObject(asset.name);
             sabRoomObj.transform.localScale = new Vector3(0.8f, 0.8f, 1.0f);
-            sabRoomObj.transform.position = new Vector3(
-                asset.x * MinimapGenerator.MAP_SCALE,
-                -asset.y * MinimapGenerator.MAP_SCALE - 0.25f,
-                -25.0f
-            );
             sabRoomObj.transform.SetParent(overlayObj.transform);
+            sabRoomObj.transform.localPosition = new Vector3(0, 0, -25.0f);
 
             // MapRoom
             MapRoom sabMapRoom = sabRoomObj.AddComponent<MapRoom>();
@@ -73,7 +67,9 @@ namespace LevelImposter.MinimapGen
 
             // GameObject
             GameObject sabRoomObj = new GameObject(sys.ToString());
+            sabRoomObj.transform.localScale = new Vector3(0.8f, 0.8f, 1.0f);
             sabRoomObj.transform.SetParent(overlayObj.transform);
+            sabRoomObj.transform.localPosition = new Vector3(0, 0, -25.0f);
 
             // Map Room
             MapRoom sabMapRoom = sabRoomObj.AddComponent<MapRoom>();
@@ -87,29 +83,42 @@ namespace LevelImposter.MinimapGen
 
         public static void AddSabotage(MapAsset asset)
         {
+            sabObjs.Add(asset);
+        }
+
+        public void Finish()
+        {
+            foreach (MapAsset sabotage in sabObjs)
+            {
+                DrawSabotage(sabotage);
+            }
+            sabObjs.Clear();
+        }
+        private void DrawSabotage(MapAsset asset)
+        {
             if (!SabBuilder.SAB_SYSTEMS.ContainsKey(asset.type))
                 return;
-            if (Instance.addedIds.Contains(asset.id))
+            if (addedIds.Contains(asset.id))
                 return;
-            Instance.addedIds.Add(asset.id);
+            addedIds.Add(asset.id);
 
             // System
             SystemTypes sys = SabBuilder.SAB_SYSTEMS[asset.type];
-            MapRoom mapRoom = Instance.GetRoom(sys);
+            MapRoom mapRoom = GetRoom(sys);
 
             // GameObject
             GameObject button = new GameObject(asset.name);
             button.transform.SetParent(mapRoom.gameObject.transform);
-            button.transform.position = new Vector3(asset.x * MinimapGenerator.MAP_SCALE, -asset.y * MinimapGenerator.MAP_SCALE, -25.0f);
+            button.transform.localPosition = new Vector3(asset.x * MinimapGenerator.MAP_SCALE * 1.25f, -asset.y * MinimapGenerator.MAP_SCALE * 1.25f, -25.0f);
 
             // Sprite Renderer
             SpriteRenderer spriteRenderer = button.AddComponent<SpriteRenderer>();
-            spriteRenderer.material = Instance.commsBackup.GetComponent<SpriteRenderer>().material;
+            spriteRenderer.material = commsBackup.GetComponent<SpriteRenderer>().material;
             button.layer = (int)Layer.UI;
             mapRoom.special = spriteRenderer;
 
             // Collider
-            CircleCollider2D colliderClone = Instance.commsBackup.GetComponent<CircleCollider2D>();
+            CircleCollider2D colliderClone = commsBackup.GetComponent<CircleCollider2D>();
             CircleCollider2D collider = button.AddComponent<CircleCollider2D>();
             collider.radius = colliderClone.radius;
             collider.offset = colliderClone.offset;
@@ -121,20 +130,20 @@ namespace LevelImposter.MinimapGen
             switch (asset.type)
             {
                 case "sab-electric":
-                    spriteRenderer.sprite = Instance.lightsBackup.GetComponent<SpriteRenderer>().sprite;
-                    behaviour = Instance.lightsBackup.GetComponent<ButtonBehavior>();
+                    spriteRenderer.sprite = lightsBackup.GetComponent<SpriteRenderer>().sprite;
+                    behaviour = lightsBackup.GetComponent<ButtonBehavior>();
                     break;
                 case "sab-reactorleft":
-                    spriteRenderer.sprite = Instance.reactorBackup.GetComponent<SpriteRenderer>().sprite;
-                    behaviour = Instance.reactorBackup.GetComponent<ButtonBehavior>();
+                    spriteRenderer.sprite = reactorBackup.GetComponent<SpriteRenderer>().sprite;
+                    behaviour = reactorBackup.GetComponent<ButtonBehavior>();
                     break;
                 case "sab-comms":
-                    spriteRenderer.sprite = Instance.commsBackup.GetComponent<SpriteRenderer>().sprite;
-                    behaviour = Instance.commsBackup.GetComponent<ButtonBehavior>();
+                    spriteRenderer.sprite = commsBackup.GetComponent<SpriteRenderer>().sprite;
+                    behaviour = commsBackup.GetComponent<ButtonBehavior>();
                     break;
                 case "sab-doors":
-                    spriteRenderer.sprite = Instance.doorsBackup.gameObject.GetComponent<SpriteRenderer>().sprite;
-                    behaviour = Instance.doorsBackup.GetComponent<ButtonBehavior>();
+                    spriteRenderer.sprite = doorsBackup.gameObject.GetComponent<SpriteRenderer>().sprite;
+                    behaviour = doorsBackup.GetComponent<ButtonBehavior>();
                     break;
                 default:
                     return;
@@ -147,9 +156,7 @@ namespace LevelImposter.MinimapGen
             btnBehaviour.colliders = new UnhollowerBaseLib.Il2CppReferenceArray<Collider2D>(1);
             btnBehaviour.colliders[0] = collider;
 
-            Instance.overlay.allButtons = AssetHelper.AddToArr(Instance.overlay.allButtons, btnBehaviour);
+            overlay.allButtons = AssetHelper.AddToArr(overlay.allButtons, btnBehaviour);
         }
-
-        public void Finish() { }
     }
 }

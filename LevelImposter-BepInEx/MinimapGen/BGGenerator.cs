@@ -24,7 +24,7 @@ namespace LevelImposter.MinimapGen
 
             // Get Object
             bgObj = map.prefab.transform.FindChild("Background").gameObject;
-            bgObj.transform.position = new Vector3(0, 0, 0);
+            bgObj.transform.localPosition = new Vector3(0, 0, 0);
             bgObj.GetComponent<AlphaPulse>().rend = null;
 
             // Replace Sprite with Mesh
@@ -66,7 +66,7 @@ namespace LevelImposter.MinimapGen
                 // LineRenderer
                 var lineObj = new GameObject(asset.name + "Line");
                 lineObj.transform.SetParent(bgObj.transform);
-                lineObj.transform.position += new Vector3(0, 0, -1.0f);
+                lineObj.transform.localPosition = new Vector3(0, 0, -1.0f);
                 lineObj.layer = (int)Layer.UI;
 
                 LineRenderer lineRenderer = lineObj.AddComponent<LineRenderer>();

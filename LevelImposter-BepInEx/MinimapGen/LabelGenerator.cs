@@ -29,7 +29,7 @@ namespace LevelImposter.MinimapGen
             // Label
             GameObject label = GameObject.Instantiate(nameBackup);
             label.transform.SetParent(namesParent.transform);
-            label.transform.position = new Vector3(asset.x * MinimapGenerator.MAP_SCALE, -asset.y * MinimapGenerator.MAP_SCALE, -25.0f);
+            label.transform.localPosition = new Vector3(asset.x * MinimapGenerator.MAP_SCALE, -asset.y * MinimapGenerator.MAP_SCALE, -25.0f);
             label.name = asset.name;
 
             // TextMeshPro

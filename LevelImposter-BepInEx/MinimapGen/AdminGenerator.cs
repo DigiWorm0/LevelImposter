@@ -24,12 +24,13 @@ namespace LevelImposter.MinimapGen
         {
             // Object
             GameObject counterObj = new GameObject(asset.name);
-            counterObj.transform.position = new Vector3(
-                asset.x * MinimapGenerator.MAP_SCALE,
-                -asset.y * MinimapGenerator.MAP_SCALE - 0.25f,
+            
+            counterObj.transform.SetParent(countObj.transform);
+            counterObj.transform.localPosition = new Vector3(
+                asset.x * MinimapGenerator.MAP_SCALE * 1.333f,
+                (-asset.y * MinimapGenerator.MAP_SCALE) * 1.333f - 0.25f,
                 -25.0f
             );
-            counterObj.transform.SetParent(countObj.transform);
 
             // Counter Area
             CounterArea counterArea = counterObj.AddComponent<CounterArea>();

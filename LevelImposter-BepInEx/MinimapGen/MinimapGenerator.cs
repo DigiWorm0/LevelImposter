@@ -48,7 +48,7 @@ namespace LevelImposter.MinimapGen
         public void PreGen(MapBehaviour mapBehaviour)
         {
             // Player Position
-            mapBehaviour.gameObject.transform.FindChild("HereIndicatorParent").position = new Vector3(0, 5.0f, -0.1f);
+            mapBehaviour.gameObject.transform.FindChild("HereIndicatorParent").localPosition = new Vector3(0, 5.0f, -0.1f);
 
             // Map
             map = new Minimap(mapBehaviour);
@@ -82,7 +82,7 @@ namespace LevelImposter.MinimapGen
             {
                 Transform child = map.prefab.transform.GetChild(i);
                 if (child.name != "CloseButton")
-                    child.position -= new Vector3(deltaX + OFFSET_X, deltaY + OFFSET_Y, 0);
+                    child.localPosition -= new Vector3(deltaX, deltaY, 0);
             }
 
             foreach (var generator in generators)
