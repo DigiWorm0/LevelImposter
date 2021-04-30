@@ -30,7 +30,6 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(LevelImposter));
             this.applyButton = new System.Windows.Forms.Button();
-            this.progressBar = new System.Windows.Forms.ProgressBar();
             this.revertButton = new System.Windows.Forms.Button();
             this.logo = new System.Windows.Forms.PictureBox();
             this.logoBeta = new System.Windows.Forms.Label();
@@ -51,23 +50,12 @@
             this.applyButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.applyButton.Font = new System.Drawing.Font("Bahnschrift SemiBold", 11F, System.Drawing.FontStyle.Bold);
             this.applyButton.ForeColor = System.Drawing.Color.White;
-            this.applyButton.Location = new System.Drawing.Point(12, 130);
+            this.applyButton.Location = new System.Drawing.Point(12, 104);
             this.applyButton.Name = "applyButton";
             this.applyButton.Size = new System.Drawing.Size(283, 37);
             this.applyButton.TabIndex = 4;
             this.applyButton.Text = "Apply";
             this.applyButton.UseVisualStyleBackColor = false;
-            // 
-            // progressBar
-            // 
-            this.progressBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.progressBar.Cursor = System.Windows.Forms.Cursors.Default;
-            this.progressBar.Location = new System.Drawing.Point(12, 104);
-            this.progressBar.MarqueeAnimationSpeed = 40;
-            this.progressBar.Name = "progressBar";
-            this.progressBar.Size = new System.Drawing.Size(397, 20);
-            this.progressBar.TabIndex = 9;
             // 
             // revertButton
             // 
@@ -77,7 +65,7 @@
             this.revertButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.revertButton.Font = new System.Drawing.Font("Bahnschrift SemiBold", 11F, System.Drawing.FontStyle.Bold);
             this.revertButton.ForeColor = System.Drawing.Color.White;
-            this.revertButton.Location = new System.Drawing.Point(311, 130);
+            this.revertButton.Location = new System.Drawing.Point(311, 104);
             this.revertButton.Name = "revertButton";
             this.revertButton.Size = new System.Drawing.Size(98, 37);
             this.revertButton.TabIndex = 6;
@@ -142,19 +130,18 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;
-            this.ClientSize = new System.Drawing.Size(421, 177);
+            this.ClientSize = new System.Drawing.Size(421, 151);
             this.Controls.Add(this.mapLabel);
             this.Controls.Add(this.browseButton);
             this.Controls.Add(this.logoBeta);
             this.Controls.Add(this.logo);
-            this.Controls.Add(this.progressBar);
             this.Controls.Add(this.revertButton);
             this.Controls.Add(this.applyButton);
             this.Font = new System.Drawing.Font("Bahnschrift SemiLight", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.ForeColor = System.Drawing.SystemColors.ControlLightLight;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
-            this.MinimumSize = new System.Drawing.Size(437, 216);
+            this.MinimumSize = new System.Drawing.Size(437, 190);
             this.Name = "LevelImposter";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Level Imposter";
@@ -167,7 +154,6 @@
         #endregion
         public System.Windows.Forms.Button applyButton;
         public System.Windows.Forms.Button revertButton;
-        public System.Windows.Forms.ProgressBar progressBar;
         public System.Windows.Forms.PictureBox logo;
         public System.Windows.Forms.Label logoBeta;
         public System.Windows.Forms.Button browseButton;

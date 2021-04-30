@@ -61,6 +61,9 @@ namespace LevelImposter.Map
             }
             checksum = checkNum.ToString("X4");
 
+            // Map Name
+            GameOptionsData.MapNames[2] = mapData.name;
+
             // Return
             mapLoaded = true;
             return true;
