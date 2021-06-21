@@ -11,11 +11,11 @@ namespace LevelImposter.Harmony.Patches
     [HarmonyPatch(typeof(TranslationController), nameof(TranslationController.GetString), typeof(SystemTypes))]
     public static class TextPatch
     {
-        public static bool Prefix(SystemTypes PAECGDHCGJC, ref string __result)
+        public static bool Prefix(SystemTypes room, ref string __result)
         {
-            if (TextHandler.Contains(PAECGDHCGJC))
+            if (TextHandler.Contains(room))
             {
-                __result = TextHandler.Get(PAECGDHCGJC);
+                __result = TextHandler.Get(room);
                 return false;
             }
             return true;

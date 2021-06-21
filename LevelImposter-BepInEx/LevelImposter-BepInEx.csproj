@@ -2,29 +2,28 @@
     <PropertyGroup>
         <TargetFramework>netstandard2.1</TargetFramework>
         <Version>0.3.2</Version>
-        <Mappings>NuclearPowered/Mappings:0.3.0</Mappings>
 
         <Description>LevelImposter</Description>
         <Authors>DigiWorm</Authors>
         <OutputType>Library</OutputType>
         <Platforms>AnyCPU</Platforms>
+        <GameVersion>2021.6.15</GameVersion>
         <RootNamespace>LevelImposter</RootNamespace>
     </PropertyGroup>
 
-    <PropertyGroup Condition="'$(GamePlatform)' == 'Steam'">
-        <GameVersion>2021.4.14s</GameVersion>
-		    <Mappings>C:\Users\aus43\Repositories\2021.4.14s.json</Mappings>
-        <DefineConstants>$(DefineConstants);STEAM</DefineConstants>
-    </PropertyGroup>
-
-    <PropertyGroup Condition="'$(GamePlatform)' == 'Itch'">
-        <GameVersion>2021.4.14i</GameVersion>
-        <DefineConstants>$(DefineConstants);ITCH</DefineConstants>
-    </PropertyGroup>
+    <ItemGroup>
+		    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Reactor.OxygenFilter.MSBuild" Version="0.3.0" />
-		    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+        <Reference Include="$(AmongUs)\BepInEx\core\*.dll">
+            <Private>false</Private>
+        </Reference>
+        <Reference Include="$(AmongUs)\BepInEx\unhollowed\*.dll">
+            <Private>false</Private>
+        </Reference>
+        <Reference Remove="$(AmongUs)\BepInEx\unhollowed\netstandard.dll;$(AmongUs)\BepInEx\unhollowed\Newtonsoft.Json.dll" />
+        <Reference Include="$(AmongUs)\BepInEx\plugins\Reactor.dll" />
     </ItemGroup>
 
     <ItemGroup>
@@ -42,7 +41,11 @@
       </EmbeddedResource>
     </ItemGroup>
 
-    <Target Name="Copy" AfterTargets="Reobfuscate">
-        <Copy SourceFiles="$(OutputPath)reobfuscated/$(AssemblyName)-$(GameVersion).dll" DestinationFolder="$(AmongUs)/BepInEx/plugins/" Condition="'$(Configuration)' == 'Debug'" />
-    </Target>
+	<ItemGroup>
+		<EmbeddedResource Include="Resources\**\*" />
+	</ItemGroup>
+
+	<Target Name="Copy" AfterTargets="Build">
+		<Copy SourceFiles="$(OutputPath)$(AssemblyName).dll" DestinationFiles="$(AmongUs)/BepInEx/plugins/$(AssemblyName)-$(GameVersion).dll" />
+	</Target>
 </Project>
