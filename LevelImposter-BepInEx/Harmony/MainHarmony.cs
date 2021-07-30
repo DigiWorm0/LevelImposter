@@ -1,4 +1,5 @@
 ﻿using BepInEx;
+using BepInEx.Configuration;
 using BepInEx.IL2CPP;
 using HarmonyLib;
 using LevelImposter.DB;
@@ -15,8 +16,11 @@ namespace LevelImposter
 
         public HarmonyLib.Harmony Harmony { get; } = new HarmonyLib.Harmony(ID);
 
+        public static ConfigFile ConfigFile { get; private set; }
+        
         public override void Load()
         {
+            ConfigFile = Config;
             LILogger.Init();
             VersionCheck.CheckVersion();
             VersionCheck.CheckNewtonsoft();

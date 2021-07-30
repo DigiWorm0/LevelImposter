@@ -33,7 +33,7 @@ namespace LevelImposter.MinimapGen
             label.name = asset.name;
 
             // TextMeshPro
-            GameObject.Destroy(label.GetComponent<TextTranslator>());
+            GameObject.Destroy(label.GetComponent<TextTranslatorTMP>());
             TextMeshPro text = label.GetComponent<TextMeshPro>();
             text.text = asset.name;
             text.enabled = true;
