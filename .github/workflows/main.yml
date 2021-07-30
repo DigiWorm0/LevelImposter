@@ -15,11 +15,6 @@ jobs:
         uses: actions/setup-dotnet@v1
         with:
           dotnet-version: 5.x
-          
-      - name: Setup .NET
-          uses: actions/setup-dotnet@v1
-          with:
-            dotnet-version: 4.7.2
 
       - name: Run the Cake script
         uses: cake-build/cake-action@v1
@@ -29,9 +24,4 @@ jobs:
       - uses: actions/upload-artifact@v2
         with:
           name: LevelImposter.dll
-          path: LevelImposter-BepInEx/bin/Release/netstandard2.1/LevelImposter-BepInEx.dll
-
-      - uses: actions/upload-artifact@v2
-        with:
-          name: LevelImposter-Installer.exe
-          path: LevelImposter-Installer/bin/Release/LevelImposter-Merged.exe
+          path: LevelImposter-BepInEx/bin/BuildMod/netstandard2.1/LevelImposter-BepInEx.dll

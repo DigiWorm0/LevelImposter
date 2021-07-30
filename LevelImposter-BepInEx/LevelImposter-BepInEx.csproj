@@ -8,6 +8,7 @@
         <OutputType>Library</OutputType>
         <Platforms>AnyCPU</Platforms>
         <RootNamespace>LevelImposter</RootNamespace>
+        <Configurations>Debug;Release;BuildMod</Configurations>
     </PropertyGroup>
 
     <PropertyGroup>

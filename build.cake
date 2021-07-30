@@ -11,7 +11,7 @@ Task("Build")
 {
     var settings = new DotNetCoreBuildSettings
     {
-        Configuration = "Release",
+        Configuration = "BuildMod",
         MSBuildSettings = new DotNetCoreMSBuildSettings()
     };
 
