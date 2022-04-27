@@ -14,9 +14,13 @@ namespace LevelImposter
         public static void Init()
         {
             logger = BepInEx.Logging.Logger.CreateLogSource("LevelImposter");
-            UnityEngine.Application.add_logMessageReceived(
-                new Action<string, string, UnityEngine.LogType>(OnUnityLog)
-            );
+            var debug = MainHarmony.ConfigFile.Bind("Debug", "ShowUnityLogs", false);
+            if (debug.Value)
+            {
+                UnityEngine.Application.add_logMessageReceived(
+                    new Action<string, string, UnityEngine.LogType>(OnUnityLog)
+                );   
+            }
         }
 
         private static void OnUnityLog(string msg, string stackTrace, UnityEngine.LogType type)

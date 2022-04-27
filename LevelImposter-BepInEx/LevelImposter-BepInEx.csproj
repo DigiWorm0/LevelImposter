@@ -2,29 +2,24 @@
     <PropertyGroup>
         <TargetFramework>netstandard2.1</TargetFramework>
         <Version>0.3.2</Version>
-        <Mappings>NuclearPowered/Mappings:0.3.0</Mappings>
 
         <Description>LevelImposter</Description>
         <Authors>DigiWorm</Authors>
         <OutputType>Library</OutputType>
         <Platforms>AnyCPU</Platforms>
         <RootNamespace>LevelImposter</RootNamespace>
+        <Configurations>Debug;Release;BuildMod</Configurations>
     </PropertyGroup>
 
-    <PropertyGroup Condition="'$(GamePlatform)' == 'Steam'">
-        <GameVersion>2021.4.14s</GameVersion>
-		    <Mappings>C:\Users\aus43\Repositories\2021.4.14s.json</Mappings>
-        <DefineConstants>$(DefineConstants);STEAM</DefineConstants>
-    </PropertyGroup>
-
-    <PropertyGroup Condition="'$(GamePlatform)' == 'Itch'">
-        <GameVersion>2021.4.14i</GameVersion>
-        <DefineConstants>$(DefineConstants);ITCH</DefineConstants>
+    <PropertyGroup>
+        <GameVersion Condition="'$(GamePlatform)' == 'Steam'">2021.6.30s</GameVersion>
+        <GameVersion Condition="'$(GamePlatform)' == 'Itch'">2021.6.30i</GameVersion>
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Reactor.OxygenFilter.MSBuild" Version="0.3.0" />
-		    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+        <PackageReference Include="Reactor" Version="1.0.0-rc.1" />
+        <PackageReference Include="Reactor.MSBuild" Version="0.1.5" PrivateAssets="all" />
+        <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     </ItemGroup>
 
     <ItemGroup>
@@ -42,7 +37,7 @@
       </EmbeddedResource>
     </ItemGroup>
 
-    <Target Name="Copy" AfterTargets="Reobfuscate">
-        <Copy SourceFiles="$(OutputPath)reobfuscated/$(AssemblyName)-$(GameVersion).dll" DestinationFolder="$(AmongUs)/BepInEx/plugins/" Condition="'$(Configuration)' == 'Debug'" />
+    <Target Name="Copy" AfterTargets="Build" Condition="'$(AmongUs)' != ''">
+        <Copy SourceFiles="$(OutputPath)$(AssemblyName).dll" DestinationFolder="$(AmongUs)/BepInEx/plugins/" Condition="'$(Configuration)' == 'Debug'" />
     </Target>
 </Project>
