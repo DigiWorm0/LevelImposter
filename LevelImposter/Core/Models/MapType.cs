@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace LevelImposter.Models
+namespace LevelImposter.Core
 {
     public enum MapType
     {

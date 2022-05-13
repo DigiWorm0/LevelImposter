@@ -2,6 +2,7 @@
 using BepInEx.Configuration;
 using BepInEx.IL2CPP;
 using LevelImposter.Core;
+using LevelImposter.Shop;
 using UnhollowerRuntimeLib;
 
 namespace LevelImposter
@@ -19,6 +20,8 @@ namespace LevelImposter
         {
             LILogger.Init();
             ClassInjector.RegisterTypeInIl2Cpp<LIShipStatus>();
+            ClassInjector.RegisterTypeInIl2Cpp<ShopManager>();
+            ClassInjector.RegisterTypeInIl2Cpp<MapButton>();
             Harmony.PatchAll();
             LILogger.Msg("LevelImposter Initialized.");
         }

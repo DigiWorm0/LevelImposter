@@ -1,6 +1,5 @@
 using HarmonyLib;
 using LevelImposter.DB;
-using LevelImposter.Models;
 using System;
 using System.Collections.Generic;
 using System.Text;

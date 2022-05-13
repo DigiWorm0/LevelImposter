@@ -26,7 +26,7 @@ namespace LevelImposter.Core
         {
             shipStatus = GetComponent<ShipStatus>();
             Instance = this;
-            SetMap(MapLoader.LoadMap("test1"));
+            SetMap(MapLoader.LoadMap("test1")); // <-- Temp
         }
 
         public void ResetMap()

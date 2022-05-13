@@ -1,3 +1,4 @@
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -14,7 +15,7 @@ namespace LevelImposter.Core
         public bool? onlyFromBelow { get; set; }
         public float? range { get; set; }
 
-        public string spriteData { get; set; }
-        public LICollider[] colliders { get; set; }
+        public string? spriteData { get; set; }
+        public LICollider[]? colliders { get; set; }
     }
 }

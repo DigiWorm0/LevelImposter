@@ -1,8 +1,8 @@
-﻿using LevelImposter.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
+using LevelImposter.Core;
 
 namespace LevelImposter.DB
 {

@@ -12,7 +12,7 @@ namespace LevelImposter.Shop
     {
         public static void Postfix()
         {
-            ShopLoader.OnLoad();
+            ShopBuilder.OnLoad();
         }
     }
 }
