@@ -13,21 +13,21 @@ namespace LevelImposter.Shop
         private TMPro.TMP_Text authorText;
         private TMPro.TMP_Text downloadCountText;
         private PassiveButton button;
-        private LIMetadata map;
+        private LIMetadata metadata;
 
-        public void SetMap(LIMetadata map)
+        public void SetMap(LIMetadata metadata)
         {
             titleText = transform.Find("Title").GetComponent<TMPro.TMP_Text>();
             descriptionText = transform.Find("Description").GetComponent<TMPro.TMP_Text>();
             authorText = transform.Find("Author").GetComponent<TMPro.TMP_Text>();
             downloadCountText = transform.Find("DownloadCount").GetComponent<TMPro.TMP_Text>();
             button = transform.Find("DeleteButton").GetComponent<PassiveButton>();
-            this.map = map;
+            this.metadata = metadata;
 
-            titleText.text = map.name;
-            descriptionText.text = map.description;
-            authorText.text = map.authorID;
-            downloadCountText.text = "0"; // TODO
+            titleText.text = metadata.name;
+            descriptionText.text = metadata.description;
+            authorText.text = metadata.authorId;
+            downloadCountText.text = "0";
 
             button.OnClick.RemoveAllListeners();
             button.OnClick.AddListener((Action)DownloadMap);
@@ -37,7 +37,7 @@ namespace LevelImposter.Shop
 
         public void DownloadMap()
         {
-            ShopManager.Instance.DownloadMap(map, OnDownloadFinish);
+            ShopManager.Instance.DownloadMap(metadata, OnDownloadFinish);
             button.gameObject.SetActive(false);
         }
 
@@ -50,7 +50,7 @@ namespace LevelImposter.Shop
 
         public void DeleteMap()
         {
-            ShopManager.Instance.DeleteMap(map.id);
+            ShopManager.Instance.DeleteMap(metadata.id);
             button.OnClick.RemoveAllListeners();
             button.OnClick.AddListener((Action)DownloadMap);
         }

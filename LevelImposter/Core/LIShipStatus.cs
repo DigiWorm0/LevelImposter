@@ -76,7 +76,7 @@ namespace LevelImposter.Core
                 AddElement(elem);
             buildRouter.PostBuild();
             currentMap = map;
-            LILogger.Msg("Added Map: " + map.name + " [" + map.id + "]");
+            LILogger.Msg("Added Map: " + map.name + " [" + map.authorId + "]");
         }
 
         public void AddElement(LIElement element)

@@ -45,7 +45,7 @@ namespace LevelImposter.Shop
 
         public void DownloadMap(LIMetadata map, Action callbackFinish)
         {
-            MapAPI.GetMapData(map, (System.Action<string>)((string mapJson) =>
+            MapAPI.DownloadMap(map.id, (System.Action<string>)((string mapJson) =>
             {
                 string path = Path.Combine(Application.persistentDataPath, "maps", map.id + ".json");
                 if (!Directory.Exists(Path.GetDirectoryName(path)))

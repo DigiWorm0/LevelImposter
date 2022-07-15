@@ -4,43 +4,47 @@ using System.Text;
 using UnityEngine;
 using UnityEngine.Networking;
 using LevelImposter.Core;
-using Google.Cloud.Firestore;
 
 namespace LevelImposter.Shop
 {
-    
     public static class MapAPI
     {
-        public static FirestoreDb db { get; private set; }
+        public const string API_PATH = "https://us-central1-levelimposter-347807.cloudfunctions.net/app/";
 
-        public static void Init()
+        public static void DownloadMap(Guid mapId, Action<string> callback)
         {
-            db = FirestoreDb.Create("levelimposter-347807");
-        }
-
-        public static async void GetMap(Guid mapId, Action<LIMetadata> callback)
-        {
-            var docRef = db.Collection("maps").Document(mapId.ToString());
-            var snapshot = await docRef.GetSnapshotAsync();
-            var metadata = snapshot.ConvertTo<LIMetadata>();
-            callback(metadata);
-        }
-
-        public static async void GetMaps(Action<LIMetadata[]> callback)
-        {
-            var collectionRef = db.Collection("maps");
-            var snapshot = await collectionRef.GetSnapshotAsync();
-            LIMetadata[] metadata = new LIMetadata[snapshot.Count];
-            for (int i = 0; i < snapshot.Count; i++)
+            GetMap(mapId, (System.Action<LIMetadata>)((LIMetadata metadata) =>
             {
-                metadata[i] = snapshot[i].ConvertTo<LIMetadata>();
-            }
-            callback(metadata);
+                LILogger.Msg("Downloading " + mapId + "...");
+                Request(metadata.downloadURL[0], callback);
+            }));
         }
 
-        public static void GetMapData(LIMetadata metadata, Action<string> callback)
+        public static void GetMap(Guid mapId, Action<LIMetadata> callback)
         {
-            var request = UnityWebRequest.Get(metadata.storageURL);
+            LILogger.Msg("Getting Map " + mapId + "...");
+            RequestJson(API_PATH + "map/" + mapId, callback);
+        }
+
+        public static void GetMaps(Action<LIMetadata[]> callback)
+        {
+            LILogger.Msg("Getting Maps...");
+            RequestJson(API_PATH + "maps", callback);
+        }
+
+        private static void RequestJson<T>(string url, Action<T> callback)
+        {
+            Request(url, (System.Action<string>)((string json) =>
+            {
+                T data = System.Text.Json.JsonSerializer.Deserialize<T>(json);
+                callback(data);
+            }));
+        }
+
+        private static void Request(string url, Action<string> callback)
+        {
+            LILogger.Msg("GET: " + url);
+            var request = UnityWebRequest.Get(url);
             request.SendWebRequest().add_completed((System.Action<AsyncOperation>)((AsyncOperation op) =>
             {
                 if (request.isNetworkError || request.isHttpError)
@@ -48,11 +52,9 @@ namespace LevelImposter.Shop
                     LILogger.Error(request.error);
                     return;
                 }
-                var json = request.downloadHandler.text;
-                LILogger.Info(json);
-                callback(json);
+                var data = request.downloadHandler.text;
+                callback(data);
             }));
         }
-
     }
 }
