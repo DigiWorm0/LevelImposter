@@ -12,15 +12,16 @@ namespace LevelImposter.Core
             if (!elem.type.StartsWith("util-spawn"))
                 return;
 
-            Vector2 pos = new Vector2(elem.x, elem.y - LIShipStatus.Y_OFFSET);
+            Vector2 pos = obj.transform.position - new Vector3(0, LIShipStatus.Y_OFFSET);
+            ShipStatus shipStatus = LIShipStatus.Instance.shipStatus;
             if (elem.type == "util-spawn1")
             {
-                ShipStatus.Instance.InitialSpawnCenter = pos;
+                shipStatus.InitialSpawnCenter = pos;
             }
             else if (elem.type == "util-spawn2")
             {
-                ShipStatus.Instance.MeetingSpawnCenter = pos;
-                ShipStatus.Instance.MeetingSpawnCenter2 = pos;
+                shipStatus.MeetingSpawnCenter = pos;
+                shipStatus.MeetingSpawnCenter2 = pos;
             }
         }
 

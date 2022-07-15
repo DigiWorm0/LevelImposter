@@ -22,9 +22,6 @@ namespace LevelImposter.Core
             shipRoom.roomArea = obj.GetComponent<Collider2D>();
             shipRoom.roomArea.isTrigger = true;
 
-            ShipStatus.Instance.AllRooms = MapUtils.AddToArr(ShipStatus.Instance.AllRooms, shipRoom);
-            ShipStatus.Instance.FastRooms.Add(systemType, shipRoom);
-
             // Collider
             PolygonCollider2D polyCollider = obj.GetComponent<PolygonCollider2D>();
             if (polyCollider != null)

@@ -8,7 +8,7 @@ namespace LevelImposter.Core
     [HarmonyPatch(typeof(ShipStatus), nameof(ShipStatus.Awake))]
     public static class ShipStatusPatch
     {
-        public static void Postfix(ShipStatus __instance)
+        public static void Prefix(ShipStatus __instance)
         {
             if (LIShipStatus.Instance == null)
                 __instance.gameObject.AddComponent<LIShipStatus>();

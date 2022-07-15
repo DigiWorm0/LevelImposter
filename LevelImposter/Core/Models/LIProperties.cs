@@ -15,6 +15,10 @@ namespace LevelImposter.Core
         public bool? onlyFromBelow { get; set; }
         public float? range { get; set; }
 
+        public float? camXOffset { get; set; }
+        public float? camYOffset { get; set; }
+        public float? camZoom { get; set; }
+
         public string? spriteData { get; set; }
         public LICollider[]? colliders { get; set; }
     }

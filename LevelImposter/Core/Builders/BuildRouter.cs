@@ -11,7 +11,10 @@ namespace LevelImposter.Core
         private DefaultBuilder defaultBuilder = new DefaultBuilder();
         private Builder[] builders = {
             new DummyBuilder(),
-            new UtilBuilder()
+            new UtilBuilder(),
+            new SpawnBuilder(),
+            new VentBuilder(),
+            new CamBuilder()
         };
 
         public GameObject Build(LIElement element)

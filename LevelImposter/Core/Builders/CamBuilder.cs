@@ -27,7 +27,17 @@ namespace LevelImposter.Core
             // Camera
             SurvCamera survCam = obj.AddComponent<SurvCamera>();
             survCam.CamName = elem.name;
-            ShipStatus.Instance.AllCameras = MapUtils.AddToArr(ShipStatus.Instance.AllCameras, survCam);
+            if (elem.properties.camXOffset != null && elem.properties.camYOffset != null)
+            {
+                survCam.Offset = new Vector3(
+                    (float)elem.properties.camXOffset,
+                    (float)elem.properties.camYOffset
+                );
+            }
+            if (elem.properties.camZoom != null)
+            {
+                survCam.CamSize = (float)elem.properties.camZoom;
+            }
         }
 
         public void PostBuild() { }

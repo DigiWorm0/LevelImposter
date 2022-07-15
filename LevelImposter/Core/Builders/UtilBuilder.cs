@@ -12,13 +12,11 @@ namespace LevelImposter.Core
     {
         public void Build(LIElement elem, GameObject obj)
         {
-            if (!elem.type.StartsWith("util-") ||
-                elem.type.StartsWith("util-vent") ||
-                elem.type.StartsWith("util-spawn") ||
-                elem.type == "util-room" ||
-                elem.type == "util-dummy" ||
-                elem.type == "util-cam" ||
-                elem.type == "util-blank")
+            if (!(elem.type.StartsWith("util-button") ||
+                elem.type.StartsWith("util-cams") ||
+                elem.type == "util-admin" ||
+                elem.type == "util-vitals" || 
+                elem.type == "util-computer"))
                 return;
 
             UtilData utilData = AssetDB.utils[elem.type];

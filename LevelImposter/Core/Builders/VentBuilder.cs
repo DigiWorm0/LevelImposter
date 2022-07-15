@@ -64,7 +64,6 @@ namespace LevelImposter.Core
             vent.Buttons = new UnhollowerBaseLib.Il2CppReferenceArray<ButtonBehavior>(0);
             vent.CleaningIndicators = new UnhollowerBaseLib.Il2CppReferenceArray<GameObject>(0);
             vent.Id = this.id;
-            ShipStatus.Instance.AllVents = MapUtils.AddToArr(ShipStatus.Instance.AllVents, vent);
 
             // Arrows
             GameObject arrowPrefab = utilData.GameObj.transform.FindChild("Arrow").gameObject;
@@ -72,10 +71,11 @@ namespace LevelImposter.Core
                 GenerateArrow(arrowPrefab, vent, i);
 
             // Sounds
+            ShipStatus shipStatus = LIShipStatus.Instance.shipStatus;
             if (!hasSound)
             {
-                ShipStatus.Instance.VentEnterSound = AssetDB.ss["ss-skeld"].ShipStatus.VentEnterSound;
-                ShipStatus.Instance.VentMoveSounds = AssetDB.ss["ss-skeld"].ShipStatus.VentMoveSounds;
+                shipStatus.VentEnterSound = AssetDB.ss["ss-skeld"].ShipStatus.VentEnterSound;
+                shipStatus.VentMoveSounds = AssetDB.ss["ss-skeld"].ShipStatus.VentMoveSounds;
                 hasSound = true;
             }
 
