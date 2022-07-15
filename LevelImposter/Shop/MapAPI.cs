@@ -4,30 +4,43 @@ using System.Text;
 using UnityEngine;
 using UnityEngine.Networking;
 using LevelImposter.Core;
+using Google.Cloud.Firestore;
 
 namespace LevelImposter.Shop
 {
+    
     public static class MapAPI
     {
-        public const string API_PATH = "https://localhost:7108/api/";
+        public static FirestoreDb db { get; private set; }
 
-        public static void GetMap(Guid mapId, Action<string> callback)
+        public static void Init()
         {
-            Request(API_PATH + "maps/" + mapId, callback);
+            db = FirestoreDb.Create("levelimposter-347807");
         }
 
-        public static void GetMaps(Action<LIMap[]> callback)
+        public static async void GetMap(Guid mapId, Action<LIMetadata> callback)
         {
-            Request(API_PATH + "maps", (System.Action<string>)((string mapJson) =>
+            var docRef = db.Collection("maps").Document(mapId.ToString());
+            var snapshot = await docRef.GetSnapshotAsync();
+            var metadata = snapshot.ConvertTo<LIMetadata>();
+            callback(metadata);
+        }
+
+        public static async void GetMaps(Action<LIMetadata[]> callback)
+        {
+            var collectionRef = db.Collection("maps");
+            var snapshot = await collectionRef.GetSnapshotAsync();
+            LIMetadata[] metadata = new LIMetadata[snapshot.Count];
+            for (int i = 0; i < snapshot.Count; i++)
             {
-                callback(System.Text.Json.JsonSerializer.Deserialize<LIMap[]>(mapJson));
-            }));
+                metadata[i] = snapshot[i].ConvertTo<LIMetadata>();
+            }
+            callback(metadata);
         }
 
-        private static void Request(string url, Action<string> callback)
+        public static void GetMapData(LIMetadata metadata, Action<string> callback)
         {
-            LILogger.Msg("GET: " + url);
-            var request = UnityWebRequest.Get(url);
+            var request = UnityWebRequest.Get(metadata.storageURL);
             request.SendWebRequest().add_completed((System.Action<AsyncOperation>)((AsyncOperation op) =>
             {
                 if (request.isNetworkError || request.isHttpError)
@@ -36,8 +49,10 @@ namespace LevelImposter.Shop
                     return;
                 }
                 var json = request.downloadHandler.text;
+                LILogger.Info(json);
                 callback(json);
             }));
         }
+
     }
 }

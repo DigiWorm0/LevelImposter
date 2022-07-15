@@ -33,7 +33,7 @@ namespace LevelImposter.Shop
             MapAPI.GetMaps(OnMapsLoaded);
         }
 
-        private void OnMapsLoaded(LIMap[] maps)
+        private void OnMapsLoaded(LIMetadata[] maps)
         {
             for (int i = 0; i < maps.Length; i++)
             {
@@ -43,11 +43,11 @@ namespace LevelImposter.Shop
             }
         }
 
-        public void DownloadMap(Guid id, Action callbackFinish)
+        public void DownloadMap(LIMetadata map, Action callbackFinish)
         {
-            MapAPI.GetMap(id, (System.Action<string>)((string mapJson) =>
+            MapAPI.GetMapData(map, (System.Action<string>)((string mapJson) =>
             {
-                string path = Path.Combine(Application.persistentDataPath, "maps", id + ".json");
+                string path = Path.Combine(Application.persistentDataPath, "maps", map.id + ".json");
                 if (!Directory.Exists(Path.GetDirectoryName(path)))
                     Directory.CreateDirectory(Path.GetDirectoryName(path));
                 File.WriteAllText(path, mapJson);

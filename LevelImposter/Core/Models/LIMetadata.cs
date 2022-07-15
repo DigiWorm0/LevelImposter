@@ -5,12 +5,13 @@ using System.Text;
 namespace LevelImposter.Core
 {
     [Serializable]
-    public class LIMap
+    public class LIMetadata
     {
         public System.Guid id { get; set; }
-        public int v { get; set; }
         public string name { get; set; }
+        public string description { get; set; }
+        public string authorID { get; set; }
         public bool isPublic { get; set; }
-        public LIElement[] elements { get; set; }
+        public string storageURL { get; set; }
     }
 }
