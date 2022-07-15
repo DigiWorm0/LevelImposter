@@ -15,7 +15,6 @@ namespace LevelImposter.Core
         public static LIShipStatus Instance { get; private set; }
         public ShipStatus shipStatus { get; private set; }
 
-        private LIMap currentMap;
         private BuildRouter buildRouter = new BuildRouter();
 
         public LIShipStatus(IntPtr intPtr) : base(intPtr)
@@ -26,7 +25,16 @@ namespace LevelImposter.Core
         {
             shipStatus = GetComponent<ShipStatus>();
             Instance = this;
-            SetMap(MapLoader.LoadMap("test1")); // <-- Temp
+            LILogger.Info(MapLoader.GetPath(Guid.Empty));
+            if (MapLoader.Exists(Guid.Empty))
+            {
+                LILogger.Info("Loading Default Map...");
+                MapLoader.LoadMap(Guid.Empty);
+            }
+            if (MapLoader.currentMap != null)
+                LoadMap(MapLoader.currentMap);
+            else
+                LILogger.Info("No map content, no LI data will load");
         }
 
         public void ResetMap()
@@ -68,30 +76,23 @@ namespace LevelImposter.Core
             }).Cast<ISystemType>());
         }
 
-        public void SetMap(LIMap map)
+        public void LoadMap(LIMap map)
         {
+            LILogger.Info("Loading " + map.name + " [" + map.id + "]");
             AssetDB.Import();
             ResetMap();
             foreach (LIElement elem in map.elements)
                 AddElement(elem);
             buildRouter.PostBuild();
-            currentMap = map;
-            LILogger.Msg("Added Map: " + map.name + " [" + map.authorId + "]");
+            LILogger.Info("Map Load Completed");
         }
 
         public void AddElement(LIElement element)
         {
+            LILogger.Info("Adding " + element.name + " (" + element.type + ") [" + element.id + "]");
             GameObject gameObject = buildRouter.Build(element);
             gameObject.transform.SetParent(transform);
             gameObject.transform.localPosition -= new Vector3(0, Y_OFFSET, 0);
-            LILogger.Msg("Added Element: " + element.name + " [" + element.type + "]");
-        }
-
-        public static UnhollowerBaseLib.Il2CppReferenceArray<T> AddToArr<T>(UnhollowerBaseLib.Il2CppReferenceArray<T> arr, T value) where T : UnhollowerBaseLib.Il2CppObjectBase
-        {
-            List<T> list = new List<T>(arr);
-            list.Add(value);
-            return list.ToArray();
         }
     }
 }

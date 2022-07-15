@@ -9,10 +9,12 @@ namespace LevelImposter.Core
     {
         public void Build(LIElement elem, GameObject obj)
         {
+            LILogger.Info(elem.type);
             if (elem.type != "util-dummy")
                 return;
-
-            ShipStatus.Instance.DummyLocations = LIShipStatus.AddToArr(ShipStatus.Instance.DummyLocations, obj.transform);
+            
+            ShipStatus.Instance.DummyLocations = MapUtils.AddToArr(ShipStatus.Instance.DummyLocations, obj.transform);
+            LILogger.Info(ShipStatus.Instance.DummyLocations.Length);
         }
 
         public void PostBuild() { }

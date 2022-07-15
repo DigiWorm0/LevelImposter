@@ -16,8 +16,9 @@ namespace LevelImposter.Core
                 elem.type.StartsWith("util-vent") ||
                 elem.type.StartsWith("util-spawn") ||
                 elem.type == "util-room" ||
-                elem.type == "util-player" ||
-                elem.type == "util-cam")
+                elem.type == "util-dummy" ||
+                elem.type == "util-cam" ||
+                elem.type == "util-blank")
                 return;
 
             UtilData utilData = AssetDB.utils[elem.type];

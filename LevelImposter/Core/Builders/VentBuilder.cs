@@ -64,7 +64,7 @@ namespace LevelImposter.Core
             vent.Buttons = new UnhollowerBaseLib.Il2CppReferenceArray<ButtonBehavior>(0);
             vent.CleaningIndicators = new UnhollowerBaseLib.Il2CppReferenceArray<GameObject>(0);
             vent.Id = this.id;
-            ShipStatus.Instance.AllVents = LIShipStatus.AddToArr(ShipStatus.Instance.AllVents, vent);
+            ShipStatus.Instance.AllVents = MapUtils.AddToArr(ShipStatus.Instance.AllVents, vent);
 
             // Arrows
             GameObject arrowPrefab = utilData.GameObj.transform.FindChild("Arrow").gameObject;
@@ -143,7 +143,7 @@ namespace LevelImposter.Core
             arrowBtn.OnClick.AddListener(action);
 
             // Transform
-            vent.Buttons = LIShipStatus.AddToArr(vent.Buttons, arrowBtn);
+            vent.Buttons = MapUtils.AddToArr(vent.Buttons, arrowBtn);
             arrowObj.transform.SetParent(vent.transform);
             arrowObj.transform.localScale = new Vector3(0.4f, 0.4f, 1.0f);
             arrowObj.active = false;
@@ -159,7 +159,7 @@ namespace LevelImposter.Core
             cleaningIndicatorSprite.sprite = cleaningClone.sprite;
             cleaningIndicatorSprite.material = cleaningClone.material;
             cleaningIndicator.active = false;
-            vent.CleaningIndicators = LIShipStatus.AddToArr(vent.CleaningIndicators, cleaningIndicator);
+            vent.CleaningIndicators = MapUtils.AddToArr(vent.CleaningIndicators, cleaningIndicator);
         }
     }
 }

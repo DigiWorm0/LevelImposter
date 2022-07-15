@@ -9,7 +9,6 @@ namespace LevelImposter.Shop
 {
     public static class ShopBuilder
     {
-
         public static void OnLoad()
         {
             RemoveChildren();
@@ -90,10 +89,7 @@ namespace LevelImposter.Shop
             btnTitle.transform.SetParent(btnPrefab.transform);
             btnTitle.transform.localPosition = new Vector3(0, 0.4f, 0);
             RectTransform btnTitleRect = btnTitle.AddComponent<RectTransform>();
-            btnTitleRect.anchorMin = new Vector2(0, 0);
-            btnTitleRect.anchorMax = new Vector2(1, 1);
-            btnTitleRect.pivot = new Vector2(0.5f, 0.5f);
-            btnTitleRect.sizeDelta = new Vector2(0, 0);
+            btnTitleRect.sizeDelta = new Vector2(6, 0.5f);
             TextMeshPro btnTitleText = btnTitle.AddComponent<TextMeshPro>();
             btnTitleText.fontSize = 3.0f;
             btnTitleText.SetText("Ultimate Map v1.0");

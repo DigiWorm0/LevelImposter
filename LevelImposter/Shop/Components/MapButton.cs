@@ -26,7 +26,7 @@ namespace LevelImposter.Shop
 
             titleText.text = metadata.name;
             descriptionText.text = metadata.description;
-            authorText.text = metadata.authorId;
+            authorText.text = metadata.authorID;
             downloadCountText.text = "0";
 
             button.OnClick.RemoveAllListeners();
@@ -37,7 +37,7 @@ namespace LevelImposter.Shop
 
         public void DownloadMap()
         {
-            ShopManager.Instance.DownloadMap(metadata, OnDownloadFinish);
+            ShopManager.Instance.DownloadMap(metadata.id, OnDownloadFinish);
             button.gameObject.SetActive(false);
         }
 

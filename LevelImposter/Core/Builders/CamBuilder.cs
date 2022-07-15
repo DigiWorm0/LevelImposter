@@ -27,7 +27,7 @@ namespace LevelImposter.Core
             // Camera
             SurvCamera survCam = obj.AddComponent<SurvCamera>();
             survCam.CamName = elem.name;
-            ShipStatus.Instance.AllCameras = LIShipStatus.AddToArr(ShipStatus.Instance.AllCameras, survCam);
+            ShipStatus.Instance.AllCameras = MapUtils.AddToArr(ShipStatus.Instance.AllCameras, survCam);
         }
 
         public void PostBuild() { }

@@ -43,24 +43,18 @@ namespace LevelImposter.Shop
             }
         }
 
-        public void DownloadMap(LIMetadata map, Action callbackFinish)
+        public void DownloadMap(Guid mapID, Action callbackFinish)
         {
-            MapAPI.DownloadMap(map.id, (System.Action<string>)((string mapJson) =>
+            MapAPI.DownloadMap(mapID, (System.Action<string>)((string mapJson) =>
             {
-                string path = Path.Combine(Application.persistentDataPath, "maps", map.id + ".json");
-                if (!Directory.Exists(Path.GetDirectoryName(path)))
-                    Directory.CreateDirectory(Path.GetDirectoryName(path));
-                File.WriteAllText(path, mapJson);
-                LILogger.Msg("Map downloaded to " + path);
+                MapLoader.WriteMap(mapID, mapJson);
                 callbackFinish();
             }));
         }
 
         public void DeleteMap(Guid id)
         {
-            string path = Path.Combine(Application.persistentDataPath, "maps", id + ".json");
-            File.Delete(path);
-            LILogger.Msg("Map deleted from " + path);
+            MapLoader.DeleteMap(id);
         }
     }
 }
