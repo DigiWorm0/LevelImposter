@@ -13,7 +13,16 @@ namespace LevelImposter.Core
         public static void Init()
         {
             logger = BepInEx.Logging.Logger.CreateLogSource("LevelImposter");
+            UnityEngine.Application.add_logMessageReceived(
+                new Action<string, string, UnityEngine.LogType>(OnUnityLog)
+            );
         }
+
+        private static void OnUnityLog(string msg, string stackTrace, UnityEngine.LogType type)
+        {
+            //Info("Unity Stack Trace:\n" + msg + "\n" + stackTrace);
+        }
+
 
         public static void Log(LogLevel logLevel, object data)
         {

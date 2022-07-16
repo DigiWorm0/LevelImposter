@@ -10,7 +10,7 @@ namespace LevelImposter.Core
         public GameObject Build(LIElement elem)
         {
             GameObject gameObject = new GameObject(elem.name);
-            gameObject.layer = (int)Layer.ShortObjects;
+            gameObject.layer = (int)Layer.Ship;
             gameObject.transform.position = new Vector3(elem.x, elem.y, elem.z);
             gameObject.transform.rotation = Quaternion.Euler(0, 0, elem.rotation);
             gameObject.transform.localScale = new Vector3(elem.xScale, elem.yScale, 0);
@@ -33,6 +33,19 @@ namespace LevelImposter.Core
                     else
                     {
                         EdgeCollider2D collider = gameObject.AddComponent<EdgeCollider2D>();
+                        collider.SetPoints(colliderData.GetPoints());
+                    }
+
+                    if (colliderData.blocksLight)
+                    {
+                        GameObject shadowObj = new GameObject(colliderData.id.ToString());
+                        shadowObj.transform.SetParent(gameObject.transform);
+                        shadowObj.transform.localPosition = new Vector3(0, 0, 1);
+                        shadowObj.transform.localRotation = Quaternion.Euler(0, 0, 0);
+                        shadowObj.transform.localScale = Vector3.one;
+                        shadowObj.layer = (int)Layer.Shadow;
+
+                        EdgeCollider2D collider = shadowObj.AddComponent<EdgeCollider2D>();
                         collider.SetPoints(colliderData.GetPoints());
                     }
                 }

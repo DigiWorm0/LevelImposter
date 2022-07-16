@@ -14,7 +14,8 @@ namespace LevelImposter.Core
             new UtilBuilder(),
             new SpawnBuilder(),
             new VentBuilder(),
-            new CamBuilder()
+            new CamBuilder(),
+            new TaskBuilder()
         };
 
         public GameObject Build(LIElement element)

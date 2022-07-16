@@ -23,6 +23,7 @@ namespace LevelImposter.Core
 
             // Default Sprite
             SpriteRenderer spriteRenderer = obj.GetComponent<SpriteRenderer>();
+            obj.layer = (int)Layer.ShortObjects;
             if (!spriteRenderer)
             {
                 spriteRenderer = obj.AddComponent<SpriteRenderer>();

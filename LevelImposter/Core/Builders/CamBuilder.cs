@@ -16,6 +16,7 @@ namespace LevelImposter.Core
             UtilData utilData = AssetDB.utils[elem.type];
 
             // Default Sprite
+            obj.layer = (int)Layer.ShortObjects;
             SpriteRenderer spriteRenderer = obj.GetComponent<SpriteRenderer>();
             if (!spriteRenderer)
             {

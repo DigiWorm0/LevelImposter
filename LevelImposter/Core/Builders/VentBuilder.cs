@@ -25,6 +25,7 @@ namespace LevelImposter.Core
 
             // Default Sprite
             SpriteRenderer spriteRenderer = obj.GetComponent<SpriteRenderer>();
+            obj.layer = (int)Layer.ShortObjects;
             if (!spriteRenderer)
             {
                 spriteRenderer = obj.AddComponent<SpriteRenderer>();
@@ -50,6 +51,8 @@ namespace LevelImposter.Core
             console.onlySameRoom = false;
             console.usableDistance = 1;
             console.ImpostorDiscoveredSound = origConsole.ImpostorDiscoveredSound;
+            console.TaskTypes = origConsole.TaskTypes;
+            console.ValidTasks = origConsole.ValidTasks;
             if (elem.properties.range != null)
                 console.usableDistance = (float)elem.properties.range;
 
