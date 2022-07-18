@@ -44,12 +44,6 @@ namespace LevelImposter.Core
             VentCleaningConsole origConsole = utilData.GameObj.GetComponent<VentCleaningConsole>();
             VentCleaningConsole console = obj.AddComponent<VentCleaningConsole>();
             console.Image = spriteRenderer;
-            console.AllowImpostor = false;
-            console.checkWalls = false;
-            console.GhostsIgnored = false;
-            console.onlyFromBelow = false;
-            console.onlySameRoom = false;
-            console.usableDistance = 1;
             console.ImpostorDiscoveredSound = origConsole.ImpostorDiscoveredSound;
             console.TaskTypes = origConsole.TaskTypes;
             console.ValidTasks = origConsole.ValidTasks;

@@ -20,7 +20,7 @@ namespace LevelImposter.Core
 
         private static void OnUnityLog(string msg, string stackTrace, UnityEngine.LogType type)
         {
-            //Info("Unity Stack Trace:\n" + msg + "\n" + stackTrace);
+            Info("Unity Stack Trace:\n" + msg + "\n" + stackTrace);
         }
 
 

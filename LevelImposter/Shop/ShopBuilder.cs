@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using TMPro;
 using UnityEngine;
-using TMPro;
 using UnityEngine.UI;
 
 namespace LevelImposter.Shop
@@ -17,6 +14,8 @@ namespace LevelImposter.Shop
 
         private static void RemoveChildren()
         {
+            GameObject starField = GameObject.Find("starfield");
+            //starField.SetActive(false);
             GameObject controller = GameObject.Find("HowToPlayController");
             controller.transform.FindChild("IntroScene").gameObject.active = false;
             controller.transform.FindChild("RightArrow").gameObject.active = false;
@@ -31,115 +30,91 @@ namespace LevelImposter.Shop
             Sprite contentBackground = ctrlScreen.FindChild("Background").GetComponent<SpriteRenderer>().sprite;
 
             // Container
-            GameObject container = new GameObject("ShopContainer");
-            container.transform.position = new Vector3(0, 0, 0);
-            SpriteRenderer containerBg = container.AddComponent<SpriteRenderer>();
-            containerBg.sprite = contentBackground;
-            containerBg.drawMode = SpriteDrawMode.Sliced;
-            containerBg.size = new Vector2(7, 5);
-            ShopManager shopManager = container.AddComponent<ShopManager>();
-            ScrollRect scroller = container.AddComponent<ScrollRect>();
-            scroller.horizontal = false;
-            scroller.vertical = true;
+            GameObject shopContainer = new GameObject("ShopContainer");
+            shopContainer.transform.position = new Vector3(1.4f, 0, 0);
+            Scroller scroller = shopContainer.AddComponent<Scroller>();
+            scroller.allowY = true;
+            scroller.ContentYBounds = new FloatRange(-1.8f, -1.8f);
+            scroller.ContentXBounds = new FloatRange(0, 0);
+            scroller.ScrollbarXBounds = new FloatRange(0, 0);
+            scroller.ScrollbarYBounds = new FloatRange(0, 0);
+            ShopManager shopManager = shopContainer.AddComponent<ShopManager>();
 
-            // Viewport
-            GameObject viewport = new GameObject("Viewport");
-            viewport.transform.parent = container.transform;
-            RectTransform viewportRect = viewport.AddComponent<RectTransform>();
-            viewportRect.anchorMin = new Vector2(0, 0);
-            viewportRect.anchorMax = new Vector2(1, 1);
-            viewportRect.pivot = new Vector2(0.5f, 0.5f);
-            viewportRect.sizeDelta = new Vector2(0, 0);
-            viewport.AddComponent<Mask>();
+            // Background
+            GameObject shopBackground = new GameObject("Background");
+            shopBackground.transform.SetParent(shopContainer.transform);
+            BoxCollider2D bgCollider = shopBackground.AddComponent<BoxCollider2D>();
+            bgCollider.size = new Vector2(7, 7);
+            scroller.Colliders = new UnhollowerBaseLib.Il2CppReferenceArray<Collider2D>(1);
+            scroller.Colliders[0] = bgCollider;
 
-            // Content
-            GameObject content = new GameObject("Content");
-            content.transform.parent = viewport.transform;
-            RectTransform contentRect = content.AddComponent<RectTransform>();
-            contentRect.anchorMin = new Vector2(0, 0);
-            contentRect.anchorMax = new Vector2(1, 1);
-            contentRect.pivot = new Vector2(0.5f, 0.5f);
-            contentRect.sizeDelta = new Vector2(0, 0);
-            GridLayoutGroup contentGrid = content.AddComponent<GridLayoutGroup>();
-            contentGrid.cellSize = new Vector2(5.0f, 5.0f);
-            contentGrid.constraint = GridLayoutGroup.Constraint.FixedColumnCount;
-            contentGrid.constraintCount = 1;
-            ContentSizeFitter contentSize = content.AddComponent<ContentSizeFitter>();
-            contentSize.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+            // Inner
+            GameObject shopInner = new GameObject("Inner");
+            shopInner.transform.SetParent(shopContainer.transform);
+            shopInner.transform.localPosition = Vector3.zero;
+            scroller.Inner = shopInner.transform;
 
-            GameObject btnPrefab = BuildButtonPrefab(content, buttonBackground);
-            shopManager.mapButtonPrefab = btnPrefab;
-            shopManager.mapButtonParent = content.transform;
-            scroller.viewport = viewport.GetComponent<RectTransform>();
-            scroller.content = content.GetComponent<RectTransform>();
+            GameObject button = BuildButtonPrefab(shopInner, buttonBackground);
+            shopManager.mapButtonPrefab = button;
+            shopManager.mapButtonParent = shopInner.transform;
         }
 
         private static GameObject BuildButtonPrefab(GameObject parent, Sprite background)
         {
-            GameObject btnPrefab = new GameObject("MapButton");
-            btnPrefab.transform.SetParent(parent.transform);
-            RectTransform btnRect = btnPrefab.AddComponent<RectTransform>();
-            btnRect.drivenProperties = DrivenTransformProperties.AnchorMaxX | DrivenTransformProperties.AnchoredPositionY;
-            SpriteRenderer btnRenderer = btnPrefab.AddComponent<SpriteRenderer>();
-            btnRenderer.sprite = background;
-            MapButton btnMapButton = btnPrefab.AddComponent<MapButton>();
+            // Container
+            GameObject mapContainer = new GameObject("MapContainer");
+            mapContainer.transform.SetParent(parent.transform);
+            mapContainer.transform.localPosition = Vector3.zero;
+            BoxCollider2D mapCollider = mapContainer.AddComponent<BoxCollider2D>();
+            mapCollider.size = new Vector2(6, 1);
+            mapCollider.offset = Vector2.zero;
+            PassiveButton mapPassiveBtn = mapContainer.AddComponent<PassiveButton>();
+            MapButton mapButton = mapContainer.AddComponent<MapButton>();
 
-            // Button Title
-            GameObject btnTitle = new GameObject("Title");
-            btnTitle.transform.SetParent(btnPrefab.transform);
-            btnTitle.transform.localPosition = new Vector3(0, 0.4f, 0);
-            RectTransform btnTitleRect = btnTitle.AddComponent<RectTransform>();
-            btnTitleRect.sizeDelta = new Vector2(6, 0.5f);
-            TextMeshPro btnTitleText = btnTitle.AddComponent<TextMeshPro>();
-            btnTitleText.fontSize = 3.0f;
-            btnTitleText.SetText("Ultimate Map v1.0");
+            // Background
+            GameObject mapBackground = new GameObject("Background");
+            mapBackground.transform.SetParent(mapContainer.transform);
+            mapBackground.transform.localPosition = Vector3.zero;
+            SpriteRenderer spriteRenderer = mapBackground.AddComponent<SpriteRenderer>();
+            spriteRenderer.sprite = background;
+            spriteRenderer.drawMode = SpriteDrawMode.Sliced;
+            spriteRenderer.size = new Vector2(6, 1);
 
-            // Button Author
-            GameObject btnAuthor = new GameObject("Author");
-            btnAuthor.transform.SetParent(btnPrefab.transform);
-            btnAuthor.transform.localPosition = new Vector3(0, 0, 0);
-            RectTransform btnAuthorRect = btnAuthor.AddComponent<RectTransform>();
-            btnAuthorRect.sizeDelta = new Vector2(6, 0.5f);
-            TextMeshPro btnAuthorText = btnAuthor.AddComponent<TextMeshPro>();
-            btnAuthorText.fontSize = 2.0f;
-            btnAuthorText.SetText("DigiWorm");
+            // Title
+            GameObject mapTitle = new GameObject("Title");
+            mapTitle.transform.SetParent(mapContainer.transform);
+            mapTitle.transform.localPosition = new Vector3(0, 0, 0);
+            RectTransform titleTransform = mapTitle.AddComponent<RectTransform>();
+            titleTransform.sizeDelta = new Vector2(5.5f, 0.8f);
+            TextMeshPro titleText = mapTitle.AddComponent<TextMeshPro>();
+            titleText.fontSize = 2.5f;
+            titleText.SetText("Example Map");
 
-            // Button Description
-            GameObject btnDescription = new GameObject("Description");
-            btnDescription.transform.SetParent(btnPrefab.transform);
-            btnDescription.transform.localPosition = new Vector3(0, -0.3f, 0);
-            RectTransform btnDescriptionRect = btnDescription.AddComponent<RectTransform>();
-            btnDescriptionRect.sizeDelta = new Vector2(6, 0.5f);
-            TextMeshPro btnDescriptionText = btnDescription.AddComponent<TextMeshPro>();
-            btnDescriptionText.fontSize = 2.0f;
-            btnDescriptionText.color = new Color(0.5f, 0.5f, 0.5f);
-            btnDescriptionText.overflowMode = TextOverflowModes.Ellipsis;
-            btnDescriptionText.SetText("A map made for the Ultimate Game Jam\nwow such map\nlorem ipsum dolor sit amet");
+            // Author
+            GameObject mapAuthor = new GameObject("Author");
+            mapAuthor.transform.SetParent(mapContainer.transform);
+            mapAuthor.transform.localPosition = new Vector3(0, 0, 0);
+            RectTransform authorTransform = mapAuthor.AddComponent<RectTransform>();
+            authorTransform.sizeDelta = new Vector2(5.5f, 0.8f);
+            TextMeshPro authorText = mapAuthor.AddComponent<TextMeshPro>();
+            authorText.fontSize = 2.0f;
+            authorText.alignment = TextAlignmentOptions.Left;
+            authorText.SetText("DigiWorm");
 
-            // Download Count
-            GameObject btnDownloadCount = new GameObject("DownloadCount");
-            btnDownloadCount.transform.SetParent(btnPrefab.transform);
-            btnDownloadCount.transform.localPosition = new Vector3(2.0f, -0, 0);
-            RectTransform btnDownloadCountRect = btnDownloadCount.AddComponent<RectTransform>();
-            btnDownloadCountRect.sizeDelta = new Vector2(0.5f, 0.5f);
-            TextMeshPro btnDownloadCountText = btnDownloadCount.AddComponent<TextMeshPro>();
-            btnDownloadCountText.fontSize = 2.0f;
-            btnDownloadCountText.SetText("0");
+            // Description
+            GameObject mapDesc = new GameObject("Description");
+            mapDesc.transform.SetParent(mapContainer.transform);
+            mapDesc.transform.localPosition = new Vector3(0, 0, 0);
+            RectTransform descTransform = mapDesc.AddComponent<RectTransform>();
+            descTransform.sizeDelta = new Vector2(5.5f, 0.7f);
+            TextMeshPro descText = mapDesc.AddComponent<TextMeshPro>();
+            descText.fontSize = 1.8f;
+            descText.alignment = TextAlignmentOptions.BottomLeft;
+            descText.color = new Color(0.5f, 0.5f, 0.5f);
+            descText.SetText("Once upon a time a thing was a thing that did a thing");
 
-            // Delete Button
-            GameObject deleteBtn = new GameObject("DeleteButton");
-            deleteBtn.transform.SetParent(btnPrefab.transform);
-            deleteBtn.transform.localPosition = new Vector3(2.5f, 0, -1.0f);
-            SpriteRenderer deleteBtnRenderer = deleteBtn.AddComponent<SpriteRenderer>();
-            deleteBtnRenderer.sprite = background;
-            deleteBtnRenderer.drawMode = SpriteDrawMode.Sliced;
-            deleteBtnRenderer.size = new Vector2(0.5f, 0.5f);
-            BoxCollider2D deleteBtnCollider = deleteBtn.AddComponent<BoxCollider2D>();
-            deleteBtnCollider.size = new Vector2(0.5f, 0.5f);
-            PassiveButton deleteBtnPassive = deleteBtn.AddComponent<PassiveButton>();
-
-            btnPrefab.SetActive(false);
-            return btnPrefab;
+            mapContainer.SetActive(false);
+            return mapContainer;
         }
     }
 }

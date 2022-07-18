@@ -16,7 +16,9 @@ namespace LevelImposter.Shop
 
         public static ShopManager Instance { get; private set; }
 
-        private void Awake()
+        private Scroller scroller;
+
+        public void Awake()
         {
             if (Instance == null)
             {
@@ -28,18 +30,20 @@ namespace LevelImposter.Shop
             }
         }
 
-        private void Start()
+        public void Start()
         {
             MapAPI.GetMaps(OnMapsLoaded);
+            scroller = GetComponent<Scroller>();
         }
 
         private void OnMapsLoaded(LIMetadata[] maps)
         {
+            scroller.ContentYBounds = new FloatRange(-1.8f, (1.1f * maps.Length) - 1.8f);
             for (int i = 0; i < maps.Length; i++)
             {
                 GameObject mapButton = Instantiate(mapButtonPrefab, mapButtonParent);
+                mapButton.transform.localPosition = new Vector3(0, i * -1.1f + 1.8f, 0);
                 mapButton.GetComponent<MapButton>().SetMap(maps[i]);
-                //mapButton.transform.position += new Vector3(0, -i * 1.1f, 0);
             }
         }
 

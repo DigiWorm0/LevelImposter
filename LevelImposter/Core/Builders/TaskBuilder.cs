@@ -66,12 +66,8 @@ namespace LevelImposter.Core
                 console = obj.AddComponent<Console>();
             }
             console.ConsoleId = consoleID;
-            console.AllowImpostor = false;
-            console.checkWalls = false;
-            console.GhostsIgnored = false;
             console.Image = spriteRenderer;
             console.onlyFromBelow = elem.properties.onlyFromBelow == null ? true : (bool)elem.properties.onlyFromBelow;
-            console.onlySameRoom = false;
             console.usableDistance = elem.properties.range == null ? 1.0f : (float)elem.properties.range;
             console.Room = systemType;
             console.TaskTypes = origConsole.TaskTypes;
