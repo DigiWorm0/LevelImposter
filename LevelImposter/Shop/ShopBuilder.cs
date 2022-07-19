@@ -43,6 +43,7 @@ namespace LevelImposter.Shop
             // Background
             GameObject shopBackground = new GameObject("Background");
             shopBackground.transform.SetParent(shopContainer.transform);
+            shopBackground.transform.localPosition = new Vector3(0, 0, 5);
             BoxCollider2D bgCollider = shopBackground.AddComponent<BoxCollider2D>();
             bgCollider.size = new Vector2(7, 7);
             scroller.Colliders = new UnhollowerBaseLib.Il2CppReferenceArray<Collider2D>(1);
@@ -88,6 +89,8 @@ namespace LevelImposter.Shop
             titleTransform.sizeDelta = new Vector2(5.5f, 0.8f);
             TextMeshPro titleText = mapTitle.AddComponent<TextMeshPro>();
             titleText.fontSize = 2.5f;
+            titleText.raycastTarget = false;
+            titleText.overflowMode = TextOverflowModes.Ellipsis;
             titleText.SetText("Example Map");
 
             // Author
@@ -99,6 +102,7 @@ namespace LevelImposter.Shop
             TextMeshPro authorText = mapAuthor.AddComponent<TextMeshPro>();
             authorText.fontSize = 2.0f;
             authorText.alignment = TextAlignmentOptions.Left;
+            authorText.raycastTarget = false;
             authorText.SetText("DigiWorm");
 
             // Description
@@ -111,6 +115,7 @@ namespace LevelImposter.Shop
             descText.fontSize = 1.8f;
             descText.alignment = TextAlignmentOptions.BottomLeft;
             descText.color = new Color(0.5f, 0.5f, 0.5f);
+            descText.raycastTarget = false;
             descText.SetText("Once upon a time a thing was a thing that did a thing");
 
             mapContainer.SetActive(false);

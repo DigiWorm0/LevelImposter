@@ -7,6 +7,10 @@ using UnityEngine;
 
 namespace LevelImposter.Shop
 {
+    /*
+     *      Replaces the How To Play
+     *      menu with the Map Shop
+     */
     [HarmonyPatch(typeof(HowToPlayController), nameof(HowToPlayController.Start))]
     public static class ShopPatch
     {

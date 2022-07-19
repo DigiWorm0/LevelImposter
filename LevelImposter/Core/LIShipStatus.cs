@@ -76,6 +76,8 @@ namespace LevelImposter.Core
                 shipStatus.Systems[SystemTypes.Comms].Cast<IActivatable>(),
                 shipStatus.Systems[SystemTypes.Laboratory].Cast<IActivatable>()
             }).Cast<ISystemType>());
+
+            MapUtils.systemRenames.Clear();
         }
 
         public void LoadMap(LIMap map)

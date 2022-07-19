@@ -7,6 +7,8 @@ namespace LevelImposter.Core
 {
     class MapUtils
     {
+        public static Dictionary<SystemTypes, string> systemRenames = new Dictionary<SystemTypes, string>();
+
         public static UnhollowerBaseLib.Il2CppReferenceArray<T> AddToArr<T>(UnhollowerBaseLib.Il2CppReferenceArray<T> arr, T value) where T : UnhollowerBaseLib.Il2CppObjectBase
         {
             List<T> list = new List<T>(arr);
@@ -55,6 +57,11 @@ namespace LevelImposter.Core
                 box.offset = origBox.offset;
                 box.isTrigger = origBox.isTrigger;
             }
+        }
+
+        public static void Rename(SystemTypes system, string name)
+        {
+            systemRenames[system] = name;
         }
     }
 }

@@ -42,7 +42,7 @@ namespace LevelImposter.Shop
             for (int i = 0; i < maps.Length; i++)
             {
                 GameObject mapButton = Instantiate(mapButtonPrefab, mapButtonParent);
-                mapButton.transform.localPosition = new Vector3(0, i * -1.1f + 1.8f, 0);
+                mapButton.transform.localPosition = new Vector3(0, i * -1.1f + 1.8f, -1);
                 mapButton.GetComponent<MapButton>().SetMap(maps[i]);
             }
         }

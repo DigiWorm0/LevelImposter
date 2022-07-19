@@ -5,6 +5,11 @@ using LevelImposter.Shop;
 
 namespace LevelImposter.Core
 {
+    /*
+     *      Gives credit to map makers
+     *      through the Ping Tracker in
+     *      the rop right corner.
+     */
     [HarmonyPatch(typeof(PingTracker), nameof(PingTracker.Update))]
     public static class PingPatch
     {

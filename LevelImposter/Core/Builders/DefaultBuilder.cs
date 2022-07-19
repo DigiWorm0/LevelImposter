@@ -40,14 +40,13 @@ namespace LevelImposter.Core
                     {
                         GameObject shadowObj = new GameObject(colliderData.id.ToString());
                         shadowObj.transform.SetParent(gameObject.transform);
-                        shadowObj.transform.localPosition = new Vector3(0, 0, 1);
+                        shadowObj.transform.localPosition = new Vector3(0, 0, 0);
                         shadowObj.transform.localRotation = Quaternion.Euler(0, 0, 0);
                         shadowObj.transform.localScale = Vector3.one;
                         shadowObj.layer = (int)Layer.Shadow;
 
                         EdgeCollider2D collider = shadowObj.AddComponent<EdgeCollider2D>();
                         collider.SetPoints(colliderData.GetPoints());
-                        collider.isTrigger = true;
                     }
                 }
             }

@@ -3,6 +3,11 @@ using UnityEngine;
 
 namespace LevelImposter.Shop
 {
+    /*
+     *      Replaces the How To Play
+     *      Button in the Main Menu
+     *      with the Map Shop Button
+     */
     [HarmonyPatch(typeof(MainMenuManager), nameof(MainMenuManager.Start))]
     public static class ButtonPatch
     {

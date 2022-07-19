@@ -5,6 +5,10 @@ using LevelImposter.Shop;
 
 namespace LevelImposter.Core
 {
+    /*
+     *      Appends a new LIShipStatus
+     *      to all ShipStatus-es
+     */
     [HarmonyPatch(typeof(ShipStatus), nameof(ShipStatus.Awake))]
     public static class ShipStatusPatch
     {

@@ -21,6 +21,8 @@ namespace LevelImposter.Core
             shipRoom.RoomId = systemType;
             shipRoom.roomArea = obj.GetComponent<Collider2D>();
             shipRoom.roomArea.isTrigger = true;
+
+            MapUtils.Rename(systemType, elem.name);
         }
 
         public void PostBuild()
