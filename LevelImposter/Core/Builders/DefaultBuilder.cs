@@ -47,6 +47,7 @@ namespace LevelImposter.Core
 
                         EdgeCollider2D collider = shadowObj.AddComponent<EdgeCollider2D>();
                         collider.SetPoints(colliderData.GetPoints());
+                        collider.isTrigger = true;
                     }
                 }
             }

@@ -31,7 +31,7 @@ namespace LevelImposter.Shop
 
             titleText.text = metadata.name;
             descriptionText.text = metadata.description;
-            authorText.text = metadata.authorID;
+            authorText.text = metadata.authorName;
 
             UpdateButton();
 

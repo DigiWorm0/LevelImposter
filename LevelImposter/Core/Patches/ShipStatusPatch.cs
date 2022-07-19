@@ -10,8 +10,7 @@ namespace LevelImposter.Core
     {
         public static void Prefix(ShipStatus __instance)
         {
-            if (LIShipStatus.Instance == null)
-                __instance.gameObject.AddComponent<LIShipStatus>();
+            __instance.gameObject.AddComponent<LIShipStatus>();
         }
     }
 }

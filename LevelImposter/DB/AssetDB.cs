@@ -24,6 +24,9 @@ namespace LevelImposter.DB
 
         public static void Init()
         {
+            if (isLoaded)
+                return;
+
             TempDB tempDB = JsonSerializer.Deserialize<TempDB>(
                 Encoding.UTF8.GetString(Properties.Resources.AssetDB, 0, Properties.Resources.AssetDB.Length)
             );

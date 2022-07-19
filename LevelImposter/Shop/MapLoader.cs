@@ -23,7 +23,6 @@ namespace LevelImposter.Shop
 
         public static void DeleteMap(Guid mapID)
         {
-            LILogger.Info("Removing map [" + mapID + "] from filesystem");
             if (!Exists(mapID))
             {
                 LILogger.Error("Could not find map [" + mapID + "] in filesystem");

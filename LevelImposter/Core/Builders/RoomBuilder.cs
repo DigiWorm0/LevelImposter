@@ -21,11 +21,6 @@ namespace LevelImposter.Core
             shipRoom.RoomId = systemType;
             shipRoom.roomArea = obj.GetComponent<Collider2D>();
             shipRoom.roomArea.isTrigger = true;
-
-            // Collider
-            PolygonCollider2D polyCollider = obj.GetComponent<PolygonCollider2D>();
-            if (polyCollider != null)
-                polyCollider.isTrigger = true;
         }
 
         public void PostBuild()
