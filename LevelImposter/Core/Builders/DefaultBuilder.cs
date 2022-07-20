@@ -23,6 +23,7 @@ namespace LevelImposter.Core
 
             if (elem.properties.colliders != null)
             {
+                GameObject shadowObj = null;
                 foreach (LICollider colliderData in elem.properties.colliders)
                 {
                     if (colliderData.isSolid)
@@ -38,12 +39,15 @@ namespace LevelImposter.Core
 
                     if (colliderData.blocksLight)
                     {
-                        GameObject shadowObj = new GameObject(colliderData.id.ToString());
-                        shadowObj.transform.SetParent(gameObject.transform);
-                        shadowObj.transform.localPosition = new Vector3(0, 0, 0);
-                        shadowObj.transform.localRotation = Quaternion.Euler(0, 0, 0);
-                        shadowObj.transform.localScale = Vector3.one;
-                        shadowObj.layer = (int)Layer.Shadow;
+                        if (shadowObj == null)
+                        {
+                            shadowObj = new GameObject("Shadows");
+                            shadowObj.transform.SetParent(gameObject.transform);
+                            shadowObj.transform.localPosition = new Vector3(0, 0, 0);
+                            shadowObj.transform.localRotation = Quaternion.Euler(0, 0, 0);
+                            shadowObj.transform.localScale = Vector3.one;
+                            shadowObj.layer = (int)Layer.Shadow;
+                        }
 
                         EdgeCollider2D collider = shadowObj.AddComponent<EdgeCollider2D>();
                         collider.SetPoints(colliderData.GetPoints());

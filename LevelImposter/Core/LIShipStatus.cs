@@ -25,10 +25,9 @@ namespace LevelImposter.Core
         {
             shipStatus = GetComponent<ShipStatus>();
             Instance = this;
-            LILogger.Info(shipStatus);
             if (MapLoader.Exists(Guid.Empty))
             {
-                LILogger.Info("Loading Default Map...");
+                LILogger.Info("Loading default map...");
                 MapLoader.LoadMap(Guid.Empty);
             }
             if (MapLoader.currentMap != null)
@@ -37,18 +36,15 @@ namespace LevelImposter.Core
                 LILogger.Info("No map content, no LI data will load");
         }
 
+        private void Start()
+        {
+            HudManager.Instance.ShadowQuad.material.SetInt("_Mask", 7);
+        }
+        
         public void ResetMap()
         {
             while (transform.childCount > 0)
                 DestroyImmediate(transform.GetChild(0).gameObject);
-
-            // Set in ShipStatus.Awake
-            //shipStatus.AllCameras = new UnhollowerBaseLib.Il2CppReferenceArray<SurvCamera>(0);
-            //shipStatus.AllConsoles = new UnhollowerBaseLib.Il2CppReferenceArray<Console>(0);
-            //shipStatus.AllRooms = new UnhollowerBaseLib.Il2CppReferenceArray<PlainShipRoom>(0);
-            //shipStatus.AllStepWatchers = new UnhollowerBaseLib.Il2CppReferenceArray<IStepWatcher>(0);
-            //shipStatus.AllVents = new UnhollowerBaseLib.Il2CppReferenceArray<Vent>(0);
-            //shipStatus.FastRooms = new Il2CppSystem.Collections.Generic.Dictionary<SystemTypes, PlainShipRoom>();
 
             shipStatus.AllDoors = new UnhollowerBaseLib.Il2CppReferenceArray<PlainDoor>(0);
             shipStatus.DummyLocations = new UnhollowerBaseLib.Il2CppReferenceArray<Transform>(0);
@@ -58,6 +54,9 @@ namespace LevelImposter.Core
             shipStatus.NormalTasks = new UnhollowerBaseLib.Il2CppReferenceArray<NormalPlayerTask>(0);
             shipStatus.SystemNames = new UnhollowerBaseLib.Il2CppStructArray<StringNames>(0);
             shipStatus.Systems = new Il2CppSystem.Collections.Generic.Dictionary<SystemTypes, ISystemType>();
+            shipStatus.MedScanner = null;
+            shipStatus.Type = ShipStatus.MapType.Ship;
+            shipStatus.WeaponsImage = null;
 
             shipStatus.InitialSpawnCenter = new Vector2(0, -Y_OFFSET);
             shipStatus.MeetingSpawnCenter = new Vector2(0, -Y_OFFSET);
@@ -85,10 +84,11 @@ namespace LevelImposter.Core
             LILogger.Info("Loading " + map.name + " [" + map.id + "]");
             AssetDB.Import();
             ResetMap();
+            shipStatus.name = map.name;
             foreach (LIElement elem in map.elements)
                 AddElement(elem);
             buildRouter.PostBuild();
-            LILogger.Info("Map Load Completed");
+            LILogger.Info("Map load completed");
         }
 
         public void AddElement(LIElement element)

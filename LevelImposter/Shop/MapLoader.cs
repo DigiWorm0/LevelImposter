@@ -39,7 +39,7 @@ namespace LevelImposter.Shop
                 LILogger.Error("Could not find [" + mapID + "] in filesystem");
                 return;
             }
-            LILogger.Info("Loading nap [" + mapID + "] from filesystem");
+            LILogger.Info("Loading map [" + mapID + "] from filesystem");
             string mapPath = GetPath(mapID);
             string mapJson = File.ReadAllText(mapPath);
             currentMap = System.Text.Json.JsonSerializer.Deserialize<LIMap>(mapJson);
