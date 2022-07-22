@@ -27,7 +27,8 @@ namespace LevelImposter.Shop
             // Grab Assets
             Transform ctrlScreen = GameObject.Find("ControllerDisconnectScreen").transform;
             Sprite buttonBackground = ctrlScreen.FindChild("ContinueButton").FindChild("Background").GetComponent<SpriteRenderer>().sprite;
-            Sprite contentBackground = ctrlScreen.FindChild("Background").GetComponent<SpriteRenderer>().sprite;
+
+            BuildSubContainer();
 
             // Container
             GameObject shopContainer = new GameObject("ShopContainer");
@@ -120,6 +121,25 @@ namespace LevelImposter.Shop
 
             mapContainer.SetActive(false);
             return mapContainer;
+        }
+
+        public static GameObject BuildSubContainer()
+        {
+            // Sub Container
+            GameObject subContainer = new GameObject("ShopSubContainer");
+            subContainer.transform.position = new Vector3(-1.4f, 1.4f, 0);
+
+            // Sub Title
+            GameObject subTitle = new GameObject("Title");
+            subTitle.transform.SetParent(subContainer.transform);
+            subTitle.transform.localPosition = Vector3.zero;
+            RectTransform subTitleTransform = subTitle.AddComponent<RectTransform>();
+            subTitleTransform.sizeDelta = new Vector2(5.5f, 1.0f);
+            TextMeshPro subTitleText = subTitle.AddComponent<TextMeshPro>();
+            subTitleText.fontSize = 2.5f;
+            subTitleText.SetText("LevelImposter\n<size=4>Map Shop");
+
+            return subContainer;
         }
     }
 }

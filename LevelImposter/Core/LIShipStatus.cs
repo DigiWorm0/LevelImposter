@@ -77,6 +77,7 @@ namespace LevelImposter.Core
             }).Cast<ISystemType>());
 
             MapUtils.systemRenames.Clear();
+            MapUtils.taskRenames.Clear();
         }
 
         public void LoadMap(LIMap map)

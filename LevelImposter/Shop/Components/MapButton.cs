@@ -14,6 +14,8 @@ namespace LevelImposter.Shop
         private SpriteRenderer spriteRenderer;
         private PassiveButton button;
         private LIMetadata metadata;
+        private bool isDownloading = false;
+        private bool isHovering = false;
         private bool isDownloaded
         {
             get { return MapLoader.Exists(metadata.id); }
@@ -34,6 +36,8 @@ namespace LevelImposter.Shop
             authorText.text = metadata.authorName;
 
             UpdateButton();
+            button.OnMouseOut.AddListener((Action)OnMouseOut);
+            button.OnMouseOver.AddListener((Action)OnMouseOver);
 
             gameObject.SetActive(true);
         }
@@ -41,29 +45,48 @@ namespace LevelImposter.Shop
         public void UpdateButton()
         {
             button.OnClick.RemoveAllListeners();
-            if (isDownloaded)
+            if (isDownloading)
+            {
+                spriteRenderer.color = Color.yellow;
+            }
+            else if (isDownloaded)
             {
                 spriteRenderer.color = Color.red;
                 button.OnClick.AddListener((Action)DeleteMap);
             }
             else
             {
-                spriteRenderer.color = Color.green;
+                if (isHovering)
+                    spriteRenderer.color = Color.green;
+                else
+                    spriteRenderer.color = Color.white;
                 button.OnClick.AddListener((Action)DownloadMap);
             }
         }
 
+        public void OnMouseOver()
+        {
+            isHovering = true;
+            UpdateButton();
+        }
+        public void OnMouseOut()
+        {
+            isHovering = false;
+            UpdateButton();
+        }
+
         public void DownloadMap()
         {
-            button.gameObject.SetActive(false);
+            isDownloading = true;
             ShopManager.Instance.DownloadMap(metadata.id, OnDownloadFinish);
+            UpdateButton();
         }
 
         public void OnDownloadFinish()
         {
+            isDownloading = false;
             MapLoader.LoadMap(metadata.id);
             UpdateButton();
-            button.gameObject.SetActive(true);
         }
 
         public void DeleteMap()

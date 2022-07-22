@@ -8,6 +8,7 @@ namespace LevelImposter.Core
     class MapUtils
     {
         public static Dictionary<SystemTypes, string> systemRenames = new Dictionary<SystemTypes, string>();
+        public static Dictionary<TaskTypes, string> taskRenames = new Dictionary<TaskTypes, string>();
 
         public static UnhollowerBaseLib.Il2CppReferenceArray<T> AddToArr<T>(UnhollowerBaseLib.Il2CppReferenceArray<T> arr, T value) where T : UnhollowerBaseLib.Il2CppObjectBase
         {
@@ -62,6 +63,10 @@ namespace LevelImposter.Core
         public static void Rename(SystemTypes system, string name)
         {
             systemRenames[system] = name;
+        }
+        public static void Rename(TaskTypes system, string name)
+        {
+            taskRenames[system] = name;
         }
     }
 }

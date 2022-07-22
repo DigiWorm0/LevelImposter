@@ -98,6 +98,7 @@ namespace LevelImposter.Core
             // Task
             if (!string.IsNullOrEmpty(taskData.BehaviorName))
             {
+                MapUtils.Rename(taskData.Behavior.TaskType, elem.name);
 
                 GameObject taskHolder = new GameObject(elem.name);
                 taskHolder.transform.SetParent(taskContainer.transform);
