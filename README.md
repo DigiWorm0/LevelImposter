@@ -49,7 +49,7 @@ Simply download and open the sln in Visual Studio. Requires Among Us with BepInE
 - [BepInEx](https://github.com/BepInEx/BepInEx)
 
 ## Disclaimer
-This mod is not affiliated with Among Us or Innersloth LLC, and the content contained therein is not endorsed or otherwise sponsored by Innersloth LLC. Portions of the materials contained herein are property of Innersloth LLC. © Innersloth LLC.
+LevelImposter is not affiliated with Among Us or Innersloth LLC, and the content contained therein is not endorsed or otherwise sponsored by Innersloth LLC. Portions of the materials contained herein are property of Innersloth LLC. © Innersloth LLC.
 
 ## License
 This software is distributed under the GNU GPLv3 License

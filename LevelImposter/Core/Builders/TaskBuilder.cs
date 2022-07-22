@@ -37,7 +37,8 @@ namespace LevelImposter.Core
 
             // Parent
             SystemTypes systemType = 0;
-            // TODO: Inherit Room
+            if (elem.properties.parent != null)
+                systemType = RoomBuilder.GetRoom((Guid)elem.properties.parent);
 
             // Console
             Console console;
@@ -93,7 +94,7 @@ namespace LevelImposter.Core
             // Task
             if (!string.IsNullOrEmpty(taskData.BehaviorName))
             {
-                GameObject taskHolder = new GameObject(elem.id.ToString());
+                GameObject taskHolder = new GameObject(elem.name);
                 taskHolder.transform.SetParent(taskContainer.transform);
 
                 NormalPlayerTask origTask = taskData.Behavior;

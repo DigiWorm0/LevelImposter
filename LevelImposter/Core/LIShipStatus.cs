@@ -84,11 +84,26 @@ namespace LevelImposter.Core
             LILogger.Info("Loading " + map.name + " [" + map.id + "]");
             AssetDB.Import();
             ResetMap();
-            shipStatus.name = map.name;
+            LoadMapProperties(map);
             foreach (LIElement elem in map.elements)
-                AddElement(elem);
+                if (elem.type == "util-room")
+                    AddElement(elem);
+            foreach (LIElement elem in map.elements)
+                if (elem.type != "util-room")
+                    AddElement(elem);
             buildRouter.PostBuild();
             LILogger.Info("Map load completed");
+        }
+
+        public void LoadMapProperties(LIMap map)
+        {
+            shipStatus.name = map.name;
+
+            if (!string.IsNullOrEmpty(map.properties.bgColor)) {
+                Color bgColor;
+                ColorUtility.TryParseHtmlString(map.properties.bgColor, out bgColor);
+                Camera.main.backgroundColor = bgColor;
+            }
         }
 
         public void AddElement(LIElement element)

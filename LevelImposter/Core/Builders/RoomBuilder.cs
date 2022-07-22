@@ -7,7 +7,8 @@ namespace LevelImposter.Core
 {
     public class RoomBuilder : Builder
     {
-        private int roomId = 0;
+        private int roomId = 1;
+        private static Dictionary<Guid, SystemTypes> roomDB = new Dictionary<Guid, SystemTypes>();
 
         public void Build(LIElement elem, GameObject obj)
         {
@@ -23,11 +24,19 @@ namespace LevelImposter.Core
             shipRoom.roomArea.isTrigger = true;
 
             MapUtils.Rename(systemType, elem.name);
+            roomDB.Add(elem.id, systemType);
         }
 
         public void PostBuild()
         {
-            roomId = 0;
+            roomDB.Clear();
+            MapUtils.Rename(0, "Default Room");
+            roomId = 1;
+        }
+
+        public static SystemTypes GetRoom(Guid id)
+        {
+            return roomDB.GetValueOrDefault(id);
         }
     }
 }

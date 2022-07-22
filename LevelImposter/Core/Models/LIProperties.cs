@@ -8,6 +8,8 @@ namespace LevelImposter.Core
     [Serializable]
     public class LIProperties
     {
+        public Guid? parent { get; set; }
+
         public Guid? leftVent { get; set; }
         public Guid? middleVent { get; set; }
         public Guid? rightVent { get; set; }
