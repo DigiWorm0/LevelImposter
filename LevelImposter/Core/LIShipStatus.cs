@@ -109,9 +109,16 @@ namespace LevelImposter.Core
         public void AddElement(LIElement element)
         {
             LILogger.Info("Adding " + element.name + " (" + element.type + ") [" + element.id + "]");
-            GameObject gameObject = buildRouter.Build(element);
-            gameObject.transform.SetParent(transform);
-            gameObject.transform.localPosition -= new Vector3(0, Y_OFFSET, 0);
+            try
+            {
+                GameObject gameObject = buildRouter.Build(element);
+                gameObject.transform.SetParent(transform);
+                gameObject.transform.localPosition -= new Vector3(0, Y_OFFSET, 0);
+            }
+            catch (Exception e)
+            {
+                LILogger.Error("Error while building " + element.name + " (" + element.type + ") [" + element.id + "]:\n" + e);
+            }
         }
     }
 }

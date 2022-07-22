@@ -75,6 +75,10 @@ namespace LevelImposter.Core
             console.ValidTasks = origConsole.ValidTasks;
             consoleID++;
 
+            // Multi-Step Tasks
+            if (elem.type.StartsWith("task-waterwheel"))
+                console.ConsoleId = int.Parse(elem.type.Substring(elem.type.Length - 1, 1)) - 1;
+
             // Collider
             if (!MapUtils.HasSolidCollider(elem))
                 MapUtils.CloneColliders(origConsole.gameObject, obj);
@@ -94,12 +98,12 @@ namespace LevelImposter.Core
             // Task
             if (!string.IsNullOrEmpty(taskData.BehaviorName))
             {
+
                 GameObject taskHolder = new GameObject(elem.name);
                 taskHolder.transform.SetParent(taskContainer.transform);
 
                 NormalPlayerTask origTask = taskData.Behavior;
-                NormalPlayerTask task;
-                task = taskHolder.AddComponent<NormalPlayerTask>();
+                NormalPlayerTask task = taskHolder.AddComponent(taskData.Behavior.GetIl2CppType()).Cast<NormalPlayerTask>();
                 task.StartAt = systemType;
                 task.taskStep = origTask.taskStep;
                 task.MaxStep = origTask.MaxStep;
