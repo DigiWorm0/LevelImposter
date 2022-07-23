@@ -17,6 +17,19 @@ namespace LevelImposter.Core
             return list.ToArray();
         }
 
+        public static UnhollowerBaseLib.Il2CppStructArray<byte> Shuffle(UnhollowerBaseLib.Il2CppStructArray<byte> arr)
+        {
+            List<byte> listA = new List<byte>(arr);
+            List<byte> listB = new List<byte>();
+            while (listA.Count > 0)
+            {
+                int index = UnityEngine.Random.Range(0, listA.Count);
+                listB.Add(listA[index]);
+                listA.RemoveAt(index);
+            }
+            return listB.ToArray();
+        }
+
         public static bool HasSolidCollider(LIElement elem)
         {
             if (elem.properties == null)

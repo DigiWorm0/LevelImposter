@@ -22,6 +22,16 @@ namespace LevelImposter.Core
             { "task-fans1", 0 },
             { "task-fans2", 1 },
         };
+        private Dictionary<string, int> consoleIDIncrements = new Dictionary<string, int> {
+            { "task-toilet", 0 },
+            { "task-breakers", 0 },
+            { "task-towels", 0 },
+            { "task-node", 0 }
+        };
+
+        public static byte breakerCount = 0;
+        public static byte toiletCount = 0;
+        public static byte towelCount = 0;
 
         public void Build(LIElement elem, GameObject obj)
         {
@@ -90,6 +100,21 @@ namespace LevelImposter.Core
             {
                 console.ConsoleId = consoleIDPairs[elem.type];
             }
+            else if (elem.type.StartsWith("task-towels"))
+            {
+                if (elem.type == "task-towels1")
+                    console.ConsoleId = 255;
+                else
+                {
+                    console.ConsoleId = consoleIDIncrements["task-towels"];
+                    consoleIDIncrements["task-towels"]++;
+                }
+            }
+            else if (consoleIDIncrements.ContainsKey(elem.type))
+            {
+                console.ConsoleId = consoleIDIncrements[elem.type];
+                consoleIDIncrements[elem.type]++;
+            }
             else
             {
                 console.ConsoleId = consoleID;
@@ -134,6 +159,13 @@ namespace LevelImposter.Core
                 task.MinigamePrefab = origTask.MinigamePrefab;
                 task.HasLocation = origTask.HasLocation;
 
+                if (elem.type == "task-node")
+                {
+                    WeatherNodeTask nodeTask = task.Cast<WeatherNodeTask>();
+                    nodeTask.NodeId = console.ConsoleId;
+                    nodeTask.Stage2Prefab = origTask.Cast<WeatherNodeTask>().Stage2Prefab;
+                }
+
                 if (taskData.TaskType == TaskType.Common)
                     shipStatus.CommonTasks = MapUtils.AddToArr(shipStatus.CommonTasks, task);
                 if (taskData.TaskType == TaskType.Short)
@@ -152,6 +184,38 @@ namespace LevelImposter.Core
             }
         }
 
-        public void PostBuild() { }
+        public void PostBuild() {
+            string[] keys = new string[consoleIDIncrements.Keys.Count];
+            consoleIDIncrements.Keys.CopyTo(keys, 0);
+
+            foreach (var key in keys)
+            {
+                byte count = (byte)consoleIDIncrements[key];
+                if (key == "task-breakers")
+                    breakerCount = count;
+                if (key == "task-toilet")
+                    toiletCount = count;
+                if (key == "task-towels")
+                    towelCount = count;
+                consoleIDIncrements[key] = 0;
+            }
+        }
+
+        /*
+        private NormalPlayerTask SearchForTask(TaskTypes taskTypes)
+        {
+            ShipStatus shipStatus = LIShipStatus.Instance.shipStatus;
+            foreach(var task in shipStatus.LongTasks)
+                if (task.TaskType == taskTypes)
+                    return task;
+            foreach (var task in shipStatus.NormalTasks)
+                if (task.TaskType == taskTypes)
+                    return task;
+            foreach (var task in shipStatus.CommonTasks)
+                if (task.TaskType == taskTypes)
+                    return task;
+            return null;
+        }
+        */
     }
 }

@@ -38,7 +38,8 @@ namespace LevelImposter.Core
 
         private void Start()
         {
-            HudManager.Instance.ShadowQuad.material.SetInt("_Mask", 7);
+            if (MapLoader.currentMap != null)
+                HudManager.Instance.ShadowQuad.material.SetInt("_Mask", 7);
         }
         
         public void ResetMap()
