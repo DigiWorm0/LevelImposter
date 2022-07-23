@@ -17,7 +17,8 @@ namespace LevelImposter.Core
             new CamBuilder(),
             new TaskBuilder(),
             new RoomBuilder(),
-            new DecBuilder()
+            new DecBuilder(),
+            new MinimapBuilder()
         };
 
         public GameObject Build(LIElement element)
