@@ -39,7 +39,7 @@ namespace LevelImposter.Core
                 CircleCollider2D box = to.AddComponent<CircleCollider2D>();
                 box.radius = origBox.radius;
                 box.offset = origBox.offset;
-                box.isTrigger = origBox.isTrigger;
+                box.isTrigger = true;
             }
             if (from.GetComponent<BoxCollider2D>() != null)
             {
@@ -47,7 +47,7 @@ namespace LevelImposter.Core
                 BoxCollider2D box = to.AddComponent<BoxCollider2D>();
                 box.size = origBox.size;
                 box.offset = origBox.offset;
-                box.isTrigger = origBox.isTrigger;
+                box.isTrigger = true;
             }
             if (from.GetComponent<PolygonCollider2D>() != null)
             {
@@ -56,7 +56,7 @@ namespace LevelImposter.Core
                 box.points = origBox.points;
                 box.pathCount = origBox.pathCount;
                 box.offset = origBox.offset;
-                box.isTrigger = origBox.isTrigger;
+                box.isTrigger = true;
             }
         }
 

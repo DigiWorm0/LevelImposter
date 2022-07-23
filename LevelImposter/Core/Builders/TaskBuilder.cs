@@ -12,6 +12,17 @@ namespace LevelImposter.Core
         public GameObject taskContainer;
         public int consoleID = 0;
 
+        private Dictionary<string, int> consoleIDPairs = new Dictionary<string, int> {
+            { "task-garbage2", 1 },
+            { "task-garbage3", 0 },
+            { "task-garbage4", 2 },
+            { "task-waterwheel1", 0 },
+            { "task-waterwheel2", 1 },
+            { "task-waterwheel3", 2 },
+            { "task-fans1", 0 },
+            { "task-fans2", 1 },
+        };
+
         public void Build(LIElement elem, GameObject obj)
         {
             if (!elem.type.StartsWith("task-"))
@@ -24,6 +35,7 @@ namespace LevelImposter.Core
             }
 
             TaskData taskData = AssetDB.tasks[elem.type];
+            ShipStatus shipStatus = LIShipStatus.Instance.shipStatus;
 
             // Default Sprite
             obj.layer = (int)Layer.ShortObjects;
@@ -73,11 +85,16 @@ namespace LevelImposter.Core
             console.Room = systemType;
             console.TaskTypes = origConsole.TaskTypes;
             console.ValidTasks = origConsole.ValidTasks;
-            consoleID++;
 
-            // Multi-Step Tasks
-            if (elem.type.StartsWith("task-waterwheel"))
-                console.ConsoleId = int.Parse(elem.type.Substring(elem.type.Length - 1, 1)) - 1;
+            if (consoleIDPairs.ContainsKey(elem.type))
+            {
+                console.ConsoleId = consoleIDPairs[elem.type];
+            }
+            else
+            {
+                console.ConsoleId = consoleID;
+                consoleID++;
+            }
 
             // Collider
             if (!MapUtils.HasSolidCollider(elem))
@@ -98,7 +115,7 @@ namespace LevelImposter.Core
             // Task
             if (!string.IsNullOrEmpty(taskData.BehaviorName))
             {
-                MapUtils.Rename(taskData.Behavior.TaskType, elem.name);
+                //MapUtils.Rename(taskData.Behavior.TaskType, elem.name); // TODO: Implement this in a different way...
 
                 GameObject taskHolder = new GameObject(elem.name);
                 taskHolder.transform.SetParent(taskContainer.transform);
@@ -117,13 +134,21 @@ namespace LevelImposter.Core
                 task.MinigamePrefab = origTask.MinigamePrefab;
                 task.HasLocation = origTask.HasLocation;
 
-                ShipStatus shipStatus = LIShipStatus.Instance.shipStatus;
                 if (taskData.TaskType == TaskType.Common)
                     shipStatus.CommonTasks = MapUtils.AddToArr(shipStatus.CommonTasks, task);
                 if (taskData.TaskType == TaskType.Short)
                     shipStatus.NormalTasks = MapUtils.AddToArr(shipStatus.NormalTasks, task);
                 if (taskData.TaskType == TaskType.Long)
                     shipStatus.LongTasks = MapUtils.AddToArr(shipStatus.LongTasks, task);
+            }
+
+            // Medscan
+            if (elem.type == "task-medscan")
+            {
+                if (shipStatus.MedScanner != null)
+                    LILogger.Warn("Warning: Only 1 med scanner can be used per map");
+                MedScannerBehaviour medscan = obj.AddComponent<MedScannerBehaviour>();
+                shipStatus.MedScanner = medscan;
             }
         }
 

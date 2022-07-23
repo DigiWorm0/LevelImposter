@@ -15,6 +15,7 @@ namespace LevelImposter.Core
             DecData utilData = AssetDB.dec[elem.type];
 
             // Sprite Renderer
+            obj.layer = (int)Layer.ShortObjects;
             SpriteRenderer spriteRenderer = obj.GetComponent<SpriteRenderer>();
             if (!spriteRenderer)
             {
