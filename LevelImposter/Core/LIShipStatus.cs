@@ -87,10 +87,10 @@ namespace LevelImposter.Core
             AssetDB.Import();
             ResetMap();
             LoadMapProperties(map);
-            foreach (LIElement elem in map.elements)
+            foreach (LIElement elem in map.elements)    // Rooms
                 if (elem.type == "util-room")
                     AddElement(elem);
-            foreach (LIElement elem in map.elements)
+            foreach (LIElement elem in map.elements)    // Objs
                 if (elem.type != "util-room")
                     AddElement(elem);
             buildRouter.PostBuild();

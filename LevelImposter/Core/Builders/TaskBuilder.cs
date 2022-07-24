@@ -60,7 +60,7 @@ namespace LevelImposter.Core
             // Parent
             SystemTypes systemType = 0;
             if (elem.properties.parent != null)
-                systemType = RoomBuilder.GetRoom((Guid)elem.properties.parent);
+                systemType = RoomBuilder.GetSystem((Guid)elem.properties.parent);
 
             // Console
             Console console;
@@ -157,7 +157,6 @@ namespace LevelImposter.Core
                 task.TimerStarted = origTask.TimerStarted;
                 task.TaskType = origTask.TaskType;
                 task.MinigamePrefab = origTask.MinigamePrefab;
-                task.HasLocation = origTask.HasLocation;
 
                 if (elem.type == "task-node")
                 {

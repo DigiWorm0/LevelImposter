@@ -7,7 +7,6 @@ namespace LevelImposter.Core
 {
     public class MinimapBuilder : Builder
     {
-
         private bool isBuilt = false;
 
         public void Build(LIElement elem, GameObject obj)
@@ -20,9 +19,7 @@ namespace LevelImposter.Core
                 return;
             }
 
-            ShipStatus shipStatus = LIShipStatus.Instance.shipStatus;
             MapBehaviour mapBehaviour = GetMinimap();
-
 
             SpriteRenderer spriteRenderer = obj.GetComponent<SpriteRenderer>();
             if (spriteRenderer != null)
@@ -56,7 +53,7 @@ namespace LevelImposter.Core
             isBuilt = false;
         }
 
-        private MapBehaviour GetMinimap()
+        public static MapBehaviour GetMinimap()
         {
             MapBehaviour mapBehaviour = MapBehaviour.Instance;
             if (mapBehaviour == null)
