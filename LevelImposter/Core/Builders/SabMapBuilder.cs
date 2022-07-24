@@ -20,10 +20,12 @@ namespace LevelImposter.Core
             InfectedOverlay infectedOverlay = mapBehaviour.infectedOverlay;
             GameObject buttonPrefab = infectedOverlay.transform.GetChild(0).GetChild(0).gameObject;
 
+            // System
             SystemTypes systemType = 0;
             if (elem.properties.parent != null)
                 systemType = RoomBuilder.GetSystem((Guid)elem.properties.parent);
 
+            // Map Room
             MapRoom mapRoom;
             if (mapRoomDB.ContainsKey(systemType))
             {
@@ -39,8 +41,13 @@ namespace LevelImposter.Core
                 mapRoom.room = systemType;
 
                 mapRoomDB.Add(systemType, mapRoom);
+
+                MapRoom[] rooms = new MapRoom[mapRoomDB.Count];
+                mapRoomDB.Values.CopyTo(rooms, 0);
+                infectedOverlay.rooms = rooms;
             }
 
+            // Button
             GameObject sabButton = new GameObject(elem.name);
             sabButton.transform.SetParent(mapRoom.transform);
             sabButton.transform.localPosition = new Vector3(
@@ -55,9 +62,16 @@ namespace LevelImposter.Core
 
             SpriteRenderer renderer = sabButton.AddComponent<SpriteRenderer>();
             renderer.sprite = buttonPrefab.GetComponent<SpriteRenderer>().sprite;
+            mapRoom.special = renderer;
 
             ButtonBehavior button = sabButton.AddComponent<ButtonBehavior>();
             Action action = mapRoom.SabotageLights;
+            if (elem.type == "sab-reactorleft" || elem.type == "sab-reactorright")
+                action = mapRoom.SabotageReactor;
+            else if (elem.type == "sab-oxygen1" || elem.type == "sab-oxygen2")
+                action = mapRoom.SabotageOxygen;
+            else if (elem.type == "sab-comms")
+                action = mapRoom.SabotageComms;
             button.OnClick.AddListener(action);
 
         }
