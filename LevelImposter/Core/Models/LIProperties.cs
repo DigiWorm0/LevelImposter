@@ -16,6 +16,7 @@ namespace LevelImposter.Core
 
         public bool? onlyFromBelow { get; set; }
         public float? range { get; set; }
+        public string? description { get; set; }
 
         public float? camXOffset { get; set; }
         public float? camYOffset { get; set; }

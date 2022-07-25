@@ -90,7 +90,7 @@ namespace LevelImposter.Core
             }
             console.ConsoleId = consoleID;
             console.Image = spriteRenderer;
-            console.onlyFromBelow = elem.properties.onlyFromBelow == null ? true : (bool)elem.properties.onlyFromBelow;
+            console.onlyFromBelow = elem.properties.onlyFromBelow == null ? false : (bool)elem.properties.onlyFromBelow;
             console.usableDistance = elem.properties.range == null ? 1.0f : (float)elem.properties.range;
             console.Room = systemType;
             console.TaskTypes = origConsole.TaskTypes;
@@ -140,7 +140,8 @@ namespace LevelImposter.Core
             // Task
             if (!string.IsNullOrEmpty(taskData.BehaviorName))
             {
-                //MapUtils.Rename(taskData.Behavior.TaskType, elem.name); // TODO: Implement this in a different way...
+                if (!string.IsNullOrEmpty(elem.properties.description))
+                    MapUtils.Rename(taskData.Behavior.TaskType, elem.properties.description);
 
                 GameObject taskHolder = new GameObject(elem.name);
                 taskHolder.transform.SetParent(taskContainer.transform);
