@@ -10,7 +10,7 @@ namespace LevelImposter.Shop
     {
         public static LIMap currentMap = null;
 
-        public static void WriteMap(Guid mapID, string mapData)
+        public static void WriteMap(string mapID, string mapData)
         {
             LILogger.Info("Writing map [" + mapID + "] to filesystem");
             string mapPath = GetPath(mapID);
@@ -21,7 +21,7 @@ namespace LevelImposter.Shop
             File.WriteAllText(mapPath, mapData);
         }
 
-        public static void DeleteMap(Guid mapID)
+        public static void DeleteMap(string mapID)
         {
             if (!Exists(mapID))
             {
@@ -32,34 +32,52 @@ namespace LevelImposter.Shop
             string mapPath = GetPath(mapID);
             File.Delete(mapPath);
         }
-        public static void LoadMap(Guid mapID)
+        public static LIMap GetMap(string mapID)
         {
             if (!Exists(mapID))
             {
                 LILogger.Error("Could not find [" + mapID + "] in filesystem");
-                return;
+                return null;
             }
             LILogger.Info("Loading map [" + mapID + "] from filesystem");
             string mapPath = GetPath(mapID);
             string mapJson = File.ReadAllText(mapPath);
-            currentMap = System.Text.Json.JsonSerializer.Deserialize<LIMap>(mapJson);
+            LIMap mapData = System.Text.Json.JsonSerializer.Deserialize<LIMap>(mapJson);
+            return mapData;
         }
 
+        public static void LoadMap(string mapID)
+        {
+            currentMap = GetMap(mapID);
+        }
         public static void UnloadMap()
         {
             currentMap = null;
         }
 
-        public static bool Exists(Guid mapId)
+        public static bool Exists(string mapId)
         {
             string mapPath = GetPath(mapId);
             return File.Exists(mapPath);
         }
 
-        public static string GetPath(Guid mapId)
+        public static string GetDir()
         {
             string dllDir = System.Reflection.Assembly.GetAssembly(typeof(LevelImposter)).Location;
-            return Path.Combine(Path.GetDirectoryName(dllDir), "LevelImposter", mapId + ".lim");
+            return Path.Combine(Path.GetDirectoryName(dllDir), "LevelImposter");
+        }
+
+        public static string GetPath(string mapId)
+        {
+            return Path.Combine(GetDir(), mapId + ".lim");
+        }
+
+        public static string[] GetMapIDs()
+        {
+            string[] paths = Directory.GetFiles(GetDir());
+            for (int i = 0; i < paths.Length; i++)
+                paths[i] = Path.GetFileNameWithoutExtension(paths[i]);
+            return paths;
         }
     }
 }

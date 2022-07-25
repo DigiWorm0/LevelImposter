@@ -28,8 +28,6 @@ namespace LevelImposter.Shop
             Transform ctrlScreen = GameObject.Find("ControllerDisconnectScreen").transform;
             Sprite buttonBackground = ctrlScreen.FindChild("ContinueButton").FindChild("Background").GetComponent<SpriteRenderer>().sprite;
 
-            BuildSubContainer();
-
             // Container
             GameObject shopContainer = new GameObject("ShopContainer");
             shopContainer.transform.position = new Vector3(1.4f, 0, 0);
@@ -59,6 +57,8 @@ namespace LevelImposter.Shop
             GameObject button = BuildButtonPrefab(shopInner, buttonBackground);
             shopManager.mapButtonPrefab = button;
             shopManager.mapButtonParent = shopInner.transform;
+
+            BuildSubContainer(buttonBackground);
         }
 
         private static GameObject BuildButtonPrefab(GameObject parent, Sprite background)
@@ -123,7 +123,7 @@ namespace LevelImposter.Shop
             return mapContainer;
         }
 
-        public static GameObject BuildSubContainer()
+        public static GameObject BuildSubContainer(Sprite background)
         {
             // Sub Container
             GameObject subContainer = new GameObject("ShopSubContainer");
@@ -139,7 +139,55 @@ namespace LevelImposter.Shop
             subTitleText.fontSize = 2.5f;
             subTitleText.SetText("LevelImposter\n<size=4>Map Shop");
 
+            // Sub Filters
+            FilterButton publicButton = BuildFilterButton(background, FilterButton.Filter.Public);
+            publicButton.transform.SetParent(subContainer.transform);
+            publicButton.transform.localPosition = new Vector3(-1.5f, -2.0f);
+
+            // Sub Filters
+            FilterButton downloadedButton = BuildFilterButton(background, FilterButton.Filter.Downloaded);
+            downloadedButton.transform.SetParent(subContainer.transform);
+            downloadedButton.transform.localPosition = new Vector3(-1.5f, -2.5f);
+
+
             return subContainer;
+        }
+
+        private static FilterButton BuildFilterButton(Sprite background, FilterButton.Filter filter)
+        {
+            // Container
+            GameObject filterButton = new GameObject(filter.ToString());
+            BoxCollider2D filterCollider = filterButton.AddComponent<BoxCollider2D>();
+            filterCollider.size = new Vector2(2, 0.4f);
+            filterCollider.offset = Vector2.zero;
+            PassiveButton filterPassiveBtn = filterButton.AddComponent<PassiveButton>();
+            FilterButton filterButtonBtn = filterButton.AddComponent<FilterButton>();
+
+            // Background
+            GameObject filterBackground = new GameObject("Background");
+            filterBackground.transform.SetParent(filterButton.transform);
+            filterBackground.transform.localPosition = Vector3.zero;
+            SpriteRenderer spriteRenderer = filterBackground.AddComponent<SpriteRenderer>();
+            spriteRenderer.sprite = background;
+            spriteRenderer.drawMode = SpriteDrawMode.Sliced;
+            spriteRenderer.size = new Vector2(2, 0.4f);
+
+            // Title
+            GameObject filterTitle = new GameObject("Title");
+            filterTitle.transform.SetParent(filterButton.transform);
+            filterTitle.transform.localPosition = Vector3.zero;
+            RectTransform titleTransform = filterTitle.AddComponent<RectTransform>();
+            titleTransform.sizeDelta = new Vector2(1.5f, 0.4f);
+            TextMeshPro titleText = filterTitle.AddComponent<TextMeshPro>();
+            titleText.fontSize = 2.5f;
+            titleText.raycastTarget = false;
+            titleText.overflowMode = TextOverflowModes.Ellipsis;
+            titleText.alignment = TextAlignmentOptions.Center;
+            titleText.SetText(filter.ToString());
+
+            filterButtonBtn.SetFilter(filter);
+
+            return filterButtonBtn;
         }
     }
 }

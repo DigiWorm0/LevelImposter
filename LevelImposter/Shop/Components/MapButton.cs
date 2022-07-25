@@ -18,7 +18,7 @@ namespace LevelImposter.Shop
         private bool isHovering = false;
         private bool isDownloaded
         {
-            get { return MapLoader.Exists(metadata.id); }
+            get { return MapLoader.Exists(metadata.id.ToString()); }
         }
 
         public void SetMap(LIMetadata metadata)
@@ -27,7 +27,7 @@ namespace LevelImposter.Shop
             descriptionText = transform.Find("Description").GetComponent<TMPro.TMP_Text>();
             authorText = transform.Find("Author").GetComponent<TMPro.TMP_Text>();
             spriteRenderer = transform.Find("Background").GetComponent<SpriteRenderer>();
-            button = transform.GetComponent<PassiveButton>();
+            button = GetComponent<PassiveButton>();
             
             this.metadata = metadata;
 
@@ -85,7 +85,7 @@ namespace LevelImposter.Shop
         public void OnDownloadFinish()
         {
             isDownloading = false;
-            MapLoader.LoadMap(metadata.id);
+            MapLoader.LoadMap(metadata.id.ToString());
             UpdateButton();
         }
 

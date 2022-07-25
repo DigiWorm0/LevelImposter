@@ -25,10 +25,10 @@ namespace LevelImposter.Core
         {
             shipStatus = GetComponent<ShipStatus>();
             Instance = this;
-            if (MapLoader.Exists(Guid.Empty))
+            if (MapLoader.Exists("default"))
             {
                 LILogger.Info("Loading default map...");
-                MapLoader.LoadMap(Guid.Empty);
+                MapLoader.LoadMap("default");
             }
             if (MapLoader.currentMap != null)
                 LoadMap(MapLoader.currentMap);

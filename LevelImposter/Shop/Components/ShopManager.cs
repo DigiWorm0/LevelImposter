@@ -20,24 +20,38 @@ namespace LevelImposter.Shop
 
         public void Awake()
         {
-            if (Instance == null)
-            {
-                Instance = this;
-            }
-            else
-            {
-                Destroy(gameObject);
-            }
+            Instance = this;
         }
 
         public void Start()
         {
-            MapAPI.GetMaps(OnMapsLoaded);
             scroller = GetComponent<Scroller>();
+            ListPublicMaps();
+        }
+
+        public void ListDownloadedMaps()
+        {
+            LILogger.Info("Using downloaded maps...");
+            string[] mapIDs = MapLoader.GetMapIDs();
+            LIMetadata[] maps = new LIMetadata[mapIDs.Length];
+            for (int i = 0; i < mapIDs.Length; i++)
+            {
+                maps[i] = MapLoader.GetMap(mapIDs[i]);
+            }
+            OnMapsLoaded(maps);
+        }
+
+        public void ListPublicMaps()
+        {
+            LILogger.Info("Using public maps...");
+            MapAPI.GetMaps(OnMapsLoaded);
         }
 
         private void OnMapsLoaded(LIMetadata[] maps)
         {
+            LILogger.Info("Listed " + maps.Length + " maps");
+            while (mapButtonParent.childCount > 1)
+                DestroyImmediate(mapButtonParent.GetChild(1).gameObject);
             scroller.ContentYBounds = new FloatRange(-1.8f, (1.1f * maps.Length) - 1.8f);
             for (int i = 0; i < maps.Length; i++)
             {
@@ -51,14 +65,14 @@ namespace LevelImposter.Shop
         {
             MapAPI.DownloadMap(mapID, (System.Action<string>)((string mapJson) =>
             {
-                MapLoader.WriteMap(mapID, mapJson);
+                MapLoader.WriteMap(mapID.ToString(), mapJson);
                 callbackFinish();
             }));
         }
 
         public void DeleteMap(Guid id)
         {
-            MapLoader.DeleteMap(id);
+            MapLoader.DeleteMap(id.ToString());
         }
     }
 }
