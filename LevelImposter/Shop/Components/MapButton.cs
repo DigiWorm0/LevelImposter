@@ -33,7 +33,7 @@ namespace LevelImposter.Shop
 
             titleText.text = metadata.name;
             descriptionText.text = metadata.description;
-            authorText.text = metadata.authorName;
+            authorText.text = "By: " + metadata.authorName;
 
             UpdateButton();
             button.OnMouseOut.AddListener((Action)OnMouseOut);

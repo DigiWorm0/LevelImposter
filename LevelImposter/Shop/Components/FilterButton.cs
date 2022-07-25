@@ -9,30 +9,16 @@ namespace LevelImposter.Shop
 {
     public class FilterButton : MonoBehaviour
     {
-        public static Filter currentFilter;
-        public static List<FilterButton> filterButtons = new List<FilterButton>();
-
         private Filter filter;
         private SpriteRenderer spriteRenderer;
         private PassiveButton button;
         private bool isHovering = false;
-        private bool isSelected
-        {
-            get { return filter == currentFilter; }
-        }
-
-        public void OnDestory()
-        {
-            filterButtons.Clear();
-        }
 
         public void SetFilter(Filter newFilter)
         {
             filter = newFilter;
             spriteRenderer = transform.Find("Background").GetComponent<SpriteRenderer>();
             button = GetComponent<PassiveButton>();
-
-            filterButtons.Add(this);
 
             button.OnMouseOver = new UnityEvent();
             button.OnMouseOut = new UnityEvent();
@@ -44,17 +30,10 @@ namespace LevelImposter.Shop
 
         public void UpdateButton()
         {   
-            if (isSelected)
-            {
-                spriteRenderer.color = Color.red;
-            }
+            if (isHovering)
+                spriteRenderer.color = Color.green;
             else
-            {
-                if (isHovering)
-                    spriteRenderer.color = Color.green;
-                else
-                    spriteRenderer.color = Color.white;
-            }
+                spriteRenderer.color = Color.white;
         }
 
         public void OnMouseOver()
@@ -70,8 +49,7 @@ namespace LevelImposter.Shop
 
         public void UpdateFilter()
         {
-            currentFilter = filter;
-            switch (currentFilter)
+            switch (filter)
             {
                 case Filter.Public:
                     ShopManager.Instance.ListPublicMaps();
@@ -80,8 +58,6 @@ namespace LevelImposter.Shop
                     ShopManager.Instance.ListDownloadedMaps();
                     break;
             }
-            foreach (FilterButton btn in filterButtons)
-                btn.UpdateButton();
         }
 
         public enum Filter { 

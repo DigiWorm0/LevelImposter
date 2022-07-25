@@ -11,6 +11,7 @@ namespace LevelImposter.Core
         private DefaultBuilder defaultBuilder = new DefaultBuilder();
         private Builder[] builders = {
             new RoomBuilder(),
+            new AdminMapBuilder(),
             new MinimapBuilder(),
             new DummyBuilder(),
             new UtilBuilder(),
