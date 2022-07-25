@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
@@ -18,7 +19,15 @@ namespace LevelImposter.Core
             if (elem.properties.spriteData != null)
             {
                 SpriteRenderer spriteRenderer = gameObject.AddComponent<SpriteRenderer>();
-                spriteRenderer.sprite = generateSprite(elem.properties.spriteData);
+                if (elem.properties.spriteData.StartsWith("data:image/gif;base64,"))
+                {
+                    GIFAnimator animator = gameObject.AddComponent<GIFAnimator>();
+                    animator.Animate(elem.properties.spriteData);
+                }
+                else
+                {
+                    spriteRenderer.sprite = generateSprite(elem.properties.spriteData);
+                }
             }
 
             if (elem.properties.colliders != null)

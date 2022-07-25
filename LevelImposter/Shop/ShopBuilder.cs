@@ -134,7 +134,7 @@ namespace LevelImposter.Shop
             subTitle.transform.SetParent(subContainer.transform);
             subTitle.transform.localPosition = Vector3.zero;
             RectTransform subTitleTransform = subTitle.AddComponent<RectTransform>();
-            subTitleTransform.sizeDelta = new Vector2(5.5f, 1.0f);
+            subTitleTransform.sizeDelta = new Vector2(5.0f, 1.0f);
             TextMeshPro subTitleText = subTitle.AddComponent<TextMeshPro>();
             subTitleText.fontSize = 2.5f;
             subTitleText.SetText("LevelImposter\n<size=4>Map Shop");
