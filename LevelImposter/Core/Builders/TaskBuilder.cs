@@ -14,6 +14,12 @@ namespace LevelImposter.Core
 
         private List<string> builtTypes = new List<string>();
 
+        private Dictionary<string, TaskType> taskLengths = new Dictionary<string, TaskType>
+        {
+            { "Short", TaskType.Short },
+            { "Long", TaskType.Long },
+            { "Common", TaskType.Common }
+        };
         private Dictionary<string, int> consoleIDPairs = new Dictionary<string, int> {
             { "task-garbage2", 1 },
             { "task-garbage3", 0 },
@@ -246,11 +252,13 @@ namespace LevelImposter.Core
                     nodeTask.Stage2Prefab = origTask.Cast<WeatherNodeTask>().Stage2Prefab;
                 }
 
-                if (taskData.TaskType == TaskType.Common)
+                string? taskLengthProp = elem.properties.taskLength;
+                TaskType taskLength = taskLengthProp != null ? taskLengths[taskLengthProp] : taskData.TaskType;
+                if (taskLength == TaskType.Common)
                     shipStatus.CommonTasks = MapUtils.AddToArr(shipStatus.CommonTasks, task);
-                if (taskData.TaskType == TaskType.Short)
+                if (taskLength == TaskType.Short)
                     shipStatus.NormalTasks = MapUtils.AddToArr(shipStatus.NormalTasks, task);
-                if (taskData.TaskType == TaskType.Long)
+                if (taskLength == TaskType.Long)
                     shipStatus.LongTasks = MapUtils.AddToArr(shipStatus.LongTasks, task);
             }
 
