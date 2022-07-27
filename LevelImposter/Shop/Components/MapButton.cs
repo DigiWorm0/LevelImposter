@@ -78,7 +78,10 @@ namespace LevelImposter.Shop
         public void DownloadMap()
         {
             isDownloading = true;
-            ShopManager.Instance.DownloadMap(metadata.id, OnDownloadFinish);
+            Guid mapID = Guid.Empty;
+            Guid.TryParse(metadata.id, out mapID);
+            if (mapID != Guid.Empty)
+                ShopManager.Instance.DownloadMap(mapID, OnDownloadFinish);
             UpdateButton();
         }
 

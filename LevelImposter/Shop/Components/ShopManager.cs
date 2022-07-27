@@ -37,6 +37,7 @@ namespace LevelImposter.Shop
             for (int i = 0; i < mapIDs.Length; i++)
             {
                 maps[i] = MapLoader.GetMap(mapIDs[i]);
+                maps[i].id = mapIDs[i];
             }
             OnMapsLoaded(maps);
         }
@@ -70,7 +71,7 @@ namespace LevelImposter.Shop
             }));
         }
 
-        public void DeleteMap(Guid id)
+        public void DeleteMap(string id)
         {
             MapLoader.DeleteMap(id.ToString());
         }

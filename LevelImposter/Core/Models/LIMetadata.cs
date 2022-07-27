@@ -8,7 +8,7 @@ namespace LevelImposter.Core
     public class LIMetadata
     {
         public int v { get; set; }
-        public System.Guid id { get; set; }
+        public string id { get; set; }
         public string name { get; set; }
         public string description { get; set; }
         public string authorID { get; set; }

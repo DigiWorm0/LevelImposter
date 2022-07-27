@@ -29,7 +29,7 @@ namespace LevelImposter.Core.Patches
                 );
                 Guid mapID = Guid.Empty;
                 if (MapLoader.currentMap != null)
-                    mapID = MapLoader.currentMap.id;
+                    Guid.TryParse(MapLoader.currentMap.id, out mapID);
                 writer.Write(mapID.ToByteArray());
                 __instance.FinishRpcImmediately(writer);
             }

@@ -1,6 +1,7 @@
-﻿using TMPro;
+﻿using System.Diagnostics;
+using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
+using UnityEngine.Events;
 
 namespace LevelImposter.Shop
 {
@@ -127,41 +128,69 @@ namespace LevelImposter.Shop
         {
             // Sub Container
             GameObject subContainer = new GameObject("ShopSubContainer");
-            subContainer.transform.position = new Vector3(-1.4f, 1.4f, 0);
+            subContainer.transform.position = new Vector3(-3.2f, 1.4f, 0);
 
             // Sub Title
             GameObject subTitle = new GameObject("Title");
             subTitle.transform.SetParent(subContainer.transform);
-            subTitle.transform.localPosition = Vector3.zero;
+            subTitle.transform.localPosition = new Vector3(0, 0, 0);
             RectTransform subTitleTransform = subTitle.AddComponent<RectTransform>();
             subTitleTransform.sizeDelta = new Vector2(5.0f, 1.0f);
             TextMeshPro subTitleText = subTitle.AddComponent<TextMeshPro>();
-            subTitleText.fontSize = 2.5f;
-            subTitleText.SetText("LevelImposter\n<size=4>Map Shop");
+            subTitleText.fontSize = 4;
+            subTitleText.SetText("\nMaps<size=2> v" + LevelImposter.VERSION);
+            subTitleText.alignment = TextAlignmentOptions.Top;
 
-            // Sub Filters
-            FilterButton publicButton = BuildFilterButton(background, FilterButton.Filter.Public);
+            // Sub Logo
+            GameObject subLogo = new GameObject("Logo");
+            subLogo.transform.SetParent(subContainer.transform);
+            subLogo.transform.localPosition = new Vector3(0, 0.2f);
+
+            SpriteRenderer logoRenderer = subLogo.AddComponent<SpriteRenderer>();
+            Texture2D tex = new Texture2D(1, 1);
+            ImageConversion.LoadImage(tex, Properties.Resources.logo);
+            logoRenderer.sprite = Sprite.Create(
+                tex,
+                new Rect(0.0f, 0.0f, tex.width, tex.height),
+                new Vector2(0.5f, 0.5f),
+                180.0f
+            );
+
+            // Public Filter
+            GameObject publicButton = BuildFilterButton(background, "Public");
             publicButton.transform.SetParent(subContainer.transform);
-            publicButton.transform.localPosition = new Vector3(-1.5f, -2.0f);
+            publicButton.transform.localPosition = new Vector3(0, -2.0f);
+            publicButton.AddComponent<FilterButton>().SetFilter(FilterButton.Filter.Public);
 
-            // Sub Filters
-            FilterButton downloadedButton = BuildFilterButton(background, FilterButton.Filter.Downloaded);
+            // Download Filter
+            GameObject downloadedButton = BuildFilterButton(background, "Downloaded");
             downloadedButton.transform.SetParent(subContainer.transform);
-            downloadedButton.transform.localPosition = new Vector3(-1.5f, -2.5f);
+            downloadedButton.transform.localPosition = new Vector3(0, -2.5f);
+            downloadedButton.AddComponent<FilterButton>().SetFilter(FilterButton.Filter.Downloaded);
 
+            // Folder Filter
+            GameObject folderButton = BuildFilterButton(background, "Open Folder");
+            folderButton.transform.SetParent(subContainer.transform);
+            folderButton.transform.localPosition = new Vector3(0, -3.5f);
+            PassiveButton folderBtn = folderButton.GetComponent<PassiveButton>();
+            folderBtn.OnMouseOver = new UnityEvent();
+            folderBtn.OnMouseOut = new UnityEvent();
+            folderBtn.OnClick.AddListener((System.Action)(() =>
+            {
+                Process.Start("explorer.exe", MapLoader.GetDir());
+            }));
 
             return subContainer;
         }
 
-        private static FilterButton BuildFilterButton(Sprite background, FilterButton.Filter filter)
+        private static GameObject BuildFilterButton(Sprite background, string title)
         {
             // Container
-            GameObject filterButton = new GameObject(filter.ToString());
+            GameObject filterButton = new GameObject("SubButton-" + title);
             BoxCollider2D filterCollider = filterButton.AddComponent<BoxCollider2D>();
             filterCollider.size = new Vector2(2, 0.4f);
             filterCollider.offset = Vector2.zero;
             PassiveButton filterPassiveBtn = filterButton.AddComponent<PassiveButton>();
-            FilterButton filterButtonBtn = filterButton.AddComponent<FilterButton>();
 
             // Background
             GameObject filterBackground = new GameObject("Background");
@@ -179,15 +208,13 @@ namespace LevelImposter.Shop
             RectTransform titleTransform = filterTitle.AddComponent<RectTransform>();
             titleTransform.sizeDelta = new Vector2(1.5f, 0.4f);
             TextMeshPro titleText = filterTitle.AddComponent<TextMeshPro>();
-            titleText.fontSize = 2.5f;
+            titleText.fontSize = 2.0f;
             titleText.raycastTarget = false;
             titleText.overflowMode = TextOverflowModes.Ellipsis;
             titleText.alignment = TextAlignmentOptions.Center;
-            titleText.SetText(filter.ToString());
+            titleText.text = title;
 
-            filterButtonBtn.SetFilter(filter);
-
-            return filterButtonBtn;
+            return filterButton;
         }
     }
 }

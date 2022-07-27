@@ -12,13 +12,14 @@ namespace LevelImposter
     public class LevelImposter : BasePlugin
     {
         public const string ID = "com.DigiWorm.LevelImposter";
-        public const string VERSION = "2.0.1";
+        public const string VERSION = "0.4.0";
 
         public HarmonyLib.Harmony Harmony { get; } = new HarmonyLib.Harmony(ID);
 
         public override void Load()
         {
             LILogger.Init();
+            MapLoader.Init();
             ClassInjector.RegisterTypeInIl2Cpp<LIShipStatus>();
             ClassInjector.RegisterTypeInIl2Cpp<ShopManager>();
             ClassInjector.RegisterTypeInIl2Cpp<MapButton>();

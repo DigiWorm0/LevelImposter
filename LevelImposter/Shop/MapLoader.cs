@@ -10,6 +10,13 @@ namespace LevelImposter.Shop
     {
         public static LIMap currentMap = null;
 
+        public static void Init()
+        {
+            string dir = GetDir();
+            if (!Directory.Exists(dir))
+                Directory.CreateDirectory(dir);
+        }
+
         public static void WriteMap(string mapID, string mapData)
         {
             LILogger.Info("Writing map [" + mapID + "] to filesystem");
