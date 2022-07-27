@@ -121,13 +121,7 @@
   <data name="AssetDB" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\AssetDB.json;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="custom_btn" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\custom-btn.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
   <data name="logo" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\logo.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="mapshop" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\mapshop;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
 </root>

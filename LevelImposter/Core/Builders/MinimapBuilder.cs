@@ -31,10 +31,14 @@ namespace LevelImposter.Core
                 background.transform.localRotation = obj.transform.localRotation;
             }
 
-            Transform hereIndicatorParent = mapBehaviour.transform.FindChild("HereIndicatorParent");
-            hereIndicatorParent.localPosition = new Vector3(0, 5.0f, -0.1f) - (obj.transform.localPosition * 0.2f);
+            Vector3 mapOffset = -(obj.transform.localPosition * 0.2f);
 
-            Transform roomNames = mapBehaviour.transform.FindChild("RoomNames");
+            Transform hereIndicatorParent = mapBehaviour.transform.FindChild("HereIndicatorParent");
+            hereIndicatorParent.localPosition = mapOffset + new Vector3(0, 5.0f, -0.1f);
+            mapBehaviour.countOverlay.transform.localPosition = mapOffset;
+            mapBehaviour.infectedOverlay.transform.localPosition = mapOffset;
+
+            Transform roomNames = mapBehaviour.transform.GetChild(mapBehaviour.transform.childCount - 1);
             roomNames.gameObject.SetActive(false);
 
             obj.SetActive(false);

@@ -44,7 +44,86 @@ namespace LevelImposter.Core
                     for (byte i = 0; i < __instance.Data.Count; i++)
                         __instance.Data[i] = tempData[i];
                     break;
+                case TaskTypes.FuelEngines:
+                    __instance.MaxStep = TaskBuilder.fuelCount;
+                    break;
+                case TaskTypes.DivertPower:
+                    DivertPowerTask divertTask = __instance.Cast<DivertPowerTask>();
+                    // TODO: Set Target System
+                    break;
             }
+        }
+    }
+
+    /*
+     *      Of course, WaterWayTask has to
+     *      override NormalPlayerTask for no reason...
+     */
+    [HarmonyPatch(typeof(WaterWayTask), nameof(WaterWayTask.Initialize))]
+    public static class WaterWheelInitializePatch
+    {
+        public static void Postfix(NormalPlayerTask __instance)
+        {
+            if (MapLoader.currentMap == null)
+                return;
+
+            __instance.Data = new byte[TaskBuilder.waterWheelCount];
+            __instance.MaxStep = TaskBuilder.waterWheelCount;
+        }
+    }
+
+    /*
+     *      Fix Divert Power Sliders
+     */
+    [HarmonyPatch(typeof(DivertPowerMinigame), nameof(DivertPowerMinigame.Begin))]
+    public static class DivertBeginPatch
+    {
+        public static void Prefix([HarmonyArgument(0)] PlayerTask task, DivertPowerMinigame __instance)
+        {
+            if (MapLoader.currentMap == null)
+                return;
+
+            __instance.SliderOrder = TaskBuilder.divertSystems;
+        }
+    }
+
+    /*
+     *      Fix Fuel Stages
+     */
+    [HarmonyPatch(typeof(MultistageMinigame), nameof(MultistageMinigame.Begin))]
+    public static class MinigameBeginPatch
+    {
+        public static bool Prefix([HarmonyArgument(0)] PlayerTask task, MultistageMinigame __instance)
+        {
+            if (MapLoader.currentMap == null)
+                return true;
+
+            NormalPlayerTask normalPlayerTask = task.Cast<NormalPlayerTask>();
+            if (normalPlayerTask.TaskType == TaskTypes.FuelEngines)
+            {
+                __instance.stage = __instance.Stages[normalPlayerTask.Data[1] % 2];
+                __instance.stage.gameObject.SetActive(true);
+                __instance.stage.Begin(task);
+                Minigame.Instance = __instance;
+                UiElement defaultSelection = null;
+                foreach (UiElement uiElement in __instance.ControllerSelectable)
+                {
+                    if (uiElement.isActiveAndEnabled)
+                    {
+                        defaultSelection = uiElement;
+                        break;
+                    }
+                }
+                ControllerManager.Instance.OpenOverlayMenu(
+                    __instance.name,
+                    __instance.BackButton,
+                    defaultSelection,
+                    __instance.ControllerSelectable,
+                    false
+                );
+                return false;
+            }
+            return true;
         }
     }
 }

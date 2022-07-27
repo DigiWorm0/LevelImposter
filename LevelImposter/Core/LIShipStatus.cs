@@ -14,6 +14,7 @@ namespace LevelImposter.Core
 
         public static LIShipStatus Instance { get; private set; }
         public ShipStatus shipStatus { get; private set; }
+        public LIMap currentMap { get; private set; }
 
         private BuildRouter buildRouter = new BuildRouter();
 
@@ -84,6 +85,7 @@ namespace LevelImposter.Core
         public void LoadMap(LIMap map)
         {
             LILogger.Info("Loading " + map.name + " [" + map.id + "]");
+            currentMap = map;
             AssetDB.Import();
             ResetMap();
             LoadMapProperties(map);

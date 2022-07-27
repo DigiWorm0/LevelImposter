@@ -16,9 +16,6 @@ namespace LevelImposter.Core
             { "task-garbage2", 1 },
             { "task-garbage3", 0 },
             { "task-garbage4", 2 },
-            { "task-waterwheel1", 0 },
-            { "task-waterwheel2", 1 },
-            { "task-waterwheel3", 2 },
             { "task-fans1", 0 },
             { "task-fans2", 1 },
         };
@@ -26,12 +23,18 @@ namespace LevelImposter.Core
             { "task-toilet", 0 },
             { "task-breakers", 0 },
             { "task-towels", 0 },
-            { "task-node", 0 }
+            { "task-node", 0 },
+            { "task-waterwheel1", 0 },
+            { "task-fuel2", 0 },
         };
 
         public static byte breakerCount = 0;
         public static byte toiletCount = 0;
         public static byte towelCount = 0;
+        public static byte fuelCount = 0;
+        public static byte waterWheelCount = 0;
+
+        public static SystemTypes[] divertSystems = new SystemTypes[0];
 
         public void Build(LIElement elem, GameObject obj)
         {
@@ -100,6 +103,15 @@ namespace LevelImposter.Core
             {
                 console.ConsoleId = consoleIDPairs[elem.type];
             }
+            else if (elem.type == "task-waterjug2")
+            {
+                TaskSet taskSet = new TaskSet();
+                taskSet.taskType = TaskTypes.ReplaceWaterJug;
+                taskSet.taskStep = new IntRange(1, 1);
+                console.ValidTasks = new UnhollowerBaseLib.Il2CppReferenceArray<TaskSet>(new TaskSet[] {
+                    taskSet
+                });
+            }
             else if (elem.type.StartsWith("task-towels"))
             {
                 if (elem.type == "task-towels1")
@@ -109,6 +121,28 @@ namespace LevelImposter.Core
                     console.ConsoleId = consoleIDIncrements["task-towels"];
                     consoleIDIncrements["task-towels"]++;
                 }
+            }
+            else if (elem.type == "task-fuel1")
+            {
+                console.ValidTasks = new UnhollowerBaseLib.Il2CppReferenceArray<TaskSet>(byte.MaxValue / 2);
+                for (byte i = 0; i < byte.MaxValue - 1; i+=2)
+                {
+                    TaskSet taskSet = new TaskSet();
+                    taskSet.taskType = TaskTypes.FuelEngines;
+                    taskSet.taskStep = new IntRange(i, i);
+                    console.ValidTasks[i / 2] = taskSet;
+                }
+            }
+            else if (elem.type == "task-fuel2")
+            {
+                console.ConsoleId = consoleIDIncrements[elem.type];
+                TaskSet taskSet = new TaskSet();
+                taskSet.taskType = TaskTypes.FuelEngines;
+                taskSet.taskStep = new IntRange(console.ConsoleId * 2 + 1, console.ConsoleId * 2 + 1);
+                console.ValidTasks = new UnhollowerBaseLib.Il2CppReferenceArray<TaskSet>(new TaskSet[] {
+                    taskSet
+                });
+                consoleIDIncrements[elem.type]++;
             }
             else if (consoleIDIncrements.ContainsKey(elem.type))
             {
@@ -138,7 +172,44 @@ namespace LevelImposter.Core
             }
 
             // Task
-            if (!string.IsNullOrEmpty(taskData.BehaviorName))
+            if (elem.type == "task-divert1")
+            {
+                List<LIElement> divertTargets = new List<LIElement>();
+                foreach (LIElement mapElem in LIShipStatus.Instance.currentMap.elements)
+                    if (mapElem.type == "task-divert2")
+                        divertTargets.Add(mapElem);
+
+                divertSystems = new SystemTypes[divertTargets.Count];
+                NormalPlayerTask origTask = taskData.Behavior;
+                for (int i = 0; i < divertTargets.Count; i++)
+                {
+                    LIElement divertTarget = divertTargets[i];
+
+                    SystemTypes divertSystem = 0;
+                    if (divertTarget.properties.parent != null)
+                        divertSystem = RoomBuilder.GetSystem((Guid)divertTarget.properties.parent);
+                    divertSystems[i] = divertSystem;
+
+                    GameObject taskHolder = new GameObject(elem.name);
+                    taskHolder.transform.SetParent(taskContainer.transform);
+
+                    DivertPowerTask task = taskHolder.AddComponent<DivertPowerTask>();
+                    task.StartAt = systemType;
+                    task.taskStep = origTask.taskStep;
+                    task.MaxStep = origTask.MaxStep;
+                    task.arrowSuspended = origTask.arrowSuspended;
+                    task.ShowTaskTimer = origTask.ShowTaskTimer;
+                    task.ShowTaskStep = origTask.ShowTaskStep;
+                    task.TaskTimer = origTask.TaskTimer;
+                    task.TimerStarted = origTask.TimerStarted;
+                    task.TaskType = origTask.TaskType;
+                    task.MinigamePrefab = origTask.MinigamePrefab;
+                    task.TargetSystem = divertSystem;
+
+                    shipStatus.LongTasks = MapUtils.AddToArr(shipStatus.LongTasks, task.Cast<NormalPlayerTask>());
+                }
+            }
+            else if (!string.IsNullOrEmpty(taskData.BehaviorName))
             {
                 if (!string.IsNullOrEmpty(elem.properties.description))
                     MapUtils.Rename(taskData.Behavior.TaskType, elem.properties.description);
@@ -197,6 +268,10 @@ namespace LevelImposter.Core
                     toiletCount = count;
                 if (key == "task-towels")
                     towelCount = count;
+                if (key == "task-fuel2")
+                    fuelCount = count;
+                if (key == "task-waterwheel1")
+                    waterWheelCount = count;
                 consoleIDIncrements[key] = 0;
             }
         }

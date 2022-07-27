@@ -64,14 +64,6 @@
             "GameObjName": "panel_fuel (1)",
             "BehaviorName": ""
         },
-        "task-fuel3": {
-            "Name": "Gas Output 2",
-            "MapType": 2,
-            "SpriteRendererName": "panel_fuel",
-            "TaskType": 2,
-            "GameObjName": "panel_fuel",
-            "BehaviorName": ""
-        },
         "task-waterwheel1": {
             "Name": "Water Wheel",
             "MapType": 2,
@@ -79,22 +71,6 @@
             "TaskType": 2,
             "GameObjName": "panel_waterwheel",
             "BehaviorName": "OpenWaterways"
-        },
-        "task-waterwheel2": {
-            "Name": "Water Wheel",
-            "MapType": 2,
-            "SpriteRendererName": "panel_waterwheel",
-            "TaskType": 2,
-            "GameObjName": "panel_waterwheel",
-            "BehaviorName": ""
-        },
-        "task-waterwheel3": {
-            "Name": "Water Wheel",
-            "MapType": 2,
-            "SpriteRendererName": "panel_waterwheel",
-            "TaskType": 2,
-            "GameObjName": "panel_waterwheel",
-            "BehaviorName": ""
         },
         "task-samples": {
             "Name": "Inspect Samples",
