@@ -12,6 +12,8 @@ namespace LevelImposter.Core
         public GameObject taskContainer;
         public int consoleID = 0;
 
+        private List<string> builtTypes = new List<string>();
+
         private Dictionary<string, int> consoleIDPairs = new Dictionary<string, int> {
             { "task-garbage2", 1 },
             { "task-garbage3", 0 },
@@ -26,6 +28,7 @@ namespace LevelImposter.Core
             { "task-node", 0 },
             { "task-waterwheel1", 0 },
             { "task-fuel2", 0 },
+            { "task-align1", 0 }
         };
 
         public static byte breakerCount = 0;
@@ -33,6 +36,7 @@ namespace LevelImposter.Core
         public static byte towelCount = 0;
         public static byte fuelCount = 0;
         public static byte waterWheelCount = 0;
+        public static byte alignEngineCount = 0;
 
         public static SystemTypes[] divertSystems = new SystemTypes[0];
 
@@ -41,12 +45,14 @@ namespace LevelImposter.Core
             if (!elem.type.StartsWith("task-"))
                 return;
 
+            // Create Task Container
             if (taskContainer == null)
             {
                 taskContainer = new GameObject("Tasks");
                 taskContainer.transform.SetParent(LIShipStatus.Instance.transform);
             }
 
+            // Get DB
             TaskData taskData = AssetDB.tasks[elem.type];
             ShipStatus shipStatus = LIShipStatus.Instance.shipStatus;
 
@@ -172,7 +178,10 @@ namespace LevelImposter.Core
             }
 
             // Task
-            if (elem.type == "task-divert1")
+            bool isBuilt = builtTypes.Contains(elem.type);
+            builtTypes.Add(elem.type);
+
+            if (elem.type == "task-divert1" && !isBuilt)
             {
                 List<LIElement> divertTargets = new List<LIElement>();
                 foreach (LIElement mapElem in LIShipStatus.Instance.currentMap.elements)
@@ -209,7 +218,7 @@ namespace LevelImposter.Core
                     shipStatus.LongTasks = MapUtils.AddToArr(shipStatus.LongTasks, task.Cast<NormalPlayerTask>());
                 }
             }
-            else if (!string.IsNullOrEmpty(taskData.BehaviorName))
+            else if (!string.IsNullOrEmpty(taskData.BehaviorName) && !isBuilt)
             {
                 if (!string.IsNullOrEmpty(elem.properties.description))
                     MapUtils.Rename(taskData.Behavior.TaskType, elem.properties.description);
@@ -272,25 +281,10 @@ namespace LevelImposter.Core
                     fuelCount = count;
                 if (key == "task-waterwheel1")
                     waterWheelCount = count;
+                if (key == "task-align1")
+                    alignEngineCount = count;
                 consoleIDIncrements[key] = 0;
             }
         }
-
-        /*
-        private NormalPlayerTask SearchForTask(TaskTypes taskTypes)
-        {
-            ShipStatus shipStatus = LIShipStatus.Instance.shipStatus;
-            foreach(var task in shipStatus.LongTasks)
-                if (task.TaskType == taskTypes)
-                    return task;
-            foreach (var task in shipStatus.NormalTasks)
-                if (task.TaskType == taskTypes)
-                    return task;
-            foreach (var task in shipStatus.CommonTasks)
-                if (task.TaskType == taskTypes)
-                    return task;
-            return null;
-        }
-        */
     }
 }

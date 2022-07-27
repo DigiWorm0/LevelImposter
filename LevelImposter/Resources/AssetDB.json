@@ -320,14 +320,6 @@
             "GameObjName": "AlignEngineConsole",
             "BehaviorName": "AlignEnginesTask"
         },
-        "task-align2": {
-            "Name": "Align Engine",
-            "MapType": 0,
-            "SpriteRendererName": "AlignEngineConsole",
-            "TaskType": 2,
-            "GameObjName": "AlignEngineConsole",
-            "BehaviorName": ""
-        },
         "task-stabilize": {
             "Name": "Steering (Skeld)",
             "MapType": 0,

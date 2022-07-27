@@ -47,9 +47,11 @@ namespace LevelImposter.Core
                 case TaskTypes.FuelEngines:
                     __instance.MaxStep = TaskBuilder.fuelCount;
                     break;
-                case TaskTypes.DivertPower:
-                    DivertPowerTask divertTask = __instance.Cast<DivertPowerTask>();
-                    // TODO: Set Target System
+                case TaskTypes.AlignEngineOutput:
+                    __instance.Data = new byte[TaskBuilder.alignEngineCount + 2];
+                    for (int i = 0; i < TaskBuilder.alignEngineCount; i++)
+                        __instance.Data[i] = (byte)(IntRange.RandomSign() * IntRange.Next(25, 127) + 127);
+                    __instance.MaxStep = TaskBuilder.alignEngineCount;
                     break;
             }
         }
