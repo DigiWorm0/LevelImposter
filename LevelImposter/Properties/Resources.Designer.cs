@@ -89,15 +89,5 @@ namespace LevelImposter.Properties {
                 return ((byte[])(obj));
             }
         }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Byte[].
-        /// </summary>
-        internal static byte[] mapshop {
-            get {
-                object obj = ResourceManager.GetObject("mapshop", resourceCulture);
-                return ((byte[])(obj));
-            }
-        }
     }
 }

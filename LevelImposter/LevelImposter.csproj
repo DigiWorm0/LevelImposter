@@ -25,6 +25,10 @@
         <PackageReference Include="System.Text.Json" Version="6.0.3" />
     </ItemGroup>
 	
+	<ItemGroup>
+		<EmbeddedResource Include="Assets\**\*" />
+	</ItemGroup>
+	
 	<Target Name="Copy" AfterTargets="Build" Condition="'$(AmongUs)' != ''">
         <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(AmongUs)/BepInEx/plugins/" UseSymboliclinksIfPossible="true" />
 		<Exec Command="&quot;$(AmongUs)/Among Us.exe&quot;" />

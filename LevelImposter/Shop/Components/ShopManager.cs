@@ -6,17 +6,22 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using LevelImposter.Core;
+using InnerNet;
 
 namespace LevelImposter.Shop
 {
     public class ShopManager : MonoBehaviour
     {
-        public GameObject mapButtonPrefab;
-        public Transform mapButtonParent;
+        public MapFilter currentFilter = MapFilter.Downloaded;
 
         public static ShopManager Instance { get; private set; }
 
         private Scroller scroller;
+        private Transform content;
+        private Transform mainPanel;
+        private Transform sidePanel;
+
+        private GameObject mapBannerPrefab;
 
         public void Awake()
         {
@@ -25,13 +30,36 @@ namespace LevelImposter.Shop
 
         public void Start()
         {
-            scroller = GetComponent<Scroller>();
-            ListPublicMaps();
+            mainPanel = transform.FindChild("MainPanel");
+            sidePanel = transform.FindChild("SidePanel");
+            content = mainPanel.FindChild("Content");
+            mapBannerPrefab = content.FindChild("MapBannerPrefab").gameObject;
+
+            GameObject downloadedBtn = sidePanel.FindChild("DownloadedBtn").gameObject;
+            downloadedBtn.AddComponent<FilterButton>().Init(MapFilter.Downloaded);
+            GameObject recentBtn = sidePanel.FindChild("RecentBtn").gameObject;
+            recentBtn.AddComponent<FilterButton>().Init(MapFilter.Recent);
+            GameObject folderBtn = sidePanel.FindChild("FolderBtn").gameObject;
+            folderBtn.AddComponent<FolderButton>().Init();
+
+            scroller = mainPanel.gameObject.AddComponent<Scroller>();
+
+            scroller.allowY = true;
+            scroller.ContentYBounds = new FloatRange(-1.8f, -1.8f);
+            scroller.ContentXBounds = new FloatRange(0, 0);
+            scroller.ScrollbarXBounds = new FloatRange(0, 0);
+            scroller.ScrollbarYBounds = new FloatRange(0, 0);
+            scroller.Colliders = new UnhollowerBaseLib.Il2CppReferenceArray<Collider2D>(1);
+            scroller.Colliders[0] = mainPanel.gameObject.GetComponent<BoxCollider2D>();
+            scroller.Inner = content;
+
+            ListDownloadedMaps();
         }
 
         public void ListDownloadedMaps()
         {
             LILogger.Info("Using downloaded maps...");
+            currentFilter = MapFilter.Downloaded;
             string[] mapIDs = MapLoader.GetMapIDs();
             LIMetadata[] maps = new LIMetadata[mapIDs.Length];
             for (int i = 0; i < mapIDs.Length; i++)
@@ -39,27 +67,46 @@ namespace LevelImposter.Shop
                 maps[i] = MapLoader.GetMap(mapIDs[i]);
                 maps[i].id = mapIDs[i];
             }
-            OnMapsLoaded(maps);
+            ListMaps(maps);
         }
 
         public void ListPublicMaps()
         {
             LILogger.Info("Using public maps...");
-            MapAPI.GetMaps(OnMapsLoaded);
+            currentFilter = MapFilter.Recent;
+            MapAPI.GetMaps(ListMaps);
         }
 
-        private void OnMapsLoaded(LIMetadata[] maps)
+        public void ListMaps(LIMetadata[] maps)
         {
             LILogger.Info("Listed " + maps.Length + " maps");
-            while (mapButtonParent.childCount > 1)
-                DestroyImmediate(mapButtonParent.GetChild(1).gameObject);
-            scroller.ContentYBounds = new FloatRange(-1.8f, (1.1f * maps.Length) - 1.8f);
+            while (content.childCount > 1)
+                DestroyImmediate(content.GetChild(1).gameObject);
+            scroller.ContentYBounds = new FloatRange(-1.8f, (1.3f * maps.Length) - 1.8f);
             for (int i = 0; i < maps.Length; i++)
             {
-                GameObject mapButton = Instantiate(mapButtonPrefab, mapButtonParent);
-                mapButton.transform.localPosition = new Vector3(0, i * -1.1f + 1.8f, -1);
-                mapButton.GetComponent<MapButton>().SetMap(maps[i]);
+                GameObject mapButton = Instantiate(mapBannerPrefab, content);
+                mapButton.transform.localPosition = new Vector3(0, i * -1.3f + 1.8f, -1);
+                mapButton.AddComponent<MapBanner>().Init(maps[i]);
             }
+        }
+
+        public void LaunchMap(string id)
+        {
+            LILogger.Info("Launching map in freeplay: " + id);
+            MapLoader.LoadMap(id);
+
+            AmongUsClient.Instance.TutorialMapId = 2;
+            SaveManager.GameHostOptions.gameType = GameType.Normal;
+            SoundManager.Instance.StopAllSound();
+            AmongUsClient.Instance.GameMode = GameModes.FreePlay;
+            DestroyableSingleton<InnerNetServer>.Instance.StartAsLocalServer();
+            AmongUsClient.Instance.SetEndpoint("127.0.0.1", 22023, false);
+            AmongUsClient.Instance.MainMenuScene = "MainMenu";
+            AmongUsClient.Instance.OnlineScene = "Tutorial";
+            AmongUsClient.Instance.Connect(MatchMakerModes.HostAndClient, null);
+
+            StartCoroutine(AmongUsClient.Instance.WaitForConnectionOrFail());
         }
 
         public void DownloadMap(Guid mapID, Action callbackFinish)

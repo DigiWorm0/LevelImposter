@@ -22,8 +22,10 @@ namespace LevelImposter
             MapLoader.Init();
             ClassInjector.RegisterTypeInIl2Cpp<LIShipStatus>();
             ClassInjector.RegisterTypeInIl2Cpp<ShopManager>();
-            ClassInjector.RegisterTypeInIl2Cpp<MapButton>();
+            ClassInjector.RegisterTypeInIl2Cpp<MapBanner>();
+            ClassInjector.RegisterTypeInIl2Cpp<MapBannerButton>();
             ClassInjector.RegisterTypeInIl2Cpp<FilterButton>();
+            ClassInjector.RegisterTypeInIl2Cpp<FolderButton>();
             ClassInjector.RegisterTypeInIl2Cpp<GIFAnimator>();
             Harmony.PatchAll();
             LILogger.Msg("LevelImposter Initialized.");

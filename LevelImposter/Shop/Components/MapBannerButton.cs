@@ -1,27 +1,26 @@
-using System;
-using System.Collections;
+﻿using System;
 using System.Collections.Generic;
+using System.Text;
 using UnityEngine;
 using UnityEngine.Events;
 using LevelImposter.Core;
 
 namespace LevelImposter.Shop
 {
-    public class FilterButton : MonoBehaviour
+    public class MapBannerButton : MonoBehaviour
     {
-        public static List<FilterButton> filterButtons = new List<FilterButton>();
-        private MapFilter filter;
+        
         private SpriteRenderer spriteRenderer;
         private PassiveButton button;
-        private bool isHovering = false;
-        private bool isSelected
-        {
-            get { return filter == ShopManager.Instance.currentFilter; }
-        }
+        private MapBanner banner;
+        private MapButtonFunction function;
 
-        public void Init(MapFilter newFilter)
+        private bool isHovering = false;
+
+        public void Init(MapButtonFunction func)
         {
-            filter = newFilter;
+            function = func;
+            banner = gameObject.GetComponentInParent<MapBanner>();
             spriteRenderer = gameObject.GetComponent<SpriteRenderer>();
             button = gameObject.AddComponent<PassiveButton>();
 
@@ -32,21 +31,28 @@ namespace LevelImposter.Shop
             button.OnMouseOut.AddListener((Action)OnMouseOut);
             button.OnMouseOver.AddListener((Action)OnMouseOver);
 
-            filterButtons.Add(this);
             UpdateButton();
         }
 
-        public void OnDestroy()
-        {
-            filterButtons.Remove(this);
-        }
-
         public void UpdateButton()
-        {   
-            if (isHovering || isSelected)
+        {
+            if (isHovering)
                 spriteRenderer.color = Color.green;
             else
                 spriteRenderer.color = Color.white;
+
+            switch (function)
+            {
+                case MapButtonFunction.Delete:
+                    gameObject.SetActive(banner.isDownloaded);
+                    break;
+                case MapButtonFunction.Launch:
+                    gameObject.SetActive(banner.isDownloaded);
+                    break;
+                case MapButtonFunction.Download:
+                    gameObject.SetActive(!banner.isDownloading && !banner.isDownloaded);
+                    break;
+            }
         }
 
         public void OnMouseOver()
@@ -62,18 +68,19 @@ namespace LevelImposter.Shop
 
         public void OnClick()
         {
-            switch (filter)
+            
+            switch (function)
             {
-                case MapFilter.Recent:
-                    ShopManager.Instance.ListPublicMaps();
+                case MapButtonFunction.Delete:
+                    banner.DeleteMap();
                     break;
-                case MapFilter.Downloaded:
-                    ShopManager.Instance.ListDownloadedMaps();
+                case MapButtonFunction.Launch:
+                    banner.LaunchMap();
+                    break;
+                case MapButtonFunction.Download:
+                    banner.DownloadMap();
                     break;
             }
-
-            foreach (FilterButton btn in filterButtons)
-                btn.UpdateButton();
         }
     }
 }
