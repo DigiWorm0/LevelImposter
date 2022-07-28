@@ -10,20 +10,32 @@ namespace LevelImposter.Core
     {
         public void Build(LIElement elem, GameObject obj)
         {
-            if (!elem.type.StartsWith("dec-"))
-                return;
-            DecData utilData = AssetDB.dec[elem.type];
-
-            // Sprite Renderer
-            obj.layer = (int)Layer.ShortObjects;
-            SpriteRenderer spriteRenderer = obj.GetComponent<SpriteRenderer>();
-            if (!spriteRenderer)
+            if (elem.type.StartsWith("dec-"))
             {
-                spriteRenderer = obj.AddComponent<SpriteRenderer>();
-                spriteRenderer.sprite = utilData.SpriteRenderer.sprite;
-                spriteRenderer.material = utilData.SpriteRenderer.material;
+                DecData utilData = AssetDB.dec[elem.type];
+
+                SpriteRenderer spriteRenderer = obj.GetComponent<SpriteRenderer>();
+                if (!spriteRenderer)
+                {
+                    spriteRenderer = obj.AddComponent<SpriteRenderer>();
+                    spriteRenderer.sprite = utilData.SpriteRenderer.sprite;
+                    spriteRenderer.material = utilData.SpriteRenderer.material;
+                }
+                obj.layer = (int)Layer.ShortObjects;
             }
-            obj.layer = (int)Layer.ShortObjects;
+            else if (elem.type.StartsWith("room-"))
+            {
+                RoomData utilData = AssetDB.room[elem.type];
+
+                SpriteRenderer spriteRenderer = obj.GetComponent<SpriteRenderer>();
+                if (!spriteRenderer)
+                {
+                    spriteRenderer = obj.AddComponent<SpriteRenderer>();
+                    spriteRenderer.sprite = utilData.SpriteRenderer.sprite;
+                    spriteRenderer.material = utilData.SpriteRenderer.material;
+                }
+                obj.layer = (int)Layer.Ship;
+            }
         }
 
         public void PostBuild() { }

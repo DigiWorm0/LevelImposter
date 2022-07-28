@@ -11,6 +11,7 @@ namespace LevelImposter.Core
     public class LIShipStatus : MonoBehaviour
     {
         public const int Y_OFFSET = 25;
+        public const float PLAYER_POS = -5.0f;
 
         public static LIShipStatus Instance { get; private set; }
         public ShipStatus shipStatus { get; private set; }
@@ -117,7 +118,7 @@ namespace LevelImposter.Core
             {
                 GameObject gameObject = buildRouter.Build(element);
                 gameObject.transform.SetParent(transform);
-                gameObject.transform.localPosition -= new Vector3(0, Y_OFFSET, 0);
+                gameObject.transform.localPosition -= new Vector3(0, Y_OFFSET, -((element.y - Y_OFFSET) / 1000.0f) + PLAYER_POS);
             }
             catch (Exception e)
             {
