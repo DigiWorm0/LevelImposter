@@ -23,9 +23,12 @@ namespace LevelImposter.Core
         public float? camYOffset { get; set; }
         public float? camZoom { get; set; }
 
-        // Consoles
+        // Console
         public bool? onlyFromBelow { get; set; }
         public float? range { get; set; }
+
+        // Ladder
+        public float? ladderHeight { get; set; }
 
         // Tasks
         public string? description { get; set; }

@@ -627,6 +627,18 @@
             "MapType": 3,
             "SpriteRendererName": "task_cams",
             "GameObjName": "task_cams"
+        },
+		"util-ladder1": {
+            "Name": "Tall Ladder",
+            "MapType": 3,
+            "SpriteRendererName": "ladder_meeting",
+            "GameObjName": "ladder_meeting"
+        },
+        "util-ladder2": {
+            "Name": "Short Ladder",
+            "MapType": 3,
+            "SpriteRendererName": "ladder_electrical",
+            "GameObjName": "ladder_electrical"
         }
     },
     "sabs": {
