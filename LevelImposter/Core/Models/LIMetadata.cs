@@ -15,6 +15,7 @@ namespace LevelImposter.Core
         public string authorName { get; set; }
         public bool isPublic { get; set; }
         public bool isVerified { get; set; }
+        public long createdAt { get; set; }
         public string[] downloadURL { get; set; }
     }
 }

@@ -4,6 +4,7 @@ using System.Text;
 using UnityEngine;
 using UnityEngine.Networking;
 using LevelImposter.Core;
+using System.Text.Json;
 
 namespace LevelImposter.Shop
 {
@@ -13,7 +14,7 @@ namespace LevelImposter.Shop
 
         public static void DownloadMap(Guid mapID, Action<string> callback)
         {
-            GetMap(mapID, ((LIMetadata metadata) =>
+            GetMap(mapID, (LIMetadata metadata) =>
             {
                 LILogger.Info("Downloading map [" + mapID + "]...");
                 RequestJson(metadata.downloadURL[0], (LIMap mapData) =>
@@ -27,11 +28,16 @@ namespace LevelImposter.Shop
                     mapData.authorName = metadata.authorName;
                     mapData.isPublic = metadata.isPublic;
                     mapData.isVerified = metadata.isVerified;
+                    mapData.createdAt = metadata.createdAt;
 
-                    string mapJson = System.Text.Json.JsonSerializer.Serialize(mapData);
+                    JsonSerializerOptions serializerOptions = new JsonSerializerOptions {
+                        DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull
+                    };
+
+                    string mapJson = JsonSerializer.Serialize(mapData, serializerOptions);
                     callback(mapJson);
                 });
-            }));
+            });
         }
 
         public static void GetMap(Guid mapID, Action<LIMetadata> callback)
@@ -40,17 +46,23 @@ namespace LevelImposter.Shop
             RequestJson(API_PATH + "map/" + mapID, callback);
         }
 
-        public static void GetMaps(Action<LIMetadata[]> callback)
+        public static void GetRecentMaps(Action<LIMetadata[]> callback)
         {
             LILogger.Info("Getting map listing...");
-            RequestJson(API_PATH + "maps", callback);
+            RequestJson(API_PATH + "maps/recent", callback);
+        }
+
+        public static void GetVerifiedMaps(Action<LIMetadata[]> callback)
+        {
+            LILogger.Info("Getting map listing...");
+            RequestJson(API_PATH + "maps/verified", callback);
         }
 
         private static void RequestJson<T>(string url, Action<T> callback)
         {
-            Request(url, (System.Action<string>)((string json) =>
+            Request(url, ((string json) =>
             {
-                T data = System.Text.Json.JsonSerializer.Deserialize<T>(json);
+                T data = JsonSerializer.Deserialize<T>(json);
                 callback(data);
             }));
         }
@@ -59,7 +71,7 @@ namespace LevelImposter.Shop
         {
             LILogger.Info("GET: " + url);
             var request = UnityWebRequest.Get(url);
-            request.SendWebRequest().add_completed((System.Action<AsyncOperation>)((AsyncOperation op) =>
+            request.SendWebRequest().add_completed((Action<AsyncOperation>)((AsyncOperation op) =>
             {
                 if (request.isNetworkError || request.isHttpError)
                 {

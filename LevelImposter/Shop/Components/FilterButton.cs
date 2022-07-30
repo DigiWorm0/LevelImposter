@@ -65,10 +65,13 @@ namespace LevelImposter.Shop
             switch (filter)
             {
                 case MapFilter.Recent:
-                    ShopManager.Instance.ListPublicMaps();
+                    ShopManager.Instance.ListRecentMaps();
                     break;
                 case MapFilter.Downloaded:
                     ShopManager.Instance.ListDownloadedMaps();
+                    break;
+                case MapFilter.Verified:
+                    ShopManager.Instance.ListVerifiedMaps();
                     break;
             }
 

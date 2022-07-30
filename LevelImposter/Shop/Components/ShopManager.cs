@@ -39,6 +39,8 @@ namespace LevelImposter.Shop
             downloadedBtn.AddComponent<FilterButton>().Init(MapFilter.Downloaded);
             GameObject recentBtn = sidePanel.FindChild("RecentBtn").gameObject;
             recentBtn.AddComponent<FilterButton>().Init(MapFilter.Recent);
+            GameObject verifiedBtn = sidePanel.FindChild("VerifiedBtn").gameObject;
+            verifiedBtn.AddComponent<FilterButton>().Init(MapFilter.Verified);
             GameObject folderBtn = sidePanel.FindChild("FolderBtn").gameObject;
             folderBtn.AddComponent<FolderButton>().Init();
 
@@ -70,11 +72,18 @@ namespace LevelImposter.Shop
             ListMaps(maps);
         }
 
-        public void ListPublicMaps()
+        public void ListRecentMaps()
         {
-            LILogger.Info("Using public maps...");
+            LILogger.Info("Using recent maps...");
             currentFilter = MapFilter.Recent;
-            MapAPI.GetMaps(ListMaps);
+            MapAPI.GetRecentMaps(ListMaps);
+        }
+
+        public void ListVerifiedMaps()
+        {
+            LILogger.Info("Using verified maps...");
+            currentFilter = MapFilter.Verified;
+            MapAPI.GetVerifiedMaps(ListMaps);
         }
 
         public void ListMaps(LIMetadata[] maps)
