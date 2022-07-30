@@ -11,19 +11,33 @@ namespace LevelImposter.Shop
     {
         public const string API_PATH = "https://us-central1-levelimposter-347807.cloudfunctions.net/api/";
 
-        public static void DownloadMap(Guid mapId, Action<string> callback)
+        public static void DownloadMap(Guid mapID, Action<string> callback)
         {
-            GetMap(mapId, (System.Action<LIMetadata>)((LIMetadata metadata) =>
+            GetMap(mapID, ((LIMetadata metadata) =>
             {
-                LILogger.Info("Downloading map [" + mapId + "]...");
-                Request(metadata.downloadURL[0], callback);
+                LILogger.Info("Downloading map [" + mapID + "]...");
+                RequestJson(metadata.downloadURL[0], (LIMap mapData) =>
+                {
+                    LILogger.Info("Parsing map [" + mapID + "]...");
+                    mapData.v = metadata.v;
+                    mapData.id = mapID.ToString();
+                    mapData.name = metadata.name;
+                    mapData.description = metadata.description;
+                    mapData.authorID = metadata.authorID;
+                    mapData.authorName = metadata.authorName;
+                    mapData.isPublic = metadata.isPublic;
+                    mapData.isVerified = metadata.isVerified;
+
+                    string mapJson = System.Text.Json.JsonSerializer.Serialize(mapData);
+                    callback(mapJson);
+                });
             }));
         }
 
-        public static void GetMap(Guid mapId, Action<LIMetadata> callback)
+        public static void GetMap(Guid mapID, Action<LIMetadata> callback)
         {
-            LILogger.Info("Getting map [" + mapId + "]...");
-            RequestJson(API_PATH + "map/" + mapId, callback);
+            LILogger.Info("Getting map [" + mapID + "]...");
+            RequestJson(API_PATH + "map/" + mapID, callback);
         }
 
         public static void GetMaps(Action<LIMetadata[]> callback)

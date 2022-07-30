@@ -50,7 +50,7 @@ namespace LevelImposter.Shop
                     gameObject.SetActive(banner.isDownloaded);
                     break;
                 case MapButtonFunction.Download:
-                    gameObject.SetActive(!banner.isDownloading && !banner.isDownloaded);
+                    gameObject.SetActive(!banner.isDownloading && !banner.isDownloaded && !banner.isLocal);
                     break;
             }
         }

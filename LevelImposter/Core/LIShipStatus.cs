@@ -49,6 +49,10 @@ namespace LevelImposter.Core
             while (transform.childCount > 0)
                 DestroyImmediate(transform.GetChild(0).gameObject);
 
+            FollowerCamera camera = Camera.main.GetComponent<FollowerCamera>();
+            camera.shakeAmount = 0;
+            camera.shakePeriod = 0;
+
             shipStatus.AllDoors = new UnhollowerBaseLib.Il2CppReferenceArray<PlainDoor>(0);
             shipStatus.DummyLocations = new UnhollowerBaseLib.Il2CppReferenceArray<Transform>(0);
             shipStatus.SpecialTasks = new UnhollowerBaseLib.Il2CppReferenceArray<PlayerTask>(0);

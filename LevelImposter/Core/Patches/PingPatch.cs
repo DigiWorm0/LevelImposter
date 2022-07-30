@@ -18,7 +18,15 @@ namespace LevelImposter.Core
             __instance.gameObject.SetActive(true);
             LIMap currentMap = MapLoader.currentMap;
             if (currentMap != null)
-                __instance.text.text += "\n" + currentMap.name + " \n<size=2>by " + currentMap.authorName + "</size>";
+            {
+
+                __instance.text.text += "\n" + currentMap.name + " \n";
+                if (!string.IsNullOrEmpty(currentMap.authorID))
+                    __instance.text.text += "<size=2>by " + currentMap.authorName + "</size>";
+                else
+                    __instance.text.text += "<size=2><i>(Freeplay Only)</i></size>";
+            }
+            
         }
     }
 }

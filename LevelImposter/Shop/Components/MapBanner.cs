@@ -8,6 +8,7 @@ namespace LevelImposter.Shop
 {
     public class MapBanner : MonoBehaviour
     {
+        public bool isLocal = false;
         public bool isDownloading = false;
         public bool isDownloaded
         {
@@ -50,6 +51,7 @@ namespace LevelImposter.Shop
             titleText.text = metadata.name;
             if (string.IsNullOrEmpty(metadata.authorID))
             {
+                isLocal = true;
                 authorText.fontStyle = TMPro.FontStyles.Italic;
                 authorText.text = "(Freeplay Only)";
                 descriptionText.text = metadata.id + ".lim";
