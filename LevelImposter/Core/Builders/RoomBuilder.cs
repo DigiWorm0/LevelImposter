@@ -38,5 +38,12 @@ namespace LevelImposter.Core
         {
             return systemDB.GetValueOrDefault(id);
         }
+
+        public static SystemTypes[] GetAllSystems()
+        {
+            SystemTypes[] arr = new SystemTypes[systemDB.Count];
+            systemDB.Values.CopyTo(arr, 0);
+            return arr;
+        }
     }
 }

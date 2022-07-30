@@ -2,11 +2,14 @@
 using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
+using TMPro;
 
 namespace LevelImposter.Core
 {
     public class MinimapBuilder : Builder
     {
+        public const float MAP_SCALE = 0.2f;
+
         private bool isBuilt = false;
 
         public void Build(LIElement elem, GameObject obj)
@@ -27,19 +30,19 @@ namespace LevelImposter.Core
                 Sprite sprite = spriteRenderer.sprite;
                 GameObject background = mapBehaviour.ColorControl.gameObject;
                 background.GetComponent<SpriteRenderer>().sprite = sprite;
-                background.transform.localScale = obj.transform.localScale * 0.2f;
+                background.transform.localScale = obj.transform.localScale * MAP_SCALE;
                 background.transform.localRotation = obj.transform.localRotation;
             }
 
             Vector3 mapOffset = -(obj.transform.localPosition * 0.2f);
 
+            // Offsets
+            Transform roomNames = mapBehaviour.transform.GetChild(mapBehaviour.transform.childCount - 1);
+            roomNames.localPosition = mapOffset;
             Transform hereIndicatorParent = mapBehaviour.transform.FindChild("HereIndicatorParent");
             hereIndicatorParent.localPosition = mapOffset + new Vector3(0, 5.0f, -0.1f);
             mapBehaviour.countOverlay.transform.localPosition = mapOffset;
             mapBehaviour.infectedOverlay.transform.localPosition = mapOffset;
-
-            Transform roomNames = mapBehaviour.transform.GetChild(mapBehaviour.transform.childCount - 1);
-            roomNames.gameObject.SetActive(false);
 
             obj.SetActive(false);
             isBuilt = true;

@@ -9,6 +9,7 @@ namespace LevelImposter.Core
 {
     public class AdminMapBuilder : Builder
     {
+        public const float ICON_OFFSET = -0.3f;
         private static List<CounterArea> counterAreaDB = new List<CounterArea>();
         private PoolableBehavior poolPrefab = null;
 
@@ -28,11 +29,12 @@ namespace LevelImposter.Core
             SystemTypes systemType = RoomBuilder.GetSystem(elem.id);
 
             // Map Room
+            float overlayScale = mapCountOverlay.transform.localScale.x;
             GameObject roomObj = new GameObject(elem.name);
             roomObj.transform.SetParent(mapCountOverlay.transform);
             roomObj.transform.localPosition = new Vector3(
-                elem.x * 0.2f * 1.25f,
-                elem.y * 0.2f * 1.25f,
+                elem.x * MinimapBuilder.MAP_SCALE * (1 / overlayScale),
+                elem.y * MinimapBuilder.MAP_SCALE * (1 / overlayScale) + ICON_OFFSET,
                 -25.0f
             );
 
