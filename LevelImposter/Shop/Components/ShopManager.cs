@@ -62,6 +62,7 @@ namespace LevelImposter.Shop
         {
             LILogger.Info("Using downloaded maps...");
             currentFilter = MapFilter.Downloaded;
+            RemoveChildren();
             string[] mapIDs = MapLoader.GetMapIDs();
             LIMetadata[] maps = new LIMetadata[mapIDs.Length];
             for (int i = 0; i < mapIDs.Length; i++)
@@ -76,21 +77,28 @@ namespace LevelImposter.Shop
         {
             LILogger.Info("Using recent maps...");
             currentFilter = MapFilter.Recent;
+            RemoveChildren();
             MapAPI.GetRecentMaps(ListMaps);
         }
 
         public void ListVerifiedMaps()
         {
-            LILogger.Info("Using verified maps...");
+            LILogger.Info("Using featured maps...");
             currentFilter = MapFilter.Verified;
+            RemoveChildren();
             MapAPI.GetVerifiedMaps(ListMaps);
+        }
+
+        private void RemoveChildren()
+        {
+            while (content.childCount > 1)
+                DestroyImmediate(content.GetChild(1).gameObject);
         }
 
         public void ListMaps(LIMetadata[] maps)
         {
             LILogger.Info("Listed " + maps.Length + " maps");
-            while (content.childCount > 1)
-                DestroyImmediate(content.GetChild(1).gameObject);
+            RemoveChildren();
             scroller.ContentYBounds = new FloatRange(-1.8f, (1.3f * maps.Length) - 1.8f);
             for (int i = 0; i < maps.Length; i++)
             {
