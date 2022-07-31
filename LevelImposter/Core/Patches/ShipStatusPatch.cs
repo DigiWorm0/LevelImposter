@@ -17,4 +17,16 @@ namespace LevelImposter.Core
             __instance.gameObject.AddComponent<LIShipStatus>();
         }
     }
+
+    /*
+     *      Unloads maps after disconnect
+     */
+    [HarmonyPatch(typeof(AmongUsClient), nameof(AmongUsClient.ExitGame))]
+    public static class ExitGamePatch
+    {
+        public static void Postfix()
+        {
+            MapLoader.UnloadMap();
+        }
+    }
 }

@@ -221,6 +221,11 @@ namespace LevelImposter.Core
                     task.MinigamePrefab = origTask.MinigamePrefab;
                     task.TargetSystem = divertSystem;
 
+                    GameObject arrow = UnityEngine.Object.Instantiate(origTask.Arrow.gameObject);
+                    arrow.transform.SetParent(task.transform);
+                    arrow.SetActive(false);
+                    task.Arrow = arrow.GetComponent<ArrowBehaviour>();
+
                     shipStatus.LongTasks = MapUtils.AddToArr(shipStatus.LongTasks, task.Cast<NormalPlayerTask>());
                 }
             }
@@ -244,6 +249,15 @@ namespace LevelImposter.Core
                 task.TimerStarted = origTask.TimerStarted;
                 task.TaskType = origTask.TaskType;
                 task.MinigamePrefab = origTask.MinigamePrefab;
+
+                if (origTask.Arrow != null)
+                {
+                    GameObject arrow = UnityEngine.Object.Instantiate(origTask.Arrow.gameObject);
+                    arrow.transform.SetParent(task.transform);
+                    arrow.SetActive(false);
+
+                    task.Arrow = arrow.GetComponent<ArrowBehaviour>();
+                }
 
                 if (elem.type == "task-node")
                 {
