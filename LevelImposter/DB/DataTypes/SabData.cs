@@ -19,7 +19,8 @@ namespace LevelImposter.DB
         {
             SpriteRenderer = MapSearcher.SearchComponent<SpriteRenderer>(map, SpriteRendererName);
             GameObj = MapSearcher.SearchChildren(map, GameObjName);
-            Behavior = MapSearcher.SearchList(shipStatus.SpecialTasks, BehaviorName);
+            if (!string.IsNullOrEmpty(BehaviorName))
+                Behavior = MapSearcher.SearchList(shipStatus.SpecialTasks, BehaviorName);
         }
     }
 }

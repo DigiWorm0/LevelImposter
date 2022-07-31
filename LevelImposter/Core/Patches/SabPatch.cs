@@ -18,7 +18,7 @@ namespace LevelImposter.Core
     {
         private static Dictionary<SystemTypes, TaskTypes> systemTaskPairs = new Dictionary<SystemTypes, TaskTypes> {
             { SystemTypes.Electrical, TaskTypes.FixLights },
-            { SystemTypes.Reactor, TaskTypes.ResetReactor },
+            { SystemTypes.Laboratory, TaskTypes.ResetSeismic },
             { SystemTypes.LifeSupp, TaskTypes.RestoreOxy },
             { SystemTypes.Comms, TaskTypes.FixComms },
         };
@@ -34,7 +34,7 @@ namespace LevelImposter.Core
                 if (task.TaskType == taskType)
                 {
                     PlayerControl localPlayer = PlayerControl.LocalPlayer;
-                    PlayerTask taskClone = UnityEngine.Object.Instantiate<PlayerTask>(task, localPlayer.transform);
+                    PlayerTask taskClone = UnityEngine.Object.Instantiate(task, localPlayer.transform);
                     taskClone.Id = 255U;
                     taskClone.Owner = localPlayer;
                     taskClone.Initialize();

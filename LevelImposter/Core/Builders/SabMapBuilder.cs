@@ -18,7 +18,13 @@ namespace LevelImposter.Core
 
             MapBehaviour mapBehaviour = MinimapBuilder.GetMinimap();
             InfectedOverlay infectedOverlay = mapBehaviour.infectedOverlay;
-            GameObject buttonPrefab = infectedOverlay.transform.GetChild(0).GetChild(0).gameObject;
+
+            // Is anyone going to talk about the fact that comms is literally called "bomb" in Unity?
+            Sprite commsSprite = GetSprite(infectedOverlay, "Comms", "bomb"); // um...BOMB!?
+            Sprite reactorSprite = GetSprite(infectedOverlay, "Laboratory", "meltdown");
+            Sprite doorsSprite = GetSprite(infectedOverlay, "Office", "Doors");
+            Sprite lightsSprite = GetSprite(infectedOverlay, "Electrical", "lightsOut");
+            Material buttonMat = infectedOverlay.transform.GetChild(0).GetChild(0).GetComponent<SpriteRenderer>().material;
 
             // System
             SystemTypes systemType = 0;
@@ -33,8 +39,9 @@ namespace LevelImposter.Core
             }
             else
             {
-                GameObject roomObj = new GameObject("Room " + ((int)systemType));
+                GameObject roomObj = new GameObject(elem.name);
                 roomObj.transform.SetParent(infectedOverlay.transform);
+                roomObj.transform.localPosition = Vector3.zero;
 
                 mapRoom = roomObj.AddComponent<MapRoom>();
                 mapRoom.Parent = infectedOverlay;
@@ -49,10 +56,11 @@ namespace LevelImposter.Core
 
             // Button
             GameObject sabButton = new GameObject(elem.name);
+            sabButton.layer = (int)Layer.UI;
             sabButton.transform.SetParent(mapRoom.transform);
             sabButton.transform.localPosition = new Vector3(
-                elem.x * 0.2f * 1.25f,
-                elem.y * 0.2f * 1.25f,
+                elem.x * MinimapBuilder.MAP_SCALE,
+                elem.y * MinimapBuilder.MAP_SCALE,
                 -25.0f
             );
 
@@ -61,17 +69,29 @@ namespace LevelImposter.Core
             collider.isTrigger = true;
 
             SpriteRenderer renderer = sabButton.AddComponent<SpriteRenderer>();
-            renderer.sprite = buttonPrefab.GetComponent<SpriteRenderer>().sprite;
+            renderer.sprite = lightsSprite;
+            renderer.material = buttonMat;
+            if (mapRoom.special != null)
+                LILogger.Warn("Only 1 sabotage is supported per room. Sabotage buttons may experience strange behaviour.");
             mapRoom.special = renderer;
-
             ButtonBehavior button = sabButton.AddComponent<ButtonBehavior>();
             Action action = mapRoom.SabotageLights;
+
             if (elem.type == "sab-reactorleft" || elem.type == "sab-reactorright")
-                action = mapRoom.SabotageReactor;
+            {
+                renderer.sprite = reactorSprite;
+                action = mapRoom.SabotageSeismic;
+            }
             else if (elem.type == "sab-oxygen1" || elem.type == "sab-oxygen2")
+            {
+                renderer.sprite = reactorSprite; // TODO: Fix Me
                 action = mapRoom.SabotageOxygen;
+            }
             else if (elem.type == "sab-comms")
+            {
+                renderer.sprite = commsSprite;
                 action = mapRoom.SabotageComms;
+            }
             button.OnClick.AddListener(action);
 
         }
@@ -85,6 +105,11 @@ namespace LevelImposter.Core
                 UnityEngine.Object.DestroyImmediate(infectedOverlay.transform.GetChild(0).gameObject);
             
             mapRoomDB.Clear();    
+        }
+
+        private Sprite GetSprite(InfectedOverlay overlay, string parent, string child)
+        {
+            return overlay.transform.Find(parent).Find(child).GetComponent<SpriteRenderer>().sprite;
         }
     }
 }

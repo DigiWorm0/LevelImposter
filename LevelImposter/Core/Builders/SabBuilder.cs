@@ -94,7 +94,7 @@ namespace LevelImposter.Core
                 // Task
                 SabotageTask origTask = sabData.Behavior.Cast<SabotageTask>();
                 SabotageTask task = taskContainer.AddComponent(sabData.Behavior.GetIl2CppType()).Cast<SabotageTask>();
-                task.StartAt = systemType;
+                task.StartAt = origTask.StartAt;
                 task.TaskType = origTask.TaskType;
                 task.MinigamePrefab = origTask.MinigamePrefab;
                 task.Arrows = sabArrows.ToArray();
