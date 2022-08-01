@@ -16,6 +16,6 @@ namespace LevelImposter.Core
         public bool isPublic { get; set; }
         public bool isVerified { get; set; }
         public long createdAt { get; set; }
-        public string[] downloadURL { get; set; }
+        public string downloadURL { get; set; }
     }
 }

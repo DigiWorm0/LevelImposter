@@ -11,15 +11,18 @@ namespace LevelImposter.Shop
     public static class MapAPI
     {
         public const string API_PATH = "https://us-central1-levelimposter-347807.cloudfunctions.net/api/";
+        public const int API_VERSION = 1;
 
         public static void DownloadMap(Guid mapID, Action<string> callback)
         {
             GetMap(mapID, (LIMetadata metadata) =>
             {
                 LILogger.Info("Downloading map [" + mapID + "]...");
-                RequestJson(metadata.downloadURL[0], (LIMap mapData) =>
+                Request(metadata.downloadURL, (string mapJSON) =>
                 {
                     LILogger.Info("Parsing map [" + mapID + "]...");
+                    LIMap mapData = JsonSerializer.Deserialize<LIMap>(mapJSON);
+
                     mapData.v = metadata.v;
                     mapData.id = mapID.ToString();
                     mapData.name = metadata.name;
@@ -62,9 +65,20 @@ namespace LevelImposter.Shop
         {
             Request(url, ((string json) =>
             {
-                T data = JsonSerializer.Deserialize<T>(json);
-                callback(data);
+                LICallback<T> response = JsonSerializer.Deserialize<LICallback<T>>(json);
+                if (response.v != API_VERSION)
+                    HandleError("You are running on an older version of LevelImposter (" + LevelImposter.VERSION + "). Update to get access to the API.");
+                else if (!string.IsNullOrEmpty(response.error))
+                    HandleError(response.error);
+                else
+                    callback(response.data);
             }));
+        }
+
+        private static void HandleError(string error)
+        {
+            LILogger.Error(error);
+            DestroyableSingleton<DisconnectPopup>.Instance.ShowCustom(error);
         }
 
         private static void Request(string url, Action<string> callback)
@@ -73,14 +87,14 @@ namespace LevelImposter.Shop
             var request = UnityWebRequest.Get(url);
             request.SendWebRequest().add_completed((Action<AsyncOperation>)((AsyncOperation op) =>
             {
-                if (request.isNetworkError || request.isHttpError)
-                {
-                    LILogger.Error(request.error);
-                    return;
-                }
                 LILogger.Info("RESPONSE: " + request.responseCode);
-                var data = request.downloadHandler.text;
-                callback(data);
+                if (request.isNetworkError || request.isHttpError)
+                    HandleError(request.error);
+                else
+                {
+                    var data = request.downloadHandler.text;
+                    callback(data);
+                }
             }));
         }
     }
