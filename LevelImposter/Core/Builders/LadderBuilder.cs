@@ -69,6 +69,9 @@ namespace LevelImposter.Core
             AllLadders.Add(bottomConsole);
         }
 
-        public void PostBuild() { }
+        public void PostBuild()
+        {
+            AllLadders.RemoveAll(platform => platform == null);
+        }
     }
 }

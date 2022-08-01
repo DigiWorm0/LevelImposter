@@ -639,7 +639,13 @@
             "MapType": 3,
             "SpriteRendererName": "ladder_electrical",
             "GameObjName": "ladder_electrical"
-        }
+        },
+		"util-platform": {
+			"Name": "Moving Platform",
+			"MapType": 3,
+			"SpriteRendererName": "Platform",
+			"GameObjName": "Platform"
+		}
     },
     "sabs": {
         "sab-electric": {

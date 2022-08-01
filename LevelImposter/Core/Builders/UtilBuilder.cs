@@ -16,6 +16,10 @@ namespace LevelImposter.Core
                 elem.type.StartsWith("util-cams") ||
                 elem.type == "util-admin" ||
                 elem.type == "util-vitals" || 
+                elem.type.StartsWith("util-button") ||
+                elem.type.StartsWith("util-cams") ||
+                elem.type == "util-admin" ||
+                elem.type == "util-vitals" || 
                 elem.type == "util-computer"))
                 return;
 

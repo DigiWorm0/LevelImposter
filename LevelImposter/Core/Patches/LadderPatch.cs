@@ -31,7 +31,7 @@ namespace LevelImposter.Core
                         return false;
                     }
                 }
-                LILogger.Warn("Could not find ladder of id: " + ladderId);
+                LILogger.Warn("[RPC] Could not find a ladder of id: " + ladderId);
             }
             return true;
         }

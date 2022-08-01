@@ -29,6 +29,13 @@ namespace LevelImposter.Core
 
         // Ladder
         public float? ladderHeight { get; set; }
+        
+        public float? platformXOffset { get; set; }
+        public float? platformYOffset { get; set; }
+        public float? platformXEntranceOffset { get; set; }
+        public float? platformYEntranceOffset { get; set; }
+        public float? platformXExitOffset { get; set; }
+        public float? platformYExitOffset { get; set; }
 
         // Tasks
         public string? description { get; set; }
