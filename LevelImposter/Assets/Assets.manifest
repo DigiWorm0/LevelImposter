@@ -1,0 +1,7 @@
+ManifestFileVersion: 0
+CRC: 703895051
+AssetBundleManifest:
+  AssetBundleInfos:
+    Info_0:
+      Name: shop
+      Dependencies: {}
