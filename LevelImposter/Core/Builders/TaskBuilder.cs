@@ -26,6 +26,7 @@ namespace LevelImposter.Core
             { "task-garbage4", 2 },
             { "task-fans1", 0 },
             { "task-fans2", 1 },
+            { "task-records1", 0 }
         };
         private Dictionary<string, int> consoleIDIncrements = new Dictionary<string, int> {
             { "task-toilet", 0 },
@@ -34,7 +35,8 @@ namespace LevelImposter.Core
             { "task-node", 0 },
             { "task-waterwheel1", 0 },
             { "task-fuel2", 0 },
-            { "task-align1", 0 }
+            { "task-align1", 0 },
+            { "task-records2", 1 }
         };
 
         public static byte breakerCount = 0;
@@ -43,6 +45,7 @@ namespace LevelImposter.Core
         public static byte fuelCount = 0;
         public static byte waterWheelCount = 0;
         public static byte alignEngineCount = 0;
+        public static byte recordsCount = 0;
 
         public static SystemTypes[] divertSystems = new SystemTypes[0];
 
@@ -305,6 +308,8 @@ namespace LevelImposter.Core
                     waterWheelCount = count;
                 if (key == "task-align1")
                     alignEngineCount = count;
+                if (key == "task-records2")
+                    recordsCount = count;
                 consoleIDIncrements[key] = 0;
             }
         }

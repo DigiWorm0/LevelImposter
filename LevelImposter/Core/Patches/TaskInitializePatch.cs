@@ -128,4 +128,36 @@ namespace LevelImposter.Core
             return true;
         }
     }
+
+    /*
+     *      Fix Records Stages
+     */
+    [HarmonyPatch(typeof(RecordsMinigame), nameof(RecordsMinigame.GrabFolder))]
+    public static class RecordsPatch
+    {
+        public static bool Prefix([HarmonyArgument(0)] SpriteRenderer folder, RecordsMinigame __instance)
+        {
+            if (MapLoader.currentMap == null)
+                return true;
+
+            if (__instance.amClosing != Minigame.CloseState.None)
+                return false;
+
+            int folderIndex = 0;
+            for (int i = 0; i < __instance.Folders.Count; i++)
+            {
+                if (__instance.Folders[i].gameObject == folder.gameObject)
+                    folderIndex = i;
+            }
+
+            folder.gameObject.SetActive(false);
+            __instance.MyNormTask.Data[folderIndex] = IntRange.NextByte(1, TaskBuilder.recordsCount);
+            __instance.MyNormTask.UpdateArrow();
+            if (Constants.ShouldPlaySfx())
+                SoundManager.Instance.PlaySound(__instance.grabDocument, false, 1f);
+            __instance.StartCoroutine(__instance.CoStartClose(0.75f));
+
+            return false;
+        }
+    }
 }
