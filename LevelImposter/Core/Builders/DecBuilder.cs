@@ -19,7 +19,6 @@ namespace LevelImposter.Core
                 {
                     spriteRenderer = obj.AddComponent<SpriteRenderer>();
                     spriteRenderer.sprite = utilData.SpriteRenderer.sprite;
-                    spriteRenderer.material = utilData.SpriteRenderer.material;
                 }
                 obj.layer = (int)Layer.ShortObjects;
             }
@@ -32,7 +31,6 @@ namespace LevelImposter.Core
                 {
                     spriteRenderer = obj.AddComponent<SpriteRenderer>();
                     spriteRenderer.sprite = utilData.SpriteRenderer.sprite;
-                    spriteRenderer.material = utilData.SpriteRenderer.material;
                 }
                 obj.layer = (int)Layer.Ship;
             }

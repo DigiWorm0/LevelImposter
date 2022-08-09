@@ -11,6 +11,7 @@ namespace LevelImposter.Core
         // Generic
         public Guid? parent { get; set; }
         public string? spriteData { get; set; }
+        public bool? noShadows { get; set; }
         public LICollider[]? colliders { get; set; }
 
         // Vent

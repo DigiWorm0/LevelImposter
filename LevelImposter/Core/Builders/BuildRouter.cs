@@ -25,7 +25,9 @@ namespace LevelImposter.Core
             new SabBuilder(),
             new SabMapBuilder(),
             new LadderBuilder(),
-            new PlatformBuilder()
+            new PlatformBuilder(),
+
+            new NoShadowBuilder()
         };
 
         public GameObject Build(LIElement element)

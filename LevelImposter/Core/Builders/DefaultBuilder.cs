@@ -3,6 +3,7 @@ using System.IO;
 using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
+using LevelImposter.DB;
 
 namespace LevelImposter.Core
 {
@@ -64,10 +65,12 @@ namespace LevelImposter.Core
                 }
             }
 
+            /*
             BoxCollider2D boxCollider = gameObject.AddComponent<BoxCollider2D>();
             boxCollider.size = new Vector2(elem.xScale, elem.yScale);
             boxCollider.offset = new Vector2(elem.xScale / 2, elem.yScale / 2);
             boxCollider.isTrigger = true;
+            */
 
             return gameObject;
         }
