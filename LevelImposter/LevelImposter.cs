@@ -8,11 +8,13 @@ using UnhollowerRuntimeLib;
 namespace LevelImposter
 {
     [BepInPlugin(ID, "LevelImposter", VERSION)]
+    [BepInDependency(REACTOR_ID, BepInDependency.DependencyFlags.SoftDependency)]
     [BepInProcess("Among Us.exe")]
     public class LevelImposter : BasePlugin
     {
         public const string ID = "com.DigiWorm.LevelImposter";
-        public const string VERSION = "0.4.0";
+        public const string VERSION = "0.4.1";
+        public const string REACTOR_ID = "gg.reactor.api";
 
         public HarmonyLib.Harmony Harmony { get; } = new HarmonyLib.Harmony(ID);
 
