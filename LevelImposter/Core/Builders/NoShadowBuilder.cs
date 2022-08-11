@@ -13,6 +13,9 @@ namespace LevelImposter.Core
 
         public void Build(LIElement elem, GameObject obj)
         {
+            if (!(elem.type.StartsWith("dec-") || elem.type == "util-blank"))
+                return;
+
             if (noShadowMat == null)
             {
                 noShadowMat = AssetDB.dec["dec-rock5"].SpriteRenderer.material;
@@ -25,12 +28,22 @@ namespace LevelImposter.Core
                 if (elem.properties.noShadows == true)
                 {
                     spriteRenderer.material = noShadowMat;
-                    NoShadowBehaviour behaviour = obj.AddComponent<NoShadowBehaviour>();
-                    behaviour.rend = spriteRenderer;
 
-                    Collider2D[] shadows = obj.GetComponentsInChildren<Collider2D>();
-                    if (shadows.Length > 1)
-                        behaviour.hitOverride = shadows[1];
+                    if (elem.properties.noShadowsBehaviour == true)
+                    {
+                        NoShadowBehaviour behaviour = obj.AddComponent<NoShadowBehaviour>();
+                        behaviour.rend = spriteRenderer;
+
+                        Collider2D[] shadows = obj.GetComponentsInChildren<Collider2D>();
+                        for (int i = 0; i < shadows.Length; i++)
+                        {
+                            if (shadows[i].gameObject != obj)
+                            {
+                                behaviour.hitOverride = shadows[i];
+                                return;
+                            }
+                        }
+                    }
                 }
                 else
                 {

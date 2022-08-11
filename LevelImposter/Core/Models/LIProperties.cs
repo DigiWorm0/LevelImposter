@@ -10,9 +10,12 @@ namespace LevelImposter.Core
     {
         // Generic
         public Guid? parent { get; set; }
+        public LICollider[]? colliders { get; set; }
+
+        // Sprite
         public string? spriteData { get; set; }
         public bool? noShadows { get; set; }
-        public LICollider[]? colliders { get; set; }
+        public bool? noShadowsBehaviour { get; set; }
 
         // Vent
         public Guid? leftVent { get; set; }
