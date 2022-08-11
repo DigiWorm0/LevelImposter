@@ -28,17 +28,11 @@ namespace LevelImposter.Core
             // Camera
             SurvCamera survCam = obj.AddComponent<SurvCamera>();
             survCam.CamName = elem.name;
-            if (elem.properties.camXOffset != null && elem.properties.camYOffset != null)
-            {
-                survCam.Offset = new Vector3(
-                    (float)elem.properties.camXOffset,
-                    (float)elem.properties.camYOffset
-                );
-            }
-            if (elem.properties.camZoom != null)
-            {
-                survCam.CamSize = (float)elem.properties.camZoom;
-            }
+            survCam.Offset = new Vector3(
+                elem.properties.camXOffset == null ? 0 : (float)elem.properties.camXOffset,
+                elem.properties.camYOffset == null ? 0 : (float)elem.properties.camYOffset
+            );
+            survCam.CamSize = elem.properties.camZoom == null ? 0 : (float)elem.properties.camZoom;
         }
 
         public void PostBuild() { }
