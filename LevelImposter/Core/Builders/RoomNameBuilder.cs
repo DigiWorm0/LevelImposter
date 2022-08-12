@@ -36,9 +36,15 @@ namespace LevelImposter.Core
             // Text
             UnityEngine.Object.Destroy(roomName.GetComponent<TextTranslatorTMP>());
             TextMeshPro roomText = roomName.GetComponent<TextMeshPro>();
-            roomText.text = elem.name;
+            roomText.text = elem.name.Replace("\\n", "\n");
+            roomText.fontSizeMin = roomText.fontSizeMax;
+            roomText.alignment = TextAlignmentOptions.Bottom;
             roomText.enabled = true;
             nameCount++;
+
+            // Transform
+            RectTransform rectTransform = roomName.GetComponent<RectTransform>();
+            rectTransform.sizeDelta = new Vector2(10, 0);
         }
 
         public void PostBuild()

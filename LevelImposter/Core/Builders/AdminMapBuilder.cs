@@ -9,7 +9,7 @@ namespace LevelImposter.Core
 {
     public class AdminMapBuilder : Builder
     {
-        public const float ICON_OFFSET = -0.3f;
+        public const float ICON_OFFSET = -0.25f;
         private static List<CounterArea> counterAreaDB = new List<CounterArea>();
         private PoolableBehavior poolPrefab = null;
 

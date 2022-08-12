@@ -11,7 +11,8 @@ namespace LevelImposter.Core
     {
         public GameObject Build(LIElement elem)
         {
-            GameObject gameObject = new GameObject(elem.name);
+            string objName = elem.name.Replace("\\n", " ");
+            GameObject gameObject = new GameObject(objName);
             gameObject.layer = (int)Layer.Ship;
             gameObject.transform.position = new Vector3(elem.x, elem.y, elem.z);
             gameObject.transform.rotation = Quaternion.Euler(0, 0, elem.rotation);
@@ -23,7 +24,8 @@ namespace LevelImposter.Core
                 if (elem.properties.spriteData.StartsWith("data:image/gif;base64,"))
                 {
                     GIFAnimator animator = gameObject.AddComponent<GIFAnimator>();
-                    animator.Animate(elem.properties.spriteData);
+                    animator.Init(elem.properties.spriteData);
+                    animator.Play(true);
                 }
                 else
                 {
