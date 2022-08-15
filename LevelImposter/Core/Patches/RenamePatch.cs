@@ -14,6 +14,9 @@ namespace LevelImposter.Core
     {
         public static bool Prefix([HarmonyArgument(0)] SystemTypes systemType, ref string __result)
         {
+            if (MapLoader.currentMap == null)
+                return true;
+
             if (MapUtils.systemRenames.ContainsKey(systemType))
             {
                 __result = MapUtils.systemRenames[systemType];
@@ -27,12 +30,28 @@ namespace LevelImposter.Core
     {
         public static bool Prefix([HarmonyArgument(0)] TaskTypes taskType, ref string __result)
         {
+            if (MapLoader.currentMap == null)
+                return true;
+
             if (MapUtils.taskRenames.ContainsKey(taskType))
             {
                 __result = MapUtils.taskRenames[taskType];
                 return false;
             }
             return true;
+        }
+    }
+    [HarmonyPatch(typeof(GameOptionsData), nameof(GameOptionsData.ToHudString))]
+    public static class StringRenamePatch
+    {
+        public static void Postfix(GameOptionsData __instance, ref string __result)
+        {
+            if (MapLoader.currentMap == null)
+                return;
+
+            int mapID = (int)((__instance.MapId == 0 && Constants.ShouldFlipSkeld()) ? 3 : __instance.MapId);
+            string oldMapName = Constants.MapNames[mapID];
+            __result = __result.Replace(oldMapName, MapLoader.currentMap.name);
         }
     }
 }
