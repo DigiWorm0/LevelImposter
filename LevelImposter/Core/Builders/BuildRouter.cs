@@ -26,6 +26,7 @@ namespace LevelImposter.Core
             new SabMapBuilder(),
             new LadderBuilder(),
             new PlatformBuilder(),
+            new StarfieldBuilder(),
 
             new NoShadowBuilder()
         };

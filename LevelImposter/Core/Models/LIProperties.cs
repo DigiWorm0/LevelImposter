@@ -34,6 +34,7 @@ namespace LevelImposter.Core
         // Ladder
         public float? ladderHeight { get; set; }
         
+        // Platform
         public float? platformXOffset { get; set; }
         public float? platformYOffset { get; set; }
         public float? platformXEntranceOffset { get; set; }
@@ -41,11 +42,15 @@ namespace LevelImposter.Core
         public float? platformXExitOffset { get; set; }
         public float? platformYExitOffset { get; set; }
 
+        // Star Field
+        public int? starfieldCount { get; set; }
+        public float? starfieldMinSpeed { get; set; }
+        public float? starfieldMaxSpeed { get; set; }
+        public float? starfieldHeight { get; set; }
+        public float? starfieldLength { get; set; }
+
         // Tasks
         public string? description { get; set; }
         public string? taskLength { get; set; }
-
-        
-
     }
 }
