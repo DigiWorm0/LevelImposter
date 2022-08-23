@@ -27,6 +27,8 @@ namespace LevelImposter.Core
             new LadderBuilder(),
             new PlatformBuilder(),
             new StarfieldBuilder(),
+            new AmbientSoundBuilder(),
+            new StepSoundBuilder(),
 
             new NoShadowBuilder()
         };
