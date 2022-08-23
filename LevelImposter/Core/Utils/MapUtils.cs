@@ -116,22 +116,6 @@ namespace LevelImposter.Core
         }
 
         /// <summary>
-        /// Grabs a map resource from id
-        /// </summary>
-        /// <param name="resourceID">ID of the resource</param>
-        /// <returns>Resource of ID</returns>
-        public static string GetResource(string resourceID)
-        {
-            var resources = LIShipStatus.Instance.currentMap.properties.resources;
-            if (resources == null)
-                return null;
-
-            string resource;
-            resources.TryGetValue(resourceID, out resource);
-            return resource;
-        }
-
-        /// <summary>
         /// Converts a base64 encoded string into a byte array
         /// </summary>
         /// <param name="base64">Base64 encoded data</param>

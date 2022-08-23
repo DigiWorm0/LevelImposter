@@ -23,24 +23,31 @@ namespace LevelImposter.Core
             }
 
             // AudioClip
-            if (elem.properties.soundID == null)
+            if (elem.properties.sounds == null)
             {
-                LILogger.Warn("Ambient sound missing audio data");
+                LILogger.Warn("Ambient sound missing audio listing");
                 return;
             }
-            string resource = MapUtils.GetResource(elem.properties.soundID);
-            if (resource == null)
+
+            if (elem.properties.sounds.Length <= 0)
             {
-                LILogger.Warn("Ambient sound missing resource data [" + elem.properties.soundID + "]");
+                LILogger.Warn("Ambient sound missing audio elements");
                 return;
             }
-            AudioClip clip = MapUtils.ConvertToAudio(elem.name, resource);
+
+            LISound soundData = elem.properties.sounds[0];
+            if (soundData.data == null)
+            {
+                LILogger.Warn("Ambient sound missing audio data [" + soundData.id + "]");
+                return;
+            }
+            AudioClip clip = MapUtils.ConvertToAudio(elem.name, soundData.data);
 
             // Sound Player
             AmbientSoundPlayer ambientPlayer = obj.AddComponent<AmbientSoundPlayer>();
             ambientPlayer.HitAreas = colliders;
             ambientPlayer.AmbientSound = clip;
-            ambientPlayer.MaxVolume = elem.properties.soundVolume == null ? 1 : (float)elem.properties.soundVolume;
+            ambientPlayer.MaxVolume = soundData.volume;
         }
 
         public void PostBuild() {}

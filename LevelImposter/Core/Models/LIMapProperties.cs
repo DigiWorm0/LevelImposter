@@ -9,6 +9,5 @@ namespace LevelImposter.Core
     public class LIMapProperties
     {
         public string? bgColor { get; set; }
-        public Dictionary<string, string> resources { get; set; } = new();
     }
 }

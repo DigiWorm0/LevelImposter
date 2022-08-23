@@ -18,9 +18,7 @@ namespace LevelImposter.Core
         public bool? noShadowsBehaviour { get; set; }
 
         // Sound
-        public string? soundID { get; set; }
-        public string[]? soundIDs { get; set; }
-        public float? soundVolume { get; set; }
+        public LISound[]? sounds { get; set; }
         public int? soundPriority { get; set; }
 
         // Vent

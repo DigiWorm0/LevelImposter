@@ -16,23 +16,40 @@ namespace LevelImposter.Core
                 return;
 
             // AudioClip
-            if (elem.properties.soundIDs == null)
+            if (elem.properties.sounds == null)
             {
-                LILogger.Warn("Step sound missing audio data");
+                LILogger.Warn("Step sound missing audio listing");
                 return;
             }
 
             SoundGroup soundGroup = ScriptableObject.CreateInstance<SoundGroup>();
-            soundGroup.Clips = new AudioClip[elem.properties.soundIDs.Length];
-            for (int i = 0; i < elem.properties.soundIDs.Length; i++)
+            soundGroup.Clips = new AudioClip[elem.properties.sounds.Length];
+            for (int i = 0; i < elem.properties.sounds.Length; i++)
             {
-                string resourceID = elem.properties.soundIDs[i];
-                AudioClip clip = GetResource(elem.name, resourceID);
+                LISound sound = elem.properties.sounds[i];
+
+                if (sound.data == null)
+                {
+                    LILogger.Warn("Step sound missing audio data [" + sound.id + "]");
+                    continue;
+                }
+
+                AudioClip clip;
+                if (sound.isPreset)
+                {
+                    SoundData soundData;
+                    AssetDB.sounds.TryGetValue(sound.data, out soundData);
+                    clip = soundData.Clip;
+                }
+                else
+                {
+                    clip = MapUtils.ConvertToAudio(elem.name, sound.data);
+                }
 
                 if (clip != null)
                     soundGroup.Clips[i] = clip;
                 else
-                    LILogger.Warn("Step sound missing resource data [" + resourceID + "]");
+                    LILogger.Warn("Step sound has corrupt audio data [" + sound.id + "]");
             }
 
             // Colliders
@@ -55,24 +72,5 @@ namespace LevelImposter.Core
         }
 
         public void PostBuild() {}
-
-        private AudioClip GetResource(string name, string resourceID)
-        {
-            string resource = MapUtils.GetResource(resourceID);
-            if (resource != null)
-            {
-                AudioClip clip = MapUtils.ConvertToAudio(name, resource);
-                return clip;
-            }
-
-            SoundData sound;
-            AssetDB.sounds.TryGetValue(resourceID, out sound);
-            if (sound != null)
-            {
-                return sound.Clip;
-            }
-
-            return null;
-        }
     }
 }
