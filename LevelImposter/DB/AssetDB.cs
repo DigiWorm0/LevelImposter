@@ -21,6 +21,7 @@ namespace LevelImposter.DB
         public static Dictionary<string, DecData> dec;
         public static Dictionary<string, RoomData> room;
         public static Dictionary<string, SSData> ss;
+        public static Dictionary<string, SoundData> sounds;
 
         public static void Init()
         {
@@ -37,6 +38,7 @@ namespace LevelImposter.DB
             dec = tempDB.dec;
             room = tempDB.room;
             ss = tempDB.ss;
+            sounds = tempDB.sounds;
         }
 
         public static void Import()
@@ -70,6 +72,7 @@ namespace LevelImposter.DB
             Import(prefab, shipStatus, mapType, dec);
             Import(prefab, shipStatus, mapType, room);
             Import(prefab, shipStatus, mapType, ss);
+            Import(prefab, shipStatus, mapType, sounds);
 
             LILogger.Info("..." + prefab.name + " Loaded");
         }

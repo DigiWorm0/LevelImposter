@@ -628,7 +628,7 @@
             "SpriteRendererName": "task_cams",
             "GameObjName": "task_cams"
         },
-		"util-ladder1": {
+        "util-ladder1": {
             "Name": "Tall Ladder",
             "MapType": 3,
             "SpriteRendererName": "ladder_meeting",
@@ -640,12 +640,12 @@
             "SpriteRendererName": "ladder_electrical",
             "GameObjName": "ladder_electrical"
         },
-		"util-platform": {
-			"Name": "Moving Platform",
-			"MapType": 3,
-			"SpriteRendererName": "Platform",
-			"GameObjName": "Platform"
-		}
+        "util-platform": {
+            "Name": "Moving Platform",
+            "MapType": 3,
+            "SpriteRendererName": "Platform",
+            "GameObjName": "Platform"
+        }
     },
     "sabs": {
         "sab-electric": {
@@ -1347,6 +1347,393 @@
         "ss-airship": {
             "Name": "Airship",
             "MapType": 3
+        }
+    },
+    "sounds": {
+        "FootstepCarpet01.wav": {
+            "Name": "Carpet Step 1",
+            "MapType": 2,
+            "GameObjName": "Carpet",
+            "SoundGroupName": "CarpetFootsteps",
+            "AudioClipName": "FootstepCarpet01"
+        },
+        "FootstepCarpet02.wav": {
+            "Name": "Carpet Step 2",
+            "MapType": 2,
+            "GameObjName": "Carpet",
+            "SoundGroupName": "CarpetFootsteps",
+            "AudioClipName": "FootstepCarpet02"
+        },
+        "FootstepCarpet03.wav": {
+            "Name": "Carpet Step 3",
+            "MapType": 2,
+            "GameObjName": "Carpet",
+            "SoundGroupName": "CarpetFootsteps",
+            "AudioClipName": "FootstepCarpet03"
+        },
+        "FootstepCarpet04.wav": {
+            "Name": "Carpet Step 4",
+            "MapType": 2,
+            "GameObjName": "Carpet",
+            "SoundGroupName": "CarpetFootsteps",
+            "AudioClipName": "FootstepCarpet04"
+        },
+        "FootstepCarpet05.wav": {
+            "Name": "Carpet Step 5",
+            "MapType": 2,
+            "GameObjName": "Carpet",
+            "SoundGroupName": "CarpetFootsteps",
+            "AudioClipName": "FootstepCarpet05"
+        },
+        "FootstepCarpet06.wav": {
+            "Name": "Carpet Step 6",
+            "MapType": 2,
+            "GameObjName": "Carpet",
+            "SoundGroupName": "CarpetFootsteps",
+            "AudioClipName": "FootstepCarpet06"
+        },
+        "FootstepCarpet07.wav": {
+            "Name": "Carpet Step 7",
+            "MapType": 2,
+            "GameObjName": "Carpet",
+            "SoundGroupName": "CarpetFootsteps",
+            "AudioClipName": "FootstepCarpet07"
+        },
+        "FootstepDirt01.wav": {
+            "Name": "Dirt Step 1",
+            "MapType": 2,
+            "GameObjName": "OuterBoundary",
+            "SoundGroupName": "DirtFootsteps",
+            "AudioClipName": "FootstepDirt01"
+        },
+        "FootstepDirt02.wav": {
+            "Name": "Dirt Step 2",
+            "MapType": 2,
+            "GameObjName": "OuterBoundary",
+            "SoundGroupName": "DirtFootsteps",
+            "AudioClipName": "FootstepDirt02"
+        },
+        "FootstepDirt03.wav": {
+            "Name": "Dirt Step 3",
+            "MapType": 2,
+            "GameObjName": "OuterBoundary",
+            "SoundGroupName": "DirtFootsteps",
+            "AudioClipName": "FootstepDirt03"
+        },
+        "FootstepDirt04.wav": {
+            "Name": "Dirt Step 4",
+            "MapType": 2,
+            "GameObjName": "OuterBoundary",
+            "SoundGroupName": "DirtFootsteps",
+            "AudioClipName": "FootstepDirt04"
+        },
+        "FootstepDirt05.wav": {
+            "Name": "Dirt Step 5",
+            "MapType": 2,
+            "GameObjName": "OuterBoundary",
+            "SoundGroupName": "DirtFootsteps",
+            "AudioClipName": "FootstepDirt05"
+        },
+        "FootstepDirt06.wav": {
+            "Name": "Dirt Step 6",
+            "MapType": 2,
+            "GameObjName": "OuterBoundary",
+            "SoundGroupName": "DirtFootsteps",
+            "AudioClipName": "FootstepDirt06"
+        },
+        "FootstepDirt07.wav": {
+            "Name": "Dirt Step 7",
+            "MapType": 2,
+            "GameObjName": "OuterBoundary",
+            "SoundGroupName": "DirtFootsteps",
+            "AudioClipName": "FootstepDirt07"
+        },
+        "FootstepGlass01.wav": {
+            "Name": "Glass Step 1",
+            "MapType": 1,
+            "GameObjName": "SkyBridge",
+            "SoundGroupName": "GlassFootsteps",
+            "AudioClipName": "FootstepGlass01"
+        },
+        "FootstepGlass02.wav": {
+            "Name": "Glass Step 2",
+            "MapType": 1,
+            "GameObjName": "SkyBridge",
+            "SoundGroupName": "GlassFootsteps",
+            "AudioClipName": "FootstepGlass02"
+        },
+        "FootstepGlass03.wav": {
+            "Name": "Glass Step 3",
+            "MapType": 1,
+            "GameObjName": "SkyBridge",
+            "SoundGroupName": "GlassFootsteps",
+            "AudioClipName": "FootstepGlass03"
+        },
+        "FootstepGlass04.wav": {
+            "Name": "Glass Step 4",
+            "MapType": 1,
+            "GameObjName": "SkyBridge",
+            "SoundGroupName": "GlassFootsteps",
+            "AudioClipName": "FootstepGlass04"
+        },
+        "FootstepGlass05.wav": {
+            "Name": "Glass Step 5",
+            "MapType": 1,
+            "GameObjName": "SkyBridge",
+            "SoundGroupName": "GlassFootsteps",
+            "AudioClipName": "FootstepGlass05"
+        },
+        "FootstepGlass06.wav": {
+            "Name": "Glass Step 6",
+            "MapType": 1,
+            "GameObjName": "SkyBridge",
+            "SoundGroupName": "GlassFootsteps",
+            "AudioClipName": "FootstepGlass06"
+        },
+        "FootstepGlass07.wav": {
+            "Name": "Glass Step 7",
+            "MapType": 1,
+            "GameObjName": "SkyBridge",
+            "SoundGroupName": "GlassFootsteps",
+            "AudioClipName": "FootstepGlass07"
+        },
+        "FootstepMetal01.wav": {
+            "Name": "Metal Step 1",
+            "MapType": 2,
+            "GameObjName": "Metal",
+            "SoundGroupName": "MetalFootsteps",
+            "AudioClipName": "FootstepMetal01"
+        },
+        "FootstepMetal02.wav": {
+            "Name": "Metal Step 2",
+            "MapType": 2,
+            "GameObjName": "Metal",
+            "SoundGroupName": "MetalFootsteps",
+            "AudioClipName": "FootstepMetal02"
+        },
+        "FootstepMetal03.wav": {
+            "Name": "Metal Step 3",
+            "MapType": 2,
+            "GameObjName": "Metal",
+            "SoundGroupName": "MetalFootsteps",
+            "AudioClipName": "FootstepMetal03"
+        },
+        "FootstepMetal04.wav": {
+            "Name": "Metal Step 4",
+            "MapType": 2,
+            "GameObjName": "Metal",
+            "SoundGroupName": "MetalFootsteps",
+            "AudioClipName": "FootstepMetal04"
+        },
+        "FootstepMetal05.wav": {
+            "Name": "Metal Step 5",
+            "MapType": 2,
+            "GameObjName": "Metal",
+            "SoundGroupName": "MetalFootsteps",
+            "AudioClipName": "FootstepMetal05"
+        },
+        "FootstepMetal06.wav": {
+            "Name": "Metal Step 6",
+            "MapType": 2,
+            "GameObjName": "Metal",
+            "SoundGroupName": "MetalFootsteps",
+            "AudioClipName": "FootstepMetal06"
+        },
+        "FootstepMetal07.wav": {
+            "Name": "Metal Step 7",
+            "MapType": 2,
+            "GameObjName": "Metal",
+            "SoundGroupName": "MetalFootsteps",
+            "AudioClipName": "FootstepMetal07"
+        },
+        "FootstepMetal08.wav": {
+            "Name": "Metal Step 8",
+            "MapType": 2,
+            "GameObjName": "Metal",
+            "SoundGroupName": "MetalFootsteps",
+            "AudioClipName": "FootstepMetal08"
+        },
+        "FootstepPlastic01.wav": {
+            "Name": "Plastic Step 1",
+            "MapType": 2,
+            "GameObjName": "Plastic",
+            "SoundGroupName": "PlasticFootsteps",
+            "AudioClipName": "FootstepPlastic01"
+        },
+        "FootstepPlastic02.wav": {
+            "Name": "Plastic Step 2",
+            "MapType": 2,
+            "GameObjName": "Plastic",
+            "SoundGroupName": "PlasticFootsteps",
+            "AudioClipName": "FootstepPlastic02"
+        },
+        "FootstepPlastic03.wav": {
+            "Name": "Plastic Step 3",
+            "MapType": 2,
+            "GameObjName": "Plastic",
+            "SoundGroupName": "PlasticFootsteps",
+            "AudioClipName": "FootstepPlastic03"
+        },
+        "FootstepPlastic04.wav": {
+            "Name": "Plastic Step 4",
+            "MapType": 2,
+            "GameObjName": "Plastic",
+            "SoundGroupName": "PlasticFootsteps",
+            "AudioClipName": "FootstepPlastic04"
+        },
+        "FootstepPlastic05.wav": {
+            "Name": "Plastic Step 5",
+            "MapType": 2,
+            "GameObjName": "Plastic",
+            "SoundGroupName": "PlasticFootsteps",
+            "AudioClipName": "FootstepPlastic05"
+        },
+        "FootstepSnow01.wav": {
+            "Name": "Snow Step 1",
+            "MapType": 2,
+            "GameObjName": "Snow",
+            "SoundGroupName": "SnowFootsteps",
+            "AudioClipName": "FootstepSnow01"
+        },
+        "FootstepSnow02.wav": {
+            "Name": "Snow Step 2",
+            "MapType": 2,
+            "GameObjName": "Snow",
+            "SoundGroupName": "SnowFootsteps",
+            "AudioClipName": "FootstepSnow02"
+        },
+        "FootstepSnow03.wav": {
+            "Name": "Snow Step 3",
+            "MapType": 2,
+            "GameObjName": "Snow",
+            "SoundGroupName": "SnowFootsteps",
+            "AudioClipName": "FootstepSnow03"
+        },
+        "FootstepSnow04.wav": {
+            "Name": "Snow Step 4",
+            "MapType": 2,
+            "GameObjName": "Snow",
+            "SoundGroupName": "SnowFootsteps",
+            "AudioClipName": "FootstepSnow04"
+        },
+        "FootstepSnow05.wav": {
+            "Name": "Snow Step 5",
+            "MapType": 2,
+            "GameObjName": "Snow",
+            "SoundGroupName": "SnowFootsteps",
+            "AudioClipName": "FootstepSnow05"
+        },
+        "FootstepSnow06.wav": {
+            "Name": "Snow Step 6",
+            "MapType": 2,
+            "GameObjName": "Snow",
+            "SoundGroupName": "SnowFootsteps",
+            "AudioClipName": "FootstepSnow06"
+        },
+        "FootstepSnow07.wav": {
+            "Name": "Snow Step 7",
+            "MapType": 2,
+            "GameObjName": "Snow",
+            "SoundGroupName": "SnowFootsteps",
+            "AudioClipName": "FootstepSnow07"
+        },
+        "FootstepTile01.wav": {
+            "Name": "Tile Step 1",
+            "MapType": 2,
+            "GameObjName": "Tile",
+            "SoundGroupName": "TileFootsteps",
+            "AudioClipName": "FootstepTile01"
+        },
+        "FootstepTile02.wav": {
+            "Name": "Tile Step 2",
+            "MapType": 2,
+            "GameObjName": "Tile",
+            "SoundGroupName": "TileFootsteps",
+            "AudioClipName": "FootstepTile02"
+        },
+        "FootstepTile03.wav": {
+            "Name": "Tile Step 3",
+            "MapType": 2,
+            "GameObjName": "Tile",
+            "SoundGroupName": "TileFootsteps",
+            "AudioClipName": "FootstepTile03"
+        },
+        "FootstepTile04.wav": {
+            "Name": "Tile Step 4",
+            "MapType": 2,
+            "GameObjName": "Tile",
+            "SoundGroupName": "TileFootsteps",
+            "AudioClipName": "FootstepTile04"
+        },
+        "FootstepTile05.wav": {
+            "Name": "Tile Step 5",
+            "MapType": 2,
+            "GameObjName": "Tile",
+            "SoundGroupName": "TileFootsteps",
+            "AudioClipName": "FootstepTile05"
+        },
+        "FootstepTile06.wav": {
+            "Name": "Tile Step 6",
+            "MapType": 2,
+            "GameObjName": "Tile",
+            "SoundGroupName": "TileFootsteps",
+            "AudioClipName": "FootstepTile06"
+        },
+        "FootstepTile07.wav": {
+            "Name": "Tile Step 7",
+            "MapType": 2,
+            "GameObjName": "Tile",
+            "SoundGroupName": "TileFootsteps",
+            "AudioClipName": "FootstepTile07"
+        },
+        "FootstepWood01.wav": {
+            "Name": "Wood Step 1",
+            "MapType": 2,
+            "GameObjName": "Wood",
+            "SoundGroupName": "WoodFootsteps",
+            "AudioClipName": "FootstepWood01"
+        },
+        "FootstepWood02.wav": {
+            "Name": "Wood Step 2",
+            "MapType": 2,
+            "GameObjName": "Wood",
+            "SoundGroupName": "WoodFootsteps",
+            "AudioClipName": "FootstepWood02"
+        },
+        "FootstepWood03.wav": {
+            "Name": "Wood Step 3",
+            "MapType": 2,
+            "GameObjName": "Wood",
+            "SoundGroupName": "WoodFootsteps",
+            "AudioClipName": "FootstepWood03"
+        },
+        "FootstepWood04.wav": {
+            "Name": "Wood Step 4",
+            "MapType": 2,
+            "GameObjName": "Wood",
+            "SoundGroupName": "WoodFootsteps",
+            "AudioClipName": "FootstepWood04"
+        },
+        "FootstepWood05.wav": {
+            "Name": "Wood Step 5",
+            "MapType": 2,
+            "GameObjName": "Wood",
+            "SoundGroupName": "WoodFootsteps",
+            "AudioClipName": "FootstepWood05"
+        },
+        "FootstepWood06.wav": {
+            "Name": "Wood Step 6",
+            "MapType": 2,
+            "GameObjName": "Wood",
+            "SoundGroupName": "WoodFootsteps",
+            "AudioClipName": "FootstepWood06"
+        },
+        "FootstepWood07.wav": {
+            "Name": "Wood Step 7",
+            "MapType": 2,
+            "GameObjName": "Wood",
+            "SoundGroupName": "WoodFootsteps",
+            "AudioClipName": "FootstepWood07"
         }
     }
 }

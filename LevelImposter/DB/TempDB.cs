@@ -12,5 +12,6 @@ namespace LevelImposter.DB
         public Dictionary<string, DecData> dec { get; set; }
         public Dictionary<string, RoomData> room { get; set; }
         public Dictionary<string, SSData> ss { get; set; }
+        public Dictionary<string, SoundData> sounds { get; set; }
     }
 }

@@ -27,14 +27,12 @@ namespace LevelImposter.Core
             for (int i = 0; i < elem.properties.soundIDs.Length; i++)
             {
                 string resourceID = elem.properties.soundIDs[i];
-                string resource = MapUtils.GetResource(resourceID);
-                if (resource == null)
-                {
+                AudioClip clip = GetResource(elem.name, resourceID);
+
+                if (clip != null)
+                    soundGroup.Clips[i] = clip;
+                else
                     LILogger.Warn("Step sound missing resource data [" + resourceID + "]");
-                    continue;
-                }
-                AudioClip clip = MapUtils.ConvertToAudio(elem.name, resource);
-                soundGroup.Clips[i] = clip;
             }
 
             // Colliders
@@ -57,5 +55,24 @@ namespace LevelImposter.Core
         }
 
         public void PostBuild() {}
+
+        private AudioClip GetResource(string name, string resourceID)
+        {
+            string resource = MapUtils.GetResource(resourceID);
+            if (resource != null)
+            {
+                AudioClip clip = MapUtils.ConvertToAudio(name, resource);
+                return clip;
+            }
+
+            SoundData sound;
+            AssetDB.sounds.TryGetValue(resourceID, out sound);
+            if (sound != null)
+            {
+                return sound.Clip;
+            }
+
+            return null;
+        }
     }
 }
