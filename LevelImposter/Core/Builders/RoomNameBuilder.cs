@@ -14,7 +14,7 @@ namespace LevelImposter.Core
 
         public void Build(LIElement elem, GameObject obj)
         {
-            if (elem.type != "util-room")
+            if (elem.type != "util-room" || elem.properties.isRoomNameVisible == false)
                 return;
 
             MapBehaviour mapBehaviour = MinimapBuilder.GetMinimap();

@@ -56,5 +56,10 @@ namespace LevelImposter.Core
         // Tasks
         public string? description { get; set; }
         public string? taskLength { get; set; }
+
+        // Room
+        public bool? isRoomNameVisible { get; set; }
+        public bool? isRoomAdminVisible { get; set; }
+
     }
 }

@@ -15,6 +15,18 @@ namespace LevelImposter.Core
             if (elem.type != "util-sound2")
                 return;
 
+            // Colliders
+            Collider2D[] colliders = obj.GetComponents<Collider2D>();
+            foreach (Collider2D collider in colliders)
+            {
+                collider.isTrigger = true;
+            }
+            if (colliders.Length < 1)
+            {
+                LILogger.Warn("Step sound missing cooresponding collision");
+                return;
+            }
+
             // AudioClip
             if (elem.properties.sounds == null)
             {
@@ -50,18 +62,6 @@ namespace LevelImposter.Core
                     soundGroup.Clips[i] = clip;
                 else
                     LILogger.Warn("Step sound has corrupt audio data [" + sound.id + "]");
-            }
-
-            // Colliders
-            Collider2D[] colliders = obj.GetComponents<Collider2D>();
-            foreach (Collider2D collider in colliders)
-            {
-                collider.isTrigger = true;
-            }
-            if (colliders.Length < 1)
-            {
-                LILogger.Warn("Step sound missing cooresponding collision");
-                return;
             }
 
             // Sound Player
