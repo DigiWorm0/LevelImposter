@@ -25,12 +25,12 @@ namespace LevelImposter.Core
 
             // Default Sprite
             SpriteRenderer spriteRenderer = obj.GetComponent<SpriteRenderer>();
+            GIFAnimator gifAnimator = obj.GetComponent<GIFAnimator>();
             obj.layer = (int)Layer.ShortObjects;
             if (!spriteRenderer)
             {
                 spriteRenderer = obj.AddComponent<SpriteRenderer>();
                 spriteRenderer.sprite = utilData.SpriteRenderer.sprite;
-
                 if (elem.type == "util-vent1")
                 {
                     SpriteAnim spriteAnimClone = utilData.GameObj.GetComponent<SpriteAnim>();
@@ -38,7 +38,13 @@ namespace LevelImposter.Core
                     spriteAnim.Play(spriteAnimClone.m_defaultAnim, spriteAnimClone.Speed);
                 }
             }
+            else if (gifAnimator != null)
+            {
+                gifAnimator.Stop();
+            }
             spriteRenderer.material = utilData.SpriteRenderer.material;
+
+            // Animation
 
             // Console
             VentCleaningConsole origConsole = utilData.GameObj.GetComponent<VentCleaningConsole>();
@@ -77,9 +83,16 @@ namespace LevelImposter.Core
             }
 
             // Collider
-            PolygonCollider2D polyCollider = obj.GetComponent<PolygonCollider2D>();
-            if (polyCollider != null)
-                polyCollider.isTrigger = true;
+            PolygonCollider2D[] solidColliders = obj.GetComponents<PolygonCollider2D>();
+            for (int i = 0; i < solidColliders.Length; i++)
+                solidColliders[i].isTrigger = true;
+            if (solidColliders.Length <= 0)
+            {
+                BoxCollider2D boxCollider = obj.AddComponent<BoxCollider2D>();
+                boxCollider.size = new Vector2(elem.xScale, elem.yScale);
+                boxCollider.offset = new Vector2(elem.xScale / 2, elem.yScale / 2);
+                boxCollider.isTrigger = true;
+            }
 
             // DB
             ventElementDb.Add(id, elem);

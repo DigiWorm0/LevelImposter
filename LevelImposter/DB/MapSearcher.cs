@@ -49,6 +49,17 @@ namespace LevelImposter.DB
 
         }
 
+        public static List<Transform> SearchMultipleChildren(GameObject parent, string name)
+        {
+            List<Transform> output = new List<Transform>();
+            SearchChildren(parent.transform, name, output);
+
+            if (output.Count() > 0)
+                return output;
+            LILogger.Warn("Could not find " + name);
+            return null;
+        }
+
         private static void SearchChildren(Transform parent, string name, List<Transform> output)
         {
             for (int i = 0; i < parent.childCount; i++)

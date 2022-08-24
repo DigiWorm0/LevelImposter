@@ -7,7 +7,7 @@ namespace LevelImposter.Core
 {
     public class RoomBuilder : Builder
     {
-        private int roomId = 1;
+        private byte roomId = 1;
         private static Dictionary<Guid, SystemTypes> systemDB = new Dictionary<Guid, SystemTypes>();
 
         public void Build(LIElement elem, GameObject obj)
@@ -15,15 +15,23 @@ namespace LevelImposter.Core
             if (elem.type != "util-room")
                 return;
 
-            SystemTypes systemType = (SystemTypes)roomId;
-            roomId++;
+            SystemTypes systemType;
+            do
+            {
+                systemType = (SystemTypes)roomId;
+                roomId++;
+            }
+            while (systemType == SystemTypes.LowerEngine || systemType == SystemTypes.UpperEngine);
 
             PlainShipRoom shipRoom = obj.AddComponent<PlainShipRoom>();
             shipRoom.RoomId = systemType;
             shipRoom.roomArea = obj.GetComponent<Collider2D>();
-            shipRoom.roomArea.isTrigger = true;
+            if (shipRoom.roomArea != null)
+                shipRoom.roomArea.isTrigger = true;
+            else
+                LILogger.Warn("Admin table will not function in " + shipRoom.name + " because it has no collider");
 
-            MapUtils.Rename(systemType, elem.name);
+            MapUtils.Rename(systemType, obj.name);
             systemDB.Add(elem.id, systemType);
         }
 

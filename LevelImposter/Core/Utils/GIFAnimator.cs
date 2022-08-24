@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.IO;
 using System.Collections;
 using UnityEngine;
@@ -10,13 +8,13 @@ namespace LevelImposter.Core
 {
     public class GIFAnimator : MonoBehaviour
     {
-        public bool isAnimating = true;
+        public bool isAnimating = false;
         public Sprite[] frames;
         public float[] delays;
 
         private SpriteRenderer spriteRenderer;
 
-        public void Animate(string base64)
+        public void Init(string base64)
         {
             spriteRenderer = GetComponent<SpriteRenderer>();
 
@@ -29,17 +27,33 @@ namespace LevelImposter.Core
             frames = image.GetFrames();
             delays = image.GetDelays();
 
-            StartCoroutine(CoAnimate().WrapToIl2Cpp());
         }
 
-        public IEnumerator CoAnimate()
+        public void Play(bool repeat)
         {
+            if (isAnimating)
+                StopAllCoroutines();
+            StartCoroutine(CoAnimate(repeat).WrapToIl2Cpp());
+        }
+
+        public void Stop()
+        {
+            StopAllCoroutines();
+            isAnimating = false;
+            spriteRenderer.sprite = frames[0];
+        }
+
+        public IEnumerator CoAnimate(bool repeat)
+        {
+            isAnimating = true;
             int f = 0;
             while (isAnimating)
             {
                 spriteRenderer.sprite = frames[f];
                 yield return new WaitForSeconds(delays[f]);
                 f = (f + 1) % frames.Length;
+                if (f == 0 && !repeat)
+                    Stop();
             }
         }
     }

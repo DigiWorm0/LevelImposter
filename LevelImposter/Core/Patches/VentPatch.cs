@@ -1,0 +1,97 @@
+﻿using HarmonyLib;
+using System;
+using System.Collections.Generic;
+using UnhollowerBaseLib.Attributes;
+using System.Text;
+using UnityEngine;
+using LevelImposter.Shop;
+using PowerTools;
+
+namespace LevelImposter.Core
+{
+    /*
+     *      This enables the use of
+     *      LevelImposter.Core.GIFAnimator
+     *      instead of PowerTools.SpriteAnim
+     */
+    [HarmonyPatch(typeof(Vent), nameof(Vent.EnterVent))]
+    public static class EnterVentPatch
+    {
+        public static bool Prefix([HarmonyArgument(0)] PlayerControl pc, Vent __instance)
+        {
+            if (MapLoader.currentMap == null)
+                return true;
+
+            // Player
+            if (pc.AmOwner)
+            {
+                Vent.currentVent = __instance;
+                ConsoleJoystick.SetMode_Vent();
+            }
+
+            // Animation
+            SpriteAnim spriteAnim = __instance.GetComponent<SpriteAnim>();
+            GIFAnimator gifAnim = __instance.GetComponent<GIFAnimator>();
+            if (spriteAnim != null && __instance.EnterVentAnim != null)
+            {
+                spriteAnim.Play(__instance.EnterVentAnim, 1f);
+            }
+            else if (gifAnim != null)
+            {
+                gifAnim.Play(false);
+            }
+            else
+            {
+                return false;
+            }
+
+            // Sound
+            if (pc.AmOwner && Constants.ShouldPlaySfx())
+            {
+                SoundManager.Instance.StopSound(ShipStatus.Instance.VentEnterSound);
+                SoundManager.Instance.PlaySound(ShipStatus.Instance.VentEnterSound, false, 1f).pitch = FloatRange.Next(0.8f, 1.2f);
+            }
+            return false;
+        }
+    }
+
+    [HarmonyPatch(typeof(Vent), nameof(Vent.ExitVent))]
+    public static class ExitVentPatch
+    {
+        public static bool Prefix([HarmonyArgument(0)] PlayerControl pc, Vent __instance)
+        {
+            if (MapLoader.currentMap == null)
+                return true;
+
+            // Player
+            if (pc.AmOwner)
+            {
+                Vent.currentVent = null;
+            }
+
+            // Animation
+            SpriteAnim spriteAnim = __instance.GetComponent<SpriteAnim>();
+            GIFAnimator gifAnim = __instance.GetComponent<GIFAnimator>();
+            if (spriteAnim != null && __instance.ExitVentAnim != null)
+            {
+                spriteAnim.Play(__instance.ExitVentAnim, 1f);
+            }
+            else if (gifAnim != null)
+            {
+                gifAnim.Play(false);
+            }
+            else
+            {
+                return false;
+            }
+
+            // Sound
+            if (pc.AmOwner && Constants.ShouldPlaySfx())
+            {
+                SoundManager.Instance.StopSound(ShipStatus.Instance.VentEnterSound);
+                SoundManager.Instance.PlaySound(ShipStatus.Instance.VentEnterSound, false, 1f).pitch = FloatRange.Next(0.8f, 1.2f);
+            }
+            return false;
+        }
+    }
+}

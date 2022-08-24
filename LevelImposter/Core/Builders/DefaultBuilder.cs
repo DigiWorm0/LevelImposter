@@ -3,6 +3,7 @@ using System.IO;
 using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
+using LevelImposter.DB;
 
 namespace LevelImposter.Core
 {
@@ -10,7 +11,8 @@ namespace LevelImposter.Core
     {
         public GameObject Build(LIElement elem)
         {
-            GameObject gameObject = new GameObject(elem.name);
+            string objName = elem.name.Replace("\\n", " ");
+            GameObject gameObject = new GameObject(objName);
             gameObject.layer = (int)Layer.Ship;
             gameObject.transform.position = new Vector3(elem.x, elem.y, elem.z);
             gameObject.transform.rotation = Quaternion.Euler(0, 0, elem.rotation);
@@ -22,7 +24,8 @@ namespace LevelImposter.Core
                 if (elem.properties.spriteData.StartsWith("data:image/gif;base64,"))
                 {
                     GIFAnimator animator = gameObject.AddComponent<GIFAnimator>();
-                    animator.Animate(elem.properties.spriteData);
+                    animator.Init(elem.properties.spriteData);
+                    animator.Play(true);
                 }
                 else
                 {
@@ -64,18 +67,12 @@ namespace LevelImposter.Core
                 }
             }
 
-            BoxCollider2D boxCollider = gameObject.AddComponent<BoxCollider2D>();
-            boxCollider.size = new Vector2(elem.xScale, elem.yScale);
-            boxCollider.offset = new Vector2(elem.xScale / 2, elem.yScale / 2);
-            boxCollider.isTrigger = true;
-
             return gameObject;
         }
 
         private Sprite generateSprite(string base64)
         {
-            string sub64 = base64.Substring(base64.IndexOf(",") + 1);
-            byte[] data = Convert.FromBase64String(sub64);
+            byte[] data = MapUtils.ParseBase64(base64);
             Texture2D texture = new Texture2D(1, 1);
             ImageConversion.LoadImage(texture, data);
             return Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f), 100.0f);

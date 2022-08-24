@@ -8,7 +8,7 @@ namespace LevelImposter.Core
     /*
      *      Gives credit to map makers
      *      through the Ping Tracker in
-     *      the rop right corner.
+     *      the top right corner.
      */
     [HarmonyPatch(typeof(PingTracker), nameof(PingTracker.Update))]
     public static class PingPatch
@@ -20,11 +20,11 @@ namespace LevelImposter.Core
             if (currentMap != null)
             {
 
-                __instance.text.text += "\n" + currentMap.name + " \n";
+                __instance.text.text += "\n<color=#1a95d8>" + currentMap.name + " \n";
                 if (!string.IsNullOrEmpty(currentMap.authorID))
                     __instance.text.text += "<size=2>by " + currentMap.authorName + "</size>";
                 else
-                    __instance.text.text += "<size=2><i>(Freeplay Only)</i></size>";
+                    __instance.text.text += "<size=2><i>(Freeplay Only)</i></size></color>";
             }
             
         }

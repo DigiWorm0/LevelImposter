@@ -9,13 +9,13 @@ namespace LevelImposter.Core
 {
     public class AdminMapBuilder : Builder
     {
-        public const float ICON_OFFSET = -0.3f;
+        public const float ICON_OFFSET = -0.25f;
         private static List<CounterArea> counterAreaDB = new List<CounterArea>();
         private PoolableBehavior poolPrefab = null;
 
         public void Build(LIElement elem, GameObject obj)
         {
-            if (elem.type != "util-room")
+            if (elem.type != "util-room" || elem.properties.isRoomAdminVisible == false)
                 return;
 
             MapBehaviour mapBehaviour = MinimapBuilder.GetMinimap();

@@ -15,11 +15,11 @@ namespace LevelImposter.Core
             if (!(elem.type.StartsWith("util-button") ||
                 elem.type.StartsWith("util-cams") ||
                 elem.type == "util-admin" ||
-                elem.type == "util-vitals" || 
+                elem.type == "util-vitals" ||
                 elem.type.StartsWith("util-button") ||
                 elem.type.StartsWith("util-cams") ||
                 elem.type == "util-admin" ||
-                elem.type == "util-vitals" || 
+                elem.type == "util-vitals" ||
                 elem.type == "util-computer"))
                 return;
 
@@ -75,9 +75,16 @@ namespace LevelImposter.Core
             btn.OnClick.AddListener(action);
 
             // Collider
-            PolygonCollider2D polyCollider = obj.GetComponent<PolygonCollider2D>();
-            if (polyCollider != null)
-                polyCollider.isTrigger = true;
+            PolygonCollider2D[] solidColliders = obj.GetComponents<PolygonCollider2D>();
+            for (int i = 0; i < solidColliders.Length; i++)
+                solidColliders[i].isTrigger = true;
+            if (solidColliders.Length <= 0)
+            {
+                BoxCollider2D boxCollider = obj.AddComponent<BoxCollider2D>();
+                boxCollider.size = new Vector2(elem.xScale, elem.yScale);
+                boxCollider.offset = new Vector2(elem.xScale / 2, elem.yScale / 2);
+                boxCollider.isTrigger = true;
+            }
         }
 
         public void PostBuild() { }

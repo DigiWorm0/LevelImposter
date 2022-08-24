@@ -14,7 +14,7 @@ namespace LevelImposter.Core.Patches
     [HarmonyPatch(typeof(AmongUsClient), nameof(AmongUsClient.OnPlayerJoined))]
     public static class SendRpcPatch
     {
-        public const int RPC_ID = 149; // ASCII code of the letter L because why not
+        public const int RPC_ID = 99; // <100 for TOU Support
 
         public static void Postfix(AmongUsClient __instance)
         {
