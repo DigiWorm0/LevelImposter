@@ -23,7 +23,7 @@ namespace LevelImposter.Shop
 
             GameObject logoObj = new GameObject("LevelImposterVersion " + antiPiracy);
             logoObj.transform.SetParent(__instance.transform.parent);
-            logoObj.transform.localPosition = new Vector3(-4.5f, 1.8f, -1.0f);
+            logoObj.transform.localPosition = new Vector3(4.0f, -2.75f, -1.0f);
             logoObj.layer = (int)Layer.UI;
 
             SpriteRenderer logoRenderer = logoObj.AddComponent<SpriteRenderer>();

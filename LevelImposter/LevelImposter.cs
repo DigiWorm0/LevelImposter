@@ -13,7 +13,7 @@ namespace LevelImposter
     public class LevelImposter : BasePlugin
     {
         public const string ID = "com.DigiWorm.LevelImposter";
-        public const string VERSION = "0.4.1";
+        public const string VERSION = "0.5.0";
         public const string REACTOR_ID = "gg.reactor.api";
 
         public HarmonyLib.Harmony Harmony { get; } = new HarmonyLib.Harmony(ID);
