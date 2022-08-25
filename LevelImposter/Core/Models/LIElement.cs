@@ -18,5 +18,10 @@ namespace LevelImposter.Core
         public float rotation { get; set; }
 
         public LIProperties properties { get; set; }
+
+        public override string ToString()
+        {
+            return name + "(" + type + ")[" + id + "]";
+        }
     }
 }

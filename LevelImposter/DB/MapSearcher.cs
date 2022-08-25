@@ -14,7 +14,7 @@ namespace LevelImposter.DB
             GameObject obj = SearchChildren(parent, name);
             if (obj != null)
                 return obj.GetComponent<T>();
-            LILogger.Warn("Could not find " + name);
+            LILogger.Warn("Could not find " + name + " in " + parent);
             return default(T);
         }
 
@@ -33,7 +33,7 @@ namespace LevelImposter.DB
                 if (r.sprite.name == spriteName)
                     return r;
             }
-            LILogger.Warn("Could not find " + spriteName + " (" + name + ")");
+            LILogger.Warn("Could not find " + spriteName + " in " + name);
             return null;
         }
 
@@ -44,7 +44,7 @@ namespace LevelImposter.DB
 
             if (output.Count() > 0)
                 return output[0].gameObject;
-            LILogger.Warn("Could not find " + name);
+            LILogger.Warn("Could not find " + name + " in " + parent);
             return null;
 
         }
@@ -56,7 +56,7 @@ namespace LevelImposter.DB
 
             if (output.Count() > 0)
                 return output;
-            LILogger.Warn("Could not find " + name);
+            LILogger.Warn("Could not find " + name + " in " + parent);
             return null;
         }
 
@@ -78,7 +78,7 @@ namespace LevelImposter.DB
             IEnumerable<T> elem = list.Where(t => t.name == name);
             if (elem.Count() > 0)
                 return elem.First();
-            LILogger.Warn("Could not find " + name);
+            LILogger.Warn("Could not find " + name + " in list");
             return null;
         }
     }

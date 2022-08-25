@@ -29,7 +29,7 @@ namespace LevelImposter.Core
             if (shipRoom.roomArea != null)
                 shipRoom.roomArea.isTrigger = true;
             else
-                LILogger.Warn("Admin table will not function in " + shipRoom.name + " because it has no collider");
+                LILogger.Warn(shipRoom.name + " is missing a collider");
 
             MapUtils.Rename(systemType, obj.name);
             systemDB.Add(elem.id, systemType);

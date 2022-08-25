@@ -283,7 +283,7 @@ namespace LevelImposter.Core
             if (elem.type == "task-medscan")
             {
                 if (shipStatus.MedScanner != null)
-                    LILogger.Warn("Warning: Only 1 med scanner can be used per map");
+                    LILogger.Warn("Only 1 med scanner can be used per map");
                 MedScannerBehaviour medscan = obj.AddComponent<MedScannerBehaviour>();
                 shipStatus.MedScanner = medscan;
             }
