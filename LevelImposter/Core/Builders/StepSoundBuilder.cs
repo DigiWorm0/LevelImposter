@@ -23,14 +23,14 @@ namespace LevelImposter.Core
             }
             if (colliders.Length < 1)
             {
-                LILogger.Warn("Step sound missing cooresponding collision");
+                LILogger.Warn(elem.name + " missing cooresponding collision");
                 return;
             }
 
             // AudioClip
             if (elem.properties.sounds == null)
             {
-                LILogger.Warn("Step sound missing audio listing");
+                LILogger.Warn(elem.name + " missing audio listing");
                 return;
             }
 
@@ -42,7 +42,7 @@ namespace LevelImposter.Core
 
                 if (sound.data == null)
                 {
-                    LILogger.Warn("Step sound missing audio data [" + sound.id + "]");
+                    LILogger.Warn(elem.name + " missing audio data");
                     continue;
                 }
 
@@ -61,7 +61,7 @@ namespace LevelImposter.Core
                 if (clip != null)
                     soundGroup.Clips[i] = clip;
                 else
-                    LILogger.Warn("Step sound has corrupt audio data [" + sound.id + "]");
+                    LILogger.Warn(elem.name + "Step sound has corrupt audio data");
             }
 
             // Sound Player

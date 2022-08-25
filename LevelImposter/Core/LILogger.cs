@@ -46,11 +46,22 @@ namespace LevelImposter.Core
         public static void Error(object data)
         {
             Log(LogLevel.Error, data);
+            Notify(data.ToString());
         }
 
         public static void Warn(object data)
         {
             Log(LogLevel.Warning, data);
+            Notify(data.ToString());
+        }
+
+        public static void Notify(string data)
+        {
+            if (HudManager.Instance == null)
+                return;
+            if (HudManager.Instance.Notifier == null)
+                return;
+            HudManager.Instance.Notifier.AddItem(data);
         }
     }
 }

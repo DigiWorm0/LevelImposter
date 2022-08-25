@@ -25,20 +25,20 @@ namespace LevelImposter.Core
             // AudioClip
             if (elem.properties.sounds == null)
             {
-                LILogger.Warn("Ambient sound missing audio listing");
+                LILogger.Warn(elem.name + " missing audio listing");
                 return;
             }
 
             if (elem.properties.sounds.Length <= 0)
             {
-                LILogger.Warn("Ambient sound missing audio elements");
+                LILogger.Warn(elem.name + " missing audio elements");
                 return;
             }
 
             LISound soundData = elem.properties.sounds[0];
             if (soundData.data == null)
             {
-                LILogger.Warn("Ambient sound missing audio data [" + soundData.id + "]");
+                LILogger.Warn(elem.name + " missing audio data");
                 return;
             }
             AudioClip clip = MapUtils.ConvertToAudio(elem.name, soundData.data);

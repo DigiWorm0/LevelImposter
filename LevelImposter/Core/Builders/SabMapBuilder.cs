@@ -72,7 +72,7 @@ namespace LevelImposter.Core
             renderer.sprite = lightsSprite;
             renderer.material = buttonMat;
             if (mapRoom.special != null)
-                LILogger.Warn("Only 1 sabotage is supported per room. Sabotage buttons may experience strange behaviour.");
+                LILogger.Warn("Only 1 sabotage is supported per room");
             mapRoom.special = renderer;
             ButtonBehavior button = sabButton.AddComponent<ButtonBehavior>();
             Action action = mapRoom.SabotageLights;

@@ -32,7 +32,7 @@ namespace LevelImposter.DB
                         return;
                 }
             }
-            LILogger.Warn("Could not find " + Name);
+            LILogger.Warn("Could not find " + Name + " in " + shipStatus);
         }
 
         private bool SearchSoundGroup(SoundGroup soundGroup)

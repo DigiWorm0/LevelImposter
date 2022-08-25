@@ -130,13 +130,13 @@ namespace LevelImposter.Core
             }
             catch (Exception e)
             {
-                LILogger.Error("Error while building " + element.name + " (" + element.type + ") [" + element.id + "]:\n" + e);
+                LILogger.Error("Error while building " + element.name + ":\n" + e);
             }
             stopWatch.Stop();
             if (stopWatch.ElapsedMilliseconds < 1000)
                 LILogger.Info("Took " + stopWatch.ElapsedMilliseconds + "ms");
             else
-                LILogger.Warn("Took " + stopWatch.ElapsedMilliseconds + "ms");
+                LILogger.Warn("Took " + stopWatch.ElapsedMilliseconds + "ms to build " + element.name);
         }
     }
 }

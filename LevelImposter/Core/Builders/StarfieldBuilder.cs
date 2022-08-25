@@ -24,7 +24,7 @@ namespace LevelImposter.Core
             }
             else
             {
-                LILogger.Warn("Star Fields do not work without a cooresponding sprite");
+                LILogger.Warn(elem.name + " missing a sprite");
                 return;
             }
 
