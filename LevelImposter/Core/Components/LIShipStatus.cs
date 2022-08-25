@@ -5,6 +5,7 @@ using System.Text;
 using UnityEngine;
 using LevelImposter.Shop;
 using LevelImposter.DB;
+using System.Diagnostics;
 
 namespace LevelImposter.Core
 {
@@ -18,6 +19,7 @@ namespace LevelImposter.Core
         public LIMap currentMap { get; private set; }
 
         private BuildRouter buildRouter = new BuildRouter();
+        private Stopwatch stopWatch = new Stopwatch();
 
         public LIShipStatus(IntPtr intPtr) : base(intPtr)
         {
@@ -117,7 +119,9 @@ namespace LevelImposter.Core
 
         public void AddElement(LIElement element)
         {
-            LILogger.Info("Adding " + element.name + " (" + element.type + ") [" + element.id + "]");
+            stopWatch.Restart();
+            stopWatch.Start();
+            LILogger.Info("Adding " + element.ToString());
             try
             {
                 GameObject gameObject = buildRouter.Build(element);
@@ -128,6 +132,11 @@ namespace LevelImposter.Core
             {
                 LILogger.Error("Error while building " + element.name + " (" + element.type + ") [" + element.id + "]:\n" + e);
             }
+            stopWatch.Stop();
+            if (stopWatch.ElapsedMilliseconds < 1000)
+                LILogger.Info("Took " + stopWatch.ElapsedMilliseconds + "ms");
+            else
+                LILogger.Warn("Took " + stopWatch.ElapsedMilliseconds + "ms");
         }
     }
 }
