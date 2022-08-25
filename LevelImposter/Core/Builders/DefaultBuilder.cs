@@ -41,6 +41,7 @@ namespace LevelImposter.Core
                     if (colliderData.isSolid)
                     {
                         PolygonCollider2D collider = gameObject.AddComponent<PolygonCollider2D>();
+                        collider.pathCount = 1;
                         collider.SetPath(0, colliderData.GetPoints());
                     }
                     else
@@ -62,7 +63,7 @@ namespace LevelImposter.Core
                         }
 
                         EdgeCollider2D collider = shadowObj.AddComponent<EdgeCollider2D>();
-                        collider.SetPoints(colliderData.GetPoints());
+                        collider.SetPoints(colliderData.GetPoints(colliderData.isSolid));
                     }
                 }
             }
