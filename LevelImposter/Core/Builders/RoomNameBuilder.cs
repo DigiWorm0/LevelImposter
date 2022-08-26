@@ -28,8 +28,8 @@ namespace LevelImposter.Core
             roomName.name = elem.name;
             roomName.layer = (int)Layer.UI;
             roomName.transform.localPosition = new Vector3(
-                elem.x * MinimapBuilder.MAP_SCALE,
-                elem.y * MinimapBuilder.MAP_SCALE,
+                elem.x * MinimapBuilder.mapScale,
+                elem.y * MinimapBuilder.mapScale,
                 0
             );
 

@@ -61,5 +61,8 @@ namespace LevelImposter.Core
         public bool? isRoomNameVisible { get; set; }
         public bool? isRoomAdminVisible { get; set; }
 
+        // Minimap
+        public float? minimapScale { get; set; }
+
     }
 }

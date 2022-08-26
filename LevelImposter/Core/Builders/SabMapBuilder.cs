@@ -59,8 +59,8 @@ namespace LevelImposter.Core
             sabButton.layer = (int)Layer.UI;
             sabButton.transform.SetParent(mapRoom.transform);
             sabButton.transform.localPosition = new Vector3(
-                elem.x * MinimapBuilder.MAP_SCALE,
-                elem.y * MinimapBuilder.MAP_SCALE,
+                elem.x * MinimapBuilder.mapScale,
+                elem.y * MinimapBuilder.mapScale,
                 -25.0f
             );
 

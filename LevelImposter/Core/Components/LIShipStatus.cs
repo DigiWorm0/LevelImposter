@@ -20,6 +20,11 @@ namespace LevelImposter.Core
 
         private BuildRouter buildRouter = new BuildRouter();
         private Stopwatch stopWatch = new Stopwatch();
+        private readonly List<string> priorityTypes = new()
+        {
+            "util-minimap",
+            "util-room"
+        };
 
         public LIShipStatus(IntPtr intPtr) : base(intPtr)
         {
@@ -96,12 +101,17 @@ namespace LevelImposter.Core
             AssetDB.Import();
             ResetMap();
             LoadMapProperties(map);
-            foreach (LIElement elem in map.elements)    // Rooms
-                if (elem.type == "util-room")
+
+            // Priority First
+            foreach (string type in priorityTypes)
+                foreach (LIElement elem in map.elements)
+                    if (elem.type == type)
+                        AddElement(elem);
+            // Everything Else
+            foreach (LIElement elem in map.elements)
+                if (!priorityTypes.Contains(elem.type))
                     AddElement(elem);
-            foreach (LIElement elem in map.elements)    // Objs
-                if (elem.type != "util-room")
-                    AddElement(elem);
+
             buildRouter.PostBuild();
             LILogger.Info("Map load completed");
         }
