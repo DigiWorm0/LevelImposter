@@ -131,6 +131,7 @@ namespace LevelImposter.Core
         {
             stopWatch.Restart();
             stopWatch.Start();
+
             LILogger.Info("Adding " + element.ToString());
             try
             {
@@ -142,11 +143,13 @@ namespace LevelImposter.Core
             {
                 LILogger.Error("Error while building " + element.name + ":\n" + e);
             }
+
             stopWatch.Stop();
-            if (stopWatch.ElapsedMilliseconds < 1000)
-                LILogger.Info("Took " + stopWatch.ElapsedMilliseconds + "ms");
-            else
-                LILogger.Warn("Took " + stopWatch.ElapsedMilliseconds + "ms to build " + element.name);
+            if (stopWatch.ElapsedMilliseconds > 1000)
+            {
+                float seconds = Mathf.Round(stopWatch.ElapsedMilliseconds / 100f) / 10f;
+                LILogger.Warn("Took " + seconds + "s to build " + element.name);
+            }
         }
     }
 }
