@@ -20,6 +20,11 @@ namespace LevelImposter.Core
 
         private BuildRouter buildRouter = new BuildRouter();
         private Stopwatch stopWatch = new Stopwatch();
+        private readonly List<string> priorityTypes = new()
+        {
+            "util-minimap",
+            "util-room"
+        };
 
         public LIShipStatus(IntPtr intPtr) : base(intPtr)
         {
@@ -96,12 +101,17 @@ namespace LevelImposter.Core
             AssetDB.Import();
             ResetMap();
             LoadMapProperties(map);
-            foreach (LIElement elem in map.elements)    // Rooms
-                if (elem.type == "util-room")
+
+            // Priority First
+            foreach (string type in priorityTypes)
+                foreach (LIElement elem in map.elements)
+                    if (elem.type == type)
+                        AddElement(elem);
+            // Everything Else
+            foreach (LIElement elem in map.elements)
+                if (!priorityTypes.Contains(elem.type))
                     AddElement(elem);
-            foreach (LIElement elem in map.elements)    // Objs
-                if (elem.type != "util-room")
-                    AddElement(elem);
+
             buildRouter.PostBuild();
             LILogger.Info("Map load completed");
         }
@@ -121,6 +131,7 @@ namespace LevelImposter.Core
         {
             stopWatch.Restart();
             stopWatch.Start();
+
             LILogger.Info("Adding " + element.ToString());
             try
             {
@@ -132,11 +143,13 @@ namespace LevelImposter.Core
             {
                 LILogger.Error("Error while building " + element.name + ":\n" + e);
             }
+
             stopWatch.Stop();
-            if (stopWatch.ElapsedMilliseconds < 1000)
-                LILogger.Info("Took " + stopWatch.ElapsedMilliseconds + "ms");
-            else
-                LILogger.Warn("Took " + stopWatch.ElapsedMilliseconds + "ms to build " + element.name);
+            if (stopWatch.ElapsedMilliseconds > 1000)
+            {
+                float seconds = Mathf.Round(stopWatch.ElapsedMilliseconds / 100f) / 10f;
+                LILogger.Warn("Took " + seconds + "s to build " + element.name);
+            }
         }
     }
 }

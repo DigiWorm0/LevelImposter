@@ -49,7 +49,7 @@ namespace LevelImposter.Core
             if (pc.AmOwner && Constants.ShouldPlaySfx())
             {
                 SoundManager.Instance.StopSound(ShipStatus.Instance.VentEnterSound);
-                SoundManager.Instance.PlaySound(ShipStatus.Instance.VentEnterSound, false, 1f).pitch = FloatRange.Next(0.8f, 1.2f);
+                SoundManager.Instance.PlaySound(ShipStatus.Instance.VentEnterSound, false, 1f, null).pitch = FloatRange.Next(0.8f, 1.2f);
             }
             return false;
         }
@@ -89,7 +89,7 @@ namespace LevelImposter.Core
             if (pc.AmOwner && Constants.ShouldPlaySfx())
             {
                 SoundManager.Instance.StopSound(ShipStatus.Instance.VentEnterSound);
-                SoundManager.Instance.PlaySound(ShipStatus.Instance.VentEnterSound, false, 1f).pitch = FloatRange.Next(0.8f, 1.2f);
+                SoundManager.Instance.PlaySound(ShipStatus.Instance.VentEnterSound, false, 1f, null).pitch = FloatRange.Next(0.8f, 1.2f);
             }
             return false;
         }

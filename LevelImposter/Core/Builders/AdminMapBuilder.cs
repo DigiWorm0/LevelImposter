@@ -33,8 +33,8 @@ namespace LevelImposter.Core
             GameObject roomObj = new GameObject(elem.name);
             roomObj.transform.SetParent(mapCountOverlay.transform);
             roomObj.transform.localPosition = new Vector3(
-                elem.x * MinimapBuilder.MAP_SCALE * (1 / overlayScale),
-                elem.y * MinimapBuilder.MAP_SCALE * (1 / overlayScale) + ICON_OFFSET,
+                elem.x * MinimapBuilder.mapScale * (1 / overlayScale),
+                elem.y * MinimapBuilder.mapScale * (1 / overlayScale) + ICON_OFFSET,
                 -25.0f
             );
 
