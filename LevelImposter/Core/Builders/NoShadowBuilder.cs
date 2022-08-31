@@ -13,7 +13,7 @@ namespace LevelImposter.Core
 
         public void Build(LIElement elem, GameObject obj)
         {
-            if (!(elem.type.StartsWith("dec-") || elem.type == "util-blank"))
+            if (!(elem.type.StartsWith("dec-") || elem.type.StartsWith("util-blank")))
                 return;
 
             if (noShadowMat == null)

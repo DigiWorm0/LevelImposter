@@ -53,6 +53,10 @@ namespace LevelImposter.Core
         public float? starfieldHeight { get; set; }
         public float? starfieldLength { get; set; }
 
+        // Floating
+        public float? floatingHeight { get; set; }
+        public float? floatingSpeed { get; set; }
+
         // Tasks
         public string? description { get; set; }
         public string? taskLength { get; set; }
