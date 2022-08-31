@@ -1,4 +1,4 @@
-﻿using BepInEx.Logging;
+using BepInEx.Logging;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -52,7 +52,7 @@ namespace LevelImposter.Core
         public static void Warn(object data)
         {
             Log(LogLevel.Warning, data);
-            Notify(data.ToString());
+            Notify("<color=yellow>" + data.ToString() + "</color>");
         }
 
         public static void Notify(string data)

@@ -61,6 +61,12 @@ namespace LevelImposter.Shop
             RequestJson(API_PATH + "maps/verified", callback);
         }
 
+        public static void GetTopMaps(Action<LIMetadata[]> callback)
+        {
+            LILogger.Info("Getting map listing...");
+            RequestJson(API_PATH + "maps/top", callback);
+        }
+
         private static void RequestJson<T>(string url, Action<T> callback)
         {
             Request(url, ((string json) =>

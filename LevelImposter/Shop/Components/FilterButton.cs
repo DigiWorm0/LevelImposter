@@ -73,6 +73,9 @@ namespace LevelImposter.Shop
                 case MapFilter.Verified:
                     ShopManager.Instance.ListVerifiedMaps();
                     break;
+                case MapFilter.Top:
+                    ShopManager.Instance.ListTopMaps();
+                    break;
             }
 
             foreach (FilterButton btn in filterButtons)
