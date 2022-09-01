@@ -67,7 +67,7 @@ namespace LevelImposter.Shop
             LIMetadata[] maps = new LIMetadata[mapIDs.Length];
             for (int i = 0; i < mapIDs.Length; i++)
             {
-                maps[i] = MapLoader.GetMap(mapIDs[i]);
+                maps[i] = MapLoader.GetMetadata(mapIDs[i]);
                 maps[i].id = mapIDs[i];
             }
             ListMaps(maps);
