@@ -14,12 +14,12 @@ namespace LevelImposter.Shop
     [HarmonyPatch(typeof(GameSettingMenu), nameof(GameSettingMenu.InitializeOptions))]
     public static class LobbyMenuInitPatch
     {
-        public static string[] mapIDs = new string[0];
+        public static List<string> mapIDList = new List<string>();
         public static int MAP_ID_OFFSET = 10;
 
         public static void Postfix(GameSettingMenu __instance)
         {
-            mapIDs = MapLoader.GetMapIDs();
+            string[] mapIDs = MapLoader.GetMapIDs();
             for (int i = 0; i < __instance.AllItems.Length; i++)
             {
                 Transform t = __instance.AllItems[i];
@@ -31,13 +31,15 @@ namespace LevelImposter.Shop
                 int mapIndex = MAP_ID_OFFSET;
                 for (int o = 0; o < mapIDs.Length; o++)
                 {
-                    LIMetadata metadata = MapLoader.GetMetadata(mapIDs[o]);
+                    string mapID = mapIDs[o];
+                    LIMetadata metadata = MapLoader.GetMetadata(mapID);
                     if (string.IsNullOrEmpty(metadata.authorID))
                         continue;
                     var pair = new Il2CppSystem.Collections.Generic.KeyValuePair<string, int>();
                     pair.key = metadata.name;
                     pair.value = mapIndex++;
                     keyComp.Values.Add(pair);
+                    mapIDList.Add(mapID);
                 }
                 return;
             }
@@ -64,7 +66,7 @@ namespace LevelImposter.Shop
             else
             {
                 gameOptions.MapId = 2;
-                MapLoader.LoadMap(LobbyMenuInitPatch.mapIDs[mapID - LobbyMenuInitPatch.MAP_ID_OFFSET]);
+                MapLoader.LoadMap(LobbyMenuInitPatch.mapIDList[mapID - LobbyMenuInitPatch.MAP_ID_OFFSET]);
             }
 
             if (PlayerControl.LocalPlayer)

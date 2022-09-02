@@ -9,67 +9,69 @@ namespace LevelImposter.Core.Patches
 {
     /*
      *      Transmits and receives LevelImposter
-     *      map information over RPC
+     *      map settings over the PlayerControl RPC
      */
-    [HarmonyPatch(typeof(AmongUsClient), nameof(AmongUsClient.OnPlayerJoined))]
+    [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.RpcSyncSettings))]
     public static class SendRpcPatch
     {
         public const int RPC_ID = 99; // <100 for TOU Support
 
-        public static void Postfix(AmongUsClient __instance)
+        public static void Postfix(PlayerControl __instance)
         {
-            if (__instance.AmHost)
-            {
-                LILogger.Info("[RPC] Player Joined: Sending map ID...");
-                var writer = __instance.StartRpcImmediately(
-                    PlayerControl.LocalPlayer.NetId,
-                    RPC_ID,
-                    SendOption.Reliable,
-                    -1
-                );
-                Guid mapID = Guid.Empty;
-                if (MapLoader.currentMap != null)
-                    Guid.TryParse(MapLoader.currentMap.id, out mapID);
-                writer.Write(mapID.ToByteArray());
-                __instance.FinishRpcImmediately(writer);
-            }
+            if (!AmongUsClient.Instance.AmHost || DestroyableSingleton<TutorialManager>.InstanceExists)
+                return;
+
+            // Parse ID
+            Guid mapID = Guid.Empty;
+            if (MapLoader.currentMap != null)
+                Guid.TryParse(MapLoader.currentMap.id, out mapID);
+            LILogger.Info("[RPC] Transmitting map ID [" + mapID.ToString() + "]");
+
+            // Transmit ID
+            MessageWriter messageWriter = AmongUsClient.Instance.StartRpc(__instance.NetId, RPC_ID);
+            messageWriter.Write(mapID.ToByteArray());
+            messageWriter.EndMessage();
         }
     }
 
     [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.HandleRpc))]
     public static class ReceiveRpcPatch
     {
+        public static Guid? targetMapID = null;
+
         public static void Postfix([HarmonyArgument(0)] byte callId, [HarmonyArgument(1)] MessageReader reader)
         {
             if (callId != SendRpcPatch.RPC_ID)
                 return;
 
+            // Parse ID
             byte[] mapBytes = reader.ReadBytes(16);
             Guid mapID = new Guid(mapBytes);
+            string mapIDStr = mapID.ToString();
+            LILogger.Info("[RPC] Received map ID [" + mapIDStr + "]");
+
+            // Handle ID
             if (mapID.Equals(Guid.Empty))
             {
-                LILogger.Info("[RPC] Received blank map ID. Unloading map...");
                 MapLoader.UnloadMap();
+            }
+            else if (MapLoader.currentMap.id == mapIDStr)
+            {
+                return;
+            }
+            else if (MapLoader.Exists(mapIDStr))
+            {
+                MapLoader.LoadMap(mapIDStr);
             }
             else
             {
-                
-                LILogger.Info("[RPC] Recieved map ID: " + mapID);
-                if (!MapLoader.Exists(mapID.ToString()))
+                targetMapID = mapID;
+                MapAPI.DownloadMap(mapID, ((string mapJson) =>
                 {
-                    LILogger.Info("[RPC] Downloading map...");
-                    MapAPI.DownloadMap(mapID, (System.Action<string>)((string mapJson) =>
-                    {
-                        LILogger.Info("[RPC] Loading map...");
-                        MapLoader.WriteMap(mapID.ToString(), mapJson);
+                    MapLoader.WriteMap(mapID.ToString(), mapJson);
+                    if (targetMapID == mapID)
                         MapLoader.LoadMap(mapID.ToString());
-                    }));
-                }
-                else
-                {
-                    LILogger.Info("[RPC] Loading map...");
-                    MapLoader.LoadMap(mapID.ToString());
-                }
+                }));
             }
         }
     }
