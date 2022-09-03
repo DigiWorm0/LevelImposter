@@ -50,12 +50,14 @@ namespace LevelImposter.Core.Patches
             string mapIDStr = mapID.ToString();
             LILogger.Info("[RPC] Received map ID [" + mapIDStr + "]");
 
+            string currentMapID = MapLoader.currentMap == null ? "" : MapLoader.currentMap.id;
+
             // Handle ID
             if (mapID.Equals(Guid.Empty))
             {
                 MapLoader.UnloadMap();
             }
-            else if (MapLoader.currentMap.id == mapIDStr)
+            else if (currentMapID.Equals(mapIDStr))
             {
                 return;
             }
@@ -66,6 +68,7 @@ namespace LevelImposter.Core.Patches
             else
             {
                 targetMapID = mapID;
+                LILogger.Notify("<color=#1a95d8>Downloading map data, please wait...</color>");
                 MapAPI.DownloadMap(mapID, ((string mapJson) =>
                 {
                     MapLoader.WriteMap(mapID.ToString(), mapJson);

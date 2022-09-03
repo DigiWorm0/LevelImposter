@@ -62,6 +62,7 @@ namespace LevelImposter.Shop
             if (mapID < LobbyMenuInitPatch.MAP_ID_OFFSET)
             {
                 gameOptions.MapId = (byte)mapID;
+                MapLoader.UnloadMap();
             }
             else
             {

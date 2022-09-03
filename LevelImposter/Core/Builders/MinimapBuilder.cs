@@ -36,7 +36,7 @@ namespace LevelImposter.Core
                 Sprite sprite = spriteRenderer.sprite;
                 GameObject background = mapBehaviour.ColorControl.gameObject;
                 background.GetComponent<SpriteRenderer>().sprite = sprite;
-                background.transform.localPosition = background.transform.localPosition + new Vector3(0, 0, 35);
+                background.transform.localPosition = background.transform.localPosition;
                 background.transform.localScale = obj.transform.localScale * mapScale;
                 background.transform.localRotation = obj.transform.localRotation;
             }
