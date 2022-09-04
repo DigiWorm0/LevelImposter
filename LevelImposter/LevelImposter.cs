@@ -24,6 +24,7 @@ namespace LevelImposter
         {
             ConfigFile = Config;
             LILogger.Init();
+            LIDeepLink.Init();
             MapLoader.Init();
             ClassInjector.RegisterTypeInIl2Cpp<LIShipStatus>();
             ClassInjector.RegisterTypeInIl2Cpp<LIStar>();
