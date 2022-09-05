@@ -30,6 +30,7 @@ namespace LevelImposter.Core
             new FloatBuilder(),
             new AmbientSoundBuilder(),
             new StepSoundBuilder(),
+            new TeleBuilder(),
 
             new NoShadowBuilder()
         };

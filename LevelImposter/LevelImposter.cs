@@ -26,9 +26,12 @@ namespace LevelImposter
             LILogger.Init();
             LIDeepLink.Init();
             MapLoader.Init();
+
             ClassInjector.RegisterTypeInIl2Cpp<LIShipStatus>();
             ClassInjector.RegisterTypeInIl2Cpp<LIStar>();
             ClassInjector.RegisterTypeInIl2Cpp<LIFloat>();
+            ClassInjector.RegisterTypeInIl2Cpp<LITeleporter>();
+
             ClassInjector.RegisterTypeInIl2Cpp<ShopManager>();
             ClassInjector.RegisterTypeInIl2Cpp<MapBanner>();
             ClassInjector.RegisterTypeInIl2Cpp<MapBannerButton>();

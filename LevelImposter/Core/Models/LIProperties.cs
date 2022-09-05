@@ -26,6 +26,9 @@ namespace LevelImposter.Core
         public Guid? middleVent { get; set; }
         public Guid? rightVent { get; set; }
 
+        // Teleporter
+        public Guid? teleporter { get; set; }
+
         // Camera
         public float? camXOffset { get; set; }
         public float? camYOffset { get; set; }
