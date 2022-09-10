@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using UnhollowerBaseLib.Attributes;
 using System.Text;
 using UnityEngine;
-using LevelImposter.Shop;
 
 namespace LevelImposter.Core
 {
@@ -19,12 +18,6 @@ namespace LevelImposter.Core
         public static void Postfix()
         {
             ModManager.Instance.ShowModStamp();
-
-            MapAPI.GetUpdate((LIUpdate update) =>
-            {
-                if (!update.isCurrent)
-                    DestroyableSingleton<DisconnectPopup>.Instance.ShowCustom("Update Available: " + update.name);
-            });
         }
     }
 }

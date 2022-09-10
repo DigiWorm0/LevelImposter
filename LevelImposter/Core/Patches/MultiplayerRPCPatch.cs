@@ -73,7 +73,10 @@ namespace LevelImposter.Core
                 {
                     MapLoader.WriteMap(mapID.ToString(), mapJson);
                     if (targetMapID == mapID)
+                    {
                         MapLoader.LoadMap(mapID.ToString());
+                        LILogger.Notify("<color=#1a95d8>Done!</color>");
+                    }
                 }));
             }
         }
