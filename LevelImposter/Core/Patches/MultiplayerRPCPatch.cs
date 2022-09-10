@@ -5,7 +5,7 @@ using LevelImposter.Core;
 using LevelImposter.Shop;
 using Hazel;
 
-namespace LevelImposter.Core.Patches
+namespace LevelImposter.Core
 {
     /*
      *      Transmits and receives LevelImposter

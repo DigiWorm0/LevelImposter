@@ -15,6 +15,10 @@ namespace LevelImposter.Shop
         {
             RemoveChildren();
             BuildShop();
+            MapAPI.GetUpdate((LIUpdate update) =>
+            {
+                LILogger.Info(update.ToString());
+            });
         }
 
         private static GameObject LoadAssetBundle(string name)

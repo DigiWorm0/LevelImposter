@@ -11,71 +11,18 @@ namespace LevelImposter.Shop
     /*
      *      Adds downloaded maps to the lobby menu
      */
-    [HarmonyPatch(typeof(GameSettingMenu), nameof(GameSettingMenu.InitializeOptions))]
+    [HarmonyPatch(typeof(KeyValueOption), nameof(KeyValueOption.OnEnable))]
     public static class LobbyMenuInitPatch
     {
-        public static List<string> mapIDList = new List<string>();
-        public static int MAP_ID_OFFSET = 10;
-
-        public static void Postfix(GameSettingMenu __instance)
+        public static bool Prefix(KeyValueOption __instance)
         {
-            string[] mapIDs = MapLoader.GetMapIDs();
-            for (int i = 0; i < __instance.AllItems.Length; i++)
+            if (__instance.Title == StringNames.GameMapName)
             {
-                Transform t = __instance.AllItems[i];
-                if (!t.name.Equals("MapName", StringComparison.OrdinalIgnoreCase))
-                    continue;
-
-                KeyValueOption keyComp = t.GetComponent<KeyValueOption>();
-
-                int mapIndex = MAP_ID_OFFSET;
-                for (int o = 0; o < mapIDs.Length; o++)
-                {
-                    string mapID = mapIDs[o];
-                    LIMetadata metadata = MapLoader.GetMetadata(mapID);
-                    if (string.IsNullOrEmpty(metadata.authorID))
-                        continue;
-                    var pair = new Il2CppSystem.Collections.Generic.KeyValuePair<string, int>();
-                    pair.key = metadata.name;
-                    pair.value = mapIndex++;
-                    keyComp.Values.Add(pair);
-                    mapIDList.Add(mapID);
-                }
-                return;
+                GameObject.Destroy(__instance);
+                __instance.gameObject.AddComponent<LIMapSelector>();
+                return false;
             }
-        }
-    }
-
-    /*
-     *      Adjust for custom map values
-     */
-    [HarmonyPatch(typeof(GameOptionsMenu), nameof(GameOptionsMenu.ValueChanged))]
-    public static class LobbyMenuChangePatch
-    {
-        public static bool Prefix([HarmonyArgument(0)] OptionBehaviour option, GameOptionsMenu __instance)
-        {
-            if (option.Title != StringNames.GameMapName)
-                return true;
-
-            int mapID = option.GetInt();
-            GameOptionsData gameOptions = PlayerControl.GameOptions;
-            if (mapID < LobbyMenuInitPatch.MAP_ID_OFFSET)
-            {
-                gameOptions.MapId = (byte)mapID;
-                MapLoader.UnloadMap();
-            }
-            else
-            {
-                gameOptions.MapId = 2;
-                MapLoader.LoadMap(LobbyMenuInitPatch.mapIDList[mapID - LobbyMenuInitPatch.MAP_ID_OFFSET]);
-            }
-
-            if (PlayerControl.LocalPlayer)
-            {
-                PlayerControl.LocalPlayer.RpcSyncSettings(PlayerControl.GameOptions);
-            }
-
-            return false;
+            return true;
         }
     }
 }

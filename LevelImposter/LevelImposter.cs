@@ -31,6 +31,7 @@ namespace LevelImposter
             ClassInjector.RegisterTypeInIl2Cpp<LIStar>();
             ClassInjector.RegisterTypeInIl2Cpp<LIFloat>();
             ClassInjector.RegisterTypeInIl2Cpp<LITeleporter>();
+            ClassInjector.RegisterTypeInIl2Cpp<LIMapSelector>();
 
             ClassInjector.RegisterTypeInIl2Cpp<ShopManager>();
             ClassInjector.RegisterTypeInIl2Cpp<MapBanner>();
@@ -38,6 +39,7 @@ namespace LevelImposter
             ClassInjector.RegisterTypeInIl2Cpp<FilterButton>();
             ClassInjector.RegisterTypeInIl2Cpp<FolderButton>();
             ClassInjector.RegisterTypeInIl2Cpp<GIFAnimator>();
+
             Harmony.PatchAll();
             LILogger.Msg("LevelImposter Initialized.");
         }
