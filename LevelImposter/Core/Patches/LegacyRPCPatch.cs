@@ -8,13 +8,18 @@ using Hazel;
 namespace LevelImposter.Core
 {
     /*
-     *      Transmits and receives LevelImposter
-     *      map settings over the PlayerControl RPC
+     *        (Legacy RPC Methods)
+     *      |======================|
+     *      | IN CASE OF EMERGENCY |
+     *      |     BREAK GLASS      |
+     *      |======================|
      */
+
+    /*
     [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.RpcSyncSettings))]
     public static class SendRpcPatch
     {
-        public const int RPC_ID = 99; // <100 for TOU Support
+        public const int RPC_ID = 99;
 
         public static void Postfix(PlayerControl __instance)
         {
@@ -37,7 +42,7 @@ namespace LevelImposter.Core
     [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.HandleRpc))]
     public static class ReceiveRpcPatch
     {
-        public static Guid? targetMapID = null;
+        public static Guid? downloadingMapID = null;
 
         public static void Postfix([HarmonyArgument(0)] byte callId, [HarmonyArgument(1)] MessageReader reader)
         {
@@ -51,6 +56,12 @@ namespace LevelImposter.Core
             LILogger.Info("[RPC] Received map ID [" + mapIDStr + "]");
 
             string currentMapID = MapLoader.currentMap == null ? "" : MapLoader.currentMap.id;
+
+            if (downloadingMapID != null)
+            {
+                LILogger.Notify("Download stopped.");
+                downloadingMapID = null;
+            }
 
             // Handle ID
             if (mapID.Equals(Guid.Empty))
@@ -67,19 +78,20 @@ namespace LevelImposter.Core
             }
             else
             {
-                targetMapID = mapID;
-                LILogger.Notify("<color=#1a95d8>Downloading map data, please wait...</color>");
+                downloadingMapID = mapID;
+                LILogger.Notify("<color=#1a95d8>Downloading map, please wait...</color>");
                 MapAPI.DownloadMap(mapID, ((string mapJson) =>
                 {
-                    MapLoader.WriteMap(mapID.ToString(), mapJson);
-                    if (targetMapID == mapID)
+                    if (downloadingMapID == mapID)
                     {
+                        MapLoader.WriteMap(mapID.ToString(), mapJson);
                         MapLoader.LoadMap(mapID.ToString());
-                        LILogger.Notify("<color=#1a95d8>Done!</color>");
+                        LILogger.Notify("<color=#1a95d8>Download finished!</color>");
+                        downloadingMapID = null;
                     }
                 }));
             }
         }
     }
-
+    */
 }

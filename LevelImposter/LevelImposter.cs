@@ -8,7 +8,7 @@ using UnhollowerRuntimeLib;
 namespace LevelImposter
 {
     [BepInPlugin(ID, "LevelImposter", VERSION)]
-    [BepInDependency(REACTOR_ID, BepInDependency.DependencyFlags.SoftDependency)]
+    [BepInDependency(REACTOR_ID)]
     [BepInProcess("Among Us.exe")]
     public class LevelImposter : BasePlugin
     {
