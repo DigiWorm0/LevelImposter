@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
 using LevelImposter.DB;
+using PowerTools;
 
 namespace LevelImposter.Core
 {
@@ -16,12 +17,21 @@ namespace LevelImposter.Core
             UtilData utilData = AssetDB.utils[elem.type];
 
             // Default Sprite
-            obj.layer = (int)Layer.ShortObjects;
             SpriteRenderer spriteRenderer = obj.GetComponent<SpriteRenderer>();
+            GIFAnimator gifAnimator = obj.GetComponent<GIFAnimator>();
+            obj.layer = (int)Layer.ShortObjects;
             if (!spriteRenderer)
             {
                 spriteRenderer = obj.AddComponent<SpriteRenderer>();
                 spriteRenderer.sprite = utilData.SpriteRenderer.sprite;
+
+                SpriteAnim spriteAnimClone = utilData.GameObj.GetComponent<SpriteAnim>();
+                SpriteAnim spriteAnim = obj.AddComponent<SpriteAnim>();
+                spriteAnim.Play(spriteAnimClone.m_defaultAnim, spriteAnimClone.Speed);
+            }
+            else if (gifAnimator != null)
+            {
+                gifAnimator.Stop();
             }
             spriteRenderer.material = utilData.SpriteRenderer.material;
 

@@ -44,8 +44,6 @@ namespace LevelImposter.Core
             }
             spriteRenderer.material = utilData.SpriteRenderer.material;
 
-            // Animation
-
             // Console
             VentCleaningConsole origConsole = utilData.GameObj.GetComponent<VentCleaningConsole>();
             VentCleaningConsole console = obj.AddComponent<VentCleaningConsole>();
