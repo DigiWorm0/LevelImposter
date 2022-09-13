@@ -11,6 +11,7 @@ namespace LevelImposter.Shop
     public static class MapAPI
     {
         public const string API_PATH = "https://us-central1-levelimposter-347807.cloudfunctions.net/api/";
+        public const string GH_PATH = "https://api.github.com/repos/DigiWorm0/LevelImposter/releases?per_page=1";
         public const int API_VERSION = 1;
 
         public static void DownloadMap(Guid mapID, Action<string> callback)
@@ -59,6 +60,37 @@ namespace LevelImposter.Shop
         {
             LILogger.Info("Getting map listing...");
             RequestJson(API_PATH + "maps/verified", callback);
+        }
+
+        public static void GetTopMaps(Action<LIMetadata[]> callback)
+        {
+            LILogger.Info("Getting map listing...");
+            RequestJson(API_PATH + "maps/top", callback);
+        }
+
+        public static void GetUpdate(Action<LIUpdate> callback)
+        {
+            LILogger.Info("Getting update info...");
+            Request(GH_PATH, (string json) =>
+            {
+                GHRelease[] ghReleases = JsonSerializer.Deserialize<GHRelease[]>(json);
+                GHRelease ghRelease = ghReleases[0];
+
+                LIUpdate liUpdate = new LIUpdate();
+                liUpdate.name = ghRelease.name;
+                liUpdate.tag = ghRelease.tag_name.Split("-")[0].Replace("v", "");
+                liUpdate.downloadURL = ghRelease.assets[0].browser_download_url;
+                callback(liUpdate);
+            });
+        }
+
+        public static void DownloadUpdate(Action<string> callback)
+        {
+            GetUpdate((LIUpdate liUpdate) =>
+            {
+                LILogger.Info("Downloading update [" + liUpdate.tag + "]...");
+                Request(liUpdate.downloadURL, callback);
+            });
         }
 
         private static void RequestJson<T>(string url, Action<T> callback)

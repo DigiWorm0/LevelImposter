@@ -61,6 +61,7 @@ namespace LevelImposter.Core
             console.TaskTypes = origConsole.TaskTypes;
             console.ValidTasks = origConsole.ValidTasks;
             console.AllowImpostor = true;
+            console.GhostsIgnored = true;
 
             if (consoleIDPairs.ContainsKey(elem.type))
                 console.ConsoleId = consoleIDPairs[elem.type];

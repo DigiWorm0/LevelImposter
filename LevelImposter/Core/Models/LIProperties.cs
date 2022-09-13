@@ -26,6 +26,9 @@ namespace LevelImposter.Core
         public Guid? middleVent { get; set; }
         public Guid? rightVent { get; set; }
 
+        // Teleporter
+        public Guid? teleporter { get; set; }
+
         // Camera
         public float? camXOffset { get; set; }
         public float? camYOffset { get; set; }
@@ -52,6 +55,10 @@ namespace LevelImposter.Core
         public float? starfieldMaxSpeed { get; set; }
         public float? starfieldHeight { get; set; }
         public float? starfieldLength { get; set; }
+
+        // Floating
+        public float? floatingHeight { get; set; }
+        public float? floatingSpeed { get; set; }
 
         // Tasks
         public string? description { get; set; }

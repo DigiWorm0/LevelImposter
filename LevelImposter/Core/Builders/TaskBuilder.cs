@@ -36,7 +36,8 @@ namespace LevelImposter.Core
             { "task-waterwheel1", 0 },
             { "task-fuel2", 0 },
             { "task-align1", 0 },
-            { "task-records2", 1 }
+            { "task-records2", 1 },
+            { "task-wires", 0 }
         };
 
         public static byte breakerCount = 0;
@@ -46,8 +47,11 @@ namespace LevelImposter.Core
         public static byte waterWheelCount = 0;
         public static byte alignEngineCount = 0;
         public static byte recordsCount = 0;
+        public static byte wiresCount = 0;
 
         public static SystemTypes[] divertSystems = new SystemTypes[0];
+
+        private NormalPlayerTask wiresTask = null;
 
         public void Build(LIElement elem, GameObject obj)
         {
@@ -269,6 +273,11 @@ namespace LevelImposter.Core
                     nodeTask.Stage2Prefab = origTask.Cast<WeatherNodeTask>().Stage2Prefab;
                 }
 
+                if (elem.type == "task-wires")
+                {
+                    wiresTask = task;
+                }
+
                 string? taskLengthProp = elem.properties.taskLength;
                 TaskType taskLength = taskLengthProp != null ? taskLengths[taskLengthProp] : taskData.TaskType;
                 if (taskLength == TaskType.Common)
@@ -310,8 +319,17 @@ namespace LevelImposter.Core
                     alignEngineCount = count;
                 if (key == "task-records2")
                     recordsCount = count;
+                if (key == "task-wires")
+                    wiresCount = count;
                 consoleIDIncrements[key] = 0;
             }
+
+            // Wires Length
+            if (wiresTask != null)
+            {
+                wiresTask.MaxStep = Math.Min(wiresCount, (byte)3);
+            }
+            wiresTask = null;
         }
     }
 }

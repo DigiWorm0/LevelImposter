@@ -52,6 +52,19 @@ namespace LevelImposter.Shop
             LIMap mapData = System.Text.Json.JsonSerializer.Deserialize<LIMap>(mapJson);
             return mapData;
         }
+        public static LIMetadata GetMetadata(string mapID)
+        {
+            if (!Exists(mapID))
+            {
+                LILogger.Error("Could not find [" + mapID + "] in filesystem");
+                return null;
+            }
+            LILogger.Info("Loading metadata [" + mapID + "] from filesystem");
+            string mapPath = GetPath(mapID);
+            string mapJson = File.ReadAllText(mapPath);
+            LIMetadata metadata = System.Text.Json.JsonSerializer.Deserialize<LIMetadata>(mapJson);
+            return metadata;
+        }
 
         public static void LoadMap(string mapID)
         {

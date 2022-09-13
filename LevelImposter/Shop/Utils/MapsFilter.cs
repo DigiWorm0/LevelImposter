@@ -8,6 +8,7 @@ namespace LevelImposter.Shop
     {
         Downloaded,
         Recent,
-        Verified
+        Verified,
+        Top
     }
 }

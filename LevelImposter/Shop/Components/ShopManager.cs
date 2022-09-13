@@ -37,8 +37,8 @@ namespace LevelImposter.Shop
 
             GameObject downloadedBtn = sidePanel.FindChild("DownloadedBtn").gameObject;
             downloadedBtn.AddComponent<FilterButton>().Init(MapFilter.Downloaded);
-            GameObject recentBtn = sidePanel.FindChild("RecentBtn").gameObject;
-            recentBtn.AddComponent<FilterButton>().Init(MapFilter.Recent);
+            GameObject recentBtn = sidePanel.FindChild("TopBtn").gameObject;
+            recentBtn.AddComponent<FilterButton>().Init(MapFilter.Top);
             GameObject verifiedBtn = sidePanel.FindChild("VerifiedBtn").gameObject;
             verifiedBtn.AddComponent<FilterButton>().Init(MapFilter.Verified);
             GameObject folderBtn = sidePanel.FindChild("FolderBtn").gameObject;
@@ -67,7 +67,7 @@ namespace LevelImposter.Shop
             LIMetadata[] maps = new LIMetadata[mapIDs.Length];
             for (int i = 0; i < mapIDs.Length; i++)
             {
-                maps[i] = MapLoader.GetMap(mapIDs[i]);
+                maps[i] = MapLoader.GetMetadata(mapIDs[i]);
                 maps[i].id = mapIDs[i];
             }
             ListMaps(maps);
@@ -87,6 +87,14 @@ namespace LevelImposter.Shop
             currentFilter = MapFilter.Verified;
             RemoveChildren();
             MapAPI.GetVerifiedMaps(ListMaps);
+        }
+
+        public void ListTopMaps()
+        {
+            LILogger.Info("Using top maps...");
+            currentFilter = MapFilter.Top;
+            RemoveChildren();
+            MapAPI.GetTopMaps(ListMaps);
         }
 
         private void RemoveChildren()

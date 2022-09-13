@@ -14,7 +14,7 @@ namespace LevelImposter.Core
      *      flexibility, this has been patched here.
      */
     [HarmonyPatch(typeof(NormalPlayerTask), nameof(NormalPlayerTask.Initialize))]
-    public static class TaskInitializePatch
+    public static class TaskInitializePostPatch
     {
         public static void Postfix(NormalPlayerTask __instance)
         {
