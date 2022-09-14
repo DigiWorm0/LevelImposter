@@ -18,10 +18,9 @@ namespace LevelImposter.DB
     {
         public static void Postfix(AmongUsClient __instance)
         {
-            LILogger.Info("Initializing Ship Prefabs...");
-            foreach (AssetReference assetRef in __instance.ShipPrefabs)
-                assetRef.LoadAsset<GameObject>();
-            AssetDB.Init();
+            GameObject dbObj = new GameObject("AssetDB");
+            UnityEngine.Object.DontDestroyOnLoad(dbObj);
+            dbObj.AddComponent<AssetDB>();
         }
     }
 }

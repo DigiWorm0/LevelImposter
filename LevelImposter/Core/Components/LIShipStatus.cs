@@ -98,7 +98,6 @@ namespace LevelImposter.Core
         {
             LILogger.Info("Loading " + map.name + " [" + map.id + "]");
             currentMap = map;
-            AssetDB.Import();
             ResetMap();
             LoadMapProperties(map);
 

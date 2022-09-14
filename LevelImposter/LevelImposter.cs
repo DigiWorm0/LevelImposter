@@ -2,6 +2,7 @@
 using BepInEx.Configuration;
 using BepInEx.IL2CPP;
 using LevelImposter.Core;
+using LevelImposter.DB;
 using LevelImposter.Shop;
 using UnhollowerRuntimeLib;
 
@@ -39,6 +40,7 @@ namespace LevelImposter
             ClassInjector.RegisterTypeInIl2Cpp<FilterButton>();
             ClassInjector.RegisterTypeInIl2Cpp<FolderButton>();
             ClassInjector.RegisterTypeInIl2Cpp<GIFAnimator>();
+            ClassInjector.RegisterTypeInIl2Cpp<AssetDB>();
 
             Harmony.PatchAll();
             LILogger.Msg("LevelImposter Initialized.");
