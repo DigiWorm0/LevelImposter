@@ -73,6 +73,7 @@ namespace LevelImposter.Core
 
         private Sprite generateSprite(string base64)
         {
+            Texture.allowThreadedTextureCreation = true;
             byte[] data = MapUtils.ParseBase64(base64);
             Texture2D texture = new Texture2D(1, 1);
             ImageConversion.LoadImage(texture, data);

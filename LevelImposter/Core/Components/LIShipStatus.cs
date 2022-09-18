@@ -15,6 +15,7 @@ namespace LevelImposter.Core
         public const float PLAYER_POS = -5.0f;
 
         public static LIShipStatus Instance { get; private set; }
+
         public ShipStatus shipStatus { get; private set; }
         public LIMap currentMap { get; private set; }
 
@@ -30,7 +31,7 @@ namespace LevelImposter.Core
         {
         }
 
-        private void Awake()
+        public void Awake()
         {
             shipStatus = GetComponent<ShipStatus>();
             Instance = this;
@@ -45,7 +46,7 @@ namespace LevelImposter.Core
                 LILogger.Info("No map content, no LI data will load");
         }
 
-        private void Start()
+        public void Start()
         {
             if (MapLoader.currentMap != null)
                 HudManager.Instance.ShadowQuad.material.SetInt("_Mask", 7);
@@ -100,6 +101,10 @@ namespace LevelImposter.Core
             currentMap = map;
             ResetMap();
             LoadMapProperties(map);
+
+            // Asset DB
+            if (!AssetDB.isReady)
+                LILogger.Warn("Asset DB is not ready yet!");
 
             // Priority First
             foreach (string type in priorityTypes)

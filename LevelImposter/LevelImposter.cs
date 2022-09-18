@@ -33,6 +33,7 @@ namespace LevelImposter
             ClassInjector.RegisterTypeInIl2Cpp<LIFloat>();
             ClassInjector.RegisterTypeInIl2Cpp<LITeleporter>();
             ClassInjector.RegisterTypeInIl2Cpp<LIMapSelector>();
+            ClassInjector.RegisterTypeInIl2Cpp<LITriggerable>();
 
             ClassInjector.RegisterTypeInIl2Cpp<ShopManager>();
             ClassInjector.RegisterTypeInIl2Cpp<MapBanner>();

@@ -32,7 +32,8 @@ namespace LevelImposter.Core
             new StepSoundBuilder(),
             new TeleBuilder(),
 
-            new NoShadowBuilder()
+            new NoShadowBuilder(),
+            new TriggerBuilder()
         };
 
         public GameObject Build(LIElement element)
