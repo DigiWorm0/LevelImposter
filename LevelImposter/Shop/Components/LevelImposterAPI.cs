@@ -59,13 +59,17 @@ namespace LevelImposter.Shop
 
         public IEnumerator CoRequestTexture(string url, System.Action<Texture2D> callback)
         {
-            UnityWebRequest request = UnityWebRequestTexture.GetTexture(url);
+            UnityWebRequest request = UnityWebRequest.Get(url);
             yield return request.SendWebRequest();
 
             if (request.result == UnityWebRequest.Result.ConnectionError || request.result == UnityWebRequest.Result.ProtocolError)
                 LILogger.Error(request.error);
             else
-                callback(DownloadHandlerTexture.GetContent(request));
+            {
+                Texture2D texture = new Texture2D(1, 1);
+                ImageConversion.LoadImage(texture, request.downloadHandler.data);
+                callback(texture);
+            }
             request.Dispose();
         }
 
