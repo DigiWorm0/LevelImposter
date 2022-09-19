@@ -42,10 +42,7 @@ namespace LevelImposter.Shop
             {
                 MapBanner banner = Instantiate(mapBannerPrefab, shopParent);
                 banner.gameObject.SetActive(true);
-                MapFileAPI.Instance.GetAsync(mapID, (LIMap map) =>
-                {
-                    banner.SetMap(map);
-                });
+                banner.SetMap(MapFileAPI.Instance.GetMetadata(mapID));
             }
         }
 

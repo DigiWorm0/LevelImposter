@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -63,8 +64,23 @@ namespace LevelImposter.Shop
             }
             LILogger.Info("Loading map [" + mapID + "] from filesystem");
             string mapPath = GetPath(mapID);
-            string mapJson = System.IO.File.ReadAllText(mapPath);
+            string mapJson = File.ReadAllText(mapPath);
             LIMap mapData = JsonSerializer.Deserialize<LIMap>(mapJson);
+            mapData.id = mapID;
+            return mapData;
+        }
+
+        public LIMetadata GetMetadata(string mapID)
+        {
+            if (!Exists(mapID))
+            {
+                LILogger.Error("Could not find [" + mapID + "] in filesystem");
+                return null;
+            }
+            LILogger.Info("Loading map [" + mapID + "] from filesystem");
+            string mapPath = GetPath(mapID);
+            string mapJson = File.ReadAllText(mapPath);
+            LIMetadata mapData = JsonSerializer.Deserialize<LIMetadata>(mapJson);
             mapData.id = mapID;
             return mapData;
         }

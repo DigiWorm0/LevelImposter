@@ -52,7 +52,7 @@ namespace LevelImposter.Shop
             authorText.text = map.authorName;
             descText.text = map.description;
             UpdateButtons();
-            StartCoroutine(CoGetThumbnail().WrapToIl2Cpp());
+            GetThumbnail();
         }
 
         public void UpdateButtons()
@@ -97,10 +97,10 @@ namespace LevelImposter.Shop
             UpdateButtons();
         }
 
-        public IEnumerator CoGetThumbnail()
+        public void GetThumbnail()
         {
             if (string.IsNullOrEmpty(map.thumbnailURL))
-                yield break;
+                return;
             if (ThumbnailFileAPI.Instance.Exists(map.id))
             {
                 ThumbnailFileAPI.Instance.Get(map.id, (Texture2D texture) =>
@@ -115,6 +115,7 @@ namespace LevelImposter.Shop
                     byte[] textureData = texture.EncodeToPNG();
                     ThumbnailFileAPI.Instance.Save(map.id, textureData);
                     thumbnail.sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f), 100.0f);
+                    textureData = null;
                 });
             }
         }
