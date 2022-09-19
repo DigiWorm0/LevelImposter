@@ -26,22 +26,23 @@ namespace LevelImposter
             ConfigFile = Config;
             LILogger.Init();
             LIDeepLink.Init();
-            MapLoader.Init();
 
             ClassInjector.RegisterTypeInIl2Cpp<LIShipStatus>();
             ClassInjector.RegisterTypeInIl2Cpp<LIStar>();
             ClassInjector.RegisterTypeInIl2Cpp<LIFloat>();
             ClassInjector.RegisterTypeInIl2Cpp<LITeleporter>();
-            ClassInjector.RegisterTypeInIl2Cpp<LIMapSelector>();
             ClassInjector.RegisterTypeInIl2Cpp<LITriggerable>();
-
-            ClassInjector.RegisterTypeInIl2Cpp<ShopManager>();
-            ClassInjector.RegisterTypeInIl2Cpp<MapBanner>();
-            ClassInjector.RegisterTypeInIl2Cpp<MapBannerButton>();
-            ClassInjector.RegisterTypeInIl2Cpp<FilterButton>();
-            ClassInjector.RegisterTypeInIl2Cpp<FolderButton>();
             ClassInjector.RegisterTypeInIl2Cpp<GIFAnimator>();
             ClassInjector.RegisterTypeInIl2Cpp<AssetDB>();
+            ClassInjector.RegisterTypeInIl2Cpp<LIMapSelector>();
+
+            ClassInjector.RegisterTypeInIl2Cpp<LevelImposterAPI>();
+            ClassInjector.RegisterTypeInIl2Cpp<MapBanner>();
+            ClassInjector.RegisterTypeInIl2Cpp<MapFileAPI>();
+            ClassInjector.RegisterTypeInIl2Cpp<ShopButtons>();
+            ClassInjector.RegisterTypeInIl2Cpp<ShopManager>();
+            ClassInjector.RegisterTypeInIl2Cpp<Spinner>();
+            ClassInjector.RegisterTypeInIl2Cpp<ThumbnailFileAPI>();
 
             Harmony.PatchAll();
             LILogger.Msg("LevelImposter Initialized.");

@@ -84,14 +84,14 @@ namespace LevelImposter.Shop
                 mapOptions.Add(mapOption);
             }
 
-            string[] mapIDs = MapLoader.GetMapIDs();
+            string[] mapIDs = MapFileAPI.Instance.ListIDs();
             foreach (string mapID in mapIDs)
             {
                 Guid tempID;
                 Guid.TryParse(mapID, out tempID);
                 if (tempID == Guid.Empty)
                     continue;
-                LIMetadata mapMetadata = MapLoader.GetMetadata(mapID);
+                LIMetadata mapMetadata = MapFileAPI.Instance.Get(mapID);
                 if (string.IsNullOrEmpty(mapMetadata.authorID) || string.IsNullOrEmpty(mapMetadata.id))
                     continue;
                 LIMapOption mapOption = new LIMapOption();

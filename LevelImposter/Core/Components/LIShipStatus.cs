@@ -35,11 +35,6 @@ namespace LevelImposter.Core
         {
             shipStatus = GetComponent<ShipStatus>();
             Instance = this;
-            if (MapLoader.Exists("default") && MapLoader.currentMap == null)
-            {
-                LILogger.Info("Loading default map...");
-                MapLoader.LoadMap("default");
-            }
             if (MapLoader.currentMap != null)
                 LoadMap(MapLoader.currentMap);
             else
@@ -124,7 +119,8 @@ namespace LevelImposter.Core
         {
             shipStatus.name = map.name;
 
-            if (!string.IsNullOrEmpty(map.properties.bgColor)) {
+            if (!string.IsNullOrEmpty(map.properties.bgColor))
+            {
                 Color bgColor;
                 ColorUtility.TryParseHtmlString(map.properties.bgColor, out bgColor);
                 Camera.main.backgroundColor = bgColor;

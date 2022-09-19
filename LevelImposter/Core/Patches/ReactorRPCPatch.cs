@@ -63,7 +63,7 @@ namespace LevelImposter.Core
             {
                 return;
             }
-            else if (MapLoader.Exists(mapIDStr))
+            else if (MapFileAPI.Instance.Exists(mapIDStr))
             {
                 MapLoader.LoadMap(mapIDStr);
             }
@@ -71,11 +71,10 @@ namespace LevelImposter.Core
             {
                 downloadingMapID = mapID;
                 LILogger.Notify("<color=#1a95d8>Downloading map, please wait...</color>");
-                MapAPI.DownloadMap(mapID, ((string mapJson) =>
+                LevelImposterAPI.Instance.DownloadMap(mapID, ((LIMap map) =>
                 {
                     if (downloadingMapID == mapID)
                     {
-                        MapLoader.WriteMap(mapID.ToString(), mapJson);
                         MapLoader.LoadMap(mapID.ToString());
                         LILogger.Notify("<color=#1a95d8>Download finished!</color>");
                         downloadingMapID = null;

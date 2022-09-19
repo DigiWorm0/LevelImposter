@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.Events;
 using System.IO;
 using LevelImposter.Core;
@@ -15,10 +16,6 @@ namespace LevelImposter.Shop
         {
             RemoveChildren();
             BuildShop();
-            MapAPI.GetUpdate((LIUpdate update) =>
-            {
-                LILogger.Info(update.ToString());
-            });
         }
 
         private static GameObject LoadAssetBundle(string name)
@@ -48,7 +45,20 @@ namespace LevelImposter.Shop
             if (mapShopPrefab == null)
                 mapShopPrefab = LoadAssetBundle("shop");
             GameObject mapShop = Object.Instantiate(mapShopPrefab);
-            mapShop.AddComponent<ShopManager>();
+
+            ShopManager shopMgr = mapShop.AddComponent<ShopManager>();
+            shopMgr.shopParent = mapShop.transform.FindChild("Canvas").FindChild("Scroll").FindChild("Viewport").FindChild("Content");
+            shopMgr.mapBannerPrefab = shopMgr.shopParent.FindChild("MapBanner").gameObject.AddComponent<MapBanner>();
+
+            ShopButtons shopBtns = mapShop.AddComponent<ShopButtons>();
+            Transform btnsParent = mapShop.transform.FindChild("Canvas").FindChild("Shop Buttons");
+            shopBtns.downloadedButton = btnsParent.FindChild("DownloadedBtn").GetComponent<Button>();
+            shopBtns.topButton = btnsParent.FindChild("TopBtn").GetComponent<Button>();
+            shopBtns.recentButton = btnsParent.FindChild("RecentBtn").GetComponent<Button>();
+            shopBtns.featuredButton = btnsParent.FindChild("FeaturedBtn").GetComponent<Button>();
+
+            MapBanner bannerPrefab = shopMgr.mapBannerPrefab;
+            bannerPrefab.transform.FindChild("LoadOverlay").FindChild("LoadingSpinner").gameObject.AddComponent<Spinner>();
         }
     }
 }
