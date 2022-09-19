@@ -35,14 +35,15 @@ namespace LevelImposter.Shop
 
         public void Request(string url, System.Action<string> callback)
         {
-            LILogger.Info("GET: " + url);
             StartCoroutine(CoRequest(url, callback).WrapToIl2Cpp());
         }
 
         public IEnumerator CoRequest(string url, System.Action<string> callback)
         {
+            LILogger.Info("GET: " + url);
             UnityWebRequest request = UnityWebRequest.Get(url);
             yield return request.SendWebRequest();
+            LILogger.Info("RES: " + request.responseCode);
 
             if (request.result == UnityWebRequest.Result.ConnectionError || request.result == UnityWebRequest.Result.ProtocolError)
                 LILogger.Error(request.error);
@@ -53,14 +54,15 @@ namespace LevelImposter.Shop
 
         public void RequestTexture(string url, System.Action<Texture2D> callback)
         {
-            LILogger.Info("GET: " + url);
             StartCoroutine(CoRequestTexture(url, callback).WrapToIl2Cpp());
         }
 
         public IEnumerator CoRequestTexture(string url, System.Action<Texture2D> callback)
         {
+            LILogger.Info("GET: " + url);
             UnityWebRequest request = UnityWebRequest.Get(url);
             yield return request.SendWebRequest();
+            LILogger.Info("RES: " + request.responseCode);
 
             if (request.result == UnityWebRequest.Result.ConnectionError || request.result == UnityWebRequest.Result.ProtocolError)
                 LILogger.Error(request.error);

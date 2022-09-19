@@ -56,6 +56,7 @@ namespace LevelImposter.Shop
             shopBtns.topButton = btnsParent.FindChild("TopBtn").GetComponent<Button>();
             shopBtns.recentButton = btnsParent.FindChild("RecentBtn").GetComponent<Button>();
             shopBtns.featuredButton = btnsParent.FindChild("FeaturedBtn").GetComponent<Button>();
+            shopBtns.folderButton = btnsParent.FindChild("FolderBtn").GetComponent<Button>();
 
             MapBanner bannerPrefab = shopMgr.mapBannerPrefab;
             bannerPrefab.transform.FindChild("LoadOverlay").FindChild("LoadingSpinner").gameObject.AddComponent<Spinner>();

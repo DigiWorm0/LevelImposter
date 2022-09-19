@@ -14,6 +14,8 @@ namespace LevelImposter.Shop
         public MapBanner mapBannerPrefab;
         public Transform shopParent;
 
+        private string currentList = "downloaded";
+
         public ShopManager(IntPtr intPtr) : base(intPtr)
         {
         }
@@ -30,6 +32,7 @@ namespace LevelImposter.Shop
 
         public void ListNone()
         {
+            currentList = "none";
             while (shopParent.childCount > 1)
                 DestroyImmediate(shopParent.GetChild(1).gameObject);
         }
@@ -37,6 +40,7 @@ namespace LevelImposter.Shop
         public void ListDownloaded()
         {
             ListNone();
+            currentList = "downloaded";
             string[] mapIDs = MapFileAPI.Instance.ListIDs();
             foreach (string mapID in mapIDs)
             {
@@ -49,8 +53,11 @@ namespace LevelImposter.Shop
         public void ListTop()
         {
             ListNone();
+            currentList = "top";
             LevelImposterAPI.Instance.GetTop((LIMetadata[] maps) =>
             {
+                if (currentList != "top")
+                    return;
                 foreach (LIMetadata map in maps)
                 {
                     MapBanner banner = Instantiate(mapBannerPrefab, shopParent);
@@ -63,8 +70,11 @@ namespace LevelImposter.Shop
         public void ListRecent()
         {
             ListNone();
+            currentList = "recent";
             LevelImposterAPI.Instance.GetRecent((LIMetadata[] maps) =>
             {
+                if (currentList != "recent")
+                    return;
                 foreach (LIMetadata map in maps)
                 {
                     MapBanner banner = Instantiate(mapBannerPrefab, shopParent);
@@ -77,8 +87,11 @@ namespace LevelImposter.Shop
         public void ListFeatured()
         {
             ListNone();
+            currentList = "featured";
             LevelImposterAPI.Instance.GetFeatured((LIMetadata[] maps) =>
             {
+                if (currentList != "featured")
+                    return;
                 foreach (LIMetadata map in maps)
                 {
                     MapBanner banner = Instantiate(mapBannerPrefab, shopParent);
@@ -90,7 +103,7 @@ namespace LevelImposter.Shop
 
         public void LaunchMap(string id)
         {
-            LILogger.Info("Launching map in freeplay: " + id);
+            LILogger.Info("Launching map [" + id + "]");
             MapLoader.LoadMap(id);
 
             AmongUsClient.Instance.TutorialMapId = 2;

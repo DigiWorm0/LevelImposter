@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -12,6 +13,7 @@ namespace LevelImposter.Shop
         public Button topButton;
         public Button recentButton;
         public Button featuredButton;
+        public Button folderButton;
 
         private string selected = "downloaded";
 
@@ -25,6 +27,7 @@ namespace LevelImposter.Shop
             topButton.onClick.AddListener((Action)OnTop);
             recentButton.onClick.AddListener((Action)OnRecent);
             featuredButton.onClick.AddListener((Action)OnFeatured);
+            folderButton.onClick.AddListener((Action)OnFolder);
             UpdateButtons();
         }
 
@@ -74,6 +77,11 @@ namespace LevelImposter.Shop
                 ShopManager.Instance.ListFeatured();
                 UpdateButtons();
             }
+        }
+
+        public void OnFolder()
+        {
+            Process.Start("explorer.exe", MapFileAPI.Instance.GetDirectory());
         }
     }
 }

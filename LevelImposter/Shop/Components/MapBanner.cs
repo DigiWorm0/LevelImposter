@@ -19,6 +19,7 @@ namespace LevelImposter.Shop
         public Button downloadButton;
         public Button playButton;
         public Button deleteButton;
+        public Button externalButton;
 
         public MapBanner(IntPtr intPtr) : base(intPtr)
         {
@@ -34,6 +35,7 @@ namespace LevelImposter.Shop
             downloadButton = transform.FindChild("DownloadBtn").GetComponent<Button>();
             playButton = transform.FindChild("PlayBtn").GetComponent<Button>();
             deleteButton = transform.FindChild("DeleteBtn").GetComponent<Button>();
+            externalButton = transform.FindChild("ExternalBtn").GetComponent<Button>();
         }
 
         private void Start()
@@ -41,6 +43,7 @@ namespace LevelImposter.Shop
             downloadButton.onClick.AddListener((Action)OnDownload);
             playButton.onClick.AddListener((Action)OnPlay);
             deleteButton.onClick.AddListener((Action)OnDelete);
+            externalButton.onClick.AddListener((Action)OnExternal);
             UpdateButtons();
         }
 
@@ -62,6 +65,7 @@ namespace LevelImposter.Shop
                 downloadButton.interactable = false;
                 playButton.interactable = false;
                 deleteButton.interactable = false;
+                externalButton.interactable = false;
             }
             else
             {
@@ -70,6 +74,7 @@ namespace LevelImposter.Shop
                 downloadButton.interactable = !mapExists && isOnline;
                 playButton.interactable = mapExists;
                 deleteButton.interactable = mapExists && isOnline;
+                externalButton.gameObject.SetActive(isOnline);
             }
         }
 
@@ -95,6 +100,11 @@ namespace LevelImposter.Shop
             MapFileAPI.Instance.Delete(map.id);
             ThumbnailFileAPI.Instance.Delete(map.id);
             UpdateButtons();
+        }
+
+        public void OnExternal()
+        {
+            Application.OpenURL("https://levelimposter.net/#/map/" + map.id);
         }
 
         public void GetThumbnail()
