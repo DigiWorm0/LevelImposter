@@ -9,7 +9,7 @@ using PowerTools;
 
 namespace LevelImposter.Core
 {
-    class VentBuilder : Builder
+    class VentBuilder : IElemBuilder
     {
         private int id = 0;
         private bool hasSound = false;

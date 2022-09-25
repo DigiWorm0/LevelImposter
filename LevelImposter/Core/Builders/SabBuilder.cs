@@ -7,7 +7,7 @@ using LevelImposter.DB;
 
 namespace LevelImposter.Core
 {
-    public class SabBuilder : Builder
+    public class SabBuilder : IElemBuilder
     {
         public GameObject sabContainer;
 

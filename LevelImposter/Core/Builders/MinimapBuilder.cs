@@ -6,7 +6,7 @@ using TMPro;
 
 namespace LevelImposter.Core
 {
-    public class MinimapBuilder : Builder
+    public class MinimapBuilder : IElemBuilder
     {
         public const float DEFAULT_SCALE = 4.975f;
 

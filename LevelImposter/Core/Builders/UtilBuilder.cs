@@ -8,7 +8,7 @@ using UnityEngine.Events;
 
 namespace LevelImposter.Core
 {
-    class UtilBuilder : Builder
+    class UtilBuilder : IElemBuilder
     {
         public void Build(LIElement elem, GameObject obj)
         {

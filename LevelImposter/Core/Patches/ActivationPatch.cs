@@ -20,10 +20,7 @@ namespace LevelImposter.Core
 
         public static void Postfix(MonoBehaviour __instance)
         {
-            LITriggerable[] triggers = __instance.GetComponents<LITriggerable>();
-            LITriggerable trigger = Array.Find(triggers, (LITriggerable t) => t.id == "onUse");
-            if (trigger != null)
-                trigger.Trigger();
+            MapUtils.FireTrigger(__instance.gameObject, "onUse", PlayerControl.LocalPlayer.gameObject);
         }
     }
 }

@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace LevelImposter.Core
 {
-    public class DummyBuilder : Builder
+    public class DummyBuilder : IElemBuilder
     {
         public void Build(LIElement elem, GameObject obj)
         {

@@ -8,7 +8,7 @@ using UnityEngine.Events;
 
 namespace LevelImposter.Core
 {
-    class LadderBuilder : Builder
+    class LadderBuilder : IElemBuilder
     {
         public static List<Ladder> AllLadders = new List<Ladder>();
 

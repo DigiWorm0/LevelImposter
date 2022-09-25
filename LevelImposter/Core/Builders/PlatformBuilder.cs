@@ -8,7 +8,7 @@ using UnityEngine.Events;
 
 namespace LevelImposter.Core
 {
-    class PlatformBuilder : Builder
+    class PlatformBuilder : IElemBuilder
     {
         public static MovingPlatformBehaviour Platform = null;
 

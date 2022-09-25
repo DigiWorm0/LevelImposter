@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace LevelImposter.Core
 {
-    class StarfieldBuilder : Builder
+    class StarfieldBuilder : IElemBuilder
     {
         public void Build(LIElement elem, GameObject obj)
         {

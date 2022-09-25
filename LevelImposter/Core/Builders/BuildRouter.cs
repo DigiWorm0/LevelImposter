@@ -8,38 +8,54 @@ namespace LevelImposter.Core
 {
     public class BuildRouter
     {
-        private DefaultBuilder defaultBuilder = new DefaultBuilder();
-        private Builder[] builders = {
-            new RoomBuilder(),
-            new AdminMapBuilder(),
-            new RoomNameBuilder(),
+        public List<IElemBuilder> _buildStack;
 
-            new MinimapBuilder(),
-            new DummyBuilder(),
-            new UtilBuilder(),
-            new SpawnBuilder(),
-            new VentBuilder(),
-            new CamBuilder(),
-            new TaskBuilder(),
-            new DecBuilder(),
-            new SabBuilder(),
-            new SabMapBuilder(),
-            new LadderBuilder(),
-            new PlatformBuilder(),
-            new StarfieldBuilder(),
-            new FloatBuilder(),
-            new AmbientSoundBuilder(),
-            new StepSoundBuilder(),
-            new TeleBuilder(),
+        public BuildRouter()
+        {
+            InitStack();
+        }
 
-            new NoShadowBuilder(),
-            new TriggerBuilder()
-        };
+        /*
+         *      Patch this Method to add/remove builders
+         */
+        public void InitStack()
+        {
+            _buildStack = new List<IElemBuilder> {
+                new DefaultBuilder(),
+
+                new RoomBuilder(),
+                new AdminMapBuilder(),
+                new RoomNameBuilder(),
+
+                new MinimapBuilder(),
+                new DummyBuilder(),
+                new UtilBuilder(),
+                new SpawnBuilder(),
+                new VentBuilder(),
+                new CamBuilder(),
+                new TaskBuilder(),
+                new DecBuilder(),
+                new SabBuilder(),
+                new SabMapBuilder(),
+                new LadderBuilder(),
+                new PlatformBuilder(),
+                new StarfieldBuilder(),
+                new FloatBuilder(),
+                new AmbientSoundBuilder(),
+                new StepSoundBuilder(),
+                new TeleBuilder(),
+                new TriggerAreaBuilder(),
+
+                new NoShadowBuilder(),
+                new TriggerBuilder()
+            };
+        }
 
         public GameObject Build(LIElement element)
         {
-            GameObject gameObject = defaultBuilder.Build(element);
-            foreach (Builder builder in builders)
+            string objName = element.name.Replace("\\n", " ");
+            GameObject gameObject = new GameObject(objName);
+            foreach (IElemBuilder builder in _buildStack)
             {
                 builder.Build(element, gameObject);
             }
@@ -48,7 +64,7 @@ namespace LevelImposter.Core
 
         public void PostBuild()
         {
-            foreach (Builder builder in builders)
+            foreach (IElemBuilder builder in _buildStack)
                 builder.PostBuild();
         }
     }

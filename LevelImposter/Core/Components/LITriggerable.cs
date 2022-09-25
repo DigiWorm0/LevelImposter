@@ -18,9 +18,9 @@ namespace LevelImposter.Core
         {
         }
 
-        public virtual void onTrigger()
+        public virtual void onTrigger(GameObject orgin)
         {
-            LILogger.Info(name + " >>> " + id);
+            LILogger.Info(name + " >>> " + id + " (" + orgin.name + ")");
             switch (id)
             {
                 case "Enable":
@@ -29,14 +29,20 @@ namespace LevelImposter.Core
                 case "Disable":
                     gameObject.SetActive(false);
                     break;
+                case "Show":
+                    gameObject.SetActive(true);
+                    break;
+                case "Hide":
+                    gameObject.SetActive(false);
+                    break;
             }
         }
 
-        public void Trigger()
+        public void Trigger(GameObject orgin)
         {
-            onTrigger();
+            onTrigger(orgin);
             if (targetTrigger != null)
-                targetTrigger.Trigger();
+                targetTrigger.Trigger(orgin);
         }
     }
 }

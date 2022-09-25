@@ -7,7 +7,7 @@ using LevelImposter.DB;
 
 namespace LevelImposter.Core
 {
-    public class TaskBuilder : Builder
+    public class TaskBuilder : IElemBuilder
     {
         public GameObject taskContainer;
         public int consoleID = 0;

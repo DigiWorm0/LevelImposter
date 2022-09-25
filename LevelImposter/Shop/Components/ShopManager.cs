@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using LevelImposter.Core;
+using LevelImposter.DB;
 using InnerNet;
 
 namespace LevelImposter.Shop
@@ -127,6 +128,11 @@ namespace LevelImposter.Shop
 
         public void LaunchMap(string id)
         {
+            if (!AssetDB.isReady)
+            {
+                DisconnectPopup.Instance.SendMessage("Hold up! The Asset DB isn't quite ready yet.");
+                return;
+            }
             LILogger.Info("Launching map [" + id + "]");
             MapLoader.LoadMap(id);
 

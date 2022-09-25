@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace LevelImposter.Core
 {
-    public class TriggerBuilder : Builder
+    public class TriggerBuilder : IElemBuilder
     {
         private List<LITriggerable> triggerDB = new List<LITriggerable>();
 

@@ -6,7 +6,7 @@ using LevelImposter.DB;
 
 namespace LevelImposter.Core
 {
-    public class NoShadowBuilder : Builder
+    public class NoShadowBuilder : IElemBuilder
     {
         private Material noShadowMat = null;
         private Material defaultMat = null;

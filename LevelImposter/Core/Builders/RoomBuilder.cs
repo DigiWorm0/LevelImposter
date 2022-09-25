@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace LevelImposter.Core
 {
-    public class RoomBuilder : Builder
+    public class RoomBuilder : IElemBuilder
     {
         private byte roomId = 1;
         private static Dictionary<Guid, SystemTypes> systemDB = new Dictionary<Guid, SystemTypes>();

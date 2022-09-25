@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace LevelImposter.Core
 {
-    class FloatBuilder : Builder
+    class FloatBuilder : IElemBuilder
     {
         public void Build(LIElement elem, GameObject obj)
         {

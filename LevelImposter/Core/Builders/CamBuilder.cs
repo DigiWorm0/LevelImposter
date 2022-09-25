@@ -7,7 +7,7 @@ using PowerTools;
 
 namespace LevelImposter.Core
 {
-    public class CamBuilder : Builder
+    public class CamBuilder : IElemBuilder
     {
         public void Build(LIElement elem, GameObject obj)
         {

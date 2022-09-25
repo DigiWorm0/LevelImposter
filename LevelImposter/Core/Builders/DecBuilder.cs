@@ -6,7 +6,7 @@ using LevelImposter.DB;
 
 namespace LevelImposter.Core
 {
-    public class DecBuilder : Builder
+    public class DecBuilder : IElemBuilder
     {
         public void Build(LIElement elem, GameObject obj)
         {

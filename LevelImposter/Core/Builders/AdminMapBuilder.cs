@@ -7,7 +7,7 @@ using LevelImposter.DB;
 
 namespace LevelImposter.Core
 {
-    public class AdminMapBuilder : Builder
+    public class AdminMapBuilder : IElemBuilder
     {
         public const float ICON_OFFSET = -0.25f;
         private static List<CounterArea> counterAreaDB = new List<CounterArea>();

@@ -36,6 +36,7 @@ namespace LevelImposter
             ClassInjector.RegisterTypeInIl2Cpp<AssetDB>();
             ClassInjector.RegisterTypeInIl2Cpp<LIMapSelector>();
             ClassInjector.RegisterTypeInIl2Cpp<LIMapConsole>();
+            ClassInjector.RegisterTypeInIl2Cpp<LITriggerArea>();
 
             ClassInjector.RegisterTypeInIl2Cpp<LevelImposterAPI>();
             ClassInjector.RegisterTypeInIl2Cpp<MapBanner>();

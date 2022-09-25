@@ -153,5 +153,30 @@ namespace LevelImposter.Core
                 color.a
             );
         }
+
+        /// <summary>
+        /// Fires trigger on an object with a specific name
+        /// </summary>
+        /// <param name="obj">Object to trigger</param>
+        /// <param name="triggerID">Trigger ID</param>
+        public static void FireTrigger(GameObject obj, string triggerID, GameObject orgin)
+        {
+            LITriggerable[] triggers = obj.GetComponents<LITriggerable>();
+            LITriggerable trigger = Array.Find(triggers, (LITriggerable t) => t.id == triggerID);
+            if (trigger != null)
+                trigger.Trigger(orgin);
+        }
+
+        /// <summary>
+        /// Checks if a Game Object is the local player
+        /// </summary>
+        /// <param name="obj">Game Object to check</param>
+        /// <returns>Whether or not obj is considered to be the local player</returns>
+        public static bool IsLocalPlayer(GameObject obj)
+        {
+            if (PlayerControl.LocalPlayer == null)
+                return false;
+            return obj == PlayerControl.LocalPlayer.gameObject;
+        }
     }
 }

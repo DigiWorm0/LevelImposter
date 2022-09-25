@@ -8,7 +8,7 @@ using UnityEngine.Events;
 
 namespace LevelImposter.Core
 {
-    class TeleBuilder : Builder
+    class TeleBuilder : IElemBuilder
     {
         private static Dictionary<Guid, LITeleporter> teleporterDb = new Dictionary<Guid, LITeleporter>();
 
