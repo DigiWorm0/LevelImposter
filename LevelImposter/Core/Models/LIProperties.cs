@@ -17,6 +17,7 @@ namespace LevelImposter.Core
         public string? spriteData { get; set; }
         public bool? noShadows { get; set; }
         public bool? noShadowsBehaviour { get; set; }
+        public LIColor? color { get; set; }
 
         // Sound
         public LISound[]? sounds { get; set; }

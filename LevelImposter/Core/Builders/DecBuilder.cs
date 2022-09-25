@@ -19,6 +19,9 @@ namespace LevelImposter.Core
                 {
                     spriteRenderer = obj.AddComponent<SpriteRenderer>();
                     spriteRenderer.sprite = utilData.SpriteRenderer.sprite;
+
+                    if (elem.properties.color != null)
+                        spriteRenderer.color = MapUtils.LIColorToColor(elem.properties.color);
                 }
                 obj.layer = (int)Layer.ShortObjects;
             }
@@ -31,6 +34,8 @@ namespace LevelImposter.Core
                 {
                     spriteRenderer = obj.AddComponent<SpriteRenderer>();
                     spriteRenderer.sprite = utilData.SpriteRenderer.sprite;
+                    if (elem.properties.color != null)
+                        spriteRenderer.color = MapUtils.LIColorToColor(elem.properties.color);
                 }
                 obj.layer = (int)Layer.Ship;
             }

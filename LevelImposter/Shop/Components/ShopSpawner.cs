@@ -16,6 +16,7 @@ namespace LevelImposter.Shop
         public void Start()
         {
             ShopBuilder.BuildShop();
+            Destroy(gameObject);
         }
     }
 }

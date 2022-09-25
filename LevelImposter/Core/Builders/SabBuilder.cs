@@ -42,6 +42,8 @@ namespace LevelImposter.Core
             {
                 spriteRenderer = obj.AddComponent<SpriteRenderer>();
                 spriteRenderer.sprite = sabData.SpriteRenderer.sprite;
+                if (elem.properties.color != null)
+                    spriteRenderer.color = MapUtils.LIColorToColor(elem.properties.color);
             }
             spriteRenderer.material = sabData.SpriteRenderer.material;
 

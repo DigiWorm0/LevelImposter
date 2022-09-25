@@ -138,5 +138,20 @@ namespace LevelImposter.Core
             AudioClip audio = WAVLoader.Load(name, byteData); // TODO Support other audio formats
             return audio;
         }
+
+        /// <summary>
+        /// Converts an LIColor to UnityEngine.Color
+        /// </summary>
+        /// <param name="color">Color to convert from</param>
+        /// <returns>UnityEngine.Color to convert to</returns>
+        public static Color LIColorToColor(LIColor color)
+        {
+            return new Color (
+                color.r / 255,
+                color.g / 255,
+                color.b / 255,
+                color.a
+            );
+        }
     }
 }

@@ -28,6 +28,9 @@ namespace LevelImposter.Core
                 SpriteAnim spriteAnimClone = utilData.GameObj.GetComponent<SpriteAnim>();
                 SpriteAnim spriteAnim = obj.AddComponent<SpriteAnim>();
                 spriteAnim.Play(spriteAnimClone.m_defaultAnim, spriteAnimClone.Speed);
+
+                if (elem.properties.color != null)
+                    spriteRenderer.color = MapUtils.LIColorToColor(elem.properties.color);
             }
             else if (gifAnimator != null)
             {

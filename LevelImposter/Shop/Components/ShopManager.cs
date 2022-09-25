@@ -31,6 +31,14 @@ namespace LevelImposter.Shop
             ListDownloaded();
         }
 
+        private void Update()
+        {
+            if (Input.GetKeyUp(KeyCode.Escape))
+            {
+                Close();
+            }
+        }
+
         public void Close()
         {
             if (SceneManager.GetActiveScene().name == "HowToPlay")
