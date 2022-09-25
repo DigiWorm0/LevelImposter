@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using LevelImposter.Core;
 using BepInEx.IL2CPP.Utils.Collections;
@@ -92,7 +93,10 @@ namespace LevelImposter.Shop
 
         public void OnPlay()
         {
-            ShopManager.Instance.LaunchMap(map.id);
+            if (SceneManager.GetActiveScene().name == "HowToPlay")
+                ShopManager.Instance.LaunchMap(map.id);
+            else
+                ShopManager.Instance.SelectMap(map.id);
         }
 
         public void OnDelete()

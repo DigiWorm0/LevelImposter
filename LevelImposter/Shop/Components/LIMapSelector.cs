@@ -115,7 +115,10 @@ namespace LevelImposter.Shop
                 while (t < colorDuration)
                 {
                     t += Time.deltaTime;
-                    background.color = Color.Lerp(a, b, t / colorDuration);
+                    if (current < Constants.MapNames.Count)
+                        background.color = Color.white;
+                    else
+                        background.color = Color.Lerp(a, b, t / colorDuration);
                     yield return null;
                 }
 

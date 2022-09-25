@@ -35,12 +35,14 @@ namespace LevelImposter
             ClassInjector.RegisterTypeInIl2Cpp<GIFAnimator>();
             ClassInjector.RegisterTypeInIl2Cpp<AssetDB>();
             ClassInjector.RegisterTypeInIl2Cpp<LIMapSelector>();
+            ClassInjector.RegisterTypeInIl2Cpp<LIMapConsole>();
 
             ClassInjector.RegisterTypeInIl2Cpp<LevelImposterAPI>();
             ClassInjector.RegisterTypeInIl2Cpp<MapBanner>();
             ClassInjector.RegisterTypeInIl2Cpp<MapFileAPI>();
             ClassInjector.RegisterTypeInIl2Cpp<ShopButtons>();
             ClassInjector.RegisterTypeInIl2Cpp<ShopManager>();
+            ClassInjector.RegisterTypeInIl2Cpp<ShopSpawner>();
             ClassInjector.RegisterTypeInIl2Cpp<Spinner>();
             ClassInjector.RegisterTypeInIl2Cpp<ThumbnailFileAPI>();
 

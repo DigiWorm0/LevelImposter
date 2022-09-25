@@ -12,17 +12,26 @@ namespace LevelImposter.Shop
      *      Adds downloaded maps to the lobby menu
      */
     [HarmonyPatch(typeof(KeyValueOption), nameof(KeyValueOption.OnEnable))]
-    public static class LobbyMenuInitPatch
+    public static class MapNameValuePatch
     {
         public static bool Prefix(KeyValueOption __instance)
         {
             if (__instance.Title == StringNames.GameMapName)
             {
-                GameObject.Destroy(__instance);
+                UnityEngine.Object.Destroy(__instance);
                 __instance.gameObject.AddComponent<LIMapSelector>();
                 return false;
             }
             return true;
+        }
+    }
+    
+    [HarmonyPatch(typeof(LobbyBehaviour), nameof(LobbyBehaviour.Start))]
+    public static class LobbyMenuInitPatch
+    {
+        public static void Postfix()
+        {
+            LobbyBuilder.OnLoad();
         }
     }
 }

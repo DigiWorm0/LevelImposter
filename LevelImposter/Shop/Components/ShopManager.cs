@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using LevelImposter.Core;
 using InnerNet;
 
@@ -28,6 +29,14 @@ namespace LevelImposter.Shop
         private void Start()
         {
             ListDownloaded();
+        }
+
+        public void Close()
+        {
+            if (SceneManager.GetActiveScene().name == "HowToPlay")
+                SceneManager.LoadScene("MainMenu");
+            else
+                Destroy(gameObject);
         }
 
         public void ListNone()
@@ -101,6 +110,13 @@ namespace LevelImposter.Shop
             });
         }
 
+        public void SelectMap(string id)
+        {
+            LILogger.Info("Selecting map [" + id + "]");
+            MapLoader.LoadMap(id);
+            CloseShop();
+        }
+
         public void LaunchMap(string id)
         {
             LILogger.Info("Launching map [" + id + "]");
@@ -117,6 +133,12 @@ namespace LevelImposter.Shop
             AmongUsClient.Instance.Connect(MatchMakerModes.HostAndClient, null);
 
             StartCoroutine(AmongUsClient.Instance.WaitForConnectionOrFail());
+        }
+
+        public static void CloseShop()
+        {
+            if (Instance != null)
+                Instance.Close();
         }
     }
 }

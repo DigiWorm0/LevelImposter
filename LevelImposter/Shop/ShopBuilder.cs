@@ -32,6 +32,13 @@ namespace LevelImposter.Shop
             }
         }
 
+        public static GameObject GetShopPrefab()
+        {
+            if (mapShopPrefab == null)
+                mapShopPrefab = LoadAssetBundle("shop");
+            return mapShopPrefab;
+        }
+
         private static void RemoveChildren()
         {
             GameObject controller = GameObject.Find("HowToPlayController");
@@ -40,11 +47,9 @@ namespace LevelImposter.Shop
             controller.transform.FindChild("Dots").gameObject.active = false;
         }
 
-        private static void BuildShop()
+        public static GameObject BuildShop()
         {
-            if (mapShopPrefab == null)
-                mapShopPrefab = LoadAssetBundle("shop");
-            GameObject mapShop = Object.Instantiate(mapShopPrefab);
+            GameObject mapShop = Object.Instantiate(GetShopPrefab());
 
             ShopManager shopMgr = mapShop.AddComponent<ShopManager>();
             shopMgr.shopParent = mapShop.transform.FindChild("Canvas").FindChild("Scroll").FindChild("Viewport").FindChild("Content");
@@ -60,6 +65,10 @@ namespace LevelImposter.Shop
 
             MapBanner bannerPrefab = shopMgr.mapBannerPrefab;
             bannerPrefab.transform.FindChild("LoadOverlay").FindChild("LoadingSpinner").gameObject.AddComponent<Spinner>();
+
+            mapShop.transform.FindChild("Canvas").FindChild("CloseBtn").GetComponent<Button>().onClick.AddListener((System.Action)ShopManager.CloseShop);
+
+            return mapShop;
         }
     }
 }
