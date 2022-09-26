@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using UnityEngine.Events;
+using System.IO;
 using UnityEngine;
 
 namespace LevelImposter.Core
@@ -190,6 +192,25 @@ namespace LevelImposter.Core
             Texture2D texture = new Texture2D(1, 1);
             ImageConversion.LoadImage(texture, data);
             return Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f), 100.0f);
+        }
+
+        /// <summary>
+        /// Loads a GameObject from the local Asset Bundle by Name
+        /// </summary>
+        /// <param name="name">Name of the Asset from the Asset Bundle</param>
+        /// <returns></returns>
+        public static GameObject LoadAssetBundle(string name)
+        {
+            Stream resourceStream = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("LevelImposter.Assets." + name);
+            using (var ms = new MemoryStream())
+            {
+                resourceStream.CopyTo(ms);
+                byte[] assetData = ms.ToArray();
+                AssetBundle assetBundle = AssetBundle.LoadFromMemory(assetData);
+                GameObject asset = assetBundle.LoadAsset(name, UnhollowerRuntimeLib.Il2CppType.Of<GameObject>()).Cast<GameObject>();
+                assetBundle.Unload(false);
+                return asset;
+            }
         }
     }
 }

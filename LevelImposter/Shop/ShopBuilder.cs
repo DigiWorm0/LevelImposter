@@ -2,8 +2,6 @@
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.Events;
-using System.IO;
 using LevelImposter.Core;
 using LevelImposter.DB;
 
@@ -16,27 +14,14 @@ namespace LevelImposter.Shop
         public static void OnLoad()
         {
             RemoveChildren();
-            BuildShop();
-        }
-
-        private static GameObject LoadAssetBundle(string name)
-        {
-            Stream resourceStream = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("LevelImposter.Assets." + name);
-            using (var ms = new MemoryStream())
-            {
-                resourceStream.CopyTo(ms);
-                byte[] assetData = ms.ToArray();
-                AssetBundle assetBundle = AssetBundle.LoadFromMemory(assetData);
-                GameObject asset = assetBundle.LoadAsset(name, UnhollowerRuntimeLib.Il2CppType.Of<GameObject>()).Cast<GameObject>();
-                assetBundle.Unload(false);
-                return asset;
-            }
+            GameObject shopSpawner = new GameObject("Shop Spawner");
+            shopSpawner.AddComponent<ShopSpawner>();
         }
 
         public static GameObject GetShopPrefab()
         {
             if (mapShopPrefab == null)
-                mapShopPrefab = LoadAssetBundle("shop");
+                mapShopPrefab = MapUtils.LoadAssetBundle("shop");
             return mapShopPrefab;
         }
 
