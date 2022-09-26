@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace LevelImposter.Shop
 {
@@ -18,6 +19,10 @@ namespace LevelImposter.Shop
     {
         public static void Postfix(VersionShower __instance)
         {
+            bool isMainMenu = SceneManager.GetActiveScene().name == "MainMenu";
+            if (!isMainMenu)
+                return;
+
             string antiPiracy = Guid.NewGuid().ToString();
             byte[] logoData = Properties.Resources.logo;
 
@@ -48,8 +53,15 @@ namespace LevelImposter.Shop
             logoText.alignment = TextAlignmentOptions.BottomLeft;
             logoText.raycastTarget = false;
             logoText.SetText("v" + LevelImposter.VERSION);
+        }
+    }
 
-            
+    [HarmonyPatch(typeof(TranslationController), nameof(TranslationController.GetStringWithDefault))]
+    public static class RegionPatch
+    {
+        public static void Postfix(ref string __result)
+        {
+            __result = __result.Replace("LevelImposter", "<color=#176be6>Level</color><color=#c13030>Impostor</color>");
         }
     }
 }
