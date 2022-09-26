@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Text;
 using UnityEngine.Events;
 using System.IO;
+using LevelImposter.DB;
+using LevelImposter.Shop;
 using UnityEngine;
 
 namespace LevelImposter.Core
@@ -211,6 +213,23 @@ namespace LevelImposter.Core
                 assetBundle.Unload(false);
                 return asset;
             }
+        }
+
+        /// <summary>
+        /// Syncs the current map over RPC
+        /// </summary>
+        public static void SyncMapID()
+        {
+            if (!AmongUsClient.Instance.AmHost || DestroyableSingleton<TutorialManager>.InstanceExists || PlayerControl.LocalPlayer == null)
+                return;
+
+            Guid mapID = Guid.Empty;
+            if (MapLoader.currentMap != null)
+                Guid.TryParse(MapLoader.currentMap.id, out mapID);
+            string mapIDStr = mapID.ToString();
+
+            LILogger.Info("[RPC] Transmitting map ID [" + mapIDStr + "]");
+            ReactorRPC.RPCSendMapID(PlayerControl.LocalPlayer, mapIDStr);
         }
     }
 }

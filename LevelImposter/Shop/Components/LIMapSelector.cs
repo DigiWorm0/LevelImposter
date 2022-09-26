@@ -157,6 +157,7 @@ namespace LevelImposter.Shop
             PlayerControl.GameOptions.MapId = mapOption.shipID;
             if (PlayerControl.LocalPlayer)
                 PlayerControl.LocalPlayer.RpcSyncSettings(PlayerControl.GameOptions);
+            MapUtils.SyncMapID();
         }
 
         private int GetOptionIndex(string mapID)

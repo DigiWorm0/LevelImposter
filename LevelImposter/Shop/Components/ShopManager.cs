@@ -132,6 +132,7 @@ namespace LevelImposter.Shop
         {
             LILogger.Info("Selecting map [" + id + "]");
             MapLoader.LoadMap(id);
+            MapUtils.SyncMapID();
             CloseShop();
         }
 
