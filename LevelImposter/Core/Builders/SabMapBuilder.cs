@@ -7,7 +7,7 @@ using LevelImposter.DB;
 
 namespace LevelImposter.Core
 {
-    public class SabMapBuilder : Builder
+    public class SabMapBuilder : IElemBuilder
     {
         private static Dictionary<SystemTypes, MapRoom> mapRoomDB = new Dictionary<SystemTypes, MapRoom>();
 

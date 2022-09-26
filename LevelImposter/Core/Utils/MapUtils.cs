@@ -1,11 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using UnityEngine.Events;
+using System.IO;
+using LevelImposter.DB;
+using LevelImposter.Shop;
 using UnityEngine;
 
 namespace LevelImposter.Core
 {
-    class MapUtils
+    public class MapUtils
     {
         public static Dictionary<SystemTypes, string> systemRenames = new();
         public static Dictionary<TaskTypes, string> taskRenames = new();
@@ -137,6 +141,95 @@ namespace LevelImposter.Core
             byte[] byteData = MapUtils.ParseBase64(base64);
             AudioClip audio = WAVLoader.Load(name, byteData); // TODO Support other audio formats
             return audio;
+        }
+
+        /// <summary>
+        /// Converts an LIColor to UnityEngine.Color
+        /// </summary>
+        /// <param name="color">Color to convert from</param>
+        /// <returns>UnityEngine.Color to convert to</returns>
+        public static Color LIColorToColor(LIColor color)
+        {
+            return new Color (
+                color.r / 255,
+                color.g / 255,
+                color.b / 255,
+                color.a
+            );
+        }
+
+        /// <summary>
+        /// Fires trigger on an object with a specific name
+        /// </summary>
+        /// <param name="obj">Object to trigger</param>
+        /// <param name="triggerID">Trigger ID</param>
+        public static void FireTrigger(GameObject obj, string triggerID, GameObject orgin)
+        {
+            LITriggerable[] triggers = obj.GetComponents<LITriggerable>();
+            LITriggerable trigger = Array.Find(triggers, (LITriggerable t) => t.id == triggerID);
+            if (trigger != null)
+                trigger.Trigger(orgin);
+        }
+
+        /// <summary>
+        /// Checks if a Game Object is the local player
+        /// </summary>
+        /// <param name="obj">Game Object to check</param>
+        /// <returns>Whether or not obj is considered to be the local player</returns>
+        public static bool IsLocalPlayer(GameObject obj)
+        {
+            if (PlayerControl.LocalPlayer == null)
+                return false;
+            return obj == PlayerControl.LocalPlayer.gameObject;
+        }
+
+        /// <summary>
+        /// Generates a Sprite from byte dara
+        /// </summary>
+        /// <param name="data">png formated texture data</param>
+        /// <returns>A Unity Sprite representing the texture data</returns>
+        public static Sprite GenerateSprite(byte[] data)
+        {
+            Texture.allowThreadedTextureCreation = true;
+            Texture2D texture = new Texture2D(1, 1);
+            ImageConversion.LoadImage(texture, data);
+            return Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f), 100.0f);
+        }
+
+        /// <summary>
+        /// Loads a GameObject from the local Asset Bundle by Name
+        /// </summary>
+        /// <param name="name">Name of the Asset from the Asset Bundle</param>
+        /// <returns></returns>
+        public static GameObject LoadAssetBundle(string name)
+        {
+            Stream resourceStream = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("LevelImposter.Assets." + name);
+            using (var ms = new MemoryStream())
+            {
+                resourceStream.CopyTo(ms);
+                byte[] assetData = ms.ToArray();
+                AssetBundle assetBundle = AssetBundle.LoadFromMemory(assetData);
+                GameObject asset = assetBundle.LoadAsset(name, UnhollowerRuntimeLib.Il2CppType.Of<GameObject>()).Cast<GameObject>();
+                assetBundle.Unload(false);
+                return asset;
+            }
+        }
+
+        /// <summary>
+        /// Syncs the current map over RPC
+        /// </summary>
+        public static void SyncMapID()
+        {
+            if (!AmongUsClient.Instance.AmHost || DestroyableSingleton<TutorialManager>.InstanceExists || PlayerControl.LocalPlayer == null)
+                return;
+
+            Guid mapID = Guid.Empty;
+            if (MapLoader.currentMap != null)
+                Guid.TryParse(MapLoader.currentMap.id, out mapID);
+            string mapIDStr = mapID.ToString();
+
+            LILogger.Info("[RPC] Transmitting map ID [" + mapIDStr + "]");
+            ReactorRPC.RPCSendMapID(PlayerControl.LocalPlayer, mapIDStr);
         }
     }
 }

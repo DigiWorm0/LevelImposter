@@ -8,7 +8,7 @@ using UnityEngine.Events;
 
 namespace LevelImposter.Core
 {
-    class AmbientSoundBuilder : Builder
+    class AmbientSoundBuilder : IElemBuilder
     {
         public void Build(LIElement elem, GameObject obj)
         {

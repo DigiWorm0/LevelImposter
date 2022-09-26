@@ -7,7 +7,7 @@ using LevelImposter.DB;
 
 namespace LevelImposter.Core
 {
-    public class SabBuilder : Builder
+    public class SabBuilder : IElemBuilder
     {
         public GameObject sabContainer;
 
@@ -42,6 +42,8 @@ namespace LevelImposter.Core
             {
                 spriteRenderer = obj.AddComponent<SpriteRenderer>();
                 spriteRenderer.sprite = sabData.SpriteRenderer.sprite;
+                if (elem.properties.color != null)
+                    spriteRenderer.color = MapUtils.LIColorToColor(elem.properties.color);
             }
             spriteRenderer.material = sabData.SpriteRenderer.material;
 

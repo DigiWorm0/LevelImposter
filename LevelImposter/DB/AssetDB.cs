@@ -4,16 +4,18 @@ using System.IO;
 using System.Text;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
-using UnityEngine.ResourceManagement.AsyncOperations;
 using LevelImposter.Core;
 using System.Text.Json;
-using System.Text.Json.Serialization;
+using System.Collections;
+using BepInEx.IL2CPP.Utils.Collections;
 
 namespace LevelImposter.DB
 {
-    class AssetDB
+    class AssetDB : MonoBehaviour
     {
-        private static bool isLoaded = false;
+        public static AssetDB Instance { get; private set; }
+
+        public static bool isReady = false;
 
         public static Dictionary<string, TaskData> tasks;
         public static Dictionary<string, UtilData> utils;
@@ -23,10 +25,14 @@ namespace LevelImposter.DB
         public static Dictionary<string, SSData> ss;
         public static Dictionary<string, SoundData> sounds;
 
-        public static void Init()
+        public void Start()
         {
-            if (isLoaded)
+            if (Instance != null)
+            {
+                Destroy(gameObject);
                 return;
+            }
+            Instance = this;
 
             TempDB tempDB = JsonSerializer.Deserialize<TempDB>(
                 Encoding.UTF8.GetString(Properties.Resources.AssetDB, 0, Properties.Resources.AssetDB.Length)
@@ -39,26 +45,28 @@ namespace LevelImposter.DB
             room = tempDB.room;
             ss = tempDB.ss;
             sounds = tempDB.sounds;
+
+            StartCoroutine(CoLoadAssets().WrapToIl2Cpp());
         }
 
-        public static void Import()
+        public IEnumerator CoLoadAssets()
         {
-            if (isLoaded)
-                return;
-            isLoaded = true;
-            LILogger.Info("Importing AssetDB...");
-            AmongUsClient client = GameObject.Find("NetworkManager").GetComponent<AmongUsClient>();
-            foreach (AssetReference prefab in client.ShipPrefabs)
-                if (prefab.IsDone)
-                    Import(prefab.Asset.Cast<GameObject>());
+            LILogger.Info("Loading AssetDB...");
+            foreach (AssetReference shipRef in AmongUsClient.Instance.ShipPrefabs)
+            {
+                yield return shipRef.LoadAssetAsync<GameObject>();
+                GameObject shipPrefab = shipRef.Asset.Cast<GameObject>();
+                yield return ImportAsset(shipPrefab);
+            }
+            isReady = true;
         }
 
-        private static void Import(GameObject prefab)
+        public IEnumerator ImportAsset(GameObject prefab)
         {
             ShipStatus shipStatus = prefab.GetComponent<ShipStatus>();
             MapType mapType = MapType.Skeld;
             if (prefab.name == "AprilShip")
-                return;
+                yield break;
             if (prefab.name == "MiraShip")
                 mapType = MapType.Mira;
             if (prefab.name == "PolusShip")
@@ -66,24 +74,25 @@ namespace LevelImposter.DB
             if (prefab.name == "Airship")
                 mapType = MapType.Airship;
 
-            Import(prefab, shipStatus, mapType, tasks);
-            Import(prefab, shipStatus, mapType, utils);
-            Import(prefab, shipStatus, mapType, sabs);
-            Import(prefab, shipStatus, mapType, dec);
-            Import(prefab, shipStatus, mapType, room);
-            Import(prefab, shipStatus, mapType, ss);
-            Import(prefab, shipStatus, mapType, sounds);
+            yield return Import(prefab, shipStatus, mapType, tasks);
+            yield return Import(prefab, shipStatus, mapType, utils);
+            yield return Import(prefab, shipStatus, mapType, sabs);
+            yield return Import(prefab, shipStatus, mapType, dec);
+            yield return Import(prefab, shipStatus, mapType, room);
+            yield return Import(prefab, shipStatus, mapType, ss);
+            yield return Import(prefab, shipStatus, mapType, sounds);
 
             LILogger.Info("..." + prefab.name + " Loaded");
         }
 
-        private static void Import<T>(GameObject map, ShipStatus shipStatus, MapType mapType, Dictionary<string, T> list) where T : AssetData
+        private IEnumerator Import<T>(GameObject map, ShipStatus shipStatus, MapType mapType, Dictionary<string, T> list) where T : AssetData
         {
             foreach (var elem in list)
             {
                 if (elem.Value.MapType == mapType)
                 {
                     elem.Value.ImportMap(map, shipStatus);
+                    yield return null;
                 }
             }
         }

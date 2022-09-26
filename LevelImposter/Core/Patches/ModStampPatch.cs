@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnhollowerBaseLib.Attributes;
 using System.Text;
 using UnityEngine;
+using LevelImposter.Shop;
 
 namespace LevelImposter.Core
 {
@@ -18,6 +19,15 @@ namespace LevelImposter.Core
         public static void Postfix()
         {
             ModManager.Instance.ShowModStamp();
+
+            if (LevelImposterAPI.Instance == null)
+            {
+                GameObject apiParent = new GameObject("LevelImposter API");
+                apiParent.AddComponent<LevelImposterAPI>();
+                apiParent.AddComponent<MapFileAPI>();
+                apiParent.AddComponent<ThumbnailFileAPI>();
+                UnityEngine.Object.DontDestroyOnLoad(apiParent);
+            }
         }
     }
 }

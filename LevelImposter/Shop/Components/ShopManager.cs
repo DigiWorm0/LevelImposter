@@ -1,124 +1,146 @@
-
 using System;
-using System.IO;
-using System.Text;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using LevelImposter.Core;
+using LevelImposter.DB;
 using InnerNet;
 
 namespace LevelImposter.Shop
 {
     public class ShopManager : MonoBehaviour
     {
-        public MapFilter currentFilter = MapFilter.Downloaded;
-
         public static ShopManager Instance { get; private set; }
+        public static bool IsOpen = false; // Circumvent Garbage Collection Issues w/ ShopManager.Instance
 
-        private Scroller scroller;
-        private Transform content;
-        private Transform mainPanel;
-        private Transform sidePanel;
+        public MapBanner mapBannerPrefab;
+        public Transform shopParent;
 
-        private GameObject mapBannerPrefab;
+        private string currentList = "downloaded";
+
+        public ShopManager(IntPtr intPtr) : base(intPtr)
+        {
+        }
 
         public void Awake()
         {
             Instance = this;
+            IsOpen = true;
+            ControllerManager.Instance.OpenOverlayMenu("LIShop", null);
         }
 
         public void Start()
         {
-            mainPanel = transform.FindChild("MainPanel");
-            sidePanel = transform.FindChild("SidePanel");
-            content = mainPanel.FindChild("Content");
-            mapBannerPrefab = content.FindChild("MapBannerPrefab").gameObject;
-
-            GameObject downloadedBtn = sidePanel.FindChild("DownloadedBtn").gameObject;
-            downloadedBtn.AddComponent<FilterButton>().Init(MapFilter.Downloaded);
-            GameObject recentBtn = sidePanel.FindChild("TopBtn").gameObject;
-            recentBtn.AddComponent<FilterButton>().Init(MapFilter.Top);
-            GameObject verifiedBtn = sidePanel.FindChild("VerifiedBtn").gameObject;
-            verifiedBtn.AddComponent<FilterButton>().Init(MapFilter.Verified);
-            GameObject folderBtn = sidePanel.FindChild("FolderBtn").gameObject;
-            folderBtn.AddComponent<FolderButton>().Init();
-
-            scroller = mainPanel.gameObject.AddComponent<Scroller>();
-
-            scroller.allowY = true;
-            scroller.ContentYBounds = new FloatRange(-1.8f, -1.8f);
-            scroller.ContentXBounds = new FloatRange(0, 0);
-            scroller.ScrollbarXBounds = new FloatRange(0, 0);
-            scroller.ScrollbarYBounds = new FloatRange(0, 0);
-            scroller.Colliders = new UnhollowerBaseLib.Il2CppReferenceArray<Collider2D>(1);
-            scroller.Colliders[0] = mainPanel.gameObject.GetComponent<BoxCollider2D>();
-            scroller.Inner = content;
-
-            ListDownloadedMaps();
+            ListDownloaded();
         }
 
-        public void ListDownloadedMaps()
+        public void Update()
         {
-            LILogger.Info("Using downloaded maps...");
-            currentFilter = MapFilter.Downloaded;
-            RemoveChildren();
-            string[] mapIDs = MapLoader.GetMapIDs();
-            LIMetadata[] maps = new LIMetadata[mapIDs.Length];
-            for (int i = 0; i < mapIDs.Length; i++)
+            if (Input.GetKeyUp(KeyCode.Escape))
             {
-                maps[i] = MapLoader.GetMetadata(mapIDs[i]);
-                maps[i].id = mapIDs[i];
+                Close();
             }
-            ListMaps(maps);
         }
 
-        public void ListRecentMaps()
+        public void OnDestroy()
         {
-            LILogger.Info("Using recent maps...");
-            currentFilter = MapFilter.Recent;
-            RemoveChildren();
-            MapAPI.GetRecentMaps(ListMaps);
+            IsOpen = false;
+            ControllerManager.Instance.CloseOverlayMenu("LIShop");
         }
 
-        public void ListVerifiedMaps()
+        public void Close()
         {
-            LILogger.Info("Using featured maps...");
-            currentFilter = MapFilter.Verified;
-            RemoveChildren();
-            MapAPI.GetVerifiedMaps(ListMaps);
+            if (SceneManager.GetActiveScene().name == "HowToPlay")
+                SceneManager.LoadScene("MainMenu");
+            else
+                Destroy(gameObject);
         }
 
-        public void ListTopMaps()
+        public void ListNone()
         {
-            LILogger.Info("Using top maps...");
-            currentFilter = MapFilter.Top;
-            RemoveChildren();
-            MapAPI.GetTopMaps(ListMaps);
+            currentList = "none";
+            while (shopParent.childCount > 1)
+                DestroyImmediate(shopParent.GetChild(1).gameObject);
         }
 
-        private void RemoveChildren()
+        public void ListDownloaded()
         {
-            while (content.childCount > 1)
-                DestroyImmediate(content.GetChild(1).gameObject);
-        }
-
-        public void ListMaps(LIMetadata[] maps)
-        {
-            LILogger.Info("Listed " + maps.Length + " maps");
-            RemoveChildren();
-            scroller.ContentYBounds = new FloatRange(-1.8f, (1.3f * maps.Length) - 1.8f);
-            for (int i = 0; i < maps.Length; i++)
+            ListNone();
+            currentList = "downloaded";
+            string[] mapIDs = MapFileAPI.Instance.ListIDs();
+            foreach (string mapID in mapIDs)
             {
-                GameObject mapButton = Instantiate(mapBannerPrefab, content);
-                mapButton.transform.localPosition = new Vector3(0, i * -1.3f + 1.8f, -1);
-                mapButton.AddComponent<MapBanner>().Init(maps[i]);
+                MapBanner banner = Instantiate(mapBannerPrefab, shopParent);
+                banner.gameObject.SetActive(true);
+                banner.SetMap(MapFileAPI.Instance.GetMetadata(mapID));
             }
+        }
+
+        public void ListTop()
+        {
+            ListNone();
+            currentList = "top";
+            LevelImposterAPI.Instance.GetTop((LIMetadata[] maps) =>
+            {
+                if (currentList != "top")
+                    return;
+                foreach (LIMetadata map in maps)
+                {
+                    MapBanner banner = Instantiate(mapBannerPrefab, shopParent);
+                    banner.gameObject.SetActive(true);
+                    banner.SetMap(map);
+                }
+            });
+        }
+
+        public void ListRecent()
+        {
+            ListNone();
+            currentList = "recent";
+            LevelImposterAPI.Instance.GetRecent((LIMetadata[] maps) =>
+            {
+                if (currentList != "recent")
+                    return;
+                foreach (LIMetadata map in maps)
+                {
+                    MapBanner banner = Instantiate(mapBannerPrefab, shopParent);
+                    banner.gameObject.SetActive(true);
+                    banner.SetMap(map);
+                }
+            });
+        }
+
+        public void ListFeatured()
+        {
+            ListNone();
+            currentList = "featured";
+            LevelImposterAPI.Instance.GetFeatured((LIMetadata[] maps) =>
+            {
+                if (currentList != "featured")
+                    return;
+                foreach (LIMetadata map in maps)
+                {
+                    MapBanner banner = Instantiate(mapBannerPrefab, shopParent);
+                    banner.gameObject.SetActive(true);
+                    banner.SetMap(map);
+                }
+            });
+        }
+
+        public void SelectMap(string id)
+        {
+            LILogger.Info("Selecting map [" + id + "]");
+            MapLoader.LoadMap(id);
+            MapUtils.SyncMapID();
+            CloseShop();
         }
 
         public void LaunchMap(string id)
         {
-            LILogger.Info("Launching map in freeplay: " + id);
+            if (!AssetDB.isReady)
+                return;
+            LILogger.Info("Launching map [" + id + "]");
             MapLoader.LoadMap(id);
 
             AmongUsClient.Instance.TutorialMapId = 2;
@@ -134,18 +156,10 @@ namespace LevelImposter.Shop
             StartCoroutine(AmongUsClient.Instance.WaitForConnectionOrFail());
         }
 
-        public void DownloadMap(Guid mapID, Action callbackFinish)
+        public static void CloseShop()
         {
-            MapAPI.DownloadMap(mapID, (System.Action<string>)((string mapJson) =>
-            {
-                MapLoader.WriteMap(mapID.ToString(), mapJson);
-                callbackFinish();
-            }));
-        }
-
-        public void DeleteMap(string id)
-        {
-            MapLoader.DeleteMap(id.ToString());
+            if (Instance != null)
+                Instance.Close();
         }
     }
 }

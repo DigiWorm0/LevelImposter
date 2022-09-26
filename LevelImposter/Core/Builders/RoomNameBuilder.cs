@@ -8,7 +8,7 @@ using TMPro;
 
 namespace LevelImposter.Core
 {
-    public class RoomNameBuilder : Builder
+    public class RoomNameBuilder : IElemBuilder
     {
         private int nameCount = 0;
 

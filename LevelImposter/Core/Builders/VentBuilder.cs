@@ -9,7 +9,7 @@ using PowerTools;
 
 namespace LevelImposter.Core
 {
-    class VentBuilder : Builder
+    class VentBuilder : IElemBuilder
     {
         private int id = 0;
         private bool hasSound = false;
@@ -31,6 +31,8 @@ namespace LevelImposter.Core
             {
                 spriteRenderer = obj.AddComponent<SpriteRenderer>();
                 spriteRenderer.sprite = utilData.SpriteRenderer.sprite;
+                if (elem.properties.color != null)
+                    spriteRenderer.color = MapUtils.LIColorToColor(elem.properties.color);
                 if (elem.type == "util-vent1")
                 {
                     SpriteAnim spriteAnimClone = utilData.GameObj.GetComponent<SpriteAnim>();

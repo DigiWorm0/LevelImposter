@@ -15,6 +15,7 @@ namespace LevelImposter.Core
         public const float PLAYER_POS = -5.0f;
 
         public static LIShipStatus Instance { get; private set; }
+
         public ShipStatus shipStatus { get; private set; }
         public LIMap currentMap { get; private set; }
 
@@ -25,27 +26,31 @@ namespace LevelImposter.Core
             "util-minimap",
             "util-room"
         };
+        private readonly Dictionary<string, string> exileIDs = new()
+        {
+            { "Skeld", "ss-skeld" },
+            { "MiraHQ", "ss-mira" },
+            { "Polus", "ss-polus" },
+            { "Airship", "ss-airship" }
+        };
 
         public LIShipStatus(IntPtr intPtr) : base(intPtr)
         {
         }
 
-        private void Awake()
+        public void Awake()
         {
+            Destroy(GetComponent<TagAmbientSoundPlayer>());
+
             shipStatus = GetComponent<ShipStatus>();
             Instance = this;
-            if (MapLoader.Exists("default") && MapLoader.currentMap == null)
-            {
-                LILogger.Info("Loading default map...");
-                MapLoader.LoadMap("default");
-            }
             if (MapLoader.currentMap != null)
                 LoadMap(MapLoader.currentMap);
             else
                 LILogger.Info("No map content, no LI data will load");
         }
 
-        private void Start()
+        public void Start()
         {
             if (MapLoader.currentMap != null)
                 HudManager.Instance.ShadowQuad.material.SetInt("_Mask", 7);
@@ -98,9 +103,12 @@ namespace LevelImposter.Core
         {
             LILogger.Info("Loading " + map.name + " [" + map.id + "]");
             currentMap = map;
-            AssetDB.Import();
             ResetMap();
             LoadMapProperties(map);
+
+            // Asset DB
+            if (!AssetDB.isReady)
+                LILogger.Warn("Asset DB is not ready yet!");
 
             // Priority First
             foreach (string type in priorityTypes)
@@ -120,10 +128,24 @@ namespace LevelImposter.Core
         {
             shipStatus.name = map.name;
 
-            if (!string.IsNullOrEmpty(map.properties.bgColor)) {
+            if (!string.IsNullOrEmpty(map.properties.bgColor))
+            {
                 Color bgColor;
                 ColorUtility.TryParseHtmlString(map.properties.bgColor, out bgColor);
                 Camera.main.backgroundColor = bgColor;
+            }
+
+            if (!string.IsNullOrEmpty(map.properties.exileID))
+            {
+                if (exileIDs.ContainsKey(map.properties.exileID))
+                {
+                    ShipStatus ship = AssetDB.ss[exileIDs[map.properties.exileID]].ShipStatus;
+                    shipStatus.ExileCutscenePrefab = ship.ExileCutscenePrefab;
+                }
+                else
+                {
+                    LILogger.Warn("Unknown exile ID: " + map.properties.exileID);
+                }
             }
         }
 

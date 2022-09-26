@@ -65,11 +65,19 @@ namespace LevelImposter.Shop
 
         public void Increment()
         {
-            SetValue(Math.Min(current + 1, mapOptions.Count - 1));
+            int newValue = Math.Min(current + 1, mapOptions.Count - 1);
+            if (newValue == 3)
+                SetValue(newValue + 1);
+            else
+                SetValue(newValue);
         }
         public void Decrement()
         {
-            SetValue(Math.Max(current - 1, 0));
+            int newValue = Math.Max(current - 1, 0);
+            if (newValue == 3)
+                SetValue(newValue - 1);
+            else
+                SetValue(newValue);
         }
 
         private void LoadOptions()
@@ -84,14 +92,14 @@ namespace LevelImposter.Shop
                 mapOptions.Add(mapOption);
             }
 
-            string[] mapIDs = MapLoader.GetMapIDs();
+            string[] mapIDs = MapFileAPI.Instance.ListIDs();
             foreach (string mapID in mapIDs)
             {
                 Guid tempID;
                 Guid.TryParse(mapID, out tempID);
                 if (tempID == Guid.Empty)
                     continue;
-                LIMetadata mapMetadata = MapLoader.GetMetadata(mapID);
+                LIMetadata mapMetadata = MapFileAPI.Instance.Get(mapID);
                 if (string.IsNullOrEmpty(mapMetadata.authorID) || string.IsNullOrEmpty(mapMetadata.id))
                     continue;
                 LIMapOption mapOption = new LIMapOption();
@@ -115,7 +123,10 @@ namespace LevelImposter.Shop
                 while (t < colorDuration)
                 {
                     t += Time.deltaTime;
-                    background.color = Color.Lerp(a, b, t / colorDuration);
+                    if (current < Constants.MapNames.Count)
+                        background.color = Color.white;
+                    else
+                        background.color = Color.Lerp(a, b, t / colorDuration);
                     yield return null;
                 }
 
@@ -146,6 +157,7 @@ namespace LevelImposter.Shop
             PlayerControl.GameOptions.MapId = mapOption.shipID;
             if (PlayerControl.LocalPlayer)
                 PlayerControl.LocalPlayer.RpcSyncSettings(PlayerControl.GameOptions);
+            MapUtils.SyncMapID();
         }
 
         private int GetOptionIndex(string mapID)

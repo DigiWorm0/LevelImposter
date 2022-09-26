@@ -8,7 +8,7 @@ using UnityEngine.Events;
 
 namespace LevelImposter.Core
 {
-    class LadderBuilder : Builder
+    class LadderBuilder : IElemBuilder
     {
         public static List<Ladder> AllLadders = new List<Ladder>();
 
@@ -36,6 +36,9 @@ namespace LevelImposter.Core
             {
                 spriteRenderer = obj.AddComponent<SpriteRenderer>();
                 spriteRenderer.sprite = utilData.SpriteRenderer.sprite;
+
+                if (elem.properties.color != null)
+                    spriteRenderer.color = MapUtils.LIColorToColor(elem.properties.color);
             }
             spriteRenderer.material = utilData.SpriteRenderer.material;
 

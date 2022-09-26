@@ -61,7 +61,8 @@ namespace LevelImposter.Core
                 return;
             if (HudManager.Instance.Notifier == null)
                 return;
-            HudManager.Instance.Notifier.AddItem(data);
+
+            DestroyableSingleton<HudManager>.Instance.Notifier.AddItem(data);
         }
     }
 }

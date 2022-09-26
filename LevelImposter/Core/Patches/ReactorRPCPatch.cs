@@ -6,24 +6,12 @@ using Reactor.Networking.MethodRpc;
 
 namespace LevelImposter.Core
 {
-    /*
-     *      Transmits the LI map ID over RPC
-     */
-    [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.RpcSyncSettings))]
+    [HarmonyPatch(typeof(AmongUsClient), nameof(AmongUsClient.CreatePlayer))]
     public static class SendRpcPatch
     {
         public static void Postfix()
         {
-            if (!AmongUsClient.Instance.AmHost || DestroyableSingleton<TutorialManager>.InstanceExists || PlayerControl.LocalPlayer == null)
-                return;
-
-            Guid mapID = Guid.Empty;
-            if (MapLoader.currentMap != null)
-                Guid.TryParse(MapLoader.currentMap.id, out mapID);
-            string mapIDStr = mapID.ToString();
-
-            LILogger.Info("[RPC] Transmitting map ID [" + mapIDStr + "]");
-            ReactorRPC.RPCSendMapID(PlayerControl.LocalPlayer, mapIDStr);
+            MapUtils.SyncMapID();
         }
     }
 
@@ -63,7 +51,7 @@ namespace LevelImposter.Core
             {
                 return;
             }
-            else if (MapLoader.Exists(mapIDStr))
+            else if (MapFileAPI.Instance.Exists(mapIDStr))
             {
                 MapLoader.LoadMap(mapIDStr);
             }
@@ -71,12 +59,11 @@ namespace LevelImposter.Core
             {
                 downloadingMapID = mapID;
                 LILogger.Notify("<color=#1a95d8>Downloading map, please wait...</color>");
-                MapAPI.DownloadMap(mapID, ((string mapJson) =>
+                LevelImposterAPI.Instance.DownloadMap(mapID, ((LIMap map) =>
                 {
                     if (downloadingMapID == mapID)
                     {
-                        MapLoader.WriteMap(mapID.ToString(), mapJson);
-                        MapLoader.LoadMap(mapID.ToString());
+                        MapLoader.LoadMap(map);
                         LILogger.Notify("<color=#1a95d8>Download finished!</color>");
                         downloadingMapID = null;
                     }

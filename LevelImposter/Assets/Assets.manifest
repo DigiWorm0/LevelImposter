@@ -1,7 +1,10 @@
 ManifestFileVersion: 0
-CRC: 2242365439
+CRC: 3840103461
 AssetBundleManifest:
   AssetBundleInfos:
     Info_0:
       Name: shop
+      Dependencies: {}
+    Info_1:
+      Name: spinner
       Dependencies: {}

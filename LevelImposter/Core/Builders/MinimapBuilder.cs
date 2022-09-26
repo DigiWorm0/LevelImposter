@@ -6,7 +6,7 @@ using TMPro;
 
 namespace LevelImposter.Core
 {
-    public class MinimapBuilder : Builder
+    public class MinimapBuilder : IElemBuilder
     {
         public const float DEFAULT_SCALE = 4.975f;
 
@@ -35,10 +35,13 @@ namespace LevelImposter.Core
             {
                 Sprite sprite = spriteRenderer.sprite;
                 GameObject background = mapBehaviour.ColorControl.gameObject;
-                background.GetComponent<SpriteRenderer>().sprite = sprite;
+                SpriteRenderer bgRenderer = background.GetComponent<SpriteRenderer>();
+                bgRenderer.sprite = sprite;
                 background.transform.localPosition = background.transform.localPosition;
                 background.transform.localScale = obj.transform.localScale * mapScale;
                 background.transform.localRotation = obj.transform.localRotation;
+                if (elem.properties.color != null)
+                    bgRenderer.color = MapUtils.LIColorToColor(elem.properties.color);
             }
 
             Vector3 mapOffset = -(obj.transform.localPosition * mapScale);

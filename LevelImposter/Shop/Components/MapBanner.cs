@@ -2,100 +2,143 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 using LevelImposter.Core;
+using BepInEx.IL2CPP.Utils.Collections;
 
 namespace LevelImposter.Shop
 {
     public class MapBanner : MonoBehaviour
     {
-        public bool isLocal = false;
-        public bool isDownloading = false;
-        public bool isDownloaded
+        public LIMetadata map;
+        public GameObject loadingSpinner;
+        public Image thumbnail;
+        public TMPro.TMP_Text nameText;
+        public TMPro.TMP_Text authorText;
+        public TMPro.TMP_Text descText;
+        public Button downloadButton;
+        public Button playButton;
+        public Button deleteButton;
+        public Button externalButton;
+
+        private bool _isInLobby
         {
-            get { return MapLoader.Exists(metadata.id); }
+            get
+            {
+                return SceneManager.GetActiveScene().name != "HowToPlay";
+            }
         }
 
-        private TMPro.TMP_Text titleText;
-        private TMPro.TMP_Text descriptionText;
-        private TMPro.TMP_Text authorText;
-
-        private GameObject deleteBtn;
-        private GameObject downloadBtn;
-        private GameObject launchBtn;
-
-        private LIMetadata metadata;
-
-        private List<MapBannerButton> buttons = new List<MapBannerButton>();
-
-        public void Init(LIMetadata metadata)
+        public MapBanner(IntPtr intPtr) : base(intPtr)
         {
-            this.metadata = metadata;
-            gameObject.SetActive(true);
+        }
 
-            titleText = transform.Find("Title").GetComponent<TMPro.TMP_Text>();
-            descriptionText = transform.Find("Description").GetComponent<TMPro.TMP_Text>();
-            authorText = transform.Find("Author").GetComponent<TMPro.TMP_Text>();
+        public void Awake()
+        {
+            loadingSpinner = transform.FindChild("LoadOverlay").gameObject;
+            thumbnail = transform.FindChild("Thumbnail").GetComponent<Image>();
+            nameText = transform.FindChild("Title").GetComponent<TMPro.TMP_Text>();
+            authorText = transform.FindChild("Author").GetComponent<TMPro.TMP_Text>();
+            descText = transform.FindChild("Description").GetComponent<TMPro.TMP_Text>();
+            downloadButton = transform.FindChild("DownloadBtn").GetComponent<Button>();
+            playButton = transform.FindChild("PlayBtn").GetComponent<Button>();
+            deleteButton = transform.FindChild("DeleteBtn").GetComponent<Button>();
+            externalButton = transform.FindChild("ExternalBtn").GetComponent<Button>();
+        }
 
-            deleteBtn = transform.Find("DeleteBtn").gameObject;
-            deleteBtn.AddComponent<MapBannerButton>().Init(MapButtonFunction.Delete);
-            buttons.Add(deleteBtn.GetComponent<MapBannerButton>());
+        public void Start()
+        {
+            downloadButton.onClick.AddListener((Action)OnDownload);
+            playButton.onClick.AddListener((Action)OnPlay);
+            deleteButton.onClick.AddListener((Action)OnDelete);
+            externalButton.onClick.AddListener((Action)OnExternal);
+            UpdateButtons();
+        }
 
-            launchBtn = transform.Find("RunBtn").gameObject;
-            launchBtn.AddComponent<MapBannerButton>().Init(MapButtonFunction.Launch);
-            buttons.Add(launchBtn.GetComponent<MapBannerButton>());
+        public void SetMap(LIMetadata map)
+        {
+            this.map = map;
+            loadingSpinner.SetActive(false);
+            nameText.text = map.name;
+            authorText.text = map.authorName;
+            descText.text = map.description;
+            UpdateButtons();
+            GetThumbnail();
+        }
 
-            downloadBtn = transform.Find("DownloadBtn").gameObject;
-            downloadBtn.AddComponent<MapBannerButton>().Init(MapButtonFunction.Download);
-            buttons.Add(downloadBtn.GetComponent<MapBannerButton>());
-
-            titleText.text = metadata.name;
-            if (string.IsNullOrEmpty(metadata.authorID))
+        public void UpdateButtons()
+        {
+            if (map == null)
             {
-                isLocal = true;
-                authorText.fontStyle = TMPro.FontStyles.Italic;
-                authorText.text = "(Freeplay Only)";
-                descriptionText.text = metadata.id + ".lim";
+                downloadButton.interactable = false;
+                playButton.interactable = false;
+                deleteButton.interactable = false;
+                externalButton.interactable = false;
             }
             else
             {
-                authorText.text = "By: " + metadata.authorName;
-                descriptionText.text = metadata.description;
+                bool mapExists = MapFileAPI.Instance.Exists(map.id);
+                bool isOnline = !string.IsNullOrEmpty(map.authorID);
+                downloadButton.interactable = !mapExists && isOnline;
+                playButton.interactable = mapExists && (isOnline || !_isInLobby);
+                deleteButton.interactable = mapExists && isOnline;
+                externalButton.gameObject.SetActive(isOnline);
             }
         }
 
-        public void DownloadMap()
+        public void OnDownload()
         {
-            isDownloading = true;
-            Guid mapID = Guid.Empty;
-            Guid.TryParse(metadata.id, out mapID);
-            if (mapID != Guid.Empty)
-                ShopManager.Instance.DownloadMap(mapID, OnDownloadFinish);
-            UpdateAllButtons();
-        }
-
-        public void OnDownloadFinish()
-        {
-            isDownloading = false;
-            MapLoader.LoadMap(metadata.id);
-            UpdateAllButtons();
-        }
-
-        public void DeleteMap()
-        {
-            ShopManager.Instance.DeleteMap(metadata.id);
-            UpdateAllButtons();
-        }
-
-        public void LaunchMap()
-        {
-            ShopManager.Instance.LaunchMap(metadata.id);
-        }
-
-        private void UpdateAllButtons()
-        {
-            foreach (MapBannerButton btn in buttons)
+            downloadButton.interactable = false;
+            loadingSpinner.SetActive(true);
+            LevelImposterAPI.Instance.DownloadMap(new System.Guid(map.id), (LIMap map) =>
             {
-                btn.UpdateButton();
+                MapFileAPI.Instance.Save(map);
+                loadingSpinner.SetActive(false);
+                UpdateButtons();
+            });
+        }
+
+        public void OnPlay()
+        {
+            if (_isInLobby)
+                ShopManager.Instance.SelectMap(map.id);
+            else
+                ShopManager.Instance.LaunchMap(map.id);
+        }
+
+        public void OnDelete()
+        {
+            MapFileAPI.Instance.Delete(map.id);
+            ThumbnailFileAPI.Instance.Delete(map.id);
+            UpdateButtons();
+        }
+
+        public void OnExternal()
+        {
+            Application.OpenURL("https://levelimposter.net/#/map/" + map.id);
+        }
+
+        public void GetThumbnail()
+        {
+            if (string.IsNullOrEmpty(map.thumbnailURL))
+                return;
+            if (ThumbnailFileAPI.Instance.Exists(map.id))
+            {
+                ThumbnailFileAPI.Instance.Get(map.id, (Texture2D texture) =>
+                {
+                    thumbnail.sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), Vector2.zero);
+                });
+            }
+            else
+            {
+                LevelImposterAPI.Instance.DownloadThumbnail(map, (Texture2D texture) =>
+                {
+                    byte[] textureData = texture.EncodeToPNG();
+                    ThumbnailFileAPI.Instance.Save(map.id, textureData);
+                    thumbnail.sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f), 100.0f);
+                    textureData = null;
+                });
             }
         }
     }

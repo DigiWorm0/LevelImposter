@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace LevelImposter.Core
 {
-    interface Builder
+    public interface IElemBuilder
     {
         public void Build(LIElement elem, GameObject obj);
         public void PostBuild();

@@ -73,9 +73,9 @@ namespace LevelImposter.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
-        internal static byte[] custom_btn {
+        internal static byte[] console {
             get {
-                object obj = ResourceManager.GetObject("custom_btn", resourceCulture);
+                object obj = ResourceManager.GetObject("console", resourceCulture);
                 return ((byte[])(obj));
             }
         }
