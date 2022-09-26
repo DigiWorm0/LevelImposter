@@ -5,6 +5,7 @@ using UnityEngine.UI;
 using UnityEngine.Events;
 using System.IO;
 using LevelImposter.Core;
+using LevelImposter.DB;
 
 namespace LevelImposter.Shop
 {
@@ -67,6 +68,15 @@ namespace LevelImposter.Shop
             bannerPrefab.transform.FindChild("LoadOverlay").FindChild("LoadingSpinner").gameObject.AddComponent<Spinner>();
 
             mapShop.transform.FindChild("Canvas").FindChild("CloseBtn").GetComponent<Button>().onClick.AddListener((System.Action)ShopManager.CloseShop);
+
+            Transform starField = mapShop.transform.FindChild("Star Field");
+            StarGen starGen = starField.gameObject.AddComponent<StarGen>();
+            starGen.Length = 12;
+            starGen.Width = 6;
+            MeshRenderer starRenderer = starField.gameObject.GetComponent<MeshRenderer>();
+
+            Transform skeld = AssetDB.ss["ss-skeld"].ShipStatus.transform;
+            starRenderer.material = skeld.FindChild("starfield").gameObject.GetComponent<MeshRenderer>().material;
 
             return mapShop;
         }

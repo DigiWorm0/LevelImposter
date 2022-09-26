@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace LevelImposter.Core
 {
-    class MapUtils
+    public class MapUtils
     {
         public static Dictionary<SystemTypes, string> systemRenames = new();
         public static Dictionary<TaskTypes, string> taskRenames = new();
@@ -177,6 +177,19 @@ namespace LevelImposter.Core
             if (PlayerControl.LocalPlayer == null)
                 return false;
             return obj == PlayerControl.LocalPlayer.gameObject;
+        }
+
+        /// <summary>
+        /// Generates a Sprite from byte dara
+        /// </summary>
+        /// <param name="data">png formated texture data</param>
+        /// <returns>A Unity Sprite representing the texture data</returns>
+        public static Sprite GenerateSprite(byte[] data)
+        {
+            Texture.allowThreadedTextureCreation = true;
+            Texture2D texture = new Texture2D(1, 1);
+            ImageConversion.LoadImage(texture, data);
+            return Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f), 100.0f);
         }
     }
 }

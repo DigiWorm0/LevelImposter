@@ -12,6 +12,7 @@ namespace LevelImposter.Shop
     public class ShopManager : MonoBehaviour
     {
         public static ShopManager Instance { get; private set; }
+        public static bool IsOpen = false; // Circumvent Garbage Collection Issues w/ ShopManager.Instance
 
         public MapBanner mapBannerPrefab;
         public Transform shopParent;
@@ -22,22 +23,30 @@ namespace LevelImposter.Shop
         {
         }
 
-        private void Awake()
+        public void Awake()
         {
             Instance = this;
+            IsOpen = true;
+            ControllerManager.Instance.OpenOverlayMenu("LIShop", null);
         }
 
-        private void Start()
+        public void Start()
         {
             ListDownloaded();
         }
 
-        private void Update()
+        public void Update()
         {
             if (Input.GetKeyUp(KeyCode.Escape))
             {
                 Close();
             }
+        }
+
+        public void OnDestroy()
+        {
+            IsOpen = false;
+            ControllerManager.Instance.CloseOverlayMenu("LIShop");
         }
 
         public void Close()
@@ -129,10 +138,7 @@ namespace LevelImposter.Shop
         public void LaunchMap(string id)
         {
             if (!AssetDB.isReady)
-            {
-                DisconnectPopup.Instance.SendMessage("Hold up! The Asset DB isn't quite ready yet.");
                 return;
-            }
             LILogger.Info("Launching map [" + id + "]");
             MapLoader.LoadMap(id);
 

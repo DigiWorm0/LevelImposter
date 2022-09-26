@@ -22,11 +22,19 @@ namespace LevelImposter.Shop
         public Button deleteButton;
         public Button externalButton;
 
+        private bool _isInLobby
+        {
+            get
+            {
+                return SceneManager.GetActiveScene().name != "HowToPlay";
+            }
+        }
+
         public MapBanner(IntPtr intPtr) : base(intPtr)
         {
         }
 
-        private void Awake()
+        public void Awake()
         {
             loadingSpinner = transform.FindChild("LoadOverlay").gameObject;
             thumbnail = transform.FindChild("Thumbnail").GetComponent<Image>();
@@ -39,7 +47,7 @@ namespace LevelImposter.Shop
             externalButton = transform.FindChild("ExternalBtn").GetComponent<Button>();
         }
 
-        private void Start()
+        public void Start()
         {
             downloadButton.onClick.AddListener((Action)OnDownload);
             playButton.onClick.AddListener((Action)OnPlay);
@@ -73,7 +81,7 @@ namespace LevelImposter.Shop
                 bool mapExists = MapFileAPI.Instance.Exists(map.id);
                 bool isOnline = !string.IsNullOrEmpty(map.authorID);
                 downloadButton.interactable = !mapExists && isOnline;
-                playButton.interactable = mapExists;
+                playButton.interactable = mapExists && (isOnline || !_isInLobby);
                 deleteButton.interactable = mapExists && isOnline;
                 externalButton.gameObject.SetActive(isOnline);
             }
@@ -93,10 +101,10 @@ namespace LevelImposter.Shop
 
         public void OnPlay()
         {
-            if (SceneManager.GetActiveScene().name == "HowToPlay")
-                ShopManager.Instance.LaunchMap(map.id);
-            else
+            if (_isInLobby)
                 ShopManager.Instance.SelectMap(map.id);
+            else
+                ShopManager.Instance.LaunchMap(map.id);
         }
 
         public void OnDelete()

@@ -28,7 +28,7 @@ namespace LevelImposter.Core
                 }
                 else
                 {
-                    spriteRenderer.sprite = generateSprite(elem.properties.spriteData);
+                    spriteRenderer.sprite = MapUtils.GenerateSprite(MapUtils.ParseBase64(elem.properties.spriteData));
                 }
             }
 
@@ -70,13 +70,6 @@ namespace LevelImposter.Core
 
         public void PostBuild() { }
 
-        private Sprite generateSprite(string base64)
-        {
-            Texture.allowThreadedTextureCreation = true;
-            byte[] data = MapUtils.ParseBase64(base64);
-            Texture2D texture = new Texture2D(1, 1);
-            ImageConversion.LoadImage(texture, data);
-            return Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f), 100.0f);
-        }
+        
     }
 }

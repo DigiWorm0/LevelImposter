@@ -65,11 +65,19 @@ namespace LevelImposter.Shop
 
         public void Increment()
         {
-            SetValue(Math.Min(current + 1, mapOptions.Count - 1));
+            int newValue = Math.Min(current + 1, mapOptions.Count - 1);
+            if (newValue == 3)
+                SetValue(newValue + 1);
+            else
+                SetValue(newValue);
         }
         public void Decrement()
         {
-            SetValue(Math.Max(current - 1, 0));
+            int newValue = Math.Max(current - 1, 0);
+            if (newValue == 3)
+                SetValue(newValue - 1);
+            else
+                SetValue(newValue);
         }
 
         private void LoadOptions()
