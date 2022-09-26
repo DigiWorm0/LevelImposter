@@ -26,6 +26,13 @@ namespace LevelImposter.Core
             "util-minimap",
             "util-room"
         };
+        private readonly Dictionary<string, string> exileIDs = new()
+        {
+            { "Skeld", "ss-skeld" },
+            { "MiraHQ", "ss-mira" },
+            { "Polus", "ss-polus" },
+            { "Airship", "ss-airship" }
+        };
 
         public LIShipStatus(IntPtr intPtr) : base(intPtr)
         {
@@ -126,6 +133,19 @@ namespace LevelImposter.Core
                 Color bgColor;
                 ColorUtility.TryParseHtmlString(map.properties.bgColor, out bgColor);
                 Camera.main.backgroundColor = bgColor;
+            }
+
+            if (!string.IsNullOrEmpty(map.properties.exileID))
+            {
+                if (exileIDs.ContainsKey(map.properties.exileID))
+                {
+                    ShipStatus ship = AssetDB.ss[exileIDs[map.properties.exileID]].ShipStatus;
+                    shipStatus.ExileCutscenePrefab = ship.ExileCutscenePrefab;
+                }
+                else
+                {
+                    LILogger.Warn("Unknown exile ID: " + map.properties.exileID);
+                }
             }
         }
 

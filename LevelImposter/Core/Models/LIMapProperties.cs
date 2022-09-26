@@ -9,5 +9,6 @@ namespace LevelImposter.Core
     public class LIMapProperties
     {
         public string? bgColor { get; set; }
+        public string? exileID { get; set; }
     }
 }
