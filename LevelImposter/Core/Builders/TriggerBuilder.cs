@@ -22,6 +22,7 @@ namespace LevelImposter.Core
                 triggerComp.elemID = elem.id;
                 triggerComp.targetElemID = trigger.elemID;
                 triggerComp.targetTriggerID = trigger.triggerID;
+                triggerComp.elem = elem;
 
                 triggerDB.Add(triggerComp);
             }

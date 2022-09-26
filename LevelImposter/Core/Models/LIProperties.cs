@@ -11,7 +11,10 @@ namespace LevelImposter.Core
         // Generic
         public Guid? parent { get; set; }
         public LICollider[]? colliders { get; set; }
+
+        // Triggers
         public LITrigger[]? triggers { get; set; }
+        public float? triggerTime { get; set; }
 
         // Sprite
         public string? spriteData { get; set; }
