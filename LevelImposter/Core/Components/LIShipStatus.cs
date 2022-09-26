@@ -33,6 +33,8 @@ namespace LevelImposter.Core
 
         public void Awake()
         {
+            Destroy(GetComponent<TagAmbientSoundPlayer>());
+
             shipStatus = GetComponent<ShipStatus>();
             Instance = this;
             if (MapLoader.currentMap != null)
