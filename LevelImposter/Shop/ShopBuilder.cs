@@ -58,8 +58,8 @@ namespace LevelImposter.Shop
             StarGen starGen = starField.gameObject.AddComponent<StarGen>();
             starGen.Length = 12;
             starGen.Width = 6;
-            MeshRenderer starRenderer = starField.gameObject.GetComponent<MeshRenderer>();
 
+            MeshRenderer starRenderer = starField.gameObject.GetComponent<MeshRenderer>();
             Transform skeld = AssetDB.ss["ss-skeld"].ShipStatus.transform;
             starRenderer.material = skeld.FindChild("starfield").gameObject.GetComponent<MeshRenderer>().material;
 

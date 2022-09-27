@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using UnityEngine;
+using UnityEngine.ResourceManagement.AsyncOperations;
 using UnityEngine.AddressableAssets;
 using LevelImposter.Core;
 using System.Text.Json;
@@ -45,18 +46,41 @@ namespace LevelImposter.DB
             room = tempDB.room;
             ss = tempDB.ss;
             sounds = tempDB.sounds;
-
             StartCoroutine(CoLoadAssets().WrapToIl2Cpp());
         }
 
         public IEnumerator CoLoadAssets()
         {
             LILogger.Info("Loading AssetDB...");
-            foreach (AssetReference shipRef in AmongUsClient.Instance.ShipPrefabs)
+            for (int i = 0; i < AmongUsClient.Instance.ShipPrefabs.Count; i++)
             {
-                yield return shipRef.LoadAssetAsync<GameObject>();
-                GameObject shipPrefab = shipRef.Asset.Cast<GameObject>();
-                yield return ImportAsset(shipPrefab);
+                AssetReference shipRef = AmongUsClient.Instance.ShipPrefabs[i];
+                while (true)
+                {
+                    if (shipRef.Asset == null)
+                    {
+                        AsyncOperationHandle op = shipRef.LoadAssetAsync<GameObject>();
+                        if (!op.IsValid())
+                        {
+                            LILogger.Warn($"Could not import [{shipRef.AssetGUID}] due to invalid Async Operation. Trying again in 5 seconds...");
+                            yield return new WaitForSeconds(5);
+                            continue;
+                        }
+                        yield return op;
+                        if (op.Status != AsyncOperationStatus.Succeeded)
+                            LILogger.Warn($"Could not import [{shipRef.AssetGUID}] due to failed Async Operation. Ignoring...");
+                    }
+                    break;
+                }
+
+                if (shipRef.Asset != null)
+                {
+                    GameObject shipPrefab = shipRef.Asset.Cast<GameObject>();
+                    yield return ImportAsset(shipPrefab);
+                } else
+                {
+                    LILogger.Warn($"Could not import [{shipRef.AssetGUID}] due to missing Assets. Ignoring...");
+                }
             }
             isReady = true;
         }

@@ -57,12 +57,11 @@ namespace LevelImposter.Core
 
         public static void Notify(string data)
         {
-            if (HudManager.Instance == null)
+            if (!DestroyableSingleton<HudManager>.InstanceExists)
                 return;
-            if (HudManager.Instance.Notifier == null)
-                return;
-
-            DestroyableSingleton<HudManager>.Instance.Notifier.AddItem(data);
+            NotificationPopper notifier = DestroyableSingleton<HudManager>.Instance.Notifier;
+            if (notifier != null)
+                notifier.AddItem(data);
         }
     }
 }

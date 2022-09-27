@@ -9,23 +9,40 @@ using UnityEngine;
 namespace LevelImposter.Shop
 {
     /*
-     *      Adds downloaded maps to the lobby menu
+     *      Replace Map Name in Options Console
      */
-    [HarmonyPatch(typeof(KeyValueOption), nameof(KeyValueOption.OnEnable))]
+    [HarmonyPatch(typeof(KeyValueOption))]
     public static class MapNameValuePatch
     {
-        public static bool Prefix(KeyValueOption __instance)
+        [HarmonyPrefix]
+        [HarmonyPatch(nameof(KeyValueOption.FixedUpdate))]
+        public static bool EnableFix(KeyValueOption __instance)
         {
-            if (__instance.Title == StringNames.GameMapName)
+            if (MapLoader.currentMap != null && __instance.Title == StringNames.GameMapName && __instance.oldValue != __instance.Selected)
             {
-                UnityEngine.Object.Destroy(__instance);
-                __instance.gameObject.AddComponent<LIMapSelector>();
+                __instance.oldValue = __instance.Selected;
+                __instance.ValueText.text = MapLoader.currentMap.name;
                 return false;
             }
             return true;
         }
+
+        [HarmonyPrefix]
+        [HarmonyPatch(nameof(KeyValueOption.Increase))]
+        [HarmonyPatch(nameof(KeyValueOption.Decrease))]
+        public static void IncrementFix(KeyValueOption __instance)
+        {
+            if (__instance.Title == StringNames.GameMapName)
+            {
+                MapLoader.UnloadMap();
+                MapUtils.SyncMapID();
+            }
+        }
     }
-    
+
+    /*
+     *      Initializes a new Map Console in the Lobby
+     */
     [HarmonyPatch(typeof(LobbyBehaviour), nameof(LobbyBehaviour.Start))]
     public static class LobbyMenuInitPatch
     {
