@@ -55,8 +55,8 @@ namespace LevelImposter.Shop
             logoText.SetText("v" + LevelImposter.VERSION);
         }
     }
-
-    [HarmonyPatch(typeof(TranslationController), nameof(TranslationController.GetStringWithDefault))]
+    /*
+    [HarmonyPatch(typeof(TranslationController), nameof(TranslationController.GetStringWithDefault), new System.Type[] { typeof(StringNames), typeof(string) })]
     public static class RegionPatch
     {
         public static void Postfix(ref string __result)
@@ -64,4 +64,5 @@ namespace LevelImposter.Shop
             __result = __result.Replace("LevelImposter", "<color=#176be6>Level</color><color=#c13030>Impostor</color>");
         }
     }
+    */
 }
