@@ -7,8 +7,20 @@ using LevelImposter.Core;
 
 namespace LevelImposter.DB
 {
-    public static class MapSearcher
+    /// <summary>
+    /// Utility class used to search GameObjects in
+    /// Among Us Map prefabs for the AssetDB.
+    /// </summary>
+    public static class MapSearchUtil
     {
+        /// <summary>
+        /// Recursively searches a GameObject's children for a
+        /// GameObject with a specific name and component.
+        /// </summary>
+        /// <typeparam name="T">Component type</typeparam>
+        /// <param name="parent">Parent GameObject</param>
+        /// <param name="name">Child GameObject's name</param>
+        /// <returns>The cooresponding component. Null otherwise.</returns>
         public static T SearchComponent<T>(GameObject parent, string name)
         {
             GameObject obj = SearchChildren(parent, name);
@@ -18,6 +30,14 @@ namespace LevelImposter.DB
             return default(T);
         }
 
+        /// <summary>
+        /// Recursively searches a GameObject's children for
+        /// a specific SpriteRenderer with a specific sprite.
+        /// </summary>
+        /// <param name="parent">Parent GameObject</param>
+        /// <param name="name">Child GameObject's name</param>
+        /// <param name="spriteName">Sprite name</param>
+        /// <returns>The cooresponding SpriteRenderer. Null otherwise.</returns>
         public static SpriteRenderer SearchSprites(GameObject parent, string name, string spriteName)
         {
             List<Transform> output = new List<Transform>();
@@ -37,6 +57,13 @@ namespace LevelImposter.DB
             return null;
         }
 
+        /// <summary>
+        /// Recursively searches a GameObject's children
+        /// for a GameObject with a specific name
+        /// </summary>
+        /// <param name="parent">Parent GameObject</param>
+        /// <param name="name">Child GameObject's name</param>
+        /// <returns>The first GameObject with the cooresponding name. Null otherwise.</returns>
         public static GameObject SearchChildren(GameObject parent, string name)
         {
             List<Transform> output = new List<Transform>();
@@ -49,6 +76,13 @@ namespace LevelImposter.DB
 
         }
 
+        /// <summary>
+        /// Recursively searches a GameObject's children
+        /// for list of GameObjects with a specific name
+        /// </summary>
+        /// <param name="parent">Parent GameObject</param>
+        /// <param name="name">Child GameObject's name</param>
+        /// <returns>A list of GameObjects with the cooresponding name.</returns>
         public static List<Transform> SearchMultipleChildren(GameObject parent, string name)
         {
             List<Transform> output = new List<Transform>();
@@ -73,6 +107,14 @@ namespace LevelImposter.DB
             }
         }
 
+        /// <summary>
+        /// Searches a list of MonoBehaviours for 
+        /// GameObjects with a specific name.
+        /// </summary>
+        /// <typeparam name="T">MonoBehaviour Type</typeparam>
+        /// <param name="list">List of components</param>
+        /// <param name="name">Name of the GameObject</param>
+        /// <returns>The cooresponding component. Null otherwise.</returns>
         public static T SearchList<T>(UnhollowerBaseLib.Il2CppReferenceArray<T> list, string name) where T : MonoBehaviour
         {
             IEnumerable<T> elem = list.Where(t => t.name == name);

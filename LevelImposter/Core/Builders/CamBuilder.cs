@@ -14,7 +14,7 @@ namespace LevelImposter.Core
             if (elem.type != "util-cam")
                 return;
 
-            UtilData utilData = AssetDB.utils[elem.type];
+            UtilData utilData = AssetDB.Utils[elem.type];
 
             // Default Sprite
             SpriteRenderer spriteRenderer = obj.GetComponent<SpriteRenderer>();

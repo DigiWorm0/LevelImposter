@@ -11,17 +11,17 @@ namespace LevelImposter.Core
 {
     class VentBuilder : IElemBuilder
     {
-        private int id = 0;
-        private bool hasSound = false;
-        private static Dictionary<int, LIElement> ventElementDb = new Dictionary<int, LIElement>();
-        private static Dictionary<Guid, Vent> ventComponentDb = new Dictionary<Guid, Vent>();
+        private int _ventID = 0;
+        private bool _hasVentSound = false;
+        private static Dictionary<int, LIElement> _ventElementDb = new Dictionary<int, LIElement>();
+        private static Dictionary<Guid, Vent> _ventComponentDb = new Dictionary<Guid, Vent>();
 
         public void Build(LIElement elem, GameObject obj)
         {
             if (!elem.type.StartsWith("util-vent"))
                 return;
 
-            UtilData utilData = AssetDB.utils[elem.type];
+            UtilData utilData = AssetDB.Utils[elem.type];
 
             // Default Sprite
             SpriteRenderer spriteRenderer = obj.GetComponent<SpriteRenderer>();
@@ -66,7 +66,7 @@ namespace LevelImposter.Core
             vent.Offset = ventData.Offset;
             vent.Buttons = new UnhollowerBaseLib.Il2CppReferenceArray<ButtonBehavior>(0);
             vent.CleaningIndicators = new UnhollowerBaseLib.Il2CppReferenceArray<GameObject>(0);
-            vent.Id = this.id;
+            vent.Id = this._ventID;
 
             // Arrows
             GameObject arrowPrefab = utilData.GameObj.transform.FindChild("Arrow").gameObject;
@@ -74,12 +74,12 @@ namespace LevelImposter.Core
                 GenerateArrow(arrowPrefab, vent, i);
 
             // Sounds
-            ShipStatus shipStatus = LIShipStatus.Instance.shipStatus;
-            if (!hasSound)
+            ShipStatus shipStatus = LIShipStatus.Instance.ShipStatus;
+            if (!_hasVentSound)
             {
-                shipStatus.VentEnterSound = AssetDB.ss["ss-skeld"].ShipStatus.VentEnterSound;
-                shipStatus.VentMoveSounds = AssetDB.ss["ss-skeld"].ShipStatus.VentMoveSounds;
-                hasSound = true;
+                shipStatus.VentEnterSound = AssetDB.Sabos["ss-skeld"].ShipStatus.VentEnterSound;
+                shipStatus.VentMoveSounds = AssetDB.Sabos["ss-skeld"].ShipStatus.VentMoveSounds;
+                _hasVentSound = true;
             }
 
             // Collider
@@ -95,29 +95,29 @@ namespace LevelImposter.Core
             }
 
             // DB
-            ventElementDb.Add(id, elem);
-            ventComponentDb.Add(elem.id, vent);
-            this.id++;
+            _ventElementDb.Add(_ventID, elem);
+            _ventComponentDb.Add(elem.id, vent);
+            this._ventID++;
         }
 
         public void PostBuild()
         {
-            id = 0;
-            hasSound = false;
+            _ventID = 0;
+            _hasVentSound = false;
 
-            foreach (var currentVent in ventElementDb)
+            foreach (var currentVent in _ventElementDb)
             {
-                Vent ventComponent = ventComponentDb[currentVent.Value.id];
+                Vent ventComponent = _ventComponentDb[currentVent.Value.id];
                 if (currentVent.Value.properties.leftVent != null)
-                    ventComponent.Left = ventComponentDb[(Guid)currentVent.Value.properties.leftVent];
+                    ventComponent.Left = _ventComponentDb[(Guid)currentVent.Value.properties.leftVent];
                 if (currentVent.Value.properties.middleVent != null)
-                    ventComponent.Center = ventComponentDb[(Guid)currentVent.Value.properties.middleVent];
+                    ventComponent.Center = _ventComponentDb[(Guid)currentVent.Value.properties.middleVent];
                 if (currentVent.Value.properties.rightVent != null)
-                    ventComponent.Right = ventComponentDb[(Guid)currentVent.Value.properties.rightVent];
+                    ventComponent.Right = _ventComponentDb[(Guid)currentVent.Value.properties.rightVent];
             }
 
-            ventElementDb.Clear();
-            ventComponentDb.Clear();
+            _ventElementDb.Clear();
+            _ventComponentDb.Clear();
         }
 
         private void GenerateArrow(GameObject arrowPrefab, Vent vent, int dir)

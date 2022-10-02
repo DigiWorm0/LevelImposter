@@ -34,7 +34,6 @@ namespace LevelImposter
             ClassInjector.RegisterTypeInIl2Cpp<LITriggerable>();
             ClassInjector.RegisterTypeInIl2Cpp<GIFAnimator>();
             ClassInjector.RegisterTypeInIl2Cpp<AssetDB>();
-            ClassInjector.RegisterTypeInIl2Cpp<LIMapSelector>();
             ClassInjector.RegisterTypeInIl2Cpp<LIMapConsole>();
             ClassInjector.RegisterTypeInIl2Cpp<LITriggerArea>();
 

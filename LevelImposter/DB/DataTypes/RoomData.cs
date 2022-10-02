@@ -14,7 +14,7 @@ namespace LevelImposter.DB
 
         public override void ImportMap(GameObject map, ShipStatus shipStatus)
         {
-            SpriteRenderer = MapSearcher.SearchSprites(map, SpriteRendererName, SpriteName);
+            SpriteRenderer = MapSearchUtil.SearchSprites(map, SpriteRendererName, SpriteName);
         }
     }
 }

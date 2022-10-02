@@ -12,13 +12,13 @@ namespace LevelImposter.Shop
 {
     public class MapFileAPI : MonoBehaviour
     {
-        public static MapFileAPI Instance;
-
         public MapFileAPI(IntPtr intPtr) : base(intPtr)
         {
         }
 
-        private void Awake()
+        public static MapFileAPI Instance;
+
+        public void Awake()
         {
             if (Instance == null)
             {
@@ -31,17 +31,31 @@ namespace LevelImposter.Shop
             }
         }
 
+        /// <summary>
+        /// Gets the current directory where LevelImposter map files are stored.
+        /// Usually in a LevelImposter folder beside the LevelImposter.dll.
+        /// </summary>
+        /// <returns>String path where LevelImposter data is stored.</returns>
         public string GetDirectory()
         {
             string gameDir = System.Reflection.Assembly.GetAssembly(typeof(LevelImposter)).Location;
-            return System.IO.Path.Combine(System.IO.Path.GetDirectoryName(gameDir), "LevelImposter");
+            return Path.Combine(Path.GetDirectoryName(gameDir), "LevelImposter");
         }
 
+        /// <summary>
+        /// Gets the path where a specific map LIM file is stored.
+        /// </summary>
+        /// <param name="mapID">ID of the map file</param>
+        /// <returns>The path where a specific map is stored</returns>
         public string GetPath(string mapID)
         {
-            return System.IO.Path.Combine(GetDirectory(), mapID + ".lim");
+            return Path.Combine(GetDirectory(), mapID + ".lim");
         }
 
+        /// <summary>
+        /// Lists all map file IDs that are located in the LevelImposter folder.
+        /// </summary>
+        /// <returns>Array of map file IDs that are located in the LevelImpsoter folder.</returns>
         public string[] ListIDs()
         {
             string[] fileNames = System.IO.Directory.GetFiles(GetDirectory(), "*.lim");
@@ -50,11 +64,21 @@ namespace LevelImposter.Shop
             return fileNames;
         }
 
+        /// <summary>
+        /// Checks the existance of a map file based on ID
+        /// </summary>
+        /// <param name="mapID">Map File ID</param>
+        /// <returns>True if a map file with the cooresponding ID exists</returns>
         public bool Exists(string mapID)
         {
             return System.IO.File.Exists(GetPath(mapID));
         }
 
+        /// <summary>
+        /// Reads and parses a map file into memory.
+        /// </summary>
+        /// <param name="mapID">Map ID to read and parse</param>
+        /// <returns>Representation of the map file data in the form of a <c>LIMap</c>.</returns>
         public LIMap Get(string mapID)
         {
             if (!Exists(mapID))
@@ -70,6 +94,12 @@ namespace LevelImposter.Shop
             return mapData;
         }
 
+        /// <summary>
+        /// Reads and parses the metadata of a map file into memory.
+        /// Less memory-intensive than <c>MapFileAPI.Get()</c>.
+        /// </summary>
+        /// <param name="mapID">Map ID to read and parse</param>
+        /// <returns>Representation of the map file data in the form of a <c>LIMetadata</c>.</returns>
         public LIMetadata GetMetadata(string mapID)
         {
             if (!Exists(mapID))
@@ -85,36 +115,10 @@ namespace LevelImposter.Shop
             return mapData;
         }
 
-        public void GetAsync(string mapID, System.Action<LIMap> callback)
-        {
-            StartCoroutine(CoGetAsync(mapID, callback).WrapToIl2Cpp());
-        }
-
-        public IEnumerator CoGetAsync(string mapID, System.Action<LIMap> callback)
-        {
-            if (!Exists(mapID))
-            {
-                LILogger.Error("Could not find [" + mapID + "] in filesystem");
-                yield break;
-            }
-            LILogger.Info("Loading map [" + mapID + "] from filesystem");
-            string mapPath = GetPath(mapID);
-            UnityWebRequest request = UnityWebRequest.Get("file://" + mapPath);
-            yield return request.SendWebRequest();
-
-            if (request.result == UnityWebRequest.Result.ConnectionError || request.result == UnityWebRequest.Result.ProtocolError)
-            {
-                LILogger.Error(request.error);
-            }
-            else
-            {
-                LIMap mapData = JsonSerializer.Deserialize<LIMap>(request.downloadHandler.text);
-                mapData.id = mapID;
-                callback(mapData);
-            }
-            request.Dispose();
-        }
-
+        /// <summary>
+        /// Saves map data into the local filesystem based on the map's ID.
+        /// </summary>
+        /// <param name="map">Map data to save</param>
         public void Save(LIMap map)
         {
             LILogger.Info("Saving [" + map.id + "] to filesystem");
@@ -130,6 +134,10 @@ namespace LevelImposter.Shop
             System.IO.File.WriteAllText(mapPath, mapJson);
         }
 
+        /// <summary>
+        /// Deletes a map file from the filesystem.
+        /// </summary>
+        /// <param name="mapID">ID of the map to delete</param>
         public void Delete(string mapID)
         {
             LILogger.Info("Deleting [" + mapID + "] from filesystem");

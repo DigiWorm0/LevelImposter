@@ -23,7 +23,7 @@ namespace LevelImposter.Core
                 elem.type == "util-computer"))
                 return;
 
-            UtilData utilData = AssetDB.utils[elem.type];
+            UtilData utilData = AssetDB.Utils[elem.type];
 
             // Default Sprite
             SpriteRenderer spriteRenderer = obj.GetComponent<SpriteRenderer>();
@@ -49,7 +49,7 @@ namespace LevelImposter.Core
                 console.usableDistance = origConsole.usableDistance;
                 console.MinigamePrefab = origConsole.MinigamePrefab;
                 if (elem.type == "util-cams2")
-                    console.MinigamePrefab = AssetDB.utils["util-cams"].GameObj.GetComponent<SystemConsole>().MinigamePrefab;
+                    console.MinigamePrefab = AssetDB.Utils["util-cams"].GameObj.GetComponent<SystemConsole>().MinigamePrefab;
                 console.useIcon = origConsole.useIcon;
                 if (elem.properties.range != null)
                     console.usableDistance = (float)elem.properties.range;

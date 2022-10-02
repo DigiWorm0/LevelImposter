@@ -14,12 +14,12 @@ namespace LevelImposter.Core
     {
         public static bool Prefix([HarmonyArgument(0)] SystemTypes systemType, ref string __result)
         {
-            if (MapLoader.currentMap == null)
+            if (MapLoader.CurrentMap == null)
                 return true;
 
-            if (MapUtils.systemRenames.ContainsKey(systemType))
+            if (MapUtils.SystemRenames.ContainsKey(systemType))
             {
-                __result = MapUtils.systemRenames[systemType];
+                __result = MapUtils.SystemRenames[systemType];
                 return false;
             }
             return true;
@@ -30,12 +30,12 @@ namespace LevelImposter.Core
     {
         public static bool Prefix([HarmonyArgument(0)] TaskTypes taskType, ref string __result)
         {
-            if (MapLoader.currentMap == null)
+            if (MapLoader.CurrentMap == null)
                 return true;
 
-            if (MapUtils.taskRenames.ContainsKey(taskType))
+            if (MapUtils.TaskRenames.ContainsKey(taskType))
             {
-                __result = MapUtils.taskRenames[taskType];
+                __result = MapUtils.TaskRenames[taskType];
                 return false;
             }
             return true;
@@ -46,12 +46,12 @@ namespace LevelImposter.Core
     {
         public static void Postfix(GameOptionsData __instance, ref string __result)
         {
-            if (MapLoader.currentMap == null)
+            if (MapLoader.CurrentMap == null)
                 return;
 
             int mapID = (int)((__instance.MapId == 0 && Constants.ShouldFlipSkeld()) ? 3 : __instance.MapId);
             string oldMapName = Constants.MapNames[mapID];
-            __result = __result.Replace(oldMapName, MapLoader.currentMap.name);
+            __result = __result.Replace(oldMapName, MapLoader.CurrentMap.name);
         }
     }
 }

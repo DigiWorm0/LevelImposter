@@ -7,7 +7,7 @@ namespace LevelImposter.Shop
 {
     public static class LobbyBuilder
     {
-        private static Texture2D consoleTex;
+        private static Texture2D _consoleTex;
 
         public static void OnLoad()
         {
@@ -47,12 +47,12 @@ namespace LevelImposter.Shop
 
         public static Texture2D GetTexture()
         {
-            if (consoleTex == null)
+            if (_consoleTex == null)
             {
-                consoleTex = new Texture2D(1, 1);
-                ImageConversion.LoadImage(consoleTex, Properties.Resources.console);
+                _consoleTex = new Texture2D(1, 1);
+                ImageConversion.LoadImage(_consoleTex, Properties.Resources.console);
             }
-            return consoleTex;
+            return _consoleTex;
         }
     }
 }

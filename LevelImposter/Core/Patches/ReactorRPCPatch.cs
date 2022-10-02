@@ -17,8 +17,9 @@ namespace LevelImposter.Core
 
     public static class ReactorRPC
     {
-        public static Guid? downloadingMapID = null;
-        public const int RPC_ID = 99; // <100 for TOU Support
+        public const int RPC_ID = 99; // Must be <= 99 for TOU-R Support
+
+        public static Guid? ActiveDownloadingID = null;
 
         [MethodRpc(RPC_ID)]
         public static void RPCSendMapID(PlayerControl _p, string mapIDStr)
@@ -35,11 +36,11 @@ namespace LevelImposter.Core
             }
 
             // Get Current
-            string currentMapID = MapLoader.currentMap == null ? "" : MapLoader.currentMap.id;
-            if (downloadingMapID != null)
+            string currentMapID = MapLoader.CurrentMap == null ? "" : MapLoader.CurrentMap.id;
+            if (ActiveDownloadingID != null)
             {
                 LILogger.Notify("Download stopped.");
-                downloadingMapID = null;
+                ActiveDownloadingID = null;
             }
 
             // Handle ID
@@ -47,7 +48,7 @@ namespace LevelImposter.Core
             {
                 MapLoader.UnloadMap();
             }
-            else if (currentMapID == mapIDStr || downloadingMapID == mapID)
+            else if (currentMapID == mapIDStr || ActiveDownloadingID == mapID)
             {
                 return;
             }
@@ -57,15 +58,15 @@ namespace LevelImposter.Core
             }
             else
             {
-                downloadingMapID = mapID;
+                ActiveDownloadingID = mapID;
                 LILogger.Notify("<color=#1a95d8>Downloading map, please wait...</color>");
                 LevelImposterAPI.Instance.DownloadMap(mapID, ((LIMap map) =>
                 {
-                    if (downloadingMapID == mapID)
+                    if (ActiveDownloadingID == mapID)
                     {
                         MapLoader.LoadMap(map);
                         LILogger.Notify("<color=#1a95d8>Download finished!</color>");
-                        downloadingMapID = null;
+                        ActiveDownloadingID = null;
                     }
                 }));
             }

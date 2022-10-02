@@ -9,41 +9,41 @@ namespace LevelImposter.Shop
 {
     public class ShopButtons : MonoBehaviour
     {
-        public Button downloadedButton;
-        public Button topButton;
-        public Button recentButton;
-        public Button featuredButton;
-        public Button folderButton;
-
-        private string selected = "downloaded";
-
         public ShopButtons(IntPtr intPtr) : base(intPtr)
         {
         }
 
+        public Button DownloadedButton;
+        public Button TopButton;
+        public Button RecentButton;
+        public Button FeaturedButton;
+        public Button FolderButton;
+
+        private string _selectedID = "downloaded";
+
         private void Start()
         {
-            downloadedButton.onClick.AddListener((Action)OnDownloaded);
-            topButton.onClick.AddListener((Action)OnTop);
-            recentButton.onClick.AddListener((Action)OnRecent);
-            featuredButton.onClick.AddListener((Action)OnFeatured);
-            folderButton.onClick.AddListener((Action)OnFolder);
+            DownloadedButton.onClick.AddListener((Action)OnDownloaded);
+            TopButton.onClick.AddListener((Action)OnTop);
+            RecentButton.onClick.AddListener((Action)OnRecent);
+            FeaturedButton.onClick.AddListener((Action)OnFeatured);
+            FolderButton.onClick.AddListener((Action)OnFolder);
             UpdateButtons();
         }
 
         public void UpdateButtons()
         {
-            downloadedButton.interactable = selected != "downloaded";
-            topButton.interactable = selected != "top";
-            recentButton.interactable = selected != "recent";
-            featuredButton.interactable = selected != "featured";
+            DownloadedButton.interactable = _selectedID != "downloaded";
+            TopButton.interactable = _selectedID != "top";
+            RecentButton.interactable = _selectedID != "recent";
+            FeaturedButton.interactable = _selectedID != "featured";
         }
 
         public void OnDownloaded()
         {
-            if (selected != "downloaded")
+            if (_selectedID != "downloaded")
             {
-                selected = "downloaded";
+                _selectedID = "downloaded";
                 ShopManager.Instance.ListDownloaded();
                 UpdateButtons();
             }
@@ -51,9 +51,9 @@ namespace LevelImposter.Shop
 
         public void OnTop()
         {
-            if (selected != "top")
+            if (_selectedID != "top")
             {
-                selected = "top";
+                _selectedID = "top";
                 ShopManager.Instance.ListTop();
                 UpdateButtons();
             }
@@ -61,9 +61,9 @@ namespace LevelImposter.Shop
 
         public void OnRecent()
         {
-            if (selected != "recent")
+            if (_selectedID != "recent")
             {
-                selected = "recent";
+                _selectedID = "recent";
                 ShopManager.Instance.ListRecent();
                 UpdateButtons();
             }
@@ -71,9 +71,9 @@ namespace LevelImposter.Shop
 
         public void OnFeatured()
         {
-            if (selected != "featured")
+            if (_selectedID != "featured")
             {
-                selected = "featured";
+                _selectedID = "featured";
                 ShopManager.Instance.ListFeatured();
                 UpdateButtons();
             }

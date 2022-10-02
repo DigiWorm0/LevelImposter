@@ -18,40 +18,40 @@ namespace LevelImposter.Core
     {
         public static void Postfix(NormalPlayerTask __instance)
         {
-            if (MapLoader.currentMap == null)
+            if (MapLoader.CurrentMap == null)
                 return;
 
             TaskTypes taskType = __instance.TaskType;
             switch (taskType)
             {
                 case TaskTypes.ResetBreakers:
-                    __instance.Data = new byte[TaskBuilder.breakerCount];
-                    for (byte i = 0; i < TaskBuilder.breakerCount; i++)
+                    __instance.Data = new byte[TaskBuilder.BreakerCount];
+                    for (byte i = 0; i < TaskBuilder.BreakerCount; i++)
                         __instance.Data[i] = i;
                     __instance.Data = MapUtils.Shuffle(__instance.Data);
-                    __instance.MaxStep = TaskBuilder.breakerCount;
+                    __instance.MaxStep = TaskBuilder.BreakerCount;
                     break;
                 case TaskTypes.CleanToilet:
                     __instance.Data = new byte[1];
-                    __instance.Data[0] = IntRange.NextByte(0, TaskBuilder.toiletCount);
+                    __instance.Data[0] = IntRange.NextByte(0, TaskBuilder.ToiletCount);
                     break;
                 case TaskTypes.PickUpTowels:
-                    __instance.Data = new byte[TaskBuilder.towelCount / 2];
-                    byte[] tempData = new byte[TaskBuilder.towelCount];
-                    for (byte i = 0; i < TaskBuilder.towelCount; i++)
+                    __instance.Data = new byte[TaskBuilder.TowelCount / 2];
+                    byte[] tempData = new byte[TaskBuilder.TowelCount];
+                    for (byte i = 0; i < TaskBuilder.TowelCount; i++)
                         tempData[i] = i;
                     tempData = MapUtils.Shuffle(tempData);
                     for (byte i = 0; i < __instance.Data.Count; i++)
                         __instance.Data[i] = tempData[i];
                     break;
                 case TaskTypes.FuelEngines:
-                    __instance.MaxStep = TaskBuilder.fuelCount;
+                    __instance.MaxStep = TaskBuilder.FuelCount;
                     break;
                 case TaskTypes.AlignEngineOutput:
-                    __instance.Data = new byte[TaskBuilder.alignEngineCount + 2];
-                    for (int i = 0; i < TaskBuilder.alignEngineCount; i++)
+                    __instance.Data = new byte[TaskBuilder.AlignEngineCount + 2];
+                    for (int i = 0; i < TaskBuilder.AlignEngineCount; i++)
                         __instance.Data[i] = (byte)(IntRange.RandomSign() * IntRange.Next(25, 127) + 127);
-                    __instance.MaxStep = TaskBuilder.alignEngineCount;
+                    __instance.MaxStep = TaskBuilder.AlignEngineCount;
                     break;
             }
         }
@@ -66,11 +66,11 @@ namespace LevelImposter.Core
     {
         public static void Postfix(NormalPlayerTask __instance)
         {
-            if (MapLoader.currentMap == null)
+            if (MapLoader.CurrentMap == null)
                 return;
 
-            __instance.Data = new byte[TaskBuilder.waterWheelCount];
-            __instance.MaxStep = TaskBuilder.waterWheelCount;
+            __instance.Data = new byte[TaskBuilder.WaterWheelCount];
+            __instance.MaxStep = TaskBuilder.WaterWheelCount;
         }
     }
 
@@ -82,10 +82,10 @@ namespace LevelImposter.Core
     {
         public static void Prefix([HarmonyArgument(0)] PlayerTask task, DivertPowerMinigame __instance)
         {
-            if (MapLoader.currentMap == null)
+            if (MapLoader.CurrentMap == null)
                 return;
 
-            __instance.SliderOrder = TaskBuilder.divertSystems;
+            __instance.SliderOrder = TaskBuilder.DivertSystems;
         }
     }
 
@@ -97,7 +97,7 @@ namespace LevelImposter.Core
     {
         public static bool Prefix([HarmonyArgument(0)] PlayerTask task, MultistageMinigame __instance)
         {
-            if (MapLoader.currentMap == null)
+            if (MapLoader.CurrentMap == null)
                 return true;
 
             NormalPlayerTask normalPlayerTask = task.Cast<NormalPlayerTask>();
@@ -137,7 +137,7 @@ namespace LevelImposter.Core
     {
         public static bool Prefix([HarmonyArgument(0)] SpriteRenderer folder, RecordsMinigame __instance)
         {
-            if (MapLoader.currentMap == null)
+            if (MapLoader.CurrentMap == null)
                 return true;
 
             if (__instance.amClosing != Minigame.CloseState.None)
@@ -151,7 +151,7 @@ namespace LevelImposter.Core
             }
 
             folder.gameObject.SetActive(false);
-            __instance.MyNormTask.Data[folderIndex] = IntRange.NextByte(1, TaskBuilder.recordsCount);
+            __instance.MyNormTask.Data[folderIndex] = IntRange.NextByte(1, TaskBuilder.RecordsCount);
             __instance.MyNormTask.UpdateArrow();
             if (Constants.ShouldPlaySfx())
                 SoundManager.Instance.PlaySound(__instance.grabDocument, false, 1f);

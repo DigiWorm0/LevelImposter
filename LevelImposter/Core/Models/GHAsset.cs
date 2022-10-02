@@ -5,6 +5,7 @@ using UnityEngine;
 
 namespace LevelImposter.Core
 {
+    [Serializable]
     public class GHAsset
     {
         public string name { get; set; }

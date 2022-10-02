@@ -19,17 +19,17 @@ namespace LevelImposter.DB
 
         public override void ImportMap(GameObject map, ShipStatus shipStatus)
         {
-            SpriteRenderer = MapSearcher.SearchComponent<SpriteRenderer>(map, SpriteRendererName);
-            GameObj = MapSearcher.SearchChildren(map, GameObjName);
+            SpriteRenderer = MapSearchUtil.SearchComponent<SpriteRenderer>(map, SpriteRendererName);
+            GameObj = MapSearchUtil.SearchChildren(map, GameObjName);
 
             if (!string.IsNullOrEmpty(BehaviorName))
             {
                 if (TaskType == TaskType.Common)
-                    Behavior = MapSearcher.SearchList(shipStatus.CommonTasks, BehaviorName);
+                    Behavior = MapSearchUtil.SearchList(shipStatus.CommonTasks, BehaviorName);
                 if (TaskType == TaskType.Short)
-                    Behavior = MapSearcher.SearchList(shipStatus.NormalTasks, BehaviorName);
+                    Behavior = MapSearchUtil.SearchList(shipStatus.NormalTasks, BehaviorName);
                 if (TaskType == TaskType.Long)
-                    Behavior = MapSearcher.SearchList(shipStatus.LongTasks, BehaviorName);
+                    Behavior = MapSearchUtil.SearchList(shipStatus.LongTasks, BehaviorName);
             }
 
         }

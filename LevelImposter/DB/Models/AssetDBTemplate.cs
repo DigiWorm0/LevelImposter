@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace LevelImposter.DB
 {
     [Serializable]
-    class TempDB
+    class AssetDBTemplate
     {
         public Dictionary<string, TaskData> tasks { get; set; }
         public Dictionary<string, UtilData> utils { get; set; }

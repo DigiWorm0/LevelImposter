@@ -10,8 +10,9 @@ namespace LevelImposter.Core
     public class AdminMapBuilder : IElemBuilder
     {
         public const float ICON_OFFSET = -0.25f;
-        private static List<CounterArea> counterAreaDB = new List<CounterArea>();
-        private PoolableBehavior poolPrefab = null;
+
+        private static List<CounterArea> _counterAreaDB = new List<CounterArea>();
+        private PoolableBehavior _poolPrefab = null;
 
         public void Build(LIElement elem, GameObject obj)
         {
@@ -22,8 +23,8 @@ namespace LevelImposter.Core
             MapCountOverlay mapCountOverlay = mapBehaviour.countOverlay;
 
             // Prefab
-            if (poolPrefab == null)
-                poolPrefab = mapCountOverlay.CountAreas[0].pool.Prefab;
+            if (_poolPrefab == null)
+                _poolPrefab = mapCountOverlay.CountAreas[0].pool.Prefab;
 
             // System
             SystemTypes systemType = RoomBuilder.GetSystem(elem.id);
@@ -33,19 +34,19 @@ namespace LevelImposter.Core
             GameObject roomObj = new GameObject(elem.name);
             roomObj.transform.SetParent(mapCountOverlay.transform);
             roomObj.transform.localPosition = new Vector3(
-                elem.x * MinimapBuilder.mapScale * (1 / overlayScale),
-                elem.y * MinimapBuilder.mapScale * (1 / overlayScale) + ICON_OFFSET,
+                elem.x * MinimapBuilder.MinimapScale * (1 / overlayScale),
+                elem.y * MinimapBuilder.MinimapScale * (1 / overlayScale) + ICON_OFFSET,
                 -25.0f
             );
 
             CounterArea counterArea = roomObj.AddComponent<CounterArea>();
             counterArea.RoomType = systemType;
             counterArea.pool = roomObj.AddComponent<ObjectPoolBehavior>();
-            counterArea.pool.Prefab = poolPrefab;
+            counterArea.pool.Prefab = _poolPrefab;
 
-            counterAreaDB.Add(counterArea);
+            _counterAreaDB.Add(counterArea);
 
-            mapCountOverlay.CountAreas = counterAreaDB.ToArray();
+            mapCountOverlay.CountAreas = _counterAreaDB.ToArray();
         }
 
         public void PostBuild()
@@ -53,10 +54,10 @@ namespace LevelImposter.Core
             MapBehaviour mapBehaviour = MinimapBuilder.GetMinimap();
             MapCountOverlay mapCountOverlay = mapBehaviour.countOverlay;
 
-            while (mapCountOverlay.transform.childCount > counterAreaDB.Count)
+            while (mapCountOverlay.transform.childCount > _counterAreaDB.Count)
                 UnityEngine.Object.DestroyImmediate(mapCountOverlay.transform.GetChild(0).gameObject);
 
-            counterAreaDB.Clear();    
+            _counterAreaDB.Clear();    
         }
     }
 }

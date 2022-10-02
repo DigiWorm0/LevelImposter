@@ -6,31 +6,35 @@ using UnityEngine;
 
 namespace LevelImposter.Core
 {
+    /// <summary>
+    /// Logs and displays data throughout the mod.
+    /// </summary>
     public static class LILogger
     {
-        private static ManualLogSource logger;
-        private const bool LOG_UNITY_STACK = false;
+        // Set to true to log Unity Stack traces to the BepInEx console. Useful when debugging.
+        private const bool LOG_UNITY_STACK_TRACE = false;
+
+        private static ManualLogSource _logger;
 
         public static void Init()
         {
-            logger = BepInEx.Logging.Logger.CreateLogSource("LevelImposter");
-            if (LOG_UNITY_STACK)
+            _logger = BepInEx.Logging.Logger.CreateLogSource("LevelImposter");
+            if (LOG_UNITY_STACK_TRACE)
             {
                 Application.add_logMessageReceived(
-                    new Action<string, string, UnityEngine.LogType>(OnUnityLog)
+                    new Action<string, string, LogType>(OnUnityLog)
                 );   
             }
         }
 
-        private static void OnUnityLog(string msg, string stackTrace, UnityEngine.LogType type)
+        private static void OnUnityLog(string msg, string stackTrace, LogType type)
         {
             Info("Unity Stack Trace:\n" + msg + "\n" + stackTrace);
         }
 
-
         public static void Log(LogLevel logLevel, object data)
         {
-            logger.Log(logLevel, data);
+            _logger.Log(logLevel, data);
         }
 
         public static void Info(object data)

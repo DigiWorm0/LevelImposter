@@ -7,7 +7,7 @@ namespace LevelImposter.Core
 {
     public class TriggerBuilder : IElemBuilder
     {
-        private List<LITriggerable> triggerDB = new List<LITriggerable>();
+        private List<LITriggerable> _triggerDB = new List<LITriggerable>();
 
         public void Build(LIElement elem, GameObject obj)
         {
@@ -18,26 +18,26 @@ namespace LevelImposter.Core
             foreach (LITrigger trigger in triggers)
             {
                 LITriggerable triggerComp = obj.AddComponent<LITriggerable>();
-                triggerComp.id = trigger.id;
-                triggerComp.elemID = elem.id;
-                triggerComp.targetElemID = trigger.elemID;
-                triggerComp.targetTriggerID = trigger.triggerID;
-                triggerComp.elem = elem;
+                triggerComp.ID = trigger.id;
+                triggerComp.ElemID = elem.id;
+                triggerComp.TargetElemID = trigger.elemID;
+                triggerComp.TargetTriggerID = trigger.triggerID;
+                triggerComp.CurrentElem = elem;
 
-                triggerDB.Add(triggerComp);
+                _triggerDB.Add(triggerComp);
             }
         }
 
         public void PostBuild()
         {
-            foreach (LITriggerable trigger in triggerDB)
+            foreach (LITriggerable trigger in _triggerDB)
             {
-                if (trigger.targetElemID != null && trigger.targetTriggerID != null)
+                if (trigger.TargetElemID != null && trigger.TargetTriggerID != null)
                 {
-                    trigger.targetTrigger = Array.Find(triggerDB.ToArray(), (LITriggerable t) => t.id == trigger.targetTriggerID && t.elemID == trigger.targetElemID);
+                    trigger.targetTrigger = Array.Find(_triggerDB.ToArray(), (LITriggerable t) => t.ID == trigger.TargetTriggerID && t.ElemID == trigger.TargetElemID);
                 }
             }
-            triggerDB.Clear();
+            _triggerDB.Clear();
         }
     }
 }

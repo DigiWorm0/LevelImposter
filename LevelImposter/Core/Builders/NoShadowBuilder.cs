@@ -8,18 +8,18 @@ namespace LevelImposter.Core
 {
     public class NoShadowBuilder : IElemBuilder
     {
-        private Material noShadowMat = null;
-        private Material defaultMat = null;
+        private Material _noShadowMat = null;
+        private Material _defaultMat = null;
 
         public void Build(LIElement elem, GameObject obj)
         {
             if (!(elem.type.StartsWith("dec-") || elem.type.StartsWith("util-blank")))
                 return;
 
-            if (noShadowMat == null)
+            if (_noShadowMat == null)
             {
-                noShadowMat = AssetDB.dec["dec-rock5"].SpriteRenderer.material;
-                defaultMat = AssetDB.dec["dec-rock4"].SpriteRenderer.material;
+                _noShadowMat = AssetDB.Decor["dec-rock5"].SpriteRenderer.material;
+                _defaultMat = AssetDB.Decor["dec-rock4"].SpriteRenderer.material;
             }
 
             SpriteRenderer spriteRenderer = obj.GetComponent<SpriteRenderer>();
@@ -27,7 +27,7 @@ namespace LevelImposter.Core
             {
                 if (elem.properties.noShadows == true)
                 {
-                    spriteRenderer.material = noShadowMat;
+                    spriteRenderer.material = _noShadowMat;
 
                     if (elem.properties.noShadowsBehaviour == true)
                     {
@@ -47,7 +47,7 @@ namespace LevelImposter.Core
                 }
                 else
                 {
-                    spriteRenderer.material = defaultMat;
+                    spriteRenderer.material = _defaultMat;
                 }
             }
         }

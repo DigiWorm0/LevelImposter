@@ -18,10 +18,10 @@ namespace LevelImposter.Shop
         [HarmonyPatch(nameof(KeyValueOption.FixedUpdate))]
         public static bool EnableFix(KeyValueOption __instance)
         {
-            if (MapLoader.currentMap != null && __instance.Title == StringNames.GameMapName && __instance.oldValue != __instance.Selected)
+            if (MapLoader.CurrentMap != null && __instance.Title == StringNames.GameMapName && __instance.oldValue != __instance.Selected)
             {
                 __instance.oldValue = __instance.Selected;
-                __instance.ValueText.text = MapLoader.currentMap.name;
+                __instance.ValueText.text = MapLoader.CurrentMap.name;
                 return false;
             }
             return true;

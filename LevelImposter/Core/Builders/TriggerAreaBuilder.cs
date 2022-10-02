@@ -7,7 +7,6 @@ namespace LevelImposter.Core
 {
     public class TriggerAreaBuilder : IElemBuilder
     {
-
         public void Build(LIElement elem, GameObject obj)
         {
             if (elem.type != "util-triggerarea")
