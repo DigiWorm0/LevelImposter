@@ -9,6 +9,9 @@ using BepInEx.IL2CPP.Utils.Collections;
 
 namespace LevelImposter.Shop
 {
+    /// <summary>
+    /// API to manage thumbnail files in the local filesystem
+    /// </summary>
     public class ThumbnailFileAPI : MonoBehaviour
     {
         public ThumbnailFileAPI(IntPtr intPtr) : base(intPtr)

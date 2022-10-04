@@ -9,6 +9,9 @@ using UnityEngine;
 
 namespace LevelImposter.Core
 {
+    /// <summary>
+    /// A variety of utility functions for constructing the map
+    /// </summary>
     public class MapUtils
     {
         public static Dictionary<SystemTypes, string> SystemRenames = new();
@@ -138,8 +141,8 @@ namespace LevelImposter.Core
         /// <returns>Unity AudioClip from data</returns>
         public static AudioClip ConvertToAudio(string name, string base64)
         {
-            byte[] byteData = MapUtils.ParseBase64(base64);
-            AudioClip audio = WAVLoader.Load(name, byteData); // TODO Support other audio formats
+            byte[] byteData = ParseBase64(base64);
+            AudioClip audio = WAVLoader.Load(byteData); // TODO Support other audio formats
             return audio;
         }
 

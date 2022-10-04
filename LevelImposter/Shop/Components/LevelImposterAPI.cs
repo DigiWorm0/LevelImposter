@@ -9,6 +9,9 @@ using System.Text.Json;
 
 namespace LevelImposter.Shop
 {
+    /// <summary>
+    /// API to send/recieve map files from LevelImposter.net
+    /// </summary>
     public class LevelImposterAPI : MonoBehaviour
     {
         public const string API_PATH = "https://us-central1-levelimposter-347807.cloudfunctions.net/api/";

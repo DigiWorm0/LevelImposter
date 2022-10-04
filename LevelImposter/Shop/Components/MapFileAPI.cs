@@ -10,6 +10,9 @@ using System.Text.Json;
 
 namespace LevelImposter.Shop
 {
+    /// <summary>
+    /// API to manage LIM files in the local filesystem
+    /// </summary>
     public class MapFileAPI : MonoBehaviour
     {
         public MapFileAPI(IntPtr intPtr) : base(intPtr)

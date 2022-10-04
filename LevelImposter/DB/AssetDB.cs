@@ -52,7 +52,7 @@ namespace LevelImposter.DB
             StartCoroutine(CoLoadAssets().WrapToIl2Cpp());
         }
 
-        public IEnumerator CoLoadAssets()
+        private IEnumerator CoLoadAssets()
         {
             LILogger.Info("Loading AssetDB...");
             for (int i = 0; i < AmongUsClient.Instance.ShipPrefabs.Count; i++)
