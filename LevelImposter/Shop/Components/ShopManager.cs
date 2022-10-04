@@ -11,17 +11,17 @@ namespace LevelImposter.Shop
 {
     public class ShopManager : MonoBehaviour
     {
-        public static ShopManager Instance { get; private set; }
-        public static bool IsOpen = false; // Circumvent Garbage Collection Issues w/ ShopManager.Instance
-
-        public MapBanner mapBannerPrefab;
-        public Transform shopParent;
-
-        private string currentList = "downloaded";
-
         public ShopManager(IntPtr intPtr) : base(intPtr)
         {
         }
+
+        public static ShopManager Instance { get; private set; }
+        public static bool IsOpen = false; // Circumvent Garbage Collection Issues w/ ShopManager.Instance
+
+        public MapBanner MapBannerPrefab;
+        public Transform ShopParent;
+
+        private string _currentListID = "downloaded";
 
         public void Awake()
         {
@@ -59,19 +59,19 @@ namespace LevelImposter.Shop
 
         public void ListNone()
         {
-            currentList = "none";
-            while (shopParent.childCount > 1)
-                DestroyImmediate(shopParent.GetChild(1).gameObject);
+            _currentListID = "none";
+            while (ShopParent.childCount > 1)
+                DestroyImmediate(ShopParent.GetChild(1).gameObject);
         }
 
         public void ListDownloaded()
         {
             ListNone();
-            currentList = "downloaded";
+            _currentListID = "downloaded";
             string[] mapIDs = MapFileAPI.Instance.ListIDs();
             foreach (string mapID in mapIDs)
             {
-                MapBanner banner = Instantiate(mapBannerPrefab, shopParent);
+                MapBanner banner = Instantiate(MapBannerPrefab, ShopParent);
                 banner.gameObject.SetActive(true);
                 banner.SetMap(MapFileAPI.Instance.GetMetadata(mapID));
             }
@@ -80,14 +80,14 @@ namespace LevelImposter.Shop
         public void ListTop()
         {
             ListNone();
-            currentList = "top";
+            _currentListID = "top";
             LevelImposterAPI.Instance.GetTop((LIMetadata[] maps) =>
             {
-                if (currentList != "top")
+                if (_currentListID != "top")
                     return;
                 foreach (LIMetadata map in maps)
                 {
-                    MapBanner banner = Instantiate(mapBannerPrefab, shopParent);
+                    MapBanner banner = Instantiate(MapBannerPrefab, ShopParent);
                     banner.gameObject.SetActive(true);
                     banner.SetMap(map);
                 }
@@ -97,14 +97,14 @@ namespace LevelImposter.Shop
         public void ListRecent()
         {
             ListNone();
-            currentList = "recent";
+            _currentListID = "recent";
             LevelImposterAPI.Instance.GetRecent((LIMetadata[] maps) =>
             {
-                if (currentList != "recent")
+                if (_currentListID != "recent")
                     return;
                 foreach (LIMetadata map in maps)
                 {
-                    MapBanner banner = Instantiate(mapBannerPrefab, shopParent);
+                    MapBanner banner = Instantiate(MapBannerPrefab, ShopParent);
                     banner.gameObject.SetActive(true);
                     banner.SetMap(map);
                 }
@@ -114,14 +114,14 @@ namespace LevelImposter.Shop
         public void ListFeatured()
         {
             ListNone();
-            currentList = "featured";
+            _currentListID = "featured";
             LevelImposterAPI.Instance.GetFeatured((LIMetadata[] maps) =>
             {
-                if (currentList != "featured")
+                if (_currentListID != "featured")
                     return;
                 foreach (LIMetadata map in maps)
                 {
-                    MapBanner banner = Instantiate(mapBannerPrefab, shopParent);
+                    MapBanner banner = Instantiate(MapBannerPrefab, ShopParent);
                     banner.gameObject.SetActive(true);
                     banner.SetMap(map);
                 }
@@ -138,7 +138,7 @@ namespace LevelImposter.Shop
 
         public void LaunchMap(string id)
         {
-            if (!AssetDB.isReady)
+            if (!AssetDB.IsReady)
                 return;
             LILogger.Info("Launching map [" + id + "]");
             MapLoader.LoadMap(id);

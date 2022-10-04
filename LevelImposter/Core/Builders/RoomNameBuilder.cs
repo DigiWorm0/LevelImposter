@@ -10,7 +10,7 @@ namespace LevelImposter.Core
 {
     public class RoomNameBuilder : IElemBuilder
     {
-        private int nameCount = 0;
+        private int _nameCount = 0;
 
         public void Build(LIElement elem, GameObject obj)
         {
@@ -28,9 +28,9 @@ namespace LevelImposter.Core
             roomName.name = elem.name;
             roomName.layer = (int)Layer.UI;
             roomName.transform.localPosition = new Vector3(
-                elem.x * MinimapBuilder.mapScale,
-                elem.y * MinimapBuilder.mapScale,
-                0
+                elem.x * MinimapBuilder.MinimapScale,
+                elem.y * MinimapBuilder.MinimapScale,
+                -1
             );
 
             // Text
@@ -40,7 +40,7 @@ namespace LevelImposter.Core
             roomText.fontSizeMin = roomText.fontSizeMax;
             roomText.alignment = TextAlignmentOptions.Bottom;
             roomText.enabled = true;
-            nameCount++;
+            _nameCount++;
 
             // Transform
             RectTransform rectTransform = roomName.GetComponent<RectTransform>();
@@ -52,9 +52,9 @@ namespace LevelImposter.Core
             MapBehaviour mapBehaviour = MinimapBuilder.GetMinimap();
             Transform roomNames = mapBehaviour.transform.GetChild(mapBehaviour.transform.childCount - 1);
 
-            while (roomNames.childCount > nameCount)
+            while (roomNames.childCount > _nameCount)
                 UnityEngine.Object.DestroyImmediate(roomNames.GetChild(0).gameObject);
-            nameCount = 0; 
+            _nameCount = 0; 
         }
     }
 }

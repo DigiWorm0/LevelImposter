@@ -16,7 +16,7 @@ namespace LevelImposter.Core
     [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.AddSystemTask))]
     public static class SabPatch
     {
-        private static Dictionary<SystemTypes, TaskTypes> systemTaskPairs = new Dictionary<SystemTypes, TaskTypes> {
+        private static Dictionary<SystemTypes, TaskTypes> _systemTaskPairs = new Dictionary<SystemTypes, TaskTypes> {
             { SystemTypes.Electrical, TaskTypes.FixLights },
             { SystemTypes.Laboratory, TaskTypes.ResetSeismic },
             { SystemTypes.LifeSupp, TaskTypes.RestoreOxy },
@@ -25,10 +25,10 @@ namespace LevelImposter.Core
 
         public static bool Prefix([HarmonyArgument(0)] SystemTypes systemType)
         {
-            if (MapLoader.currentMap == null)
+            if (MapLoader.CurrentMap == null)
                 return true;
 
-            TaskTypes taskType = systemTaskPairs[systemType];
+            TaskTypes taskType = _systemTaskPairs[systemType];
             foreach (PlayerTask task in ShipStatus.Instance.SpecialTasks)
             {
                 if (task.TaskType == taskType)

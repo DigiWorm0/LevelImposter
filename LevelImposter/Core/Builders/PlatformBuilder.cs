@@ -10,6 +10,7 @@ namespace LevelImposter.Core
 {
     class PlatformBuilder : IElemBuilder
     {
+        // TODO: Support multiple moving platforms in 1 map
         public static MovingPlatformBehaviour Platform = null;
 
         public void Build(LIElement elem, GameObject obj)
@@ -22,7 +23,7 @@ namespace LevelImposter.Core
                 return;
             }
 
-            UtilData utilData = AssetDB.utils[elem.type];
+            UtilData utilData = AssetDB.Utils[elem.type];
 
             // Default Sprite
             SpriteRenderer spriteRenderer = obj.GetComponent<SpriteRenderer>();

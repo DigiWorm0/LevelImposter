@@ -18,12 +18,10 @@ namespace LevelImposter.Core
                 elem.type == "util-vitals" ||
                 elem.type.StartsWith("util-button") ||
                 elem.type.StartsWith("util-cams") ||
-                elem.type == "util-admin" ||
-                elem.type == "util-vitals" ||
                 elem.type == "util-computer"))
                 return;
 
-            UtilData utilData = AssetDB.utils[elem.type];
+            UtilData utilData = AssetDB.Utils[elem.type];
 
             // Default Sprite
             SpriteRenderer spriteRenderer = obj.GetComponent<SpriteRenderer>();
@@ -49,7 +47,7 @@ namespace LevelImposter.Core
                 console.usableDistance = origConsole.usableDistance;
                 console.MinigamePrefab = origConsole.MinigamePrefab;
                 if (elem.type == "util-cams2")
-                    console.MinigamePrefab = AssetDB.utils["util-cams"].GameObj.GetComponent<SystemConsole>().MinigamePrefab;
+                    console.MinigamePrefab = AssetDB.Utils["util-cams"].GameObj.GetComponent<SystemConsole>().MinigamePrefab;
                 console.useIcon = origConsole.useIcon;
                 if (elem.properties.range != null)
                     console.usableDistance = (float)elem.properties.range;
@@ -77,7 +75,7 @@ namespace LevelImposter.Core
             btn.OnClick.AddListener(action);
 
             // Collider
-            PolygonCollider2D[] solidColliders = obj.GetComponents<PolygonCollider2D>();
+            PolygonCollider2D[] solidColliders = obj.GetComponentsInChildren<PolygonCollider2D>();
             for (int i = 0; i < solidColliders.Length; i++)
                 solidColliders[i].isTrigger = true;
             if (solidColliders.Length <= 0)

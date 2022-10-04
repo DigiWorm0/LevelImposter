@@ -9,18 +9,21 @@ using BepInEx.IL2CPP.Utils.Collections;
 
 namespace LevelImposter.Shop
 {
+    /// <summary>
+    /// API to manage thumbnail files in the local filesystem
+    /// </summary>
     public class ThumbnailFileAPI : MonoBehaviour
     {
+        public ThumbnailFileAPI(IntPtr intPtr) : base(intPtr)
+        {
+        }
+
         public const int TEX_WIDTH = 412;
         public const int TEX_HEIGHT = 144;
 
         public static ThumbnailFileAPI Instance;
 
-        public ThumbnailFileAPI(IntPtr intPtr) : base(intPtr)
-        {
-        }
-
-        private void Awake()
+        public void Awake()
         {
             if (Instance == null)
             {
@@ -33,22 +36,42 @@ namespace LevelImposter.Shop
             }
         }
 
+        /// <summary>
+        /// Gets the current directory where LevelImposter thumbnail files are stored.
+        /// Usually in a sub-directory within the LevelImposter folder beside the LevelImposter.dll.
+        /// </summary>
+        /// <returns>String path where LevelImposter map thumbnails is stored.</returns>
         public string GetDirectory()
         {
             string gameDir = System.Reflection.Assembly.GetAssembly(typeof(LevelImposter)).Location;
             return System.IO.Path.Combine(System.IO.Path.GetDirectoryName(gameDir), "LevelImposter/Thumbnails");
         }
 
+        /// <summary>
+        /// Gets the path where a specific map thumbnail file is stored.
+        /// </summary>
+        /// <param name="mapID">Map ID for the thumbnail</param>
+        /// <returns>The path where a specific map thumbnail file is stored</returns>
         public string GetPath(string mapID)
         {
             return System.IO.Path.Combine(GetDirectory(), mapID + ".png");
         }
 
+        /// <summary>
+        /// Checks the existance of a map thumbnail file based on ID
+        /// </summary>
+        /// <param name="mapID">Map ID for the thumbnail</param>
+        /// <returns>True if a map thumbnail file with the cooresponding ID exists</returns>
         public bool Exists(string mapID)
         {
             return System.IO.File.Exists(GetPath(mapID));
         }
 
+        /// <summary>
+        /// Reads and parses a thumbnail file into a Texture2D.
+        /// </summary>
+        /// <param name="mapID">Map ID for the thumbnail</param>
+        /// <param name="callback">Callback on success</param>
         public void Get(string mapID, System.Action<Texture2D> callback)
         {
             if (!Exists(mapID))
@@ -65,6 +88,11 @@ namespace LevelImposter.Shop
             callback(texture);
         }
 
+        /// <summary>
+        /// Saves a map thumbnail file to the local filesystem.
+        /// </summary>
+        /// <param name="mapID">Map ID for the thumbnail</param>
+        /// <param name="thumbnailData">PNG-encoded image data.</param>
         public void Save(string mapID, byte[] thumbnailData)
         {
             LILogger.Info("Saving [" + mapID + "] thumbnail to filesystem");
@@ -74,6 +102,10 @@ namespace LevelImposter.Shop
             System.IO.File.WriteAllBytes(thumbnailPath, thumbnailData);
         }
 
+        /// <summary>
+        /// Deletes a map thumbnail file from the local filesystem
+        /// </summary>
+        /// <param name="mapID">Map ID for the thumbnail</param>
         public void Delete(string mapID)
         {
             if (!Exists(mapID))

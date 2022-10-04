@@ -12,11 +12,11 @@ namespace LevelImposter.Shop
 {
     public class ShopSpawner : MonoBehaviour
     {
-        private static GameObject spinnerPrefab;
-
         public ShopSpawner(IntPtr intPtr) : base(intPtr)
         {
         }
+
+        private static GameObject _spinnerPrefab;
 
         public void Start()
         {
@@ -25,16 +25,16 @@ namespace LevelImposter.Shop
 
         public static GameObject GetSpinnerPrefab()
         {
-            if (spinnerPrefab == null)
-                spinnerPrefab = MapUtils.LoadAssetBundle("spinner");
-            return spinnerPrefab;
+            if (_spinnerPrefab == null)
+                _spinnerPrefab = MapUtils.LoadAssetBundle("spinner");
+            return _spinnerPrefab;
         }
 
         public IEnumerator CoSpawnShop()
         {
             GameObject spinner = Instantiate(GetSpinnerPrefab(), transform);
             spinner.AddComponent<Spinner>();
-            while (!AssetDB.isReady)
+            while (!AssetDB.IsReady)
                 yield return null;
 
             if (!ShopManager.IsOpen)

@@ -12,7 +12,7 @@ namespace LevelImposter.Core
             if (elem.type != "util-dummy")
                 return;
 
-            ShipStatus shipStatus = LIShipStatus.Instance.shipStatus;
+            ShipStatus shipStatus = LIShipStatus.Instance.ShipStatus;
             shipStatus.DummyLocations = MapUtils.AddToArr(shipStatus.DummyLocations, obj.transform);
         }
 

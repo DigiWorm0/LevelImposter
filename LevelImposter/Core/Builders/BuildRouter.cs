@@ -15,12 +15,12 @@ namespace LevelImposter.Core
             InitStack();
         }
 
-        /*
-         *      Patch this Method to add/remove builders
-         */
+        /// <summary>
+        /// Patchable method to append or remove builders from the build stack
+        /// </summary>
         public void InitStack()
         {
-            _buildStack = new List<IElemBuilder> {
+            _buildStack = new() {
                 new DefaultBuilder(),
 
                 new RoomBuilder(),
@@ -51,6 +51,13 @@ namespace LevelImposter.Core
             };
         }
 
+        /// <summary>
+        /// Passes <c>LIElement</c> data through the build 
+        /// stack to construct a GameObject.
+        /// Should be run from <c>LIShipStatus.AddElement</c>.
+        /// </summary>
+        /// <param name="element">Element data to build</param>
+        /// <returns></returns>
         public GameObject Build(LIElement element)
         {
             string objName = element.name.Replace("\\n", " ");
@@ -62,6 +69,9 @@ namespace LevelImposter.Core
             return gameObject;
         }
 
+        /// <summary>
+        /// Runs the post-build process on every <c>IElemBuilder</c>.
+        /// </summary>
         public void PostBuild()
         {
             foreach (IElemBuilder builder in _buildStack)

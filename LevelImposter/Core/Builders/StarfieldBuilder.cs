@@ -20,7 +20,7 @@ namespace LevelImposter.Core
             SpriteRenderer prefabRenderer = obj.GetComponent<SpriteRenderer>();
             if (prefabRenderer != null)
             {
-                prefabRenderer.material = AssetDB.dec["dec-rock4"].SpriteRenderer.material;
+                prefabRenderer.material = AssetDB.Decor["dec-rock4"].SpriteRenderer.material;
             }
             else
             {

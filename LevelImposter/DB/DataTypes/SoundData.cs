@@ -16,7 +16,7 @@ namespace LevelImposter.DB
 
         public override void ImportMap(GameObject map, ShipStatus shipStatus)
         {
-            List<Transform> parents = MapSearcher.SearchMultipleChildren(map, GameObjName);
+            List<Transform> parents = MapSearchUtil.SearchMultipleChildren(map, GameObjName);
             foreach (Transform parent in parents)
             {
                 SkeldShipRoom skeldRoom = parent.gameObject.GetComponent<SkeldShipRoom>();

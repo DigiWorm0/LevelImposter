@@ -7,11 +7,11 @@ namespace LevelImposter.Shop
 {
     public class Spinner : MonoBehaviour
     {
-        public float Speed = -90f;
-
         public Spinner(IntPtr intPtr) : base(intPtr)
         {
         }
+
+        public float Speed = -90f;
 
         private void Update()
         {

@@ -12,7 +12,7 @@ namespace LevelImposter.Core
         {
             if (elem.type.StartsWith("dec-"))
             {
-                DecData utilData = AssetDB.dec[elem.type];
+                DecData utilData = AssetDB.Decor[elem.type];
 
                 SpriteRenderer spriteRenderer = obj.GetComponent<SpriteRenderer>();
                 if (!spriteRenderer)
@@ -27,7 +27,7 @@ namespace LevelImposter.Core
             }
             else if (elem.type.StartsWith("room-"))
             {
-                RoomData utilData = AssetDB.room[elem.type];
+                RoomData utilData = AssetDB.Room[elem.type];
 
                 SpriteRenderer spriteRenderer = obj.GetComponent<SpriteRenderer>();
                 if (!spriteRenderer)

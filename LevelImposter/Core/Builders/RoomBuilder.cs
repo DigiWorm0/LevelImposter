@@ -7,8 +7,8 @@ namespace LevelImposter.Core
 {
     public class RoomBuilder : IElemBuilder
     {
-        private byte roomId = 1;
-        private static Dictionary<Guid, SystemTypes> systemDB = new Dictionary<Guid, SystemTypes>();
+        private byte _roomId = 1;
+        private static Dictionary<Guid, SystemTypes> _systemDB = new Dictionary<Guid, SystemTypes>();
 
         public void Build(LIElement elem, GameObject obj)
         {
@@ -18,39 +18,39 @@ namespace LevelImposter.Core
             SystemTypes systemType;
             do
             {
-                systemType = (SystemTypes)roomId;
-                roomId++;
+                systemType = (SystemTypes)_roomId;
+                _roomId++;
             }
             while (systemType == SystemTypes.LowerEngine || systemType == SystemTypes.UpperEngine);
 
             PlainShipRoom shipRoom = obj.AddComponent<PlainShipRoom>();
             shipRoom.RoomId = systemType;
-            shipRoom.roomArea = obj.GetComponent<Collider2D>();
+            shipRoom.roomArea = obj.GetComponentInChildren<Collider2D>();
             if (shipRoom.roomArea != null)
                 shipRoom.roomArea.isTrigger = true;
             else
                 LILogger.Warn(shipRoom.name + " is missing a collider");
 
             MapUtils.Rename(systemType, obj.name);
-            systemDB.Add(elem.id, systemType);
+            _systemDB.Add(elem.id, systemType);
         }
 
         public void PostBuild()
         {
-            systemDB.Clear();
+            _systemDB.Clear();
             MapUtils.Rename((SystemTypes)0, "Default Room");
-            roomId = 1;
+            _roomId = 1;
         }
 
         public static SystemTypes GetSystem(Guid id)
         {
-            return systemDB.GetValueOrDefault(id);
+            return _systemDB.GetValueOrDefault(id);
         }
 
         public static SystemTypes[] GetAllSystems()
         {
-            SystemTypes[] arr = new SystemTypes[systemDB.Count];
-            systemDB.Values.CopyTo(arr, 0);
+            SystemTypes[] arr = new SystemTypes[_systemDB.Count];
+            _systemDB.Values.CopyTo(arr, 0);
             return arr;
         }
     }

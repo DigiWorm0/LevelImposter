@@ -11,16 +11,16 @@ namespace LevelImposter.Core
         {
         }
 
-        private void OnTriggerEnter2D(Collider2D collider)
+        public void OnTriggerEnter2D(Collider2D collider)
         {
             if (MapUtils.IsLocalPlayer(collider.gameObject))
-                MapUtils.FireTrigger(gameObject, "onEnter", collider.gameObject);
+                MapUtils.FireTrigger(transform.parent.gameObject, "onEnter", collider.gameObject);
         }
 
-        private void OnTriggerExit2D(Collider2D collider)
+        public void OnTriggerExit2D(Collider2D collider)
         {
             if (MapUtils.IsLocalPlayer(collider.gameObject))
-                MapUtils.FireTrigger(gameObject, "onExit", collider.gameObject);
+                MapUtils.FireTrigger(transform.parent.gameObject, "onExit", collider.gameObject);
         }
     }
 }

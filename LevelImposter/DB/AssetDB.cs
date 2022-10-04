@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using UnityEngine;
+using UnityEngine.ResourceManagement.AsyncOperations;
 using UnityEngine.AddressableAssets;
 using LevelImposter.Core;
 using System.Text.Json;
@@ -11,19 +12,22 @@ using BepInEx.IL2CPP.Utils.Collections;
 
 namespace LevelImposter.DB
 {
+    /// <summary>
+    /// A Singleton GameObject that stores references to
+    /// sprites, minigames, and prefabs from other locations
+    /// within the Among Us game.
+    /// </summary>
     class AssetDB : MonoBehaviour
     {
         public static AssetDB Instance { get; private set; }
-
-        public static bool isReady = false;
-
-        public static Dictionary<string, TaskData> tasks;
-        public static Dictionary<string, UtilData> utils;
-        public static Dictionary<string, SabData> sabs;
-        public static Dictionary<string, DecData> dec;
-        public static Dictionary<string, RoomData> room;
-        public static Dictionary<string, SSData> ss;
-        public static Dictionary<string, SoundData> sounds;
+        public static bool IsReady = false;
+        public static Dictionary<string, TaskData> Tasks;
+        public static Dictionary<string, UtilData> Utils;
+        public static Dictionary<string, SabData> Sabs;
+        public static Dictionary<string, DecData> Decor;
+        public static Dictionary<string, RoomData> Room;
+        public static Dictionary<string, SSData> Sabos;
+        public static Dictionary<string, SoundData> Sounds;
 
         public void Start()
         {
@@ -34,34 +38,57 @@ namespace LevelImposter.DB
             }
             Instance = this;
 
-            TempDB tempDB = JsonSerializer.Deserialize<TempDB>(
+            AssetDBTemplate tempDB = JsonSerializer.Deserialize<AssetDBTemplate>(
                 Encoding.UTF8.GetString(Properties.Resources.AssetDB, 0, Properties.Resources.AssetDB.Length)
             );
 
-            tasks = tempDB.tasks;
-            utils = tempDB.utils;
-            sabs = tempDB.sabs;
-            dec = tempDB.dec;
-            room = tempDB.room;
-            ss = tempDB.ss;
-            sounds = tempDB.sounds;
-
+            Tasks = tempDB.tasks;
+            Utils = tempDB.utils;
+            Sabs = tempDB.sabs;
+            Decor = tempDB.dec;
+            Room = tempDB.room;
+            Sabos = tempDB.ss;
+            Sounds = tempDB.sounds;
             StartCoroutine(CoLoadAssets().WrapToIl2Cpp());
         }
 
-        public IEnumerator CoLoadAssets()
+        private IEnumerator CoLoadAssets()
         {
             LILogger.Info("Loading AssetDB...");
-            foreach (AssetReference shipRef in AmongUsClient.Instance.ShipPrefabs)
+            for (int i = 0; i < AmongUsClient.Instance.ShipPrefabs.Count; i++)
             {
-                yield return shipRef.LoadAssetAsync<GameObject>();
-                GameObject shipPrefab = shipRef.Asset.Cast<GameObject>();
-                yield return ImportAsset(shipPrefab);
+                AssetReference shipRef = AmongUsClient.Instance.ShipPrefabs[i];
+                while (true)
+                {
+                    if (shipRef.Asset == null)
+                    {
+                        AsyncOperationHandle op = shipRef.LoadAssetAsync<GameObject>();
+                        if (!op.IsValid())
+                        {
+                            LILogger.Warn($"Could not import [{shipRef.AssetGUID}] due to invalid Async Operation. Trying again in 5 seconds...");
+                            yield return new WaitForSeconds(5);
+                            continue;
+                        }
+                        yield return op;
+                        if (op.Status != AsyncOperationStatus.Succeeded)
+                            LILogger.Warn($"Could not import [{shipRef.AssetGUID}] due to failed Async Operation. Ignoring...");
+                    }
+                    break;
+                }
+
+                if (shipRef.Asset != null)
+                {
+                    GameObject shipPrefab = shipRef.Asset.Cast<GameObject>();
+                    yield return _importPrefab(shipPrefab);
+                } else
+                {
+                    LILogger.Warn($"Could not import [{shipRef.AssetGUID}] due to missing Assets. Ignoring...");
+                }
             }
-            isReady = true;
+            IsReady = true;
         }
 
-        public IEnumerator ImportAsset(GameObject prefab)
+        private IEnumerator _importPrefab(GameObject prefab)
         {
             ShipStatus shipStatus = prefab.GetComponent<ShipStatus>();
             MapType mapType = MapType.Skeld;
@@ -74,18 +101,18 @@ namespace LevelImposter.DB
             if (prefab.name == "Airship")
                 mapType = MapType.Airship;
 
-            yield return Import(prefab, shipStatus, mapType, tasks);
-            yield return Import(prefab, shipStatus, mapType, utils);
-            yield return Import(prefab, shipStatus, mapType, sabs);
-            yield return Import(prefab, shipStatus, mapType, dec);
-            yield return Import(prefab, shipStatus, mapType, room);
-            yield return Import(prefab, shipStatus, mapType, ss);
-            yield return Import(prefab, shipStatus, mapType, sounds);
+            yield return _importAssets(prefab, shipStatus, mapType, Tasks);
+            yield return _importAssets(prefab, shipStatus, mapType, Utils);
+            yield return _importAssets(prefab, shipStatus, mapType, Sabs);
+            yield return _importAssets(prefab, shipStatus, mapType, Decor);
+            yield return _importAssets(prefab, shipStatus, mapType, Room);
+            yield return _importAssets(prefab, shipStatus, mapType, Sabos);
+            yield return _importAssets(prefab, shipStatus, mapType, Sounds);
 
             LILogger.Info("..." + prefab.name + " Loaded");
         }
 
-        private IEnumerator Import<T>(GameObject map, ShipStatus shipStatus, MapType mapType, Dictionary<string, T> list) where T : AssetData
+        private IEnumerator _importAssets<T>(GameObject map, ShipStatus shipStatus, MapType mapType, Dictionary<string, T> list) where T : AssetData
         {
             foreach (var elem in list)
             {

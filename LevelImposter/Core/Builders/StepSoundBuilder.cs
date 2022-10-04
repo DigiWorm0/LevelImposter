@@ -16,7 +16,7 @@ namespace LevelImposter.Core
                 return;
 
             // Colliders
-            Collider2D[] colliders = obj.GetComponents<Collider2D>();
+            Collider2D[] colliders = obj.GetComponentsInChildren<Collider2D>();
             foreach (Collider2D collider in colliders)
             {
                 collider.isTrigger = true;
@@ -50,7 +50,7 @@ namespace LevelImposter.Core
                 if (sound.isPreset)
                 {
                     SoundData soundData;
-                    AssetDB.sounds.TryGetValue(sound.data, out soundData);
+                    AssetDB.Sounds.TryGetValue(sound.data, out soundData);
                     clip = soundData.Clip;
                 }
                 else

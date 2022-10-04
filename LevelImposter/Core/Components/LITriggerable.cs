@@ -9,22 +9,21 @@ namespace LevelImposter.Core
 {
     public class LITriggerable : MonoBehaviour
     {
-        public string id = "";
-        public LIElement elem;
-        public Guid elemID = Guid.Empty;
-        public Guid? targetElemID = Guid.Empty;
-        public string targetTriggerID = "";
-
-        public LITriggerable targetTrigger = null;
-        
         public LITriggerable(IntPtr intPtr) : base(intPtr)
         {
         }
 
+        public string ID = "";
+        public LIElement CurrentElem;
+        public Guid ElemID = Guid.Empty;
+        public Guid? TargetElemID = Guid.Empty;
+        public string TargetTriggerID = "";
+        public LITriggerable targetTrigger = null;
+
         public virtual void onTrigger(GameObject orgin)
         {
-            LILogger.Info(name + " >>> " + id + " (" + orgin.name + ")");
-            switch (id)
+            LILogger.Info(name + " >>> " + ID + " (" + orgin.name + ")");
+            switch (ID)
             {
                 case "Enable":
                     gameObject.SetActive(true);
@@ -58,7 +57,7 @@ namespace LevelImposter.Core
         private IEnumerator CoTimerTrigger(GameObject orgin)
         {
             MapUtils.FireTrigger(gameObject, "onStart", orgin);
-            float duration = elem.properties.triggerTime ?? 1;
+            float duration = CurrentElem.properties.triggerTime ?? 1;
             yield return new WaitForSeconds(duration);
             MapUtils.FireTrigger(gameObject, "onFinish", orgin);
         }

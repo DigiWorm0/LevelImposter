@@ -7,21 +7,21 @@ namespace LevelImposter.Shop
 {
     public class MapLoader
     {
-        public static LIMap currentMap = null;
+        public static LIMap CurrentMap = null;
 
         public static void LoadMap(LIMap map)
         {
-            currentMap = map;
+            CurrentMap = map;
         }
 
         public static void LoadMap(string mapID)
         {
-            currentMap = MapFileAPI.Instance.Get(mapID);
+            CurrentMap = MapFileAPI.Instance.Get(mapID);
         }
 
         public static void UnloadMap()
         {
-            currentMap = null;
+            CurrentMap = null;
         }
     }
 }

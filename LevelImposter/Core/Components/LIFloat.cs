@@ -11,26 +11,26 @@ namespace LevelImposter.Core
         {
         }
 
-        private float height = 0.2f;
-        private float speed = 2.0f;
-        private float t = 0;
-        private float yOffset = 0;
+        private float _height = 0.2f;
+        private float _speed = 2.0f;
+        private float _t = 0;
+        private float _yOffset = 0;
 
         public void Init(LIElement elem)
         {
             if (elem.properties.floatingHeight != null)
-                height = (float)elem.properties.floatingHeight;
+                _height = (float)elem.properties.floatingHeight;
             if (elem.properties.floatingSpeed != null)
-                speed = (float)elem.properties.floatingSpeed;
-            yOffset = elem.y - LIShipStatus.Y_OFFSET;
+                _speed = (float)elem.properties.floatingSpeed;
+            _yOffset = elem.y - LIShipStatus.Y_OFFSET;
         }
 
         public void Update()
         {
-            t += Time.deltaTime;
+            _t += Time.deltaTime;
             transform.localPosition = new Vector3(
                 transform.localPosition.x,
-                (Mathf.Sin(t * speed) + 1) * height / 2 + yOffset,
+                (Mathf.Sin(_t * _speed) + 1) * _height / 2 + _yOffset,
                 transform.localPosition.z
             );
         }

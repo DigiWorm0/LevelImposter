@@ -9,9 +9,8 @@ namespace LevelImposter.Core
 {
     public class SabBuilder : IElemBuilder
     {
-        public GameObject sabContainer;
-
-        private Dictionary<string, int> consoleIDPairs = new Dictionary<string, int> {
+        private GameObject _sabContainer;
+        private Dictionary<string, int> _consoleIDPairs = new Dictionary<string, int> {
             { "sab-lights", 0 },
             { "sab-reactorleft", 0 },
             { "sab-reactorright", 1 },
@@ -25,15 +24,15 @@ namespace LevelImposter.Core
             if (!elem.type.StartsWith("sab-"))
                 return;
 
-            if (sabContainer == null)
+            if (_sabContainer == null)
             {
-                sabContainer = new GameObject("Sabotages");
-                sabContainer.transform.SetParent(LIShipStatus.Instance.transform);
-                sabContainer.SetActive(false);
+                _sabContainer = new GameObject("Sabotages");
+                _sabContainer.transform.SetParent(LIShipStatus.Instance.transform);
+                _sabContainer.SetActive(false);
             }
 
-            SabData sabData = AssetDB.sabs[elem.type];
-            ShipStatus shipStatus = LIShipStatus.Instance.shipStatus;
+            SabData sabData = AssetDB.Sabs[elem.type];
+            ShipStatus shipStatus = LIShipStatus.Instance.ShipStatus;
 
             // Default Sprite
             obj.layer = (int)Layer.ShortObjects;
@@ -65,8 +64,8 @@ namespace LevelImposter.Core
             console.AllowImpostor = true;
             console.GhostsIgnored = true;
 
-            if (consoleIDPairs.ContainsKey(elem.type))
-                console.ConsoleId = consoleIDPairs[elem.type];
+            if (_consoleIDPairs.ContainsKey(elem.type))
+                console.ConsoleId = _consoleIDPairs[elem.type];
 
             // Collider
             if (!MapUtils.HasSolidCollider(elem))
@@ -90,7 +89,7 @@ namespace LevelImposter.Core
                 // Arrows
                 GameObject taskContainer = new GameObject(elem.name);
                 List<ArrowBehaviour> sabArrows = new List<ArrowBehaviour>();
-                taskContainer.transform.SetParent(sabContainer.transform);
+                taskContainer.transform.SetParent(_sabContainer.transform);
                 while (sabArrows.Count <= console.ConsoleId)
                     sabArrows.Add(MakeArrow(taskContainer.transform));
                 
@@ -112,7 +111,7 @@ namespace LevelImposter.Core
         private ArrowBehaviour MakeArrow(Transform parent)
         {
             // Arrow Buttons
-            GameObject arrowClone = AssetDB.sabs["sab-comms"].Behavior.gameObject.transform.FindChild("Arrow").gameObject;
+            GameObject arrowClone = AssetDB.Sabs["sab-comms"].Behavior.gameObject.transform.FindChild("Arrow").gameObject;
             SpriteRenderer arrowCloneSprite = arrowClone.GetComponent<SpriteRenderer>();
             GameObject arrowObj = new GameObject("Sabotage Arrow");
 

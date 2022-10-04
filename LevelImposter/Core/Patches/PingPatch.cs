@@ -16,7 +16,7 @@ namespace LevelImposter.Core
         public static void Postfix(PingTracker __instance)
         {
             __instance.gameObject.SetActive(true);
-            LIMap currentMap = MapLoader.currentMap;
+            LIMap currentMap = MapLoader.CurrentMap;
             if (currentMap != null)
             {
 

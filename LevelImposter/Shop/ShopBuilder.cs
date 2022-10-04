@@ -9,7 +9,7 @@ namespace LevelImposter.Shop
 {
     public static class ShopBuilder
     {
-        private static GameObject mapShopPrefab = null;
+        private static GameObject _mapShopPrefab = null;
 
         public static void OnLoad()
         {
@@ -20,9 +20,9 @@ namespace LevelImposter.Shop
 
         public static GameObject GetShopPrefab()
         {
-            if (mapShopPrefab == null)
-                mapShopPrefab = MapUtils.LoadAssetBundle("shop");
-            return mapShopPrefab;
+            if (_mapShopPrefab == null)
+                _mapShopPrefab = MapUtils.LoadAssetBundle("shop");
+            return _mapShopPrefab;
         }
 
         private static void RemoveChildren()
@@ -38,18 +38,18 @@ namespace LevelImposter.Shop
             GameObject mapShop = Object.Instantiate(GetShopPrefab());
 
             ShopManager shopMgr = mapShop.AddComponent<ShopManager>();
-            shopMgr.shopParent = mapShop.transform.FindChild("Canvas").FindChild("Scroll").FindChild("Viewport").FindChild("Content");
-            shopMgr.mapBannerPrefab = shopMgr.shopParent.FindChild("MapBanner").gameObject.AddComponent<MapBanner>();
+            shopMgr.ShopParent = mapShop.transform.FindChild("Canvas").FindChild("Scroll").FindChild("Viewport").FindChild("Content");
+            shopMgr.MapBannerPrefab = shopMgr.ShopParent.FindChild("MapBanner").gameObject.AddComponent<MapBanner>();
 
             ShopButtons shopBtns = mapShop.AddComponent<ShopButtons>();
             Transform btnsParent = mapShop.transform.FindChild("Canvas").FindChild("Shop Buttons");
-            shopBtns.downloadedButton = btnsParent.FindChild("DownloadedBtn").GetComponent<Button>();
-            shopBtns.topButton = btnsParent.FindChild("TopBtn").GetComponent<Button>();
-            shopBtns.recentButton = btnsParent.FindChild("RecentBtn").GetComponent<Button>();
-            shopBtns.featuredButton = btnsParent.FindChild("FeaturedBtn").GetComponent<Button>();
-            shopBtns.folderButton = btnsParent.FindChild("FolderBtn").GetComponent<Button>();
+            shopBtns.DownloadedButton = btnsParent.FindChild("DownloadedBtn").GetComponent<Button>();
+            shopBtns.TopButton = btnsParent.FindChild("TopBtn").GetComponent<Button>();
+            shopBtns.RecentButton = btnsParent.FindChild("RecentBtn").GetComponent<Button>();
+            shopBtns.FeaturedButton = btnsParent.FindChild("FeaturedBtn").GetComponent<Button>();
+            shopBtns.FolderButton = btnsParent.FindChild("FolderBtn").GetComponent<Button>();
 
-            MapBanner bannerPrefab = shopMgr.mapBannerPrefab;
+            MapBanner bannerPrefab = shopMgr.MapBannerPrefab;
             bannerPrefab.transform.FindChild("LoadOverlay").FindChild("LoadingSpinner").gameObject.AddComponent<Spinner>();
 
             mapShop.transform.FindChild("Canvas").FindChild("CloseBtn").GetComponent<Button>().onClick.AddListener((System.Action)ShopManager.CloseShop);
@@ -58,9 +58,9 @@ namespace LevelImposter.Shop
             StarGen starGen = starField.gameObject.AddComponent<StarGen>();
             starGen.Length = 12;
             starGen.Width = 6;
-            MeshRenderer starRenderer = starField.gameObject.GetComponent<MeshRenderer>();
 
-            Transform skeld = AssetDB.ss["ss-skeld"].ShipStatus.transform;
+            MeshRenderer starRenderer = starField.gameObject.GetComponent<MeshRenderer>();
+            Transform skeld = AssetDB.Sabos["ss-skeld"].ShipStatus.transform;
             starRenderer.material = skeld.FindChild("starfield").gameObject.GetComponent<MeshRenderer>().material;
 
             return mapShop;

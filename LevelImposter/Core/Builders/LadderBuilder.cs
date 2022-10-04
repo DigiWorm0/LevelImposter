@@ -10,11 +10,12 @@ namespace LevelImposter.Core
 {
     class LadderBuilder : IElemBuilder
     {
+        public const float LADDER_Y_OFFSET = -0.4f;
+
         public static List<Ladder> AllLadders = new List<Ladder>();
 
-        private byte ladderID = 0;
-        private const float LADDER_Y_OFFSET = -0.4f;
-        private static Dictionary<string, float> defaultLadderHeights = new Dictionary<string, float>
+        private byte _ladderID = 0;
+        private static Dictionary<string, float> _defaultLadderHeights = new Dictionary<string, float>
         {
             { "util-ladder1", 3.0f },
             { "util-ladder2", 1.5f }
@@ -25,7 +26,7 @@ namespace LevelImposter.Core
             if (!elem.type.StartsWith("util-ladder"))
                 return;
 
-            UtilData utilData = AssetDB.utils[elem.type];
+            UtilData utilData = AssetDB.Utils[elem.type];
             Ladder topClone = utilData.GameObj.transform.GetChild(0).GetComponent<Ladder>();
             Ladder bottomClone = utilData.GameObj.transform.GetChild(1).GetComponent<Ladder>();
 
@@ -44,7 +45,7 @@ namespace LevelImposter.Core
 
             // Console
             float ladderHeight = elem.properties.ladderHeight == null ?
-                defaultLadderHeights[elem.type] : (float)elem.properties.ladderHeight;
+                _defaultLadderHeights[elem.type] : (float)elem.properties.ladderHeight;
             
             GameObject topObj = new GameObject("LadderTop");
             topObj.transform.SetParent(obj.transform);
@@ -57,14 +58,14 @@ namespace LevelImposter.Core
 
             Ladder topConsole = topObj.AddComponent<Ladder>();
             Ladder bottomConsole = bottomObj.AddComponent<Ladder>();
-            topConsole.Id = ladderID++;
+            topConsole.Id = _ladderID++;
             topConsole.IsTop = true;
             topConsole.Destination = bottomConsole;
             topConsole.UseSound = topClone.UseSound;
             topConsole.Image = spriteRenderer;
             AllLadders.Add(topConsole);
 
-            bottomConsole.Id = ladderID++;
+            bottomConsole.Id = _ladderID++;
             bottomConsole.IsTop = false;
             bottomConsole.Destination = topConsole;
             bottomConsole.UseSound = bottomClone.UseSound;

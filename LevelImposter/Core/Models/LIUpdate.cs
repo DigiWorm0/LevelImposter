@@ -5,6 +5,7 @@ using UnityEngine;
 
 namespace LevelImposter.Core
 {
+    [Serializable]
     public class LIUpdate
     {
         public string name { get; set; }

@@ -9,10 +9,13 @@ using UnityEngine;
 
 namespace LevelImposter.Core
 {
+    /// <summary>
+    /// A variety of utility functions for constructing the map
+    /// </summary>
     public class MapUtils
     {
-        public static Dictionary<SystemTypes, string> systemRenames = new();
-        public static Dictionary<TaskTypes, string> taskRenames = new();
+        public static Dictionary<SystemTypes, string> SystemRenames = new();
+        public static Dictionary<TaskTypes, string> TaskRenames = new();
 
         /// <summary>
         /// Adds an element to an Il2CppReferenceArray
@@ -106,7 +109,7 @@ namespace LevelImposter.Core
         /// <param name="name">String to rename to</param>
         public static void Rename(SystemTypes system, string name)
         {
-            systemRenames[system] = name;
+            SystemRenames[system] = name;
         }
 
         /// <summary>
@@ -116,7 +119,7 @@ namespace LevelImposter.Core
         /// <param name="name">String to rename to</param>
         public static void Rename(TaskTypes system, string name)
         {
-            taskRenames[system] = name;
+            TaskRenames[system] = name;
         }
 
         /// <summary>
@@ -138,8 +141,8 @@ namespace LevelImposter.Core
         /// <returns>Unity AudioClip from data</returns>
         public static AudioClip ConvertToAudio(string name, string base64)
         {
-            byte[] byteData = MapUtils.ParseBase64(base64);
-            AudioClip audio = WAVLoader.Load(name, byteData); // TODO Support other audio formats
+            byte[] byteData = ParseBase64(base64);
+            AudioClip audio = WAVLoader.Load(byteData); // TODO Support other audio formats
             return audio;
         }
 
@@ -166,7 +169,7 @@ namespace LevelImposter.Core
         public static void FireTrigger(GameObject obj, string triggerID, GameObject orgin)
         {
             LITriggerable[] triggers = obj.GetComponents<LITriggerable>();
-            LITriggerable trigger = Array.Find(triggers, (LITriggerable t) => t.id == triggerID);
+            LITriggerable trigger = Array.Find(triggers, (LITriggerable t) => t.ID == triggerID);
             if (trigger != null)
                 trigger.Trigger(orgin);
         }
@@ -224,8 +227,8 @@ namespace LevelImposter.Core
                 return;
 
             Guid mapID = Guid.Empty;
-            if (MapLoader.currentMap != null)
-                Guid.TryParse(MapLoader.currentMap.id, out mapID);
+            if (MapLoader.CurrentMap != null)
+                Guid.TryParse(MapLoader.CurrentMap.id, out mapID);
             string mapIDStr = mapID.ToString();
 
             LILogger.Info("[RPC] Transmitting map ID [" + mapIDStr + "]");

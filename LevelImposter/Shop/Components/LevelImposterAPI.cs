@@ -9,10 +9,13 @@ using System.Text.Json;
 
 namespace LevelImposter.Shop
 {
+    /// <summary>
+    /// API to send/recieve map files from LevelImposter.net
+    /// </summary>
     public class LevelImposterAPI : MonoBehaviour
     {
         public const string API_PATH = "https://us-central1-levelimposter-347807.cloudfunctions.net/api/";
-        private const int API_VERSION = 1;
+        public const int API_VERSION = 1;
 
         public static LevelImposterAPI Instance;
 
@@ -20,7 +23,7 @@ namespace LevelImposter.Shop
         {
         }
 
-        private void Awake()
+        public void Awake()
         {
             if (Instance == null)
             {
@@ -33,11 +36,24 @@ namespace LevelImposter.Shop
             }
         }
 
+        /// <summary>
+        /// Runs an Async HTTP Request on a specific url.
+        /// Handles and logs any errors.
+        /// </summary>
+        /// <param name="url">URL to request</param>
+        /// <param name="callback">Callback on success</param>
         public void Request(string url, System.Action<string> callback)
         {
             StartCoroutine(CoRequest(url, callback).WrapToIl2Cpp());
         }
 
+        /// <summary>
+        /// Runs an Async HTTP Request on a
+        /// specific url with a Unity Coroutine.
+        /// Handles and logs any errors.
+        /// </summary>
+        /// <param name="url">URL to request</param>
+        /// <param name="callback">Callback on success</param>
         public IEnumerator CoRequest(string url, System.Action<string> callback)
         {
             LILogger.Info("GET: " + url);
@@ -52,11 +68,24 @@ namespace LevelImposter.Shop
             request.Dispose();
         }
 
+        /// <summary>
+        /// Runs an HTTP Request for Texture2D data on a specific url.
+        /// Handles and logs any errors.
+        /// </summary>
+        /// <param name="url">URL to request</param>
+        /// <param name="callback">Callback on success</param>
         public void RequestTexture(string url, System.Action<Texture2D> callback)
         {
             StartCoroutine(CoRequestTexture(url, callback).WrapToIl2Cpp());
         }
 
+        /// <summary>
+        /// Runs an HTTP Request for Texture2D data
+        /// on a specific url with a Unity Coroutine.
+        /// Handles and logs any errors.
+        /// </summary>
+        /// <param name="url">URL to request</param>
+        /// <param name="callback">Callback on success</param>
         public IEnumerator CoRequestTexture(string url, System.Action<Texture2D> callback)
         {
             LILogger.Info("GET: " + url);
@@ -75,7 +104,14 @@ namespace LevelImposter.Shop
             request.Dispose();
         }
 
-        public void RequestJSON<T>(string url, System.Action<T> callback)
+        /// <summary>
+        /// Runs an HTTP request on a LevelImposter API
+        /// w/ a JSON-encoded <c>LICallback</c>.
+        /// </summary>
+        /// <typeparam name="T"><c>Data type the LICallback uses</c></typeparam>
+        /// <param name="url">URL to request</param>
+        /// <param name="callback">Callback on success</param>
+        public void RequestJSON<T>(string url, Action<T> callback)
         {
             Request(url, (string json) =>
             {
@@ -89,31 +125,53 @@ namespace LevelImposter.Shop
             });
         }
 
-        public void GetTop(System.Action<LIMetadata[]> callback)
+        /// <summary>
+        /// Grabs the top liked maps from the LevelImposter API.
+        /// </summary>
+        /// <param name="callback">Callback on success</param>
+        public void GetTop(Action<LIMetadata[]> callback)
         {
             LILogger.Info("Getting top maps...");
-            RequestJSON<LIMetadata[]>(API_PATH + "maps/top", callback);
+            RequestJSON(API_PATH + "maps/top", callback);
         }
 
-        public void GetRecent(System.Action<LIMetadata[]> callback)
+        /// <summary>
+        /// Grabs the most recent maps from the LevelImposter API.
+        /// </summary>
+        /// <param name="callback">Callback on success</param>
+        public void GetRecent(Action<LIMetadata[]> callback)
         {
             LILogger.Info("Getting recent maps...");
-            RequestJSON<LIMetadata[]>(API_PATH + "maps/recent", callback);
+            RequestJSON(API_PATH + "maps/recent", callback);
         }
 
-        public void GetFeatured(System.Action<LIMetadata[]> callback)
+        /// <summary>
+        /// Grabs the featured maps from the LevelImposter API.
+        /// </summary>
+        /// <param name="callback">Callback on success</param>
+        public void GetFeatured(Action<LIMetadata[]> callback)
         {
             LILogger.Info("Getting verified maps...");
-            RequestJSON<LIMetadata[]>(API_PATH + "maps/verified", callback);
+            RequestJSON(API_PATH + "maps/verified", callback);
         }
 
-        public void GetMap(System.Guid id, System.Action<LIMetadata> callback)
+        /// <summary>
+        /// Grabs specific map metadata from the LevelImposter API.
+        /// </summary>
+        /// <param name="id">ID of the map to grab</param>
+        /// <param name="callback">Callback on success</param>
+        public void GetMap(Guid id, Action<LIMetadata> callback)
         {
             LILogger.Info("Getting map " + id + "...");
-            RequestJSON<LIMetadata>(API_PATH + "map/" + id, callback);
+            RequestJSON(API_PATH + "map/" + id, callback);
         }
 
-        public void DownloadMap(System.Guid id, System.Action<LIMap> callback)
+        /// <summary>
+        /// Downloads specific map data from the LevelImposter API.
+        /// </summary>
+        /// <param name="id">ID of the map to download</param>
+        /// <param name="callback">Callback on success</param>
+        public void DownloadMap(Guid id, Action<LIMap> callback)
         {
             LILogger.Info("Downloading map " + id + "...");
             GetMap(id, (LIMetadata metadata) =>
@@ -138,7 +196,12 @@ namespace LevelImposter.Shop
             });
         }
 
-        public void DownloadThumbnail(LIMetadata metadata, System.Action<Texture2D> callback)
+        /// <summary>
+        /// Downloads a specific map thumbnail from the LevelImposter API.
+        /// </summary>
+        /// <param name="metadata">Metadata of the map to grab a thumbnail for</param>
+        /// <param name="callback">Callback on success</param>
+        public void DownloadThumbnail(LIMetadata metadata, Action<Texture2D> callback)
         {
             LILogger.Info("Downloading thumbnail for map " + metadata.id + "...");
             RequestTexture(metadata.thumbnailURL, (Texture2D thumbnail) =>

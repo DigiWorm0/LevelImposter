@@ -5,6 +5,9 @@ using UnityEngine;
 
 namespace LevelImposter.Core
 {
+    /// <summary>
+    /// Converts byte[] of WAV files into AudioClips
+    /// </summary>
     public class WAVLoader
     {
         static float bytesToFloat(byte firstByte, byte secondByte)
@@ -22,7 +25,7 @@ namespace LevelImposter.Core
             return value;
         }
 
-        public static AudioClip Load(string name, byte[] wav)
+        public static AudioClip Load(byte[] wav)
         {
             // Metadata
             int channelCount = wav[22];

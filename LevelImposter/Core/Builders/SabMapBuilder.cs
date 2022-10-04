@@ -9,7 +9,7 @@ namespace LevelImposter.Core
 {
     public class SabMapBuilder : IElemBuilder
     {
-        private static Dictionary<SystemTypes, MapRoom> mapRoomDB = new Dictionary<SystemTypes, MapRoom>();
+        private static Dictionary<SystemTypes, MapRoom> _mapRoomDB = new Dictionary<SystemTypes, MapRoom>();
 
         public void Build(LIElement elem, GameObject obj)
         {
@@ -33,9 +33,9 @@ namespace LevelImposter.Core
 
             // Map Room
             MapRoom mapRoom;
-            if (mapRoomDB.ContainsKey(systemType))
+            if (_mapRoomDB.ContainsKey(systemType))
             {
-                mapRoom = mapRoomDB[systemType];
+                mapRoom = _mapRoomDB[systemType];
             }
             else
             {
@@ -47,10 +47,10 @@ namespace LevelImposter.Core
                 mapRoom.Parent = infectedOverlay;
                 mapRoom.room = systemType;
 
-                mapRoomDB.Add(systemType, mapRoom);
+                _mapRoomDB.Add(systemType, mapRoom);
 
-                MapRoom[] rooms = new MapRoom[mapRoomDB.Count];
-                mapRoomDB.Values.CopyTo(rooms, 0);
+                MapRoom[] rooms = new MapRoom[_mapRoomDB.Count];
+                _mapRoomDB.Values.CopyTo(rooms, 0);
                 infectedOverlay.rooms = rooms;
             }
 
@@ -59,8 +59,8 @@ namespace LevelImposter.Core
             sabButton.layer = (int)Layer.UI;
             sabButton.transform.SetParent(mapRoom.transform);
             sabButton.transform.localPosition = new Vector3(
-                elem.x * MinimapBuilder.mapScale,
-                elem.y * MinimapBuilder.mapScale,
+                elem.x * MinimapBuilder.MinimapScale,
+                elem.y * MinimapBuilder.MinimapScale,
                 -25.0f
             );
 
@@ -101,10 +101,10 @@ namespace LevelImposter.Core
             MapBehaviour mapBehaviour = MinimapBuilder.GetMinimap();
             InfectedOverlay infectedOverlay = mapBehaviour.infectedOverlay;
 
-            while (infectedOverlay.transform.childCount > mapRoomDB.Count)
+            while (infectedOverlay.transform.childCount > _mapRoomDB.Count)
                 UnityEngine.Object.DestroyImmediate(infectedOverlay.transform.GetChild(0).gameObject);
             
-            mapRoomDB.Clear();    
+            _mapRoomDB.Clear();    
         }
 
         private Sprite GetSprite(InfectedOverlay overlay, string parent, string child)
