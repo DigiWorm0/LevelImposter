@@ -164,7 +164,6 @@ namespace LevelImposter.Core
         public void AddElement(LIElement element)
         {
             _buildTimer.Restart();
-            _buildTimer.Start();
 
             LILogger.Info("Adding " + element.ToString());
             try

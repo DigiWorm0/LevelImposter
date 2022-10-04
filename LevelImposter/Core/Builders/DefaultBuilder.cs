@@ -34,42 +34,42 @@ namespace LevelImposter.Core
 
             if (elem.properties.colliders != null)
             {
-                GameObject shadowObj = null;
                 foreach (LICollider colliderData in elem.properties.colliders)
                 {
+                    GameObject colliderObj = new GameObject("Collider " + colliderData.id);
+                    colliderObj.transform.SetParent(obj.transform);
+                    colliderObj.transform.localPosition = new Vector3(0, 0, 0);
+                    colliderObj.transform.localRotation = Quaternion.Euler(0, 0, 0);
+                    colliderObj.transform.localScale = Vector3.one;
+
                     if (colliderData.isSolid)
                     {
-                        PolygonCollider2D collider = obj.AddComponent<PolygonCollider2D>();
+                        PolygonCollider2D collider = colliderObj.AddComponent<PolygonCollider2D>();
                         collider.pathCount = 1;
                         collider.SetPath(0, colliderData.GetPoints());
                     }
                     else
                     {
-                        EdgeCollider2D collider = obj.AddComponent<EdgeCollider2D>();
+                        EdgeCollider2D collider = colliderObj.AddComponent<EdgeCollider2D>();
                         collider.SetPoints(colliderData.GetPoints());
                     }
 
                     if (colliderData.blocksLight)
                     {
-                        if (shadowObj == null)
-                        {
-                            shadowObj = new GameObject("Shadows");
-                            shadowObj.transform.SetParent(obj.transform);
-                            shadowObj.transform.localPosition = new Vector3(0, 0, 0);
-                            shadowObj.transform.localRotation = Quaternion.Euler(0, 0, 0);
-                            shadowObj.transform.localScale = Vector3.one;
-                            shadowObj.layer = (int)Layer.Shadow;
-                        }
+                        GameObject shadowObj = new GameObject("Shadow " + colliderData.id);
+                        shadowObj.transform.SetParent(obj.transform);
+                        shadowObj.transform.localPosition = new Vector3(0, 0, 0);
+                        shadowObj.transform.localRotation = Quaternion.Euler(0, 0, 0);
+                        shadowObj.transform.localScale = Vector3.one;
+                        shadowObj.layer = (int)Layer.Shadow;
 
-                        EdgeCollider2D collider = shadowObj.AddComponent<EdgeCollider2D>();
-                        collider.SetPoints(colliderData.GetPoints(colliderData.isSolid));
+                        EdgeCollider2D shadowCollider = shadowObj.AddComponent<EdgeCollider2D>();
+                        shadowCollider.SetPoints(colliderData.GetPoints(colliderData.isSolid));
                     }
                 }
             }
         }
 
         public void PostBuild() { }
-
-        
     }
 }

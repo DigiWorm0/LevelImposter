@@ -83,7 +83,7 @@ namespace LevelImposter.Core
             }
 
             // Collider
-            PolygonCollider2D[] solidColliders = obj.GetComponents<PolygonCollider2D>();
+            PolygonCollider2D[] solidColliders = obj.GetComponentsInChildren<PolygonCollider2D>();
             for (int i = 0; i < solidColliders.Length; i++)
                 solidColliders[i].isTrigger = true;
             if (solidColliders.Length <= 0)

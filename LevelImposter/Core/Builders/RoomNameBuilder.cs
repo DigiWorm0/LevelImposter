@@ -30,7 +30,7 @@ namespace LevelImposter.Core
             roomName.transform.localPosition = new Vector3(
                 elem.x * MinimapBuilder.MinimapScale,
                 elem.y * MinimapBuilder.MinimapScale,
-                0
+                -1
             );
 
             // Text

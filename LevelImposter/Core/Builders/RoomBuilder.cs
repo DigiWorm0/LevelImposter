@@ -25,7 +25,7 @@ namespace LevelImposter.Core
 
             PlainShipRoom shipRoom = obj.AddComponent<PlainShipRoom>();
             shipRoom.RoomId = systemType;
-            shipRoom.roomArea = obj.GetComponent<Collider2D>();
+            shipRoom.roomArea = obj.GetComponentInChildren<Collider2D>();
             if (shipRoom.roomArea != null)
                 shipRoom.roomArea.isTrigger = true;
             else
