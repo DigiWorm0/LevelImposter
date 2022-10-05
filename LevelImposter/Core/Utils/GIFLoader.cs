@@ -32,6 +32,14 @@ using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 
+/*
+ *      Quick disclaimer: I have no clue how most of this class works.
+ *      It's goal is to parse GIF data and convert it into something
+ *      the UnityEngine can read and understand. This was made by
+ *      Markus Göbel (Bunny83) and appropriate licensing is listed at
+ *      the top.
+ */
+
 namespace LevelImposter.Core
 {
     #region Enums and interfaces

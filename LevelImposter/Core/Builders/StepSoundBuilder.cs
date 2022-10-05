@@ -61,7 +61,7 @@ namespace LevelImposter.Core
                 if (clip != null)
                     soundGroup.Clips[i] = clip;
                 else
-                    LILogger.Warn(elem.name + "Step sound has corrupt audio data");
+                    LILogger.Warn(elem.name + " has corrupt audio data");
             }
 
             // Sound Player

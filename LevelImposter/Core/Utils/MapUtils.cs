@@ -142,7 +142,7 @@ namespace LevelImposter.Core
         public static AudioClip ConvertToAudio(string name, string base64)
         {
             byte[] byteData = ParseBase64(base64);
-            AudioClip audio = WAVLoader.Load(byteData); // TODO Support other audio formats
+            AudioClip audio = WAVLoader.LoadPCM(byteData); // TODO Support other audio formats
             return audio;
         }
 

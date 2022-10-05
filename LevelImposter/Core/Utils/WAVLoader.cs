@@ -10,12 +10,12 @@ namespace LevelImposter.Core
     /// </summary>
     public class WAVLoader
     {
-        static float bytesToFloat(byte firstByte, byte secondByte)
+        private static float bytesToFloat(byte firstByte, byte secondByte)
         {
             return ((short)((secondByte << 8) | firstByte)) / 32768.0F;
         }
 
-        static int bytesToInt(byte[] bytes, int offset = 0)
+        private static int bytesToInt(byte[] bytes, int offset = 0)
         {
             int value = 0;
             for (int i = 0; i < 4; i++)
@@ -25,7 +25,12 @@ namespace LevelImposter.Core
             return value;
         }
 
-        public static AudioClip Load(byte[] wav)
+        /// <summary>
+        /// Converts PCM WAV data to a Unity AudioClip
+        /// </summary>
+        /// <param name="wav">Mono or stereo WAV data in PCM format</param>
+        /// <returns>a Unity AudioClip representing the data</returns>
+        public static AudioClip LoadPCM(byte[] wav)
         {
             // Metadata
             int channelCount = wav[22];
@@ -61,7 +66,7 @@ namespace LevelImposter.Core
 
             // Make Audio Clip
             AudioClip clip = AudioClip.Create(
-                "testSound",
+                "LI Audio",
                 sampleCount,
                 channelCount,
                 frequency,
