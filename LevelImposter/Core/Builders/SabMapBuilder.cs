@@ -11,21 +11,23 @@ namespace LevelImposter.Core
     {
         private static Dictionary<SystemTypes, MapRoom> _mapRoomDB = new Dictionary<SystemTypes, MapRoom>();
 
+        private Sprite _commsBtnSprite;
+        private Sprite _reactorBtnSprite;
+        private Sprite _doorsBtnSprite;
+        private Sprite _lightsBtnSprite;
+        private Material _btnMat;
+
         public void Build(LIElement elem, GameObject obj)
         {
-            if (!elem.type.StartsWith("sab-"))
+            if (!elem.type.StartsWith("sab-btn"))
                 return;
 
+            // Assets
             MapBehaviour mapBehaviour = MinimapBuilder.GetMinimap();
             InfectedOverlay infectedOverlay = mapBehaviour.infectedOverlay;
-
-            // Is anyone going to talk about the fact that comms is literally called "bomb" in Unity?
-            Sprite commsSprite = GetSprite(infectedOverlay, "Comms", "bomb"); // um...BOMB!?
-            Sprite reactorSprite = GetSprite(infectedOverlay, "Laboratory", "meltdown");
-            Sprite doorsSprite = GetSprite(infectedOverlay, "Office", "Doors");
-            Sprite lightsSprite = GetSprite(infectedOverlay, "Electrical", "lightsOut");
-            Material buttonMat = infectedOverlay.transform.GetChild(0).GetChild(0).GetComponent<SpriteRenderer>().material;
-
+            if (_btnMat == null)
+                GetAllAssets();
+            
             // System
             SystemTypes systemType = 0;
             if (elem.properties.parent != null)
@@ -68,33 +70,48 @@ namespace LevelImposter.Core
             collider.radius = 0.425f;
             collider.isTrigger = true;
 
-            SpriteRenderer renderer = sabButton.AddComponent<SpriteRenderer>();
-            renderer.sprite = lightsSprite;
-            renderer.material = buttonMat;
+            SpriteRenderer btnRenderer = sabButton.AddComponent<SpriteRenderer>();
             if (mapRoom.special != null)
                 LILogger.Warn("Only 1 sabotage is supported per room");
-            mapRoom.special = renderer;
+            mapRoom.special = btnRenderer;
+
             ButtonBehavior button = sabButton.AddComponent<ButtonBehavior>();
-            Action action = mapRoom.SabotageLights;
+            Action btnAction = null;
+            Sprite btnSprite = null;
 
-            if (elem.type == "sab-reactorleft" || elem.type == "sab-reactorright")
-            {
-                renderer.sprite = reactorSprite;
-                action = mapRoom.SabotageSeismic;
+            switch (elem.type) {
+                case "sab-btnreactor":
+                    btnSprite = _reactorBtnSprite;
+                    btnAction = mapRoom.SabotageSeismic;
+                    break;
+                case "sab - btnoxygen":
+                    btnSprite = _reactorBtnSprite; // TODO: Replace Me
+                    btnAction = mapRoom.SabotageOxygen;
+                    break;
+                case "sab-btncomms":
+                    btnSprite = _commsBtnSprite;
+                    btnAction = mapRoom.SabotageComms;
+                    break;
+                case "sab-btnlights":
+                    btnSprite = _lightsBtnSprite;
+                    btnAction = mapRoom.SabotageLights;
+                    break;
+                default:
+                    LILogger.Error($"{elem.name} has unknown sabotage button type: {elem.type}");
+                    return;
             }
-            else if (elem.type == "sab-oxygen1" || elem.type == "sab-oxygen2")
-            {
-                renderer.sprite = reactorSprite; // TODO: Fix Me
-                action = mapRoom.SabotageOxygen;
-            }
-            else if (elem.type == "sab-comms")
-            {
-                renderer.sprite = commsSprite;
-                action = mapRoom.SabotageComms;
-            }
-            button.OnClick.AddListener(action);
 
+            btnRenderer.sprite = btnSprite;
+            btnRenderer.material = _btnMat;
+            button.OnClick.AddListener(btnAction);
+            SpriteRenderer origRenderer = obj.GetComponent<SpriteRenderer>();
+            if (origRenderer != null)
+            {
+                btnRenderer.sprite = origRenderer.sprite;
+                btnRenderer.color = origRenderer.color;
+            }
         }
+
 
         public void PostBuild()
         {
@@ -102,9 +119,18 @@ namespace LevelImposter.Core
             InfectedOverlay infectedOverlay = mapBehaviour.infectedOverlay;
 
             while (infectedOverlay.transform.childCount > _mapRoomDB.Count)
-                UnityEngine.Object.DestroyImmediate(infectedOverlay.transform.GetChild(0).gameObject);
-            
-            _mapRoomDB.Clear();    
+                UnityEngine.Object.DestroyImmediate(infectedOverlay.transform.GetChild(0).gameObject);  
+        }
+
+        private void GetAllAssets()
+        {
+            MapBehaviour mapBehaviour = MinimapBuilder.GetMinimap();
+            InfectedOverlay infectedOverlay = mapBehaviour.infectedOverlay;
+            _commsBtnSprite = GetSprite(infectedOverlay, "Comms", "bomb"); // um...BOMB!?
+            _reactorBtnSprite = GetSprite(infectedOverlay, "Laboratory", "meltdown");
+            _doorsBtnSprite = GetSprite(infectedOverlay, "Office", "Doors");
+            _lightsBtnSprite = GetSprite(infectedOverlay, "Electrical", "lightsOut");
+            _btnMat = infectedOverlay.transform.GetChild(0).GetChild(0).GetComponent<SpriteRenderer>().material;
         }
 
         private Sprite GetSprite(InfectedOverlay overlay, string parent, string child)

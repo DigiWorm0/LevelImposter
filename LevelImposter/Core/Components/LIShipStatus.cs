@@ -113,6 +113,7 @@ namespace LevelImposter.Core
             CurrentMap = map;
             ResetMap();
             _LoadMapProperties(map);
+            _buildRouter.ResetStack();
 
             // Asset DB
             if (!AssetDB.IsReady)

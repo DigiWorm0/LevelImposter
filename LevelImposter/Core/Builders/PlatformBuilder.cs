@@ -80,6 +80,6 @@ namespace LevelImposter.Core
             rightConsole.Platform = movingPlatform;
         }
 
-        public void PostBuild() {}
+        public void PostBuild() { }
     }
 }

@@ -50,6 +50,6 @@ namespace LevelImposter.Core
             ambientPlayer.MaxVolume = soundData.volume;
         }
 
-        public void PostBuild() {}
+        public void PostBuild() { }
     }
 }

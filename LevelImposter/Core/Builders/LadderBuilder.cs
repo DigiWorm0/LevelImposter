@@ -75,7 +75,7 @@ namespace LevelImposter.Core
 
         public void PostBuild()
         {
-            AllLadders.RemoveAll(platform => platform == null);
+            AllLadders.RemoveAll(ladder => ladder == null);
         }
     }
 }

@@ -115,9 +115,6 @@ namespace LevelImposter.Core
                 if (currentVent.Value.properties.rightVent != null)
                     ventComponent.Right = _ventComponentDb[(Guid)currentVent.Value.properties.rightVent];
             }
-
-            _ventElementDb.Clear();
-            _ventComponentDb.Clear();
         }
 
         private void GenerateArrow(GameObject arrowPrefab, Vent vent, int dir)

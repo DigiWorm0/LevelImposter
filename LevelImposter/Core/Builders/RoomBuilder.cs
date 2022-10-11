@@ -37,7 +37,6 @@ namespace LevelImposter.Core
 
         public void PostBuild()
         {
-            _systemDB.Clear();
             MapUtils.Rename((SystemTypes)0, "Default Room");
             _roomId = 1;
         }

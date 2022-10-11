@@ -37,7 +37,6 @@ namespace LevelImposter.Core
                     trigger.targetTrigger = Array.Find(_triggerDB.ToArray(), (LITriggerable t) => t.ID == trigger.TargetTriggerID && t.ElemID == trigger.TargetElemID);
                 }
             }
-            _triggerDB.Clear();
         }
     }
 }

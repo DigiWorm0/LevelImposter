@@ -71,6 +71,6 @@ namespace LevelImposter.Core
             stepPlayer.priority = elem.properties.soundPriority == null ? 0 : (int)elem.properties.soundPriority;
         }
 
-        public void PostBuild() {}
+        public void PostBuild() { }
     }
 }

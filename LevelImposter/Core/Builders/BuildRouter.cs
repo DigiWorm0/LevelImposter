@@ -10,15 +10,10 @@ namespace LevelImposter.Core
     {
         public List<IElemBuilder> _buildStack;
 
-        public BuildRouter()
-        {
-            InitStack();
-        }
-
         /// <summary>
         /// Patchable method to append or remove builders from the build stack
         /// </summary>
-        public void InitStack()
+        public void ResetStack()
         {
             _buildStack = new() {
                 new DefaultBuilder(),
@@ -35,8 +30,11 @@ namespace LevelImposter.Core
                 new CamBuilder(),
                 new TaskBuilder(),
                 new DecBuilder(),
+
                 new SabBuilder(),
+                new SabConsoleBuilder(),
                 new SabMapBuilder(),
+
                 new LadderBuilder(),
                 new PlatformBuilder(),
                 new StarfieldBuilder(),

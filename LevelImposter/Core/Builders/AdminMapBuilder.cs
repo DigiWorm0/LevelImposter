@@ -55,9 +55,7 @@ namespace LevelImposter.Core
             MapCountOverlay mapCountOverlay = mapBehaviour.countOverlay;
 
             while (mapCountOverlay.transform.childCount > _counterAreaDB.Count)
-                UnityEngine.Object.DestroyImmediate(mapCountOverlay.transform.GetChild(0).gameObject);
-
-            _counterAreaDB.Clear();    
+                UnityEngine.Object.DestroyImmediate(mapCountOverlay.transform.GetChild(0).gameObject); 
         }
     }
 }
