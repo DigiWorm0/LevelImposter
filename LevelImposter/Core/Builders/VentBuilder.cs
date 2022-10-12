@@ -84,8 +84,8 @@ namespace LevelImposter.Core
             ShipStatus shipStatus = LIShipStatus.Instance.ShipStatus;
             if (!_hasVentSound)
             {
-                shipStatus.VentEnterSound = AssetDB.Sabos["ss-skeld"].ShipStatus.VentEnterSound;
-                shipStatus.VentMoveSounds = AssetDB.Sabos["ss-skeld"].ShipStatus.VentMoveSounds;
+                shipStatus.VentEnterSound = AssetDB.Ships["ss-skeld"].ShipStatus.VentEnterSound;
+                shipStatus.VentMoveSounds = AssetDB.Ships["ss-skeld"].ShipStatus.VentMoveSounds;
                 _hasVentSound = true;
             }
 

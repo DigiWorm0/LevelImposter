@@ -13,6 +13,7 @@ namespace LevelImposter.Core
 
         private Sprite _commsBtnSprite = null;
         private Sprite _reactorBtnSprite = null;
+        private Sprite _oxygenBtnSprite = null;
         private Sprite _doorsBtnSprite = null;
         private Sprite _lightsBtnSprite = null;
         private Material _btnMat = null;
@@ -91,8 +92,8 @@ namespace LevelImposter.Core
                     btnSprite = _reactorBtnSprite;
                     btnAction = mapRoom.SabotageSeismic;
                     break;
-                case "sab - btnoxygen":
-                    btnSprite = _reactorBtnSprite; // TODO: Replace Me
+                case "sab-btnoxygen":
+                    btnSprite = _oxygenBtnSprite; // TODO: Replace Me
                     btnAction = mapRoom.SabotageOxygen;
                     break;
                 case "sab-btncomms":
@@ -138,6 +139,10 @@ namespace LevelImposter.Core
             _doorsBtnSprite = GetSprite(infectedOverlay, "Office", "Doors");
             _lightsBtnSprite = GetSprite(infectedOverlay, "Electrical", "lightsOut");
             _btnMat = infectedOverlay.transform.GetChild(0).GetChild(0).GetComponent<SpriteRenderer>().material;
+
+            ShipStatus miraShip = AssetDB.Ships["ss-mira"].ShipStatus;
+            InfectedOverlay miraOverlay = miraShip.MapPrefab.infectedOverlay;
+            _oxygenBtnSprite = GetSprite(miraOverlay, "LifeSupp", "bomb"); // Another bomb?
         }
 
         private Sprite GetSprite(InfectedOverlay overlay, string parent, string child)

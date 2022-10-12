@@ -60,7 +60,7 @@ namespace LevelImposter.Shop
             starGen.Width = 6;
 
             MeshRenderer starRenderer = starField.gameObject.GetComponent<MeshRenderer>();
-            Transform skeld = AssetDB.Sabos["ss-skeld"].ShipStatus.transform;
+            Transform skeld = AssetDB.Ships["ss-skeld"].ShipStatus.transform;
             starRenderer.material = skeld.FindChild("starfield").gameObject.GetComponent<MeshRenderer>().material;
 
             return mapShop;
