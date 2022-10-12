@@ -11,8 +11,13 @@ namespace LevelImposter.Core
     {
         public const float ICON_OFFSET = -0.25f;
 
-        private static List<CounterArea> _counterAreaDB = new List<CounterArea>();
-        private PoolableBehavior _poolPrefab = null;
+        private static List<CounterArea> _counterAreaDB;
+        private PoolableBehavior _poolPrefab;
+
+        public AdminMapBuilder()
+        {
+            _counterAreaDB = new List<CounterArea>();
+        }
 
         public void Build(LIElement elem, GameObject obj)
         {

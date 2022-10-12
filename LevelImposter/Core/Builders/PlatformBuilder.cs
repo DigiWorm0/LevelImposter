@@ -13,6 +13,11 @@ namespace LevelImposter.Core
         // TODO: Support multiple moving platforms in 1 map
         public static MovingPlatformBehaviour Platform = null;
 
+        public PlatformBuilder()
+        {
+            Platform = null;
+        }
+
         public void Build(LIElement elem, GameObject obj)
         {
             if (elem.type != "util-platform")

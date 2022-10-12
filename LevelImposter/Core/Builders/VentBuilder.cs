@@ -11,10 +11,17 @@ namespace LevelImposter.Core
 {
     class VentBuilder : IElemBuilder
     {
+        private static Dictionary<int, LIElement> _ventElementDb = null;
+        private static Dictionary<Guid, Vent> _ventComponentDb = null;
+
         private int _ventID = 0;
         private bool _hasVentSound = false;
-        private static Dictionary<int, LIElement> _ventElementDb = new Dictionary<int, LIElement>();
-        private static Dictionary<Guid, Vent> _ventComponentDb = new Dictionary<Guid, Vent>();
+
+        public VentBuilder()
+        {
+            _ventElementDb = new Dictionary<int, LIElement>();
+            _ventComponentDb = new Dictionary<Guid, Vent>();
+        }
 
         public void Build(LIElement elem, GameObject obj)
         {

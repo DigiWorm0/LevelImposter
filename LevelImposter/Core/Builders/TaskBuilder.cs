@@ -49,6 +49,19 @@ namespace LevelImposter.Core
         public static byte RecordsCount = 0;
         public static byte WiresCount = 0;
 
+        public TaskBuilder()
+        {
+            DivertSystems = new SystemTypes[0];
+            BreakerCount = 0;
+            ToiletCount = 0;
+            TowelCount = 0;
+            FuelCount = 0;
+            WaterWheelCount = 0;
+            AlignEngineCount = 0;
+            RecordsCount = 0;
+            WiresCount = 0;
+    }
+
         public void Build(LIElement elem, GameObject obj)
         {
             if (!elem.type.StartsWith("task-"))
@@ -189,6 +202,9 @@ namespace LevelImposter.Core
             // Task
             bool isBuilt = _builtTypes.Contains(elem.type);
             _builtTypes.Add(elem.type);
+
+            if (!isBuilt)
+                LILogger.Info("Adding task for " + elem.name + "...");
 
             if (elem.type == "task-divert1" && !isBuilt)
             {

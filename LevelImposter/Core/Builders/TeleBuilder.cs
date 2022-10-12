@@ -10,7 +10,12 @@ namespace LevelImposter.Core
 {
     class TeleBuilder : IElemBuilder
     {
-        private static Dictionary<Guid, LITeleporter> _teleporterDb = new Dictionary<Guid, LITeleporter>();
+        private static Dictionary<Guid, LITeleporter> _teleporterDb = null;
+
+        public TeleBuilder()
+        {
+            _teleporterDb = new Dictionary<Guid, LITeleporter>();
+        }
 
         public void Build(LIElement elem, GameObject obj)
         {

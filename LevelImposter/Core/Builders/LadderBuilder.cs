@@ -12,14 +12,20 @@ namespace LevelImposter.Core
     {
         public const float LADDER_Y_OFFSET = -0.4f;
 
-        public static List<Ladder> AllLadders = new List<Ladder>();
-
+        public static List<Ladder> AllLadders = null;
         private byte _ladderID = 0;
+
         private static Dictionary<string, float> _defaultLadderHeights = new Dictionary<string, float>
         {
             { "util-ladder1", 3.0f },
             { "util-ladder2", 1.5f }
         };
+
+
+        public LadderBuilder()
+        {
+            AllLadders = new List<Ladder>();
+        }
 
         public void Build(LIElement elem, GameObject obj)
         {

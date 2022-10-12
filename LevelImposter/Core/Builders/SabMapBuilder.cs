@@ -9,13 +9,18 @@ namespace LevelImposter.Core
 {
     public class SabMapBuilder : IElemBuilder
     {
-        private static Dictionary<SystemTypes, MapRoom> _mapRoomDB = new Dictionary<SystemTypes, MapRoom>();
+        private static Dictionary<SystemTypes, MapRoom> _mapRoomDB = null;
 
-        private Sprite _commsBtnSprite;
-        private Sprite _reactorBtnSprite;
-        private Sprite _doorsBtnSprite;
-        private Sprite _lightsBtnSprite;
-        private Material _btnMat;
+        private Sprite _commsBtnSprite = null;
+        private Sprite _reactorBtnSprite = null;
+        private Sprite _doorsBtnSprite = null;
+        private Sprite _lightsBtnSprite = null;
+        private Material _btnMat = null;
+
+        public SabMapBuilder()
+        {
+            _mapRoomDB = new Dictionary<SystemTypes, MapRoom>();
+        }
 
         public void Build(LIElement elem, GameObject obj)
         {
@@ -65,6 +70,8 @@ namespace LevelImposter.Core
                 elem.y * MinimapBuilder.MinimapScale,
                 -25.0f
             );
+            sabButton.transform.localScale = new Vector3(elem.xScale, elem.yScale, 1);
+            sabButton.transform.localRotation = Quaternion.Euler(0, 0, elem.rotation);
 
             CircleCollider2D collider = sabButton.AddComponent<CircleCollider2D>();
             collider.radius = 0.425f;
@@ -72,7 +79,7 @@ namespace LevelImposter.Core
 
             SpriteRenderer btnRenderer = sabButton.AddComponent<SpriteRenderer>();
             if (mapRoom.special != null)
-                LILogger.Warn("Only 1 sabotage is supported per room");
+                LILogger.Warn("Only 1 sabotage button is supported per room");
             mapRoom.special = btnRenderer;
 
             ButtonBehavior button = sabButton.AddComponent<ButtonBehavior>();
@@ -119,7 +126,7 @@ namespace LevelImposter.Core
             InfectedOverlay infectedOverlay = mapBehaviour.infectedOverlay;
 
             while (infectedOverlay.transform.childCount > _mapRoomDB.Count)
-                UnityEngine.Object.DestroyImmediate(infectedOverlay.transform.GetChild(0).gameObject);  
+                UnityEngine.Object.DestroyImmediate(infectedOverlay.transform.GetChild(0).gameObject);
         }
 
         private void GetAllAssets()

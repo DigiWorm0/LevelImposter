@@ -9,9 +9,13 @@ namespace LevelImposter.Core
 {
     public class SabBuilder : IElemBuilder
     {
-        private static Dictionary<SystemTypes, SabotageTask> _sabDB = new Dictionary<SystemTypes, SabotageTask>();
+        private static Dictionary<SystemTypes, SabotageTask> _sabDB = null;
+        private GameObject _sabContainer = null;
 
-        private GameObject _sabContainer;
+        public SabBuilder()
+        {
+            _sabDB = new Dictionary<SystemTypes, SabotageTask>();
+        }
 
         public void Build(LIElement elem, GameObject obj)
         {
@@ -37,6 +41,7 @@ namespace LevelImposter.Core
             // Task
             if (!_sabDB.ContainsKey(systemType))
             {
+                LILogger.Info("Adding sabotage for " + elem.name + "...");
                 GameObject sabContainer = new GameObject(elem.name);
                 sabContainer.transform.SetParent(_sabContainer.transform);
 
