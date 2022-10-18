@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -36,6 +37,12 @@ namespace LevelImposter.Shop
             }
         }
 
+        public void Start()
+        {
+            if (!Directory.Exists(GetDirectory()))
+                Directory.CreateDirectory(GetDirectory());
+        }
+
         /// <summary>
         /// Gets the current directory where LevelImposter thumbnail files are stored.
         /// Usually in a sub-directory within the LevelImposter folder beside the LevelImposter.dll.
@@ -44,7 +51,7 @@ namespace LevelImposter.Shop
         public string GetDirectory()
         {
             string gameDir = System.Reflection.Assembly.GetAssembly(typeof(LevelImposter)).Location;
-            return System.IO.Path.Combine(System.IO.Path.GetDirectoryName(gameDir), "LevelImposter/Thumbnails");
+            return Path.Combine(Path.GetDirectoryName(gameDir), "LevelImposter/Thumbnails");
         }
 
         /// <summary>
@@ -54,7 +61,7 @@ namespace LevelImposter.Shop
         /// <returns>The path where a specific map thumbnail file is stored</returns>
         public string GetPath(string mapID)
         {
-            return System.IO.Path.Combine(GetDirectory(), mapID + ".png");
+            return Path.Combine(GetDirectory(), mapID + ".png");
         }
 
         /// <summary>
@@ -64,7 +71,7 @@ namespace LevelImposter.Shop
         /// <returns>True if a map thumbnail file with the cooresponding ID exists</returns>
         public bool Exists(string mapID)
         {
-            return System.IO.File.Exists(GetPath(mapID));
+            return File.Exists(GetPath(mapID));
         }
 
         /// <summary>
@@ -82,7 +89,7 @@ namespace LevelImposter.Shop
 
             LILogger.Info("Loading thumbnail [" + mapID + "] from filesystem");
             string thumbnailPath = GetPath(mapID);
-            byte[] thumbnailBytes = System.IO.File.ReadAllBytes(thumbnailPath);
+            byte[] thumbnailBytes = File.ReadAllBytes(thumbnailPath);
             Texture2D texture = new Texture2D(1, 1);
             ImageConversion.LoadImage(texture, thumbnailBytes);
             callback(texture);
@@ -97,9 +104,9 @@ namespace LevelImposter.Shop
         {
             LILogger.Info("Saving [" + mapID + "] thumbnail to filesystem");
             string thumbnailPath = GetPath(mapID);
-            if (!System.IO.Directory.Exists(GetDirectory()))
-                System.IO.Directory.CreateDirectory(GetDirectory());
-            System.IO.File.WriteAllBytes(thumbnailPath, thumbnailData);
+            if (!Directory.Exists(GetDirectory()))
+                Directory.CreateDirectory(GetDirectory());
+            File.WriteAllBytes(thumbnailPath, thumbnailData);
         }
 
         /// <summary>
@@ -112,7 +119,7 @@ namespace LevelImposter.Shop
                 return;
             LILogger.Info("Deleting [" + mapID + "] thumbnail from filesystem");
             string mapPath = GetPath(mapID);
-            System.IO.File.Delete(mapPath);
+            File.Delete(mapPath);
         }
     }
 }
