@@ -24,4 +24,4 @@ jobs:
       - uses: actions/upload-artifact@v2
         with:
           name: LevelImposter.dll
-          path: LevelImposter-BepInEx/bin/BuildMod/netstandard2.1/LevelImposter-BepInEx.dll
+          path: LevelImposter-BepInEx/bin/BuildMod/net6.0/LevelImposter-BepInEx.dll
