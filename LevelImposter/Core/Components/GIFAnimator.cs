@@ -2,7 +2,7 @@
 using System.IO;
 using System.Collections;
 using UnityEngine;
-using BepInEx.IL2CPP.Utils.Collections;
+using BepInEx.Unity.IL2CPP.Utils.Collections;
 
 namespace LevelImposter.Core
 {

@@ -8,7 +8,7 @@ using UnityEngine.AddressableAssets;
 using LevelImposter.Core;
 using System.Text.Json;
 using System.Collections;
-using BepInEx.IL2CPP.Utils.Collections;
+using BepInEx.Unity.IL2CPP.Utils.Collections;
 
 namespace LevelImposter.DB
 {

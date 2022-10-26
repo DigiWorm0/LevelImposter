@@ -1,7 +1,6 @@
 ﻿using HarmonyLib;
 using System;
 using System.Collections.Generic;
-using UnhollowerBaseLib.Attributes;
 using System.Text;
 using UnityEngine;
 using LevelImposter.Shop;

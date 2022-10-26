@@ -6,6 +6,7 @@ using UnityEngine;
 using LevelImposter.Shop;
 using LevelImposter.DB;
 using System.Diagnostics;
+using Il2CppInterop.Runtime.InteropTypes.Arrays;
 
 namespace LevelImposter.Core
 {
@@ -69,13 +70,13 @@ namespace LevelImposter.Core
             camera.shakeAmount = 0;
             camera.shakePeriod = 0;
 
-            ShipStatus.AllDoors = new UnhollowerBaseLib.Il2CppReferenceArray<PlainDoor>(0);
-            ShipStatus.DummyLocations = new UnhollowerBaseLib.Il2CppReferenceArray<Transform>(0);
-            ShipStatus.SpecialTasks = new UnhollowerBaseLib.Il2CppReferenceArray<PlayerTask>(0);
-            ShipStatus.CommonTasks = new UnhollowerBaseLib.Il2CppReferenceArray<NormalPlayerTask>(0);
-            ShipStatus.LongTasks = new UnhollowerBaseLib.Il2CppReferenceArray<NormalPlayerTask>(0);
-            ShipStatus.NormalTasks = new UnhollowerBaseLib.Il2CppReferenceArray<NormalPlayerTask>(0);
-            ShipStatus.SystemNames = new UnhollowerBaseLib.Il2CppStructArray<StringNames>(0);
+            ShipStatus.AllDoors = new Il2CppReferenceArray<PlainDoor>(0);
+            ShipStatus.DummyLocations = new Il2CppReferenceArray<Transform>(0);
+            ShipStatus.SpecialTasks = new Il2CppReferenceArray<PlayerTask>(0);
+            ShipStatus.CommonTasks = new Il2CppReferenceArray<NormalPlayerTask>(0);
+            ShipStatus.LongTasks = new Il2CppReferenceArray<NormalPlayerTask>(0);
+            ShipStatus.NormalTasks = new Il2CppReferenceArray<NormalPlayerTask>(0);
+            ShipStatus.SystemNames = new Il2CppStructArray<StringNames>(0);
             ShipStatus.Systems = new Il2CppSystem.Collections.Generic.Dictionary<SystemTypes, ISystemType>();
             ShipStatus.MedScanner = null;
             ShipStatus.Type = ShipStatus.MapType.Ship;

@@ -6,7 +6,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using LevelImposter.DB;
 using LevelImposter.Core;
-using BepInEx.IL2CPP.Utils.Collections;
+using BepInEx.Unity.IL2CPP.Utils.Collections;
 
 namespace LevelImposter.Shop
 {

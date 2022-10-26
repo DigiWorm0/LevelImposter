@@ -4,6 +4,7 @@ using System.Text;
 using UnityEngine.Events;
 using UnityEngine;
 using LevelImposter.DB;
+using Il2CppInterop.Runtime.InteropTypes.Arrays;
 
 namespace LevelImposter.Core
 {
@@ -138,7 +139,7 @@ namespace LevelImposter.Core
                 TaskSet taskSet = new TaskSet();
                 taskSet.taskType = TaskTypes.ReplaceWaterJug;
                 taskSet.taskStep = new IntRange(1, 1);
-                console.ValidTasks = new UnhollowerBaseLib.Il2CppReferenceArray<TaskSet>(new TaskSet[] {
+                console.ValidTasks = new Il2CppReferenceArray<TaskSet>(new TaskSet[] {
                     taskSet
                 });
             }
@@ -154,7 +155,7 @@ namespace LevelImposter.Core
             }
             else if (elem.type == "task-fuel1")
             {
-                console.ValidTasks = new UnhollowerBaseLib.Il2CppReferenceArray<TaskSet>(byte.MaxValue / 2);
+                console.ValidTasks = new Il2CppReferenceArray<TaskSet>(byte.MaxValue / 2);
                 for (byte i = 0; i < byte.MaxValue - 1; i+=2)
                 {
                     TaskSet taskSet = new TaskSet();
@@ -169,7 +170,7 @@ namespace LevelImposter.Core
                 TaskSet taskSet = new TaskSet();
                 taskSet.taskType = TaskTypes.FuelEngines;
                 taskSet.taskStep = new IntRange(console.ConsoleId * 2 + 1, console.ConsoleId * 2 + 1);
-                console.ValidTasks = new UnhollowerBaseLib.Il2CppReferenceArray<TaskSet>(new TaskSet[] {
+                console.ValidTasks = new Il2CppReferenceArray<TaskSet>(new TaskSet[] {
                     taskSet
                 });
                 _consoleIDIncrements[elem.type]++;

@@ -6,6 +6,7 @@ using System.Text;
 using UnityEngine;
 using UnityEngine.Events;
 using PowerTools;
+using Il2CppInterop.Runtime.InteropTypes.Arrays;
 
 namespace LevelImposter.Core
 {
@@ -71,8 +72,8 @@ namespace LevelImposter.Core
             vent.spreadAmount = ventData.spreadAmount;
             vent.spreadShift = ventData.spreadShift;
             vent.Offset = ventData.Offset;
-            vent.Buttons = new UnhollowerBaseLib.Il2CppReferenceArray<ButtonBehavior>(0);
-            vent.CleaningIndicators = new UnhollowerBaseLib.Il2CppReferenceArray<GameObject>(0);
+            vent.Buttons = new Il2CppReferenceArray<ButtonBehavior>(0);
+            vent.CleaningIndicators = new Il2CppReferenceArray<GameObject>(0);
             vent.Id = this._ventID;
 
             // Arrows

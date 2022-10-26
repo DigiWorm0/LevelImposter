@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using UnityEngine;
 using LevelImposter.Core;
+using Il2CppInterop.Runtime.InteropTypes.Arrays;
 
 namespace LevelImposter.DB
 {
@@ -115,7 +116,7 @@ namespace LevelImposter.DB
         /// <param name="list">List of components</param>
         /// <param name="name">Name of the GameObject</param>
         /// <returns>The cooresponding component. Null otherwise.</returns>
-        public static T SearchList<T>(UnhollowerBaseLib.Il2CppReferenceArray<T> list, string name) where T : MonoBehaviour
+        public static T SearchList<T>(Il2CppReferenceArray<T> list, string name) where T : MonoBehaviour
         {
             IEnumerable<T> elem = list.Where(t => t.name == name);
             if (elem.Count() > 0)

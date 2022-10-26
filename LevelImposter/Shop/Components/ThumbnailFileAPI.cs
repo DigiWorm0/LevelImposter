@@ -6,7 +6,7 @@ using UnityEngine;
 using UnityEngine.Networking;
 using LevelImposter.Core;
 using Newtonsoft.Json;
-using BepInEx.IL2CPP.Utils.Collections;
+using BepInEx.Unity.IL2CPP.Utils.Collections;
 
 namespace LevelImposter.Shop
 {
