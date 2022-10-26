@@ -10,7 +10,7 @@ namespace LevelImposter.Core
     public class SabConsoleBuilder : IElemBuilder
     {
         private Dictionary<string, int> _consoleIDPairs = new Dictionary<string, int> {
-            { "sab-lights", 0 },
+            { "sab-electric", 0 },
             { "sab-reactorleft", 0 },
             { "sab-reactorright", 1 },
             { "sab-oxygen1", 0 },
