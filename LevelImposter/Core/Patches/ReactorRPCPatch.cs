@@ -2,7 +2,7 @@
 using HarmonyLib;
 using UnityEngine;
 using LevelImposter.Shop;
-using Reactor.Networking.MethodRpc;
+using Reactor.Networking.Attributes;
 
 namespace LevelImposter.Core
 {

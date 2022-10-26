@@ -22,6 +22,7 @@ namespace LevelImposter.Shop
         public Transform ShopParent;
 
         private string _currentListID = "downloaded";
+        private HostLocalGameButton _freeplayComp;
 
         public void Awake()
         {
@@ -32,6 +33,8 @@ namespace LevelImposter.Shop
 
         public void Start()
         {
+            _freeplayComp = gameObject.AddComponent<HostLocalGameButton>();
+            _freeplayComp.GameMode = GameModes.FreePlay;
             ListDownloaded();
         }
 
@@ -144,6 +147,9 @@ namespace LevelImposter.Shop
             MapLoader.LoadMap(id);
 
             AmongUsClient.Instance.TutorialMapId = 2;
+            _freeplayComp.OnClick();
+
+            /*
             SaveManager.GameHostOptions.gameType = GameType.Normal;
             SoundManager.Instance.StopAllSound();
             AmongUsClient.Instance.GameMode = GameModes.FreePlay;
@@ -152,8 +158,8 @@ namespace LevelImposter.Shop
             AmongUsClient.Instance.MainMenuScene = "MainMenu";
             AmongUsClient.Instance.OnlineScene = "Tutorial";
             AmongUsClient.Instance.Connect(MatchMakerModes.HostAndClient, null);
-
             StartCoroutine(AmongUsClient.Instance.WaitForConnectionOrFail());
+            */
         }
 
         public static void CloseShop()

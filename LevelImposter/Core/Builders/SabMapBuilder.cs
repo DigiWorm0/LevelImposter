@@ -9,23 +9,45 @@ namespace LevelImposter.Core
 {
     public class SabMapBuilder : IElemBuilder
     {
-        private static Dictionary<SystemTypes, MapRoom> _mapRoomDB = new Dictionary<SystemTypes, MapRoom>();
+        private static Dictionary<SystemTypes, MapRoom> _mapRoomDB = null;
+        private readonly Dictionary<string, string> _sabToLegacyTypes = new Dictionary<string, string> {
+            { "sab-electric", "sab-btnlights" },
+            { "sab-reactorleft", "sab-btnreactor" },
+            { "sab-oxygen", "sab-btnoxygen" },
+            { "sab-comms", "sab-btncomms" },
+        };
+
+        private Sprite _commsBtnSprite = null;
+        private Sprite _reactorBtnSprite = null;
+        private Sprite _oxygenBtnSprite = null;
+        private Sprite _doorsBtnSprite = null;
+        private Sprite _lightsBtnSprite = null;
+        private Material _btnMat = null;
+
+        private bool _hasSabConsoles = false;
+        private bool _hasSabButtons = false;
+
+        public SabMapBuilder()
+        {
+            _mapRoomDB = new Dictionary<SystemTypes, MapRoom>();
+        }
 
         public void Build(LIElement elem, GameObject obj)
         {
             if (!elem.type.StartsWith("sab-"))
                 return;
+            _hasSabConsoles = true;
 
+            if (!elem.type.StartsWith("sab-btn"))
+                return;
+            _hasSabButtons = true;
+
+            // Assets
             MapBehaviour mapBehaviour = MinimapBuilder.GetMinimap();
             InfectedOverlay infectedOverlay = mapBehaviour.infectedOverlay;
-
-            // Is anyone going to talk about the fact that comms is literally called "bomb" in Unity?
-            Sprite commsSprite = GetSprite(infectedOverlay, "Comms", "bomb"); // um...BOMB!?
-            Sprite reactorSprite = GetSprite(infectedOverlay, "Laboratory", "meltdown");
-            Sprite doorsSprite = GetSprite(infectedOverlay, "Office", "Doors");
-            Sprite lightsSprite = GetSprite(infectedOverlay, "Electrical", "lightsOut");
-            Material buttonMat = infectedOverlay.transform.GetChild(0).GetChild(0).GetComponent<SpriteRenderer>().material;
-
+            if (_btnMat == null)
+                GetAllAssets();
+            
             // System
             SystemTypes systemType = 0;
             if (elem.properties.parent != null)
@@ -63,48 +85,113 @@ namespace LevelImposter.Core
                 elem.y * MinimapBuilder.MinimapScale,
                 -25.0f
             );
+            sabButton.transform.localScale = new Vector3(elem.xScale, elem.yScale, 1);
+            sabButton.transform.localRotation = Quaternion.Euler(0, 0, elem.rotation);
 
             CircleCollider2D collider = sabButton.AddComponent<CircleCollider2D>();
             collider.radius = 0.425f;
             collider.isTrigger = true;
 
-            SpriteRenderer renderer = sabButton.AddComponent<SpriteRenderer>();
-            renderer.sprite = lightsSprite;
-            renderer.material = buttonMat;
+            SpriteRenderer btnRenderer = sabButton.AddComponent<SpriteRenderer>();
             if (mapRoom.special != null)
-                LILogger.Warn("Only 1 sabotage is supported per room");
-            mapRoom.special = renderer;
+                LILogger.Warn("Only 1 sabotage button is supported per room");
+            mapRoom.special = btnRenderer;
+
             ButtonBehavior button = sabButton.AddComponent<ButtonBehavior>();
-            Action action = mapRoom.SabotageLights;
+            Action btnAction = null;
+            Sprite btnSprite = null;
 
-            if (elem.type == "sab-reactorleft" || elem.type == "sab-reactorright")
-            {
-                renderer.sprite = reactorSprite;
-                action = mapRoom.SabotageSeismic;
+            switch (elem.type) {
+                case "sab-btnreactor":
+                    btnSprite = _reactorBtnSprite;
+                    btnAction = mapRoom.SabotageSeismic;
+                    break;
+                case "sab-btnoxygen":
+                    btnSprite = _oxygenBtnSprite; // TODO: Replace Me
+                    btnAction = mapRoom.SabotageOxygen;
+                    break;
+                case "sab-btncomms":
+                    btnSprite = _commsBtnSprite;
+                    btnAction = mapRoom.SabotageComms;
+                    break;
+                case "sab-btnlights":
+                    btnSprite = _lightsBtnSprite;
+                    btnAction = mapRoom.SabotageLights;
+                    break;
+                default:
+                    LILogger.Error($"{elem.name} has unknown sabotage button type: {elem.type}");
+                    return;
             }
-            else if (elem.type == "sab-oxygen1" || elem.type == "sab-oxygen2")
-            {
-                renderer.sprite = reactorSprite; // TODO: Fix Me
-                action = mapRoom.SabotageOxygen;
-            }
-            else if (elem.type == "sab-comms")
-            {
-                renderer.sprite = commsSprite;
-                action = mapRoom.SabotageComms;
-            }
-            button.OnClick.AddListener(action);
 
+            btnRenderer.sprite = btnSprite;
+            btnRenderer.material = _btnMat;
+            button.OnClick.AddListener(btnAction);
+            SpriteRenderer origRenderer = obj.GetComponent<SpriteRenderer>();
+            if (origRenderer != null)
+            {
+                btnRenderer.sprite = origRenderer.sprite;
+                btnRenderer.color = origRenderer.color;
+            }
         }
+
 
         public void PostBuild()
         {
+            if (_hasSabConsoles && !_hasSabButtons)
+            {
+                LILogger.Warn("Map does not include sabotage buttons.\n(Placeholder buttons are depricated and may have weird or unexpected behaviour.)");
+                BuildAllLegacy();
+            }
+
             MapBehaviour mapBehaviour = MinimapBuilder.GetMinimap();
             InfectedOverlay infectedOverlay = mapBehaviour.infectedOverlay;
 
             while (infectedOverlay.transform.childCount > _mapRoomDB.Count)
                 UnityEngine.Object.DestroyImmediate(infectedOverlay.transform.GetChild(0).gameObject);
-            
-            _mapRoomDB.Clear();    
+        }
+
+        private void BuildAllLegacy()
+        {
+            LIMap currentMap = LIShipStatus.Instance.CurrentMap;
+
+            foreach (LIElement elem in currentMap.elements)
+            {
+                if (_sabToLegacyTypes.TryGetValue(elem.type, out string btnType))
+                {
+                    LIElement tempElem = new()
+                    {
+                        id = Guid.NewGuid(),
+                        name = elem.name,
+                        type = btnType,
+                        x = elem.x,
+                        y = elem.y,
+                        z = elem.z,
+                        xScale = elem.xScale,
+                        yScale = elem.yScale,
+                        rotation = elem.rotation,
+                        properties = new()
+                        {
+                            parent = elem.properties.parent
+                        }
+                    };
+                    LIShipStatus.Instance.AddElement(tempElem);
+                }
+            }
+        }
+
+        private void GetAllAssets()
+        {
+            MapBehaviour mapBehaviour = MinimapBuilder.GetMinimap();
+            InfectedOverlay infectedOverlay = mapBehaviour.infectedOverlay;
+            _commsBtnSprite = GetSprite(infectedOverlay, "Comms", "bomb"); // um...BOMB!?
+            _reactorBtnSprite = GetSprite(infectedOverlay, "Laboratory", "meltdown");
+            _doorsBtnSprite = GetSprite(infectedOverlay, "Office", "Doors");
+            _lightsBtnSprite = GetSprite(infectedOverlay, "Electrical", "lightsOut");
+            _btnMat = infectedOverlay.transform.GetChild(0).GetChild(0).GetComponent<SpriteRenderer>().material;
+
+            ShipStatus miraShip = AssetDB.Ships["ss-mira"].ShipStatus;
+            InfectedOverlay miraOverlay = miraShip.MapPrefab.infectedOverlay;
+            _oxygenBtnSprite = GetSprite(miraOverlay, "LifeSupp", "bomb"); // Another bomb?
         }
 
         private Sprite GetSprite(InfectedOverlay overlay, string parent, string child)

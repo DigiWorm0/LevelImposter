@@ -6,6 +6,9 @@ using System.IO;
 using LevelImposter.DB;
 using LevelImposter.Shop;
 using UnityEngine;
+using Il2CppInterop.Runtime.InteropTypes.Arrays;
+using Il2CppInterop.Runtime.InteropTypes;
+using Il2CppInterop.Runtime;
 
 namespace LevelImposter.Core
 {
@@ -24,7 +27,7 @@ namespace LevelImposter.Core
         /// <param name="arr">Array to add to</param>
         /// <param name="value">Element to add</param>
         /// <returns>New array with value appended</returns>
-        public static UnhollowerBaseLib.Il2CppReferenceArray<T> AddToArr<T>(UnhollowerBaseLib.Il2CppReferenceArray<T> arr, T value) where T : UnhollowerBaseLib.Il2CppObjectBase
+        public static Il2CppReferenceArray<T> AddToArr<T>(Il2CppReferenceArray<T> arr, T value) where T : Il2CppObjectBase
         {
             List<T> list = new List<T>(arr);
             list.Add(value);
@@ -36,7 +39,7 @@ namespace LevelImposter.Core
         /// </summary>
         /// <param name="arr">Array to shuffle</param>
         /// <returns>New array with values shuffled</returns>
-        public static UnhollowerBaseLib.Il2CppStructArray<byte> Shuffle(UnhollowerBaseLib.Il2CppStructArray<byte> arr)
+        public static Il2CppStructArray<byte> Shuffle(Il2CppStructArray<byte> arr)
         {
             List<byte> listA = new List<byte>(arr);
             List<byte> listB = new List<byte>();
@@ -142,7 +145,7 @@ namespace LevelImposter.Core
         public static AudioClip ConvertToAudio(string name, string base64)
         {
             byte[] byteData = ParseBase64(base64);
-            AudioClip audio = WAVLoader.Load(byteData); // TODO Support other audio formats
+            AudioClip audio = WAVLoader.LoadPCM(byteData); // TODO Support other audio formats
             return audio;
         }
 
@@ -212,7 +215,7 @@ namespace LevelImposter.Core
                 resourceStream.CopyTo(ms);
                 byte[] assetData = ms.ToArray();
                 AssetBundle assetBundle = AssetBundle.LoadFromMemory(assetData);
-                GameObject asset = assetBundle.LoadAsset(name, UnhollowerRuntimeLib.Il2CppType.Of<GameObject>()).Cast<GameObject>();
+                GameObject asset = assetBundle.LoadAsset(name, Il2CppType.Of<GameObject>()).Cast<GameObject>();
                 assetBundle.Unload(false);
                 return asset;
             }

@@ -2,10 +2,13 @@
 using System.IO;
 using System.Collections;
 using UnityEngine;
-using BepInEx.IL2CPP.Utils.Collections;
+using BepInEx.Unity.IL2CPP.Utils.Collections;
 
 namespace LevelImposter.Core
 {
+    /// <summary>
+    /// Component to animate GIF data in-game
+    /// </summary>
     public class GIFAnimator : MonoBehaviour
     {
         public bool IsAnimating = false;
@@ -14,6 +17,10 @@ namespace LevelImposter.Core
         private Sprite[] _frames;
         private SpriteRenderer _spriteRenderer;
 
+        /// <summary>
+        /// Initializes the component with GIF data
+        /// </summary>
+        /// <param name="base64">GIF data in base-64 format</param>
         public void Init(string base64)
         {
             _spriteRenderer = GetComponent<SpriteRenderer>();
@@ -29,6 +36,10 @@ namespace LevelImposter.Core
 
         }
 
+        /// <summary>
+        /// Plays the GIF animation
+        /// </summary>
+        /// <param name="repeat">True if the GIF should repeat. False otherwise</param>
         public void Play(bool repeat)
         {
             if (IsAnimating)
@@ -36,6 +47,9 @@ namespace LevelImposter.Core
             StartCoroutine(CoAnimate(repeat).WrapToIl2Cpp());
         }
 
+        /// <summary>
+        /// Stops the GIF animation
+        /// </summary>
         public void Stop()
         {
             StopAllCoroutines();
@@ -43,7 +57,7 @@ namespace LevelImposter.Core
             _spriteRenderer.sprite = _frames[0];
         }
 
-        public IEnumerator CoAnimate(bool repeat)
+        private IEnumerator CoAnimate(bool repeat)
         {
             IsAnimating = true;
             int f = 0;

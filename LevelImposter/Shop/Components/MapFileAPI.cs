@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 using LevelImposter.Core;
-using BepInEx.IL2CPP.Utils.Collections;
+using BepInEx.Unity.IL2CPP.Utils.Collections;
 using System.Text.Json;
 
 namespace LevelImposter.Shop
@@ -32,6 +32,12 @@ namespace LevelImposter.Shop
             {
                 Destroy(gameObject);
             }
+        }
+
+        public void Start()
+        {
+            if (!Directory.Exists(GetDirectory()))
+                Directory.CreateDirectory(GetDirectory());
         }
 
         /// <summary>
@@ -61,9 +67,9 @@ namespace LevelImposter.Shop
         /// <returns>Array of map file IDs that are located in the LevelImpsoter folder.</returns>
         public string[] ListIDs()
         {
-            string[] fileNames = System.IO.Directory.GetFiles(GetDirectory(), "*.lim");
+            string[] fileNames = Directory.GetFiles(GetDirectory(), "*.lim");
             for (int i = 0; i < fileNames.Length; i++)
-                fileNames[i] = System.IO.Path.GetFileNameWithoutExtension(fileNames[i]);
+                fileNames[i] = Path.GetFileNameWithoutExtension(fileNames[i]);
             return fileNames;
         }
 
@@ -74,7 +80,7 @@ namespace LevelImposter.Shop
         /// <returns>True if a map file with the cooresponding ID exists</returns>
         public bool Exists(string mapID)
         {
-            return System.IO.File.Exists(GetPath(mapID));
+            return File.Exists(GetPath(mapID));
         }
 
         /// <summary>
@@ -132,9 +138,9 @@ namespace LevelImposter.Shop
 
             string mapPath = GetPath(map.id);
             string mapJson = JsonSerializer.Serialize(map, serializerOptions);
-            if (!System.IO.Directory.Exists(GetDirectory()))
-                System.IO.Directory.CreateDirectory(GetDirectory());
-            System.IO.File.WriteAllText(mapPath, mapJson);
+            if (!Directory.Exists(GetDirectory()))
+                Directory.CreateDirectory(GetDirectory());
+            File.WriteAllText(mapPath, mapJson);
         }
 
         /// <summary>
@@ -145,7 +151,7 @@ namespace LevelImposter.Shop
         {
             LILogger.Info("Deleting [" + mapID + "] from filesystem");
             string mapPath = GetPath(mapID);
-            System.IO.File.Delete(mapPath);
+            File.Delete(mapPath);
         }
     }
 }

@@ -21,8 +21,6 @@ namespace LevelImposter.Core
             }
         }
 
-        public void PostBuild()
-        {
-        }
+        public void PostBuild() { }
     }
 }

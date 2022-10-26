@@ -6,15 +6,23 @@ using System.Text;
 using UnityEngine;
 using UnityEngine.Events;
 using PowerTools;
+using Il2CppInterop.Runtime.InteropTypes.Arrays;
 
 namespace LevelImposter.Core
 {
     class VentBuilder : IElemBuilder
     {
+        private static Dictionary<int, LIElement> _ventElementDb = null;
+        private static Dictionary<Guid, Vent> _ventComponentDb = null;
+
         private int _ventID = 0;
         private bool _hasVentSound = false;
-        private static Dictionary<int, LIElement> _ventElementDb = new Dictionary<int, LIElement>();
-        private static Dictionary<Guid, Vent> _ventComponentDb = new Dictionary<Guid, Vent>();
+
+        public VentBuilder()
+        {
+            _ventElementDb = new Dictionary<int, LIElement>();
+            _ventComponentDb = new Dictionary<Guid, Vent>();
+        }
 
         public void Build(LIElement elem, GameObject obj)
         {
@@ -64,8 +72,8 @@ namespace LevelImposter.Core
             vent.spreadAmount = ventData.spreadAmount;
             vent.spreadShift = ventData.spreadShift;
             vent.Offset = ventData.Offset;
-            vent.Buttons = new UnhollowerBaseLib.Il2CppReferenceArray<ButtonBehavior>(0);
-            vent.CleaningIndicators = new UnhollowerBaseLib.Il2CppReferenceArray<GameObject>(0);
+            vent.Buttons = new Il2CppReferenceArray<ButtonBehavior>(0);
+            vent.CleaningIndicators = new Il2CppReferenceArray<GameObject>(0);
             vent.Id = this._ventID;
 
             // Arrows
@@ -77,8 +85,8 @@ namespace LevelImposter.Core
             ShipStatus shipStatus = LIShipStatus.Instance.ShipStatus;
             if (!_hasVentSound)
             {
-                shipStatus.VentEnterSound = AssetDB.Sabos["ss-skeld"].ShipStatus.VentEnterSound;
-                shipStatus.VentMoveSounds = AssetDB.Sabos["ss-skeld"].ShipStatus.VentMoveSounds;
+                shipStatus.VentEnterSound = AssetDB.Ships["ss-skeld"].ShipStatus.VentEnterSound;
+                shipStatus.VentMoveSounds = AssetDB.Ships["ss-skeld"].ShipStatus.VentMoveSounds;
                 _hasVentSound = true;
             }
 
@@ -115,9 +123,6 @@ namespace LevelImposter.Core
                 if (currentVent.Value.properties.rightVent != null)
                     ventComponent.Right = _ventComponentDb[(Guid)currentVent.Value.properties.rightVent];
             }
-
-            _ventElementDb.Clear();
-            _ventComponentDb.Clear();
         }
 
         private void GenerateArrow(GameObject arrowPrefab, Vent vent, int dir)

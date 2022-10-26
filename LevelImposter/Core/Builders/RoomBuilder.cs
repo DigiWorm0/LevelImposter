@@ -7,8 +7,13 @@ namespace LevelImposter.Core
 {
     public class RoomBuilder : IElemBuilder
     {
+        private static Dictionary<Guid, SystemTypes> _systemDB = null;
         private byte _roomId = 1;
-        private static Dictionary<Guid, SystemTypes> _systemDB = new Dictionary<Guid, SystemTypes>();
+
+        public RoomBuilder()
+        {
+            _systemDB = new Dictionary<Guid, SystemTypes>();
+        }
 
         public void Build(LIElement elem, GameObject obj)
         {
@@ -37,7 +42,6 @@ namespace LevelImposter.Core
 
         public void PostBuild()
         {
-            _systemDB.Clear();
             MapUtils.Rename((SystemTypes)0, "Default Room");
             _roomId = 1;
         }

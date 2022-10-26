@@ -10,7 +10,7 @@ namespace LevelImposter.Shop
         public LIMapConsole(IntPtr intPtr) : base(intPtr)
         {
         }
-
+        
         public override void Use()
         {
             bool canUse;
@@ -24,5 +24,6 @@ namespace LevelImposter.Shop
             obj.transform.localPosition = new Vector3(0, 0, -50);
             DestroyableSingleton<TransitionFade>.Instance.DoTransitionFade(null, obj, null);
         }
+        
     }
 }

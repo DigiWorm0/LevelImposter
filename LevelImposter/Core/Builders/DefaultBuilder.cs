@@ -36,21 +36,15 @@ namespace LevelImposter.Core
             {
                 foreach (LICollider colliderData in elem.properties.colliders)
                 {
-                    GameObject colliderObj = new GameObject("Collider " + colliderData.id);
-                    colliderObj.transform.SetParent(obj.transform);
-                    colliderObj.transform.localPosition = new Vector3(0, 0, 0);
-                    colliderObj.transform.localRotation = Quaternion.Euler(0, 0, 0);
-                    colliderObj.transform.localScale = Vector3.one;
-
                     if (colliderData.isSolid)
                     {
-                        PolygonCollider2D collider = colliderObj.AddComponent<PolygonCollider2D>();
+                        PolygonCollider2D collider = obj.AddComponent<PolygonCollider2D>();
                         collider.pathCount = 1;
                         collider.SetPath(0, colliderData.GetPoints());
                     }
                     else
                     {
-                        EdgeCollider2D collider = colliderObj.AddComponent<EdgeCollider2D>();
+                        EdgeCollider2D collider = obj.AddComponent<EdgeCollider2D>();
                         collider.SetPoints(colliderData.GetPoints());
                     }
 

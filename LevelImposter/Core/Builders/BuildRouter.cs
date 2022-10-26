@@ -8,17 +8,12 @@ namespace LevelImposter.Core
 {
     public class BuildRouter
     {
-        public List<IElemBuilder> _buildStack;
-
-        public BuildRouter()
-        {
-            InitStack();
-        }
+        public List<IElemBuilder> _buildStack = null;
 
         /// <summary>
         /// Patchable method to append or remove builders from the build stack
         /// </summary>
-        public void InitStack()
+        public void ResetStack()
         {
             _buildStack = new() {
                 new DefaultBuilder(),
@@ -35,8 +30,11 @@ namespace LevelImposter.Core
                 new CamBuilder(),
                 new TaskBuilder(),
                 new DecBuilder(),
+
                 new SabBuilder(),
+                new SabConsoleBuilder(),
                 new SabMapBuilder(),
+
                 new LadderBuilder(),
                 new PlatformBuilder(),
                 new StarfieldBuilder(),
@@ -60,6 +58,8 @@ namespace LevelImposter.Core
         /// <returns></returns>
         public GameObject Build(LIElement element)
         {
+            if (_buildStack == null)
+                ResetStack();
             string objName = element.name.Replace("\\n", " ");
             GameObject gameObject = new GameObject(objName);
             foreach (IElemBuilder builder in _buildStack)
@@ -74,6 +74,8 @@ namespace LevelImposter.Core
         /// </summary>
         public void PostBuild()
         {
+            if (_buildStack == null)
+                ResetStack();
             foreach (IElemBuilder builder in _buildStack)
                 builder.PostBuild();
         }

@@ -4,6 +4,7 @@ using System.Text;
 using UnityEngine.Events;
 using UnityEngine;
 using LevelImposter.DB;
+using Il2CppInterop.Runtime.InteropTypes.Arrays;
 
 namespace LevelImposter.Core
 {
@@ -48,6 +49,19 @@ namespace LevelImposter.Core
         public static byte AlignEngineCount = 0;
         public static byte RecordsCount = 0;
         public static byte WiresCount = 0;
+
+        public TaskBuilder()
+        {
+            DivertSystems = new SystemTypes[0];
+            BreakerCount = 0;
+            ToiletCount = 0;
+            TowelCount = 0;
+            FuelCount = 0;
+            WaterWheelCount = 0;
+            AlignEngineCount = 0;
+            RecordsCount = 0;
+            WiresCount = 0;
+    }
 
         public void Build(LIElement elem, GameObject obj)
         {
@@ -125,7 +139,7 @@ namespace LevelImposter.Core
                 TaskSet taskSet = new TaskSet();
                 taskSet.taskType = TaskTypes.ReplaceWaterJug;
                 taskSet.taskStep = new IntRange(1, 1);
-                console.ValidTasks = new UnhollowerBaseLib.Il2CppReferenceArray<TaskSet>(new TaskSet[] {
+                console.ValidTasks = new Il2CppReferenceArray<TaskSet>(new TaskSet[] {
                     taskSet
                 });
             }
@@ -141,7 +155,7 @@ namespace LevelImposter.Core
             }
             else if (elem.type == "task-fuel1")
             {
-                console.ValidTasks = new UnhollowerBaseLib.Il2CppReferenceArray<TaskSet>(byte.MaxValue / 2);
+                console.ValidTasks = new Il2CppReferenceArray<TaskSet>(byte.MaxValue / 2);
                 for (byte i = 0; i < byte.MaxValue - 1; i+=2)
                 {
                     TaskSet taskSet = new TaskSet();
@@ -156,7 +170,7 @@ namespace LevelImposter.Core
                 TaskSet taskSet = new TaskSet();
                 taskSet.taskType = TaskTypes.FuelEngines;
                 taskSet.taskStep = new IntRange(console.ConsoleId * 2 + 1, console.ConsoleId * 2 + 1);
-                console.ValidTasks = new UnhollowerBaseLib.Il2CppReferenceArray<TaskSet>(new TaskSet[] {
+                console.ValidTasks = new Il2CppReferenceArray<TaskSet>(new TaskSet[] {
                     taskSet
                 });
                 _consoleIDIncrements[elem.type]++;
@@ -172,16 +186,14 @@ namespace LevelImposter.Core
                 _consoleID++;
             }
 
-            // Collider
-            if (!MapUtils.HasSolidCollider(elem))
-                MapUtils.CloneColliders(origConsole.gameObject, obj);
-
             // Button
+            PolygonCollider2D collider = obj.AddComponent<PolygonCollider2D>();
+            collider.isTrigger = true;
             PassiveButton origBtn = taskData.GameObj.GetComponent<PassiveButton>();
             if (origBtn != null)
             {
                 PassiveButton btn = obj.AddComponent<PassiveButton>();
-                btn.ClickMask = origBtn.ClickMask;
+                btn.ClickMask = collider;
                 btn.OnMouseOver = new UnityEvent();
                 btn.OnMouseOut = new UnityEvent();
                 Action action = console.Use;
@@ -191,6 +203,9 @@ namespace LevelImposter.Core
             // Task
             bool isBuilt = _builtTypes.Contains(elem.type);
             _builtTypes.Add(elem.type);
+
+            if (!isBuilt)
+                LILogger.Info("Adding task for " + elem.name + "...");
 
             if (elem.type == "task-divert1" && !isBuilt)
             {

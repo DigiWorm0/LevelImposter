@@ -1,10 +1,10 @@
-﻿using BepInEx;
+using BepInEx;
 using BepInEx.Configuration;
-using BepInEx.IL2CPP;
+using BepInEx.Unity.IL2CPP;
 using LevelImposter.Core;
 using LevelImposter.DB;
 using LevelImposter.Shop;
-using UnhollowerRuntimeLib;
+using Il2CppInterop.Runtime.Injection;
 
 namespace LevelImposter
 {
@@ -14,7 +14,7 @@ namespace LevelImposter
     public class LevelImposter : BasePlugin
     {
         public const string ID = "com.DigiWorm.LevelImposter";
-        public const string VERSION = "0.7.2";
+        public const string VERSION = "0.8.0";
         public const string REACTOR_ID = "gg.reactor.api";
 
         public HarmonyLib.Harmony Harmony { get; } = new HarmonyLib.Harmony(ID);
@@ -34,7 +34,6 @@ namespace LevelImposter
             ClassInjector.RegisterTypeInIl2Cpp<LITriggerable>();
             ClassInjector.RegisterTypeInIl2Cpp<GIFAnimator>();
             ClassInjector.RegisterTypeInIl2Cpp<AssetDB>();
-            ClassInjector.RegisterTypeInIl2Cpp<LIMapConsole>();
             ClassInjector.RegisterTypeInIl2Cpp<LITriggerArea>();
 
             ClassInjector.RegisterTypeInIl2Cpp<LevelImposterAPI>();

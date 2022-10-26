@@ -6,6 +6,7 @@ using UnityEngine;
 using LevelImposter.Shop;
 using LevelImposter.DB;
 using System.Diagnostics;
+using Il2CppInterop.Runtime.InteropTypes.Arrays;
 
 namespace LevelImposter.Core
 {
@@ -69,13 +70,13 @@ namespace LevelImposter.Core
             camera.shakeAmount = 0;
             camera.shakePeriod = 0;
 
-            ShipStatus.AllDoors = new UnhollowerBaseLib.Il2CppReferenceArray<PlainDoor>(0);
-            ShipStatus.DummyLocations = new UnhollowerBaseLib.Il2CppReferenceArray<Transform>(0);
-            ShipStatus.SpecialTasks = new UnhollowerBaseLib.Il2CppReferenceArray<PlayerTask>(0);
-            ShipStatus.CommonTasks = new UnhollowerBaseLib.Il2CppReferenceArray<NormalPlayerTask>(0);
-            ShipStatus.LongTasks = new UnhollowerBaseLib.Il2CppReferenceArray<NormalPlayerTask>(0);
-            ShipStatus.NormalTasks = new UnhollowerBaseLib.Il2CppReferenceArray<NormalPlayerTask>(0);
-            ShipStatus.SystemNames = new UnhollowerBaseLib.Il2CppStructArray<StringNames>(0);
+            ShipStatus.AllDoors = new Il2CppReferenceArray<PlainDoor>(0);
+            ShipStatus.DummyLocations = new Il2CppReferenceArray<Transform>(0);
+            ShipStatus.SpecialTasks = new Il2CppReferenceArray<PlayerTask>(0);
+            ShipStatus.CommonTasks = new Il2CppReferenceArray<NormalPlayerTask>(0);
+            ShipStatus.LongTasks = new Il2CppReferenceArray<NormalPlayerTask>(0);
+            ShipStatus.NormalTasks = new Il2CppReferenceArray<NormalPlayerTask>(0);
+            ShipStatus.SystemNames = new Il2CppStructArray<StringNames>(0);
             ShipStatus.Systems = new Il2CppSystem.Collections.Generic.Dictionary<SystemTypes, ISystemType>();
             ShipStatus.MedScanner = null;
             ShipStatus.Type = ShipStatus.MapType.Ship;
@@ -92,6 +93,7 @@ namespace LevelImposter.Core
             ShipStatus.Systems.Add(SystemTypes.Comms, new HudOverrideSystemType().Cast<ISystemType>());
             ShipStatus.Systems.Add(SystemTypes.Security, new SecurityCameraSystemType().Cast<ISystemType>());
             ShipStatus.Systems.Add(SystemTypes.Laboratory, new ReactorSystemType(60f, SystemTypes.Laboratory).Cast<ISystemType>()); // <- Seconds, SystemType
+            ShipStatus.Systems.Add(SystemTypes.LifeSupp, new LifeSuppSystemType(60f).Cast<ISystemType>()); // <- Seconds
             ShipStatus.Systems.Add(SystemTypes.Ventilation, new VentilationSystem().Cast<ISystemType>());
             ShipStatus.Systems.Add(SystemTypes.Sabotage, new SabotageSystemType(new IActivatable[] {
                 ShipStatus.Systems[SystemTypes.Electrical].Cast<IActivatable>(),
@@ -113,6 +115,7 @@ namespace LevelImposter.Core
             CurrentMap = map;
             ResetMap();
             _LoadMapProperties(map);
+            _buildRouter.ResetStack();
 
             // Asset DB
             if (!AssetDB.IsReady)
@@ -147,7 +150,7 @@ namespace LevelImposter.Core
             {
                 if (_exileIDs.ContainsKey(map.properties.exileID))
                 {
-                    ShipStatus ship = AssetDB.Sabos[_exileIDs[map.properties.exileID]].ShipStatus;
+                    ShipStatus ship = AssetDB.Ships[_exileIDs[map.properties.exileID]].ShipStatus;
                     ShipStatus.ExileCutscenePrefab = ship.ExileCutscenePrefab;
                 }
                 else

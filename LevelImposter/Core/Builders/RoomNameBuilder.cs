@@ -54,7 +54,6 @@ namespace LevelImposter.Core
 
             while (roomNames.childCount > _nameCount)
                 UnityEngine.Object.DestroyImmediate(roomNames.GetChild(0).gameObject);
-            _nameCount = 0; 
         }
     }
 }

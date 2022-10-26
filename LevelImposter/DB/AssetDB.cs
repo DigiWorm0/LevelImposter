@@ -8,7 +8,7 @@ using UnityEngine.AddressableAssets;
 using LevelImposter.Core;
 using System.Text.Json;
 using System.Collections;
-using BepInEx.IL2CPP.Utils.Collections;
+using BepInEx.Unity.IL2CPP.Utils.Collections;
 
 namespace LevelImposter.DB
 {
@@ -26,7 +26,7 @@ namespace LevelImposter.DB
         public static Dictionary<string, SabData> Sabs;
         public static Dictionary<string, DecData> Decor;
         public static Dictionary<string, RoomData> Room;
-        public static Dictionary<string, SSData> Sabos;
+        public static Dictionary<string, SSData> Ships;
         public static Dictionary<string, SoundData> Sounds;
 
         public void Start()
@@ -47,7 +47,7 @@ namespace LevelImposter.DB
             Sabs = tempDB.sabs;
             Decor = tempDB.dec;
             Room = tempDB.room;
-            Sabos = tempDB.ss;
+            Ships = tempDB.ss;
             Sounds = tempDB.sounds;
             StartCoroutine(CoLoadAssets().WrapToIl2Cpp());
         }
@@ -106,7 +106,7 @@ namespace LevelImposter.DB
             yield return _importAssets(prefab, shipStatus, mapType, Sabs);
             yield return _importAssets(prefab, shipStatus, mapType, Decor);
             yield return _importAssets(prefab, shipStatus, mapType, Room);
-            yield return _importAssets(prefab, shipStatus, mapType, Sabos);
+            yield return _importAssets(prefab, shipStatus, mapType, Ships);
             yield return _importAssets(prefab, shipStatus, mapType, Sounds);
 
             LILogger.Info("..." + prefab.name + " Loaded");
