@@ -15,10 +15,13 @@ namespace LevelImposter.Core
     {
         public static void Postfix(PingTracker __instance)
         {
-            __instance.gameObject.SetActive(true);
             LIMap currentMap = MapLoader.CurrentMap;
             if (currentMap != null)
             {
+                if (currentMap.properties.showPingIndicator == false)
+                    return;
+                if (!__instance.gameObject.active)
+                    __instance.gameObject.SetActive(true);
 
                 __instance.text.text += "\n<color=#1a95d8>" + currentMap.name + " \n";
                 if (!string.IsNullOrEmpty(currentMap.authorID))
