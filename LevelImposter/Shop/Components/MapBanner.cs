@@ -25,6 +25,7 @@ namespace LevelImposter.Shop
         private Button _playButton;
         private Button _deleteButton;
         private Button _externalButton;
+        private bool _isCustomTex = false;
         private bool _isInLobby
         {
             get
@@ -53,6 +54,12 @@ namespace LevelImposter.Shop
             _deleteButton.onClick.AddListener((Action)OnDelete);
             _externalButton.onClick.AddListener((Action)OnExternal);
             UpdateButtons();
+        }
+
+        public void OnDestroy()
+        {
+            if (_isCustomTex)
+                Destroy(_thumbnail.sprite.texture);
         }
 
         public void SetMap(LIMetadata map)
@@ -127,6 +134,7 @@ namespace LevelImposter.Shop
                 ThumbnailFileAPI.Instance.Get(_currentMap.id, (Texture2D texture) =>
                 {
                     _thumbnail.sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), Vector2.zero);
+                    _isCustomTex = true;
                 });
             }
             else
@@ -136,6 +144,7 @@ namespace LevelImposter.Shop
                     byte[] textureData = texture.EncodeToPNG();
                     ThumbnailFileAPI.Instance.Save(_currentMap.id, textureData);
                     _thumbnail.sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f), 100.0f);
+                    _isCustomTex = true;
                     textureData = null;
                 });
             }

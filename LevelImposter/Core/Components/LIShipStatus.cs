@@ -26,6 +26,8 @@ namespace LevelImposter.Core
 
         private BuildRouter _buildRouter = new BuildRouter();
         private Stopwatch _buildTimer = new Stopwatch();
+        private Stack<Texture2D> _mapTextures = new Stack<Texture2D>();
+        private Stack<AudioClip> _mapClips = new Stack<AudioClip>();
 
         private readonly List<string> _priorityTypes = new()
         {
@@ -56,6 +58,17 @@ namespace LevelImposter.Core
         {
             if (MapLoader.CurrentMap != null)
                 HudManager.Instance.ShadowQuad.material.SetInt("_Mask", 7);
+        }
+
+        public void OnDestroy()
+        {
+            LILogger.Info("Destroying " + _mapTextures.Count + " map textures");
+            while (_mapTextures.Count > 0)
+                Destroy(_mapTextures.Pop());
+
+            LILogger.Info("Destroying " + _mapClips.Count + " map sounds");
+            while (_mapClips.Count > 0)
+                Destroy(_mapClips.Pop());
         }
         
         /// <summary>
@@ -186,6 +199,24 @@ namespace LevelImposter.Core
                 float seconds = Mathf.Round(_buildTimer.ElapsedMilliseconds / 100f) / 10f;
                 LILogger.Warn("Took " + seconds + "s to build " + element.name);
             }
+        }
+
+        /// <summary>
+        /// Adds a map texture to be garbage collected on unload
+        /// </summary>
+        /// <param name="tex">Texture to mark for garbage collection on unload</param>
+        public void AddMapTexture(Texture2D tex)
+        {
+            _mapTextures.Push(tex);
+        }
+
+        /// <summary>
+        /// Adds a map audio clip to be garbage collected on unload
+        /// </summary>
+        /// <param name="clip">Audio clip to mark for garbage collection on unload</param>
+        public void AddMapSound(AudioClip clip)
+        {
+            _mapClips.Push(clip);
         }
     }
 }

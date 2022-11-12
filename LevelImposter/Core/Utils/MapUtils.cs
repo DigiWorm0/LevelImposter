@@ -146,6 +146,7 @@ namespace LevelImposter.Core
         {
             byte[] byteData = ParseBase64(base64);
             AudioClip audio = WAVLoader.LoadPCM(byteData); // TODO Support other audio formats
+            LIShipStatus.Instance.AddMapSound(audio);
             return audio;
         }
 
@@ -178,7 +179,7 @@ namespace LevelImposter.Core
         }
 
         /// <summary>
-        /// Checks if a Game Object is the local player
+        /// Checks if a GameObject is the local player
         /// </summary>
         /// <param name="obj">Game Object to check</param>
         /// <returns>Whether or not obj is considered to be the local player</returns>
@@ -199,6 +200,7 @@ namespace LevelImposter.Core
             Texture.allowThreadedTextureCreation = true;
             Texture2D texture = new Texture2D(1, 1);
             ImageConversion.LoadImage(texture, data);
+            LIShipStatus.Instance.AddMapTexture(texture);
             return Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f), 100.0f);
         }
 
