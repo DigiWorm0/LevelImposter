@@ -34,6 +34,8 @@ namespace LevelImposter.Core
             _frames = image.GetFrames();
             _delays = image.GetDelays();
 
+            foreach (Sprite frame in _frames)
+                LIShipStatus.Instance.AddMapTexture(frame.texture);
         }
 
         /// <summary>
