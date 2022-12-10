@@ -6,6 +6,7 @@ using LevelImposter.DB;
 
 namespace LevelImposter.Core
 {
+    [Obsolete("Innersloth removed NoShadow objects with the introduction of Hide and Seek")]
     public class NoShadowBuilder : IElemBuilder
     {
         private Material _noShadowMat = null;

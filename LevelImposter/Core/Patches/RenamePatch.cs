@@ -42,7 +42,8 @@ namespace LevelImposter.Core
             return true;
         }
     }
-    [HarmonyPatch(typeof(GameOptionsData), nameof(GameOptionsData.ToString))]
+    /*
+    [HarmonyPatch(typeof(GameOptionsData), nameof(GameOptionsData.???))]
     public static class StringRenamePatch
     {
         public static void Postfix(GameOptionsData __instance, ref string __result)
@@ -55,4 +56,5 @@ namespace LevelImposter.Core
             __result = __result.Replace(oldMapName, MapLoader.CurrentMap.name);
         }
     }
+    */
 }
