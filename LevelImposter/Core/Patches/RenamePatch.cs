@@ -2,6 +2,7 @@ using HarmonyLib;
 using UnityEngine;
 using LevelImposter.Core;
 using LevelImposter.Shop;
+using AmongUs.GameOptions;
 
 namespace LevelImposter.Core
 {
@@ -41,7 +42,7 @@ namespace LevelImposter.Core
             return true;
         }
     }
-    [HarmonyPatch(typeof(GameOptionsData), nameof(GameOptionsData.ToHudString))]
+    [HarmonyPatch(typeof(GameOptionsData), nameof(GameOptionsData.ToString))]
     public static class StringRenamePatch
     {
         public static void Postfix(GameOptionsData __instance, ref string __result)

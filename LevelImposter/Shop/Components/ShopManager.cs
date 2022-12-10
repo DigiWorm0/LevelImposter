@@ -34,7 +34,7 @@ namespace LevelImposter.Shop
         public void Start()
         {
             _freeplayComp = gameObject.AddComponent<HostLocalGameButton>();
-            _freeplayComp.GameMode = GameModes.FreePlay;
+            _freeplayComp.NetworkMode = NetworkModes.FreePlay;
             ListDownloaded();
         }
 
