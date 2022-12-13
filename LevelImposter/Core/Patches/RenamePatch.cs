@@ -42,19 +42,18 @@ namespace LevelImposter.Core
             return true;
         }
     }
-    /*
-    [HarmonyPatch(typeof(GameOptionsData), nameof(GameOptionsData.???))]
+    
+    [HarmonyPatch(typeof(IGameOptionsExtensions), nameof(IGameOptionsExtensions.ToHudString))]
     public static class StringRenamePatch
     {
-        public static void Postfix(GameOptionsData __instance, ref string __result)
+        public static void Postfix([HarmonyArgument(0)] IGameOptions gameOptions, ref string __result)
         {
             if (MapLoader.CurrentMap == null)
                 return;
 
-            int mapID = (int)((__instance.MapId == 0 && Constants.ShouldFlipSkeld()) ? 3 : __instance.MapId);
+            int mapID = (gameOptions.MapId == 0 && Constants.ShouldFlipSkeld()) ? 3 : gameOptions.MapId;
             string oldMapName = Constants.MapNames[mapID];
             __result = __result.Replace(oldMapName, MapLoader.CurrentMap.name);
         }
     }
-    */
 }
