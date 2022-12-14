@@ -43,6 +43,7 @@ namespace LevelImposter.Core
                 new StepSoundBuilder(),
                 new TeleBuilder(),
                 new TriggerAreaBuilder(),
+                new TriggerConsoleBuilder(),
 
                 new TriggerBuilder()
             };

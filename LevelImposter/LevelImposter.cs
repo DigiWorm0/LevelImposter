@@ -31,10 +31,13 @@ namespace LevelImposter
             ClassInjector.RegisterTypeInIl2Cpp<LIStar>();
             ClassInjector.RegisterTypeInIl2Cpp<LIFloat>();
             ClassInjector.RegisterTypeInIl2Cpp<LITeleporter>();
-            ClassInjector.RegisterTypeInIl2Cpp<LITriggerable>();
             ClassInjector.RegisterTypeInIl2Cpp<GIFAnimator>();
             ClassInjector.RegisterTypeInIl2Cpp<AssetDB>();
+
+            ClassInjector.RegisterTypeInIl2Cpp<LITriggerable>();
             ClassInjector.RegisterTypeInIl2Cpp<LITriggerArea>();
+            ClassInjector.RegisterTypeInIl2Cpp<LITriggerSpawnable>();
+            ClassInjector.RegisterTypeInIl2Cpp<DummyMinigame>();
 
             ClassInjector.RegisterTypeInIl2Cpp<LevelImposterAPI>();
             ClassInjector.RegisterTypeInIl2Cpp<MapBanner>();

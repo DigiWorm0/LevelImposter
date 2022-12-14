@@ -17,6 +17,10 @@ namespace LevelImposter.Core
         private Sprite[] _frames;
         private SpriteRenderer _spriteRenderer;
 
+        public GIFAnimator(IntPtr intPtr) : base(intPtr)
+        {
+        }
+
         /// <summary>
         /// Initializes the component with GIF data
         /// </summary>
