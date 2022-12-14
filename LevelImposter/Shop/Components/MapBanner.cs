@@ -26,6 +26,7 @@ namespace LevelImposter.Shop
         private Button _deleteButton;
         private Button _externalButton;
         private bool _isCustomTex = false;
+        private bool _isEnabled = true;
         private bool _isInLobby
         {
             get
@@ -75,7 +76,7 @@ namespace LevelImposter.Shop
 
         public void UpdateButtons()
         {
-            if (_currentMap == null)
+            if (_currentMap == null || !_isEnabled)
             {
                 _downloadButton.interactable = false;
                 _playButton.interactable = false;
@@ -97,10 +98,12 @@ namespace LevelImposter.Shop
         {
             _downloadButton.interactable = false;
             _loadingSpinner.SetActive(true);
+            ShopManager.Instance.SetEnabled(false);
             LevelImposterAPI.Instance.DownloadMap(new System.Guid(_currentMap.id), (LIMap map) =>
             {
                 MapFileAPI.Instance.Save(map);
                 _loadingSpinner.SetActive(false);
+                ShopManager.Instance.SetEnabled(true);
                 UpdateButtons();
             });
         }
@@ -148,6 +151,12 @@ namespace LevelImposter.Shop
                     textureData = null;
                 });
             }
+        }
+
+        public void SetEnabled(bool isEnabled)
+        {
+            _isEnabled = isEnabled;
+            UpdateButtons();
         }
     }
 }
