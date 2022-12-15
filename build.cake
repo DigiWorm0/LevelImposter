@@ -7,10 +7,10 @@ var tag = workflow.RefType == GitHubActionsRefType.Tag ? workflow.RefName.Substr
 Task("Build")
     .Does(() =>
 {
-    var settings = new DotNetCoreBuildSettings
+    var settings = new DotNetBuildSettings
     {
         Configuration = "Release",
-        MSBuildSettings = new DotNetCoreMSBuildSettings()
+        MSBuildSettings = new DotNetMSBuildSettings()
     };
 
     if (tag != null) 
