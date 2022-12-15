@@ -157,7 +157,7 @@ namespace LevelImposter.Shop
             LILogger.Info("Launching map [" + id + "]");
             MapLoader.LoadMap(id);
 
-            AmongUsClient.Instance.TutorialMapId = 2;
+            AmongUsClient.Instance.TutorialMapId = (int)MapNames.Polus;
             _freeplayComp.OnClick();
         }
 

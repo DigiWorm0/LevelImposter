@@ -12,7 +12,7 @@ namespace LevelImposter.Core
             if (!elem.type.StartsWith("util-spawn"))
                 return;
 
-            Vector2 pos = obj.transform.position - new Vector3(0, LIShipStatus.Y_OFFSET);
+            Vector2 pos = obj.transform.position - new Vector3(0, 0);
             ShipStatus shipStatus = LIShipStatus.Instance.ShipStatus;
             if (elem.type == "util-spawn1")
             {

@@ -20,7 +20,6 @@ namespace LevelImposter.Core
         {
         }
 
-        public const int Y_OFFSET = 0; // 25
         public const float PLAYER_POS = -5.0f;
 
         public static LIShipStatus Instance { get; private set; }
@@ -99,9 +98,9 @@ namespace LevelImposter.Core
             ShipStatus.Type = ShipStatus.MapType.Ship;
             ShipStatus.WeaponsImage = null;
 
-            ShipStatus.InitialSpawnCenter = new Vector2(0, -Y_OFFSET);
-            ShipStatus.MeetingSpawnCenter = new Vector2(0, -Y_OFFSET);
-            ShipStatus.MeetingSpawnCenter2 = new Vector2(0, -Y_OFFSET);
+            ShipStatus.InitialSpawnCenter = new Vector2(0, 0);
+            ShipStatus.MeetingSpawnCenter = new Vector2(0, 0);
+            ShipStatus.MeetingSpawnCenter2 = new Vector2(0, 0);
 
             ShipStatus.Systems.Add(SystemTypes.Electrical, new SwitchSystem().Cast<ISystemType>());
             ShipStatus.Systems.Add(SystemTypes.MedBay, new MedScanSystem().Cast<ISystemType>());
@@ -190,7 +189,7 @@ namespace LevelImposter.Core
             {
                 GameObject gameObject = _buildRouter.Build(element);
                 gameObject.transform.SetParent(transform);
-                gameObject.transform.localPosition -= new Vector3(0, Y_OFFSET, -((element.y - Y_OFFSET) / 1000.0f) + PLAYER_POS);
+                gameObject.transform.localPosition -= new Vector3(0, 0, -(element.y / 1000.0f) + PLAYER_POS);
             }
             catch (Exception e)
             {

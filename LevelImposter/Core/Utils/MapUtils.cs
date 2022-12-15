@@ -244,7 +244,7 @@ namespace LevelImposter.Core
             if (mapID != Guid.Empty)
             {
                 IGameOptions currentGameOptions = GameOptionsManager.Instance.CurrentGameOptions;
-                currentGameOptions.SetByte(ByteOptionNames.MapId, (int)MapNames.Skeld);
+                currentGameOptions.SetByte(ByteOptionNames.MapId, (int)MapNames.Polus);
                 GameOptionsManager.Instance.GameHostOptions = GameOptionsManager.Instance.CurrentGameOptions;
                 GameManager.Instance.LogicOptions.SyncOptions();
             }

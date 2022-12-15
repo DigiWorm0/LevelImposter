@@ -43,7 +43,7 @@ namespace LevelImposter.Core
             spriteRenderer.material = utilData.SpriteRenderer.material;
 
             // Offsets
-            Vector2 leftPos = obj.transform.position - new Vector3(0, LIShipStatus.Y_OFFSET);
+            Vector2 leftPos = obj.transform.position;
             Vector2 leftUsePos = new Vector2(
                 (elem.properties.platformXEntranceOffset == null ? -1.5f : (float)elem.properties.platformXEntranceOffset) + leftPos.x,
                 (elem.properties.platformYEntranceOffset == null ? 0 : (float)elem.properties.platformYEntranceOffset) + leftPos.y

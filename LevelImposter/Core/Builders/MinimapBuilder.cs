@@ -10,8 +10,6 @@ namespace LevelImposter.Core
     {
         public const float DEFAULT_SCALE = 4.975f;
 
-        public static float MinimapScale = DEFAULT_SCALE;
-
         private bool _isBuilt = false;
 
         public void Build(LIElement elem, GameObject obj)
@@ -23,12 +21,11 @@ namespace LevelImposter.Core
                 LILogger.Warn("Only 1 minimap object should be used per map");
                 return;
             }
-
-            float scale = elem.properties.minimapScale == null ? 1 : (float)elem.properties.minimapScale;
-            MinimapScale = 1 / (scale * DEFAULT_SCALE);
-            LIShipStatus.Instance.ShipStatus.MapScale = scale * DEFAULT_SCALE;
-
             MapBehaviour mapBehaviour = GetMinimap();
+
+            float mapScaleVal = elem.properties.minimapScale == null ? 1 : (float)elem.properties.minimapScale;
+            float mapScale = mapScaleVal * DEFAULT_SCALE;
+            LIShipStatus.Instance.ShipStatus.MapScale = mapScale;
 
             SpriteRenderer spriteRenderer = obj.GetComponent<SpriteRenderer>();
             if (spriteRenderer != null)
@@ -38,19 +35,19 @@ namespace LevelImposter.Core
                 SpriteRenderer bgRenderer = background.GetComponent<SpriteRenderer>();
                 bgRenderer.sprite = sprite;
                 background.transform.localPosition = background.transform.localPosition;
-                background.transform.localScale = obj.transform.localScale * MinimapScale;
+                background.transform.localScale = obj.transform.localScale / mapScale;
                 background.transform.localRotation = obj.transform.localRotation;
                 if (elem.properties.color != null)
                     bgRenderer.color = MapUtils.LIColorToColor(elem.properties.color);
             }
 
-            Vector3 mapOffset = -(obj.transform.localPosition * MinimapScale);
+            Vector3 mapOffset = -(obj.transform.localPosition / mapScale);
 
             // Offsets
             Transform roomNames = mapBehaviour.transform.GetChild(mapBehaviour.transform.childCount - 1);
             roomNames.localPosition = mapOffset;
             Transform hereIndicatorParent = mapBehaviour.transform.FindChild("HereIndicatorParent");
-            hereIndicatorParent.localPosition = mapOffset + new Vector3(0, LIShipStatus.Y_OFFSET * MinimapScale, -0.1f);
+            hereIndicatorParent.localPosition = mapOffset + new Vector3(0, 0, -0.1f);
             mapBehaviour.countOverlay.transform.localPosition = mapOffset;
             mapBehaviour.infectedOverlay.transform.localPosition = mapOffset;
 

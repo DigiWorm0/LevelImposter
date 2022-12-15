@@ -77,12 +77,13 @@ namespace LevelImposter.Core
             }
 
             // Button
+            float mapScale = LIShipStatus.Instance.ShipStatus.MapScale;
             GameObject sabButton = new GameObject(elem.name);
             sabButton.layer = (int)Layer.UI;
             sabButton.transform.SetParent(mapRoom.transform);
             sabButton.transform.localPosition = new Vector3(
-                elem.x * MinimapBuilder.MinimapScale,
-                elem.y * MinimapBuilder.MinimapScale,
+                elem.x / mapScale,
+                elem.y / mapScale,
                 -25.0f
             );
             sabButton.transform.localScale = new Vector3(elem.xScale, elem.yScale, 1);

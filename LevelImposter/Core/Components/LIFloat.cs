@@ -25,7 +25,7 @@ namespace LevelImposter.Core
                 _height = (float)elem.properties.floatingHeight;
             if (elem.properties.floatingSpeed != null)
                 _speed = (float)elem.properties.floatingSpeed;
-            _yOffset = elem.y - LIShipStatus.Y_OFFSET;
+            _yOffset = elem.y;
         }
 
         public void Update()
