@@ -10,13 +10,17 @@ using Il2CppInterop.Runtime.InteropTypes.Arrays;
 
 namespace LevelImposter.Core
 {
+    /// <summary>
+    /// Component adds additional functionality added to AU's built-in ShipStatus.
+    /// Always added to ShipStatus on Awake, but dormant until LoadMap is fired.
+    /// </summary>
     public class LIShipStatus : MonoBehaviour
     {
         public LIShipStatus(IntPtr intPtr) : base(intPtr)
         {
         }
 
-        public const int Y_OFFSET = 25;
+        public const int Y_OFFSET = 0; // 25
         public const float PLAYER_POS = -5.0f;
 
         public static LIShipStatus Instance { get; private set; }

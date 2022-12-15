@@ -14,7 +14,6 @@ namespace LevelImposter.Core
 
             Vector2 pos = obj.transform.position - new Vector3(0, LIShipStatus.Y_OFFSET);
             ShipStatus shipStatus = LIShipStatus.Instance.ShipStatus;
-            shipStatus.SpawnRadius = 0;
             if (elem.type == "util-spawn1")
             {
                 shipStatus.InitialSpawnCenter = pos;

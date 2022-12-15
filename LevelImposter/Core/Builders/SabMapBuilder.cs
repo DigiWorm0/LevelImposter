@@ -181,16 +181,20 @@ namespace LevelImposter.Core
 
         private void GetAllAssets()
         {
-            MapBehaviour mapBehaviour = MinimapBuilder.GetMinimap();
-            InfectedOverlay infectedOverlay = mapBehaviour.infectedOverlay;
-            _commsBtnSprite = GetSprite(infectedOverlay, "Comms", "bomb"); // um...BOMB!?
-            _reactorBtnSprite = GetSprite(infectedOverlay, "Laboratory", "meltdown");
-            _doorsBtnSprite = GetSprite(infectedOverlay, "Office", "Doors");
-            _lightsBtnSprite = GetSprite(infectedOverlay, "Electrical", "lightsOut");
-            _btnMat = infectedOverlay.transform.GetChild(0).GetChild(0).GetComponent<SpriteRenderer>().material;
+            // Polus
+            ShipStatus polusShip = AssetDB.Ships["ss-polus"].ShipStatus;
+            InfectedOverlay polusOverlay = polusShip.MapPrefab.infectedOverlay;
 
+            _commsBtnSprite = GetSprite(polusOverlay, "Comms", "bomb"); // um...BOMB!?
+            _reactorBtnSprite = GetSprite(polusOverlay, "Laboratory", "meltdown");
+            _doorsBtnSprite = GetSprite(polusOverlay, "Office", "Doors");
+            _lightsBtnSprite = GetSprite(polusOverlay, "Electrical", "lightsOut");
+            _btnMat = polusOverlay.transform.GetChild(0).GetChild(0).GetComponent<SpriteRenderer>().material;
+
+            // Mira
             ShipStatus miraShip = AssetDB.Ships["ss-mira"].ShipStatus;
             InfectedOverlay miraOverlay = miraShip.MapPrefab.infectedOverlay;
+
             _oxygenBtnSprite = GetSprite(miraOverlay, "LifeSupp", "bomb"); // Another bomb?
         }
 

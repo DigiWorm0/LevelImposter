@@ -10,6 +10,9 @@ using BepInEx.Unity.IL2CPP.Utils.Collections;
 
 namespace LevelImposter.Core
 {
+    /// <summary>
+    /// Fires a trigger on creation. Used for spawnable prefabs.
+    /// </summary>
     public class LITriggerSpawnable : MonoBehaviour
     {
         public LITriggerSpawnable(IntPtr intPtr) : base(intPtr)

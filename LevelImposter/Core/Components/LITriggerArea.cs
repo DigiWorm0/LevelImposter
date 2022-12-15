@@ -5,6 +5,9 @@ using UnityEngine;
 
 namespace LevelImposter.Core
 {
+    /// <summary>
+    /// Object that fires a trigger when the player enters/exits it's range
+    /// </summary>
     public class LITriggerArea : MonoBehaviour
     {
         public LITriggerArea(IntPtr intPtr) : base(intPtr)

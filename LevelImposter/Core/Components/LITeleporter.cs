@@ -5,6 +5,9 @@ using UnityEngine;
 
 namespace LevelImposter.Core
 {
+    /// <summary>
+    /// Object that teleports the player on contact
+    /// </summary>
     public class LITeleporter : MonoBehaviour
     {
         public LITeleporter(IntPtr intPtr) : base(intPtr)

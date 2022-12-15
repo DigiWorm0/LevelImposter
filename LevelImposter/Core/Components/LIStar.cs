@@ -5,6 +5,9 @@ using UnityEngine;
 
 namespace LevelImposter.Core
 {
+    /// <summary>
+    /// Object that flies across screen and respawns when it hits the edge
+    /// </summary>
     public class LIStar : MonoBehaviour
     {
         public LIStar(IntPtr intPtr) : base(intPtr)

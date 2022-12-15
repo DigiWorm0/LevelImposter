@@ -9,6 +9,7 @@ using UnityEngine;
 using Il2CppInterop.Runtime.InteropTypes.Arrays;
 using Il2CppInterop.Runtime.InteropTypes;
 using Il2CppInterop.Runtime;
+using AmongUs.GameOptions;
 
 namespace LevelImposter.Core
 {
@@ -238,6 +239,15 @@ namespace LevelImposter.Core
 
             LILogger.Info("[RPC] Transmitting map ID [" + mapIDStr + "]");
             ReactorRPC.RPCSendMapID(PlayerControl.LocalPlayer, mapIDStr);
+
+            // Set Skeld
+            if (mapID != Guid.Empty)
+            {
+                IGameOptions currentGameOptions = GameOptionsManager.Instance.CurrentGameOptions;
+                currentGameOptions.SetByte(ByteOptionNames.MapId, (int)MapNames.Skeld);
+                GameOptionsManager.Instance.GameHostOptions = GameOptionsManager.Instance.CurrentGameOptions;
+                GameManager.Instance.LogicOptions.SyncOptions();
+            }
         }
     }
 }

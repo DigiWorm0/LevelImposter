@@ -5,6 +5,9 @@ using UnityEngine;
 
 namespace LevelImposter.Core
 {
+    /// <summary>
+    /// Object that oscillates up and down
+    /// </summary>
     public class LIFloat : MonoBehaviour
     {
         public LIFloat(IntPtr intPtr) : base(intPtr)

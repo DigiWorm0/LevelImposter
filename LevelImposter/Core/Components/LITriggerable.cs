@@ -7,6 +7,9 @@ using BepInEx.Unity.IL2CPP.Utils.Collections;
 
 namespace LevelImposter.Core
 {
+    /// <summary>
+    /// Object that acts as a trigger to/from another source
+    /// </summary>
     public class LITriggerable : MonoBehaviour
     {
         public LITriggerable(IntPtr intPtr) : base(intPtr)
