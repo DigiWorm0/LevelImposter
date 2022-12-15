@@ -29,6 +29,7 @@ namespace LevelImposter.Core
                 else
                 {
                     spriteRenderer.sprite = MapUtils.GenerateSprite(MapUtils.ParseBase64(elem.properties.spriteData));
+                    elem.properties.spriteData = null;
                 }
             }
 

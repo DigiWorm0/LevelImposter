@@ -14,7 +14,7 @@ namespace LevelImposter
     public class LevelImposter : BasePlugin
     {
         public const string ID = "com.DigiWorm.LevelImposter";
-        public const string VERSION = "0.8.0";
+        public const string VERSION = "0.9.0";
         public const string REACTOR_ID = "gg.reactor.api";
 
         public HarmonyLib.Harmony Harmony { get; } = new HarmonyLib.Harmony(ID);
@@ -31,10 +31,13 @@ namespace LevelImposter
             ClassInjector.RegisterTypeInIl2Cpp<LIStar>();
             ClassInjector.RegisterTypeInIl2Cpp<LIFloat>();
             ClassInjector.RegisterTypeInIl2Cpp<LITeleporter>();
-            ClassInjector.RegisterTypeInIl2Cpp<LITriggerable>();
             ClassInjector.RegisterTypeInIl2Cpp<GIFAnimator>();
             ClassInjector.RegisterTypeInIl2Cpp<AssetDB>();
+
+            ClassInjector.RegisterTypeInIl2Cpp<LITriggerable>();
             ClassInjector.RegisterTypeInIl2Cpp<LITriggerArea>();
+            ClassInjector.RegisterTypeInIl2Cpp<LITriggerSpawnable>();
+            ClassInjector.RegisterTypeInIl2Cpp<DummyMinigame>();
 
             ClassInjector.RegisterTypeInIl2Cpp<LevelImposterAPI>();
             ClassInjector.RegisterTypeInIl2Cpp<MapBanner>();

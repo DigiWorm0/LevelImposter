@@ -24,12 +24,13 @@ namespace LevelImposter.Core
             GameObject roomNameClone = roomNames.GetChild(0).gameObject;
 
             // Object
+            float mapScale = LIShipStatus.Instance.ShipStatus.MapScale;
             GameObject roomName = UnityEngine.Object.Instantiate(roomNameClone, roomNames);
             roomName.name = elem.name;
             roomName.layer = (int)Layer.UI;
             roomName.transform.localPosition = new Vector3(
-                elem.x * MinimapBuilder.MinimapScale,
-                elem.y * MinimapBuilder.MinimapScale,
+                elem.x / mapScale,
+                elem.y / mapScale,
                 -1
             );
 

@@ -35,12 +35,12 @@ namespace LevelImposter.Core
             SystemTypes systemType = RoomBuilder.GetSystem(elem.id);
 
             // Map Room
-            float overlayScale = mapCountOverlay.transform.localScale.x;
+            float overlayScale = mapCountOverlay.transform.localScale.x * LIShipStatus.Instance.ShipStatus.MapScale;
             GameObject roomObj = new GameObject(elem.name);
             roomObj.transform.SetParent(mapCountOverlay.transform);
             roomObj.transform.localPosition = new Vector3(
-                elem.x * MinimapBuilder.MinimapScale * (1 / overlayScale),
-                elem.y * MinimapBuilder.MinimapScale * (1 / overlayScale) + ICON_OFFSET,
+                elem.x * (1 / overlayScale),
+                elem.y * (1 / overlayScale) + ICON_OFFSET,
                 -25.0f
             );
 

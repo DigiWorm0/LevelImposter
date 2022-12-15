@@ -10,13 +10,16 @@ using Il2CppInterop.Runtime.InteropTypes.Arrays;
 
 namespace LevelImposter.Core
 {
+    /// <summary>
+    /// Component adds additional functionality added to AU's built-in ShipStatus.
+    /// Always added to ShipStatus on Awake, but dormant until LoadMap is fired.
+    /// </summary>
     public class LIShipStatus : MonoBehaviour
     {
         public LIShipStatus(IntPtr intPtr) : base(intPtr)
         {
         }
 
-        public const int Y_OFFSET = 25;
         public const float PLAYER_POS = -5.0f;
 
         public static LIShipStatus Instance { get; private set; }
@@ -26,6 +29,8 @@ namespace LevelImposter.Core
 
         private BuildRouter _buildRouter = new BuildRouter();
         private Stopwatch _buildTimer = new Stopwatch();
+        private Stack<Texture2D> _mapTextures = new Stack<Texture2D>();
+        private Stack<AudioClip> _mapClips = new Stack<AudioClip>();
 
         private readonly List<string> _priorityTypes = new()
         {
@@ -57,6 +62,17 @@ namespace LevelImposter.Core
             if (MapLoader.CurrentMap != null)
                 HudManager.Instance.ShadowQuad.material.SetInt("_Mask", 7);
         }
+
+        public void OnDestroy()
+        {
+            LILogger.Info("Destroying " + _mapTextures.Count + " map textures");
+            while (_mapTextures.Count > 0)
+                Destroy(_mapTextures.Pop());
+
+            LILogger.Info("Destroying " + _mapClips.Count + " map sounds");
+            while (_mapClips.Count > 0)
+                Destroy(_mapClips.Pop());
+        }
         
         /// <summary>
         /// Resets the map to a blank slate. Ran before any map elements are applied.
@@ -82,9 +98,9 @@ namespace LevelImposter.Core
             ShipStatus.Type = ShipStatus.MapType.Ship;
             ShipStatus.WeaponsImage = null;
 
-            ShipStatus.InitialSpawnCenter = new Vector2(0, -Y_OFFSET);
-            ShipStatus.MeetingSpawnCenter = new Vector2(0, -Y_OFFSET);
-            ShipStatus.MeetingSpawnCenter2 = new Vector2(0, -Y_OFFSET);
+            ShipStatus.InitialSpawnCenter = new Vector2(0, 0);
+            ShipStatus.MeetingSpawnCenter = new Vector2(0, 0);
+            ShipStatus.MeetingSpawnCenter2 = new Vector2(0, 0);
 
             ShipStatus.Systems.Add(SystemTypes.Electrical, new SwitchSystem().Cast<ISystemType>());
             ShipStatus.Systems.Add(SystemTypes.MedBay, new MedScanSystem().Cast<ISystemType>());
@@ -173,7 +189,7 @@ namespace LevelImposter.Core
             {
                 GameObject gameObject = _buildRouter.Build(element);
                 gameObject.transform.SetParent(transform);
-                gameObject.transform.localPosition -= new Vector3(0, Y_OFFSET, -((element.y - Y_OFFSET) / 1000.0f) + PLAYER_POS);
+                gameObject.transform.localPosition -= new Vector3(0, 0, -(element.y / 1000.0f) + PLAYER_POS);
             }
             catch (Exception e)
             {
@@ -186,6 +202,24 @@ namespace LevelImposter.Core
                 float seconds = Mathf.Round(_buildTimer.ElapsedMilliseconds / 100f) / 10f;
                 LILogger.Warn("Took " + seconds + "s to build " + element.name);
             }
+        }
+
+        /// <summary>
+        /// Adds a map texture to be garbage collected on unload
+        /// </summary>
+        /// <param name="tex">Texture to mark for garbage collection on unload</param>
+        public void AddMapTexture(Texture2D tex)
+        {
+            _mapTextures.Push(tex);
+        }
+
+        /// <summary>
+        /// Adds a map audio clip to be garbage collected on unload
+        /// </summary>
+        /// <param name="clip">Audio clip to mark for garbage collection on unload</param>
+        public void AddMapSound(AudioClip clip)
+        {
+            _mapClips.Push(clip);
         }
     }
 }

@@ -12,7 +12,7 @@ namespace LevelImposter.Core
     {
         public void Build(LIElement elem, GameObject obj)
         {
-            if (elem.type != "util-sound1")
+            if (elem.type != "util-sound1" && elem.type != "util-triggersound")
                 return;
 
             // Colliders
@@ -48,6 +48,10 @@ namespace LevelImposter.Core
             ambientPlayer.HitAreas = colliders;
             ambientPlayer.AmbientSound = clip;
             ambientPlayer.MaxVolume = soundData.volume;
+
+            // Trigger Sound
+            if (elem.type == "util-triggersound")
+                obj.SetActive(false);
         }
 
         public void PostBuild() { }

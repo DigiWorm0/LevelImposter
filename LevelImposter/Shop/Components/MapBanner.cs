@@ -25,6 +25,8 @@ namespace LevelImposter.Shop
         private Button _playButton;
         private Button _deleteButton;
         private Button _externalButton;
+        private bool _isCustomTex = false;
+        private bool _isEnabled = true;
         private bool _isInLobby
         {
             get
@@ -55,6 +57,12 @@ namespace LevelImposter.Shop
             UpdateButtons();
         }
 
+        public void OnDestroy()
+        {
+            if (_isCustomTex)
+                Destroy(_thumbnail.sprite.texture);
+        }
+
         public void SetMap(LIMetadata map)
         {
             this._currentMap = map;
@@ -68,7 +76,7 @@ namespace LevelImposter.Shop
 
         public void UpdateButtons()
         {
-            if (_currentMap == null)
+            if (_currentMap == null || !_isEnabled)
             {
                 _downloadButton.interactable = false;
                 _playButton.interactable = false;
@@ -90,10 +98,12 @@ namespace LevelImposter.Shop
         {
             _downloadButton.interactable = false;
             _loadingSpinner.SetActive(true);
+            ShopManager.Instance.SetEnabled(false);
             LevelImposterAPI.Instance.DownloadMap(new System.Guid(_currentMap.id), (LIMap map) =>
             {
                 MapFileAPI.Instance.Save(map);
                 _loadingSpinner.SetActive(false);
+                ShopManager.Instance.SetEnabled(true);
                 UpdateButtons();
             });
         }
@@ -127,6 +137,7 @@ namespace LevelImposter.Shop
                 ThumbnailFileAPI.Instance.Get(_currentMap.id, (Texture2D texture) =>
                 {
                     _thumbnail.sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), Vector2.zero);
+                    _isCustomTex = true;
                 });
             }
             else
@@ -136,9 +147,16 @@ namespace LevelImposter.Shop
                     byte[] textureData = texture.EncodeToPNG();
                     ThumbnailFileAPI.Instance.Save(_currentMap.id, textureData);
                     _thumbnail.sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f), 100.0f);
+                    _isCustomTex = true;
                     textureData = null;
                 });
             }
+        }
+
+        public void SetEnabled(bool isEnabled)
+        {
+            _isEnabled = isEnabled;
+            UpdateButtons();
         }
     }
 }

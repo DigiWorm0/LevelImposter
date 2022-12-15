@@ -20,6 +20,7 @@ namespace LevelImposter.Shop
         public Button FolderButton;
 
         private string _selectedID = "downloaded";
+        private bool isEnabled = true;
 
         private void Start()
         {
@@ -33,10 +34,10 @@ namespace LevelImposter.Shop
 
         public void UpdateButtons()
         {
-            DownloadedButton.interactable = _selectedID != "downloaded";
-            TopButton.interactable = _selectedID != "top";
-            RecentButton.interactable = _selectedID != "recent";
-            FeaturedButton.interactable = _selectedID != "featured";
+            DownloadedButton.interactable = _selectedID != "downloaded" && isEnabled;
+            TopButton.interactable = _selectedID != "top" && isEnabled;
+            RecentButton.interactable = _selectedID != "recent" && isEnabled;
+            FeaturedButton.interactable = _selectedID != "featured" && isEnabled;
         }
 
         public void OnDownloaded()
@@ -82,6 +83,12 @@ namespace LevelImposter.Shop
         public void OnFolder()
         {
             Process.Start("explorer.exe", MapFileAPI.Instance.GetDirectory());
+        }
+
+        public void SetEnabled(bool isEnabled)
+        {
+            this.isEnabled = isEnabled;
+            UpdateButtons();
         }
     }
 }

@@ -28,9 +28,9 @@ namespace LevelImposter.Shop
         private static void RemoveChildren()
         {
             GameObject controller = GameObject.Find("HowToPlayController");
-            controller.transform.FindChild("IntroScene").gameObject.active = false;
-            controller.transform.FindChild("RightArrow").gameObject.active = false;
-            controller.transform.FindChild("Dots").gameObject.active = false;
+            controller.transform.FindChild("HnS Scenes").gameObject.active = false;
+            controller.transform.FindChild("ClassicScenes").gameObject.active = false;
+            controller.transform.FindChild("Game modes").gameObject.active = false;
         }
 
         public static GameObject BuildShop()

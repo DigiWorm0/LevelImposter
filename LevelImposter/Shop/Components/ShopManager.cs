@@ -22,7 +22,10 @@ namespace LevelImposter.Shop
         public Transform ShopParent;
 
         private string _currentListID = "downloaded";
+        private bool _isEnabled = true;
         private HostLocalGameButton _freeplayComp;
+        private ShopButtons _shopButtons;
+        private Stack<MapBanner> _shopBanners = new Stack<MapBanner>();
 
         public void Awake()
         {
@@ -34,7 +37,8 @@ namespace LevelImposter.Shop
         public void Start()
         {
             _freeplayComp = gameObject.AddComponent<HostLocalGameButton>();
-            _freeplayComp.GameMode = GameModes.FreePlay;
+            _shopButtons = gameObject.GetComponent<ShopButtons>();
+            _freeplayComp.NetworkMode = NetworkModes.FreePlay;
             ListDownloaded();
         }
 
@@ -63,8 +67,11 @@ namespace LevelImposter.Shop
         public void ListNone()
         {
             _currentListID = "none";
-            while (ShopParent.childCount > 1)
-                DestroyImmediate(ShopParent.GetChild(1).gameObject);
+            while (_shopBanners.Count > 0)
+            {
+                MapBanner banner = _shopBanners.Pop();
+                Destroy(banner.gameObject);
+            }
         }
 
         public void ListDownloaded()
@@ -77,6 +84,7 @@ namespace LevelImposter.Shop
                 MapBanner banner = Instantiate(MapBannerPrefab, ShopParent);
                 banner.gameObject.SetActive(true);
                 banner.SetMap(MapFileAPI.Instance.GetMetadata(mapID));
+                _shopBanners.Push(banner);
             }
         }
 
@@ -93,6 +101,7 @@ namespace LevelImposter.Shop
                     MapBanner banner = Instantiate(MapBannerPrefab, ShopParent);
                     banner.gameObject.SetActive(true);
                     banner.SetMap(map);
+                    _shopBanners.Push(banner);
                 }
             });
         }
@@ -110,6 +119,7 @@ namespace LevelImposter.Shop
                     MapBanner banner = Instantiate(MapBannerPrefab, ShopParent);
                     banner.gameObject.SetActive(true);
                     banner.SetMap(map);
+                    _shopBanners.Push(banner);
                 }
             });
         }
@@ -127,6 +137,7 @@ namespace LevelImposter.Shop
                     MapBanner banner = Instantiate(MapBannerPrefab, ShopParent);
                     banner.gameObject.SetActive(true);
                     banner.SetMap(map);
+                    _shopBanners.Push(banner);
                 }
             });
         }
@@ -146,20 +157,18 @@ namespace LevelImposter.Shop
             LILogger.Info("Launching map [" + id + "]");
             MapLoader.LoadMap(id);
 
-            AmongUsClient.Instance.TutorialMapId = 2;
+            AmongUsClient.Instance.TutorialMapId = (int)MapNames.Polus;
             _freeplayComp.OnClick();
+        }
 
-            /*
-            SaveManager.GameHostOptions.gameType = GameType.Normal;
-            SoundManager.Instance.StopAllSound();
-            AmongUsClient.Instance.GameMode = GameModes.FreePlay;
-            DestroyableSingleton<InnerNetServer>.Instance.StartAsLocalServer();
-            AmongUsClient.Instance.SetEndpoint("127.0.0.1", 22023, false);
-            AmongUsClient.Instance.MainMenuScene = "MainMenu";
-            AmongUsClient.Instance.OnlineScene = "Tutorial";
-            AmongUsClient.Instance.Connect(MatchMakerModes.HostAndClient, null);
-            StartCoroutine(AmongUsClient.Instance.WaitForConnectionOrFail());
-            */
+        public void SetEnabled(bool isEnabled)
+        {
+            _isEnabled = isEnabled;
+            _shopButtons.SetEnabled(isEnabled);
+            foreach (MapBanner banner in _shopBanners)
+            {
+                banner.SetEnabled(isEnabled);
+            }
         }
 
         public static void CloseShop()

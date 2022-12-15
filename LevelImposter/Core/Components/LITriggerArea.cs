@@ -5,6 +5,9 @@ using UnityEngine;
 
 namespace LevelImposter.Core
 {
+    /// <summary>
+    /// Object that fires a trigger when the player enters/exits it's range
+    /// </summary>
     public class LITriggerArea : MonoBehaviour
     {
         public LITriggerArea(IntPtr intPtr) : base(intPtr)
@@ -14,13 +17,13 @@ namespace LevelImposter.Core
         public void OnTriggerEnter2D(Collider2D collider)
         {
             if (MapUtils.IsLocalPlayer(collider.gameObject))
-                MapUtils.FireTrigger(transform.parent.gameObject, "onEnter", collider.gameObject);
+                MapUtils.FireTrigger(transform.gameObject, "onEnter", collider.gameObject);
         }
 
         public void OnTriggerExit2D(Collider2D collider)
         {
             if (MapUtils.IsLocalPlayer(collider.gameObject))
-                MapUtils.FireTrigger(transform.parent.gameObject, "onExit", collider.gameObject);
+                MapUtils.FireTrigger(transform.gameObject, "onExit", collider.gameObject);
         }
     }
 }

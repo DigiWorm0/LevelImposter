@@ -15,10 +15,9 @@ namespace LevelImposter.Core
             // Colliders
             Collider2D[] colliders = obj.GetComponentsInChildren<Collider2D>();
             foreach (Collider2D collider in colliders)
-            {
                 collider.isTrigger = true;
-                collider.gameObject.AddComponent<LITriggerArea>();
-            }
+
+            obj.AddComponent<LITriggerArea>();
         }
 
         public void PostBuild() { }

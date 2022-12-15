@@ -17,6 +17,8 @@ namespace LevelImposter.Shop
     [HarmonyPatch(typeof(VersionShower), nameof(VersionShower.Start))]
     public static class VersionPatch
     {
+        public static Texture2D _logoTex = null;
+
         public static void Postfix(VersionShower __instance)
         {
             bool isMainMenu = SceneManager.GetActiveScene().name == "MainMenu";
@@ -32,11 +34,14 @@ namespace LevelImposter.Shop
             logoObj.layer = (int)Layer.UI;
 
             SpriteRenderer logoRenderer = logoObj.AddComponent<SpriteRenderer>();
-            Texture2D tex = new Texture2D(1, 1);
-            ImageConversion.LoadImage(tex, logoData);
+            if (_logoTex == null)
+            {
+                _logoTex = new Texture2D(1, 1);
+                ImageConversion.LoadImage(_logoTex, logoData);
+            }
             logoRenderer.sprite = Sprite.Create(
-                tex,
-                new Rect(0.0f, 0.0f, tex.width, tex.height),
+                _logoTex,
+                new Rect(0.0f, 0.0f, _logoTex.width, _logoTex.height),
                 new Vector2(0.5f, 0.5f),
                 180.0f
             );

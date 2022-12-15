@@ -9,6 +9,7 @@ using UnityEngine;
 using Il2CppInterop.Runtime.InteropTypes.Arrays;
 using Il2CppInterop.Runtime.InteropTypes;
 using Il2CppInterop.Runtime;
+using AmongUs.GameOptions;
 
 namespace LevelImposter.Core
 {
@@ -146,6 +147,7 @@ namespace LevelImposter.Core
         {
             byte[] byteData = ParseBase64(base64);
             AudioClip audio = WAVLoader.LoadPCM(byteData); // TODO Support other audio formats
+            LIShipStatus.Instance.AddMapSound(audio);
             return audio;
         }
 
@@ -178,7 +180,7 @@ namespace LevelImposter.Core
         }
 
         /// <summary>
-        /// Checks if a Game Object is the local player
+        /// Checks if a GameObject is the local player
         /// </summary>
         /// <param name="obj">Game Object to check</param>
         /// <returns>Whether or not obj is considered to be the local player</returns>
@@ -199,6 +201,7 @@ namespace LevelImposter.Core
             Texture.allowThreadedTextureCreation = true;
             Texture2D texture = new Texture2D(1, 1);
             ImageConversion.LoadImage(texture, data);
+            LIShipStatus.Instance.AddMapTexture(texture);
             return Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f), 100.0f);
         }
 
@@ -236,6 +239,15 @@ namespace LevelImposter.Core
 
             LILogger.Info("[RPC] Transmitting map ID [" + mapIDStr + "]");
             ReactorRPC.RPCSendMapID(PlayerControl.LocalPlayer, mapIDStr);
+
+            // Set Skeld
+            if (mapID != Guid.Empty)
+            {
+                IGameOptions currentGameOptions = GameOptionsManager.Instance.CurrentGameOptions;
+                currentGameOptions.SetByte(ByteOptionNames.MapId, (int)MapNames.Polus);
+                GameOptionsManager.Instance.GameHostOptions = GameOptionsManager.Instance.CurrentGameOptions;
+                GameManager.Instance.LogicOptions.SyncOptions();
+            }
         }
     }
 }
