@@ -33,8 +33,8 @@ namespace LevelImposter.Core
                 return;
 
             UtilData utilData = AssetDB.Utils[elem.type];
-            Ladder topClone = utilData.GameObj.transform.GetChild(0).GetComponent<Ladder>();
-            Ladder bottomClone = utilData.GameObj.transform.GetChild(1).GetComponent<Ladder>();
+            Ladder topClone = utilData.GameObj.transform.FindChild("LadderTop").GetComponent<Ladder>();
+            Ladder bottomClone = utilData.GameObj.transform.FindChild("LadderBottom").GetComponent<Ladder>();
 
             // Default Sprite
             SpriteRenderer spriteRenderer = obj.GetComponent<SpriteRenderer>();

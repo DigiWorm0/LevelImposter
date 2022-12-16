@@ -16,7 +16,7 @@ namespace LevelImposter.Core
         {
             get
             {
-                return tag.Equals(LevelImposter.VERSION);
+                return tag.Equals(LevelImposter.Version);
             }
         }
     }

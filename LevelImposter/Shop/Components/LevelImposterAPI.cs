@@ -117,7 +117,7 @@ namespace LevelImposter.Shop
             {
                 LICallback<T> response = JsonSerializer.Deserialize<LICallback<T>>(json);
                 if (response.v != API_VERSION)
-                    LILogger.Error("You are running on an older version of LevelImposter " + LevelImposter.VERSION + ". Update to get access to the API.");
+                    LILogger.Error("You are running on an older version of LevelImposter " + LevelImposter.Version + ". Update to get access to the API.");
                 else if (!string.IsNullOrEmpty(response.error))
                     LILogger.Error(response.error);
                 else

@@ -45,7 +45,7 @@ namespace LevelImposter.Core
                 elem.properties.camXOffset == null ? 0 : (float)elem.properties.camXOffset,
                 elem.properties.camYOffset == null ? 0 : (float)elem.properties.camYOffset
             );
-            survCam.CamSize = elem.properties.camZoom == null ? 0 : (float)elem.properties.camZoom;
+            survCam.CamSize = elem.properties.camZoom == null ? 3 : (float)elem.properties.camZoom;
         }
 
         public void PostBuild() { }
