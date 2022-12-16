@@ -57,7 +57,7 @@ namespace LevelImposter.Shop
             logoText.fontSize = 1.5f;
             logoText.alignment = TextAlignmentOptions.BottomLeft;
             logoText.raycastTarget = false;
-            logoText.SetText("v" + LevelImposter.VERSION);
+            logoText.SetText("v" + LevelImposter.Version);
         }
     }
     /*
