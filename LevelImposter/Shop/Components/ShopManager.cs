@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using LevelImposter.Core;
 using LevelImposter.DB;
@@ -20,6 +21,7 @@ namespace LevelImposter.Shop
 
         public MapBanner MapBannerPrefab;
         public Transform ShopParent;
+        public Button CloseButton;
 
         private string _currentListID = "downloaded";
         private bool _isEnabled = true;
@@ -169,6 +171,7 @@ namespace LevelImposter.Shop
             {
                 banner.SetEnabled(isEnabled);
             }
+            CloseButton.interactable = isEnabled;
         }
 
         public static void CloseShop()

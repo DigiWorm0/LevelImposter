@@ -52,7 +52,9 @@ namespace LevelImposter.Shop
             MapBanner bannerPrefab = shopMgr.MapBannerPrefab;
             bannerPrefab.transform.FindChild("LoadOverlay").FindChild("LoadingSpinner").gameObject.AddComponent<Spinner>();
 
-            mapShop.transform.FindChild("Canvas").FindChild("CloseBtn").GetComponent<Button>().onClick.AddListener((System.Action)ShopManager.CloseShop);
+            Button closeButton = mapShop.transform.FindChild("Canvas").FindChild("CloseBtn").GetComponent<Button>();
+            closeButton.onClick.AddListener((System.Action)ShopManager.CloseShop);
+            shopMgr.CloseButton = closeButton;
 
             Transform starField = mapShop.transform.FindChild("Star Field");
             StarGen starGen = starField.gameObject.AddComponent<StarGen>();
