@@ -38,9 +38,12 @@ namespace LevelImposter.Core
 
 
                 // Camera
-                Camera.main.transform.position -= offset;
-                FollowerCamera followerCam = Camera.main.GetComponent<FollowerCamera>();
-                followerCam.centerPosition = Camera.main.transform.position;
+                if (MapUtils.IsLocalPlayer(player.gameObject))
+                {
+                    Camera.main.transform.position -= offset;
+                    FollowerCamera followerCam = Camera.main.GetComponent<FollowerCamera>();
+                    followerCam.centerPosition = Camera.main.transform.position;
+                }
             }
         }
     }
