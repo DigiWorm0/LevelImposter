@@ -65,6 +65,13 @@ namespace LevelImposter.Shop
             Transform skeld = AssetDB.Ships["ss-skeld"].ShipStatus.transform;
             starRenderer.material = skeld.FindChild("starfield").gameObject.GetComponent<MeshRenderer>().material;
 
+            GameObject background = mapShop.transform.FindChild("Background").gameObject;
+            PassiveButton clickMask = mapShop.AddComponent<PassiveButton>();
+            clickMask.Colliders = new Il2CppInterop.Runtime.InteropTypes.Arrays.Il2CppReferenceArray<Collider2D>(new Collider2D[] {
+                background.GetComponent<BoxCollider2D>()
+            });
+
+
             return mapShop;
         }
     }
