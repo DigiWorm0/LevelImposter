@@ -5,6 +5,7 @@ using LevelImposter.Core;
 using LevelImposter.DB;
 using LevelImposter.Shop;
 using Il2CppInterop.Runtime.Injection;
+using AmongUs.Data;
 
 namespace LevelImposter
 {
@@ -25,6 +26,8 @@ namespace LevelImposter
             ConfigFile = Config;
             LILogger.Init();
             LIDeepLink.Init();
+
+            DataManager.Player.Onboarding.ViewedHideAndSeekHowToPlay = true;
 
             ClassInjector.RegisterTypeInIl2Cpp<LIShipStatus>();
             ClassInjector.RegisterTypeInIl2Cpp<LIStar>();
