@@ -17,11 +17,26 @@ namespace LevelImposter.Core
 
     public static class ReactorRPC
     {
+        public enum RpcIds
+        {
+            Teleport=98,
+            SendMapId=99,
+        }
         public const int RPC_ID = 99; // Must be <= 99 for TOU-R Support
 
         public static Guid? ActiveDownloadingID = null;
 
-        [MethodRpc(RPC_ID)]
+        [MethodRpc((uint)RpcIds.Teleport)]
+        public static void RPCTeleportPlayer(PlayerControl _p, float x, float y)
+        {
+            _p.transform.position = new Vector3(
+                x,
+                y,
+                _p.transform.position.z
+            );
+        }
+
+        [MethodRpc((uint)RpcIds.SendMapId)]
         public static void RPCSendMapID(PlayerControl _p, string mapIDStr)
         {
             if (AmongUsClient.Instance.AmHost)

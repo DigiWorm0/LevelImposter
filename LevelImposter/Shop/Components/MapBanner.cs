@@ -16,7 +16,8 @@ namespace LevelImposter.Shop
         }
 
         private LIMetadata _currentMap;
-        private GameObject _loadingSpinner;
+        private GameObject _loadingOverlay;
+        private GameObject _errOverlay;
         private Image _thumbnail;
         private TMPro.TMP_Text _nameText;
         private TMPro.TMP_Text _authorText;
@@ -37,7 +38,8 @@ namespace LevelImposter.Shop
 
         public void Awake()
         {
-            _loadingSpinner = transform.FindChild("LoadOverlay").gameObject;
+            _loadingOverlay = transform.FindChild("LoadOverlay").gameObject;
+            _errOverlay = transform.FindChild("ErrOverlay").gameObject;
             _thumbnail = transform.FindChild("Thumbnail").GetComponent<Image>();
             _nameText = transform.FindChild("Title").GetComponent<TMPro.TMP_Text>();
             _authorText = transform.FindChild("Author").GetComponent<TMPro.TMP_Text>();
@@ -66,7 +68,7 @@ namespace LevelImposter.Shop
         public void SetMap(LIMetadata map)
         {
             this._currentMap = map;
-            _loadingSpinner.SetActive(false);
+            _loadingOverlay.SetActive(false);
             _nameText.text = map.name;
             _authorText.text = map.authorName;
             _descText.text = map.description;
@@ -91,18 +93,19 @@ namespace LevelImposter.Shop
                 _playButton.interactable = mapExists && (isOnline || !_isInLobby);
                 _deleteButton.interactable = mapExists && isOnline;
                 _externalButton.gameObject.SetActive(isOnline);
+                _errOverlay.SetActive(mapExists && !isOnline && _isInLobby);
             }
         }
 
         public void OnDownload()
         {
             _downloadButton.interactable = false;
-            _loadingSpinner.SetActive(true);
+            _loadingOverlay.SetActive(true);
             ShopManager.Instance.SetEnabled(false);
             LevelImposterAPI.Instance.DownloadMap(new System.Guid(_currentMap.id), (LIMap map) =>
             {
                 MapFileAPI.Instance.Save(map);
-                _loadingSpinner.SetActive(false);
+                _loadingOverlay.SetActive(false);
                 ShopManager.Instance.SetEnabled(true);
                 UpdateButtons();
             });
