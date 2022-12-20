@@ -44,6 +44,7 @@ namespace LevelImposter.Core
                 new TeleBuilder(),
                 new TriggerAreaBuilder(),
                 new TriggerConsoleBuilder(),
+                new TriggerStartBuilder(),
 
                 new TriggerBuilder()
             };
