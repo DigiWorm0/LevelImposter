@@ -34,7 +34,7 @@ namespace LevelImposter.Core
 
         public void Build(LIElement elem, GameObject obj)
         {
-            if (!elem.type.StartsWith("sab-"))
+            if (!elem.type.StartsWith("sab-") || elem.type.StartsWith("sab-door"))
                 return;
             _hasSabConsoles = true;
 
@@ -96,7 +96,6 @@ namespace LevelImposter.Core
             SpriteRenderer btnRenderer = sabButton.AddComponent<SpriteRenderer>();
             if (mapRoom.special != null)
                 LILogger.Warn("Only 1 sabotage button is supported per room");
-            mapRoom.special = btnRenderer;
 
             ButtonBehavior button = sabButton.AddComponent<ButtonBehavior>();
             Action btnAction = null;
@@ -106,18 +105,27 @@ namespace LevelImposter.Core
                 case "sab-btnreactor":
                     btnSprite = _reactorBtnSprite;
                     btnAction = mapRoom.SabotageSeismic;
+                    mapRoom.special = btnRenderer;
                     break;
                 case "sab-btnoxygen":
                     btnSprite = _oxygenBtnSprite; // TODO: Replace Me
                     btnAction = mapRoom.SabotageOxygen;
+                    mapRoom.special = btnRenderer;
                     break;
                 case "sab-btncomms":
                     btnSprite = _commsBtnSprite;
                     btnAction = mapRoom.SabotageComms;
+                    mapRoom.special = btnRenderer;
                     break;
                 case "sab-btnlights":
                     btnSprite = _lightsBtnSprite;
                     btnAction = mapRoom.SabotageLights;
+                    mapRoom.special = btnRenderer;
+                    break;
+                case "sab-btndoors":
+                    btnSprite = _doorsBtnSprite;
+                    btnAction = mapRoom.SabotageDoors;
+                    mapRoom.door = btnRenderer;
                     break;
                 default:
                     LILogger.Error($"{elem.name} has unknown sabotage button type: {elem.type}");

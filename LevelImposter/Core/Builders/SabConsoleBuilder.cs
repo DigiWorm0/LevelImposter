@@ -20,7 +20,7 @@ namespace LevelImposter.Core
 
         public void Build(LIElement elem, GameObject obj)
         {
-            if (!elem.type.StartsWith("sab-") || elem.type.StartsWith("sab-btn"))
+            if (!elem.type.StartsWith("sab-") || elem.type.StartsWith("sab-btn") || elem.type.StartsWith("sab-door"))
                 return;
 
             SabData sabData = AssetDB.Sabs[elem.type];
@@ -45,6 +45,8 @@ namespace LevelImposter.Core
             if (elem.properties.parent != null)
                 systemType = RoomBuilder.GetSystem((Guid)elem.properties.parent);
             SabotageTask sabotageTask = SabBuilder.FindSabotage(systemType);
+            if (!string.IsNullOrEmpty(elem.properties.description))
+                MapUtils.Rename(sabotageTask.TaskType, elem.properties.description);
 
             // Console
             Console console = obj.AddComponent<Console>();

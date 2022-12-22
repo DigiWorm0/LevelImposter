@@ -220,9 +220,7 @@ namespace LevelImposter.Core
                 {
                     LIElement divertTarget = divertTargets[i];
 
-                    SystemTypes divertSystem = 0;
-                    if (divertTarget.properties.parent != null)
-                        divertSystem = RoomBuilder.GetSystem((Guid)divertTarget.properties.parent);
+                    SystemTypes divertSystem = RoomBuilder.GetParentOrDefault(divertTarget);
                     DivertSystems[i] = divertSystem;
 
                     GameObject taskHolder = new GameObject(elem.name);

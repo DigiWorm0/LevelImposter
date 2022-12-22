@@ -46,16 +46,27 @@ namespace LevelImposter.Core
             _roomId = 1;
         }
 
+        /// <summary>
+        /// Gets the SystemTypes associated with a specific util-room ID
+        /// </summary>
+        /// <param name="id">ID of the util-room object</param>
+        /// <returns>Associated SystemTypes value</returns>
         public static SystemTypes GetSystem(Guid id)
         {
             return _systemDB.GetValueOrDefault(id);
         }
 
-        public static SystemTypes[] GetAllSystems()
+        /// <summary>
+        /// Gets the SystemTypes of the parent of an object
+        /// </summary>
+        /// <param name="element">Object to read</param>
+        /// <returns>SystemTypes of the parent or default if none is found</returns>
+        public static SystemTypes GetParentOrDefault(LIElement element)
         {
-            SystemTypes[] arr = new SystemTypes[_systemDB.Count];
-            _systemDB.Values.CopyTo(arr, 0);
-            return arr;
+            SystemTypes systemType = 0;
+            if (element.properties.parent != null)
+                systemType = GetSystem((Guid)element.properties.parent);
+            return systemType;
         }
     }
 }

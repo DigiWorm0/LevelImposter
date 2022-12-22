@@ -26,6 +26,9 @@ namespace LevelImposter.Core
         public LISound[]? sounds { get; set; }
         public int? soundPriority { get; set; }
 
+        // Door
+        public string? doorType { get; set; }
+
         // Vent
         public Guid? leftVent { get; set; }
         public Guid? middleVent { get; set; }

@@ -695,7 +695,39 @@
             "GameObjName": "panel_comms",
             "BehaviorName": "FixComms",
             "SystemTypes": "FixComms"
-        }
+        },
+		"sab-doorv": {
+			"Name": "Vertical Door",
+			"MapType": 0,
+			"SpriteRendererName": "RightDoor",
+			"GameObjName": "RightDoor",
+			"BehaviorName": "",
+			"SystemTypes": ""
+		},
+		"sab-doorh": {
+			"Name": "Horizontal Door",
+			"MapType": 0,
+			"SpriteRendererName": "LowerDoor",
+			"GameObjName": "LowerDoor",
+			"BehaviorName": "",
+			"SystemTypes": ""
+		},
+		"sab-door-polus": {
+			"Name": "Polus Door",
+			"MapType": 2,
+			"SpriteRendererName": "RightDoor",
+			"GameObjName": "RightDoor",
+			"BehaviorName": "",
+			"SystemTypes": ""
+		},
+		"sab-door-airship": {
+			"Name": "Airship Door",
+			"MapType": 3,
+			"SpriteRendererName": "Door_VertOpen",
+			"GameObjName": "Door_VertOpen",
+			"BehaviorName": "",
+			"SystemTypes": ""
+		}
     },
     "dec": {
         "dec-barrier": {

@@ -34,6 +34,7 @@ namespace LevelImposter.Core
                 new SabBuilder(),
                 new SabConsoleBuilder(),
                 new SabMapBuilder(),
+                new SabDoorBuilder(),
 
                 new LadderBuilder(),
                 new PlatformBuilder(),

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using UnityEngine.Events;
@@ -19,7 +19,7 @@ namespace LevelImposter.Core
 
         public void Build(LIElement elem, GameObject obj)
         {
-            if (!elem.type.StartsWith("sab-") || elem.type.StartsWith("sab-btn"))
+            if (!elem.type.StartsWith("sab-") || elem.type.StartsWith("sab-btn") || elem.type.StartsWith("sab-door"))
                 return;
 
             if (_sabContainer == null)
