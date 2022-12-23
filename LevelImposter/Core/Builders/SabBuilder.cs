@@ -49,6 +49,9 @@ namespace LevelImposter.Core
                 task.MinigamePrefab = sabClone.MinigamePrefab;
                 task.Arrows = new(0);
 
+                if (!string.IsNullOrEmpty(elem.properties.description))
+                    MapUtils.Rename(task.TaskType, elem.properties.description);
+
                 shipStatus.SpecialTasks = MapUtils.AddToArr(shipStatus.SpecialTasks, task);
                 _sabDB.Add(systemType, task);
             }

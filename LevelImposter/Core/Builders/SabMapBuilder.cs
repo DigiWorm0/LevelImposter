@@ -106,7 +106,7 @@ namespace LevelImposter.Core
                     mapRoom.special = btnRenderer;
                     break;
                 case "sab-btnoxygen":
-                    btnSprite = _oxygenBtnSprite; // TODO: Replace Me
+                    btnSprite = _oxygenBtnSprite;
                     btnAction = mapRoom.SabotageOxygen;
                     mapRoom.special = btnRenderer;
                     break;
