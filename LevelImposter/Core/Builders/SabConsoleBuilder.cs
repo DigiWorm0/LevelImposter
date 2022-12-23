@@ -94,7 +94,7 @@ namespace LevelImposter.Core
             // Arrow Buttons
             GameObject arrowClone = AssetDB.Sabs["sab-comms"].Behavior.gameObject.transform.FindChild("Arrow").gameObject;
             SpriteRenderer arrowCloneSprite = arrowClone.GetComponent<SpriteRenderer>();
-            GameObject arrowObj = new GameObject(name);
+            GameObject arrowObj = new(name);
 
             // Sprite
             SpriteRenderer arrowSprite = arrowObj.AddComponent<SpriteRenderer>();

@@ -59,7 +59,7 @@ namespace LevelImposter.Core
             }
             else
             {
-                GameObject roomObj = new GameObject(elem.name);
+                GameObject roomObj = new(elem.name);
                 roomObj.transform.SetParent(infectedOverlay.transform);
                 roomObj.transform.localPosition = Vector3.zero;
 
@@ -76,7 +76,7 @@ namespace LevelImposter.Core
 
             // Button
             float mapScale = LIShipStatus.Instance.ShipStatus.MapScale;
-            GameObject sabButton = new GameObject(elem.name);
+            GameObject sabButton = new(elem.name);
             sabButton.layer = (int)Layer.UI;
             sabButton.transform.SetParent(mapRoom.transform);
             sabButton.transform.localPosition = new Vector3(

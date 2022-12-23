@@ -50,7 +50,7 @@ namespace LevelImposter.Core
 
                     if (colliderData.blocksLight)
                     {
-                        GameObject shadowObj = new GameObject("Shadow " + colliderData.id);
+                        GameObject shadowObj = new("Shadow " + colliderData.id);
                         shadowObj.transform.SetParent(obj.transform);
                         shadowObj.transform.localPosition = new Vector3(0, 0, 0);
                         shadowObj.transform.localRotation = Quaternion.Euler(0, 0, 0);

@@ -12,15 +12,16 @@ namespace LevelImposter.Core
     {
         private GameObject _taskContainer;
         private int _consoleID = 0;
-        private List<string> _builtTypes = new List<string>();
         private NormalPlayerTask _wiresTask = null;
-        private Dictionary<string, TaskType> _taskLengths = new Dictionary<string, TaskType>
+        private readonly List<string> _builtTypes = new();
+        private readonly Dictionary<string, TaskType> _taskLengths = new()
         {
             { "Short", TaskType.Short },
             { "Long", TaskType.Long },
             { "Common", TaskType.Common }
         };
-        private Dictionary<string, int> _consoleIDPairs = new Dictionary<string, int> {
+        private readonly Dictionary<string, int> _consoleIDPairs = new()
+        {
             { "task-garbage2", 1 },
             { "task-garbage3", 0 },
             { "task-garbage4", 2 },
@@ -28,7 +29,8 @@ namespace LevelImposter.Core
             { "task-fans2", 1 },
             { "task-records1", 0 }
         };
-        private Dictionary<string, int> _consoleIDIncrements = new Dictionary<string, int> {
+        private readonly Dictionary<string, int> _consoleIDIncrements = new()
+        {
             { "task-toilet", 0 },
             { "task-breakers", 0 },
             { "task-towels", 0 },
@@ -40,27 +42,38 @@ namespace LevelImposter.Core
             { "task-wires", 0 }
         };
 
-        public static SystemTypes[] DivertSystems = new SystemTypes[0];
-        public static byte BreakerCount = 0;
-        public static byte ToiletCount = 0;
-        public static byte TowelCount = 0;
-        public static byte FuelCount = 0;
-        public static byte WaterWheelCount = 0;
-        public static byte AlignEngineCount = 0;
-        public static byte RecordsCount = 0;
-        public static byte WiresCount = 0;
+        private static SystemTypes[] _divertSystems;
+        public static SystemTypes[] DivertSystems => _divertSystems;
+
+        private static byte _breakerCount = 0;
+        private static byte _toiletCount = 0;
+        private static byte _towelCount = 0;
+        private static byte _fuelCount = 0;
+        private static byte _recordsCount = 0;
+        private static byte _alignEngineCount = 0;
+        private static byte _waterWheelCount = 0;
+        private static byte _wiresCount = 0;
+
+        public static byte BreakerCount => _breakerCount;
+        public static byte ToiletCount => _toiletCount;
+        public static byte TowelCount => _towelCount;
+        public static byte FuelCount => _fuelCount;
+        public static byte WaterWheelCount => _waterWheelCount;
+        public static byte AlignEngineCount => _alignEngineCount;
+        public static byte RecordsCount => _recordsCount;
+        public static byte WiresCount => _wiresCount;
 
         public TaskBuilder()
         {
-            DivertSystems = new SystemTypes[0];
-            BreakerCount = 0;
-            ToiletCount = 0;
-            TowelCount = 0;
-            FuelCount = 0;
-            WaterWheelCount = 0;
-            AlignEngineCount = 0;
-            RecordsCount = 0;
-            WiresCount = 0;
+            _divertSystems = Array.Empty<SystemTypes>();
+            _breakerCount = 0;
+            _toiletCount = 0;
+            _towelCount = 0;
+            _fuelCount = 0;
+            _waterWheelCount = 0;
+            _alignEngineCount = 0;
+            _recordsCount = 0;
+            _wiresCount = 0;
     }
 
         public void Build(LIElement elem, GameObject obj)
@@ -122,7 +135,7 @@ namespace LevelImposter.Core
             }
             console.ConsoleId = _consoleID;
             console.Image = spriteRenderer;
-            console.onlyFromBelow = elem.properties.onlyFromBelow == null ? false : (bool)elem.properties.onlyFromBelow;
+            console.onlyFromBelow = elem.properties.onlyFromBelow == true;
             console.usableDistance = elem.properties.range == null ? 1.0f : (float)elem.properties.range;
             console.Room = systemType;
             console.TaskTypes = origConsole.TaskTypes;
@@ -134,9 +147,11 @@ namespace LevelImposter.Core
             }
             else if (elem.type == "task-waterjug2")
             {
-                TaskSet taskSet = new TaskSet();
-                taskSet.taskType = TaskTypes.ReplaceWaterJug;
-                taskSet.taskStep = new IntRange(1, 1);
+                TaskSet taskSet = new()
+                {
+                    taskType = TaskTypes.ReplaceWaterJug,
+                    taskStep = new IntRange(1, 1)
+                };
                 console.ValidTasks = new Il2CppReferenceArray<TaskSet>(new TaskSet[] {
                     taskSet
                 });
@@ -156,18 +171,22 @@ namespace LevelImposter.Core
                 console.ValidTasks = new Il2CppReferenceArray<TaskSet>(byte.MaxValue / 2);
                 for (byte i = 0; i < byte.MaxValue - 1; i+=2)
                 {
-                    TaskSet taskSet = new TaskSet();
-                    taskSet.taskType = TaskTypes.FuelEngines;
-                    taskSet.taskStep = new IntRange(i, i);
+                    TaskSet taskSet = new()
+                    {
+                        taskType = TaskTypes.FuelEngines,
+                        taskStep = new(i, i)
+                    };
                     console.ValidTasks[i / 2] = taskSet;
                 }
             }
             else if (elem.type == "task-fuel2")
             {
                 console.ConsoleId = _consoleIDIncrements[elem.type];
-                TaskSet taskSet = new TaskSet();
-                taskSet.taskType = TaskTypes.FuelEngines;
-                taskSet.taskStep = new IntRange(console.ConsoleId * 2 + 1, console.ConsoleId * 2 + 1);
+                TaskSet taskSet = new()
+                {
+                    taskType = TaskTypes.FuelEngines,
+                    taskStep = new(console.ConsoleId * 2 + 1, console.ConsoleId * 2 + 1)
+                };
                 console.ValidTasks = new Il2CppReferenceArray<TaskSet>(new TaskSet[] {
                     taskSet
                 });
@@ -207,12 +226,12 @@ namespace LevelImposter.Core
 
             if (elem.type == "task-divert1" && !isBuilt)
             {
-                List<LIElement> divertTargets = new List<LIElement>();
+                List<LIElement> divertTargets = new();
                 foreach (LIElement mapElem in LIShipStatus.Instance.CurrentMap.elements)
                     if (mapElem.type == "task-divert2")
                         divertTargets.Add(mapElem);
 
-                DivertSystems = new SystemTypes[divertTargets.Count];
+                _divertSystems = new SystemTypes[divertTargets.Count];
                 NormalPlayerTask origTask = taskData.Behavior;
                 for (int i = 0; i < divertTargets.Count; i++)
                 {
@@ -221,7 +240,7 @@ namespace LevelImposter.Core
                     SystemTypes divertSystem = RoomBuilder.GetParentOrDefault(divertTarget);
                     DivertSystems[i] = divertSystem;
 
-                    GameObject taskHolder = new GameObject(elem.name);
+                    GameObject taskHolder = new(elem.name);
                     taskHolder.transform.SetParent(_taskContainer.transform);
 
                     DivertPowerTask task = taskHolder.AddComponent<DivertPowerTask>();
@@ -250,7 +269,7 @@ namespace LevelImposter.Core
                 if (!string.IsNullOrEmpty(elem.properties.description))
                     MapUtils.Rename(taskData.Behavior.TaskType, elem.properties.description);
 
-                GameObject taskHolder = new GameObject(elem.name);
+                GameObject taskHolder = new(elem.name);
                 taskHolder.transform.SetParent(_taskContainer.transform);
 
                 NormalPlayerTask origTask = taskData.Behavior;
@@ -315,21 +334,21 @@ namespace LevelImposter.Core
             {
                 byte count = (byte)_consoleIDIncrements[key];
                 if (key == "task-breakers")
-                    BreakerCount = count;
+                    _breakerCount = count;
                 if (key == "task-toilet")
-                    ToiletCount = count;
+                    _toiletCount = count;
                 if (key == "task-towels")
-                    TowelCount = count;
+                    _towelCount = count;
                 if (key == "task-fuel2")
-                    FuelCount = count;
+                    _fuelCount = count;
                 if (key == "task-waterwheel1")
-                    WaterWheelCount = count;
+                    _waterWheelCount = count;
                 if (key == "task-align1")
-                    AlignEngineCount = count;
+                    _alignEngineCount = count;
                 if (key == "task-records2")
-                    RecordsCount = count;
+                    _recordsCount = count;
                 if (key == "task-wires")
-                    WiresCount = count;
+                    _wiresCount = count;
                 _consoleIDIncrements[key] = 0;
             }
 

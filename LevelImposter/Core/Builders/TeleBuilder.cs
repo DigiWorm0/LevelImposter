@@ -42,8 +42,7 @@ namespace LevelImposter.Core
                 Guid? targetID = teleporter.Value.CurrentElem.properties.teleporter;
                 if (targetID != null)
                 {
-                    LITeleporter target;
-                    _teleporterDb.TryGetValue((Guid)targetID, out target);
+                    _teleporterDb.TryGetValue((Guid)targetID, out LITeleporter target);
                     teleporter.Value.CurrentTarget = target;
                 }
             }

@@ -136,7 +136,7 @@ namespace LevelImposter.Core
             SpriteRenderer cleaningClone = arrowPrefab.transform.FindChild("CleaningIndicator").GetComponent<SpriteRenderer>();
             SpriteRenderer arrowCloneSprite = arrowPrefab.GetComponent<SpriteRenderer>();
             BoxCollider2D arrowCloneBox = arrowPrefab.GetComponent<BoxCollider2D>();
-            GameObject arrowObj = new GameObject("Arrow-" + dir);
+            GameObject arrowObj = new("Arrow-" + dir);
 
             // Sprite
             SpriteRenderer arrowSprite = arrowObj.AddComponent<SpriteRenderer>();

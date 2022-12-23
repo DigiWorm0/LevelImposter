@@ -36,7 +36,7 @@ namespace LevelImposter.Core
             BoxCollider2D dummyCollider = obj.AddComponent<BoxCollider2D>();
             dummyCollider.isTrigger = true;
             dummyCollider.enabled = false;
-            GameObject dummyObj = new GameObject("DummyAnim");
+            GameObject dummyObj = new("DummyAnim");
             SpriteAnim dummyAnim = dummyObj.AddComponent<SpriteAnim>();
 
             // Colliders

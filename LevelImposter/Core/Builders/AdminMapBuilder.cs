@@ -36,7 +36,7 @@ namespace LevelImposter.Core
 
             // Map Room
             float overlayScale = mapCountOverlay.transform.localScale.x * LIShipStatus.Instance.ShipStatus.MapScale;
-            GameObject roomObj = new GameObject(elem.name);
+            GameObject roomObj = new(elem.name);
             roomObj.transform.SetParent(mapCountOverlay.transform);
             roomObj.transform.localPosition = new Vector3(
                 elem.x * (1 / overlayScale),

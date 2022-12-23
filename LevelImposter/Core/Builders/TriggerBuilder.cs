@@ -7,7 +7,7 @@ namespace LevelImposter.Core
 {
     public class TriggerBuilder : IElemBuilder
     {
-        private List<LITriggerable> _triggerDB = new List<LITriggerable>();
+        private List<LITriggerable> _triggerDB = new();
 
         public void Build(LIElement elem, GameObject obj)
         {
