@@ -124,6 +124,7 @@ namespace LevelImposter.Core
                     btnSprite = _doorsBtnSprite;
                     btnAction = mapRoom.SabotageDoors;
                     mapRoom.door = btnRenderer;
+                    sabButton.transform.localScale *= 0.8f;
                     break;
                 default:
                     LILogger.Error($"{elem.name} has unknown sabotage button type: {elem.type}");
