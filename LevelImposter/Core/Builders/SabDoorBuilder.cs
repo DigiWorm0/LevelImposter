@@ -20,7 +20,11 @@ namespace LevelImposter.Core
 
             // Default Sprite
             SpriteRenderer spriteRenderer = obj.GetComponent<SpriteRenderer>();
+            GIFAnimator gifAnimator = obj.GetComponent<GIFAnimator>();
+            Animator animator = obj.AddComponent<Animator>();
+            SpriteAnim spriteAnim = obj.AddComponent<SpriteAnim>();
             obj.layer = (int)Layer.ShortObjects;
+            bool isSpriteAnim = false;
             if (!spriteRenderer)
             {
                 spriteRenderer = obj.AddComponent<SpriteRenderer>();
@@ -28,16 +32,27 @@ namespace LevelImposter.Core
 
                 if (elem.properties.color != null)
                     spriteRenderer.color = MapUtils.LIColorToColor(elem.properties.color);
+
+                isSpriteAnim = true;
+            }
+            else if (gifAnimator != null)
+            {
+                gifAnimator.Stop();
+                spriteAnim.enabled = false;
+                animator.enabled = false;
+            }
+            else
+            {
+                spriteRenderer.enabled = false;
+                spriteAnim.enabled = false;
+                animator.enabled = false;
             }
             spriteRenderer.material = sabData.SpriteRenderer.material;
-            spriteRenderer.enabled = false;
 
             // Dummy Components
             BoxCollider2D dummyCollider = obj.AddComponent<BoxCollider2D>();
             dummyCollider.isTrigger = true;
             dummyCollider.enabled = false;
-            GameObject dummyObj = new("DummyAnim");
-            SpriteAnim dummyAnim = dummyObj.AddComponent<SpriteAnim>();
 
             // Colliders
             Collider2D[] colliders = obj.GetComponentsInChildren<Collider2D>();
@@ -63,10 +78,17 @@ namespace LevelImposter.Core
             doorComponent.Room = RoomBuilder.GetParentOrDefault(elem);
             doorComponent.Id = _doorId++;
             doorComponent.myCollider = dummyCollider;
-            doorComponent.animator = dummyAnim;
+            doorComponent.animator = spriteAnim;
             doorComponent.OpenSound = doorClone.OpenSound;
             doorComponent.CloseSound = doorClone.CloseSound;
             shipStatus.AllDoors = MapUtils.AddToArr(shipStatus.AllDoors, doorComponent);
+
+            // SpriteAnim
+            if (isSpriteAnim)
+            {
+                doorComponent.OpenDoorAnim = doorClone.OpenDoorAnim;
+                doorComponent.CloseDoorAnim = doorClone.CloseDoorAnim;
+            }
 
             // Console
             if (isManualDoor)

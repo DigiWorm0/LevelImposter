@@ -21,15 +21,36 @@ namespace LevelImposter.Core
             if (MapLoader.CurrentMap == null)
                 return;
 
+            // Colliders
             Collider2D[] colliders = __instance.gameObject.GetComponentsInChildren<Collider2D>();
             foreach (Collider2D collider in colliders)
                 collider.enabled = !open;
 
-            SpriteRenderer spriteRenderer = __instance.GetComponent<SpriteRenderer>();
-            spriteRenderer.enabled = !open;
-
+            // Dummy Collider
             BoxCollider2D dummyCollider = __instance.GetComponent<BoxCollider2D>();
             dummyCollider.enabled = false;
+
+            // Sprite Renderer
+            AnimationClip animClip = open ? __instance.OpenDoorAnim : __instance.CloseDoorAnim;
+            SpriteAnim spriteAnim = __instance.GetComponent<SpriteAnim>();
+            GIFAnimator gifAnim = __instance.GetComponent<GIFAnimator>();
+            SpriteRenderer spriteRenderer = __instance.GetComponent<SpriteRenderer>();
+            if (spriteAnim != null && animClip != null) 
+            {
+                // SpriteAnim
+            }
+            else if (gifAnim != null)
+            {
+                // GIFAnimator
+                gifAnim.Play(false, open);
+            }
+            else
+            {
+                // SpriteRenderer
+                spriteRenderer.enabled = !open;
+            }
+
+            return;
         }
     }
 }
