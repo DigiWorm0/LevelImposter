@@ -11,5 +11,6 @@ namespace LevelImposter.Core
         public string? bgColor { get; set; }
         public string? exileID { get; set; }
         public bool? showPingIndicator { get; set; }
+        public bool? pixelArtMode { get; set; }
     }
 }

@@ -196,11 +196,13 @@ namespace LevelImposter.Core
         /// </summary>
         /// <param name="data">png formated texture data</param>
         /// <returns>A Unity Sprite representing the texture data</returns>
-        public static Sprite GenerateSprite(byte[] data)
+        public static Sprite GenerateSprite(byte[] data, bool isPixelArt = false)
         {
             Texture.allowThreadedTextureCreation = true;
             Texture2D texture = new(1, 1);
             ImageConversion.LoadImage(texture, data);
+            if (isPixelArt)
+                texture.filterMode = FilterMode.Point;
             LIShipStatus.Instance.AddMapTexture(texture);
             return Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f), 100.0f);
         }
