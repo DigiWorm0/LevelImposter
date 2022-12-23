@@ -41,9 +41,7 @@ namespace LevelImposter.Core
             spriteRenderer.material = sabData.SpriteRenderer.material;
 
             // Parent
-            SystemTypes systemType = 0;
-            if (elem.properties.parent != null)
-                systemType = RoomBuilder.GetSystem((Guid)elem.properties.parent);
+            SystemTypes systemType = RoomBuilder.GetParentOrDefault(elem);
             SabotageTask sabotageTask = SabBuilder.FindSabotage(systemType);
             if (!string.IsNullOrEmpty(elem.properties.description))
                 MapUtils.Rename(sabotageTask.TaskType, elem.properties.description);
@@ -85,6 +83,12 @@ namespace LevelImposter.Core
 
         public void PostBuild() { }
 
+        /// <summary>
+        /// Builds a sabotage arrow
+        /// </summary>
+        /// <param name="parent">Parent object to attatch to</param>
+        /// <param name="name">Name of the arrows</param>
+        /// <returns>ArrowBehaviour to append to SabotageTask</returns>
         private ArrowBehaviour MakeArrow(Transform parent, string name)
         {
             // Arrow Buttons

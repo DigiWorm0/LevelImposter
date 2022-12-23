@@ -67,6 +67,10 @@ namespace LevelImposter.Core
             _isBuilt = false;
         }
 
+        /// <summary>
+        /// Get the current Minimap Behaviour
+        /// </summary>
+        /// <returns>The current Minimap Behaviour</returns>
         public static MapBehaviour GetMinimap()
         {
             MapBehaviour mapBehaviour = MapBehaviour.Instance;

@@ -49,9 +49,7 @@ namespace LevelImposter.Core
                 GetAllAssets();
             
             // System
-            SystemTypes systemType = 0;
-            if (elem.properties.parent != null)
-                systemType = RoomBuilder.GetSystem((Guid)elem.properties.parent);
+            SystemTypes systemType = RoomBuilder.GetParentOrDefault(elem);
 
             // Map Room
             MapRoom mapRoom;
@@ -188,6 +186,9 @@ namespace LevelImposter.Core
             }
         }
 
+        /// <summary>
+        /// Collects all necessary sprites and assets for map
+        /// </summary>
         private void GetAllAssets()
         {
             // Polus
@@ -207,6 +208,13 @@ namespace LevelImposter.Core
             _oxygenBtnSprite = GetSprite(miraOverlay, "LifeSupp", "bomb"); // Another bomb?
         }
 
+        /// <summary>
+        /// Searches an object for a sprite in a parent and child
+        /// </summary>
+        /// <param name="overlay">Object to search</param>
+        /// <param name="parent">Parent object name</param>
+        /// <param name="child">Child object name</param>
+        /// <returns>Sprite attatched to SpriteRenderer</returns>
         private Sprite GetSprite(InfectedOverlay overlay, string parent, string child)
         {
             return overlay.transform.Find(parent).Find(child).GetComponent<SpriteRenderer>().sprite;

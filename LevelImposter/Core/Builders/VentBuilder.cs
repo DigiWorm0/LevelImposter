@@ -125,6 +125,12 @@ namespace LevelImposter.Core
             }
         }
 
+        /// <summary>
+        /// Generates the vent arrow buttons
+        /// </summary>
+        /// <param name="arrowPrefab">Prefab to steal from</param>
+        /// <param name="vent">Vent target</param>
+        /// <param name="dir">Direction to point arrow</param>
         private void GenerateArrow(GameObject arrowPrefab, Vent vent, int dir)
         {
             SpriteRenderer cleaningClone = arrowPrefab.transform.FindChild("CleaningIndicator").GetComponent<SpriteRenderer>();

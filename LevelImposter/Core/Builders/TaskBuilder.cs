@@ -92,9 +92,7 @@ namespace LevelImposter.Core
             spriteRenderer.material = taskData.SpriteRenderer.material;
 
             // Parent
-            SystemTypes systemType = 0;
-            if (elem.properties.parent != null)
-                systemType = RoomBuilder.GetSystem((Guid)elem.properties.parent);
+            SystemTypes systemType = RoomBuilder.GetParentOrDefault(elem);
 
             // Console
             Console console;
