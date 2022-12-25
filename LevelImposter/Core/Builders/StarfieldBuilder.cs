@@ -15,8 +15,8 @@ namespace LevelImposter.Core
                 return;
 
             // Sprite
-            GameObject prefab = GameObject.Instantiate(obj, LIShipStatus.Instance.transform);
-            LIStar prefabStar = prefab.AddComponent<LIStar>();
+            GameObject prefab = UnityEngine.Object.Instantiate(obj, LIShipStatus.Instance.transform);
+            prefab.AddComponent<LIStar>();
             SpriteRenderer prefabRenderer = obj.GetComponent<SpriteRenderer>();
             if (prefabRenderer != null)
             {

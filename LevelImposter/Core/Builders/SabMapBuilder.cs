@@ -34,7 +34,7 @@ namespace LevelImposter.Core
 
         public void Build(LIElement elem, GameObject obj)
         {
-            if (!elem.type.StartsWith("sab-"))
+            if (!elem.type.StartsWith("sab-") || elem.type.StartsWith("sab-door"))
                 return;
             _hasSabConsoles = true;
 
@@ -49,9 +49,7 @@ namespace LevelImposter.Core
                 GetAllAssets();
             
             // System
-            SystemTypes systemType = 0;
-            if (elem.properties.parent != null)
-                systemType = RoomBuilder.GetSystem((Guid)elem.properties.parent);
+            SystemTypes systemType = RoomBuilder.GetParentOrDefault(elem);
 
             // Map Room
             MapRoom mapRoom;
@@ -61,7 +59,7 @@ namespace LevelImposter.Core
             }
             else
             {
-                GameObject roomObj = new GameObject(elem.name);
+                GameObject roomObj = new(elem.name);
                 roomObj.transform.SetParent(infectedOverlay.transform);
                 roomObj.transform.localPosition = Vector3.zero;
 
@@ -78,7 +76,7 @@ namespace LevelImposter.Core
 
             // Button
             float mapScale = LIShipStatus.Instance.ShipStatus.MapScale;
-            GameObject sabButton = new GameObject(elem.name);
+            GameObject sabButton = new(elem.name);
             sabButton.layer = (int)Layer.UI;
             sabButton.transform.SetParent(mapRoom.transform);
             sabButton.transform.localPosition = new Vector3(
@@ -96,7 +94,6 @@ namespace LevelImposter.Core
             SpriteRenderer btnRenderer = sabButton.AddComponent<SpriteRenderer>();
             if (mapRoom.special != null)
                 LILogger.Warn("Only 1 sabotage button is supported per room");
-            mapRoom.special = btnRenderer;
 
             ButtonBehavior button = sabButton.AddComponent<ButtonBehavior>();
             Action btnAction = null;
@@ -106,18 +103,28 @@ namespace LevelImposter.Core
                 case "sab-btnreactor":
                     btnSprite = _reactorBtnSprite;
                     btnAction = mapRoom.SabotageSeismic;
+                    mapRoom.special = btnRenderer;
                     break;
                 case "sab-btnoxygen":
-                    btnSprite = _oxygenBtnSprite; // TODO: Replace Me
+                    btnSprite = _oxygenBtnSprite;
                     btnAction = mapRoom.SabotageOxygen;
+                    mapRoom.special = btnRenderer;
                     break;
                 case "sab-btncomms":
                     btnSprite = _commsBtnSprite;
                     btnAction = mapRoom.SabotageComms;
+                    mapRoom.special = btnRenderer;
                     break;
                 case "sab-btnlights":
                     btnSprite = _lightsBtnSprite;
                     btnAction = mapRoom.SabotageLights;
+                    mapRoom.special = btnRenderer;
+                    break;
+                case "sab-btndoors":
+                    btnSprite = _doorsBtnSprite;
+                    btnAction = mapRoom.SabotageDoors;
+                    mapRoom.door = btnRenderer;
+                    sabButton.transform.localScale *= 0.8f;
                     break;
                 default:
                     LILogger.Error($"{elem.name} has unknown sabotage button type: {elem.type}");
@@ -180,6 +187,9 @@ namespace LevelImposter.Core
             }
         }
 
+        /// <summary>
+        /// Collects all necessary sprites and assets for map
+        /// </summary>
         private void GetAllAssets()
         {
             // Polus
@@ -199,6 +209,13 @@ namespace LevelImposter.Core
             _oxygenBtnSprite = GetSprite(miraOverlay, "LifeSupp", "bomb"); // Another bomb?
         }
 
+        /// <summary>
+        /// Searches an object for a sprite in a parent and child
+        /// </summary>
+        /// <param name="overlay">Object to search</param>
+        /// <param name="parent">Parent object name</param>
+        /// <param name="child">Child object name</param>
+        /// <returns>Sprite attatched to SpriteRenderer</returns>
         private Sprite GetSprite(InfectedOverlay overlay, string parent, string child)
         {
             return overlay.transform.Find(parent).Find(child).GetComponent<SpriteRenderer>().sprite;

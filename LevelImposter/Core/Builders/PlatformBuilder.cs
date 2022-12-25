@@ -44,15 +44,15 @@ namespace LevelImposter.Core
 
             // Offsets
             Vector2 leftPos = obj.transform.position;
-            Vector2 leftUsePos = new Vector2(
+            Vector2 leftUsePos = new(
                 (elem.properties.platformXEntranceOffset == null ? -1.5f : (float)elem.properties.platformXEntranceOffset) + leftPos.x,
                 (elem.properties.platformYEntranceOffset == null ? 0 : (float)elem.properties.platformYEntranceOffset) + leftPos.y
             );
-            Vector2 rightPos = new Vector2(
+            Vector2 rightPos = new(
                 (elem.properties.platformXOffset == null ? 3 : (float)elem.properties.platformXOffset) + leftPos.x,
                 (elem.properties.platformYOffset == null ? 0 : (float)elem.properties.platformYOffset) + leftPos.y
             );
-            Vector2 rightUsePos = new Vector2(
+            Vector2 rightUsePos = new(
                 (elem.properties.platformXExitOffset == null ? 1.5f : (float)elem.properties.platformXExitOffset) + rightPos.x,
                 (elem.properties.platformYExitOffset == null ? 0 : (float)elem.properties.platformYExitOffset) + rightPos.y
             );
@@ -68,11 +68,11 @@ namespace LevelImposter.Core
             Platform = movingPlatform;
 
             // Consoles
-            GameObject leftObj = new GameObject("Left Console");
+            GameObject leftObj = new("Left Console");
             leftObj.transform.SetParent(LIShipStatus.Instance.transform);
             leftObj.transform.localPosition = leftUsePos;
             leftObj.AddComponent<BoxCollider2D>().isTrigger = true;
-            GameObject rightObj = new GameObject("Right Console");
+            GameObject rightObj = new("Right Console");
             rightObj.transform.SetParent(LIShipStatus.Instance.transform);
             rightObj.transform.localPosition = rightUsePos;
             rightObj.AddComponent<BoxCollider2D>().isTrigger = true;

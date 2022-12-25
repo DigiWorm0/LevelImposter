@@ -34,6 +34,7 @@ namespace LevelImposter.Core
                 new SabBuilder(),
                 new SabConsoleBuilder(),
                 new SabMapBuilder(),
+                new SabDoorBuilder(),
 
                 new LadderBuilder(),
                 new PlatformBuilder(),
@@ -44,6 +45,7 @@ namespace LevelImposter.Core
                 new TeleBuilder(),
                 new TriggerAreaBuilder(),
                 new TriggerConsoleBuilder(),
+                new TriggerStartBuilder(),
 
                 new TriggerBuilder()
             };

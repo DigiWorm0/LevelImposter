@@ -15,7 +15,7 @@ namespace LevelImposter.Core
         public static List<Ladder> AllLadders = null;
         private byte _ladderID = 0;
 
-        private static Dictionary<string, float> _defaultLadderHeights = new Dictionary<string, float>
+        private static Dictionary<string, float> _defaultLadderHeights = new()
         {
             { "util-ladder1", 3.0f },
             { "util-ladder2", 1.5f }
@@ -53,11 +53,11 @@ namespace LevelImposter.Core
             float ladderHeight = elem.properties.ladderHeight == null ?
                 _defaultLadderHeights[elem.type] : (float)elem.properties.ladderHeight;
             
-            GameObject topObj = new GameObject("LadderTop");
+            GameObject topObj = new("LadderTop");
             topObj.transform.SetParent(obj.transform);
             topObj.transform.localPosition = new Vector3(0, ladderHeight + LADDER_Y_OFFSET, 0);
             topObj.AddComponent<BoxCollider2D>().isTrigger = true;
-            GameObject bottomObj = new GameObject("LadderBottom");
+            GameObject bottomObj = new("LadderBottom");
             bottomObj.transform.SetParent(obj.transform);
             bottomObj.transform.localPosition = new Vector3(0, -ladderHeight + LADDER_Y_OFFSET, 0);
             bottomObj.AddComponent<BoxCollider2D>().isTrigger = true;

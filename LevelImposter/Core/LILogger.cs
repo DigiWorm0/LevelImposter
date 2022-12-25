@@ -56,7 +56,8 @@ namespace LevelImposter.Core
         public static void Warn(object data)
         {
             Log(LogLevel.Warning, data);
-            Notify("<color=yellow>" + data.ToString() + "</color>");
+            if (AmongUsClient.Instance.NetworkMode == NetworkModes.FreePlay)
+                Notify("<color=yellow>" + data.ToString() + "</color>");
         }
 
         public static void Notify(string data)

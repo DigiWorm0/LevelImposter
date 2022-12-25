@@ -28,23 +28,23 @@ namespace LevelImposter.Core
             LILogger.Info(name + " >>> " + ID + " (" + orgin.name + ")");
             switch (ID)
             {
-                case "Enable":
+                case "enable":
                     gameObject.SetActive(true);
                     break;
-                case "Disable":
+                case "disable":
                     gameObject.SetActive(false);
                     break;
-                case "Show":
+                case "show":
                     gameObject.SetActive(true);
                     break;
-                case "Hide":
+                case "hide":
                     gameObject.SetActive(false);
                     break;
-                case "Repeat":
+                case "repeat":
                     for (int i = 0; i < 8; i++)
                         MapUtils.FireTrigger(gameObject, "onRepeat " + (i + 1), orgin);
                     break;
-                case "Start Timer":
+                case "startTimer":
                     StartCoroutine(CoTimerTrigger(orgin).WrapToIl2Cpp());
                     break;
             }

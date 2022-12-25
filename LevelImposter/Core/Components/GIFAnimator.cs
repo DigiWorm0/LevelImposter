@@ -16,6 +16,7 @@ namespace LevelImposter.Core
         private float[] _delays;
         private Sprite[] _frames;
         private SpriteRenderer _spriteRenderer;
+        private Coroutine _animationCoroutine = null;
 
         public GIFAnimator(IntPtr intPtr) : base(intPtr)
         {
@@ -46,34 +47,36 @@ namespace LevelImposter.Core
         /// Plays the GIF animation
         /// </summary>
         /// <param name="repeat">True if the GIF should repeat. False otherwise</param>
-        public void Play(bool repeat)
+        public void Play(bool repeat = false, bool reverse = false)
         {
-            if (IsAnimating)
-                StopAllCoroutines();
-            StartCoroutine(CoAnimate(repeat).WrapToIl2Cpp());
+            if (_animationCoroutine != null)
+                StopCoroutine(_animationCoroutine);
+            _animationCoroutine = StartCoroutine(CoAnimate(repeat, reverse).WrapToIl2Cpp());
         }
 
         /// <summary>
         /// Stops the GIF animation
         /// </summary>
-        public void Stop()
+        public void Stop(bool reversed = false)
         {
-            StopAllCoroutines();
+            if (_animationCoroutine != null)
+                StopCoroutine(_animationCoroutine);
             IsAnimating = false;
-            _spriteRenderer.sprite = _frames[0];
+            _spriteRenderer.sprite = _frames[reversed ? _frames.Length - 1 : 0];
         }
 
-        private IEnumerator CoAnimate(bool repeat)
+        private IEnumerator CoAnimate(bool repeat, bool reverse)
         {
             IsAnimating = true;
-            int f = 0;
+            int t = 0;
             while (IsAnimating)
             {
-                _spriteRenderer.sprite = _frames[f];
-                yield return new WaitForSeconds(_delays[f]);
-                f = (f + 1) % _frames.Length;
-                if (f == 0 && !repeat)
-                    Stop();
+                int frame = reverse ? _frames.Length - t - 1 : t;
+                _spriteRenderer.sprite = _frames[frame];
+                yield return new WaitForSeconds(_delays[frame]);
+                t = (t + 1) % _frames.Length;
+                if (t == 0 && !repeat)
+                    Stop(!reverse);
             }
         }
     }

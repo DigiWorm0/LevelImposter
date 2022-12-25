@@ -104,17 +104,17 @@ namespace LevelImposter.Core
 
             ShipStatus.Systems.Add(SystemTypes.Electrical, new SwitchSystem().Cast<ISystemType>());
             ShipStatus.Systems.Add(SystemTypes.MedBay, new MedScanSystem().Cast<ISystemType>());
-            //shipStatus.Systems.Add(SystemTypes.Doors, new DoorsSystemType().Cast<ISystemType>()); // <-- Doors w/ Task
-            //shipStatus.Systems.Add(SystemTypes.Doors, new AutoDoorsSystemType().Cast<ISystemType>()); // <-- Doors w/o Task
+            ShipStatus.Systems.Add(SystemTypes.Doors, new AutoDoorsSystemType().Cast<ISystemType>()); // (Default)
             ShipStatus.Systems.Add(SystemTypes.Comms, new HudOverrideSystemType().Cast<ISystemType>());
             ShipStatus.Systems.Add(SystemTypes.Security, new SecurityCameraSystemType().Cast<ISystemType>());
             ShipStatus.Systems.Add(SystemTypes.Laboratory, new ReactorSystemType(60f, SystemTypes.Laboratory).Cast<ISystemType>()); // <- Seconds, SystemType
-            ShipStatus.Systems.Add(SystemTypes.LifeSupp, new LifeSuppSystemType(60f).Cast<ISystemType>()); // <- Seconds
+            ShipStatus.Systems.Add(SystemTypes.LifeSupp, new LifeSuppSystemType(45f).Cast<ISystemType>()); // <- Seconds
             ShipStatus.Systems.Add(SystemTypes.Ventilation, new VentilationSystem().Cast<ISystemType>());
             ShipStatus.Systems.Add(SystemTypes.Sabotage, new SabotageSystemType(new IActivatable[] {
                 ShipStatus.Systems[SystemTypes.Electrical].Cast<IActivatable>(),
                 ShipStatus.Systems[SystemTypes.Comms].Cast<IActivatable>(),
-                ShipStatus.Systems[SystemTypes.Laboratory].Cast<IActivatable>()
+                ShipStatus.Systems[SystemTypes.Laboratory].Cast<IActivatable>(),
+                ShipStatus.Systems[SystemTypes.LifeSupp].Cast<IActivatable>(),
             }).Cast<ISystemType>());
 
             MapUtils.SystemRenames.Clear();

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using HarmonyLib;
 using UnityEngine;
 using LevelImposter.Shop;
@@ -24,7 +24,7 @@ namespace LevelImposter.Core
         }
         public const int RPC_ID = 99; // Must be <= 99 for TOU-R Support
 
-        public static Guid? ActiveDownloadingID = null;
+        private static Guid? _activeDownloadingID = null;
 
         [MethodRpc((uint)RpcIds.Teleport)]
         public static void RPCTeleportPlayer(PlayerControl _p, float x, float y)
@@ -39,6 +39,8 @@ namespace LevelImposter.Core
         [MethodRpc((uint)RpcIds.SendMapId)]
         public static void RPCSendMapID(PlayerControl _p, string mapIDStr)
         {
+            if (GameStartManager.Instance != null)
+                GameStartManager.Instance.ResetStartState();
             if (AmongUsClient.Instance.AmHost)
                 return;
             LILogger.Info("[RPC] Received map ID [" + mapIDStr + "]");
@@ -52,10 +54,10 @@ namespace LevelImposter.Core
 
             // Get Current
             string currentMapID = MapLoader.CurrentMap == null ? "" : MapLoader.CurrentMap.id;
-            if (ActiveDownloadingID != null)
+            if (_activeDownloadingID != null)
             {
                 LILogger.Notify("Download stopped.");
-                ActiveDownloadingID = null;
+                _activeDownloadingID = null;
             }
 
             // Handle ID
@@ -63,7 +65,7 @@ namespace LevelImposter.Core
             {
                 MapLoader.UnloadMap();
             }
-            else if (currentMapID == mapIDStr || ActiveDownloadingID == mapID)
+            else if (currentMapID == mapIDStr || _activeDownloadingID == mapID)
             {
                 return;
             }
@@ -73,15 +75,16 @@ namespace LevelImposter.Core
             }
             else
             {
-                ActiveDownloadingID = mapID;
+                _activeDownloadingID = mapID;
                 LILogger.Notify("<color=#1a95d8>Downloading map, please wait...</color>");
                 LevelImposterAPI.Instance.DownloadMap(mapID, ((LIMap map) =>
                 {
-                    if (ActiveDownloadingID == mapID)
+                    if (_activeDownloadingID == mapID)
                     {
                         MapLoader.LoadMap(map);
                         LILogger.Notify("<color=#1a95d8>Download finished!</color>");
-                        ActiveDownloadingID = null;
+                        _activeDownloadingID = null;
+                        MapFileAPI.Instance.Save(map);
                     }
                 }));
             }

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using UnityEngine.Events;
@@ -19,7 +19,7 @@ namespace LevelImposter.Core
 
         public void Build(LIElement elem, GameObject obj)
         {
-            if (!elem.type.StartsWith("sab-") || elem.type.StartsWith("sab-btn"))
+            if (!elem.type.StartsWith("sab-") || elem.type.StartsWith("sab-btn") || elem.type.StartsWith("sab-door"))
                 return;
 
             if (_sabContainer == null)
@@ -34,9 +34,7 @@ namespace LevelImposter.Core
             SabotageTask sabClone = sabData.Behavior.Cast<SabotageTask>();
 
             // System
-            SystemTypes systemType = 0;
-            if (elem.properties.parent != null)
-                systemType = RoomBuilder.GetSystem((Guid)elem.properties.parent);
+            SystemTypes systemType = RoomBuilder.GetParentOrDefault(elem);
 
             // Task
             if (!_sabDB.ContainsKey(systemType))
@@ -51,6 +49,9 @@ namespace LevelImposter.Core
                 task.MinigamePrefab = sabClone.MinigamePrefab;
                 task.Arrows = new(0);
 
+                if (!string.IsNullOrEmpty(elem.properties.description))
+                    MapUtils.Rename(task.TaskType, elem.properties.description);
+
                 shipStatus.SpecialTasks = MapUtils.AddToArr(shipStatus.SpecialTasks, task);
                 _sabDB.Add(systemType, task);
             }
@@ -58,6 +59,11 @@ namespace LevelImposter.Core
 
         public void PostBuild() { }
 
+        /// <summary>
+        /// Gets a SabotageTask from a SystemTypes
+        /// </summary>
+        /// <param name="systemType">Room to search</param>
+        /// <returns>Sabotage attached to room</returns>
         public static SabotageTask FindSabotage(SystemTypes systemType)
         {
             SabotageTask sabotage;

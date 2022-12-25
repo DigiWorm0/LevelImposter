@@ -17,7 +17,21 @@ namespace LevelImposter.Core
         public static void Postfix(PlanetSurveillanceMinigame __instance)
         {
             SurvCamera survCamera = __instance.survCameras[__instance.currentCamera];
+
+            // Size
             __instance.Camera.orthographicSize = survCamera.CamSize;
+
+            // Clear Screen
+            __instance.Camera.clearFlags = CameraClearFlags.SolidColor;
+            __instance.Camera.backgroundColor = Camera.main.backgroundColor;
+
+            // Z Index
+            Vector3 pos = __instance.Camera.transform.position;
+            __instance.Camera.transform.position = new Vector3(
+                pos.x,
+                pos.y,
+                -0.1f
+            );
         }
     }
 }
