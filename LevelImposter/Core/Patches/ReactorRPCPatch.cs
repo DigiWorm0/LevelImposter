@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using HarmonyLib;
 using UnityEngine;
 using LevelImposter.Shop;
@@ -39,6 +39,8 @@ namespace LevelImposter.Core
         [MethodRpc((uint)RpcIds.SendMapId)]
         public static void RPCSendMapID(PlayerControl _p, string mapIDStr)
         {
+            if (GameStartManager.Instance != null)
+                GameStartManager.Instance.ResetStartState();
             if (AmongUsClient.Instance.AmHost)
                 return;
             LILogger.Info("[RPC] Received map ID [" + mapIDStr + "]");
