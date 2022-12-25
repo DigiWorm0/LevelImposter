@@ -84,7 +84,7 @@ namespace LevelImposter.Core
                         MapLoader.LoadMap(map);
                         LILogger.Notify("<color=#1a95d8>Download finished!</color>");
                         _activeDownloadingID = null;
-                        MapFileAPI.Instance.Save(map);
+                        //MapFileAPI.Instance.Save(map); // Maybe another time...
                     }
                 }));
             }
