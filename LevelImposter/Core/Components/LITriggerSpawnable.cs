@@ -21,23 +21,36 @@ namespace LevelImposter.Core
 
         private GameObject _triggerTarget = null;
         private string _triggerID = "";
+        private bool _hostOnly = false;
 
-        public void SetTrigger(GameObject triggerTarget, string triggerID)
+        public void SetTrigger(GameObject triggerTarget, string triggerID, bool hostOnly)
         {
             _triggerTarget = triggerTarget;
             _triggerID = triggerID;
+            _hostOnly = hostOnly;
             gameObject.SetActive(false);
         }
 
         public void Start()
         {
+            if (!AmongUsClient.Instance.AmHost && _hostOnly)
+            {
+                return;
+            }
             if (_triggerTarget == null || _triggerID == "")
             {
                 LILogger.Error("A Spawnable Trigger enabled without a target");
                 return;
             }
 
-            MapUtils.FireTrigger(_triggerTarget, _triggerID, gameObject);
+            StartCoroutine(CoFireTrigger().WrapToIl2Cpp());
+        }
+
+        private IEnumerator CoFireTrigger()
+        {
+            while (PlayerControl.LocalPlayer == null)
+                yield return null;
+            MapUtils.FireTrigger(_triggerTarget, _triggerID, PlayerControl.LocalPlayer);
         }
     }
 }

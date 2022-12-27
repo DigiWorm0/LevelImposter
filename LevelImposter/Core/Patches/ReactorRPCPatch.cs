@@ -19,12 +19,34 @@ namespace LevelImposter.Core
     {
         public enum RpcIds
         {
+            Trigger=97,
             Teleport=98,
             SendMapId=99,
         }
         public const int RPC_ID = 99; // Must be <= 99 for TOU-R Support
 
         private static Guid? _activeDownloadingID = null;
+
+        [MethodRpc((uint)RpcIds.Trigger)]
+        public static void RPCFireTrigger(PlayerControl orgin, string elemIDString, string triggerID)
+        {
+            // Parse ID
+            Guid elemID;
+            if (!Guid.TryParse(elemIDString, out elemID))
+            {
+                LILogger.Error("Triggered element ID is invalid.");
+                return;
+            }
+
+            // Find Triggerable
+            LITriggerable trigger = LITriggerable.AllTriggers.Find(t => t.SourceID == elemID && t.SourceTrigger == triggerID);
+            if (trigger == null)
+            {
+                LILogger.Warn("Triggered element not found");
+                return;
+            }
+            trigger.Trigger(orgin);
+        }
 
         [MethodRpc((uint)RpcIds.Teleport)]
         public static void RPCTeleportPlayer(PlayerControl _p, float x, float y)
@@ -49,7 +71,8 @@ namespace LevelImposter.Core
             Guid mapID;
             if (!Guid.TryParse(mapIDStr, out mapID))
             {
-                LILogger.Error("Custom map not found or no longer available.");
+                LILogger.Error("Invalid map ID.");
+                return;
             }
 
             // Get Current

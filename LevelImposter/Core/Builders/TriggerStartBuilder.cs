@@ -13,7 +13,7 @@ namespace LevelImposter.Core
                 return;
 
             LITriggerSpawnable trigger = obj.AddComponent<LITriggerSpawnable>();
-            trigger.SetTrigger(obj, "onStart");
+            trigger.SetTrigger(obj, "onStart", true);
             obj.SetActive(true);
         }
 

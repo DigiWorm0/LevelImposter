@@ -17,13 +17,13 @@ namespace LevelImposter.Core
         public void OnTriggerEnter2D(Collider2D collider)
         {
             if (MapUtils.IsLocalPlayer(collider.gameObject))
-                MapUtils.FireTrigger(transform.gameObject, "onEnter", collider.gameObject);
+                MapUtils.FireTrigger(transform.gameObject, "onEnter", PlayerControl.LocalPlayer);
         }
 
         public void OnTriggerExit2D(Collider2D collider)
         {
             if (MapUtils.IsLocalPlayer(collider.gameObject))
-                MapUtils.FireTrigger(transform.gameObject, "onExit", collider.gameObject);
+                MapUtils.FireTrigger(transform.gameObject, "onExit", PlayerControl.LocalPlayer);
         }
     }
 }

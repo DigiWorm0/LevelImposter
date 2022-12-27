@@ -171,12 +171,11 @@ namespace LevelImposter.Core
         /// </summary>
         /// <param name="obj">Object to trigger</param>
         /// <param name="triggerID">Trigger ID</param>
-        public static void FireTrigger(GameObject obj, string triggerID, GameObject orgin)
+        public static void FireTrigger(GameObject obj, string triggerID, PlayerControl playerControl)
         {
-            LITriggerable[] triggers = obj.GetComponents<LITriggerable>();
-            LITriggerable trigger = Array.Find(triggers, (LITriggerable t) => t.ID == triggerID);
+            LITriggerable trigger = LITriggerable.AllTriggers.Find(t => t.gameObject == obj && t.SourceTrigger == triggerID);
             if (trigger != null)
-                trigger.Trigger(orgin);
+                ReactorRPC.RPCFireTrigger(playerControl, trigger.SourceID.ToString(), triggerID);
         }
 
         /// <summary>

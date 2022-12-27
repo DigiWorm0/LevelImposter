@@ -20,7 +20,7 @@ namespace LevelImposter.Core
 
         public static void Postfix(MonoBehaviour __instance)
         {
-            MapUtils.FireTrigger(__instance.gameObject, "onUse", PlayerControl.LocalPlayer.gameObject);
+            MapUtils.FireTrigger(__instance.gameObject, "onUse", PlayerControl.LocalPlayer);
         }
     }
 }

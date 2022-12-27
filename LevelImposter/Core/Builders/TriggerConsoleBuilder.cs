@@ -31,7 +31,7 @@ namespace LevelImposter.Core
             GameObject spawnablePrefab = new GameObject(obj.name + "_Spawnable");
             LITriggerSpawnable spawnableTrigger = spawnablePrefab.AddComponent<LITriggerSpawnable>();
             Minigame spawnableGame = spawnablePrefab.AddComponent<DummyMinigame>();
-            spawnableTrigger.SetTrigger(obj, "onUse");
+            spawnableTrigger.SetTrigger(obj, "onUse", false);
             spawnablePrefab.SetActive(false);
 
             // Console
