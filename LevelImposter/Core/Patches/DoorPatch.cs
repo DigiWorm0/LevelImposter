@@ -50,6 +50,9 @@ namespace LevelImposter.Core
                 spriteRenderer.enabled = !open;
             }
 
+            string triggerID = open ? "onOpen" : "onClose";
+            MapUtils.FireTrigger(__instance.gameObject, triggerID, PlayerControl.LocalPlayer.gameObject);
+
             return;
         }
     }

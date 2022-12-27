@@ -23,7 +23,7 @@ namespace LevelImposter.Core
         public string TargetTriggerID = "";
         public LITriggerable targetTrigger = null;
 
-        public virtual void onTrigger(GameObject orgin)
+        public virtual void OnTrigger(GameObject orgin)
         {
             LILogger.Info(name + " >>> " + ID + " (" + orgin.name + ")");
             switch (ID)
@@ -47,12 +47,19 @@ namespace LevelImposter.Core
                 case "startTimer":
                     StartCoroutine(CoTimerTrigger(orgin).WrapToIl2Cpp());
                     break;
+                case "open":
+                    SetDoorOpen(true);
+                    break;
+                case "close":
+                    SetDoorOpen(false);
+                    break;
+
             }
         }
 
         public void Trigger(GameObject orgin)
         {
-            onTrigger(orgin);
+            OnTrigger(orgin);
             if (targetTrigger != null)
                 targetTrigger.Trigger(orgin);
         }
@@ -63,6 +70,12 @@ namespace LevelImposter.Core
             float duration = CurrentElem.properties.triggerTime ?? 1;
             yield return new WaitForSeconds(duration);
             MapUtils.FireTrigger(gameObject, "onFinish", orgin);
+        }
+
+        private void SetDoorOpen(bool isOpen)
+        {
+            PlainDoor doorComponent = gameObject.GetComponent<PlainDoor>();
+            doorComponent.SetDoorway(isOpen);
         }
     }
 }
