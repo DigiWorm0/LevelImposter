@@ -140,6 +140,7 @@ namespace LevelImposter.Core
             console.Room = systemType;
             console.TaskTypes = origConsole.TaskTypes;
             console.ValidTasks = origConsole.ValidTasks;
+            console.AllowImpostor = false;
 
             if (_consoleIDPairs.ContainsKey(elem.type))
             {

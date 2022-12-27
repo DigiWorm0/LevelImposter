@@ -43,7 +43,7 @@ namespace LevelImposter.Core
                 SystemConsole console = obj.AddComponent<SystemConsole>();
                 console.Image = obj.GetComponent<SpriteRenderer>();
                 console.FreeplayOnly = origConsole.FreeplayOnly;
-                console.onlyFromBelow = false;
+                console.onlyFromBelow = elem.properties.onlyFromBelow == true;
                 console.usableDistance = origConsole.usableDistance;
                 console.MinigamePrefab = origConsole.MinigamePrefab;
                 if (elem.type == "util-cams2")

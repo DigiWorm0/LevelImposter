@@ -49,7 +49,7 @@ namespace LevelImposter.Core
             Guid mapID;
             if (!Guid.TryParse(mapIDStr, out mapID))
             {
-                LILogger.Error("Invalid map ID");
+                LILogger.Error("Custom map not found or no longer available.");
             }
 
             // Get Current
