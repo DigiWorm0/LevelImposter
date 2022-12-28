@@ -16,6 +16,13 @@ namespace LevelImposter.Core
     [HarmonyPatch(typeof(PlainDoor), nameof(PlainDoor.SetDoorway))]
     public static class DoorPatch
     {
+        private static bool _shouldTrigger = false;
+
+        public static void Prefix([HarmonyArgument(0)] bool open, PlainDoor __instance)
+        {
+            _shouldTrigger = open != __instance.Open;
+        }
+
         public static void Postfix([HarmonyArgument(0)] bool open, PlainDoor __instance)
         {
             if (MapLoader.CurrentMap == null)
@@ -51,8 +58,11 @@ namespace LevelImposter.Core
             }
 
             // Triggers
-            string triggerID = open ? "onOpen" : "onClose";
-            LITriggerable.Trigger(__instance.gameObject, triggerID, PlayerControl.LocalPlayer);
+            if (_shouldTrigger)
+            {
+                string triggerID = open ? "onOpen" : "onClose";
+                LITriggerable.Trigger(__instance.gameObject, triggerID, PlayerControl.LocalPlayer);
+            }
 
             return;
         }
