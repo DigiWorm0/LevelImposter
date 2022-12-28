@@ -51,11 +51,8 @@ namespace LevelImposter.Core
             }
 
             // Triggers
-            if (AmongUsClient.Instance.AmHost)
-            {
-                string triggerID = open ? "onOpen" : "onClose";
-                MapUtils.FireTrigger(__instance.gameObject, triggerID, PlayerControl.LocalPlayer);
-            }
+            string triggerID = open ? "onOpen" : "onClose";
+            LITriggerable.Trigger(__instance.gameObject, triggerID, PlayerControl.LocalPlayer);
 
             return;
         }

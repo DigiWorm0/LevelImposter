@@ -7,7 +7,7 @@ using Reactor.Networking.Attributes;
 namespace LevelImposter.Core
 {
     [HarmonyPatch(typeof(AmongUsClient), nameof(AmongUsClient.CreatePlayer))]
-    public static class SendRpcPatch
+    public static class MapSyncPatch
     {
         public static void Postfix()
         {
@@ -15,48 +15,9 @@ namespace LevelImposter.Core
         }
     }
 
-    public static class ReactorRPC
+    public static class MapSync
     {
-        public enum RpcIds
-        {
-            Trigger=97,
-            Teleport=98,
-            SendMapId=99,
-        }
-        public const int RPC_ID = 99; // Must be <= 99 for TOU-R Support
-
         private static Guid? _activeDownloadingID = null;
-
-        [MethodRpc((uint)RpcIds.Trigger)]
-        public static void RPCFireTrigger(PlayerControl orgin, string elemIDString, string triggerID)
-        {
-            // Parse ID
-            Guid elemID;
-            if (!Guid.TryParse(elemIDString, out elemID))
-            {
-                LILogger.Error("Triggered element ID is invalid.");
-                return;
-            }
-
-            // Find Triggerable
-            LITriggerable trigger = LITriggerable.AllTriggers.Find(t => t.SourceID == elemID && t.SourceTrigger == triggerID);
-            if (trigger == null)
-            {
-                LILogger.Warn("Triggered element not found");
-                return;
-            }
-            trigger.Trigger(orgin);
-        }
-
-        [MethodRpc((uint)RpcIds.Teleport)]
-        public static void RPCTeleportPlayer(PlayerControl player, float x, float y)
-        {
-            player.transform.position = new Vector3(
-                x,
-                y,
-                player.transform.position.z
-            );
-        }
 
         [MethodRpc((uint)RpcIds.SendMapId)]
         public static void RPCSendMapID(PlayerControl _, string mapIDStr)

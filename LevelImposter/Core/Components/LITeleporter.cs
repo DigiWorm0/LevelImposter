@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
+using Reactor.Networking.Attributes;
 
 namespace LevelImposter.Core
 {
@@ -47,10 +48,20 @@ namespace LevelImposter.Core
             followerCam.centerPosition = Camera.main.transform.position;
 
             // RPC
-            ReactorRPC.RPCTeleportPlayer(
+            RPCTeleport(
                 player,
                 player.transform.position.x,
                 player.transform.position.y
+            );
+        }
+
+        [MethodRpc((uint)RpcIds.Teleport)]
+        public static void RPCTeleport(PlayerControl player, float x, float y)
+        {
+            player.transform.position = new Vector3(
+                x,
+                y,
+                player.transform.position.z
             );
         }
     }

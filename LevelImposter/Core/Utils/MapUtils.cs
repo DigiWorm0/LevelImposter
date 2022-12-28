@@ -167,18 +167,6 @@ namespace LevelImposter.Core
         }
 
         /// <summary>
-        /// Fires trigger on an object with a specific name
-        /// </summary>
-        /// <param name="obj">Object to trigger</param>
-        /// <param name="triggerID">Trigger ID</param>
-        public static void FireTrigger(GameObject obj, string triggerID, PlayerControl playerControl)
-        {
-            LITriggerable trigger = LITriggerable.AllTriggers.Find(t => t.gameObject == obj && t.SourceTrigger == triggerID);
-            if (trigger != null)
-                ReactorRPC.RPCFireTrigger(playerControl, trigger.SourceID.ToString(), triggerID);
-        }
-
-        /// <summary>
         /// Checks if a GameObject is the local player
         /// </summary>
         /// <param name="obj">Game Object to check</param>
@@ -240,7 +228,7 @@ namespace LevelImposter.Core
             string mapIDStr = mapID.ToString();
 
             LILogger.Info("[RPC] Transmitting map ID [" + mapIDStr + "]");
-            ReactorRPC.RPCSendMapID(PlayerControl.LocalPlayer, mapIDStr);
+            MapSync.RPCSendMapID(PlayerControl.LocalPlayer, mapIDStr);
 
             // Set Skeld
             if (mapID != Guid.Empty)
