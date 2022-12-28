@@ -41,7 +41,7 @@ namespace LevelImposter.DB
         /// <returns>The cooresponding SpriteRenderer. Null otherwise.</returns>
         public static SpriteRenderer SearchSprites(GameObject parent, string name, string spriteName)
         {
-            List<Transform> output = new List<Transform>();
+            List<Transform> output = new();
             SearchChildren(parent.transform, name, output);
 
             foreach (Transform t in output)
@@ -67,7 +67,7 @@ namespace LevelImposter.DB
         /// <returns>The first GameObject with the cooresponding name. Null otherwise.</returns>
         public static GameObject SearchChildren(GameObject parent, string name)
         {
-            List<Transform> output = new List<Transform>();
+            List<Transform> output = new();
             SearchChildren(parent.transform, name, output);
 
             if (output.Count() > 0)
@@ -86,7 +86,7 @@ namespace LevelImposter.DB
         /// <returns>A list of GameObjects with the cooresponding name.</returns>
         public static List<Transform> SearchMultipleChildren(GameObject parent, string name)
         {
-            List<Transform> output = new List<Transform>();
+            List<Transform> output = new();
             SearchChildren(parent.transform, name, output);
 
             if (output.Count() > 0)

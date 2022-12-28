@@ -49,17 +49,17 @@ namespace LevelImposter.Core
         }
 
         [MethodRpc((uint)RpcIds.Teleport)]
-        public static void RPCTeleportPlayer(PlayerControl _p, float x, float y)
+        public static void RPCTeleportPlayer(PlayerControl player, float x, float y)
         {
-            _p.transform.position = new Vector3(
+            player.transform.position = new Vector3(
                 x,
                 y,
-                _p.transform.position.z
+                player.transform.position.z
             );
         }
 
         [MethodRpc((uint)RpcIds.SendMapId)]
-        public static void RPCSendMapID(PlayerControl _p, string mapIDStr)
+        public static void RPCSendMapID(PlayerControl _, string mapIDStr)
         {
             if (GameStartManager.Instance != null)
                 GameStartManager.Instance.ResetStartState();

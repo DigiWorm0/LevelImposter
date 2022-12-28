@@ -49,6 +49,7 @@ namespace LevelImposter
             ClassInjector.RegisterTypeInIl2Cpp<ShopSpawner>();
             ClassInjector.RegisterTypeInIl2Cpp<Spinner>();
             ClassInjector.RegisterTypeInIl2Cpp<ThumbnailFileAPI>();
+            ClassInjector.RegisterTypeInIl2Cpp<GitHubAPI>();
 
             Harmony.PatchAll();
             LILogger.Msg("LevelImposter Initialized.");

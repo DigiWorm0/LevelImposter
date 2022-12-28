@@ -14,7 +14,7 @@ namespace LevelImposter.Shop
         public static void OnLoad()
         {
             RemoveChildren();
-            GameObject shopSpawner = new GameObject("Shop Spawner");
+            GameObject shopSpawner = new("Shop Spawner");
             shopSpawner.AddComponent<ShopSpawner>();
         }
 

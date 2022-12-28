@@ -131,7 +131,7 @@ namespace LevelImposter.Shop
         public void Save(LIMap map)
         {
             LILogger.Info("Saving [" + map.id + "] to filesystem");
-            JsonSerializerOptions serializerOptions = new JsonSerializerOptions
+            JsonSerializerOptions serializerOptions = new()
             {
                 DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull
             };

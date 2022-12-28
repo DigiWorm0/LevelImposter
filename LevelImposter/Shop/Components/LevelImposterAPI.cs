@@ -97,7 +97,7 @@ namespace LevelImposter.Shop
                 LILogger.Error(request.error);
             else
             {
-                Texture2D texture = new Texture2D(1, 1);
+                Texture2D texture = new(1, 1);
                 ImageConversion.LoadImage(texture, request.downloadHandler.data);
                 callback(texture);
             }

@@ -28,7 +28,7 @@ namespace LevelImposter.Shop
             string antiPiracy = Guid.NewGuid().ToString();
             byte[] logoData = Properties.Resources.logo;
 
-            GameObject logoObj = new GameObject("LevelImposterVersion " + antiPiracy);
+            GameObject logoObj = new("LevelImposterVersion " + antiPiracy);
             logoObj.transform.SetParent(__instance.transform.parent);
             logoObj.transform.localPosition = new Vector3(4.0f, -2.75f, -1.0f);
             logoObj.layer = (int)Layer.UI;
@@ -46,7 +46,7 @@ namespace LevelImposter.Shop
                 180.0f
             );
 
-            GameObject logoTextObj = new GameObject("LevelImposterText " + antiPiracy);
+            GameObject logoTextObj = new("LevelImposterText " + antiPiracy);
             logoTextObj.transform.SetParent(logoObj.transform);
             logoTextObj.transform.localPosition = new Vector3(1.78f, 0, 0);
 
