@@ -79,6 +79,7 @@ namespace LevelImposter.Core
 
         // Minimap
         public float? minimapScale { get; set; }
+        public bool? imposterOnly { get; set; }
 
     }
 }

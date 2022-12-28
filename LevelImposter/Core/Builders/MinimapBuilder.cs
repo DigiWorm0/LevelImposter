@@ -21,12 +21,17 @@ namespace LevelImposter.Core
                 LILogger.Warn("Only 1 minimap object should be used per map");
                 return;
             }
+
+            // Minimap
             MapBehaviour mapBehaviour = GetMinimap();
 
+            // Map Scale
             float mapScaleVal = elem.properties.minimapScale == null ? 1 : (float)elem.properties.minimapScale;
             float mapScale = mapScaleVal * DEFAULT_SCALE;
             LIShipStatus.Instance.ShipStatus.MapScale = mapScale;
+            Vector3 mapOffset = -(obj.transform.localPosition / mapScale);
 
+            // Sprite Renderer
             SpriteRenderer spriteRenderer = obj.GetComponent<SpriteRenderer>();
             if (spriteRenderer != null)
             {
@@ -34,14 +39,11 @@ namespace LevelImposter.Core
                 GameObject background = mapBehaviour.ColorControl.gameObject;
                 SpriteRenderer bgRenderer = background.GetComponent<SpriteRenderer>();
                 bgRenderer.sprite = sprite;
+                bgRenderer.color = spriteRenderer.color;
                 background.transform.localPosition = background.transform.localPosition;
                 background.transform.localScale = obj.transform.localScale / mapScale;
                 background.transform.localRotation = obj.transform.localRotation;
-                if (elem.properties.color != null)
-                    bgRenderer.color = MapUtils.LIColorToColor(elem.properties.color);
             }
-
-            Vector3 mapOffset = -(obj.transform.localPosition / mapScale);
 
             // Offsets
             Transform roomNames = mapBehaviour.transform.GetChild(mapBehaviour.transform.childCount - 1);

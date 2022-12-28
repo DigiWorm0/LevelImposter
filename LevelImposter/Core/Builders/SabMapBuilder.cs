@@ -140,6 +140,8 @@ namespace LevelImposter.Core
                 btnRenderer.sprite = origRenderer.sprite;
                 btnRenderer.color = origRenderer.color;
             }
+
+            obj.SetActive(false);
         }
 
 
