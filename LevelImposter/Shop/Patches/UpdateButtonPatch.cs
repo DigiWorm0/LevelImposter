@@ -5,6 +5,7 @@ using System.Text;
 using UnityEngine;
 using LevelImposter.Core;
 using PowerTools;
+using LevelImposter.Shop;
 
 namespace LevelImposter.Shop
 {

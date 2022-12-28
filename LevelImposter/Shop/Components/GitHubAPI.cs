@@ -115,7 +115,7 @@ namespace LevelImposter.Shop
         /// </summary>
         /// <param name="onSuccess">Callback on success</param>
         /// <param name="onError">Callback on error</param>
-        public void UpdateToLatest(Action onSuccess, Action<string> onError)
+        public void UpdateMod(Action onSuccess, Action<string> onError)
         {
             GetLatestRelease((release) =>
             {

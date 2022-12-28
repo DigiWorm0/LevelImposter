@@ -16,7 +16,7 @@ namespace LevelImposter.Shop
         {
             // Object
             GameObject buttonPrefab = GameObject.Find("ExitGameButton");
-            GameObject buttonObj = GameObject.Instantiate(buttonPrefab);
+            GameObject buttonObj = UnityEngine.Object.Instantiate(buttonPrefab);
             buttonObj.name = "button_LevelImposterUpdater";
             buttonObj.transform.localPosition = new Vector3(4.25f, -2.3f, -1.0f);
 
@@ -48,11 +48,18 @@ namespace LevelImposter.Shop
             // Button
             PassiveButton btnComponent = buttonObj.GetComponent<PassiveButton>();
             btnComponent.OnClick = new();
-            btnComponent.OnClick.AddListener((Action)Update);
+            btnComponent.OnClick.AddListener((Action)UpdateMod);
 
+            // Button Hover
+            ButtonRolloverHandler btnRollover = buttonObj.GetComponent<ButtonRolloverHandler>();
+            btnRollover.OverColor = new Color(1, 1, 1, 0.5f);
+
+            // Box Collider
+            BoxCollider2D btnCollider = buttonObj.GetComponent<BoxCollider2D>();
+            btnCollider.size = btnRenderer.size;
         }
 
-        private static void Update()
+        private static void UpdateMod()
         {
             if (_popupComponent == null)
                 return;
@@ -61,12 +68,14 @@ namespace LevelImposter.Shop
             confirmButton.SetActive(false);
             _popupComponent.Show("Updating...");
 
-            GitHubAPI.Instance.UpdateToLatest(() => {
+            GitHubAPI.Instance.UpdateMod(() =>
+            {
                 confirmButton.SetActive(true);
                 _popupComponent.Show("<color=green>Update complete!</color>\nPlease restart your game.");
-            }, (error) => {
+            }, (error) =>
+            {
                 confirmButton.SetActive(true);
-                _popupComponent.Show($"<color=red>Update failed!</color>\n<size=1>${error}\nYou may have to update manually.</size>");
+                _popupComponent.Show($"<color=red>Update failed!</color>\n<size=1.5>${error}\nYou may have to update manually.</size>");
             });
         }
 

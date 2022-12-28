@@ -38,7 +38,7 @@ namespace LevelImposter.Shop
                 yield return null;
 
             if (!ShopManager.IsOpen)
-                ShopBuilder.BuildShop();
+                ShopBuilder.Build();
             Destroy(gameObject);
         }
     }

@@ -5,38 +5,29 @@ using UnityEngine;
 
 namespace LevelImposter.Shop
 {
-    public static class LobbyBuilder
+    public static class LobbyConsoleBuilder
     {
         private static Texture2D _consoleTex;
 
-        public static void OnLoad()
+        public static void Build()
         {
-            /*
-            Transform lobbyMenu = GameSettingMenu.Instance.transform;
-            Transform menuTabs = lobbyMenu.Find("Header").Find("Tabs");
-            GameObject gameTab = menuTabs.Find("GameTab").gameObject;
-            GameObject roleTab = menuTabs.Find("RoleTab").gameObject;
-
-            GameObject newTab = UnityEngine.Object.Instantiate(gameTab, menuTabs);
-            newTab.transform.localPosition += new Vector3(1.5f, 0, 0);
-            menuTabs.transform.localPosition += new Vector3(-0.75f, 0, 0);
-            */
-
+            // Spawnable Prefab
             GameObject shopSpawner = new GameObject("LIShopSpawner");
             shopSpawner.AddComponent<ShopSpawner>();
             shopSpawner.SetActive(false);
 
-            Transform lobby = LobbyBehaviour.Instance.transform;
-            GameObject consolePrefab = lobby.FindChild("panel_Wardrobe").gameObject;
-
-            GameObject liConsoleObj = GameObject.Instantiate(consolePrefab, lobby);
+            // Object
+            Transform lobbyTransform = LobbyBehaviour.Instance.transform;
+            GameObject consolePrefab = lobbyTransform.FindChild("panel_Wardrobe").gameObject;
+            GameObject liConsoleObj = UnityEngine.Object.Instantiate(consolePrefab, lobbyTransform);
             liConsoleObj.name = "panel_LevelImposter";
             liConsoleObj.transform.localPosition = new Vector3(-1.41f, 1.84f, -9.998f);
 
+            // Sprite
             SpriteRenderer liRenderer = liConsoleObj.GetComponent<SpriteRenderer>();
-            Texture2D tex = GetTexture();
-            liRenderer.sprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(0.5f, 0.5f), 100.0f);
+            liRenderer.sprite = GetSprite();
 
+            // Console
             OptionsConsole liConsole = liConsoleObj.transform.GetChild(0).GetComponent<OptionsConsole>();
             liConsole.CustomPosition = new Vector3(0, 0, -30);
             liConsole.CustomUseIcon = ImageNames.UseButton;
@@ -45,14 +36,20 @@ namespace LevelImposter.Shop
             liConsole.Outline = liRenderer;
         }
 
-        public static Texture2D GetTexture()
+        private static Sprite GetSprite()
         {
             if (_consoleTex == null)
             {
                 _consoleTex = new Texture2D(1, 1);
                 ImageConversion.LoadImage(_consoleTex, Properties.Resources.console);
             }
-            return _consoleTex;
+            Sprite sprite = Sprite.Create(
+                _consoleTex,
+                new Rect(0, 0, _consoleTex.width, _consoleTex.height),
+                new Vector2(0.5f, 0.5f),
+                100.0f
+            );
+            return sprite;
         }
     }
 }
