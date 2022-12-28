@@ -7,12 +7,14 @@ using UnityEngine.Networking;
 using LevelImposter.Core;
 using BepInEx.Unity.IL2CPP.Utils.Collections;
 using System.Text.Json;
+using Il2CppInterop.Runtime.Attributes;
 
 namespace LevelImposter.Shop
 {
     /// <summary>
     /// API to manage LIM files in the local filesystem
     /// </summary>
+    
     public class MapFileAPI : MonoBehaviour
     {
         public MapFileAPI(IntPtr intPtr) : base(intPtr)
@@ -65,6 +67,7 @@ namespace LevelImposter.Shop
         /// Lists all map file IDs that are located in the LevelImposter folder.
         /// </summary>
         /// <returns>Array of map file IDs that are located in the LevelImpsoter folder.</returns>
+        [HideFromIl2Cpp]
         public string[] ListIDs()
         {
             string[] fileNames = Directory.GetFiles(GetDirectory(), "*.lim");
@@ -88,6 +91,7 @@ namespace LevelImposter.Shop
         /// </summary>
         /// <param name="mapID">Map ID to read and parse</param>
         /// <returns>Representation of the map file data in the form of a <c>LIMap</c>.</returns>
+        [HideFromIl2Cpp]
         public LIMap Get(string mapID)
         {
             if (!Exists(mapID))
@@ -109,6 +113,7 @@ namespace LevelImposter.Shop
         /// </summary>
         /// <param name="mapID">Map ID to read and parse</param>
         /// <returns>Representation of the map file data in the form of a <c>LIMetadata</c>.</returns>
+        [HideFromIl2Cpp]
         public LIMetadata GetMetadata(string mapID)
         {
             if (!Exists(mapID))
@@ -128,6 +133,7 @@ namespace LevelImposter.Shop
         /// Saves map data into the local filesystem based on the map's ID.
         /// </summary>
         /// <param name="map">Map data to save</param>
+        [HideFromIl2Cpp]
         public void Save(LIMap map)
         {
             LILogger.Info("Saving [" + map.id + "] to filesystem");

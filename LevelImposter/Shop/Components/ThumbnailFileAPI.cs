@@ -7,6 +7,7 @@ using UnityEngine.Networking;
 using LevelImposter.Core;
 using Newtonsoft.Json;
 using BepInEx.Unity.IL2CPP.Utils.Collections;
+using Il2CppInterop.Runtime.Attributes;
 
 namespace LevelImposter.Shop
 {
@@ -79,7 +80,8 @@ namespace LevelImposter.Shop
         /// </summary>
         /// <param name="mapID">Map ID for the thumbnail</param>
         /// <param name="callback">Callback on success</param>
-        public void Get(string mapID, System.Action<Texture2D> callback)
+        [HideFromIl2Cpp]
+        public void Get(string mapID, Action<Texture2D> callback)
         {
             if (!Exists(mapID))
             {
@@ -100,6 +102,7 @@ namespace LevelImposter.Shop
         /// </summary>
         /// <param name="mapID">Map ID for the thumbnail</param>
         /// <param name="thumbnailData">PNG-encoded image data.</param>
+        [HideFromIl2Cpp]
         public void Save(string mapID, byte[] thumbnailData)
         {
             LILogger.Info("Saving [" + mapID + "] thumbnail to filesystem");
@@ -120,6 +123,19 @@ namespace LevelImposter.Shop
             LILogger.Info("Deleting [" + mapID + "] thumbnail from filesystem");
             string mapPath = GetPath(mapID);
             File.Delete(mapPath);
+        }
+
+        /// <summary>
+        /// Deletes all thumbnail files from the local filesystem
+        /// </summary>
+        public void DeleteAll()
+        {
+            DirectoryInfo directory = new DirectoryInfo(GetDirectory());
+            if (!directory.Exists)
+                return;
+
+            LILogger.Info("Deleting all thumbnails from filesystem");
+            directory.Delete(true);
         }
     }
 }

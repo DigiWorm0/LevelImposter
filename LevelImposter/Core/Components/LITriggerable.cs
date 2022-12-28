@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
 using BepInEx.Unity.IL2CPP.Utils.Collections;
+using Il2CppInterop.Runtime.Attributes;
 
 namespace LevelImposter.Core
 {
@@ -26,6 +27,7 @@ namespace LevelImposter.Core
         private string _destTrigger;
         private LITriggerable _destTriggerComp;
 
+        [HideFromIl2Cpp]
         public LIElement SourceElem => _sourceElem;
         public Guid? SourceID => _sourceID;
         public string SourceTrigger => _sourceTrigger;
@@ -48,6 +50,7 @@ namespace LevelImposter.Core
             _allTriggers.Remove(this);
         }
 
+        [HideFromIl2Cpp]
         public void SetTrigger(LIElement sourceElem, string sourceTrigger, Guid? destID, string destTrigger)
         {
             _sourceElem = sourceElem;
@@ -56,7 +59,7 @@ namespace LevelImposter.Core
             _destTrigger = destTrigger;
         }
 
-        public virtual void OnTrigger(PlayerControl orgin)
+        public void OnTrigger(PlayerControl orgin)
         {
             LILogger.Info(name + " >>> " + _sourceTrigger + " (" + orgin.name + ")");
             switch (_sourceTrigger)
@@ -97,6 +100,7 @@ namespace LevelImposter.Core
                 _destTriggerComp.Trigger(orgin);
         }
 
+        [HideFromIl2Cpp]
         private IEnumerator CoTimerTrigger(PlayerControl orgin)
         {
             MapUtils.FireTrigger(gameObject, "onStart", orgin);

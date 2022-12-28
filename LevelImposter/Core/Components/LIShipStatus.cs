@@ -6,6 +6,7 @@ using UnityEngine;
 using LevelImposter.Shop;
 using LevelImposter.DB;
 using System.Diagnostics;
+using Il2CppInterop.Runtime.Attributes;
 using Il2CppInterop.Runtime.InteropTypes.Arrays;
 
 namespace LevelImposter.Core
@@ -24,8 +25,9 @@ namespace LevelImposter.Core
 
         public static LIShipStatus Instance { get; private set; }
 
-        public ShipStatus ShipStatus { get; private set; }
+        [HideFromIl2Cpp]
         public LIMap CurrentMap { get; private set; }
+        public ShipStatus ShipStatus { get; private set; }
 
         private BuildRouter _buildRouter = new BuildRouter();
         private Stopwatch _buildTimer = new Stopwatch();
@@ -125,6 +127,7 @@ namespace LevelImposter.Core
         /// Replaces the active map with LevelImposter map data
         /// </summary>
         /// <param name="map">Deserialized map data from a <c>.LIM</c> file</param>
+        [HideFromIl2Cpp]
         public void LoadMap(LIMap map)
         {
             LILogger.Info("Loading " + map.name + " [" + map.id + "]");
@@ -151,6 +154,7 @@ namespace LevelImposter.Core
             LILogger.Info("Map load completed");
         }
 
+        [HideFromIl2Cpp]
         private void _LoadMapProperties(LIMap map)
         {
             ShipStatus.name = map.name;
@@ -180,6 +184,7 @@ namespace LevelImposter.Core
         /// Adds a single <c>LIElement</c> object into the map.
         /// </summary>
         /// <param name="element"></param>
+        [HideFromIl2Cpp]
         public void AddElement(LIElement element)
         {
             _buildTimer.Restart();

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
+using Il2CppInterop.Runtime.Attributes;
 
 namespace LevelImposter.Core
 {
@@ -19,6 +20,7 @@ namespace LevelImposter.Core
         private float _t = 0;
         private float _yOffset = 0;
 
+        [HideFromIl2Cpp]
         public void Init(LIElement elem)
         {
             if (elem.properties.floatingHeight != null)

@@ -7,6 +7,7 @@ using UnityEngine.UI;
 using LevelImposter.DB;
 using LevelImposter.Core;
 using BepInEx.Unity.IL2CPP.Utils.Collections;
+using Il2CppInterop.Runtime.Attributes;
 
 namespace LevelImposter.Core
 {
@@ -46,6 +47,7 @@ namespace LevelImposter.Core
             StartCoroutine(CoFireTrigger().WrapToIl2Cpp());
         }
 
+        [HideFromIl2Cpp]
         private IEnumerator CoFireTrigger()
         {
             while (PlayerControl.LocalPlayer == null)

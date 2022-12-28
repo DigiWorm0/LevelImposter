@@ -33,23 +33,23 @@ namespace LevelImposter
             ClassInjector.RegisterTypeInIl2Cpp<LIStar>();
             ClassInjector.RegisterTypeInIl2Cpp<LIFloat>();
             ClassInjector.RegisterTypeInIl2Cpp<LITeleporter>();
-            ClassInjector.RegisterTypeInIl2Cpp<GIFAnimator>();
-            ClassInjector.RegisterTypeInIl2Cpp<AssetDB>();
-
             ClassInjector.RegisterTypeInIl2Cpp<LITriggerable>();
             ClassInjector.RegisterTypeInIl2Cpp<LITriggerArea>();
             ClassInjector.RegisterTypeInIl2Cpp<LITriggerSpawnable>();
             ClassInjector.RegisterTypeInIl2Cpp<DummyMinigame>();
+            ClassInjector.RegisterTypeInIl2Cpp<GIFAnimator>();
+
+            ClassInjector.RegisterTypeInIl2Cpp<AssetDB>();
 
             ClassInjector.RegisterTypeInIl2Cpp<LevelImposterAPI>();
-            ClassInjector.RegisterTypeInIl2Cpp<MapBanner>();
+            ClassInjector.RegisterTypeInIl2Cpp<ThumbnailFileAPI>();
+            ClassInjector.RegisterTypeInIl2Cpp<GitHubAPI>();
             ClassInjector.RegisterTypeInIl2Cpp<MapFileAPI>();
+            ClassInjector.RegisterTypeInIl2Cpp<MapBanner>();
             ClassInjector.RegisterTypeInIl2Cpp<ShopButtons>();
             ClassInjector.RegisterTypeInIl2Cpp<ShopManager>();
             ClassInjector.RegisterTypeInIl2Cpp<ShopSpawner>();
             ClassInjector.RegisterTypeInIl2Cpp<Spinner>();
-            ClassInjector.RegisterTypeInIl2Cpp<ThumbnailFileAPI>();
-            ClassInjector.RegisterTypeInIl2Cpp<GitHubAPI>();
 
             Harmony.PatchAll();
             LILogger.Msg("LevelImposter Initialized.");

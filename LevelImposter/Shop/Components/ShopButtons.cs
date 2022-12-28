@@ -22,7 +22,7 @@ namespace LevelImposter.Shop
         private string _selectedID = "downloaded";
         private bool isEnabled = true;
 
-        private void Start()
+        public void Start()
         {
             DownloadedButton.onClick.AddListener((Action)OnDownloaded);
             TopButton.onClick.AddListener((Action)OnTop);

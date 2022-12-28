@@ -3,6 +3,7 @@ using System.IO;
 using System.Collections;
 using UnityEngine;
 using BepInEx.Unity.IL2CPP.Utils.Collections;
+using Il2CppInterop.Runtime.Attributes;
 
 namespace LevelImposter.Core
 {
@@ -65,6 +66,7 @@ namespace LevelImposter.Core
             _spriteRenderer.sprite = _frames[reversed ? _frames.Length - 1 : 0];
         }
 
+        [HideFromIl2Cpp]
         private IEnumerator CoAnimate(bool repeat, bool reverse)
         {
             IsAnimating = true;

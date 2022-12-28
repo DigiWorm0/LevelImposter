@@ -9,6 +9,7 @@ using LevelImposter.Core;
 using System.Text.Json;
 using System.Collections;
 using BepInEx.Unity.IL2CPP.Utils.Collections;
+using Il2CppInterop.Runtime.Attributes;
 
 namespace LevelImposter.DB
 {
@@ -52,6 +53,7 @@ namespace LevelImposter.DB
             StartCoroutine(CoLoadAssets().WrapToIl2Cpp());
         }
 
+        [HideFromIl2Cpp]
         private IEnumerator CoLoadAssets()
         {
             LILogger.Info("Loading AssetDB...");
@@ -88,6 +90,7 @@ namespace LevelImposter.DB
             IsReady = true;
         }
 
+        [HideFromIl2Cpp]
         private IEnumerator _importPrefab(GameObject prefab)
         {
             ShipStatus shipStatus = prefab.GetComponent<ShipStatus>();
@@ -112,6 +115,7 @@ namespace LevelImposter.DB
             LILogger.Info("..." + prefab.name + " Loaded");
         }
 
+        [HideFromIl2Cpp]
         private IEnumerator _importAssets<T>(GameObject map, ShipStatus shipStatus, MapType mapType, Dictionary<string, T> list) where T : AssetData
         {
             foreach (var elem in list)

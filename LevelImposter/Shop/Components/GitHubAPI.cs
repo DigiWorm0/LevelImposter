@@ -8,6 +8,7 @@ using UnityEngine.Networking;
 using LevelImposter.Core;
 using BepInEx.Unity.IL2CPP.Utils.Collections;
 using System.Text.Json;
+using Il2CppInterop.Runtime.Attributes;
 
 namespace LevelImposter.Shop
 {
@@ -44,6 +45,7 @@ namespace LevelImposter.Shop
         /// <param name="url">URL to request</param>
         /// <param name="onSuccess">Callback on success</param>
         /// <param name="onError">Callback on error</param>
+        [HideFromIl2Cpp]
         public void Request(string url, Action<string> onSucccess, Action<string> onError)
         {
             StartCoroutine(CoRequest(url, onSucccess, onError).WrapToIl2Cpp());
@@ -57,6 +59,7 @@ namespace LevelImposter.Shop
         /// <param name="url">URL to request</param>
         /// <param name="onSuccess">Callback on success</param>
         /// <param name="onError">Callback on error</param>
+        [HideFromIl2Cpp]
         public IEnumerator CoRequest(string url, Action<string> onSuccess, Action<string> onError)
         {
             LILogger.Info("GET: " + url);
@@ -89,6 +92,7 @@ namespace LevelImposter.Shop
         /// </summary>
         /// <param name="onSuccess">Callback on success</param>
         /// <param name="onError">Callback on error</param>
+        [HideFromIl2Cpp]
         public void GetLatestRelease(Action<GHRelease> onSuccess, Action<string> onError)
         {
             Request(API_PATH, (string json) =>
@@ -104,6 +108,7 @@ namespace LevelImposter.Shop
         /// </summary>
         /// <param name="release">Release data to check</param>
         /// <returns>True if the release matches the current version</returns>
+        [HideFromIl2Cpp]
         public bool IsCurrent(GHRelease release)
         {
             string versionString = release.name.Split(" ")[1];
@@ -115,6 +120,7 @@ namespace LevelImposter.Shop
         /// </summary>
         /// <param name="onSuccess">Callback on success</param>
         /// <param name="onError">Callback on error</param>
+        [HideFromIl2Cpp]
         public void UpdateMod(Action onSuccess, Action<string> onError)
         {
             GetLatestRelease((release) =>
@@ -135,6 +141,7 @@ namespace LevelImposter.Shop
                             byte[] dllBytes = Encoding.ASCII.GetBytes(dllString);
                             fileStream.Write(dllBytes);
                             File.Move(dllTempPath, dllPath, true);
+                            ThumbnailFileAPI.Instance.DeleteAll();
                             onSuccess();
                         }
                         catch (Exception e)

@@ -7,6 +7,7 @@ using UnityEngine.SceneManagement;
 using LevelImposter.Core;
 using LevelImposter.DB;
 using InnerNet;
+using Il2CppInterop.Runtime.Attributes;
 
 namespace LevelImposter.Shop
 {
@@ -94,54 +95,63 @@ namespace LevelImposter.Shop
         {
             ListNone();
             _currentListID = "top";
-            LevelImposterAPI.Instance.GetTop((LIMetadata[] maps) =>
+            LevelImposterAPI.Instance.GetTop(OnTop);
+        }
+
+        [HideFromIl2Cpp]
+        private void OnTop(LIMetadata[] maps)
+        {
+            if (_currentListID != "top")
+                return;
+            foreach (LIMetadata map in maps)
             {
-                if (_currentListID != "top")
-                    return;
-                foreach (LIMetadata map in maps)
-                {
-                    MapBanner banner = Instantiate(MapBannerPrefab, ShopParent);
-                    banner.gameObject.SetActive(true);
-                    banner.SetMap(map);
-                    _shopBanners.Push(banner);
-                }
-            });
+                MapBanner banner = Instantiate(MapBannerPrefab, ShopParent);
+                banner.gameObject.SetActive(true);
+                banner.SetMap(map);
+                _shopBanners.Push(banner);
+            }
         }
 
         public void ListRecent()
         {
             ListNone();
             _currentListID = "recent";
-            LevelImposterAPI.Instance.GetRecent((LIMetadata[] maps) =>
+            LevelImposterAPI.Instance.GetRecent(OnRecent);
+        }
+
+        [HideFromIl2Cpp]
+        private void OnRecent(LIMetadata[] maps)
+        {
+            if (_currentListID != "recent")
+                return;
+            foreach (LIMetadata map in maps)
             {
-                if (_currentListID != "recent")
-                    return;
-                foreach (LIMetadata map in maps)
-                {
-                    MapBanner banner = Instantiate(MapBannerPrefab, ShopParent);
-                    banner.gameObject.SetActive(true);
-                    banner.SetMap(map);
-                    _shopBanners.Push(banner);
-                }
-            });
+                MapBanner banner = Instantiate(MapBannerPrefab, ShopParent);
+                banner.gameObject.SetActive(true);
+                banner.SetMap(map);
+                _shopBanners.Push(banner);
+            }
         }
 
         public void ListFeatured()
         {
             ListNone();
             _currentListID = "featured";
-            LevelImposterAPI.Instance.GetFeatured((LIMetadata[] maps) =>
+            LevelImposterAPI.Instance.GetFeatured(OnFeatured);
+        }
+
+        [HideFromIl2Cpp]
+        private void OnFeatured(LIMetadata[] maps)
+        {
+            if (_currentListID != "featured")
+                return;
+            foreach (LIMetadata map in maps)
             {
-                if (_currentListID != "featured")
-                    return;
-                foreach (LIMetadata map in maps)
-                {
-                    MapBanner banner = Instantiate(MapBannerPrefab, ShopParent);
-                    banner.gameObject.SetActive(true);
-                    banner.SetMap(map);
-                    _shopBanners.Push(banner);
-                }
-            });
+                MapBanner banner = Instantiate(MapBannerPrefab, ShopParent);
+                banner.gameObject.SetActive(true);
+                banner.SetMap(map);
+                _shopBanners.Push(banner);
+            }
         }
 
         public void SelectMap(string id)

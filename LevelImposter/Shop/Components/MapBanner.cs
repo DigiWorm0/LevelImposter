@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using LevelImposter.Core;
-using BepInEx.Unity.IL2CPP.Utils.Collections;
+using Il2CppInterop.Runtime.Attributes;
 
 namespace LevelImposter.Shop
 {
@@ -52,10 +52,10 @@ namespace LevelImposter.Shop
 
         public void Start()
         {
-            _downloadButton.onClick.AddListener((Action)OnDownload);
-            _playButton.onClick.AddListener((Action)OnPlay);
-            _deleteButton.onClick.AddListener((Action)OnDelete);
-            _externalButton.onClick.AddListener((Action)OnExternal);
+            _downloadButton.onClick.AddListener((Action)OnDownloadClick);
+            _playButton.onClick.AddListener((Action)OnPlayClick);
+            _deleteButton.onClick.AddListener((Action)OnDeleteClick);
+            _externalButton.onClick.AddListener((Action)OnExternalClick);
             UpdateButtons();
         }
 
@@ -65,9 +65,10 @@ namespace LevelImposter.Shop
                 Destroy(_thumbnail.sprite.texture);
         }
 
+        [HideFromIl2Cpp]
         public void SetMap(LIMetadata map)
         {
-            this._currentMap = map;
+            _currentMap = map;
             _loadingOverlay.SetActive(false);
             _nameText.text = map.name;
             _authorText.text = map.authorName;
@@ -97,21 +98,24 @@ namespace LevelImposter.Shop
             }
         }
 
-        public void OnDownload()
+        public void OnDownloadClick()
         {
             _downloadButton.interactable = false;
             _loadingOverlay.SetActive(true);
             ShopManager.Instance.SetEnabled(false);
-            LevelImposterAPI.Instance.DownloadMap(new System.Guid(_currentMap.id), (LIMap map) =>
-            {
-                MapFileAPI.Instance.Save(map);
-                _loadingOverlay.SetActive(false);
-                ShopManager.Instance.SetEnabled(true);
-                UpdateButtons();
-            });
+            LevelImposterAPI.Instance.DownloadMap(new Guid(_currentMap.id), OnDownload);
         }
 
-        public void OnPlay()
+        [HideFromIl2Cpp]
+        private void OnDownload(LIMap map)
+        {
+            MapFileAPI.Instance.Save(map);
+            _loadingOverlay.SetActive(false);
+            ShopManager.Instance.SetEnabled(true);
+            UpdateButtons();
+        }
+
+        public void OnPlayClick()
         {
             if (_isInLobby)
                 ShopManager.Instance.SelectMap(_currentMap.id);
@@ -119,14 +123,14 @@ namespace LevelImposter.Shop
                 ShopManager.Instance.LaunchMap(_currentMap.id);
         }
 
-        public void OnDelete()
+        public void OnDeleteClick()
         {
             MapFileAPI.Instance.Delete(_currentMap.id);
             ThumbnailFileAPI.Instance.Delete(_currentMap.id);
             UpdateButtons();
         }
 
-        public void OnExternal()
+        public void OnExternalClick()
         {
             Application.OpenURL("https://levelimposter.net/#/map/" + _currentMap.id);
         }

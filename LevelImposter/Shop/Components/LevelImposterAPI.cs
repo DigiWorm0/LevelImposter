@@ -6,6 +6,7 @@ using UnityEngine.Networking;
 using LevelImposter.Core;
 using BepInEx.Unity.IL2CPP.Utils.Collections;
 using System.Text.Json;
+using Il2CppInterop.Runtime.Attributes;
 
 namespace LevelImposter.Shop
 {
@@ -42,7 +43,8 @@ namespace LevelImposter.Shop
         /// </summary>
         /// <param name="url">URL to request</param>
         /// <param name="callback">Callback on success</param>
-        public void Request(string url, System.Action<string> callback)
+        [HideFromIl2Cpp]
+        public void Request(string url, Action<string> callback)
         {
             StartCoroutine(CoRequest(url, callback).WrapToIl2Cpp());
         }
@@ -54,7 +56,8 @@ namespace LevelImposter.Shop
         /// </summary>
         /// <param name="url">URL to request</param>
         /// <param name="callback">Callback on success</param>
-        public IEnumerator CoRequest(string url, System.Action<string> callback)
+        [HideFromIl2Cpp]
+        public IEnumerator CoRequest(string url, Action<string> callback)
         {
             LILogger.Info("GET: " + url);
             UnityWebRequest request = UnityWebRequest.Get(url);
@@ -74,7 +77,8 @@ namespace LevelImposter.Shop
         /// </summary>
         /// <param name="url">URL to request</param>
         /// <param name="callback">Callback on success</param>
-        public void RequestTexture(string url, System.Action<Texture2D> callback)
+        [HideFromIl2Cpp]
+        public void RequestTexture(string url, Action<Texture2D> callback)
         {
             StartCoroutine(CoRequestTexture(url, callback).WrapToIl2Cpp());
         }
@@ -86,7 +90,8 @@ namespace LevelImposter.Shop
         /// </summary>
         /// <param name="url">URL to request</param>
         /// <param name="callback">Callback on success</param>
-        public IEnumerator CoRequestTexture(string url, System.Action<Texture2D> callback)
+        [HideFromIl2Cpp]
+        public IEnumerator CoRequestTexture(string url, Action<Texture2D> callback)
         {
             LILogger.Info("GET: " + url);
             UnityWebRequest request = UnityWebRequest.Get(url);
@@ -111,6 +116,7 @@ namespace LevelImposter.Shop
         /// <typeparam name="T"><c>Data type the LICallback uses</c></typeparam>
         /// <param name="url">URL to request</param>
         /// <param name="callback">Callback on success</param>
+        [HideFromIl2Cpp]
         public void RequestJSON<T>(string url, Action<T> callback)
         {
             Request(url, (string json) =>
@@ -129,6 +135,7 @@ namespace LevelImposter.Shop
         /// Grabs the top liked maps from the LevelImposter API.
         /// </summary>
         /// <param name="callback">Callback on success</param>
+        [HideFromIl2Cpp]
         public void GetTop(Action<LIMetadata[]> callback)
         {
             LILogger.Info("Getting top maps...");
@@ -139,6 +146,7 @@ namespace LevelImposter.Shop
         /// Grabs the most recent maps from the LevelImposter API.
         /// </summary>
         /// <param name="callback">Callback on success</param>
+        [HideFromIl2Cpp]
         public void GetRecent(Action<LIMetadata[]> callback)
         {
             LILogger.Info("Getting recent maps...");
@@ -149,6 +157,7 @@ namespace LevelImposter.Shop
         /// Grabs the featured maps from the LevelImposter API.
         /// </summary>
         /// <param name="callback">Callback on success</param>
+        [HideFromIl2Cpp]
         public void GetFeatured(Action<LIMetadata[]> callback)
         {
             LILogger.Info("Getting verified maps...");
@@ -160,6 +169,7 @@ namespace LevelImposter.Shop
         /// </summary>
         /// <param name="id">ID of the map to grab</param>
         /// <param name="callback">Callback on success</param>
+        [HideFromIl2Cpp]
         public void GetMap(Guid id, Action<LIMetadata> callback)
         {
             LILogger.Info("Getting map " + id + "...");
@@ -171,6 +181,7 @@ namespace LevelImposter.Shop
         /// </summary>
         /// <param name="id">ID of the map to download</param>
         /// <param name="callback">Callback on success</param>
+        [HideFromIl2Cpp]
         public void DownloadMap(Guid id, Action<LIMap> callback)
         {
             LILogger.Info("Downloading map " + id + "...");
@@ -201,6 +212,7 @@ namespace LevelImposter.Shop
         /// </summary>
         /// <param name="metadata">Metadata of the map to grab a thumbnail for</param>
         /// <param name="callback">Callback on success</param>
+        [HideFromIl2Cpp]
         public void DownloadThumbnail(LIMetadata metadata, Action<Texture2D> callback)
         {
             LILogger.Info("Downloading thumbnail for map " + metadata.id + "...");
