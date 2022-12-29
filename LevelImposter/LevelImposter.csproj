@@ -26,6 +26,7 @@
 	
 	<ItemGroup>
 		<EmbeddedResource Include="Assets\**\*" />
+		<Reference Include="lib/x32/FreeImage.dll" />
 	</ItemGroup>
 	
 	<Target Name="Copy" AfterTargets="Build" Condition="'$(AmongUs)' != ''">

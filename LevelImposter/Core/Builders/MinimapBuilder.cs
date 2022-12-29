@@ -53,7 +53,7 @@ namespace LevelImposter.Core
             mapBehaviour.countOverlay.transform.localPosition = mapOffset;
             mapBehaviour.infectedOverlay.transform.localPosition = mapOffset;
 
-            obj.SetActive(false);
+            UnityEngine.Object.Destroy(obj);
             _isBuilt = true;
         }
 

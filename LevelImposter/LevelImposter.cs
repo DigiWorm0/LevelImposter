@@ -36,6 +36,7 @@ namespace LevelImposter
             ClassInjector.RegisterTypeInIl2Cpp<LITriggerable>();
             ClassInjector.RegisterTypeInIl2Cpp<LITriggerArea>();
             ClassInjector.RegisterTypeInIl2Cpp<LITriggerSpawnable>();
+            ClassInjector.RegisterTypeInIl2Cpp<LISpriteLoader>();
             ClassInjector.RegisterTypeInIl2Cpp<DummyMinigame>();
             ClassInjector.RegisterTypeInIl2Cpp<GIFAnimator>();
 
