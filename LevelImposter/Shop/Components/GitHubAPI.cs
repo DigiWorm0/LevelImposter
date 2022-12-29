@@ -46,7 +46,7 @@ namespace LevelImposter.Shop
         /// <param name="onSuccess">Callback on success</param>
         /// <param name="onError">Callback on error</param>
         [HideFromIl2Cpp]
-        public void Request(string url, Action<string> onSucccess, Action<string> onError)
+        public void Request(string url, Action<byte[]> onSucccess, Action<string> onError)
         {
             StartCoroutine(CoRequest(url, onSucccess, onError).WrapToIl2Cpp());
         }
@@ -60,7 +60,7 @@ namespace LevelImposter.Shop
         /// <param name="onSuccess">Callback on success</param>
         /// <param name="onError">Callback on error</param>
         [HideFromIl2Cpp]
-        public IEnumerator CoRequest(string url, Action<string> onSuccess, Action<string> onError)
+        public IEnumerator CoRequest(string url, Action<byte[]> onSuccess, Action<string> onError)
         {
             LILogger.Info("GET: " + url);
             UnityWebRequest request = UnityWebRequest.Get(url);
@@ -73,7 +73,7 @@ namespace LevelImposter.Shop
                 onError(request.error);
             }
             else
-                onSuccess(request.downloadHandler.text);
+                onSuccess(request.downloadHandler.data);
             request.Dispose();
         }
 
@@ -95,8 +95,10 @@ namespace LevelImposter.Shop
         [HideFromIl2Cpp]
         public void GetLatestRelease(Action<GHRelease> onSuccess, Action<string> onError)
         {
-            Request(API_PATH, (string json) =>
+            LILogger.Info("Getting latest release info from GitHub");
+            Request(API_PATH, (byte[] rawData) =>
             {
+                string json = Encoding.UTF8.GetString(rawData);
                 GHRelease[] response = JsonSerializer.Deserialize<GHRelease[]>(json);
                 onSuccess(response[0]);
             }, onError);
@@ -123,31 +125,44 @@ namespace LevelImposter.Shop
         [HideFromIl2Cpp]
         public void UpdateMod(Action onSuccess, Action<string> onError)
         {
+            LILogger.Info("Updating mod from GitHub");
             GetLatestRelease((release) =>
             {
-                string dllPath = GetDLLDirectory();
-                string dllTempPath = dllPath + ".part";
-
-                if (File.Exists(dllTempPath))
-                    File.Delete(dllTempPath);
-
-                string downloadURL = release.assets[0].browser_download_url;
-                Request(downloadURL, (string dllString) =>
+                LILogger.Info($"Downloading DLL from {release.name}");
+                if (release.assets.Length <= 0)
                 {
-                    using (var fileStream = File.Create(dllTempPath))
+                    string errorMsg = "No release assets were found on GitHub";
+                    LILogger.Error(errorMsg);
+                    onError(errorMsg);
+                }
+                string downloadURL = release.assets[0].browser_download_url;
+                Request(downloadURL, (byte[] dllBytes) =>
+                {
+                    LILogger.Info($"Saving {dllBytes.Length / 1024}kb DLL to local filesystem");
+                    try
                     {
-                        try
+                        string dllPath = GetDLLDirectory();
+                        string dllOldPath = dllPath + ".old";
+
+                        if (File.Exists(dllOldPath))
+                            File.Delete(dllOldPath);
+                        File.Move(dllPath, dllOldPath);
+
+                        //byte[] dllBytes = Encoding.UTF8.GetBytes(dllString);
+                        using (FileStream fileStream = File.Create(dllPath))
                         {
-                            byte[] dllBytes = Encoding.ASCII.GetBytes(dllString);
-                            fileStream.Write(dllBytes);
-                            File.Move(dllTempPath, dllPath, true);
-                            ThumbnailFileAPI.Instance.DeleteAll();
-                            onSuccess();
+                            fileStream.Write(dllBytes, 0, dllBytes.Length);
                         }
-                        catch (Exception e)
-                        {
-                            onError(e.Message);
-                        }
+
+                        ThumbnailFileAPI.Instance.DeleteAll();
+
+                        LILogger.Info("Update complete");
+                        onSuccess();
+                    }
+                    catch (Exception e)
+                    {
+                        LILogger.Error(e);
+                        onError(e.Message);
                     }
                 }, onError);
             }, onError);

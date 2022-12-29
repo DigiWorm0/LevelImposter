@@ -4,6 +4,7 @@ using System.Text;
 using UnityEngine;
 using Twitch;
 using TMPro;
+using LevelImposter.Core;
 
 namespace LevelImposter.Shop
 {
@@ -11,19 +12,20 @@ namespace LevelImposter.Shop
     {
         private static Texture2D _buttonTex;
         private static GenericPopup _popupComponent;
+        private static GameObject _buttonObj;
 
         public static void Build()
         {
             // Object
             GameObject buttonPrefab = GameObject.Find("ExitGameButton");
-            GameObject buttonObj = UnityEngine.Object.Instantiate(buttonPrefab);
-            buttonObj.name = "button_LevelImposterUpdater";
-            buttonObj.transform.localPosition = new Vector3(4.25f, -2.3f, -1.0f);
+            _buttonObj = UnityEngine.Object.Instantiate(buttonPrefab);
+            _buttonObj.name = "button_LevelImposterUpdater";
+            _buttonObj.transform.localPosition = new Vector3(4.25f, -2.3f, -1.0f);
 
             // Sprite
             Sprite btnSprite = GetSprite();
             float btnAspect = btnSprite.rect.height / btnSprite.rect.width;
-            SpriteRenderer btnRenderer = buttonObj.GetComponent<SpriteRenderer>();
+            SpriteRenderer btnRenderer = _buttonObj.GetComponent<SpriteRenderer>();
             btnRenderer.sprite = btnSprite;
             btnRenderer.size = new Vector2(
                 1.3f,
@@ -31,11 +33,11 @@ namespace LevelImposter.Shop
             );
 
             // Remove Text
-            Transform textTransform = buttonObj.transform.GetChild(0);
+            Transform textTransform = _buttonObj.transform.GetChild(0);
             UnityEngine.Object.Destroy(textTransform.gameObject);
 
             // Remove Aspect
-            AspectPosition aspectComponent = buttonObj.GetComponent<AspectPosition>();
+            AspectPosition aspectComponent = _buttonObj.GetComponent<AspectPosition>();
             UnityEngine.Object.Destroy(aspectComponent);
 
             // Popup
@@ -46,27 +48,28 @@ namespace LevelImposter.Shop
             popupText.enableAutoSizing = false;
 
             // Button
-            PassiveButton btnComponent = buttonObj.GetComponent<PassiveButton>();
+            PassiveButton btnComponent = _buttonObj.GetComponent<PassiveButton>();
             btnComponent.OnClick = new();
             btnComponent.OnClick.AddListener((Action)UpdateMod);
 
             // Button Hover
-            ButtonRolloverHandler btnRollover = buttonObj.GetComponent<ButtonRolloverHandler>();
+            ButtonRolloverHandler btnRollover = _buttonObj.GetComponent<ButtonRolloverHandler>();
             btnRollover.OverColor = new Color(1, 1, 1, 0.5f);
 
             // Box Collider
-            BoxCollider2D btnCollider = buttonObj.GetComponent<BoxCollider2D>();
+            BoxCollider2D btnCollider = _buttonObj.GetComponent<BoxCollider2D>();
             btnCollider.size = btnRenderer.size;
         }
 
         private static void UpdateMod()
         {
-            if (_popupComponent == null)
+            if (_popupComponent == null || _buttonObj == null)
                 return;
 
             GameObject confirmButton = _popupComponent.transform.FindChild("ExitGame").gameObject;
             confirmButton.SetActive(false);
             _popupComponent.Show("Updating...");
+            _buttonObj.SetActive(false);
 
             GitHubAPI.Instance.UpdateMod(() =>
             {
@@ -75,7 +78,8 @@ namespace LevelImposter.Shop
             }, (error) =>
             {
                 confirmButton.SetActive(true);
-                _popupComponent.Show($"<color=red>Update failed!</color>\n<size=1.5>${error}\nYou may have to update manually.</size>");
+                _popupComponent.Show($"<color=red>Update failed!</color>\n<size=1.5>{error}\n<i>(You may have to update manually)</i></size>");
+                _buttonObj.SetActive(true);
             });
         }
 
