@@ -10,6 +10,7 @@ namespace LevelImposter.Core
     {
         public string tag_name { get; set; }
         public string name { get; set; }
+        public string body { get; set; }
         public GHAsset[] assets { get; set; }
     }
 }

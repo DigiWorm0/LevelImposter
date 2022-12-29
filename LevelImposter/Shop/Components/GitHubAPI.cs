@@ -18,6 +18,7 @@ namespace LevelImposter.Shop
     public class GitHubAPI : MonoBehaviour
     {
         public const string API_PATH = "https://api.github.com/repos/DigiWorm0/LevelImposter/releases?per_page=1";
+        public const string UPDATE_FORBIDDEN_FLAG = "[NoAutoUpdate]";
 
         public static GitHubAPI Instance;
 
@@ -131,9 +132,17 @@ namespace LevelImposter.Shop
                 LILogger.Info($"Downloading DLL from {release.name}");
                 if (release.assets.Length <= 0)
                 {
-                    string errorMsg = "No release assets were found on GitHub";
+                    string errorMsg = $"No release assets were found for {release.name}";
                     LILogger.Error(errorMsg);
                     onError(errorMsg);
+                    return;
+                }
+                if (release.body.Contains(UPDATE_FORBIDDEN_FLAG))
+                {
+                    string errorMsg = $"Auto-update to {release.name} is unavailable.";
+                    LILogger.Error(errorMsg);
+                    onError(errorMsg);
+                    return;
                 }
                 string downloadURL = release.assets[0].browser_download_url;
                 Request(downloadURL, (byte[] dllBytes) =>
@@ -148,7 +157,6 @@ namespace LevelImposter.Shop
                             File.Delete(dllOldPath);
                         File.Move(dllPath, dllOldPath);
 
-                        //byte[] dllBytes = Encoding.UTF8.GetBytes(dllString);
                         using (FileStream fileStream = File.Create(dllPath))
                         {
                             fileStream.Write(dllBytes, 0, dllBytes.Length);
