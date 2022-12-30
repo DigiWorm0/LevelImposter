@@ -32,17 +32,20 @@ namespace LevelImposter.Core
             Vector3 mapOffset = -(obj.transform.localPosition / mapScale);
 
             // Sprite Renderer
-            SpriteRenderer spriteRenderer = obj.GetComponent<SpriteRenderer>();
-            if (spriteRenderer != null)
+            LISpriteLoader spriteLoader = obj.GetComponent<LISpriteLoader>();
+            if (spriteLoader != null)
             {
-                Sprite sprite = spriteRenderer.sprite;
                 GameObject background = mapBehaviour.ColorControl.gameObject;
                 SpriteRenderer bgRenderer = background.GetComponent<SpriteRenderer>();
-                bgRenderer.sprite = sprite;
-                bgRenderer.color = spriteRenderer.color;
                 background.transform.localPosition = background.transform.localPosition;
                 background.transform.localScale = obj.transform.localScale / mapScale;
                 background.transform.localRotation = obj.transform.localRotation;
+
+                spriteLoader.OnLoad.AddListener((Action<Sprite>)((Sprite sprite) =>
+                {
+                    bgRenderer.sprite = sprite;
+                    UnityEngine.Object.Destroy(obj);
+                }));
             }
 
             // Offsets
@@ -53,7 +56,6 @@ namespace LevelImposter.Core
             mapBehaviour.countOverlay.transform.localPosition = mapOffset;
             mapBehaviour.infectedOverlay.transform.localPosition = mapOffset;
 
-            UnityEngine.Object.Destroy(obj);
             _isBuilt = true;
         }
 

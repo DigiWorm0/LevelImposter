@@ -21,6 +21,10 @@ namespace LevelImposter.Core
         private float _maxSpeed = 2;
         private float _currentSpeed = 0;
 
+        /// <summary>
+        /// Initializes a star from util-starfield
+        /// </summary>
+        /// <param name="elem">LIElement to extract props from</param>
         [HideFromIl2Cpp]
         public void Init(LIElement elem)
         {
@@ -32,10 +36,9 @@ namespace LevelImposter.Core
                 _minSpeed = (float)elem.properties.starfieldMinSpeed;
             if (elem.properties.starfieldMaxSpeed != null)
                 _maxSpeed = (float)elem.properties.starfieldMaxSpeed;
-            Respawn(true);
         }
 
-        public void Respawn(bool isInitial)
+        private void Respawn(bool isInitial)
         {
             _currentSpeed = UnityEngine.Random.Range(_minSpeed, _maxSpeed);
             transform.localPosition = new Vector3(
@@ -43,6 +46,11 @@ namespace LevelImposter.Core
                 UnityEngine.Random.Range(-_height / 2, _height / 2),
                 0
             );
+        }
+
+        public void Start()
+        {
+            Respawn(true);
         }
 
         public void Update()

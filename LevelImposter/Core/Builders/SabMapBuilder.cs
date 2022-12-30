@@ -134,14 +134,17 @@ namespace LevelImposter.Core
             btnRenderer.sprite = btnSprite;
             btnRenderer.material = _btnMat;
             button.OnClick.AddListener(btnAction);
-            SpriteRenderer origRenderer = obj.GetComponent<SpriteRenderer>();
-            if (origRenderer != null)
-            {
-                btnRenderer.sprite = origRenderer.sprite;
-                btnRenderer.color = origRenderer.color;
-            }
 
-            obj.SetActive(false);
+            // Sprite Renderer
+            LISpriteLoader spriteLoader = obj.GetComponent<LISpriteLoader>();
+            if (spriteLoader != null)
+            {
+                spriteLoader.OnLoad.AddListener((Action<Sprite>)((Sprite sprite) =>
+                {
+                    btnRenderer.sprite = sprite;
+                    UnityEngine.Object.Destroy(obj);
+                }));
+            }
         }
 
 

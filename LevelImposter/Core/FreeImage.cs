@@ -50,6 +50,9 @@ namespace LevelImposter.Core
         [DllImport(FreeImageLibrary, EntryPoint = "FreeImage_Load")]
         public static extern IntPtr FreeImage_Load(FREE_IMAGE_FORMAT format, string filename, int flags);
 
+        [DllImport(FreeImageLibrary, EntryPoint = "FreeImage_GetFileTypeFromMemory")]
+        public static extern FREE_IMAGE_FORMAT FreeImage_GetFileTypeFromMemory(IntPtr stream, int size_in_bytes);
+
         [DllImport(FreeImageLibrary, EntryPoint = "FreeImage_OpenMemory")]
         public static extern IntPtr FreeImage_OpenMemory(IntPtr data, uint size_in_bytes);
 

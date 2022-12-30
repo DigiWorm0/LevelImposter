@@ -4,6 +4,7 @@ using System.IO;
 using System.Text;
 using System.Runtime.InteropServices;
 using UnityEngine;
+using UnityEngine.Events;
 using LevelImposter.Shop;
 using LevelImposter.DB;
 using System.Diagnostics;
@@ -25,16 +26,19 @@ namespace LevelImposter.Core
         }
 
         private static bool _shouldRender = true;
-        private static int _renderCount = 0;
+        private static List<LISpriteLoader> _activeRenders = new();
 
-        public static int RenderCount => _renderCount;
+        public static int RenderCount => _activeRenders.Count;
 
-        private LIElement _element;
-        private Thread _processThread;
+        private LIElement? _element;
+        private Thread? _processThread;
+        private readonly UnityEvent<Sprite> _onLoad = new();
         private bool _isReady = false;
-        private byte[] _texBytes = null;
+        private byte[] _texBytes = Array.Empty<byte>();
         private uint _texWidth = 1;
         private uint _texHeight = 1;
+        
+        public UnityEvent<Sprite> OnLoad => _onLoad;
 
         /// <summary>
         /// Loads the custom sprite on an LIElement
@@ -43,6 +47,7 @@ namespace LevelImposter.Core
         [HideFromIl2Cpp]
         public void LoadElement(LIElement element)
         {
+            LILogger.Info($"Loading sprite for {element}");
             StopAllCoroutines();
             StartCoroutine(CoLoadElement(element).WrapToIl2Cpp());
         }
@@ -50,23 +55,19 @@ namespace LevelImposter.Core
         [HideFromIl2Cpp]
         private IEnumerator CoLoadElement(LIElement element)
         {
+            _activeRenders.Add(this);
             _element = element;
             _processThread = new Thread(ProcessImage);
             _processThread.Start();
             while (!_isReady || !_shouldRender)
                 yield return null;
-            LoadImage();
             _shouldRender = false;
-            Destroy(this);
+            LoadImage();
         }
 
-        public void Awake()
-        {
-            _renderCount++;
-        }
         public void OnDestroy()
         {
-            _renderCount--;
+            _activeRenders.Remove(this);
         }
         public void LateUpdate()
         {
@@ -81,16 +82,20 @@ namespace LevelImposter.Core
             _isReady = false;
 
             // Get Image Bytes
-            string imgString = _element.properties.spriteData;
+            string imgString = _element?.properties.spriteData ?? "";
             byte[] imgBytes = MapUtils.ParseBase64(imgString);
 
-            // Bytes to FreeImage 
+            // Bytes to FreeImage
             IntPtr texMemory = FreeImage.FreeImage_OpenMemory(
                 Marshal.UnsafeAddrOfPinnedArrayElement(imgBytes, 0),
                 (uint)imgBytes.Length
             );
+            FREE_IMAGE_FORMAT imageFormat = FreeImage.FreeImage_GetFileTypeFromMemory(
+                texMemory,
+                imgBytes.Length
+            );
             IntPtr texHandle = FreeImage.FreeImage_LoadFromMemory(
-                FREE_IMAGE_FORMAT.FIF_PNG,
+                imageFormat,
                 texMemory,
                 0
             );
@@ -124,17 +129,20 @@ namespace LevelImposter.Core
         private void LoadImage()
         {
             // Generate Texture
-            Texture2D texture = new Texture2D(
+            bool pixelArtMode = LIShipStatus.Instance.CurrentMap.properties.pixelArtMode == true;
+            Texture2D texture = new(
                 (int)_texWidth,
                 (int)_texHeight,
                 TextureFormat.BGRA32,
                 1,
                 false
-            );
-
-            texture.wrapMode = TextureWrapMode.Clamp;
+            )
+            {
+                wrapMode = TextureWrapMode.Clamp,
+                filterMode = pixelArtMode ? FilterMode.Point : FilterMode.Bilinear,
+            };
             texture.LoadRawTextureData(_texBytes);
-            texture.Apply();
+            texture.Apply(false, true);
             LIShipStatus.Instance.AddMapTexture(texture);
 
             // Generate Sprite
@@ -150,6 +158,11 @@ namespace LevelImposter.Core
             // Apply Sprite
             SpriteRenderer spriteRenderer = GetComponent<SpriteRenderer>();
             spriteRenderer.sprite = sprite;
+
+            // Fire Events
+            LILogger.Info($"Done loading sprite for {_element}");
+            Destroy(this);
+            _onLoad.Invoke(sprite);
         }
     }
 }

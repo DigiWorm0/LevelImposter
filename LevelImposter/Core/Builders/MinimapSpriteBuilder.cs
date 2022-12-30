@@ -34,17 +34,19 @@ namespace LevelImposter.Core
             spriteObj.transform.localScale = new Vector3(elem.xScale, elem.yScale, 1);
             spriteObj.transform.localRotation = Quaternion.Euler(0, 0, elem.rotation);
 
-            SpriteRenderer oldRenderer = obj.GetComponent<SpriteRenderer>();
-            if (oldRenderer == null)
+            // Sprite Renderer
+            LISpriteLoader spriteLoader = obj.GetComponent<LISpriteLoader>();
+            if (spriteLoader == null)
             {
                 LILogger.Warn("util-minimapsprite does not have a sprite attatched");
                 return;
             }
-            SpriteRenderer newRenderer = spriteObj.AddComponent<SpriteRenderer>();
-            newRenderer.sprite = oldRenderer.sprite;
-            newRenderer.color = oldRenderer.color;
-
-            obj.SetActive(false);
+            SpriteRenderer spriteRenderer = spriteObj.AddComponent<SpriteRenderer>();
+            spriteLoader.OnLoad.AddListener((Action<Sprite>)((Sprite sprite) =>
+            {
+                spriteRenderer.sprite = sprite;
+                UnityEngine.Object.Destroy(obj);
+            }));
         }
 
         public void PostBuild() { }

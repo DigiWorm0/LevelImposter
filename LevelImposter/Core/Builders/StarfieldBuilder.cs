@@ -15,12 +15,11 @@ namespace LevelImposter.Core
                 return;
 
             // Sprite
-            GameObject prefab = UnityEngine.Object.Instantiate(obj, LIShipStatus.Instance.transform);
-            prefab.AddComponent<LIStar>();
-            SpriteRenderer prefabRenderer = obj.GetComponent<SpriteRenderer>();
-            if (prefabRenderer != null)
+            SpriteRenderer spriteRenderer = obj.GetComponent<SpriteRenderer>();
+            LISpriteLoader spriteLoader = obj.GetComponent<LISpriteLoader>();
+            if (spriteRenderer != null)
             {
-                prefabRenderer.material = AssetDB.Decor["dec-rock4"].SpriteRenderer.material;
+                spriteRenderer.material = AssetDB.Decor["dec-rock4"].SpriteRenderer.material;
             }
             else
             {
@@ -28,21 +27,26 @@ namespace LevelImposter.Core
                 return;
             }
 
-            // Stars
-            int count = 20;
-            if (elem.properties.starfieldCount != null)
-                count = (int)elem.properties.starfieldCount;
+            // Star Prefab
+            GameObject starPrefab = UnityEngine.Object.Instantiate(obj);
+            LIStar prefabComp = starPrefab.AddComponent<LIStar>();
+
+            int count = elem.properties.starfieldCount ?? 20;
+            LIStar[] liStars = new LIStar[count];
             for (int i = 0; i < count; i++)
             {
-                GameObject starObj = GameObject.Instantiate(prefab, obj.transform);
-                starObj.name = "Star " + i;
-                LIStar starComp = starObj.GetComponent<LIStar>();
-                starComp.Init(elem);
+                LIStar liStar = UnityEngine.Object.Instantiate(prefabComp, obj.transform);
+                liStar.Init(elem);
+                liStars[i] = liStar;
             }
 
-            // Disable Obj
-            obj.GetComponent<SpriteRenderer>().enabled = false;
-            GameObject.Destroy(prefab);
+            // Clones
+            spriteLoader.OnLoad.AddListener((Action<Sprite>)((Sprite sprite) =>
+            {
+                foreach (LIStar liStar in liStars)
+                    liStar.GetComponent<SpriteRenderer>().sprite = sprite;
+                UnityEngine.Object.Destroy(starPrefab);
+            }));
         }
 
         public void PostBuild() { }
