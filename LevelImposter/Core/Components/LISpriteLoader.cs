@@ -30,14 +30,14 @@ namespace LevelImposter.Core
 
         public static int RenderCount => _activeRenders.Count;
 
+        private readonly UnityEvent<Sprite> _onLoad = new();
         private LIElement? _element;
         private Thread? _processThread;
-        private readonly UnityEvent<Sprite> _onLoad = new();
-        private bool _isReady = false;
         private byte[] _texBytes = Array.Empty<byte>();
         private uint _texWidth = 1;
         private uint _texHeight = 1;
-        
+        private bool _isReady = false;
+
         public UnityEvent<Sprite> OnLoad => _onLoad;
 
         /// <summary>

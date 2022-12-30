@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections;
 using System.IO;
 using System.Text;
 using UnityEngine;
@@ -8,6 +9,7 @@ using LevelImposter.DB;
 using System.Diagnostics;
 using Il2CppInterop.Runtime.Attributes;
 using Il2CppInterop.Runtime.InteropTypes.Arrays;
+using BepInEx.Unity.IL2CPP.Utils.Collections;
 
 namespace LevelImposter.Core
 {
@@ -131,6 +133,7 @@ namespace LevelImposter.Core
         public void LoadMap(LIMap map)
         {
             LILogger.Info("Loading " + map.name + " [" + map.id + "]");
+            StartCoroutine(CoLoadingScreen().WrapToIl2Cpp());
             CurrentMap = map;
             ResetMap();
             _LoadMapProperties(map);
@@ -225,6 +228,31 @@ namespace LevelImposter.Core
         public void AddMapSound(AudioClip clip)
         {
             _mapClips.Push(clip);
+        }
+
+        [HideFromIl2Cpp]
+        private IEnumerator CoLoadingScreen()
+        {
+            if (AmongUsClient.Instance.NetworkMode != NetworkModes.FreePlay)
+                yield break;
+
+            yield return null;
+            SpriteRenderer fullScreen = DestroyableSingleton<HudManager>.Instance.FullScreen;
+            GameObject loadingBean = fullScreen.transform.GetChild(0).gameObject;
+            Color sabColor = fullScreen.color;
+            
+            // Loading
+            fullScreen.color = new Color(0, 0, 0, 0.7f);
+            loadingBean.SetActive(true);
+            fullScreen.gameObject.SetActive(true);
+
+            while (LISpriteLoader.RenderCount > 0)
+                yield return null;
+
+            // Sabotage
+            fullScreen.color = sabColor;
+            loadingBean.SetActive(false);
+            fullScreen.gameObject.SetActive(false);
         }
     }
 }
