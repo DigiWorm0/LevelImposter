@@ -78,19 +78,33 @@ namespace LevelImposter.Core
         [HideFromIl2Cpp]
         public void LoadSprite(string b64Image, Action<Sprite> onLoad)
         {
+            byte[] imgBytes = MapUtils.ParseBase64(b64Image);
+            LoadSprite(imgBytes, onLoad);
+        }
+
+        /// <summary>
+        /// Loads the custom sprite in a seperate thread
+        /// </summary>
+        /// <param name="b64">LIElement to read</param>
+        /// <param name="onLoad">Callback on success</param>
+        [HideFromIl2Cpp]
+        public void LoadSprite(byte[] imgBytes, Action<Sprite> onLoad)
+        {
             if (LIShipStatus.Instance == null)
             {
                 LILogger.Error("Cannot load sprite, LIShipStatus.Instance is null");
                 return;
             }
-            StartCoroutine(CoLoadElement(b64Image, onLoad).WrapToIl2Cpp());
+            StartCoroutine(CoLoadElement(imgBytes, onLoad).WrapToIl2Cpp());
         }
 
         [HideFromIl2Cpp]
-        private IEnumerator CoLoadElement(string b64Image, Action<Sprite> onLoad)
+        private IEnumerator CoLoadElement(byte[] imgBytes, Action<Sprite> onLoad)
         {
             _renderCount++;
-            Task<TextureMetadata> task = Task.Run(() => { return ProcessImage(b64Image); });
+            Task<TextureMetadata> task = Task.Run(() => {
+                return ProcessImage(imgBytes);
+            });
             while (!task.IsCompleted)
                 yield return null;
             while (_renderTimer.ElapsedMilliseconds > (1000 / 15)) // Stay above ~15fps
@@ -106,11 +120,8 @@ namespace LevelImposter.Core
         /// </summary>
         /// <param name="b64Image">Base64 data of image</param>
         [HideFromIl2Cpp]
-        private TextureMetadata ProcessImage(string b64Image)
+        private TextureMetadata ProcessImage(byte[] imgBytes)
         {
-            // Get Image Bytes
-            byte[] imgBytes = MapUtils.ParseBase64(b64Image);
-
             // Bytes to FreeImage
             IntPtr texMemory = FreeImage.FreeImage_OpenMemory(
                 Marshal.UnsafeAddrOfPinnedArrayElement(imgBytes, 0),
@@ -172,7 +183,10 @@ namespace LevelImposter.Core
             };
             texture.LoadRawTextureData(texData.texBytes);
             texture.Apply(false, true);
-            LIShipStatus.Instance.AddMapTexture(texture);
+
+            // Garbage Collection
+            if (LIShipStatus.Instance != null)
+                LIShipStatus.Instance.AddMapTexture(texture);
 
             // Generate Sprite
             Sprite sprite = Sprite.Create(
