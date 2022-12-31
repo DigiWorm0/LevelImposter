@@ -16,16 +16,12 @@ namespace LevelImposter.Core
 
             // Sprite
             SpriteRenderer spriteRenderer = obj.GetComponent<SpriteRenderer>();
-            LISpriteLoader spriteLoader = obj.GetComponent<LISpriteLoader>();
-            if (spriteRenderer != null)
-            {
-                spriteRenderer.material = AssetDB.Decor["dec-rock4"].SpriteRenderer.material;
-            }
-            else
+            if (spriteRenderer == null)
             {
                 LILogger.Warn(elem.name + " missing a sprite");
                 return;
             }
+            spriteRenderer.material = AssetDB.Decor["dec-rock4"].SpriteRenderer.material;
 
             // Star Prefab
             GameObject starPrefab = UnityEngine.Object.Instantiate(obj);
@@ -39,14 +35,17 @@ namespace LevelImposter.Core
                 liStar.Init(elem);
                 liStars[i] = liStar;
             }
+            UnityEngine.Object.Destroy(starPrefab);
 
             // Clones
-            spriteLoader.OnLoad.AddListener((Action<Sprite>)((Sprite sprite) =>
+            SpriteLoader.Instance.OnLoad += (LIElement loadedElem) =>
             {
+                if (loadedElem.id != elem.id)
+                    return;
+
                 foreach (LIStar liStar in liStars)
-                    liStar.GetComponent<SpriteRenderer>().sprite = sprite;
-                UnityEngine.Object.Destroy(starPrefab);
-            }));
+                    liStar.GetComponent<SpriteRenderer>().sprite = spriteRenderer.sprite;
+            };
         }
 
         public void PostBuild() { }

@@ -31,10 +31,10 @@ namespace LevelImposter.Core
         public LIMap CurrentMap { get; private set; }
         public ShipStatus ShipStatus { get; private set; }
 
-        private BuildRouter _buildRouter = new BuildRouter();
-        private Stopwatch _buildTimer = new Stopwatch();
-        private Stack<Texture2D> _mapTextures = new Stack<Texture2D>();
-        private Stack<AudioClip> _mapClips = new Stack<AudioClip>();
+        private BuildRouter _buildRouter = new();
+        private Stopwatch _buildTimer = new();
+        private Stack<Texture2D> _mapTextures = new();
+        private Stack<AudioClip> _mapClips = new();
 
         private readonly List<string> _priorityTypes = new()
         {
@@ -53,8 +53,10 @@ namespace LevelImposter.Core
         {
             Destroy(GetComponent<TagAmbientSoundPlayer>());
 
+            gameObject.AddComponent<SpriteLoader>();
             ShipStatus = GetComponent<ShipStatus>();
             Instance = this;
+
             if (MapLoader.CurrentMap != null)
                 LoadMap(MapLoader.CurrentMap);
             else
@@ -164,9 +166,8 @@ namespace LevelImposter.Core
 
             if (!string.IsNullOrEmpty(map.properties.bgColor))
             {
-                Color bgColor;
-                ColorUtility.TryParseHtmlString(map.properties.bgColor, out bgColor);
-                Camera.main.backgroundColor = bgColor;
+                if (ColorUtility.TryParseHtmlString(map.properties.bgColor, out Color bgColor))
+                    Camera.main.backgroundColor = bgColor;
             }
 
             if (!string.IsNullOrEmpty(map.properties.exileID))
@@ -205,7 +206,7 @@ namespace LevelImposter.Core
             }
 
             _buildTimer.Stop();
-            if (_buildTimer.ElapsedMilliseconds > 1000)
+            if (_buildTimer.ElapsedMilliseconds > 10) // 1000
             {
                 float seconds = Mathf.Round(_buildTimer.ElapsedMilliseconds / 100f) / 10f;
                 LILogger.Warn("Took " + seconds + "s to build " + element.name);
@@ -238,7 +239,7 @@ namespace LevelImposter.Core
 
             yield return null;
             SpriteRenderer fullScreen = DestroyableSingleton<HudManager>.Instance.FullScreen;
-            GameObject loadingBean = fullScreen.transform.GetChild(0).gameObject;
+            GameObject loadingBean = DestroyableSingleton<HudManager>.Instance.GameLoadAnimation;
             Color sabColor = fullScreen.color;
             
             // Loading
@@ -246,7 +247,7 @@ namespace LevelImposter.Core
             loadingBean.SetActive(true);
             fullScreen.gameObject.SetActive(true);
 
-            while (LISpriteLoader.RenderCount > 0)
+            while (SpriteLoader.Instance.RenderCount > 0)
                 yield return null;
 
             // Sabotage

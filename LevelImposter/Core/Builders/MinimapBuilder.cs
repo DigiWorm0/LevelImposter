@@ -32,21 +32,29 @@ namespace LevelImposter.Core
             Vector3 mapOffset = -(obj.transform.localPosition / mapScale);
 
             // Sprite Renderer
-            LISpriteLoader spriteLoader = obj.GetComponent<LISpriteLoader>();
-            if (spriteLoader != null)
+            SpriteRenderer spriteRenderer = obj.GetComponent<SpriteRenderer>();
+            if (spriteRenderer == null)
             {
-                GameObject background = mapBehaviour.ColorControl.gameObject;
-                SpriteRenderer bgRenderer = background.GetComponent<SpriteRenderer>();
-                background.transform.localPosition = background.transform.localPosition;
-                background.transform.localScale = obj.transform.localScale / mapScale;
-                background.transform.localRotation = obj.transform.localRotation;
-
-                spriteLoader.OnLoad.AddListener((Action<Sprite>)((Sprite sprite) =>
-                {
-                    bgRenderer.sprite = sprite;
-                    UnityEngine.Object.Destroy(obj);
-                }));
+                LILogger.Warn("Minimap object has no sprite attached");
+                return;
             }
+
+            // Background
+            GameObject background = mapBehaviour.ColorControl.gameObject;
+            SpriteRenderer bgRenderer = background.GetComponent<SpriteRenderer>();
+            background.transform.localPosition = background.transform.localPosition;
+            background.transform.localScale = obj.transform.localScale / mapScale;
+            background.transform.localRotation = obj.transform.localRotation;
+
+            // On Load
+            SpriteLoader.Instance.OnLoad += (LIElement loadedElem) =>
+            {
+                if (loadedElem.id != elem.id)
+                    return;
+
+                bgRenderer.sprite = spriteRenderer.sprite;
+                UnityEngine.Object.Destroy(obj);
+            };
 
             // Offsets
             Transform roomNames = mapBehaviour.transform.GetChild(mapBehaviour.transform.childCount - 1);

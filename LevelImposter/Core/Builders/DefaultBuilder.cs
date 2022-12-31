@@ -28,13 +28,7 @@ namespace LevelImposter.Core
                 }
                 else
                 {
-                    /*
-                    spriteRenderer.sprite = MapUtils.GenerateSprite(
-                        MapUtils.ParseBase64(elem.properties.spriteData),
-                        LIShipStatus.Instance.CurrentMap.properties.pixelArtMode == true
-                    );*/
-                    LISpriteLoader spriteLoader = obj.AddComponent<LISpriteLoader>();
-                    spriteLoader.LoadElement(elem);
+                    SpriteLoader.Instance.LoadSprite(elem, obj);
                 }
             }
 

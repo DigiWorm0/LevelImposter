@@ -3,8 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
-using LevelImposter.Shop;
-using PowerTools;
 
 namespace LevelImposter.Core
 {
@@ -17,7 +15,7 @@ namespace LevelImposter.Core
     {
         public static bool Prefix(FollowerCamera __instance)
         {
-            if (LISpriteLoader.RenderCount > 0)
+            if (SpriteLoader.Instance.RenderCount > 0)
             {
                 __instance.centerPosition = __instance.transform.position;
                 return false;

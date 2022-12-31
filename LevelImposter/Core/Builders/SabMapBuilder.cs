@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using UnityEngine.Events;
@@ -136,15 +136,15 @@ namespace LevelImposter.Core
             button.OnClick.AddListener(btnAction);
 
             // Sprite Renderer
-            LISpriteLoader spriteLoader = obj.GetComponent<LISpriteLoader>();
-            if (spriteLoader != null)
+            SpriteRenderer spriteRenderer = obj.GetComponent<SpriteRenderer>();
+            SpriteLoader.Instance.OnLoad += (LIElement loadedElem) =>
             {
-                spriteLoader.OnLoad.AddListener((Action<Sprite>)((Sprite sprite) =>
-                {
-                    btnRenderer.sprite = sprite;
-                    UnityEngine.Object.Destroy(obj);
-                }));
-            }
+                if (loadedElem.id != elem.id)
+                    return;
+
+                btnRenderer.sprite = spriteRenderer.sprite;
+                UnityEngine.Object.Destroy(obj);
+            };
         }
 
 

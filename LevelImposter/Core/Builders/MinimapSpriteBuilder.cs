@@ -35,18 +35,23 @@ namespace LevelImposter.Core
             spriteObj.transform.localRotation = Quaternion.Euler(0, 0, elem.rotation);
 
             // Sprite Renderer
-            LISpriteLoader spriteLoader = obj.GetComponent<LISpriteLoader>();
-            if (spriteLoader == null)
+            SpriteRenderer spriteRenderer = obj.GetComponent<SpriteRenderer>();
+            if (spriteRenderer == null)
             {
                 LILogger.Warn("util-minimapsprite does not have a sprite attatched");
                 return;
             }
-            SpriteRenderer spriteRenderer = spriteObj.AddComponent<SpriteRenderer>();
-            spriteLoader.OnLoad.AddListener((Action<Sprite>)((Sprite sprite) =>
+
+            // Background
+            SpriteRenderer bgRenderer = spriteObj.AddComponent<SpriteRenderer>();
+            SpriteLoader.Instance.OnLoad += (LIElement loadedElem) =>
             {
-                spriteRenderer.sprite = sprite;
+                if (loadedElem.id != elem.id)
+                    return;
+
+                bgRenderer.sprite = spriteRenderer.sprite;
                 UnityEngine.Object.Destroy(obj);
-            }));
+            };
         }
 
         public void PostBuild() { }
