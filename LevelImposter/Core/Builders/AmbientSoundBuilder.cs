@@ -35,19 +35,24 @@ namespace LevelImposter.Core
                 return;
             }
 
+            // Sound Data
             LISound soundData = elem.properties.sounds[0];
             if (soundData.data == null)
             {
                 LILogger.Warn(elem.name + " missing audio data");
                 return;
             }
-            AudioClip clip = MapUtils.ConvertToAudio(elem.name, soundData.data);
 
             // Sound Player
             AmbientSoundPlayer ambientPlayer = obj.AddComponent<AmbientSoundPlayer>();
             ambientPlayer.HitAreas = colliders;
-            ambientPlayer.AmbientSound = clip;
             ambientPlayer.MaxVolume = soundData.volume;
+
+            // WAVLoader
+            WAVLoader.Instance.LoadWAV(elem, soundData, (AudioClip audioClip) =>
+            {
+                ambientPlayer.AmbientSound = audioClip;
+            });
 
             // Trigger Sound
             if (elem.type == "util-triggersound")

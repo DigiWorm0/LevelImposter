@@ -1,37 +1,72 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
+using System.Runtime.InteropServices;
 using UnityEngine;
+using BepInEx.Unity.IL2CPP.Utils.Collections;
+using System.Collections;
 
 namespace LevelImposter.Core
 {
     /// <summary>
     /// Converts byte[] of WAV files into AudioClips
     /// </summary>
-    public class WAVLoader
+    public class WAVLoader : MonoBehaviour
     {
-        private static float bytesToFloat(byte firstByte, byte secondByte)
+        public WAVLoader(IntPtr intPtr) : base(intPtr)
         {
-            return ((short)((secondByte << 8) | firstByte)) / 32768.0F;
         }
 
-        private static int bytesToInt(byte[] bytes, int offset = 0)
+        private bool _canProcess = true;
+
+        public static WAVLoader Instance;
+
+        public void Awake()
         {
-            int value = 0;
-            for (int i = 0; i < 4; i++)
+            Instance = this;
+        }
+        public void LateUpdate()
+        {
+            _canProcess = true;
+        }
+
+        public void LoadWAV(LIElement element, LISound sound, Action<AudioClip> onLoad)
+        {
+            LILogger.Info($"Loading sound for {element}");
+            LoadWAV(sound.data ?? "", (AudioClip audioClip) =>
             {
-                value |= ((int)bytes[offset + i]) << (i * 8);
-            }
-            return value;
+                LILogger.Info($"Done loading sound for {element}");
+                onLoad(audioClip);
+            });
         }
 
-        /// <summary>
-        /// Converts PCM WAV data to a Unity AudioClip
-        /// </summary>
-        /// <param name="wav">Mono or stereo WAV data in PCM format</param>
-        /// <returns>a Unity AudioClip representing the data</returns>
-        public static AudioClip LoadPCM(byte[] wav)
+        public void LoadWAV(string b64, Action<AudioClip> onLoad)
         {
+            if (LIShipStatus.Instance == null)
+            {
+                LILogger.Error("Cannot load audio, LIShipStatus.Instance is null");
+                return;
+            }
+            StartCoroutine(CoLoadAudio(b64, onLoad).WrapToIl2Cpp());
+        }
+
+        private IEnumerator CoLoadAudio(string b64, Action<AudioClip> onLoad)
+        {
+            Task<AudioMetadata> task = Task.Run(() => { return ProcessWAV(b64); });
+            while (!task.IsCompleted || !_canProcess)
+                yield return null;
+            AudioMetadata audioData = task.Result;
+            _canProcess = false;
+            AudioClip audioClip = LoadWAV(audioData);
+            onLoad.Invoke(audioClip);
+        }
+
+        private AudioMetadata ProcessWAV(string b64Audio)
+        {
+            // Get Image Bytes
+            byte[] wav = MapUtils.ParseBase64(b64Audio);
+
             // Metadata
             int channelCount = wav[22];
             int frequency = bytesToInt(wav, 24);
@@ -64,18 +99,52 @@ namespace LevelImposter.Core
                 i += channelCount;
             }
 
-            // Make Audio Clip
+            // Return Metadata
+            return new AudioMetadata()
+            {
+                sampleCount = sampleCount,
+                channelCount = channelCount,
+                frequency = frequency,
+                pcmData = pcmData
+            };
+        }
+
+        private float bytesToFloat(byte firstByte, byte secondByte)
+        {
+            return ((short)((secondByte << 8) | firstByte)) / 32768.0F;
+        }
+
+        private int bytesToInt(byte[] bytes, int offset = 0)
+        {
+            int value = 0;
+            for (int i = 0; i < 4; i++)
+            {
+                value |= ((int)bytes[offset + i]) << (i * 8);
+            }
+            return value;
+        }
+
+        private AudioClip LoadWAV(AudioMetadata audioData)
+        {
             AudioClip clip = AudioClip.Create(
                 "LI Audio",
-                sampleCount,
-                channelCount,
-                frequency,
+                audioData.sampleCount,
+                audioData.channelCount,
+                audioData.frequency,
                 false,
                 false
             );
-            clip.SetData(pcmData, 0);
+            clip.SetData(audioData.pcmData, 0);
 
             return clip;
+        }
+
+        private class AudioMetadata
+        {
+            public int sampleCount = 0;
+            public int channelCount = 0;
+            public int frequency = 0;
+            public float[] pcmData = Array.Empty<float>();
         }
     }
 }

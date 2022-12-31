@@ -52,8 +52,8 @@ namespace LevelImposter.Core
         public void Awake()
         {
             Destroy(GetComponent<TagAmbientSoundPlayer>());
-
             gameObject.AddComponent<SpriteLoader>();
+            gameObject.AddComponent<WAVLoader>();
             ShipStatus = GetComponent<ShipStatus>();
             Instance = this;
 

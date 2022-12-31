@@ -138,20 +138,6 @@ namespace LevelImposter.Core
         }
 
         /// <summary>
-        /// Converts a base64 encoded string into a Unity AudioClip
-        /// </summary>
-        /// <param name="name">Name of the AudioClip object</param>
-        /// <param name="base64">Base64 encoded data</param>
-        /// <returns>Unity AudioClip from data</returns>
-        public static AudioClip ConvertToAudio(string name, string base64)
-        {
-            byte[] byteData = ParseBase64(base64);
-            AudioClip audio = WAVLoader.LoadPCM(byteData); // TODO Support other audio formats
-            LIShipStatus.Instance.AddMapSound(audio);
-            return audio;
-        }
-
-        /// <summary>
         /// Converts an LIColor to UnityEngine.Color
         /// </summary>
         /// <param name="color">Color to convert from</param>

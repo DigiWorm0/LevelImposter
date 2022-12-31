@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
@@ -22,6 +22,10 @@ namespace LevelImposter.Core
     /// </summary>
     public class SpriteLoader : MonoBehaviour
     {
+        public SpriteLoader(IntPtr intPtr) : base(intPtr)
+        {
+        }
+
         private bool _canRender = true;
         private int _renderCount = 0;
 
@@ -173,7 +177,7 @@ namespace LevelImposter.Core
             return sprite;
         }
 
-        public class TextureMetadata
+        private class TextureMetadata
         {
             public int width = 0;
             public int height = 0;
