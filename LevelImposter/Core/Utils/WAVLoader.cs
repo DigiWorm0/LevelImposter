@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using System.Runtime.InteropServices;
 using UnityEngine;
 using BepInEx.Unity.IL2CPP.Utils.Collections;
+using Il2CppInterop.Runtime.Attributes;
 using System.Collections;
 
 namespace LevelImposter.Core
@@ -18,19 +19,14 @@ namespace LevelImposter.Core
         {
         }
 
-        private bool _canProcess = true;
-
         public static WAVLoader Instance;
 
         public void Awake()
         {
             Instance = this;
         }
-        public void LateUpdate()
-        {
-            _canProcess = true;
-        }
 
+        [HideFromIl2Cpp]
         public void LoadWAV(LIElement element, LISound sound, Action<AudioClip> onLoad)
         {
             LILogger.Info($"Loading sound for {element}");
@@ -41,6 +37,7 @@ namespace LevelImposter.Core
             });
         }
 
+        [HideFromIl2Cpp]
         public void LoadWAV(string b64, Action<AudioClip> onLoad)
         {
             if (LIShipStatus.Instance == null)
@@ -51,17 +48,18 @@ namespace LevelImposter.Core
             StartCoroutine(CoLoadAudio(b64, onLoad).WrapToIl2Cpp());
         }
 
+        [HideFromIl2Cpp]
         private IEnumerator CoLoadAudio(string b64, Action<AudioClip> onLoad)
         {
             Task<AudioMetadata> task = Task.Run(() => { return ProcessWAV(b64); });
-            while (!task.IsCompleted || !_canProcess)
+            while (!task.IsCompleted)
                 yield return null;
             AudioMetadata audioData = task.Result;
-            _canProcess = false;
             AudioClip audioClip = LoadWAV(audioData);
             onLoad.Invoke(audioClip);
         }
 
+        [HideFromIl2Cpp]
         private AudioMetadata ProcessWAV(string b64Audio)
         {
             // Get Image Bytes
@@ -109,11 +107,13 @@ namespace LevelImposter.Core
             };
         }
 
+        [HideFromIl2Cpp]
         private float bytesToFloat(byte firstByte, byte secondByte)
         {
             return ((short)((secondByte << 8) | firstByte)) / 32768.0F;
         }
 
+        [HideFromIl2Cpp]
         private int bytesToInt(byte[] bytes, int offset = 0)
         {
             int value = 0;
@@ -124,6 +124,7 @@ namespace LevelImposter.Core
             return value;
         }
 
+        [HideFromIl2Cpp]
         private AudioClip LoadWAV(AudioMetadata audioData)
         {
             AudioClip clip = AudioClip.Create(

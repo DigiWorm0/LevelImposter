@@ -205,12 +205,10 @@ namespace LevelImposter.Core
                 LILogger.Error("Error while building " + element.name + ":\n" + e);
             }
 
+            // Build Timer
             _buildTimer.Stop();
-            if (_buildTimer.ElapsedMilliseconds > 10) // 1000
-            {
-                float seconds = Mathf.Round(_buildTimer.ElapsedMilliseconds / 100f) / 10f;
-                LILogger.Warn("Took " + seconds + "s to build " + element.name);
-            }
+            if (_buildTimer.ElapsedMilliseconds > 100)
+                LILogger.Warn($"Took {_buildTimer.ElapsedMilliseconds}ms to build {element.name}");
         }
 
         /// <summary>
@@ -243,7 +241,7 @@ namespace LevelImposter.Core
             Color sabColor = fullScreen.color;
             
             // Loading
-            fullScreen.color = new Color(0, 0, 0, 0.7f);
+            fullScreen.color = new Color(0, 0, 0, 0.8f);
             loadingBean.SetActive(true);
             fullScreen.gameObject.SetActive(true);
 

@@ -26,12 +26,14 @@ namespace LevelImposter.Core
         {
         }
 
-        private bool _canRender = true;
+        private Stopwatch _renderTimer = new();
         private int _renderCount = 0;
 
         public int RenderCount => _renderCount;
-        public delegate void SpriteEventHandle(LIElement elem);
+
+        [HideFromIl2Cpp]
         public event SpriteEventHandle OnLoad;
+        public delegate void SpriteEventHandle(LIElement elem);
 
         public static SpriteLoader Instance;
 
@@ -39,9 +41,10 @@ namespace LevelImposter.Core
         {
             Instance = this;
         }
-        public void LateUpdate()
+        public void Update()
         {
-            _canRender = true;
+            if (_renderCount > 0)
+                _renderTimer.Restart();
         }
 
         /// <summary>
@@ -50,6 +53,7 @@ namespace LevelImposter.Core
         /// </summary>
         /// <param name="element">LIElement to grab sprite from</param>
         /// <param name="obj">GameObject to apply sprite data to</param>
+        [HideFromIl2Cpp]
         public void LoadSprite(LIElement element, GameObject obj)
         {
             LILogger.Info($"Loading sprite for {element}");
@@ -71,6 +75,7 @@ namespace LevelImposter.Core
         /// </summary>
         /// <param name="b64">LIElement to read</param>
         /// <param name="onLoad">Callback on success</param>
+        [HideFromIl2Cpp]
         public void LoadSprite(string b64Image, Action<Sprite> onLoad)
         {
             if (LIShipStatus.Instance == null)
@@ -81,15 +86,16 @@ namespace LevelImposter.Core
             StartCoroutine(CoLoadElement(b64Image, onLoad).WrapToIl2Cpp());
         }
 
+        [HideFromIl2Cpp]
         private IEnumerator CoLoadElement(string b64Image, Action<Sprite> onLoad)
         {
             _renderCount++;
             Task<TextureMetadata> task = Task.Run(() => { return ProcessImage(b64Image); });
-            yield return null;
-            while (!task.IsCompleted || !_canRender)
+            while (!task.IsCompleted)
+                yield return null;
+            while (_renderTimer.ElapsedMilliseconds > (1000 / 15)) // Stay above ~15fps
                 yield return null;
             TextureMetadata texData = task.Result;
-            _canRender = false;
             Sprite sprite = LoadImage(texData);
             onLoad.Invoke(sprite);
             _renderCount--;
@@ -99,6 +105,7 @@ namespace LevelImposter.Core
         /// Thread-safe image processer
         /// </summary>
         /// <param name="b64Image">Base64 data of image</param>
+        [HideFromIl2Cpp]
         private TextureMetadata ProcessImage(string b64Image)
         {
             // Get Image Bytes
@@ -147,6 +154,7 @@ namespace LevelImposter.Core
             };
         }
 
+        [HideFromIl2Cpp]
         private Sprite LoadImage(TextureMetadata texData)
         {
             // Generate Texture
