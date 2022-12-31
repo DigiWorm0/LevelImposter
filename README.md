@@ -108,7 +108,8 @@ git push feature/cool-feature
 ### Dependencies
 [Firebase](https://firebase.google.com/) - API Database and Servers\
 [Reactor](https://docs.reactor.gg/) - Among Us Mod RPCs and Interop\
-[BepInEx](https://github.com/BepInEx/BepInEx) - Unity Modding Framework
+[BepInEx](https://github.com/BepInEx/BepInEx) - Unity Modding Framework\
+[FreeImage](https://freeimage.sourceforge.io/) - External Image Processor
 
 ### License
 This software is distributed under the GNU GPLv3 License

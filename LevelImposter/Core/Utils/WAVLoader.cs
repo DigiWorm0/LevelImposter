@@ -21,9 +21,17 @@ namespace LevelImposter.Core
 
         public static WAVLoader Instance;
 
+        private Stack<AudioClip> _mapClips = new();
+
         public void Awake()
         {
             Instance = this;
+        }
+        public void OnDestroy()
+        {
+            LILogger.Info("Destroying " + _mapClips.Count + " map sounds");
+            while (_mapClips.Count > 0)
+                Destroy(_mapClips.Pop());
         }
 
         [HideFromIl2Cpp]
@@ -136,6 +144,7 @@ namespace LevelImposter.Core
                 false
             );
             clip.SetData(audioData.pcmData, 0);
+            _mapClips.Push(clip);
 
             return clip;
         }

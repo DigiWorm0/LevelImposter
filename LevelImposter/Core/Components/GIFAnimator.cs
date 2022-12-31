@@ -40,6 +40,7 @@ namespace LevelImposter.Core
         /// <param name="element">Element that is initialized</param>
         /// <param name="sprites">Array of sprites representing each frame</param>
         /// <param name="frameTimes">Array of floats representing the times each frame is visible</param>
+        [HideFromIl2Cpp]
         public void Init(LIElement element, Sprite[] sprites, float[] frameTimes)
         {
             _spriteRenderer = GetComponent<SpriteRenderer>();

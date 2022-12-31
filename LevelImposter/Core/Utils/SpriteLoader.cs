@@ -28,6 +28,7 @@ namespace LevelImposter.Core
 
         private Stopwatch _renderTimer = new();
         private int _renderCount = 0;
+        private Stack<Sprite> _mapTextures = new();
 
         public int RenderCount => _renderCount;
 
@@ -45,6 +46,16 @@ namespace LevelImposter.Core
         {
             if (_renderCount > 0)
                 _renderTimer.Restart();
+        }
+        public void OnDestroy()
+        {
+            LILogger.Info("Destroying " + _mapTextures.Count + " map textures");
+            while (_mapTextures.Count > 0)
+            {
+                Sprite sprite = _mapTextures.Pop();
+                Destroy(sprite.texture);
+                Destroy(sprite);
+            }
         }
 
         /// <summary>
@@ -209,6 +220,7 @@ namespace LevelImposter.Core
             }
         }
 
+        [HideFromIl2Cpp]
         private TextureMetadata TextureHandleToMetadata(IntPtr texHandle)
         {
             uint texWidth = FreeImage.FreeImage_GetWidth(texHandle);
@@ -253,10 +265,6 @@ namespace LevelImposter.Core
             texture.LoadRawTextureData(texData.texBytes);
             texture.Apply(false, true);
 
-            // Garbage Collection
-            if (LIShipStatus.Instance != null)
-                LIShipStatus.Instance.AddMapTexture(texture);
-
             // Generate Sprite
             texData.sprite = Sprite.Create(
                 texture,
@@ -266,6 +274,7 @@ namespace LevelImposter.Core
                 0,
                 SpriteMeshType.FullRect
             );
+            _mapTextures.Push(texData.sprite);
 
             return texData;
         }
