@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
@@ -61,7 +61,8 @@ namespace LevelImposter.Core
                 spriteRenderer.sprite = sprite;
                 spriteRenderer.color = spriteColor;
                 LILogger.Info($"Done loading sprite for {element}");
-                OnLoad(element);
+                if (OnLoad != null)
+                    OnLoad.Invoke(element);
             });
         }
 
@@ -84,6 +85,7 @@ namespace LevelImposter.Core
         {
             _renderCount++;
             Task<TextureMetadata> task = Task.Run(() => { return ProcessImage(b64Image); });
+            yield return null;
             while (!task.IsCompleted || !_canRender)
                 yield return null;
             TextureMetadata texData = task.Result;
