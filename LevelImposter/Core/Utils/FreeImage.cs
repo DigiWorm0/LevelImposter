@@ -12,6 +12,7 @@ namespace LevelImposter.Core
         FIF_JNG = 3,
         FIF_KOALA = 4,
         FIF_LBM = 5,
+        FIF_IFF = 5,
         FIF_MNG = 6,
         FIF_PBM = 7,
         FIF_PBMRAW = 8,
@@ -28,19 +29,60 @@ namespace LevelImposter.Core
         FIF_WBMP = 19,
         FIF_PSD = 20,
         FIF_CUT = 21,
-        FIF_IFF = FIF_LBM,
         FIF_XBM = 22,
-        FIF_XPM = 23
+        FIF_XPM = 23,
+        FIF_DDS = 24,
+        FIF_GIF = 25,
+        FIF_HDR = 26,
+        FIF_FAXG3 = 27,
+        FIF_SGI = 28,
+        FIF_EXR = 29,
+        FIF_J2K = 30,
+        FIF_JP2 = 31,
+        FIF_PFM = 32,
+        FIF_PICT = 33,
+        FIF_RAW = 34,
+        FIF_WEBP = 35,
+        FIF_JXR = 36
     }
 
-    public enum FREE_IMAGE_FILTER
+    public enum FREE_IMAGE_LOAD_FLAGS
     {
-        FILTER_BOX = 0,
-        FILTER_BICUBIC = 1,
-        FILTER_BILINEAR = 2,
-        FILTER_BSPLINE = 3,
-        FILTER_CATMULLROM = 4,
-        FILTER_LANCZOS3 = 5
+        DEFAULT = 0,
+        GIF_LOAD256 = 1,
+        GIF_PLAYBACK = 2,
+        ICO_MAKEALPHA = 1,
+        JPEG_FAST = 1,
+        JPEG_ACCURATE = 2,
+        JPEG_CMYK = 4,
+        JPEG_EXIFROTATE = 8,
+        PCD_BASE = 1,
+        PCD_BASEDIV4 = 2,
+        PCD_BASEDIV16 = 3,
+        PNG_IGNOREGAMMA = 1,
+        TARGA_LOAD_RGB888 = 1,
+        TIFF_CMYK = 1,
+        RAW_PREVIEW = 1,
+        RAW_DISPLAY = 2,
+        RAW_HALFSIZE = 4,
+        RAW_UNPROCESSED = 8,
+        FIF_LOAD_NOPIXELS = 0x8000
+    }
+
+    public enum FREE_IMAGE_MDMODEL
+    {
+        FIMD_NODATA = -1,
+        FIMD_COMMENTS = 0,
+        FIMD_EXIF_MAIN = 1,
+        FIMD_EXIF_EXIF = 2,
+        FIMD_EXIF_GPS = 3,
+        FIMD_EXIF_MAKERNOTE = 4,
+        FIMD_EXIF_INTEROP = 5,
+        FIMD_IPTC = 6,
+        FIMD_XMP = 7,
+        FIMD_GEOTIFF = 8,
+        FIMD_ANIMATION = 9,
+        FIMD_CUSTOM = 10
     }
 
     public class FreeImage
@@ -65,8 +107,20 @@ namespace LevelImposter.Core
         [DllImport(FreeImageLibrary, EntryPoint = "FreeImage_LoadFromMemory")]
         public static extern IntPtr FreeImage_LoadFromMemory(FREE_IMAGE_FORMAT format, IntPtr stream, int flags);
 
+        [DllImport(FreeImageLibrary, EntryPoint = "FreeImage_LoadMultiBitmapFromMemory")]
+        public static extern IntPtr FreeImage_LoadMultiBitmapFromMemory(FREE_IMAGE_FORMAT format, IntPtr stream, int flags);
+
+        [DllImport(FreeImageLibrary, EntryPoint = "FreeImage_LockPage")]
+        public static extern IntPtr FreeImage_LockPage(IntPtr multiHandle, int page);
+
+        [DllImport(FreeImageLibrary, EntryPoint = "FreeImage_UnlockPage")]
+        public static extern void FreeImage_UnlockPage(IntPtr multiHandle, IntPtr handle, bool isChanged);
+
         [DllImport(FreeImageLibrary, EntryPoint = "FreeImage_Unload")]
         public static extern void FreeImage_Unload(IntPtr dib);
+
+        [DllImport(FreeImageLibrary, EntryPoint = "FreeImage_CloseMultiBitmap")]
+        public static extern bool FreeImage_CloseMultiBitmap(IntPtr handle, int flags);
 
         [DllImport(FreeImageLibrary, EntryPoint = "FreeImage_Save")]
         public static extern bool FreeImage_Save(FREE_IMAGE_FORMAT format, IntPtr handle, string filename, int flags);
@@ -83,14 +137,20 @@ namespace LevelImposter.Core
         [DllImport(FreeImageLibrary, EntryPoint = "FreeImage_ConvertTo32Bits")]
         public static extern IntPtr FreeImage_ConvertTo32Bits(IntPtr handle);
 
-        [DllImport(FreeImageLibrary, EntryPoint = "FreeImage_Rescale")]
-        public static extern IntPtr FreeImage_Rescale(IntPtr dib, int dst_width, int dst_height, FREE_IMAGE_FILTER filter);
-
         [DllImport(FreeImageLibrary, EntryPoint = "FreeImage_GetWidth")]
         public static extern uint FreeImage_GetWidth(IntPtr handle);
 
         [DllImport(FreeImageLibrary, EntryPoint = "FreeImage_GetHeight")]
         public static extern uint FreeImage_GetHeight(IntPtr handle);
+
+        [DllImport(FreeImageLibrary, EntryPoint = "FreeImage_GetPageCount")]
+        public static extern int FreeImage_GetPageCount(IntPtr handle);
+
+        [DllImport(FreeImageLibrary, EntryPoint = "FreeImage_GetMetadata")]
+        public static extern bool FreeImage_GetMetadata(FREE_IMAGE_MDMODEL model, IntPtr handle, string key, out IntPtr tag);
+    
+        [DllImport(FreeImageLibrary, EntryPoint = "FreeImage_GetTagValue")]
+        public static extern IntPtr FreeImage_GetTagValue(IntPtr tag);
 
         [DllImport(FreeImageLibrary, EntryPoint = "FreeImage_GetVersion")]
         public static extern IntPtr FreeImage_GetVersion();
@@ -104,11 +164,14 @@ namespace LevelImposter.Core
             return PtrToString(FreeImage.FreeImage_GetVersion());
         }
 
-        private static string PtrToString(IntPtr pointer)
+        public static string PtrToString(IntPtr pointer)
         {
-            if (pointer != IntPtr.Zero)
-                return Marshal.PtrToStringAnsi(pointer);
-            return null;
+            return Marshal.PtrToStringAnsi(pointer);
+        }
+
+        public static IntPtr StringToPtr(string text)
+        {
+            return Marshal.StringToHGlobalAnsi(text);
         }
     }
 }

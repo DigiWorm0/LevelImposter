@@ -143,7 +143,7 @@ namespace LevelImposter.Shop
             {
                 ThumbnailFileAPI.Instance.Get(_currentMap.id, (Texture2D texture) =>
                 {
-                    _thumbnail.sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), Vector2.zero);
+                    _thumbnail.sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f), 100.0f, 0, SpriteMeshType.FullRect);
                     _isCustomTex = true;
                 });
             }
@@ -153,7 +153,7 @@ namespace LevelImposter.Shop
                 {
                     byte[] textureData = texture.EncodeToPNG();
                     ThumbnailFileAPI.Instance.Save(_currentMap.id, textureData);
-                    _thumbnail.sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f), 100.0f);
+                    _thumbnail.sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f), 100.0f, 0, SpriteMeshType.FullRect);
                     _isCustomTex = true;
                     textureData = null;
                 });

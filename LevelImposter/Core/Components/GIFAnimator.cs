@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using BepInEx.Unity.IL2CPP.Utils.Collections;
 using Il2CppInterop.Runtime.Attributes;
@@ -12,36 +13,41 @@ namespace LevelImposter.Core
     /// </summary>
     public class GIFAnimator : MonoBehaviour
     {
-        public bool IsAnimating = false;
-
-        private float[] _delays;
-        private Sprite[] _frames;
-        private SpriteRenderer _spriteRenderer;
-        private Coroutine _animationCoroutine = null;
-
         public GIFAnimator(IntPtr intPtr) : base(intPtr)
         {
         }
 
+        private bool _isAnimating = false;
+        private float[] _delays;
+        private Sprite[] _frames;
+        private SpriteRenderer _spriteRenderer;
+        private Coroutine _animationCoroutine = null;
+        private readonly List<string> _autoplayBlacklist = new()
+        {
+            "util-vent1",
+            "util-vent2",
+            "sab-doorv",
+            "sab-doorh",
+            "util-cam"
+        };
+
+        public bool IsAnimating => _isAnimating;
+
+
         /// <summary>
         /// Initializes the component with GIF data
         /// </summary>
-        /// <param name="base64">GIF data in base-64 format</param>
-        public void Init(string base64)
+        /// <param name="element">Element that is initialized</param>
+        /// <param name="sprites">Array of sprites representing each frame</param>
+        /// <param name="frameTimes">Array of floats representing the times each frame is visible</param>
+        public void Init(LIElement element, Sprite[] sprites, float[] frameTimes)
         {
             _spriteRenderer = GetComponent<SpriteRenderer>();
-
-            string sub64 = base64.Substring(base64.IndexOf(",") + 1);
-            byte[] data = Convert.FromBase64String(sub64);
-            MemoryStream stream = new MemoryStream(data);
-            GIFLoader gifLoader = new GIFLoader();
-            GIFImage image = gifLoader.Load(stream);
-
-            _frames = image.GetFrames();
-            _delays = image.GetDelays();
-
-            foreach (Sprite frame in _frames)
-                LIShipStatus.Instance.AddMapTexture(frame.texture);
+            _frames = sprites;
+            _delays = frameTimes;
+            Play(true);
+            if (_autoplayBlacklist.Contains(element.type))
+                Stop();
         }
 
         /// <summary>
@@ -62,16 +68,16 @@ namespace LevelImposter.Core
         {
             if (_animationCoroutine != null)
                 StopCoroutine(_animationCoroutine);
-            IsAnimating = false;
+            _isAnimating = false;
             _spriteRenderer.sprite = _frames[reversed ? _frames.Length - 1 : 0];
         }
 
         [HideFromIl2Cpp]
         private IEnumerator CoAnimate(bool repeat, bool reverse)
         {
-            IsAnimating = true;
+            _isAnimating = true;
             int t = 0;
-            while (IsAnimating)
+            while (_isAnimating)
             {
                 int frame = reverse ? _frames.Length - t - 1 : t;
                 _spriteRenderer.sprite = _frames[frame];

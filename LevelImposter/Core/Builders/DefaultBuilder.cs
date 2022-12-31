@@ -20,16 +20,7 @@ namespace LevelImposter.Core
                 SpriteRenderer spriteRenderer = obj.AddComponent<SpriteRenderer>();
                 if (elem.properties.color != null)
                     spriteRenderer.color = MapUtils.LIColorToColor(elem.properties.color);
-                if (elem.properties.spriteData.StartsWith("data:image/gif;base64,"))
-                {
-                    GIFAnimator animator = obj.AddComponent<GIFAnimator>();
-                    animator.Init(elem.properties.spriteData);
-                    animator.Play(true);
-                }
-                else
-                {
-                    SpriteLoader.Instance.LoadSprite(elem, obj);
-                }
+                SpriteLoader.Instance.LoadSprite(elem, obj);
             }
 
             if (elem.properties.colliders != null)

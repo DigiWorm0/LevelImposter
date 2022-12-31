@@ -33,7 +33,6 @@ namespace LevelImposter.Core
 
             // Default Sprite
             SpriteRenderer spriteRenderer = obj.GetComponent<SpriteRenderer>();
-            GIFAnimator gifAnimator = obj.GetComponent<GIFAnimator>();
             obj.layer = (int)Layer.ShortObjects;
             if (!spriteRenderer)
             {
@@ -47,10 +46,6 @@ namespace LevelImposter.Core
                     SpriteAnim spriteAnim = obj.AddComponent<SpriteAnim>();
                     spriteAnim.Play(spriteAnimClone.m_defaultAnim, spriteAnimClone.Speed);
                 }
-            }
-            else if (gifAnimator != null)
-            {
-                gifAnimator.Stop();
             }
             spriteRenderer.material = utilData.SpriteRenderer.material;
 
