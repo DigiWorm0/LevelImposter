@@ -26,42 +26,19 @@ namespace LevelImposter.Core
         {
         }
 
-        public const float MIN_FRAMERATE = 5.0f;
+        public const float MIN_FRAMERATE = 15.0f;
 
-        private Stack<Texture2D>? _mapTextures = new();
-        private Stopwatch? _renderTimer = new();
-        private int _renderCount = 0;
-
-        public int RenderCount => _renderCount;
+        public static SpriteLoader? Instance;
 
         [HideFromIl2Cpp]
         public event SpriteEventHandle? OnLoad;
         public delegate void SpriteEventHandle(LIElement elem);
 
-        public static SpriteLoader? Instance;
+        private Stack<Sprite>? _mapTextures = new();
+        private Stopwatch? _renderTimer = new();
+        private int _renderCount = 0;
 
-        public void Awake()
-        {
-            Instance = this;
-        }
-        public void Update()
-        {
-            if (_renderCount > 0)
-                _renderTimer?.Restart();
-        }
-        public void OnDestroy()
-        {
-            LILogger.Info("Destroying " + _mapTextures?.Count + " map textures");
-            while (_mapTextures?.Count > 0)
-            {
-                Texture2D texture = _mapTextures.Pop();
-                Destroy(texture);
-                LILogger.Info(texture);
-            }
-            _renderTimer = null;
-            _mapTextures = null;
-            OnLoad = null;
-        }
+        public int RenderCount => _renderCount;
 
         /// <summary>
         /// Loads a custom sprite from an
@@ -204,7 +181,7 @@ namespace LevelImposter.Core
             texData.texStream.Read(buffer, 0, buffer.Length);
             texture.LoadRawTextureData(buffer);
             texture.Apply(false, true);
-            _mapTextures?.Push(texture);
+            allSpritesEver.Add(new WeakReference(texture));
 
             // Generate Sprite
             Sprite sprite = Sprite.Create(
@@ -215,10 +192,34 @@ namespace LevelImposter.Core
                 0,
                 SpriteMeshType.FullRect
             );
+            _mapTextures?.Push(sprite);
+
             return sprite;
         }
 
-        
+        public void Awake()
+        {
+            Instance = this;
+        }
+        public void Update()
+        {
+            if (_renderCount > 0)
+                _renderTimer?.Restart();
+        }
+        public void OnDestroy()
+        {
+            LILogger.Info("Destroying " + _mapTextures?.Count + " map textures");
+            while (_mapTextures?.Count > 0)
+            {
+                Sprite sprite = _mapTextures.Pop();
+                Destroy(sprite);
+                Destroy(sprite.texture);
+            }
+            _renderTimer = null;
+            _mapTextures = null;
+            OnLoad = null;
+        }
+
         /// <summary>
         /// Metadata to store and send animated texture data
         /// </summary>

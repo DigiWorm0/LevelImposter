@@ -241,6 +241,7 @@ namespace LevelImposter.Core
         {
             _currentMap = null;
             Instance = null;
+            GC.Collect();
         }
     }
 }

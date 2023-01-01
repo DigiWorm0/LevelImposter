@@ -12,17 +12,10 @@ namespace LevelImposter.Core
 {
     class VentBuilder : IElemBuilder
     {
-        private static Dictionary<int, LIElement> _ventElementDb = null;
-        private static Dictionary<Guid, Vent> _ventComponentDb = null;
-
+        private Dictionary<int, LIElement> _ventElementDb = new();
+        private Dictionary<Guid, Vent> _ventComponentDb = new();
         private int _ventID = 0;
         private bool _hasVentSound = false;
-
-        public VentBuilder()
-        {
-            _ventElementDb = new Dictionary<int, LIElement>();
-            _ventComponentDb = new Dictionary<Guid, Vent>();
-        }
 
         public void Build(LIElement elem, GameObject obj)
         {
@@ -69,16 +62,18 @@ namespace LevelImposter.Core
             vent.Offset = ventData.Offset;
             vent.Buttons = new Il2CppReferenceArray<ButtonBehavior>(0);
             vent.CleaningIndicators = new Il2CppReferenceArray<GameObject>(0);
-            vent.Id = this._ventID;
+            vent.Id = _ventID;
 
             // Arrows
             GameObject arrowPrefab = utilData.GameObj.transform.FindChild("Arrow").gameObject;
+            GameObject arrowParent = new GameObject($"{obj.name}_arrows");
+            arrowParent.transform.position = obj.transform.position;
             for (int i = 0; i < 3; i++)
-                GenerateArrow(arrowPrefab, vent, i);
+                GenerateArrow(arrowPrefab, vent, i).transform.SetParent(arrowParent.transform);
 
             // Sounds
-            ShipStatus shipStatus = LIShipStatus.Instance.ShipStatus;
-            if (!_hasVentSound)
+            ShipStatus? shipStatus = LIShipStatus.Instance?.ShipStatus;
+            if (!_hasVentSound && shipStatus != null)
             {
                 shipStatus.VentEnterSound = AssetDB.Ships["ss-skeld"].ShipStatus.VentEnterSound;
                 shipStatus.VentMoveSounds = AssetDB.Ships["ss-skeld"].ShipStatus.VentMoveSounds;
@@ -100,7 +95,7 @@ namespace LevelImposter.Core
             // DB
             _ventElementDb.Add(_ventID, elem);
             _ventComponentDb.Add(elem.id, vent);
-            this._ventID++;
+            _ventID++;
         }
 
         public void PostBuild()
@@ -110,7 +105,9 @@ namespace LevelImposter.Core
 
             foreach (var currentVent in _ventElementDb)
             {
-                Vent ventComponent = _ventComponentDb[currentVent.Value.id];
+                bool exists = _ventComponentDb.TryGetValue(currentVent.Value.id, out Vent? ventComponent);
+                if (!exists || ventComponent == null)
+                    continue;
                 if (currentVent.Value.properties.leftVent != null)
                     ventComponent.Left = _ventComponentDb[(Guid)currentVent.Value.properties.leftVent];
                 if (currentVent.Value.properties.middleVent != null)
@@ -126,7 +123,7 @@ namespace LevelImposter.Core
         /// <param name="arrowPrefab">Prefab to steal from</param>
         /// <param name="vent">Vent target</param>
         /// <param name="dir">Direction to point arrow</param>
-        private void GenerateArrow(GameObject arrowPrefab, Vent vent, int dir)
+        private GameObject GenerateArrow(GameObject arrowPrefab, Vent vent, int dir)
         {
             SpriteRenderer cleaningClone = arrowPrefab.transform.FindChild("CleaningIndicator").GetComponent<SpriteRenderer>();
             SpriteRenderer arrowCloneSprite = arrowPrefab.GetComponent<SpriteRenderer>();
@@ -160,8 +157,11 @@ namespace LevelImposter.Core
 
             // Transform
             vent.Buttons = MapUtils.AddToArr(vent.Buttons, arrowBtn);
-            arrowObj.transform.SetParent(vent.transform);
-            arrowObj.transform.localScale = new Vector3(0.4f, 0.4f, 1.0f);
+            arrowObj.transform.localScale = new Vector3(
+                0.4f,
+                0.4f,
+                1.0f
+            );
             arrowObj.active = false;
 
             // Cleaning Indicator
@@ -176,6 +176,8 @@ namespace LevelImposter.Core
             cleaningIndicatorSprite.material = cleaningClone.material;
             cleaningIndicator.active = false;
             vent.CleaningIndicators = MapUtils.AddToArr(vent.CleaningIndicators, cleaningIndicator);
+
+            return arrowObj;
         }
     }
 }
