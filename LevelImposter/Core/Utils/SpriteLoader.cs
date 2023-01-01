@@ -28,7 +28,7 @@ namespace LevelImposter.Core
 
         private Stopwatch _renderTimer = new();
         private int _renderCount = 0;
-        private Stack<Sprite> _mapTextures = new();
+        private Stack<Texture2D> _mapTextures = new();
 
         public int RenderCount => _renderCount;
 
@@ -52,10 +52,12 @@ namespace LevelImposter.Core
             LILogger.Info("Destroying " + _mapTextures.Count + " map textures");
             while (_mapTextures.Count > 0)
             {
-                Sprite sprite = _mapTextures.Pop();
-                Destroy(sprite.texture);
-                Destroy(sprite);
+                Texture2D texture = _mapTextures.Pop();
+                Destroy(texture);
+                LILogger.Info(texture);
             }
+            GC.Collect();
+            Resources.UnloadUnusedAssets();
         }
 
         /// <summary>
@@ -69,25 +71,25 @@ namespace LevelImposter.Core
         {
             LILogger.Info($"Loading sprite for {element}");
             string b64 = element.properties.spriteData ?? "";
-            LoadSprite(b64, (spriteArr, frameTimes) =>
+            LoadSprite(b64, (spriteArr) =>
             {
                 // Handle Error
-                if (spriteArr.Length <= 0)
+                if (spriteArr == null)
                 {
                     LILogger.Warn($"Error loading sprite for {element}");
                     return;
                 }
 
-                if (spriteArr.Length >= 2) // Animated GIF
+                if (spriteArr.isAnimated) // Animated GIF
                 {
                     GIFAnimator gifAnimator = obj.AddComponent<GIFAnimator>();
-                    gifAnimator.Init(element, spriteArr, frameTimes);
+                    gifAnimator.Init(element, spriteArr.spriteArr, spriteArr.frameTimeArr);
                     LILogger.Info($"Done loading animated sprite for {element}");
                 }
                 else // Still Image
                 {
                     SpriteRenderer spriteRenderer = obj.GetComponent<SpriteRenderer>();
-                    spriteRenderer.sprite = spriteArr[0];
+                    spriteRenderer.sprite = spriteArr.sprite;
                     LILogger.Info($"Done loading sprite for {element}");
                 }
 
@@ -102,7 +104,7 @@ namespace LevelImposter.Core
         /// <param name="b64Image">Base64 image data to read</param>
         /// <param name="onLoad">Callback on success w/ an array of Sprites and Frame Delays measured in seconds</param>
         [HideFromIl2Cpp]
-        public void LoadSprite(string b64Image, Action<Sprite[], float[]> onLoad)
+        public void LoadSprite(string b64Image, Action<SpriteList> onLoad)
         {
             byte[] imgBytes = MapUtils.ParseBase64(b64Image);
             LoadSprite(imgBytes, onLoad);
@@ -114,140 +116,65 @@ namespace LevelImposter.Core
         /// <param name="imgBytes">Array of bytes representing image data</param>
         /// <param name="onLoad">Callback on success w/ an array of Sprites and Frame Delays measured in seconds</param>
         [HideFromIl2Cpp]
-        public void LoadSprite(byte[] imgBytes, Action<Sprite[], float[]> onLoad)
+        public void LoadSprite(byte[] imgBytes, Action<SpriteList> onLoad)
         {
-            if (LIShipStatus.Instance == null)
+            StartCoroutine(CoLoadElement(imgBytes, (spriteList) =>
             {
-                LILogger.Error("Cannot load sprite, LIShipStatus.Instance is null");
-                return;
-            }
-            StartCoroutine(CoLoadElement(imgBytes, onLoad).WrapToIl2Cpp());
+                onLoad(spriteList);
+                spriteList = null;
+            }).WrapToIl2Cpp());
         }
 
         [HideFromIl2Cpp]
-        private IEnumerator CoLoadElement(byte[] imgBytes, Action<Sprite[], float[]> onLoad)
+        private IEnumerator CoLoadElement(byte[] imgBytes, Action<SpriteList> onLoad)
         {
             _renderCount++;
-            Task<TextureMetadata[]> task = Task.Run(() => {
-                return ProcessImage(imgBytes);
+
+            // Run Task
+            FreeImageWrapper.TextureList textureList = null;
+            Task<bool> task = Task.Run(() => {
+                return FreeImageWrapper.LoadImage(imgBytes, out textureList);
             });
             while (!task.IsCompleted)
                 yield return null;
-            TextureMetadata[] texDataArr = task.Result;
-            Sprite[] spriteArr = new Sprite[texDataArr.Length];
-            float[] frameTimeArr = new float[texDataArr.Length]; 
-            for (int i = 0; i < texDataArr.Length; i++)
+
+            // Get Output
+            bool isSuccess = task.Result;
+            if (!isSuccess)
+            {
+                onLoad(null);
+                yield break;
+            }
+
+            // Sprite List
+            SpriteList spriteList = new SpriteList();
+            spriteList.spriteArr = new Sprite[textureList.texDataArr.Length];
+            spriteList.frameTimeArr = textureList.frameTimeArr;
+            for (int i = 0; i < textureList.texDataArr.Length; i++)
             {
                 while (_renderTimer.ElapsedMilliseconds > (1000 / 15)) // Stay above ~15fps
                     yield return null;
-                TextureMetadata texData = texDataArr[i];
-                LoadImage(texData);
-                spriteArr[i] = texData.sprite;
-                frameTimeArr[i] = texData.frameTime;
+                FreeImageWrapper.TextureMetadata texData = textureList.texDataArr[i];
+                Sprite sprite = LoadImage(texData);
+                spriteList.spriteArr[i] = sprite;
+                texData.texBytes = Array.Empty<byte>();
+                texData = null;
             }
-            onLoad.Invoke(spriteArr, frameTimeArr);
+            textureList = null;
+
+            // Output
+            onLoad.Invoke(spriteList);
             _renderCount--;
         }
 
+        /// <summary>
+        /// Loads sprite from texture metadata.
+        /// MUST be ran from the main Unity thread.
+        /// </summary>
+        /// <param name="texData">Texture Metadata to load</param>
+        /// <returns>Generated sprite data</returns>
         [HideFromIl2Cpp]
-        private TextureMetadata[] ProcessImage(byte[] imgBytes)
-        {
-            // Bytes to FreeImage
-            IntPtr texMemory = FreeImage.FreeImage_OpenMemory(
-                Marshal.UnsafeAddrOfPinnedArrayElement(imgBytes, 0),
-                (uint)imgBytes.Length
-            );
-            FREE_IMAGE_FORMAT imageFormat = FreeImage.FreeImage_GetFileTypeFromMemory(
-                texMemory,
-                imgBytes.Length
-            );
-
-            if (imageFormat == FREE_IMAGE_FORMAT.FIF_GIF)
-            {
-                // Get Handle
-                IntPtr multiTexHandle = FreeImage.FreeImage_LoadMultiBitmapFromMemory(
-                    imageFormat,
-                    texMemory,
-                    // TODO: Replace GIF_PLAYBACK because it is O(n^2)
-                    (int)FREE_IMAGE_LOAD_FLAGS.GIF_PLAYBACK
-                );
-
-                // Iterate
-                int pageCount = FreeImage.FreeImage_GetPageCount(multiTexHandle);
-                TextureMetadata[] texDataArr = new TextureMetadata[pageCount];
-                for (int page = 0; page < pageCount; page++)
-                {
-                    IntPtr texHandle = FreeImage.FreeImage_LockPage(multiTexHandle, page);
-                    TextureMetadata texData = TextureHandleToMetadata(texHandle);
-                    texDataArr[page] = texData;
-
-                    // Get Frame Time
-                    FreeImage.FreeImage_GetMetadata(
-                        FREE_IMAGE_MDMODEL.FIMD_ANIMATION,
-                        texHandle,
-                        "FrameTime",
-                        out IntPtr tag
-                    );
-                    IntPtr frameTimePtr = FreeImage.FreeImage_GetTagValue(tag);
-                    int frameTime = Marshal.ReadInt32(frameTimePtr);
-                    texData.frameTime = frameTime / 1000.0f;
-
-                    FreeImage.FreeImage_UnlockPage(multiTexHandle, texHandle, false);
-                }
-
-                // Unload
-                FreeImage.FreeImage_CloseMultiBitmap(multiTexHandle, 0);
-                FreeImage.FreeImage_CloseMemory(texMemory);
-                return texDataArr;
-            }
-            else
-            {
-                // Get Handle
-                IntPtr texHandle = FreeImage.FreeImage_LoadFromMemory(
-                    imageFormat,
-                    texMemory,
-                    0
-                );
-
-                // Get Texture
-                TextureMetadata[] texDataArr = new TextureMetadata[1];
-                texDataArr[0] = TextureHandleToMetadata(texHandle);
-
-                // Unload
-                FreeImage.FreeImage_Unload(texHandle);
-                FreeImage.FreeImage_CloseMemory(texMemory);
-                return texDataArr;
-            }
-        }
-
-        [HideFromIl2Cpp]
-        private TextureMetadata TextureHandleToMetadata(IntPtr texHandle)
-        {
-            uint texWidth = FreeImage.FreeImage_GetWidth(texHandle);
-            uint texHeight = FreeImage.FreeImage_GetHeight(texHandle);
-            uint size = texWidth * texHeight * 4;
-            byte[] texBytes = new byte[size];
-            FreeImage.FreeImage_ConvertToRawBits(
-                Marshal.UnsafeAddrOfPinnedArrayElement(texBytes, 0),
-                texHandle,
-                (int)texWidth * 4,
-                32,
-                0,
-                0,
-                0,
-                false
-            );
-
-            return new TextureMetadata()
-            {
-                width = (int)texWidth,
-                height = (int)texHeight,
-                texBytes = texBytes
-            };
-        }
-
-        [HideFromIl2Cpp]
-        private TextureMetadata LoadImage(TextureMetadata texData)
+        private Sprite LoadImage(FreeImageWrapper.TextureMetadata texData)
         {
             // Generate Texture
             bool pixelArtMode = LIShipStatus.Instance.CurrentMap.properties.pixelArtMode == true;
@@ -264,9 +191,10 @@ namespace LevelImposter.Core
             };
             texture.LoadRawTextureData(texData.texBytes);
             texture.Apply(false, true);
+            _mapTextures.Push(texture);
 
             // Generate Sprite
-            texData.sprite = Sprite.Create(
+            Sprite sprite = Sprite.Create(
                 texture,
                 new Rect(0, 0, texture.width, texture.height),
                 new Vector2(0.5f, 0.5f),
@@ -274,21 +202,31 @@ namespace LevelImposter.Core
                 0,
                 SpriteMeshType.FullRect
             );
-            _mapTextures.Push(texData.sprite);
-
-            return texData;
+            return sprite;
         }
 
+        
         /// <summary>
-        /// Metadata to store and send texture data
+        /// Metadata to store and send animated texture data
         /// </summary>
-        private class TextureMetadata
+        public class SpriteList
         {
-            public int width = 0;
-            public int height = 0;
-            public byte[] texBytes = Array.Empty<byte>();
-            public float frameTime = 0; // ms
-            public Sprite sprite;
+            public Sprite[] spriteArr = Array.Empty<Sprite>();
+            public float[] frameTimeArr = Array.Empty<float>();
+            public Sprite sprite
+            {
+                get
+                {
+                    return spriteArr.Length > 0 ? spriteArr[0] : null;
+                }
+            }
+            public bool isAnimated
+            {
+                get
+                {
+                    return spriteArr.Length > 1;
+                }
+            }
         }
     }
 }

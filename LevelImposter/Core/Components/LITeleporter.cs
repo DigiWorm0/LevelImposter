@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
 using Reactor.Networking.Attributes;
+using Il2CppInterop.Runtime.Attributes;
 
 namespace LevelImposter.Core
 {
@@ -15,21 +16,54 @@ namespace LevelImposter.Core
         {
         }
 
-        public LIElement CurrentElem = null;
-        public LITeleporter CurrentTarget = null;
+        private static List<LITeleporter> _teleList = new();
+
+        private LIElement? _elem = null;
+        private LITeleporter? _target = null;
+
+        [HideFromIl2Cpp]
+        public LIElement? CurrentElem => _elem;
+        public LITeleporter? CurrentTarget => _target;
+
+        public void Awake()
+        {
+            _teleList.Add(this);
+        }
+        public void Start()
+        {
+            if (_elem == null)
+                return;
+            foreach (var teleporter in _teleList)
+            {
+                Guid? targetID = _elem.properties.teleporter;
+                if (targetID != null)
+                {
+                    _target = _teleList.Find((tele) => tele.CurrentElem.id == targetID);
+                }
+            }
+        }
+        public void OnDestroy()
+        {
+            _teleList.Remove(this);
+        }
+        [HideFromIl2Cpp]
+        public void SetElement(LIElement elem)
+        {
+            _elem = elem;
+        }
 
         public void OnTriggerEnter2D(Collider2D collider)
         {
             PlayerControl player = collider.GetComponent<PlayerControl>();
             if (player == null)
                 return;
-            if (CurrentElem == null)
+            if (_elem == null || _target == null)
                 return;
             if (!MapUtils.IsLocalPlayer(player.gameObject))
                 return;
 
             // Offset
-            Vector3 offset = transform.position - CurrentTarget.transform.position;
+            Vector3 offset = transform.position - _target.transform.position;
             offset.z = 0;
 
             // Pet

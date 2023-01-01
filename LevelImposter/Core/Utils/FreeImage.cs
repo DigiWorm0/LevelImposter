@@ -154,24 +154,5 @@ namespace LevelImposter.Core
 
         [DllImport(FreeImageLibrary, EntryPoint = "FreeImage_GetVersion")]
         public static extern IntPtr FreeImage_GetVersion();
-
-        /// <summary>
-        /// Gets the library version
-        /// </summary>
-        /// <returns>Version string as "1.2.3"</returns>
-        public static string GetVersion()
-        {
-            return PtrToString(FreeImage.FreeImage_GetVersion());
-        }
-
-        public static string PtrToString(IntPtr pointer)
-        {
-            return Marshal.PtrToStringAnsi(pointer);
-        }
-
-        public static IntPtr StringToPtr(string text)
-        {
-            return Marshal.StringToHGlobalAnsi(text);
-        }
     }
 }

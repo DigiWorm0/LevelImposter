@@ -10,13 +10,6 @@ namespace LevelImposter.Core
 {
     class TeleBuilder : IElemBuilder
     {
-        private static Dictionary<Guid, LITeleporter> _teleporterDb = null;
-
-        public TeleBuilder()
-        {
-            _teleporterDb = new Dictionary<Guid, LITeleporter>();
-        }
-
         public void Build(LIElement elem, GameObject obj)
         {
             if (elem.type != "util-tele")
@@ -25,27 +18,13 @@ namespace LevelImposter.Core
             // Colliders
             Collider2D[] colliders = obj.GetComponentsInChildren<Collider2D>();
             foreach (Collider2D collider in colliders)
-            {
                 collider.isTrigger = true;
-            }
 
             // Teleporter
             LITeleporter tele = obj.AddComponent<LITeleporter>();
-            tele.CurrentElem = elem;
-            _teleporterDb[elem.id] = tele;
+            tele.SetElement(elem);
         }
 
-        public void PostBuild()
-        {
-            foreach (var teleporter in _teleporterDb)
-            {
-                Guid? targetID = teleporter.Value.CurrentElem.properties.teleporter;
-                if (targetID != null)
-                {
-                    _teleporterDb.TryGetValue((Guid)targetID, out LITeleporter target);
-                    teleporter.Value.CurrentTarget = target;
-                }
-            }
-        }
+        public void PostBuild() { }
     }
 }
