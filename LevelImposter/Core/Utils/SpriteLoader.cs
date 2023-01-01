@@ -181,7 +181,6 @@ namespace LevelImposter.Core
             texData.texStream.Read(buffer, 0, buffer.Length);
             texture.LoadRawTextureData(buffer);
             texture.Apply(false, true);
-            allSpritesEver.Add(new WeakReference(texture));
 
             // Generate Sprite
             Sprite sprite = Sprite.Create(
