@@ -15,17 +15,17 @@ namespace LevelImposter.Shop
         {
         }
 
-        private LIMetadata _currentMap;
-        private GameObject _loadingOverlay;
-        private GameObject _errOverlay;
-        private Image _thumbnail;
-        private TMPro.TMP_Text _nameText;
-        private TMPro.TMP_Text _authorText;
-        private TMPro.TMP_Text _descText;
-        private Button _downloadButton;
-        private Button _playButton;
-        private Button _deleteButton;
-        private Button _externalButton;
+        private LIMetadata? _currentMap = null;
+        private GameObject? _loadingOverlay = null;
+        private GameObject? _errOverlay = null;
+        private Image? _thumbnail = null;
+        private TMPro.TMP_Text? _nameText = null;
+        private TMPro.TMP_Text? _authorText = null;
+        private TMPro.TMP_Text? _descText = null;
+        private Button? _downloadButton = null;
+        private Button? _playButton = null;
+        private Button? _deleteButton = null;
+        private Button? _externalButton = null;
         private bool _isCustomTex = false;
         private bool _isEnabled = true;
         private bool _isInLobby
@@ -34,6 +34,152 @@ namespace LevelImposter.Shop
             {
                 return SceneManager.GetActiveScene().name != "HowToPlay";
             }
+        }
+
+        /// <summary>
+        /// Sets map metadata for banner to display
+        /// </summary>
+        /// <param name="map">Map metadata to display</param>
+        [HideFromIl2Cpp]
+        public void SetMap(LIMetadata map)
+        {
+            if (_nameText == null || _authorText == null || _descText == null)
+                return;
+            _currentMap = map;
+            _loadingOverlay?.SetActive(false);
+            _nameText.text = map.name;
+            _authorText.text = map.authorName;
+            _descText.text = map.description;
+            UpdateButtons();
+            GetThumbnail();
+        }
+
+        /// <summary>
+        /// Updates the interactable state of all buttons
+        /// </summary>
+        private void UpdateButtons()
+        {
+            if (_downloadButton == null || _playButton == null || _deleteButton == null || _externalButton == null)
+                return;
+            if (_currentMap == null || !_isEnabled)
+            {
+                _downloadButton.interactable = false;
+                _playButton.interactable = false;
+                _deleteButton.interactable = false;
+                _externalButton.interactable = false;
+            }
+            else
+            {
+                bool mapExists = MapFileAPI.Instance?.Exists(_currentMap.id) ?? false;
+                bool isOnline = !string.IsNullOrEmpty(_currentMap.authorID);
+                _downloadButton.interactable = !mapExists && isOnline;
+                _playButton.interactable = mapExists && (isOnline || !_isInLobby);
+                _deleteButton.interactable = mapExists && isOnline;
+                _externalButton.gameObject.SetActive(isOnline);
+                _errOverlay?.SetActive(mapExists && !isOnline && _isInLobby);
+            }
+        }
+
+        /// <summary>
+        /// Event that is called when the download button is pressed
+        /// </summary>
+        public void OnDownloadClick()
+        {
+            if (_downloadButton == null || _loadingOverlay == null || _currentMap == null)
+                return;
+            _downloadButton.interactable = false;
+            _loadingOverlay.SetActive(true);
+            ShopManager.Instance.SetEnabled(false);
+            LevelImposterAPI.Instance?.DownloadMap(new Guid(_currentMap.id), OnDownload);
+        }
+
+        /// <summary>
+        /// Event that is called when the <c>LIMap</c> is downloaded
+        /// </summary>
+        /// <param name="map"></param>
+        [HideFromIl2Cpp]
+        private void OnDownload(LIMap map)
+        {
+            MapFileAPI.Instance?.Save(map);
+            _loadingOverlay?.SetActive(false);
+            ShopManager.Instance.SetEnabled(true);
+            UpdateButtons();
+        }
+
+        /// <summary>
+        /// Event that is called when the play button is pressed
+        /// </summary>
+        public void OnPlayClick()
+        {
+            if (_currentMap == null)
+                return;
+            if (_isInLobby)
+                ShopManager.Instance.SelectMap(_currentMap.id);
+            else
+                ShopManager.Instance.LaunchMap(_currentMap.id);
+        }
+
+        /// <summary>
+        /// Event that is called when the delete button is pressed
+        /// </summary>
+        public void OnDeleteClick()
+        {
+            if (_currentMap == null)
+                return;
+            MapFileAPI.Instance?.Delete(_currentMap?.id ?? "");
+            ThumbnailFileAPI.Instance?.Delete(_currentMap?.id ?? "");
+            UpdateButtons();
+        }
+
+        /// <summary>
+        /// Event that is called when the external button is pressed
+        /// </summary>
+        public void OnExternalClick()
+        {
+            if (_currentMap == null)
+                return;
+            Application.OpenURL("https://levelimposter.net/#/map/" + _currentMap.id);
+        }
+
+        /// <summary>
+        /// Updates the map banner's active thumbnail
+        /// </summary>
+        private void GetThumbnail()
+        {
+            if (string.IsNullOrEmpty(_currentMap?.thumbnailURL))
+                return;
+            if (ThumbnailFileAPI.Instance == null)
+                return;
+            if (ThumbnailFileAPI.Instance.Exists(_currentMap.id))
+            {
+                ThumbnailFileAPI.Instance.Get(_currentMap.id, (Texture2D texture) =>
+                {
+                    if (_thumbnail != null)
+                        _thumbnail.sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f), 100.0f, 0, SpriteMeshType.FullRect);
+                    _isCustomTex = true;
+                });
+            }
+            else
+            {
+                LevelImposterAPI.Instance?.DownloadThumbnail(_currentMap, (Texture2D texture) =>
+                {
+                    byte[] textureData = texture.EncodeToPNG();
+                    ThumbnailFileAPI.Instance.Save(_currentMap.id, textureData);
+                    if (_thumbnail != null)
+                        _thumbnail.sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f), 100.0f, 0, SpriteMeshType.FullRect);
+                    _isCustomTex = true;
+                });
+            }
+        }
+
+        /// <summary>
+        /// Sets the button to be enabled or disabled
+        /// </summary>
+        /// <param name="isEnabled">TRUE if enabled</param>
+        public void SetEnabled(bool isEnabled)
+        {
+            _isEnabled = isEnabled;
+            UpdateButtons();
         }
 
         public void Awake()
@@ -48,122 +194,51 @@ namespace LevelImposter.Shop
             _playButton = transform.FindChild("PlayBtn").GetComponent<Button>();
             _deleteButton = transform.FindChild("DeleteBtn").GetComponent<Button>();
             _externalButton = transform.FindChild("ExternalBtn").GetComponent<Button>();
-        }
 
+            if (_loadingOverlay == null)
+                LILogger.Warn("Could not find Loading Overlay in Map Banner");
+            if (_errOverlay == null)
+                LILogger.Warn("Could not find Error Overlay in Map Banner");
+            if (_thumbnail == null)
+                LILogger.Warn("Could not find Thumbnail in Map Banner");
+            if (_nameText == null)
+                LILogger.Warn("Could not find Name Text in Map Banner");
+            if (_authorText == null)
+                LILogger.Warn("Could not find Author Text in Map Banner");
+            if (_descText == null)
+                LILogger.Warn("Could not find Description Text in Map Banner");
+            if (_downloadButton == null)
+                LILogger.Warn("Could not find Download Button in Map Banner");
+            if (_playButton == null)
+                LILogger.Warn("Could not find Play Button in Map Banner");
+            if (_deleteButton == null)
+                LILogger.Warn("Could not find Delete Button in Map Banner");
+            if (_externalButton == null)
+                LILogger.Warn("Could not find External Button in Map Banner");
+        }
         public void Start()
         {
-            _downloadButton.onClick.AddListener((Action)OnDownloadClick);
-            _playButton.onClick.AddListener((Action)OnPlayClick);
-            _deleteButton.onClick.AddListener((Action)OnDeleteClick);
-            _externalButton.onClick.AddListener((Action)OnExternalClick);
+            _downloadButton?.onClick.AddListener((Action)OnDownloadClick);
+            _playButton?.onClick.AddListener((Action)OnPlayClick);
+            _deleteButton?.onClick.AddListener((Action)OnDeleteClick);
+            _externalButton?.onClick.AddListener((Action)OnExternalClick);
             UpdateButtons();
         }
-
         public void OnDestroy()
         {
             if (_isCustomTex)
-                Destroy(_thumbnail.sprite.texture);
-        }
-
-        [HideFromIl2Cpp]
-        public void SetMap(LIMetadata map)
-        {
-            _currentMap = map;
-            _loadingOverlay.SetActive(false);
-            _nameText.text = map.name;
-            _authorText.text = map.authorName;
-            _descText.text = map.description;
-            UpdateButtons();
-            GetThumbnail();
-        }
-
-        public void UpdateButtons()
-        {
-            if (_currentMap == null || !_isEnabled)
-            {
-                _downloadButton.interactable = false;
-                _playButton.interactable = false;
-                _deleteButton.interactable = false;
-                _externalButton.interactable = false;
-            }
-            else
-            {
-                bool mapExists = MapFileAPI.Instance.Exists(_currentMap.id);
-                bool isOnline = !string.IsNullOrEmpty(_currentMap.authorID);
-                _downloadButton.interactable = !mapExists && isOnline;
-                _playButton.interactable = mapExists && (isOnline || !_isInLobby);
-                _deleteButton.interactable = mapExists && isOnline;
-                _externalButton.gameObject.SetActive(isOnline);
-                _errOverlay.SetActive(mapExists && !isOnline && _isInLobby);
-            }
-        }
-
-        public void OnDownloadClick()
-        {
-            _downloadButton.interactable = false;
-            _loadingOverlay.SetActive(true);
-            ShopManager.Instance.SetEnabled(false);
-            LevelImposterAPI.Instance.DownloadMap(new Guid(_currentMap.id), OnDownload);
-        }
-
-        [HideFromIl2Cpp]
-        private void OnDownload(LIMap map)
-        {
-            MapFileAPI.Instance.Save(map);
-            _loadingOverlay.SetActive(false);
-            ShopManager.Instance.SetEnabled(true);
-            UpdateButtons();
-        }
-
-        public void OnPlayClick()
-        {
-            if (_isInLobby)
-                ShopManager.Instance.SelectMap(_currentMap.id);
-            else
-                ShopManager.Instance.LaunchMap(_currentMap.id);
-        }
-
-        public void OnDeleteClick()
-        {
-            MapFileAPI.Instance.Delete(_currentMap.id);
-            ThumbnailFileAPI.Instance.Delete(_currentMap.id);
-            UpdateButtons();
-        }
-
-        public void OnExternalClick()
-        {
-            Application.OpenURL("https://levelimposter.net/#/map/" + _currentMap.id);
-        }
-
-        public void GetThumbnail()
-        {
-            if (string.IsNullOrEmpty(_currentMap.thumbnailURL))
-                return;
-            if (ThumbnailFileAPI.Instance.Exists(_currentMap.id))
-            {
-                ThumbnailFileAPI.Instance.Get(_currentMap.id, (Texture2D texture) =>
-                {
-                    _thumbnail.sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f), 100.0f, 0, SpriteMeshType.FullRect);
-                    _isCustomTex = true;
-                });
-            }
-            else
-            {
-                LevelImposterAPI.Instance.DownloadThumbnail(_currentMap, (Texture2D texture) =>
-                {
-                    byte[] textureData = texture.EncodeToPNG();
-                    ThumbnailFileAPI.Instance.Save(_currentMap.id, textureData);
-                    _thumbnail.sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f), 100.0f, 0, SpriteMeshType.FullRect);
-                    _isCustomTex = true;
-                    textureData = null;
-                });
-            }
-        }
-
-        public void SetEnabled(bool isEnabled)
-        {
-            _isEnabled = isEnabled;
-            UpdateButtons();
+                Destroy(_thumbnail?.sprite.texture);
+            _currentMap = null;
+            _loadingOverlay = null;
+            _errOverlay = null;
+            _thumbnail = null;
+            _nameText = null;
+            _authorText = null;
+            _descText = null;
+            _downloadButton = null;
+            _playButton = null;
+            _deleteButton = null;
+            _externalButton = null;
         }
     }
 }

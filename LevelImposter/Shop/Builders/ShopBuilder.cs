@@ -42,12 +42,6 @@ namespace LevelImposter.Shop
 
             // Nav Buttons
             ShopButtons shopBtns = mapShop.AddComponent<ShopButtons>();
-            Transform btnsParent = mapShop.transform.FindChild("Canvas").FindChild("Shop Buttons");
-            shopBtns.DownloadedButton = btnsParent.FindChild("DownloadedBtn").GetComponent<Button>();
-            shopBtns.TopButton = btnsParent.FindChild("TopBtn").GetComponent<Button>();
-            shopBtns.RecentButton = btnsParent.FindChild("RecentBtn").GetComponent<Button>();
-            shopBtns.FeaturedButton = btnsParent.FindChild("FeaturedBtn").GetComponent<Button>();
-            shopBtns.FolderButton = btnsParent.FindChild("FolderBtn").GetComponent<Button>();
 
             // Shop Banner
             MapBanner bannerPrefab = shopMgr.MapBannerPrefab;

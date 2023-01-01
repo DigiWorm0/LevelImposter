@@ -17,27 +17,14 @@ namespace LevelImposter.Shop
     /// </summary>
     public class GitHubAPI : MonoBehaviour
     {
-        public const string API_PATH = "https://api.github.com/repos/DigiWorm0/LevelImposter/releases?per_page=1";
-        public const string UPDATE_FORBIDDEN_FLAG = "[NoAutoUpdate]";
-
-        public static GitHubAPI Instance;
-
         public GitHubAPI(IntPtr intPtr) : base(intPtr)
         {
         }
 
-        public void Awake()
-        {
-            if (Instance == null)
-            {
-                Instance = this;
-                DontDestroyOnLoad(gameObject);
-            }
-            else
-            {
-                Destroy(gameObject);
-            }
-        }
+        public const string API_PATH = "https://api.github.com/repos/DigiWorm0/LevelImposter/releases?per_page=1";
+        public const string UPDATE_FORBIDDEN_FLAG = "[NoAutoUpdate]";
+
+        public static GitHubAPI? Instance = null;
 
         /// <summary>
         /// Runs an Async HTTP Request on a specific url.
@@ -84,7 +71,7 @@ namespace LevelImposter.Shop
         /// <returns>String path where the LevelImposter DLL is stored.</returns>
         public string GetDLLDirectory()
         {
-            string gameDir = System.Reflection.Assembly.GetAssembly(typeof(LevelImposter)).Location;
+            string gameDir = System.Reflection.Assembly.GetAssembly(typeof(LevelImposter))?.Location ?? "/";
             return gameDir;
         }
 
@@ -100,8 +87,11 @@ namespace LevelImposter.Shop
             Request(API_PATH, (byte[] rawData) =>
             {
                 string json = Encoding.UTF8.GetString(rawData);
-                GHRelease[] response = JsonSerializer.Deserialize<GHRelease[]>(json);
-                onSuccess(response[0]);
+                GHRelease[]? response = JsonSerializer.Deserialize<GHRelease[]>(json);
+                if (response != null)
+                    onSuccess(response[0]);
+                else
+                    onError("Invalid API response");
             }, onError);
         }
 
@@ -162,7 +152,7 @@ namespace LevelImposter.Shop
                             fileStream.Write(dllBytes, 0, dllBytes.Length);
                         }
 
-                        ThumbnailFileAPI.Instance.DeleteAll();
+                        ThumbnailFileAPI.Instance?.DeleteAll();
 
                         LILogger.Info("Update complete");
                         onSuccess();
@@ -174,6 +164,19 @@ namespace LevelImposter.Shop
                     }
                 }, onError);
             }, onError);
+        }
+
+        public void Awake()
+        {
+            if (Instance == null)
+            {
+                Instance = this;
+                DontDestroyOnLoad(gameObject);
+            }
+            else
+            {
+                Destroy(gameObject);
+            }
         }
     }
 }

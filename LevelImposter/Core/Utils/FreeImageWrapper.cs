@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,19 +13,25 @@ namespace LevelImposter.Core
         /// <summary>
         /// Loads texture metadata from array
         /// </summary>
-        /// <param name="imgBytes">Array of bytes representing image data</param>
+        /// <param name="imgStream">Stream of bytes representing image data</param>
         /// <param name="textureList">Output texture metadata</param>
         /// <returns>TRUE on success</returns>
-        public static bool LoadImage(byte[] imgBytes, out TextureList textureList)
+        public static bool LoadImage(MemoryStream imgStream, out TextureList textureList)
         {
+            // Pin MemoryStream to Pointer
+            byte[] buffer = new byte[imgStream.Length];
+            imgStream.Read(buffer, 0, buffer.Length);
+            GCHandle handle = GCHandle.Alloc(buffer, GCHandleType.Pinned);
+            IntPtr bufferPtr = Marshal.UnsafeAddrOfPinnedArrayElement(buffer, 0);
+
             // Bytes to FreeImage
             IntPtr texMemory = FreeImage.FreeImage_OpenMemory(
-                Marshal.UnsafeAddrOfPinnedArrayElement(imgBytes, 0),
-                (uint)imgBytes.Length
+                bufferPtr,
+                (uint)imgStream.Length
             );
             FREE_IMAGE_FORMAT imageFormat = FreeImage.FreeImage_GetFileTypeFromMemory(
                 texMemory,
-                imgBytes.Length
+                (int)imgStream.Length
             );
 
             bool isSuccess;
@@ -37,7 +44,9 @@ namespace LevelImposter.Core
                 isSuccess = LoadImage(texMemory, imageFormat, out textureList);
             }
 
+            // Free Pointers
             FreeImage.FreeImage_CloseMemory(texMemory);
+            handle.Free();
             return isSuccess;
         }
 
@@ -131,9 +140,9 @@ namespace LevelImposter.Core
             uint texWidth = FreeImage.FreeImage_GetWidth(texHandle);
             uint texHeight = FreeImage.FreeImage_GetHeight(texHandle);
             uint size = texWidth * texHeight * 4;
-            byte[] texBytes = new byte[size];
+            byte[] buffer = new byte[size];
             FreeImage.FreeImage_ConvertToRawBits(
-                Marshal.UnsafeAddrOfPinnedArrayElement(texBytes, 0),
+                Marshal.UnsafeAddrOfPinnedArrayElement(buffer, 0),
                 texHandle,
                 (int)texWidth * 4,
                 32,
@@ -142,12 +151,13 @@ namespace LevelImposter.Core
                 0,
                 false
             );
+            MemoryStream texStream = new MemoryStream(buffer);
 
             return new TextureMetadata()
             {
                 width = (int)texWidth,
                 height = (int)texHeight,
-                texBytes = texBytes
+                texStream = texStream
             };
         }
 
@@ -158,7 +168,7 @@ namespace LevelImposter.Core
         {
             public int width = 0;
             public int height = 0;
-            public byte[] texBytes = Array.Empty<byte>();
+            public MemoryStream texStream = null;
         }
         public class TextureList
         {

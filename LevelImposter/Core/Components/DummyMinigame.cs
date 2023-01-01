@@ -8,6 +8,7 @@ namespace LevelImposter.Core
 {
     /// <summary>
     /// Placeholder minigame component that does nothing
+    /// It's very useful, I swear!
     /// </summary>
     public class DummyMinigame : Minigame
     {

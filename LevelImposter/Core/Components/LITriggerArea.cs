@@ -19,7 +19,6 @@ namespace LevelImposter.Core
             if (MapUtils.IsLocalPlayer(collider.gameObject))
                 LITriggerable.Trigger(transform.gameObject, "onEnter", PlayerControl.LocalPlayer);
         }
-
         public void OnTriggerExit2D(Collider2D collider)
         {
             if (MapUtils.IsLocalPlayer(collider.gameObject))

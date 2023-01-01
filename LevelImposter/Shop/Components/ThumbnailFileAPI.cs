@@ -23,26 +23,7 @@ namespace LevelImposter.Shop
         public const int TEX_WIDTH = 412;
         public const int TEX_HEIGHT = 144;
 
-        public static ThumbnailFileAPI Instance;
-
-        public void Awake()
-        {
-            if (Instance == null)
-            {
-                Instance = this;
-                DontDestroyOnLoad(gameObject);
-            }
-            else
-            {
-                Destroy(gameObject);
-            }
-        }
-
-        public void Start()
-        {
-            if (!Directory.Exists(GetDirectory()))
-                Directory.CreateDirectory(GetDirectory());
-        }
+        public static ThumbnailFileAPI? Instance = null;
 
         /// <summary>
         /// Gets the current directory where LevelImposter thumbnail files are stored.
@@ -51,8 +32,8 @@ namespace LevelImposter.Shop
         /// <returns>String path where LevelImposter map thumbnails is stored.</returns>
         public string GetDirectory()
         {
-            string gameDir = System.Reflection.Assembly.GetAssembly(typeof(LevelImposter)).Location;
-            return Path.Combine(Path.GetDirectoryName(gameDir), "LevelImposter/Thumbnails");
+            string gameDir = System.Reflection.Assembly.GetAssembly(typeof(LevelImposter))?.Location ?? "/";
+            return Path.Combine(Path.GetDirectoryName(gameDir) ?? "/", "LevelImposter/Thumbnails");
         }
 
         /// <summary>
@@ -136,6 +117,24 @@ namespace LevelImposter.Shop
 
             LILogger.Info("Deleting all thumbnails from filesystem");
             directory.Delete(true);
+        }
+
+        public void Awake()
+        {
+            if (Instance == null)
+            {
+                Instance = this;
+                DontDestroyOnLoad(gameObject);
+            }
+            else
+            {
+                Destroy(gameObject);
+            }
+        }
+        public void Start()
+        {
+            if (!Directory.Exists(GetDirectory()))
+                Directory.CreateDirectory(GetDirectory());
         }
     }
 }

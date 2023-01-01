@@ -15,27 +15,14 @@ namespace LevelImposter.Shop
     /// </summary>
     public class LevelImposterAPI : MonoBehaviour
     {
-        public const string API_PATH = "https://us-central1-levelimposter-347807.cloudfunctions.net/api/";
-        public const int API_VERSION = 1;
-
-        public static LevelImposterAPI Instance;
-
         public LevelImposterAPI(IntPtr intPtr) : base(intPtr)
         {
         }
 
-        public void Awake()
-        {
-            if (Instance == null)
-            {
-                Instance = this;
-                DontDestroyOnLoad(gameObject);
-            }
-            else
-            {
-                Destroy(gameObject);
-            }
-        }
+        public const string API_PATH = "https://us-central1-levelimposter-347807.cloudfunctions.net/api/";
+        public const int API_VERSION = 1;
+
+        public static LevelImposterAPI? Instance = null;
 
         /// <summary>
         /// Runs an Async HTTP Request on a specific url.
@@ -121,8 +108,10 @@ namespace LevelImposter.Shop
         {
             Request(url, (string json) =>
             {
-                LICallback<T> response = JsonSerializer.Deserialize<LICallback<T>>(json);
-                if (response.v != API_VERSION)
+                LICallback<T>? response = JsonSerializer.Deserialize<LICallback<T>>(json);
+                if (response == null)
+                    LILogger.Error("Invalid API Response");
+                else if (response.v != API_VERSION)
                     LILogger.Error("You are running on an older version of LevelImposter " + LevelImposter.Version + ". Update to get access to the API.");
                 else if (!string.IsNullOrEmpty(response.error))
                     LILogger.Error(response.error);
@@ -190,7 +179,9 @@ namespace LevelImposter.Shop
                 Request(metadata.downloadURL, (string mapJson) =>
                 {
                     LILogger.Info("Parsing map " + id + "...");
-                    LIMap mapData = JsonSerializer.Deserialize<LIMap>(mapJson);
+                    LIMap? mapData = JsonSerializer.Deserialize<LIMap>(mapJson);
+                    if (mapData == null)
+                        return; // TODO: onError callback
                     mapData.v = metadata.v;
                     mapData.id = metadata.id;
                     mapData.name = metadata.name;
@@ -225,6 +216,19 @@ namespace LevelImposter.Shop
                 }
                 callback(thumbnail);
             });
+        }
+
+        public void Awake()
+        {
+            if (Instance == null)
+            {
+                Instance = this;
+                DontDestroyOnLoad(gameObject);
+            }
+            else
+            {
+                Destroy(gameObject);
+            }
         }
     }
 }

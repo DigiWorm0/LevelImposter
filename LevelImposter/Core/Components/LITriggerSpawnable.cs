@@ -20,9 +20,14 @@ namespace LevelImposter.Core
         {
         }
 
-        private GameObject _triggerTarget = null;
+        private GameObject? _triggerTarget = null;
         private string _triggerID = "";
 
+        /// <summary>
+        /// Sets spawnable trigger properties
+        /// </summary>
+        /// <param name="triggerTarget">GameObject to trigger</param>
+        /// <param name="triggerID">ID of the trigger</param>
         public void SetTrigger(GameObject triggerTarget, string triggerID)
         {
             _triggerTarget = triggerTarget;
@@ -30,23 +35,23 @@ namespace LevelImposter.Core
             gameObject.SetActive(false);
         }
 
-        public void Start()
-        {
-            if (_triggerTarget == null || _triggerID == "")
-            {
-                LILogger.Error("A Spawnable Trigger enabled without a target");
-                return;
-            }
-
-            StartCoroutine(CoFireTrigger().WrapToIl2Cpp());
-        }
-
+        /// <summary>
+        /// Coroutine that fires the trigger once the LocalPlayer is spawned in
+        /// </summary>
         [HideFromIl2Cpp]
         private IEnumerator CoFireTrigger()
         {
             while (PlayerControl.LocalPlayer == null)
                 yield return null;
-            LITriggerable.Trigger(_triggerTarget, _triggerID, PlayerControl.LocalPlayer);
+            if (_triggerTarget != null)
+                LITriggerable.Trigger(_triggerTarget, _triggerID, PlayerControl.LocalPlayer);
+        }
+
+        public void Start()
+        {
+            if (_triggerTarget == null || _triggerID == "")
+                LILogger.Warn("A Spawnable Trigger enabled without a target");
+            StartCoroutine(CoFireTrigger().WrapToIl2Cpp());
         }
     }
 }

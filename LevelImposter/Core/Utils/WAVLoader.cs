@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
@@ -19,21 +20,16 @@ namespace LevelImposter.Core
         {
         }
 
-        public static WAVLoader Instance;
+        public static WAVLoader? Instance;
 
-        private Stack<AudioClip> _mapClips = new();
+        private Stack<AudioClip>? _mapClips = new();
 
-        public void Awake()
-        {
-            Instance = this;
-        }
-        public void OnDestroy()
-        {
-            LILogger.Info("Destroying " + _mapClips.Count + " map sounds");
-            while (_mapClips.Count > 0)
-                Destroy(_mapClips.Pop());
-        }
-
+        /// <summary>
+        /// Loads WAV data of an LISound
+        /// </summary>
+        /// <param name="element">LIElement of orgin</param>
+        /// <param name="sound">Sound data to load</param>
+        /// <param name="onLoad">Callback on load</param>
         [HideFromIl2Cpp]
         public void LoadWAV(LIElement element, LISound sound, Action<AudioClip> onLoad)
         {
@@ -45,6 +41,11 @@ namespace LevelImposter.Core
             });
         }
 
+        /// <summary>
+        /// Loads Audio data from base64
+        /// </summary>
+        /// <param name="b64">Base64 audio data</param>
+        /// <param name="onLoad">Callback on load</param>
         [HideFromIl2Cpp]
         public void LoadWAV(string b64, Action<AudioClip> onLoad)
         {
@@ -56,22 +57,37 @@ namespace LevelImposter.Core
             StartCoroutine(CoLoadAudio(b64, onLoad).WrapToIl2Cpp());
         }
 
+        /// <summary>
+        /// Coroutine to load audio data from Base64
+        /// </summary>
+        /// <param name="b64">Base64 audio data</param>
+        /// <param name="onLoad">Callback on load</param>
         [HideFromIl2Cpp]
-        private IEnumerator CoLoadAudio(string b64, Action<AudioClip> onLoad)
+        private IEnumerator CoLoadAudio(string b64, Action<AudioClip>? onLoad)
         {
             Task<AudioMetadata> task = Task.Run(() => { return ProcessWAV(b64); });
             while (!task.IsCompleted)
                 yield return null;
             AudioMetadata audioData = task.Result;
             AudioClip audioClip = LoadWAV(audioData);
-            onLoad.Invoke(audioClip);
+            if (onLoad != null)
+                onLoad.Invoke(audioClip);
+            onLoad = null;
         }
 
+        /// <summary>
+        /// Processes audio data from Base64 to raw PCM
+        /// </summary>
+        /// <param name="b64Audio">Base64 audio data</param>
+        /// <returns>Audio Metadata</returns>
         [HideFromIl2Cpp]
         private AudioMetadata ProcessWAV(string b64Audio)
         {
             // Get Image Bytes
-            byte[] wav = MapUtils.ParseBase64(b64Audio);
+            MemoryStream dataStream = MapUtils.ParseBase64(b64Audio);
+            byte[] wav = new byte[dataStream.Length];
+            dataStream.Read(wav, 0, wav.Length);
+            dataStream.Dispose();
 
             // Metadata
             int channelCount = wav[22];
@@ -105,6 +121,7 @@ namespace LevelImposter.Core
                 i += channelCount;
             }
 
+
             // Return Metadata
             return new AudioMetadata()
             {
@@ -132,6 +149,11 @@ namespace LevelImposter.Core
             return value;
         }
 
+        /// <summary>
+        /// Loads AudioClip from AudioMetadata
+        /// </summary>
+        /// <param name="audioData">Audio Metadata from WAV file</param>
+        /// <returns>AudioClip representing audio data</returns>
         [HideFromIl2Cpp]
         private AudioClip LoadWAV(AudioMetadata audioData)
         {
@@ -144,9 +166,21 @@ namespace LevelImposter.Core
                 false
             );
             clip.SetData(audioData.pcmData, 0);
-            _mapClips.Push(clip);
+            _mapClips?.Push(clip);
 
             return clip;
+        }
+
+        public void Awake()
+        {
+            Instance = this;
+        }
+        public void OnDestroy()
+        {
+            LILogger.Info("Destroying " + _mapClips?.Count + " map sounds");
+            while (_mapClips?.Count > 0)
+                Destroy(_mapClips.Pop());
+            _mapClips = null;
         }
 
         private class AudioMetadata

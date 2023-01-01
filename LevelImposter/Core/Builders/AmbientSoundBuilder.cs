@@ -49,7 +49,7 @@ namespace LevelImposter.Core
             ambientPlayer.MaxVolume = soundData.volume;
 
             // WAVLoader
-            WAVLoader.Instance.LoadWAV(elem, soundData, (AudioClip audioClip) =>
+            WAVLoader.Instance?.LoadWAV(elem, soundData, (AudioClip audioClip) =>
             {
                 ambientPlayer.AmbientSound = audioClip;
             });

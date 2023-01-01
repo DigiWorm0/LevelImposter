@@ -47,11 +47,15 @@ namespace LevelImposter.Core
             background.transform.localRotation = obj.transform.localRotation;
 
             // On Load
+            if (SpriteLoader.Instance == null)
+            {
+                LILogger.Warn("Spite Loader is not instantiated");
+                return;
+            }
             SpriteLoader.Instance.OnLoad += (LIElement loadedElem) =>
             {
                 if (loadedElem.id != elem.id)
                     return;
-
                 bgRenderer.sprite = spriteRenderer.sprite;
                 UnityEngine.Object.Destroy(obj);
             };

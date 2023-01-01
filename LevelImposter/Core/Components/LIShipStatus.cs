@@ -9,6 +9,7 @@ using LevelImposter.DB;
 using System.Diagnostics;
 using Il2CppInterop.Runtime.Attributes;
 using Il2CppInterop.Runtime.InteropTypes.Arrays;
+using UnityEngine.SceneManagement;
 using BepInEx.Unity.IL2CPP.Utils.Collections;
 
 namespace LevelImposter.Core
@@ -23,23 +24,15 @@ namespace LevelImposter.Core
         {
         }
 
-        public const float PLAYER_POS = -5.0f;
+        public static LIShipStatus? Instance { get; private set; }
 
-        public static LIShipStatus Instance { get; private set; }
-
-        [HideFromIl2Cpp]
-        public LIMap CurrentMap { get; private set; }
-        public ShipStatus ShipStatus { get; private set; }
-
-        private BuildRouter _buildRouter = new();
-        private Stopwatch _buildTimer = new();
-
-        private readonly List<string> _priorityTypes = new()
+        private const float PLAYER_POS = -5.0f;
+        private static readonly List<string> PRIORITY_TYPES = new()
         {
             "util-minimap",
             "util-room"
         };
-        private readonly Dictionary<string, string> _exileIDs = new()
+        private static readonly Dictionary<string, string> EXILE_IDS = new()
         {
             { "Skeld", "ss-skeld" },
             { "MiraHQ", "ss-mira" },
@@ -47,31 +40,21 @@ namespace LevelImposter.Core
             { "Airship", "ss-airship" }
         };
 
-        public void Awake()
-        {
-            Destroy(GetComponent<TagAmbientSoundPlayer>());
-            gameObject.AddComponent<SpriteLoader>();
-            gameObject.AddComponent<WAVLoader>();
-            ShipStatus = GetComponent<ShipStatus>();
-            Instance = this;
+        private LIMap? _currentMap = null;
+        private ShipStatus? _shipStatus = null;
 
-            if (MapLoader.CurrentMap != null)
-                LoadMap(MapLoader.CurrentMap);
-            else
-                LILogger.Info("No map content, no LI data will load");
-        }
-
-        public void Start()
-        {
-            if (MapLoader.CurrentMap != null)
-                HudManager.Instance.ShadowQuad.material.SetInt("_Mask", 7);
-        }
+        [HideFromIl2Cpp]
+        public LIMap? CurrentMap => _currentMap;
+        public ShipStatus? ShipStatus => _shipStatus;
         
         /// <summary>
         /// Resets the map to a blank slate. Ran before any map elements are applied.
         /// </summary>
         public void ResetMap()
         {
+            if (ShipStatus == null)
+                return;
+
             while (transform.childCount > 0)
                 DestroyImmediate(transform.GetChild(0).gameObject);
 
@@ -123,32 +106,41 @@ namespace LevelImposter.Core
         {
             LILogger.Info("Loading " + map.name + " [" + map.id + "]");
             StartCoroutine(CoLoadingScreen().WrapToIl2Cpp());
-            CurrentMap = map;
+            _currentMap = map;
             ResetMap();
             _LoadMapProperties(map);
-            _buildRouter.ResetStack();
+            BuildRouter buildRouter = new();
+            buildRouter.ResetStack();
 
             // Asset DB
             if (!AssetDB.IsReady)
                 LILogger.Warn("Asset DB is not ready yet!");
 
             // Priority First
-            foreach (string type in _priorityTypes)
+            foreach (string type in PRIORITY_TYPES)
                 foreach (LIElement elem in map.elements)
                     if (elem.type == type)
-                        AddElement(elem);
+                        AddElement(buildRouter, elem);
             // Everything Else
             foreach (LIElement elem in map.elements)
-                if (!_priorityTypes.Contains(elem.type))
-                    AddElement(elem);
+                if (!PRIORITY_TYPES.Contains(elem.type))
+                    AddElement(buildRouter, elem);
 
-            _buildRouter.PostBuild();
+            buildRouter.PostBuild();
+            
             LILogger.Info("Map load completed");
         }
 
+        /// <summary>
+        /// Loads LIMap.properties to ShipStatus
+        /// </summary>
+        /// <param name="map">Map to read properties from</param>
         [HideFromIl2Cpp]
         private void _LoadMapProperties(LIMap map)
         {
+            if (ShipStatus == null)
+                return;
+
             ShipStatus.name = map.name;
 
             if (!string.IsNullOrEmpty(map.properties.bgColor))
@@ -159,9 +151,9 @@ namespace LevelImposter.Core
 
             if (!string.IsNullOrEmpty(map.properties.exileID))
             {
-                if (_exileIDs.ContainsKey(map.properties.exileID))
+                if (EXILE_IDS.ContainsKey(map.properties.exileID))
                 {
-                    ShipStatus ship = AssetDB.Ships[_exileIDs[map.properties.exileID]].ShipStatus;
+                    ShipStatus ship = AssetDB.Ships[EXILE_IDS[map.properties.exileID]].ShipStatus;
                     ShipStatus.ExileCutscenePrefab = ship.ExileCutscenePrefab;
                 }
                 else
@@ -176,14 +168,15 @@ namespace LevelImposter.Core
         /// </summary>
         /// <param name="element"></param>
         [HideFromIl2Cpp]
-        public void AddElement(LIElement element)
+        public void AddElement(BuildRouter buildRouter, LIElement element)
         {
-            _buildTimer.Restart();
+            Stopwatch buildTimer = new();
+            buildTimer.Restart();
 
             LILogger.Info("Adding " + element.ToString());
             try
             {
-                GameObject gameObject = _buildRouter.Build(element);
+                GameObject gameObject = buildRouter.Build(element);
                 gameObject.transform.SetParent(transform);
                 gameObject.transform.localPosition -= new Vector3(0, 0, -(element.y / 1000.0f) + PLAYER_POS);
             }
@@ -193,11 +186,14 @@ namespace LevelImposter.Core
             }
 
             // Build Timer
-            _buildTimer.Stop();
-            if (_buildTimer.ElapsedMilliseconds > 100)
-                LILogger.Warn($"Took {_buildTimer.ElapsedMilliseconds}ms to build {element.name}");
+            buildTimer.Stop();
+            if (buildTimer.ElapsedMilliseconds > 100)
+                LILogger.Warn($"Took {buildTimer.ElapsedMilliseconds}ms to build {element.name}");
         }
 
+        /// <summary>
+        /// Coroutine that displayes the loading screen until map is built
+        /// </summary>
         [HideFromIl2Cpp]
         private IEnumerator CoLoadingScreen()
         {
@@ -221,6 +217,30 @@ namespace LevelImposter.Core
             fullScreen.color = sabColor;
             loadingBean.SetActive(false);
             fullScreen.gameObject.SetActive(false);
+        }
+
+        public void Awake()
+        {
+            Destroy(GetComponent<TagAmbientSoundPlayer>());
+            gameObject.AddComponent<SpriteLoader>();
+            gameObject.AddComponent<WAVLoader>();
+            _shipStatus = GetComponent<ShipStatus>();
+            Instance = this;
+
+            if (MapLoader.CurrentMap != null)
+                LoadMap(MapLoader.CurrentMap);
+            else
+                LILogger.Info("No map content, no LI data will load");
+        }
+        public void Start()
+        {
+            if (MapLoader.CurrentMap != null)
+                HudManager.Instance.ShadowQuad.material.SetInt("_Mask", 7);
+        }
+        public void OnDestroy()
+        {
+            _currentMap = null;
+            Instance = null;
         }
     }
 }

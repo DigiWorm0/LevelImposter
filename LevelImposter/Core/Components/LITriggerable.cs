@@ -21,21 +21,21 @@ namespace LevelImposter.Core
         private static List<LITriggerable> _allTriggers = new List<LITriggerable>();
         public static List<LITriggerable> AllTriggers => _allTriggers;
 
-        private LIElement _sourceElem;
-        private Guid? _sourceID => _sourceElem.id;
-        private string _sourceTrigger;
-        private Guid? _destID;
-        private string _destTrigger;
-        private LITriggerable _destTriggerComp;
-        private bool _isClientSide => _sourceElem.properties.triggerClientSide != false;
+        private LIElement? _sourceElem = null;
+        private Guid? _sourceID => _sourceElem?.id;
+        private string _sourceTrigger = "";
+        private Guid? _destID = null;
+        private string _destTrigger = "";
+        private LITriggerable? _destTriggerComp = null;
+        private bool _isClientSide => _sourceElem?.properties.triggerClientSide != false;
 
         [HideFromIl2Cpp]
-        public LIElement SourceElem => _sourceElem;
+        public LIElement? SourceElem => _sourceElem;
         public Guid? SourceID => _sourceID;
-        public string SourceTrigger => _sourceTrigger;
+        public string? SourceTrigger => _sourceTrigger;
         public Guid? DestID => _destID;
-        public string DestTrigger => _destTrigger;
-        public LITriggerable DestTriggerComp => _destTriggerComp;
+        public string? DestTrigger => _destTrigger;
+        public LITriggerable? DestTriggerComp => _destTriggerComp;
         public bool IsClientSide => _isClientSide;
 
         /// <summary>
@@ -46,14 +46,14 @@ namespace LevelImposter.Core
         /// <param name="orgin">Orgin player</param>
         public static void Trigger(GameObject obj, string triggerID, PlayerControl orgin)
         {
-            LITriggerable trigger = AllTriggers.Find(t => t.gameObject == obj && t.SourceTrigger == triggerID);
+            LITriggerable? trigger = AllTriggers.Find(t => t.gameObject == obj && t.SourceTrigger == triggerID);
             if (trigger == null)
                 return;
 
             if (trigger.IsClientSide != false || orgin == null)
                 trigger.FireTrigger(orgin); // Client-Side
             else
-                RPCFireTrigger(orgin, trigger.SourceID.ToString(), triggerID); // Networked
+                RPCFireTrigger(orgin, trigger.SourceID.ToString() ?? "", triggerID); // Networked
         }
 
         /// <summary>
@@ -74,7 +74,7 @@ namespace LevelImposter.Core
             }
 
             // Find Triggerable
-            LITriggerable trigger = AllTriggers.Find(t => t.SourceID == elemID && t.SourceTrigger == triggerID);
+            LITriggerable? trigger = AllTriggers.Find(t => t.SourceID == elemID && t.SourceTrigger == triggerID);
             if (trigger == null)
             {
                 LILogger.Warn("Triggered element not found");
@@ -104,7 +104,7 @@ namespace LevelImposter.Core
         /// <summary>
         /// Fires the trigger component
         /// </summary>
-        /// <param name="orgin">Player source</param>
+        /// <param name="orgin">Player of orgin</param>
         public void FireTrigger(PlayerControl orgin)
         {
             OnTrigger(orgin);
@@ -112,6 +112,10 @@ namespace LevelImposter.Core
                 _destTriggerComp.FireTrigger(orgin);
         }
 
+        /// <summary>
+        /// Function that fires when the component is triggered
+        /// </summary>
+        /// <param name="orgin">Player of orgin</param>
         private void OnTrigger(PlayerControl orgin)
         {
             LILogger.Info($"{gameObject.name} >>> {_sourceTrigger} ({orgin?.name})");
@@ -146,15 +150,23 @@ namespace LevelImposter.Core
             }
         }
 
+        /// <summary>
+        /// Coroutine to run timer trigger. Fires onStart on the start and onFinish on completion.
+        /// </summary>
+        /// <param name="orgin">Player of orgin</param>
         [HideFromIl2Cpp]
         private IEnumerator CoTimerTrigger(PlayerControl orgin)
         {
             Trigger(gameObject, "onStart", orgin);
-            float duration = _sourceElem.properties.triggerTime ?? 1;
+            float duration = _sourceElem?.properties.triggerTime ?? 1;
             yield return new WaitForSeconds(duration);
             Trigger(gameObject, "onFinish", orgin);
         }
 
+        /// <summary>
+        /// Sets the open state of the doorComponent on the gameObject
+        /// </summary>
+        /// <param name="isOpen">TRUE if the door should be open</param>
         private void SetDoorOpen(bool isOpen)
         {
             PlainDoor doorComponent = gameObject.GetComponent<PlainDoor>();
@@ -172,6 +184,9 @@ namespace LevelImposter.Core
         public void OnDestroy()
         {
             _allTriggers.Remove(this);
+            _sourceElem = null;
+            _destID = null;
+            _destTriggerComp = null;
         }
     }
 }

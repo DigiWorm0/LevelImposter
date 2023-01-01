@@ -38,11 +38,15 @@ namespace LevelImposter.Core
             UnityEngine.Object.Destroy(starPrefab);
 
             // Clones
+            if (SpriteLoader.Instance == null)
+            {
+                LILogger.Warn("Spite Loader is not instantiated");
+                return;
+            }
             SpriteLoader.Instance.OnLoad += (LIElement loadedElem) =>
             {
                 if (loadedElem.id != elem.id)
                     return;
-
                 foreach (LIStar liStar in liStars)
                     liStar.GetComponent<SpriteRenderer>().sprite = spriteRenderer.sprite;
             };

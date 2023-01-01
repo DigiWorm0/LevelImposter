@@ -14,33 +14,13 @@ namespace LevelImposter.Shop
     /// <summary>
     /// API to manage LIM files in the local filesystem
     /// </summary>
-    
     public class MapFileAPI : MonoBehaviour
     {
         public MapFileAPI(IntPtr intPtr) : base(intPtr)
         {
         }
 
-        public static MapFileAPI Instance;
-
-        public void Awake()
-        {
-            if (Instance == null)
-            {
-                Instance = this;
-                DontDestroyOnLoad(gameObject);
-            }
-            else
-            {
-                Destroy(gameObject);
-            }
-        }
-
-        public void Start()
-        {
-            if (!Directory.Exists(GetDirectory()))
-                Directory.CreateDirectory(GetDirectory());
-        }
+        public static MapFileAPI? Instance = null;
 
         /// <summary>
         /// Gets the current directory where LevelImposter map files are stored.
@@ -49,8 +29,8 @@ namespace LevelImposter.Shop
         /// <returns>String path where LevelImposter data is stored.</returns>
         public string GetDirectory()
         {
-            string gameDir = System.Reflection.Assembly.GetAssembly(typeof(LevelImposter)).Location;
-            return Path.Combine(Path.GetDirectoryName(gameDir), "LevelImposter");
+            string gameDir = System.Reflection.Assembly.GetAssembly(typeof(LevelImposter))?.Location ?? "/";
+            return Path.Combine(Path.GetDirectoryName(gameDir) ?? "/", "LevelImposter");
         }
 
         /// <summary>
@@ -92,17 +72,22 @@ namespace LevelImposter.Shop
         /// <param name="mapID">Map ID to read and parse</param>
         /// <returns>Representation of the map file data in the form of a <c>LIMap</c>.</returns>
         [HideFromIl2Cpp]
-        public LIMap Get(string mapID)
+        public LIMap? Get(string mapID)
         {
             if (!Exists(mapID))
             {
-                LILogger.Error("Could not find [" + mapID + "] in filesystem");
+                LILogger.Error($"Could not find [{mapID}] in filesystem");
                 return null;
             }
-            LILogger.Info("Loading map [" + mapID + "] from filesystem");
+            LILogger.Info($"Loading map [{mapID}] from filesystem");
             string mapPath = GetPath(mapID);
             string mapJson = File.ReadAllText(mapPath);
-            LIMap mapData = JsonSerializer.Deserialize<LIMap>(mapJson);
+            LIMap? mapData = JsonSerializer.Deserialize<LIMap>(mapJson);
+            if (mapData == null)
+            {
+                LILogger.Error($"Invalid map data in [{mapID}]");
+                return null;
+            }
             mapData.id = mapID;
             return mapData;
         }
@@ -114,7 +99,7 @@ namespace LevelImposter.Shop
         /// <param name="mapID">Map ID to read and parse</param>
         /// <returns>Representation of the map file data in the form of a <c>LIMetadata</c>.</returns>
         [HideFromIl2Cpp]
-        public LIMetadata GetMetadata(string mapID)
+        public LIMetadata? GetMetadata(string mapID)
         {
             if (!Exists(mapID))
             {
@@ -124,7 +109,12 @@ namespace LevelImposter.Shop
             LILogger.Info("Loading map [" + mapID + "] from filesystem");
             string mapPath = GetPath(mapID);
             string mapJson = File.ReadAllText(mapPath);
-            LIMetadata mapData = JsonSerializer.Deserialize<LIMetadata>(mapJson);
+            LIMetadata? mapData = JsonSerializer.Deserialize<LIMetadata>(mapJson);
+            if (mapData == null)
+            {
+                LILogger.Error($"Invalid map data in [{mapID}]");
+                return null;
+            }
             mapData.id = mapID;
             return mapData;
         }
@@ -158,6 +148,24 @@ namespace LevelImposter.Shop
             LILogger.Info("Deleting [" + mapID + "] from filesystem");
             string mapPath = GetPath(mapID);
             File.Delete(mapPath);
+        }
+
+        public void Awake()
+        {
+            if (Instance == null)
+            {
+                Instance = this;
+                DontDestroyOnLoad(gameObject);
+            }
+            else
+            {
+                Destroy(gameObject);
+            }
+        }
+        public void Start()
+        {
+            if (!Directory.Exists(GetDirectory()))
+                Directory.CreateDirectory(GetDirectory());
         }
     }
 }

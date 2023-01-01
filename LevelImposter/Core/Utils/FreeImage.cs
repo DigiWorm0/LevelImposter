@@ -99,7 +99,7 @@ namespace LevelImposter.Core
         public static extern IntPtr FreeImage_OpenMemory(IntPtr data, uint size_in_bytes);
 
         [DllImport(FreeImageLibrary, EntryPoint = "FreeImage_CloseMemory")]
-        public static extern IntPtr FreeImage_CloseMemory(IntPtr data);
+        public static extern void FreeImage_CloseMemory(IntPtr data);
 
         [DllImport(FreeImageLibrary, EntryPoint = "FreeImage_AcquireMemory")]
         public static extern bool FreeImage_AcquireMemory(IntPtr stream, ref IntPtr data, ref uint size_in_bytes);

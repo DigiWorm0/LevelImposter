@@ -10,12 +10,6 @@ namespace LevelImposter.Core
     public class SabMapBuilder : IElemBuilder
     {
         private static Dictionary<SystemTypes, MapRoom> _mapRoomDB = null;
-        private readonly Dictionary<string, string> _sabToLegacyTypes = new Dictionary<string, string> {
-            { "sab-electric", "sab-btnlights" },
-            { "sab-reactorleft", "sab-btnreactor" },
-            { "sab-oxygen", "sab-btnoxygen" },
-            { "sab-comms", "sab-btncomms" },
-        };
 
         private Sprite _commsBtnSprite = null;
         private Sprite _reactorBtnSprite = null;
@@ -136,12 +130,16 @@ namespace LevelImposter.Core
             button.OnClick.AddListener(btnAction);
 
             // Sprite Renderer
+            if (SpriteLoader.Instance == null)
+            {
+                LILogger.Warn("Spite Loader is not instantiated");
+                return;
+            }
             SpriteRenderer spriteRenderer = obj.GetComponent<SpriteRenderer>();
             SpriteLoader.Instance.OnLoad += (LIElement loadedElem) =>
             {
                 if (loadedElem.id != elem.id)
                     return;
-
                 btnRenderer.sprite = spriteRenderer.sprite;
                 UnityEngine.Object.Destroy(obj);
             };
@@ -151,45 +149,13 @@ namespace LevelImposter.Core
         public void PostBuild()
         {
             if (_hasSabConsoles && !_hasSabButtons)
-            {
-                LILogger.Warn("Map does not include sabotage buttons.\n(Placeholder buttons are depricated and may have weird or unexpected behaviour.)");
-                BuildAllLegacy();
-            }
+                LILogger.Warn("Map does not include sabotage buttons");
 
             MapBehaviour mapBehaviour = MinimapBuilder.GetMinimap();
             InfectedOverlay infectedOverlay = mapBehaviour.infectedOverlay;
 
             while (infectedOverlay.transform.childCount > _mapRoomDB.Count)
                 UnityEngine.Object.DestroyImmediate(infectedOverlay.transform.GetChild(0).gameObject);
-        }
-
-        private void BuildAllLegacy()
-        {
-            LIMap currentMap = LIShipStatus.Instance.CurrentMap;
-
-            foreach (LIElement elem in currentMap.elements)
-            {
-                if (_sabToLegacyTypes.TryGetValue(elem.type, out string btnType))
-                {
-                    LIElement tempElem = new()
-                    {
-                        id = Guid.NewGuid(),
-                        name = elem.name,
-                        type = btnType,
-                        x = elem.x,
-                        y = elem.y,
-                        z = elem.z,
-                        xScale = elem.xScale,
-                        yScale = elem.yScale,
-                        rotation = elem.rotation,
-                        properties = new()
-                        {
-                            parent = elem.properties.parent
-                        }
-                    };
-                    LIShipStatus.Instance.AddElement(tempElem);
-                }
-            }
         }
 
         /// <summary>

@@ -17,12 +17,7 @@ namespace LevelImposter.Core
         {
         }
 
-        private bool _isAnimating = false;
-        private float[] _delays;
-        private Sprite[] _frames;
-        private SpriteRenderer _spriteRenderer;
-        private Coroutine _animationCoroutine = null;
-        private readonly List<string> _autoplayBlacklist = new()
+        private static readonly List<string> AUTOPLAY_BLACKLIST = new()
         {
             "util-vent1",
             "util-vent2",
@@ -31,8 +26,13 @@ namespace LevelImposter.Core
             "util-cam"
         };
 
-        public bool IsAnimating => _isAnimating;
+        private bool _isAnimating = false;
+        private float[]? _delays;
+        private Sprite[]? _frames;
+        private SpriteRenderer? _spriteRenderer;
+        private Coroutine? _animationCoroutine = null;
 
+        public bool IsAnimating => _isAnimating;
 
         /// <summary>
         /// Initializes the component with GIF data
@@ -47,7 +47,7 @@ namespace LevelImposter.Core
             _frames = sprites;
             _delays = frameTimes;
             Play(true);
-            if (_autoplayBlacklist.Contains(element.type))
+            if (AUTOPLAY_BLACKLIST.Contains(element.type))
                 Stop();
         }
 
@@ -57,6 +57,10 @@ namespace LevelImposter.Core
         /// <param name="repeat">True if the GIF should repeat. False otherwise</param>
         public void Play(bool repeat = false, bool reverse = false)
         {
+            if (_frames == null || _delays == null)
+                LILogger.Warn(name + " does not have a frame sprites or delays");
+            if (_spriteRenderer == null)
+                LILogger.Warn(name + " does not have a spriteRenderer");
             if (_animationCoroutine != null)
                 StopCoroutine(_animationCoroutine);
             _animationCoroutine = StartCoroutine(CoAnimate(repeat, reverse).WrapToIl2Cpp());
@@ -70,12 +74,22 @@ namespace LevelImposter.Core
             if (_animationCoroutine != null)
                 StopCoroutine(_animationCoroutine);
             _isAnimating = false;
-            _spriteRenderer.sprite = _frames[reversed ? _frames.Length - 1 : 0];
+            if (_spriteRenderer != null && _frames != null)
+                _spriteRenderer.sprite = _frames[reversed ? _frames.Length - 1 : 0];
         }
 
+        /// <summary>
+        /// Coroutine to run GIF animation
+        /// </summary>
+        /// <param name="repeat">TRUE if animation should loop</param>
+        /// <param name="reverse">TRUE if animation should run in reverse</param>
+        /// <returns>IEnumerator for Unity Coroutine</returns>
         [HideFromIl2Cpp]
         private IEnumerator CoAnimate(bool repeat, bool reverse)
         {
+            if (_frames == null || _delays == null || _spriteRenderer == null)
+                yield break;
+
             _isAnimating = true;
             int t = 0;
             while (_isAnimating)
@@ -87,6 +101,14 @@ namespace LevelImposter.Core
                 if (t == 0 && !repeat)
                     Stop(!reverse);
             }
+        }
+
+        public void OnDestroy()
+        {
+            _delays = null;
+            _frames = null;
+            _spriteRenderer = null;
+            _animationCoroutine = null;
         }
     }
 }

@@ -17,48 +17,20 @@ namespace LevelImposter.Shop
         {
         }
 
-        public static ShopManager Instance { get; private set; }
-        public static bool IsOpen = false; // Circumvent Garbage Collection Issues w/ ShopManager.Instance
+        public static ShopManager? Instance { get; private set; }
 
-        public MapBanner MapBannerPrefab;
-        public Transform ShopParent;
-        public Button CloseButton;
+        public MapBanner? MapBannerPrefab;
+        public Transform? ShopParent;
+        public Button? CloseButton;
 
         private string _currentListID = "downloaded";
-        private bool _isEnabled = true;
-        private HostLocalGameButton _freeplayComp;
-        private ShopButtons _shopButtons;
-        private Stack<MapBanner> _shopBanners = new Stack<MapBanner>();
+        private HostLocalGameButton? _freeplayComp;
+        private ShopButtons? _shopButtons;
+        private Stack<MapBanner> _shopBanners = new();
 
-        public void Awake()
-        {
-            Instance = this;
-            IsOpen = true;
-            ControllerManager.Instance.OpenOverlayMenu("LIShop", null);
-        }
-
-        public void Start()
-        {
-            _freeplayComp = gameObject.AddComponent<HostLocalGameButton>();
-            _shopButtons = gameObject.GetComponent<ShopButtons>();
-            _freeplayComp.NetworkMode = NetworkModes.FreePlay;
-            ListDownloaded();
-        }
-
-        public void Update()
-        {
-            if (Input.GetKeyUp(KeyCode.Escape))
-            {
-                Close();
-            }
-        }
-
-        public void OnDestroy()
-        {
-            IsOpen = false;
-            ControllerManager.Instance.CloseOverlayMenu("LIShop");
-        }
-
+        /// <summary>
+        /// Closes the Map Shop
+        /// </summary>
         public void Close()
         {
             if (SceneManager.GetActiveScene().name == "HowToPlay")
@@ -67,6 +39,9 @@ namespace LevelImposter.Shop
                 Destroy(gameObject);
         }
 
+        /// <summary>
+        /// Clears all visible shop banners
+        /// </summary>
         public void ListNone()
         {
             _currentListID = "none";
@@ -77,8 +52,15 @@ namespace LevelImposter.Shop
             }
         }
 
+        /// <summary>
+        /// Lists all downloaded maps
+        /// </summary>
         public void ListDownloaded()
         {
+            if (MapBannerPrefab == null)
+                return;
+            if (MapFileAPI.Instance == null)
+                return;
             ListNone();
             _currentListID = "downloaded";
             string[] mapIDs = MapFileAPI.Instance.ListIDs();
@@ -86,21 +68,32 @@ namespace LevelImposter.Shop
             {
                 MapBanner banner = Instantiate(MapBannerPrefab, ShopParent);
                 banner.gameObject.SetActive(true);
-                banner.SetMap(MapFileAPI.Instance.GetMetadata(mapID));
+                LIMetadata? metadata = MapFileAPI.Instance.GetMetadata(mapID);
+                if (metadata != null)
+                    banner.SetMap(metadata);
                 _shopBanners.Push(banner);
             }
         }
 
+        /// <summary>
+        /// Lists maps in the LevelImposter API by Top
+        /// </summary>
         public void ListTop()
         {
             ListNone();
             _currentListID = "top";
-            LevelImposterAPI.Instance.GetTop(OnTop);
+            LevelImposterAPI.Instance?.GetTop(OnTop);
         }
 
+        /// <summary>
+        /// Callback response for the LevelImposter API
+        /// </summary>
+        /// <param name="maps">Listed map response</param>
         [HideFromIl2Cpp]
         private void OnTop(LIMetadata[] maps)
         {
+            if (MapBannerPrefab == null)
+                return;
             if (_currentListID != "top")
                 return;
             foreach (LIMetadata map in maps)
@@ -112,16 +105,27 @@ namespace LevelImposter.Shop
             }
         }
 
+        /// <summary>
+        /// Lists maps in the LevelImposter API by Recent
+        /// </summary>
         public void ListRecent()
         {
+            if (LevelImposterAPI.Instance == null)
+                return;
             ListNone();
             _currentListID = "recent";
             LevelImposterAPI.Instance.GetRecent(OnRecent);
         }
 
+        /// <summary>
+        /// Callback response for the LevelImposter API
+        /// </summary>
+        /// <param name="maps">Listed map response</param>
         [HideFromIl2Cpp]
         private void OnRecent(LIMetadata[] maps)
         {
+            if (MapBannerPrefab == null)
+                return;
             if (_currentListID != "recent")
                 return;
             foreach (LIMetadata map in maps)
@@ -133,16 +137,27 @@ namespace LevelImposter.Shop
             }
         }
 
+        /// <summary>
+        /// Lists maps in the LevelImposterAPI by Featured
+        /// </summary>
         public void ListFeatured()
         {
+            if (LevelImposterAPI.Instance == null)
+                return;
             ListNone();
             _currentListID = "featured";
             LevelImposterAPI.Instance.GetFeatured(OnFeatured);
         }
 
+        /// <summary>
+        /// Callback response for the LevelImposter API
+        /// </summary>
+        /// <param name="maps">Listed map response</param>
         [HideFromIl2Cpp]
         private void OnFeatured(LIMetadata[] maps)
         {
+            if (MapBannerPrefab == null)
+                return;
             if (_currentListID != "featured")
                 return;
             foreach (LIMetadata map in maps)
@@ -154,6 +169,10 @@ namespace LevelImposter.Shop
             }
         }
 
+        /// <summary>
+        /// Selects map to load by ID
+        /// </summary>
+        /// <param name="id">ID of the map to select</param>
         public void SelectMap(string id)
         {
             LILogger.Info("Selecting map [" + id + "]");
@@ -162,6 +181,10 @@ namespace LevelImposter.Shop
             CloseShop();
         }
 
+        /// <summary>
+        /// Launches a map into Freeplay by ID
+        /// </summary>
+        /// <param name="id">ID of the map to launch</param>
         public void LaunchMap(string id)
         {
             if (!AssetDB.IsReady)
@@ -170,24 +193,59 @@ namespace LevelImposter.Shop
             MapLoader.LoadMap(id);
 
             AmongUsClient.Instance.TutorialMapId = (int)MapNames.Polus;
-            _freeplayComp.OnClick();
+            _freeplayComp?.OnClick();
         }
 
+        /// <summary>
+        /// Enables or disables the shop buttons
+        /// </summary>
+        /// <param name="isEnabled">TRUE if enabled</param>
         public void SetEnabled(bool isEnabled)
         {
-            _isEnabled = isEnabled;
-            _shopButtons.SetEnabled(isEnabled);
+            _shopButtons?.SetEnabled(isEnabled);
             foreach (MapBanner banner in _shopBanners)
             {
                 banner.SetEnabled(isEnabled);
             }
-            CloseButton.interactable = isEnabled;
+            if (CloseButton != null)
+                CloseButton.interactable = isEnabled;
         }
 
+        /// <summary>
+        /// Closes the shop Instance, if one exists
+        /// </summary>
         public static void CloseShop()
         {
             if (Instance != null)
                 Instance.Close();
+        }
+        
+        public void Awake()
+        {
+            ControllerManager.Instance.OpenOverlayMenu("LIShop", null);
+            Instance = this;
+        }
+        public void Start()
+        {
+            _freeplayComp = gameObject.AddComponent<HostLocalGameButton>();
+            _shopButtons = gameObject.GetComponent<ShopButtons>();
+            _freeplayComp.NetworkMode = NetworkModes.FreePlay;
+            ListDownloaded();
+        }
+        public void Update()
+        {
+            if (Input.GetKeyUp(KeyCode.Escape))
+                Close();
+        }
+        public void OnDestroy()
+        {
+            ControllerManager.Instance.CloseOverlayMenu("LIShop");
+            Instance = null;
+            MapBannerPrefab = null;
+            ShopParent = null;
+            CloseButton = null;
+            _freeplayComp = null;
+            _shopBanners.Clear();
         }
     }
 }

@@ -25,6 +25,33 @@ namespace LevelImposter.Core
         public LIElement? CurrentElem => _elem;
         public LITeleporter? CurrentTarget => _target;
 
+
+        /// <summary>
+        /// Sets the Teleporter's LIElement source
+        /// </summary>
+        /// <param name="elem">Element to read properties from</param>
+        [HideFromIl2Cpp]
+        public void SetElement(LIElement elem)
+        {
+            _elem = elem;
+        }
+
+        /// <summary>
+        /// RPC that is ran when the player is teleported
+        /// </summary>
+        /// <param name="player">PlayerControl that is teleported</param>
+        /// <param name="x">Global X position to teleport to</param>
+        /// <param name="y">Global Y position to teleport to</param>
+        [MethodRpc((uint)RpcIds.Teleport)]
+        public static void RPCTeleport(PlayerControl player, float x, float y)
+        {
+            player.transform.position = new Vector3(
+                x,
+                y,
+                player.transform.position.z
+            );
+        }
+
         public void Awake()
         {
             _teleList.Add(this);
@@ -45,13 +72,9 @@ namespace LevelImposter.Core
         public void OnDestroy()
         {
             _teleList.Remove(this);
+            _elem = null;
+            _target = null;
         }
-        [HideFromIl2Cpp]
-        public void SetElement(LIElement elem)
-        {
-            _elem = elem;
-        }
-
         public void OnTriggerEnter2D(Collider2D collider)
         {
             PlayerControl player = collider.GetComponent<PlayerControl>();
@@ -86,16 +109,6 @@ namespace LevelImposter.Core
                 player,
                 player.transform.position.x,
                 player.transform.position.y
-            );
-        }
-
-        [MethodRpc((uint)RpcIds.Teleport)]
-        public static void RPCTeleport(PlayerControl player, float x, float y)
-        {
-            player.transform.position = new Vector3(
-                x,
-                y,
-                player.transform.position.z
             );
         }
     }

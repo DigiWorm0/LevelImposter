@@ -38,6 +38,10 @@ namespace LevelImposter.Core
                 _maxSpeed = (float)elem.properties.starfieldMaxSpeed;
         }
 
+        /// <summary>
+        /// Respawns the Star in the Star Field
+        /// </summary>
+        /// <param name="isInitial">TRUE will also randomize the X position</param>
         private void Respawn(bool isInitial)
         {
             _currentSpeed = UnityEngine.Random.Range(_minSpeed, _maxSpeed);
@@ -52,7 +56,6 @@ namespace LevelImposter.Core
         {
             Respawn(true);
         }
-
         public void Update()
         {
             transform.localPosition -= new Vector3(
