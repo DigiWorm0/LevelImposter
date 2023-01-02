@@ -50,6 +50,7 @@ namespace LevelImposter.Core
             {
                 // GIFAnimator
                 gifAnim.Play(false, open);
+                spriteRenderer.enabled = true;
             }
             else
             {

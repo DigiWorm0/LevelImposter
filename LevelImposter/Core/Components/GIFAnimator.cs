@@ -89,7 +89,6 @@ namespace LevelImposter.Core
         {
             if (_frames == null || _delays == null || _spriteRenderer == null)
                 yield break;
-
             _isAnimating = true;
             int t = 0;
             while (_isAnimating)
