@@ -11,20 +11,19 @@ namespace LevelImposter.Core
     class LadderBuilder : IElemBuilder
     {
         public const float LADDER_Y_OFFSET = -0.4f;
-
-        public static List<Ladder> AllLadders = null;
-        private byte _ladderID = 0;
-
-        private static Dictionary<string, float> _defaultLadderHeights = new()
+        public static readonly Dictionary<string, float> DEFAULT_LADDER_HEIGHTS = new()
         {
             { "util-ladder1", 3.0f },
             { "util-ladder2", 1.5f }
         };
 
+        private static List<Ladder> _allLadders = new();
+
+        private byte _ladderID = 0;
 
         public LadderBuilder()
         {
-            AllLadders = new List<Ladder>();
+            _allLadders.Clear();
         }
 
         public void Build(LIElement elem, GameObject obj)
@@ -51,7 +50,7 @@ namespace LevelImposter.Core
 
             // Console
             float ladderHeight = elem.properties.ladderHeight == null ?
-                _defaultLadderHeights[elem.type] : (float)elem.properties.ladderHeight;
+                DEFAULT_LADDER_HEIGHTS[elem.type] : (float)elem.properties.ladderHeight;
             
             GameObject topObj = new("LadderTop");
             topObj.transform.SetParent(obj.transform);
@@ -69,19 +68,39 @@ namespace LevelImposter.Core
             topConsole.Destination = bottomConsole;
             topConsole.UseSound = topClone.UseSound;
             topConsole.Image = spriteRenderer;
-            AllLadders.Add(topConsole);
+            _allLadders.Add(topConsole);
 
             bottomConsole.Id = _ladderID++;
             bottomConsole.IsTop = false;
             bottomConsole.Destination = topConsole;
             bottomConsole.UseSound = bottomClone.UseSound;
             bottomConsole.Image = spriteRenderer;
-            AllLadders.Add(bottomConsole);
+            _allLadders.Add(bottomConsole);
         }
 
         public void PostBuild()
         {
-            AllLadders.RemoveAll(ladder => ladder == null);
+            _allLadders.RemoveAll(ladder => ladder == null);
+        }
+
+        /// <summary>
+        /// Trys the find the ladder of specified id
+        /// </summary>
+        /// <param name="id">ID of the ladder</param>
+        /// <param name="ladder">Cooresponding ladder, if found</param>
+        /// <returns>TRUE if found</returns>
+        public static bool TryGetLadder(byte id, out Ladder? ladder)
+        {
+            foreach (Ladder l in _allLadders)
+            {
+                if (l.Id == id)
+                {
+                    ladder = l;
+                    return true;
+                }
+            }
+            ladder = null;
+            return false;
         }
     }
 }

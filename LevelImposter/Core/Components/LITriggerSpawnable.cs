@@ -53,5 +53,10 @@ namespace LevelImposter.Core
                 LILogger.Warn("A Spawnable Trigger enabled without a target");
             StartCoroutine(CoFireTrigger().WrapToIl2Cpp());
         }
+        public void OnDestroy()
+        {
+            _triggerID = "";
+            _triggerTarget = null;
+        }
     }
 }

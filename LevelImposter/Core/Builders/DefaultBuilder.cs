@@ -20,6 +20,8 @@ namespace LevelImposter.Core
                 SpriteRenderer spriteRenderer = obj.AddComponent<SpriteRenderer>();
                 if (elem.properties.color != null)
                     spriteRenderer.color = MapUtils.LIColorToColor(elem.properties.color);
+                if (SpriteLoader.Instance == null)
+                    throw new Exception("SpriteLoader not found");
                 SpriteLoader.Instance.LoadSprite(elem, obj);
             }
 

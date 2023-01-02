@@ -9,27 +9,30 @@ namespace LevelImposter.Core
 {
     public class SabMapBuilder : IElemBuilder
     {
-        private static Dictionary<SystemTypes, MapRoom> _mapRoomDB = null;
+        private static Dictionary<SystemTypes, MapRoom> _mapRoomDB = new();
 
-        private Sprite _commsBtnSprite = null;
-        private Sprite _reactorBtnSprite = null;
-        private Sprite _oxygenBtnSprite = null;
-        private Sprite _doorsBtnSprite = null;
-        private Sprite _lightsBtnSprite = null;
-        private Material _btnMat = null;
+        private Sprite? _commsBtnSprite = null;
+        private Sprite? _reactorBtnSprite = null;
+        private Sprite? _oxygenBtnSprite = null;
+        private Sprite? _doorsBtnSprite = null;
+        private Sprite? _lightsBtnSprite = null;
+        private Material? _btnMat = null;
 
         private bool _hasSabConsoles = false;
         private bool _hasSabButtons = false;
 
         public SabMapBuilder()
         {
-            _mapRoomDB = new Dictionary<SystemTypes, MapRoom>();
+            _mapRoomDB.Clear();
         }
 
         public void Build(LIElement elem, GameObject obj)
         {
             if (!elem.type.StartsWith("sab-") || elem.type.StartsWith("sab-door"))
                 return;
+            if (LIShipStatus.Instance?.ShipStatus == null)
+                throw new Exception("ShipStatus not found");
+
             _hasSabConsoles = true;
 
             if (!elem.type.StartsWith("sab-btn"))
@@ -41,7 +44,17 @@ namespace LevelImposter.Core
             InfectedOverlay infectedOverlay = mapBehaviour.infectedOverlay;
             if (_btnMat == null)
                 GetAllAssets();
-            
+            if (_btnMat == null ||
+                _lightsBtnSprite == null ||
+                _doorsBtnSprite == null ||
+                _oxygenBtnSprite == null ||
+                _reactorBtnSprite == null ||
+                _commsBtnSprite == null)
+            {
+                LILogger.Warn("1 or more sabotage map sprites were not found");
+                return;
+            }
+
             // System
             SystemTypes systemType = RoomBuilder.GetParentOrDefault(elem);
 
@@ -90,9 +103,8 @@ namespace LevelImposter.Core
                 LILogger.Warn("Only 1 sabotage button is supported per room");
 
             ButtonBehavior button = sabButton.AddComponent<ButtonBehavior>();
-            Action btnAction = null;
-            Sprite btnSprite = null;
-
+            Action btnAction;
+            Sprite btnSprite;
             switch (elem.type) {
                 case "sab-btnreactor":
                     btnSprite = _reactorBtnSprite;

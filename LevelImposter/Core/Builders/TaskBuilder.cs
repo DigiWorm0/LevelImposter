@@ -10,17 +10,13 @@ namespace LevelImposter.Core
 {
     public class TaskBuilder : IElemBuilder
     {
-        private GameObject _taskContainer;
-        private int _consoleID = 0;
-        private NormalPlayerTask _wiresTask = null;
-        private readonly List<string> _builtTypes = new();
-        private readonly Dictionary<string, TaskType> _taskLengths = new()
+        public static readonly Dictionary<string, TaskType> TASK_LENGTHS = new()
         {
             { "Short", TaskType.Short },
             { "Long", TaskType.Long },
             { "Common", TaskType.Common }
         };
-        private readonly Dictionary<string, int> _consoleIDPairs = new()
+        public static readonly Dictionary<string, int> CONSOLE_ID_PAIRS = new()
         {
             { "task-garbage2", 1 },
             { "task-garbage3", 0 },
@@ -29,7 +25,7 @@ namespace LevelImposter.Core
             { "task-fans2", 1 },
             { "task-records1", 0 }
         };
-        private readonly Dictionary<string, int> _consoleIDIncrements = new()
+        public static readonly Dictionary<string, int> CONSOLE_ID_INCREMENTS = new()
         {
             { "task-toilet", 0 },
             { "task-breakers", 0 },
@@ -42,7 +38,13 @@ namespace LevelImposter.Core
             { "task-wires", 0 }
         };
 
-        private static SystemTypes[] _divertSystems;
+        private GameObject? _taskContainer = null;
+        private NormalPlayerTask? _wiresTask = null;
+        private int _consoleID = 0;
+        private List<string> _builtTypes = new();
+        private Dictionary<string, int> _consoleIDIncrements = new(CONSOLE_ID_INCREMENTS);
+
+        private static SystemTypes[] _divertSystems = Array.Empty<SystemTypes>();
         public static SystemTypes[] DivertSystems => _divertSystems;
 
         private static byte _breakerCount = 0;
@@ -80,6 +82,8 @@ namespace LevelImposter.Core
         {
             if (!elem.type.StartsWith("task-"))
                 return;
+            if (LIShipStatus.Instance?.ShipStatus == null)
+                throw new Exception("ShipStatus not found");
 
             // Create Task Container
             if (_taskContainer == null)
@@ -142,9 +146,9 @@ namespace LevelImposter.Core
             console.ValidTasks = origConsole.ValidTasks;
             console.AllowImpostor = false;
 
-            if (_consoleIDPairs.ContainsKey(elem.type))
+            if (CONSOLE_ID_PAIRS.ContainsKey(elem.type))
             {
-                console.ConsoleId = _consoleIDPairs[elem.type];
+                console.ConsoleId = CONSOLE_ID_PAIRS[elem.type];
             }
             else if (elem.type == "task-waterjug2")
             {
@@ -182,7 +186,7 @@ namespace LevelImposter.Core
             }
             else if (elem.type == "task-fuel2")
             {
-                console.ConsoleId = _consoleIDIncrements[elem.type];
+                console.ConsoleId = CONSOLE_ID_INCREMENTS[elem.type];
                 TaskSet taskSet = new()
                 {
                     taskType = TaskTypes.FuelEngines,
@@ -191,12 +195,12 @@ namespace LevelImposter.Core
                 console.ValidTasks = new Il2CppReferenceArray<TaskSet>(new TaskSet[] {
                     taskSet
                 });
-                _consoleIDIncrements[elem.type]++;
+                CONSOLE_ID_INCREMENTS[elem.type]++;
             }
-            else if (_consoleIDIncrements.ContainsKey(elem.type))
+            else if (CONSOLE_ID_INCREMENTS.ContainsKey(elem.type))
             {
-                console.ConsoleId = _consoleIDIncrements[elem.type];
-                _consoleIDIncrements[elem.type]++;
+                console.ConsoleId = CONSOLE_ID_INCREMENTS[elem.type];
+                CONSOLE_ID_INCREMENTS[elem.type]++;
             }
             else
             {
@@ -228,6 +232,8 @@ namespace LevelImposter.Core
             if (elem.type == "task-divert1" && !isBuilt)
             {
                 List<LIElement> divertTargets = new();
+                if (LIShipStatus.Instance.CurrentMap == null)
+                    throw new Exception("Current map is unavailable");
                 foreach (LIElement mapElem in LIShipStatus.Instance.CurrentMap.elements)
                     if (mapElem.type == "task-divert2")
                         divertTargets.Add(mapElem);
@@ -239,7 +245,7 @@ namespace LevelImposter.Core
                     LIElement divertTarget = divertTargets[i];
 
                     SystemTypes divertSystem = RoomBuilder.GetParentOrDefault(divertTarget);
-                    DivertSystems[i] = divertSystem;
+                    _divertSystems[i] = divertSystem;
 
                     GameObject taskHolder = new(elem.name);
                     taskHolder.transform.SetParent(_taskContainer.transform);
@@ -308,7 +314,7 @@ namespace LevelImposter.Core
                 }
 
                 string? taskLengthProp = elem.properties.taskLength;
-                TaskType taskLength = taskLengthProp != null ? _taskLengths[taskLengthProp] : taskData.TaskType;
+                TaskType taskLength = taskLengthProp != null ? TASK_LENGTHS[taskLengthProp] : taskData.TaskType;
                 if (taskLength == TaskType.Common)
                     shipStatus.CommonTasks = MapUtils.AddToArr(shipStatus.CommonTasks, task);
                 if (taskLength == TaskType.Short)
@@ -328,12 +334,12 @@ namespace LevelImposter.Core
         }
 
         public void PostBuild() {
-            string[] keys = new string[_consoleIDIncrements.Keys.Count];
-            _consoleIDIncrements.Keys.CopyTo(keys, 0);
+            string[] keys = new string[CONSOLE_ID_INCREMENTS.Keys.Count];
+            CONSOLE_ID_INCREMENTS.Keys.CopyTo(keys, 0);
 
             foreach (var key in keys)
             {
-                byte count = (byte)_consoleIDIncrements[key];
+                byte count = (byte)CONSOLE_ID_INCREMENTS[key];
                 if (key == "task-breakers")
                     _breakerCount = count;
                 if (key == "task-toilet")
@@ -350,7 +356,7 @@ namespace LevelImposter.Core
                     _recordsCount = count;
                 if (key == "task-wires")
                     _wiresCount = count;
-                _consoleIDIncrements[key] = 0;
+                CONSOLE_ID_INCREMENTS[key] = 0;
             }
 
             // Wires Length

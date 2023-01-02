@@ -35,7 +35,7 @@ namespace LevelImposter.DB
         }
     }
 
-    enum TaskType
+    public enum TaskType
     {
         Common,
         Short,

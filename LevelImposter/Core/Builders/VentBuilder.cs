@@ -21,6 +21,8 @@ namespace LevelImposter.Core
         {
             if (!elem.type.StartsWith("util-vent"))
                 return;
+            if (LIShipStatus.Instance?.ShipStatus == null)
+                throw new Exception("ShipStatus not found");
 
             UtilData utilData = AssetDB.Utils[elem.type];
 
@@ -72,7 +74,7 @@ namespace LevelImposter.Core
                 GenerateArrow(arrowPrefab, vent, i).transform.SetParent(arrowParent.transform);
 
             // Sounds
-            ShipStatus? shipStatus = LIShipStatus.Instance?.ShipStatus;
+            ShipStatus shipStatus = LIShipStatus.Instance.ShipStatus;
             if (!_hasVentSound && shipStatus != null)
             {
                 shipStatus.VentEnterSound = AssetDB.Ships["ss-skeld"].ShipStatus.VentEnterSound;

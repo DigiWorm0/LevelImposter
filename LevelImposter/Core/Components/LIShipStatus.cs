@@ -26,13 +26,13 @@ namespace LevelImposter.Core
 
         public static LIShipStatus? Instance { get; private set; }
 
-        private const float PLAYER_POS = -5.0f;
-        private static readonly List<string> PRIORITY_TYPES = new()
+        public const float PLAYER_POS = -5.0f;
+        public static readonly List<string> PRIORITY_TYPES = new()
         {
             "util-minimap",
             "util-room"
         };
-        private static readonly Dictionary<string, string> EXILE_IDS = new()
+        public static readonly Dictionary<string, string> EXILE_IDS = new()
         {
             { "Skeld", "ss-skeld" },
             { "MiraHQ", "ss-mira" },
@@ -110,7 +110,6 @@ namespace LevelImposter.Core
             ResetMap();
             _LoadMapProperties(map);
             BuildRouter buildRouter = new();
-            buildRouter.ResetStack();
 
             // Asset DB
             if (!AssetDB.IsReady)
@@ -210,6 +209,8 @@ namespace LevelImposter.Core
             loadingBean.SetActive(true);
             fullScreen.gameObject.SetActive(true);
 
+            while (SpriteLoader.Instance == null)
+                yield return null;
             while (SpriteLoader.Instance.RenderCount > 0)
                 yield return null;
 

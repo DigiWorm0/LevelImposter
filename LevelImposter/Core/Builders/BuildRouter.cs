@@ -8,49 +8,40 @@ namespace LevelImposter.Core
 {
     public class BuildRouter
     {
-        public List<IElemBuilder> _buildStack = null;
+        private List<IElemBuilder> _buildStack = new() {
+            new DefaultBuilder(),
+            new RoomBuilder(),
+            new AdminMapBuilder(),
+            new RoomNameBuilder(),
 
-        /// <summary>
-        /// Patchable method to append or remove builders from the build stack
-        /// </summary>
-        public void ResetStack()
-        {
-            _buildStack = new() {
-                new DefaultBuilder(),
+            new MinimapBuilder(),
+            new DummyBuilder(),
+            new UtilBuilder(),
+            new SpawnBuilder(),
+            new VentBuilder(),
+            new CamBuilder(),
+            new TaskBuilder(),
+            new DecBuilder(),
 
-                new RoomBuilder(),
-                new AdminMapBuilder(),
-                new RoomNameBuilder(),
+            new SabBuilder(),
+            new SabConsoleBuilder(),
+            new SabMapBuilder(),
+            new SabDoorBuilder(),
 
-                new MinimapBuilder(),
-                new DummyBuilder(),
-                new UtilBuilder(),
-                new SpawnBuilder(),
-                new VentBuilder(),
-                new CamBuilder(),
-                new TaskBuilder(),
-                new DecBuilder(),
+            new MinimapSpriteBuilder(),
+            new LadderBuilder(),
+            new PlatformBuilder(),
+            new StarfieldBuilder(),
+            new FloatBuilder(),
+            new AmbientSoundBuilder(),
+            new StepSoundBuilder(),
+            new TeleBuilder(),
+            new TriggerAreaBuilder(),
+            new TriggerConsoleBuilder(),
+            new TriggerStartBuilder(),
 
-                new SabBuilder(),
-                new SabConsoleBuilder(),
-                new SabMapBuilder(),
-                new SabDoorBuilder(),
-
-                new MinimapSpriteBuilder(),
-                new LadderBuilder(),
-                new PlatformBuilder(),
-                new StarfieldBuilder(),
-                new FloatBuilder(),
-                new AmbientSoundBuilder(),
-                new StepSoundBuilder(),
-                new TeleBuilder(),
-                new TriggerAreaBuilder(),
-                new TriggerConsoleBuilder(),
-                new TriggerStartBuilder(),
-
-                new TriggerBuilder()
-            };
-        }
+            new TriggerBuilder()
+        };
 
         /// <summary>
         /// Passes <c>LIElement</c> data through the build 
@@ -61,8 +52,6 @@ namespace LevelImposter.Core
         /// <returns></returns>
         public GameObject Build(LIElement element)
         {
-            if (_buildStack == null)
-                ResetStack();
             string objName = element.name.Replace("\\n", " ");
             GameObject gameObject = new GameObject(objName);
             foreach (IElemBuilder builder in _buildStack)
@@ -77,8 +66,6 @@ namespace LevelImposter.Core
         /// </summary>
         public void PostBuild()
         {
-            if (_buildStack == null)
-                ResetStack();
             foreach (IElemBuilder builder in _buildStack)
                 builder.PostBuild();
         }

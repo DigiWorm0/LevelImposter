@@ -8,11 +8,12 @@ namespace LevelImposter.Core
 {
     public class MinimapSpriteBuilder : IElemBuilder
     {
-
         public void Build(LIElement elem, GameObject obj)
         {
             if (elem.type != "util-minimapsprite")
                 return;
+            if (LIShipStatus.Instance?.ShipStatus == null)
+                throw new Exception("ShipStatus not found");
 
             // Minimap
             MapBehaviour mapBehaviour = MinimapBuilder.GetMinimap();

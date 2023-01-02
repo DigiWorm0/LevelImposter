@@ -15,6 +15,8 @@ namespace LevelImposter.Core
         {
             if (!elem.type.StartsWith("sab-door"))
                 return;
+            if (LIShipStatus.Instance?.ShipStatus == null)
+                throw new Exception("ShipStatus not found");
 
             SabData sabData = AssetDB.Sabs[elem.type];
 
@@ -93,8 +95,6 @@ namespace LevelImposter.Core
             }
         }
 
-        public void PostBuild() {
-            _doorId = 0;
-        }
+        public void PostBuild() {}
     }
 }

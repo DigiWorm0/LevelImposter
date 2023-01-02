@@ -5,6 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Runtime.InteropServices;
 using UnityEngine;
+using Unity.Collections;
+using Unity.Jobs;
 using UnityEngine.Events;
 using LevelImposter.Shop;
 using LevelImposter.DB;
@@ -64,13 +66,13 @@ namespace LevelImposter.Core
                 {
                     GIFAnimator gifAnimator = obj.AddComponent<GIFAnimator>();
                     gifAnimator.Init(element, spriteArr.spriteArr, spriteArr.frameTimeArr);
-                    LILogger.Info($"Done loading animated sprite for {element}");
+                    LILogger.Info($"Done loading animated sprite for {element} ({RenderCount} Left)");
                 }
                 else // Still Image
                 {
                     SpriteRenderer spriteRenderer = obj.GetComponent<SpriteRenderer>();
                     spriteRenderer.sprite = spriteArr.sprite;
-                    LILogger.Info($"Done loading sprite for {element}");
+                    LILogger.Info($"Done loading sprite for {element} ({RenderCount} Left)");
                 }
 
                 if (OnLoad != null)
@@ -84,7 +86,7 @@ namespace LevelImposter.Core
         /// <param name="b64Image">Base64 image data to read</param>
         /// <param name="onLoad">Callback on success w/ an array of Sprites and Frame Delays measured in seconds</param>
         [HideFromIl2Cpp]
-        public void LoadSprite(string b64Image, Action<SpriteList> onLoad)
+        public void LoadSprite(string b64Image, Action<SpriteList?> onLoad)
         {
             MemoryStream imgStream = MapUtils.ParseBase64(b64Image);
             LoadSprite(imgStream, (spriteList) =>
@@ -100,7 +102,7 @@ namespace LevelImposter.Core
         /// <param name="imgStream">Stream of bytes representing image data</param>
         /// <param name="onLoad">Callback on success w/ an array of Sprites and Frame Delays measured in seconds</param>
         [HideFromIl2Cpp]
-        public void LoadSprite(MemoryStream imgStream, Action<SpriteList> onLoad)
+        public void LoadSprite(MemoryStream imgStream, Action<SpriteList?> onLoad)
         {
             StartCoroutine(CoLoadElement(imgStream, (spriteList) =>
             {
@@ -110,26 +112,22 @@ namespace LevelImposter.Core
         }
 
         [HideFromIl2Cpp]
-        private IEnumerator CoLoadElement(MemoryStream imgStream, Action<SpriteList>? onLoad)
+        private IEnumerator CoLoadElement(MemoryStream imgStream, Action<SpriteList?> onLoad)
         {
             _renderCount++;
-
-            // Run Task
-            FreeImageWrapper.TextureList? textureList = null;
-            Task<bool> task = Task.Run(() => {
-                return FreeImageWrapper.LoadImage(imgStream, out textureList);
-            });
-            while (!task.IsCompleted)
-                yield return null;
+            yield return null;
+            byte[] imgBuffer = imgStream.ToArray();
+            bool result = FreeImageWrapper.LoadImage(imgBuffer, out FreeImageWrapper.TextureList? textureList);
 
             // Get Output
-            bool isSuccess = task.Result;
-            task.Dispose();
+            bool isSuccess = result;
             if (!isSuccess || textureList == null)
             {
-                if (onLoad != null)
-                    onLoad(new());
+                _renderCount--;
+                onLoad.Invoke(null);
                 onLoad = null;
+                textureList = null;
+                imgBuffer = null;
                 yield break;
             }
 
@@ -142,17 +140,22 @@ namespace LevelImposter.Core
                 while (_renderTimer?.ElapsedMilliseconds > (1000.0f / MIN_FRAMERATE)) // Stay above ~15fps
                     yield return null;
                 FreeImageWrapper.TextureMetadata texData = textureList.texDataArr[i];
+
+                Stopwatch st = new Stopwatch();
+                st.Start();
                 Sprite sprite = LoadImage(texData);
+                LILogger.Info(st.ElapsedMilliseconds + "ms : " + texData.width + "x" + texData.height);
+
                 spriteList.spriteArr[i] = sprite;
                 texData.texStream.Dispose();
             }
-            textureList = null;
 
             // Output
-            if (onLoad != null)
-                onLoad.Invoke(spriteList);
-            onLoad = null;
             _renderCount--;
+            onLoad.Invoke(spriteList);
+            onLoad = null;
+            textureList = null;
+            imgBuffer = null;
         }
 
         /// <summary>
@@ -214,6 +217,7 @@ namespace LevelImposter.Core
                 Destroy(sprite);
                 Destroy(sprite.texture);
             }
+            Instance = null;
             _renderTimer = null;
             _mapTextures = null;
             OnLoad = null;

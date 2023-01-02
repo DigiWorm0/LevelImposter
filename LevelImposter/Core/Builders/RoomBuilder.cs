@@ -7,12 +7,12 @@ namespace LevelImposter.Core
 {
     public class RoomBuilder : IElemBuilder
     {
-        private static Dictionary<Guid, SystemTypes> _systemDB = null;
+        private static Dictionary<Guid, SystemTypes> _systemDB = new();
         private byte _roomId = 1;
 
         public RoomBuilder()
         {
-            _systemDB = new Dictionary<Guid, SystemTypes>();
+            _systemDB.Clear();
         }
 
         public void Build(LIElement elem, GameObject obj)

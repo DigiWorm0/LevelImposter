@@ -16,22 +16,20 @@ namespace LevelImposter.Core
         /// <param name="imgStream">Stream of bytes representing image data</param>
         /// <param name="textureList">Output texture metadata</param>
         /// <returns>TRUE on success</returns>
-        public static bool LoadImage(MemoryStream imgStream, out TextureList textureList)
+        public static bool LoadImage(byte[] buffer, out TextureList textureList)
         {
             // Pin MemoryStream to Pointer
-            byte[] buffer = new byte[imgStream.Length];
-            imgStream.Read(buffer, 0, buffer.Length);
             GCHandle handle = GCHandle.Alloc(buffer, GCHandleType.Pinned);
             IntPtr bufferPtr = Marshal.UnsafeAddrOfPinnedArrayElement(buffer, 0);
 
             // Bytes to FreeImage
             IntPtr texMemory = FreeImage.FreeImage_OpenMemory(
                 bufferPtr,
-                (uint)imgStream.Length
+                (uint)buffer.Length
             );
             FREE_IMAGE_FORMAT imageFormat = FreeImage.FreeImage_GetFileTypeFromMemory(
                 texMemory,
-                (int)imgStream.Length
+                buffer.Length
             );
 
             bool isSuccess;
