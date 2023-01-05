@@ -46,6 +46,10 @@ namespace LevelImposter.Core
         [HideFromIl2Cpp]
         public LIMap? CurrentMap => _currentMap;
         public ShipStatus? ShipStatus => _shipStatus;
+        public bool IsReady
+        {
+            get { return SpriteLoader.Instance?.RenderCount <= 0 && WAVLoader.Instance?.LoadCount <= 0; }
+        }
         
         /// <summary>
         /// Resets the map to a blank slate. Ran before any map elements are applied.
@@ -196,28 +200,35 @@ namespace LevelImposter.Core
         [HideFromIl2Cpp]
         private IEnumerator CoLoadingScreen()
         {
-            if (AmongUsClient.Instance.NetworkMode != NetworkModes.FreePlay)
-                yield break;
-
             yield return null;
+
+            // Objects
+            bool isFreeplay = AmongUsClient.Instance.NetworkMode == NetworkModes.FreePlay;
             SpriteRenderer fullScreen = DestroyableSingleton<HudManager>.Instance.FullScreen;
             GameObject loadingBean = DestroyableSingleton<HudManager>.Instance.GameLoadAnimation;
             Color sabColor = fullScreen.color;
-            
-            // Loading
-            fullScreen.color = new Color(0, 0, 0, 0.8f);
-            loadingBean.SetActive(true);
-            fullScreen.gameObject.SetActive(true);
 
-            while (SpriteLoader.Instance == null)
+            // Loading
+            LILogger.Info($"Showing loading screen (Freeplay={isFreeplay})");
+            if (isFreeplay)
+            {
+                fullScreen.color = new Color(0, 0, 0, 0.8f);
+                fullScreen.gameObject.SetActive(true);
+            }
+            while (!IsReady)
+            {
+                loadingBean.SetActive(true);
                 yield return null;
-            while (SpriteLoader.Instance.RenderCount > 0)
-                yield return null;
+            }
 
             // Sabotage
-            fullScreen.color = sabColor;
+            LILogger.Info($"Hiding loading screen (Freeplay={isFreeplay})");
+            if (isFreeplay)
+            {
+                fullScreen.color = sabColor;
+                fullScreen.gameObject.SetActive(false);
+            }
             loadingBean.SetActive(false);
-            fullScreen.gameObject.SetActive(false);
         }
 
         public void Awake()

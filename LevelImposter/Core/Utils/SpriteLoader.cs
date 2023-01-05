@@ -39,6 +39,10 @@ namespace LevelImposter.Core
         private Stack<Sprite>? _mapTextures = new();
         private Stopwatch? _renderTimer = new();
         private int _renderCount = 0;
+        private bool _shouldRender
+        {
+            get { return _renderTimer?.ElapsedMilliseconds <= (1000.0f / MIN_FRAMERATE); }
+        }
 
         public int RenderCount => _renderCount;
 
@@ -117,6 +121,9 @@ namespace LevelImposter.Core
             _renderCount++;
             yield return null;
             byte[] imgBuffer = imgStream.ToArray();
+
+            while (!_shouldRender)
+                yield return null;
             bool result = FreeImageWrapper.LoadImage(imgBuffer, out FreeImageWrapper.TextureList? textureList);
 
             // Get Output
@@ -137,14 +144,10 @@ namespace LevelImposter.Core
             spriteList.frameTimeArr = textureList.frameTimeArr;
             for (int i = 0; i < textureList.texDataArr.Length; i++)
             {
-                while (_renderTimer?.ElapsedMilliseconds > (1000.0f / MIN_FRAMERATE)) // Stay above ~15fps
+                while (!_shouldRender)
                     yield return null;
                 FreeImageWrapper.TextureMetadata texData = textureList.texDataArr[i];
-
-                Stopwatch st = new Stopwatch();
-                st.Start();
                 Sprite sprite = LoadImage(texData);
-                LILogger.Info(st.ElapsedMilliseconds + "ms : " + texData.width + "x" + texData.height);
 
                 spriteList.spriteArr[i] = sprite;
                 texData.texStream.Dispose();
