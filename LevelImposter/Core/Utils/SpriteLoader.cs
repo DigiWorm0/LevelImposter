@@ -120,21 +120,18 @@ namespace LevelImposter.Core
         {
             _renderCount++;
             yield return null;
-            byte[] imgBuffer = imgStream.ToArray();
 
             while (!_shouldRender)
                 yield return null;
-            bool result = FreeImageWrapper.LoadImage(imgBuffer, out FreeImageWrapper.TextureList? textureList);
+            ImageSharpWrapper.TextureList? textureList = ImageSharpWrapper.LoadImage(imgStream);
 
             // Get Output
-            bool isSuccess = result;
-            if (!isSuccess || textureList == null)
+            if (textureList == null)
             {
                 _renderCount--;
                 onLoad.Invoke(null);
                 onLoad = null;
                 textureList = null;
-                imgBuffer = null;
                 yield break;
             }
 
@@ -146,7 +143,7 @@ namespace LevelImposter.Core
             {
                 while (!_shouldRender)
                     yield return null;
-                FreeImageWrapper.TextureMetadata texData = textureList.texDataArr[i];
+                ImageSharpWrapper.TextureMetadata texData = textureList.texDataArr[i];
                 Sprite sprite = LoadImage(texData);
 
                 spriteList.spriteArr[i] = sprite;
@@ -158,7 +155,6 @@ namespace LevelImposter.Core
             onLoad.Invoke(spriteList);
             onLoad = null;
             textureList = null;
-            imgBuffer = null;
         }
 
         /// <summary>
@@ -168,14 +164,14 @@ namespace LevelImposter.Core
         /// <param name="texData">Texture Metadata to load</param>
         /// <returns>Generated sprite data</returns>
         [HideFromIl2Cpp]
-        private Sprite LoadImage(FreeImageWrapper.TextureMetadata texData)
+        private Sprite LoadImage(ImageSharpWrapper.TextureMetadata texData)
         {
             // Generate Texture
             bool pixelArtMode = LIShipStatus.Instance?.CurrentMap?.properties.pixelArtMode == true;
             Texture2D texture = new(
                 texData.width,
                 texData.height,
-                TextureFormat.BGRA32,
+                TextureFormat.RGBA32,
                 1,
                 false
             )

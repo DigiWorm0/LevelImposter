@@ -83,6 +83,8 @@ namespace LevelImposter.Core
         private IEnumerator CoLoadAudio(string b64, Action<AudioClip?> onLoad)
         {
             _loadCount++;
+            yield return null;
+
             while (!_shouldLoad)
                 yield return null;
             AudioMetadata? audioData = ProcessWAV(b64);
@@ -153,7 +155,7 @@ namespace LevelImposter.Core
                     pcmData = pcmData
                 };
             }
-            catch (Exception e)
+            catch
             {
                 return null;
             }
