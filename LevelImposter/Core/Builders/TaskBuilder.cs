@@ -186,7 +186,7 @@ namespace LevelImposter.Core
             }
             else if (elem.type == "task-fuel2")
             {
-                console.ConsoleId = CONSOLE_ID_INCREMENTS[elem.type];
+                console.ConsoleId = _consoleIDIncrements[elem.type];
                 TaskSet taskSet = new()
                 {
                     taskType = TaskTypes.FuelEngines,
@@ -195,12 +195,12 @@ namespace LevelImposter.Core
                 console.ValidTasks = new Il2CppReferenceArray<TaskSet>(new TaskSet[] {
                     taskSet
                 });
-                CONSOLE_ID_INCREMENTS[elem.type]++;
+                _consoleIDIncrements[elem.type]++;
             }
-            else if (CONSOLE_ID_INCREMENTS.ContainsKey(elem.type))
+            else if (_consoleIDIncrements.ContainsKey(elem.type))
             {
-                console.ConsoleId = CONSOLE_ID_INCREMENTS[elem.type];
-                CONSOLE_ID_INCREMENTS[elem.type]++;
+                console.ConsoleId = _consoleIDIncrements[elem.type];
+                _consoleIDIncrements[elem.type]++;
             }
             else
             {

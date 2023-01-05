@@ -11,6 +11,8 @@ namespace LevelImposter
 {
     [BepInAutoPlugin(ID, "LevelImposter")]
     [BepInDependency(REACTOR_ID)]
+    [BepInDependency(ModCompatibility.SUBMERGED_GUID, BepInDependency.DependencyFlags.SoftDependency)]
+    [BepInDependency(ModCompatibility.TOU_GUID, BepInDependency.DependencyFlags.SoftDependency)]
     [BepInProcess("Among Us.exe")]
     public partial class LevelImposter : BasePlugin
     {
@@ -26,6 +28,7 @@ namespace LevelImposter
             ConfigFile = Config;
             LILogger.Init();
             LIDeepLink.Init();
+            ModCompatibility.Init();
 
             DataManager.Player.Onboarding.ViewedHideAndSeekHowToPlay = true;
 
