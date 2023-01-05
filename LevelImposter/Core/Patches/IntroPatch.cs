@@ -16,13 +16,11 @@ namespace LevelImposter.Core
     [HarmonyPatch(typeof(HudManager._CoShowIntro_d__82), nameof(HudManager._CoShowIntro_d__82.MoveNext))]
     public static class IntroPatch
     {
-        private static bool _canShowIntro = false;
-
         public static bool Prefix(HudManager._CoShowIntro_d__82 __instance)
         {
             if (MapLoader.CurrentMap == null)
                 return true;
-            if (_canShowIntro)
+            if (LIShipStatus.Instance?.IsReady == true)
                 return true;
             HudManager.Instance.StartCoroutine(CoWaitIntro().WrapToIl2Cpp());
             return false;
@@ -30,13 +28,9 @@ namespace LevelImposter.Core
 
         public static IEnumerator CoWaitIntro()
         {
-            while (LIShipStatus.Instance == null)
+            while (LIShipStatus.Instance?.IsReady != true)
                 yield return null;
-            while (!LIShipStatus.Instance.IsReady)
-                yield return null;
-            _canShowIntro = true;
             yield return HudManager.Instance.CoShowIntro();
-            _canShowIntro = false;
         }
     }
 }

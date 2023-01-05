@@ -42,13 +42,14 @@ namespace LevelImposter.Core
 
         private LIMap? _currentMap = null;
         private ShipStatus? _shipStatus = null;
+        private bool _isReady = true;
 
         [HideFromIl2Cpp]
         public LIMap? CurrentMap => _currentMap;
         public ShipStatus? ShipStatus => _shipStatus;
         public bool IsReady
         {
-            get { return SpriteLoader.Instance?.RenderCount <= 0 && WAVLoader.Instance?.LoadCount <= 0; }
+            get { return SpriteLoader.Instance?.RenderCount <= 0 && WAVLoader.Instance?.LoadCount <= 0 && _isReady; }
         }
         
         /// <summary>
@@ -109,6 +110,7 @@ namespace LevelImposter.Core
         public void LoadMap(LIMap map)
         {
             LILogger.Info("Loading " + map.name + " [" + map.id + "]");
+            _isReady = false;
             StartCoroutine(CoLoadingScreen().WrapToIl2Cpp());
             _currentMap = map;
             ResetMap();
@@ -130,7 +132,7 @@ namespace LevelImposter.Core
                     AddElement(buildRouter, elem);
 
             buildRouter.PostBuild();
-            
+            _isReady = true;
             LILogger.Info("Map load completed");
         }
 
