@@ -153,6 +153,7 @@ namespace LevelImposter.Core
                 if (loadedElem.id != elem.id)
                     return;
                 btnRenderer.sprite = spriteRenderer.sprite;
+                btnRenderer.color = spriteRenderer.color;
                 UnityEngine.Object.Destroy(obj);
             };
         }
@@ -166,7 +167,7 @@ namespace LevelImposter.Core
             MapBehaviour mapBehaviour = MinimapBuilder.GetMinimap();
             InfectedOverlay infectedOverlay = mapBehaviour.infectedOverlay;
 
-            while (infectedOverlay.transform.childCount > _mapRoomDB.Count)
+            while (infectedOverlay.transform.childCount > _mapRoomDB.Count + MinimapSpriteBuilder.SabCount)
                 UnityEngine.Object.DestroyImmediate(infectedOverlay.transform.GetChild(0).gameObject);
         }
 

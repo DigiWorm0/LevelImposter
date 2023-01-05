@@ -48,7 +48,11 @@ namespace LevelImposter.Core
                 if (loadedElem.id != elem.id)
                     return;
                 foreach (LIStar liStar in liStars)
-                    liStar.GetComponent<SpriteRenderer>().sprite = spriteRenderer.sprite;
+                {
+                    SpriteRenderer starRenderer = liStar.GetComponent<SpriteRenderer>();
+                    starRenderer.sprite = spriteRenderer.sprite;
+                    starRenderer.color = spriteRenderer.color;
+                }
             };
         }
 

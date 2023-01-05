@@ -8,6 +8,15 @@ namespace LevelImposter.Core
 {
     public class MinimapSpriteBuilder : IElemBuilder
     {
+        private static int _sabCount = 0;
+
+        public static int SabCount => _sabCount;
+
+        public MinimapSpriteBuilder()
+        {
+            _sabCount = 0;
+        }
+
         public void Build(LIElement elem, GameObject obj)
         {
             if (elem.type != "util-minimapsprite")
@@ -21,6 +30,8 @@ namespace LevelImposter.Core
             MapTaskOverlay taskOverlay = mapBehaviour.taskOverlay;
             bool imposterOnly = elem.properties.imposterOnly == true;
             Transform parentTransform = imposterOnly ? infectedOverlay.transform : taskOverlay.transform;
+            if (imposterOnly)
+                _sabCount++;
 
             // GameObject
             float mapScale = LIShipStatus.Instance.ShipStatus.MapScale;
@@ -30,7 +41,7 @@ namespace LevelImposter.Core
             spriteObj.transform.localPosition = new Vector3(
                 elem.x / mapScale,
                 elem.y / mapScale,
-                -25.0f
+                elem.z
             );
             spriteObj.transform.localScale = new Vector3(elem.xScale, elem.yScale, 1);
             spriteObj.transform.localRotation = Quaternion.Euler(0, 0, elem.rotation);
@@ -55,6 +66,7 @@ namespace LevelImposter.Core
                 if (loadedElem.id != elem.id)
                     return;
                 bgRenderer.sprite = spriteRenderer.sprite;
+                bgRenderer.color = spriteRenderer.color;
                 UnityEngine.Object.Destroy(obj);
             };
         }

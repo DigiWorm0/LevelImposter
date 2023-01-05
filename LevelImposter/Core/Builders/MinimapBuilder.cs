@@ -57,6 +57,7 @@ namespace LevelImposter.Core
                 if (loadedElem.id != elem.id)
                     return;
                 bgRenderer.sprite = spriteRenderer.sprite;
+                bgRenderer.color = spriteRenderer.color;
                 UnityEngine.Object.Destroy(obj);
             };
 
