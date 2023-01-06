@@ -43,7 +43,7 @@ namespace LevelImposter.Shop
             if (_selectedID != "downloaded")
             {
                 _selectedID = "downloaded";
-                ShopManager.Instance.ListDownloaded();
+                ShopManager.Instance?.ListDownloaded();
                 UpdateButtons();
             }
         }
@@ -56,7 +56,7 @@ namespace LevelImposter.Shop
             if (_selectedID != "top")
             {
                 _selectedID = "top";
-                ShopManager.Instance.ListTop();
+                ShopManager.Instance?.ListTop();
                 UpdateButtons();
             }
         }
@@ -69,7 +69,7 @@ namespace LevelImposter.Shop
             if (_selectedID != "recent")
             {
                 _selectedID = "recent";
-                ShopManager.Instance.ListRecent();
+                ShopManager.Instance?.ListRecent();
                 UpdateButtons();
             }
         }
@@ -82,7 +82,7 @@ namespace LevelImposter.Shop
             if (_selectedID != "featured")
             {
                 _selectedID = "featured";
-                ShopManager.Instance.ListFeatured();
+                ShopManager.Instance?.ListFeatured();
                 UpdateButtons();
             }
         }

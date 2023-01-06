@@ -89,7 +89,6 @@ namespace LevelImposter.Core
 
                 // Frame Delay
                 GifFrameMetadata metadata = frame.Metadata.GetGifMetadata();
-                LILogger.Info($"{i}: {metadata.FrameDelay}");
                 textureList.frameTimeArr[i] = metadata.FrameDelay / 100.0f;
                 textureList.texDataArr[i] = new()
                 {

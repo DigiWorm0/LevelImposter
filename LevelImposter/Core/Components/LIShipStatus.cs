@@ -236,8 +236,6 @@ namespace LevelImposter.Core
         public void Awake()
         {
             Destroy(GetComponent<TagAmbientSoundPlayer>());
-            gameObject.AddComponent<SpriteLoader>();
-            gameObject.AddComponent<WAVLoader>();
             _shipStatus = GetComponent<ShipStatus>();
             Instance = this;
 
@@ -255,7 +253,9 @@ namespace LevelImposter.Core
         {
             _currentMap = null;
             Instance = null;
-            GC.Collect();
+            SpriteLoader.Instance?.ClearAll();
+            WAVLoader.Instance?.ClearAll();
+            Resources.UnloadUnusedAssets();
         }
     }
 }

@@ -18,5 +18,10 @@ namespace LevelImposter.Core
         public long createdAt { get; set; }
         public string downloadURL { get; set; }
         public string thumbnailURL { get; set; }
+
+        public override string ToString()
+        {
+            return $"{name}[{id}]";
+        }
     }
 }

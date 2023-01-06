@@ -36,6 +36,18 @@ namespace LevelImposter.Core
         public int LoadCount => _loadCount;
 
         /// <summary>
+        /// Marks all audio clips for garbage collection
+        /// </summary>
+        public void ClearAll()
+        {
+            LILogger.Info($"Destroying {_mapClips?.Count} sounds");
+            while (_mapClips?.Count > 0)
+                Destroy(_mapClips.Pop());
+
+            GC.Collect();
+        }
+
+        /// <summary>
         /// Loads WAV data of an LISound
         /// </summary>
         /// <param name="element">LIElement of orgin</param>
@@ -204,20 +216,20 @@ namespace LevelImposter.Core
 
         public void Awake()
         {
-            Instance = this;
+            if (Instance == null)
+            {
+                Instance = this;
+                DontDestroyOnLoad(gameObject);
+            }
+            else
+            {
+                Destroy(gameObject);
+            }
         }
         public void Update()
         {
             if (_loadCount > 0)
                 _loadTimer?.Restart();
-        }
-        public void OnDestroy()
-        {
-            LILogger.Info("Destroying " + _mapClips?.Count + " map sounds");
-            while (_mapClips?.Count > 0)
-                Destroy(_mapClips.Pop());
-            _mapClips = null;
-            _loadTimer = null;
         }
 
         private class AudioMetadata

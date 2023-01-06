@@ -47,6 +47,21 @@ namespace LevelImposter.Core
         public int RenderCount => _renderCount;
 
         /// <summary>
+        /// Marks all sprites and textures for garbage collection
+        /// </summary>
+        public void ClearAll()
+        {
+            LILogger.Info("Destroying " + _mapTextures?.Count + " textures");
+            while (_mapTextures?.Count > 0)
+            {
+                Sprite sprite = _mapTextures.Pop();
+                Destroy(sprite);
+            }
+            OnLoad = null;
+            GC.Collect();
+        }
+
+        /// <summary>
         /// Loads a custom sprite from an
         /// LIElement and applies it to an object
         /// </summary>
@@ -116,7 +131,7 @@ namespace LevelImposter.Core
         }
 
         [HideFromIl2Cpp]
-        private IEnumerator CoLoadElement(MemoryStream imgStream, Action<SpriteList?> onLoad)
+        private IEnumerator CoLoadElement(MemoryStream imgStream, Action<SpriteList?>? onLoad)
         {
             _renderCount++;
             yield return null;
@@ -126,33 +141,28 @@ namespace LevelImposter.Core
             ImageSharpWrapper.TextureList? textureList = ImageSharpWrapper.LoadImage(imgStream);
 
             // Get Output
-            if (textureList == null)
+            SpriteList? spriteList = null;
+            if (textureList != null)
             {
-                _renderCount--;
-                onLoad.Invoke(null);
-                onLoad = null;
-                textureList = null;
-                yield break;
-            }
+                spriteList = new();
+                spriteList.spriteArr = new Sprite[textureList.texDataArr.Length];
+                spriteList.frameTimeArr = textureList.frameTimeArr;
+                for (int i = 0; i < textureList.texDataArr.Length; i++)
+                {
+                    while (!_shouldRender)
+                        yield return null;
+                    ImageSharpWrapper.TextureMetadata texData = textureList.texDataArr[i];
+                    Sprite sprite = LoadImage(texData);
 
-            // Sprite List
-            SpriteList spriteList = new SpriteList();
-            spriteList.spriteArr = new Sprite[textureList.texDataArr.Length];
-            spriteList.frameTimeArr = textureList.frameTimeArr;
-            for (int i = 0; i < textureList.texDataArr.Length; i++)
-            {
-                while (!_shouldRender)
-                    yield return null;
-                ImageSharpWrapper.TextureMetadata texData = textureList.texDataArr[i];
-                Sprite sprite = LoadImage(texData);
-
-                spriteList.spriteArr[i] = sprite;
-                texData.texStream.Dispose();
+                    spriteList.spriteArr[i] = sprite;
+                    texData.texStream.Dispose();
+                }
             }
 
             // Output
             _renderCount--;
-            onLoad.Invoke(spriteList);
+            if (onLoad != null)
+                onLoad.Invoke(spriteList);
             onLoad = null;
             textureList = null;
         }
@@ -200,26 +210,20 @@ namespace LevelImposter.Core
 
         public void Awake()
         {
-            Instance = this;
+            if (Instance == null)
+            {
+                Instance = this;
+                DontDestroyOnLoad(gameObject);
+            }
+            else
+            {
+                Destroy(gameObject);
+            }
         }
         public void Update()
         {
             if (_renderCount > 0)
                 _renderTimer?.Restart();
-        }
-        public void OnDestroy()
-        {
-            LILogger.Info("Destroying " + _mapTextures?.Count + " map textures");
-            while (_mapTextures?.Count > 0)
-            {
-                Sprite sprite = _mapTextures.Pop();
-                Destroy(sprite);
-                Destroy(sprite.texture);
-            }
-            Instance = null;
-            _renderTimer = null;
-            _mapTextures = null;
-            OnLoad = null;
         }
 
         /// <summary>

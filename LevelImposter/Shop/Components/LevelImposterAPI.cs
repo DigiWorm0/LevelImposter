@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -44,7 +45,7 @@ namespace LevelImposter.Shop
         /// <param name="url">URL to request</param>
         /// <param name="callback">Callback on success</param>
         [HideFromIl2Cpp]
-        public IEnumerator CoRequest(string url, Action<string> callback)
+        public IEnumerator CoRequest(string url, Action<string>? callback)
         {
             LILogger.Info("GET: " + url);
             UnityWebRequest request = UnityWebRequest.Get(url);
@@ -52,10 +53,15 @@ namespace LevelImposter.Shop
             LILogger.Info("RES: " + request.responseCode);
 
             if (request.result == UnityWebRequest.Result.ConnectionError || request.result == UnityWebRequest.Result.ProtocolError)
+            {
                 LILogger.Error(request.error);
-            else
+            }
+            else if (callback != null)
+            {
                 callback(request.downloadHandler.text);
+            }
             request.Dispose();
+            callback = null;
         }
 
         /// <summary>
@@ -65,9 +71,9 @@ namespace LevelImposter.Shop
         /// <param name="url">URL to request</param>
         /// <param name="callback">Callback on success</param>
         [HideFromIl2Cpp]
-        public void RequestTexture(string url, Action<Texture2D> callback)
+        public void RequestRaw(string url, Action<MemoryStream> callback)
         {
-            StartCoroutine(CoRequestTexture(url, callback).WrapToIl2Cpp());
+            StartCoroutine(CoRequestRaw(url, callback).WrapToIl2Cpp());
         }
 
         /// <summary>
@@ -78,7 +84,7 @@ namespace LevelImposter.Shop
         /// <param name="url">URL to request</param>
         /// <param name="callback">Callback on success</param>
         [HideFromIl2Cpp]
-        public IEnumerator CoRequestTexture(string url, Action<Texture2D> callback)
+        public IEnumerator CoRequestRaw(string url, Action<MemoryStream> callback)
         {
             LILogger.Info("GET: " + url);
             UnityWebRequest request = UnityWebRequest.Get(url);
@@ -89,9 +95,8 @@ namespace LevelImposter.Shop
                 LILogger.Error(request.error);
             else
             {
-                Texture2D texture = new(1, 1);
-                ImageConversion.LoadImage(texture, request.downloadHandler.data);
-                callback(texture);
+                MemoryStream ms = new MemoryStream(request.downloadHandler.data);
+                callback(ms);
             }
             request.Dispose();
         }
@@ -173,12 +178,12 @@ namespace LevelImposter.Shop
         [HideFromIl2Cpp]
         public void DownloadMap(Guid id, Action<LIMap> callback)
         {
-            LILogger.Info("Downloading map " + id + "...");
+            LILogger.Info($"Downloading map [{id}]...");
             GetMap(id, (LIMetadata metadata) =>
             {
                 Request(metadata.downloadURL, (string mapJson) =>
                 {
-                    LILogger.Info("Parsing map " + id + "...");
+                    LILogger.Info($"Parsing map {metadata}...");
                     LIMap? mapData = JsonSerializer.Deserialize<LIMap>(mapJson);
                     if (mapData == null)
                         return; // TODO: onError callback
@@ -204,17 +209,21 @@ namespace LevelImposter.Shop
         /// <param name="metadata">Metadata of the map to grab a thumbnail for</param>
         /// <param name="callback">Callback on success</param>
         [HideFromIl2Cpp]
-        public void DownloadThumbnail(LIMetadata metadata, Action<Texture2D> callback)
+        public void DownloadThumbnail(LIMetadata metadata, Action<Sprite> callback)
         {
-            LILogger.Info("Downloading thumbnail for map " + metadata.id + "...");
-            RequestTexture(metadata.thumbnailURL, (Texture2D thumbnail) =>
+            LILogger.Info($"Downloading thumbnail for map {metadata}...");
+            RequestRaw(metadata.thumbnailURL, (MemoryStream ms) =>
             {
-                if (thumbnail.width != ThumbnailFileAPI.TEX_WIDTH || thumbnail.height != ThumbnailFileAPI.TEX_HEIGHT)
+                ThumbnailFileAPI.Instance?.Save(metadata.id, ms);
+                SpriteLoader.Instance?.LoadSprite(ms, (spriteList) =>
                 {
-                    LILogger.Error("Thumbnail for map " + metadata.id + " is not the correct size.");
-                    return;
-                }
-                callback(thumbnail);
+                    if (spriteList == null || spriteList.sprite == null)
+                    {
+                        LILogger.Warn($"Could not grab thumbnail for {metadata}");
+                        return;
+                    }
+                    callback(spriteList.sprite);
+                });
             });
         }
 

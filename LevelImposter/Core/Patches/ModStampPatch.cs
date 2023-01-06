@@ -23,11 +23,13 @@ namespace LevelImposter.Core
 
             if (LevelImposterAPI.Instance == null)
             {
-                GameObject apiParent = new GameObject("LevelImposter API");
+                GameObject apiParent = new GameObject("LevelImposter");
                 apiParent.AddComponent<LevelImposterAPI>();
                 apiParent.AddComponent<MapFileAPI>();
                 apiParent.AddComponent<ThumbnailFileAPI>();
                 apiParent.AddComponent<GitHubAPI>();
+                apiParent.AddComponent<SpriteLoader>();
+                apiParent.AddComponent<WAVLoader>();
                 UnityEngine.Object.DontDestroyOnLoad(apiParent);
             }
         }

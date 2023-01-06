@@ -89,7 +89,7 @@ namespace LevelImposter.Shop
                 return;
             _downloadButton.interactable = false;
             _loadingOverlay.SetActive(true);
-            ShopManager.Instance.SetEnabled(false);
+            ShopManager.Instance?.SetEnabled(false);
             LevelImposterAPI.Instance?.DownloadMap(new Guid(_currentMap.id), OnDownload);
         }
 
@@ -102,7 +102,7 @@ namespace LevelImposter.Shop
         {
             MapFileAPI.Instance?.Save(map);
             _loadingOverlay?.SetActive(false);
-            ShopManager.Instance.SetEnabled(true);
+            ShopManager.Instance?.SetEnabled(true);
             UpdateButtons();
         }
 
@@ -114,9 +114,9 @@ namespace LevelImposter.Shop
             if (_currentMap == null)
                 return;
             if (_isInLobby)
-                ShopManager.Instance.SelectMap(_currentMap.id);
+                ShopManager.Instance?.SelectMap(_currentMap.id);
             else
-                ShopManager.Instance.LaunchMap(_currentMap.id);
+                ShopManager.Instance?.LaunchMap(_currentMap.id);
         }
 
         /// <summary>
@@ -148,25 +148,23 @@ namespace LevelImposter.Shop
         {
             if (string.IsNullOrEmpty(_currentMap?.thumbnailURL))
                 return;
-            if (ThumbnailFileAPI.Instance == null)
+            if (ThumbnailFileAPI.Instance == null || LevelImposterAPI.Instance == null)
                 return;
             if (ThumbnailFileAPI.Instance.Exists(_currentMap.id))
             {
-                ThumbnailFileAPI.Instance.Get(_currentMap.id, (Texture2D texture) =>
+                ThumbnailFileAPI.Instance.Get(_currentMap.id, (sprite) =>
                 {
                     if (_thumbnail != null)
-                        _thumbnail.sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f), 100.0f, 0, SpriteMeshType.FullRect);
+                        _thumbnail.sprite = sprite;
                     _isCustomTex = true;
                 });
             }
             else
             {
-                LevelImposterAPI.Instance?.DownloadThumbnail(_currentMap, (Texture2D texture) =>
+                LevelImposterAPI.Instance.DownloadThumbnail(_currentMap, (sprite) =>
                 {
-                    byte[] textureData = texture.EncodeToPNG();
-                    ThumbnailFileAPI.Instance.Save(_currentMap.id, textureData);
                     if (_thumbnail != null)
-                        _thumbnail.sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f), 100.0f, 0, SpriteMeshType.FullRect);
+                        _thumbnail.sprite = sprite;
                     _isCustomTex = true;
                 });
             }

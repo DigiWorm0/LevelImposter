@@ -42,7 +42,7 @@ namespace LevelImposter.Shop
         /// <summary>
         /// Clears all visible shop banners
         /// </summary>
-        public void ListNone()
+        public void ClearList()
         {
             _currentListID = "none";
             while (_shopBanners.Count > 0)
@@ -50,6 +50,16 @@ namespace LevelImposter.Shop
                 MapBanner banner = _shopBanners.Pop();
                 Destroy(banner.gameObject);
             }
+            CleanAssets();
+        }
+
+        /// <summary>
+        /// Mark all assets for garbage collection
+        /// </summary>
+        private void CleanAssets()
+        {
+            SpriteLoader.Instance?.ClearAll();
+            WAVLoader.Instance?.ClearAll();
         }
 
         /// <summary>
@@ -61,16 +71,18 @@ namespace LevelImposter.Shop
                 return;
             if (MapFileAPI.Instance == null)
                 return;
-            ListNone();
+            ClearList();
             _currentListID = "downloaded";
             string[] mapIDs = MapFileAPI.Instance.ListIDs();
             foreach (string mapID in mapIDs)
             {
                 MapBanner banner = Instantiate(MapBannerPrefab, ShopParent);
                 banner.gameObject.SetActive(true);
-                LIMetadata? metadata = MapFileAPI.Instance.GetMetadata(mapID);
-                if (metadata != null)
-                    banner.SetMap(metadata);
+                MapFileAPI.Instance.GetMetadata(mapID, (metadata) =>
+                {
+                    if (metadata != null)
+                        banner.SetMap(metadata);
+                });
                 _shopBanners.Push(banner);
             }
         }
@@ -80,7 +92,7 @@ namespace LevelImposter.Shop
         /// </summary>
         public void ListTop()
         {
-            ListNone();
+            ClearList();
             _currentListID = "top";
             LevelImposterAPI.Instance?.GetTop(OnTop);
         }
@@ -112,7 +124,7 @@ namespace LevelImposter.Shop
         {
             if (LevelImposterAPI.Instance == null)
                 return;
-            ListNone();
+            ClearList();
             _currentListID = "recent";
             LevelImposterAPI.Instance.GetRecent(OnRecent);
         }
@@ -144,7 +156,7 @@ namespace LevelImposter.Shop
         {
             if (LevelImposterAPI.Instance == null)
                 return;
-            ListNone();
+            ClearList();
             _currentListID = "featured";
             LevelImposterAPI.Instance.GetFeatured(OnFeatured);
         }
@@ -176,8 +188,7 @@ namespace LevelImposter.Shop
         public void SelectMap(string id)
         {
             LILogger.Info("Selecting map [" + id + "]");
-            MapLoader.LoadMap(id);
-            MapUtils.SyncMapID();
+            MapLoader.LoadMap(id, MapUtils.SyncMapID);
             CloseShop();
         }
 
@@ -190,10 +201,11 @@ namespace LevelImposter.Shop
             if (!AssetDB.IsReady)
                 return;
             LILogger.Info("Launching map [" + id + "]");
-            MapLoader.LoadMap(id);
-
-            AmongUsClient.Instance.TutorialMapId = (int)MapNames.Polus;
-            _freeplayComp?.OnClick();
+            MapLoader.LoadMap(id, () =>
+            {
+                AmongUsClient.Instance.TutorialMapId = (int)MapNames.Polus;
+                _freeplayComp?.OnClick();
+            });
         }
 
         /// <summary>
@@ -246,6 +258,7 @@ namespace LevelImposter.Shop
             CloseButton = null;
             _freeplayComp = null;
             _shopBanners.Clear();
+            CleanAssets();
         }
     }
 }

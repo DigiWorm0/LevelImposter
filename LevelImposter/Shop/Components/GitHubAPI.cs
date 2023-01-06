@@ -48,7 +48,7 @@ namespace LevelImposter.Shop
         /// <param name="onSuccess">Callback on success</param>
         /// <param name="onError">Callback on error</param>
         [HideFromIl2Cpp]
-        public IEnumerator CoRequest(string url, Action<byte[]> onSuccess, Action<string> onError)
+        public IEnumerator CoRequest(string url, Action<byte[]>? onSuccess, Action<string>? onError)
         {
             LILogger.Info("GET: " + url);
             UnityWebRequest request = UnityWebRequest.Get(url);
@@ -58,11 +58,16 @@ namespace LevelImposter.Shop
             if (request.result == UnityWebRequest.Result.ConnectionError || request.result == UnityWebRequest.Result.ProtocolError)
             {
                 LILogger.Error(request.error);
-                onError(request.error);
+                if (onError != null)
+                    onError(request.error);
             }
-            else
+            else if (onSuccess != null)
+            {
                 onSuccess(request.downloadHandler.data);
+            }
             request.Dispose();
+            onSuccess = null;
+            onError = null;
         }
 
         /// <summary>
@@ -119,17 +124,17 @@ namespace LevelImposter.Shop
             LILogger.Info("Updating mod from GitHub");
             GetLatestRelease((release) =>
             {
-                LILogger.Info($"Downloading DLL from {release.name}");
+                LILogger.Info($"Downloading DLL from {release}");
                 if (release.assets.Length <= 0)
                 {
-                    string errorMsg = $"No release assets were found for {release.name}";
+                    string errorMsg = $"No release assets were found for {release}";
                     LILogger.Error(errorMsg);
                     onError(errorMsg);
                     return;
                 }
                 if (release.body.Contains(UPDATE_FORBIDDEN_FLAG))
                 {
-                    string errorMsg = $"Auto-update to {release.name} is unavailable.";
+                    string errorMsg = $"Auto-update to {release} is unavailable.";
                     LILogger.Error(errorMsg);
                     onError(errorMsg);
                     return;
