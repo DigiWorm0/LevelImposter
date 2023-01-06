@@ -98,7 +98,7 @@ namespace LevelImposter.Shop
         /// <param name="mapID">Map ID to read and parse</param>
         /// <param name="callback">Callback on success</param>
         [HideFromIl2Cpp]
-        private IEnumerator CoGet<T>(string mapID, Action<T?> callback) where T : LIMetadata
+        private IEnumerator CoGet<T>(string mapID, Action<T?>? callback) where T : LIMetadata
         {
             if (!Exists(mapID))
             {
@@ -106,23 +106,30 @@ namespace LevelImposter.Shop
                 yield break;
             }
             LILogger.Info($"Loading map [{mapID}] from filesystem");
+
+            // File Reader
             string mapPath = GetPath(mapID);
             FileStream mapStream = File.OpenRead(mapPath);
             byte[] buffer = new byte[mapStream.Length];
             var task = mapStream.ReadAsync(buffer);
+
             while (!task.IsCompleted)
                 yield return null;
             T? mapData = JsonSerializer.Deserialize<T>(buffer);
             if (mapData == null)
             {
-                LILogger.Error($"Invalid map data in [{mapID}]");
-                yield break;
+                LILogger.Warn($"Invalid map data in [{mapID}]");
             }
-            mapData.id = mapID;
-            callback(mapData);
+            else
+            {
+                mapData.id = mapID;
+                if (callback != null)
+                    callback(mapData);
+            }
+            mapStream.Close();
+            buffer = null;
             callback = null;
         }
-
 
         /// <summary>
         /// Saves map data into the local filesystem based on the map's ID.
