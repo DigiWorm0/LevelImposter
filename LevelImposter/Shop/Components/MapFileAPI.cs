@@ -1,12 +1,15 @@
 using System;
 using System.IO;
 using System.Collections;
+using System.Diagnostics;
+using System.Threading.Tasks;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 using LevelImposter.Core;
 using BepInEx.Unity.IL2CPP.Utils.Collections;
-using System.Text.Json;
 using Il2CppInterop.Runtime.Attributes;
 
 namespace LevelImposter.Shop
@@ -20,7 +23,17 @@ namespace LevelImposter.Shop
         {
         }
 
+        public const float MIN_FRAMERATE = 20.0f;
+
         public static MapFileAPI? Instance = null;
+
+        private Stopwatch? _loadTimer = new();
+        private int _loadCount = 0;
+        private bool _shouldLoad
+        {
+            get { return _loadTimer?.ElapsedMilliseconds <= (1000.0f / MIN_FRAMERATE); }
+        }
+
 
         /// <summary>
         /// Gets the current directory where LevelImposter map files are stored.
@@ -106,28 +119,29 @@ namespace LevelImposter.Shop
                 yield break;
             }
             LILogger.Info($"Loading map [{mapID}] from filesystem");
+            _loadCount++;
+            yield return null;
 
             // File Reader
-            string mapPath = GetPath(mapID);
-            FileStream mapStream = File.OpenRead(mapPath);
-            byte[] buffer = new byte[mapStream.Length];
-            var task = mapStream.ReadAsync(buffer);
-
-            while (!task.IsCompleted)
+            while (!_shouldLoad)
                 yield return null;
-            T? mapData = JsonSerializer.Deserialize<T>(buffer);
-            if (mapData == null)
+            string mapPath = GetPath(mapID);
+            using (FileStream mapStream = File.OpenRead(mapPath))
             {
-                LILogger.Warn($"Invalid map data in [{mapID}]");
+                T? mapData = JsonSerializer.Deserialize<T>(mapStream);
+                if (mapData == null)
+                {
+                    LILogger.Warn($"Invalid map data in [{mapID}]");
+                }
+                else
+                {
+                    mapData.id = mapID;
+                    if (callback != null)
+                        callback(mapData);
+                    mapData = null;
+                }
+                _loadCount--;
             }
-            else
-            {
-                mapData.id = mapID;
-                if (callback != null)
-                    callback(mapData);
-            }
-            mapStream.Close();
-            buffer = null;
             callback = null;
         }
 
@@ -178,6 +192,11 @@ namespace LevelImposter.Shop
         {
             if (!Directory.Exists(GetDirectory()))
                 Directory.CreateDirectory(GetDirectory());
+        }
+        public void Update()
+        {
+            if (_loadCount > 0)
+                _loadTimer?.Restart();
         }
     }
 }

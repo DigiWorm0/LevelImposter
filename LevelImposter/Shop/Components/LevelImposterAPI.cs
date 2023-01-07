@@ -71,7 +71,7 @@ namespace LevelImposter.Shop
         /// <param name="url">URL to request</param>
         /// <param name="callback">Callback on success</param>
         [HideFromIl2Cpp]
-        public void RequestRaw(string url, Action<MemoryStream> callback)
+        public void RequestRaw(string url, Action<byte[]> callback)
         {
             StartCoroutine(CoRequestRaw(url, callback).WrapToIl2Cpp());
         }
@@ -84,7 +84,7 @@ namespace LevelImposter.Shop
         /// <param name="url">URL to request</param>
         /// <param name="callback">Callback on success</param>
         [HideFromIl2Cpp]
-        public IEnumerator CoRequestRaw(string url, Action<MemoryStream> callback)
+        public IEnumerator CoRequestRaw(string url, Action<byte[]> callback)
         {
             LILogger.Info("GET: " + url);
             UnityWebRequest request = UnityWebRequest.Get(url);
@@ -95,10 +95,10 @@ namespace LevelImposter.Shop
                 LILogger.Error(request.error);
             else
             {
-                MemoryStream ms = new MemoryStream(request.downloadHandler.data);
-                callback(ms);
+                callback(request.downloadHandler.data);
             }
             request.Dispose();
+            request = null;
         }
 
         /// <summary>
@@ -212,17 +212,19 @@ namespace LevelImposter.Shop
         public void DownloadThumbnail(LIMetadata metadata, Action<Sprite> callback)
         {
             LILogger.Info($"Downloading thumbnail for map {metadata}...");
-            RequestRaw(metadata.thumbnailURL, (MemoryStream ms) =>
+            RequestRaw(metadata.thumbnailURL, (byte[] imgData) =>
             {
-                ThumbnailFileAPI.Instance?.Save(metadata.id, ms);
-                SpriteLoader.Instance?.LoadSprite(ms, (spriteList) =>
+                ThumbnailFileAPI.Instance?.Save(metadata.id, imgData);
+                SpriteLoader.Instance?.LoadSprite(imgData, (spriteData) =>
                 {
-                    if (spriteList == null || spriteList.sprite == null)
+                    if (spriteData == null)
                     {
-                        LILogger.Warn($"Could not grab thumbnail for {metadata}");
+                        LILogger.Warn($"Error loading {metadata} thumbnail from API");
                         return;
                     }
-                    callback(spriteList.sprite);
+                    Sprite? sprite = ((SpriteLoader.SpriteData)spriteData).Sprite;
+                    if (sprite != null)
+                        callback(sprite);
                 });
             });
         }

@@ -51,7 +51,7 @@ namespace LevelImposter.Shop
         public IEnumerator CoRequest(string url, Action<byte[]>? onSuccess, Action<string>? onError)
         {
             LILogger.Info("GET: " + url);
-            UnityWebRequest request = UnityWebRequest.Get(url);
+            UnityWebRequest request = UnityWebRequest.Get(url); // Doesn't extend IDisposable
             yield return request.SendWebRequest();
             LILogger.Info("RES: " + request.responseCode);
 
@@ -66,6 +66,7 @@ namespace LevelImposter.Shop
                 onSuccess(request.downloadHandler.data);
             }
             request.Dispose();
+            request = null;
             onSuccess = null;
             onError = null;
         }

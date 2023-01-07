@@ -36,6 +36,7 @@ namespace LevelImposter.Core
                 liStars[i] = liStar;
             }
             UnityEngine.Object.Destroy(starPrefab);
+            liStars = null;
 
             // Clones
             if (SpriteLoader.Instance == null)

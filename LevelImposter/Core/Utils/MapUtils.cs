@@ -131,11 +131,10 @@ namespace LevelImposter.Core
         /// </summary>
         /// <param name="base64">Base64 encoded data</param>
         /// <returns>Stream of bytes representing raw base64 data</returns>
-        public static MemoryStream ParseBase64(string base64)
+        public static byte[] ParseBase64(string base64)
         {
             string sub64 = base64.Substring(base64.IndexOf(",") + 1);
-            byte[] bytes = Convert.FromBase64String(sub64);
-            return new MemoryStream(bytes);
+            return Convert.FromBase64String(sub64);
         }
 
         /// <summary>
@@ -174,12 +173,14 @@ namespace LevelImposter.Core
         /// <returns></returns>
         public static GameObject LoadAssetBundle(string name)
         {
-            Stream resourceStream = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("LevelImposter.Assets." + name);
+            Stream? resourceStream = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("LevelImposter.Assets." + name);
             using (var ms = new MemoryStream())
             {
-                resourceStream.CopyTo(ms);
+                resourceStream?.CopyTo(ms);
+                resourceStream?.Dispose();
                 byte[] assetData = ms.ToArray();
                 AssetBundle assetBundle = AssetBundle.LoadFromMemory(assetData);
+                assetData = null;
                 GameObject asset = assetBundle.LoadAsset(name, Il2CppType.Of<GameObject>()).Cast<GameObject>();
                 assetBundle.Unload(false);
                 return asset;

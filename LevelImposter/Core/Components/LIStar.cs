@@ -36,6 +36,7 @@ namespace LevelImposter.Core
                 _minSpeed = (float)elem.properties.starfieldMinSpeed;
             if (elem.properties.starfieldMaxSpeed != null)
                 _maxSpeed = (float)elem.properties.starfieldMaxSpeed;
+            elem = null;
         }
 
         /// <summary>

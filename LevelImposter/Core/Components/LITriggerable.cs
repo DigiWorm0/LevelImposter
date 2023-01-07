@@ -69,7 +69,7 @@ namespace LevelImposter.Core
             Guid elemID;
             if (!Guid.TryParse(elemIDString, out elemID))
             {
-                LILogger.Error("Triggered element ID is invalid.");
+                LILogger.Warn("Triggered element ID is invalid.");
                 return;
             }
 

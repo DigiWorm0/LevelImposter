@@ -63,17 +63,22 @@ namespace LevelImposter.Shop
         {
             if (!Exists(mapID))
             {
-                LILogger.Error($"Could not find [{mapID}] thumbnail in filesystem");
+                LILogger.Warn($"Could not find [{mapID}] thumbnail in filesystem");
                 return;
             }
 
             LILogger.Info($"Loading thumbnail [{mapID}] from filesystem");
             string thumbnailPath = GetPath(mapID);
             byte[] thumbnailBytes = File.ReadAllBytes(thumbnailPath);
-            MemoryStream thumbnailStream = new MemoryStream(thumbnailBytes);
-            SpriteLoader.Instance?.LoadSprite(thumbnailStream, (spriteList) =>
+            SpriteLoader.Instance?.LoadSprite(thumbnailBytes, (spriteData) =>
             {
-                callback.Invoke(spriteList?.sprite);
+                Sprite? sprite = spriteData?.Sprite;
+                if (sprite == null)
+                {
+                    LILogger.Warn($"Error loading [{mapID}] thumbnail from filesystem");
+                    return;
+                }
+                callback.Invoke(spriteData?.Sprite);
             });
         }
 
@@ -83,13 +88,13 @@ namespace LevelImposter.Shop
         /// <param name="mapID">Map ID for the thumbnail</param>
         /// <param name="thumbnailData">PNG-encoded image data.</param>
         [HideFromIl2Cpp]
-        public void Save(string mapID, MemoryStream thumbnailStream)
+        public void Save(string mapID, byte[] thumbnailBytes)
         {
             LILogger.Info($"Saving [{mapID}] thumbnail to filesystem");
             string thumbnailPath = GetPath(mapID);
             if (!Directory.Exists(GetDirectory()))
                 Directory.CreateDirectory(GetDirectory());
-            File.WriteAllBytes(thumbnailPath, thumbnailStream.ToArray());
+            File.WriteAllBytes(thumbnailPath, thumbnailBytes);
         }
 
         /// <summary>

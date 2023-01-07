@@ -10,7 +10,7 @@ namespace LevelImposter.Shop
 {
     public static class UpdateButtonBuilder
     {
-        private static Texture2D _buttonTex;
+        private static Sprite _buttonSprite;
         private static GenericPopup _popupComponent;
         private static GameObject _buttonObj;
 
@@ -85,18 +85,20 @@ namespace LevelImposter.Shop
 
         private static Sprite GetSprite()
         {
-            if (_buttonTex == null)
+            if (_buttonSprite == null)
             {
-                _buttonTex = new Texture2D(1, 1);
-                ImageConversion.LoadImage(_buttonTex, Properties.Resources.updateButton);
+                Texture2D buttonTex = new Texture2D(1, 1);
+                ImageConversion.LoadImage(buttonTex, Properties.Resources.updateButton);
+                _buttonSprite = Sprite.Create(
+                    buttonTex,
+                    new Rect(0, 0, buttonTex.width, buttonTex.height),
+                    new Vector2(0.5f, 0.5f),
+                    100.0f,
+                    0,
+                    SpriteMeshType.FullRect
+                );
             }
-            Sprite sprite = Sprite.Create(
-                _buttonTex,
-                new Rect(0, 0, _buttonTex.width, _buttonTex.height),
-                new Vector2(0.5f, 0.5f),
-                100.0f
-            );
-            return sprite;
+            return _buttonSprite;
         }
     }
 }

@@ -7,7 +7,7 @@ namespace LevelImposter.Shop
 {
     public static class LobbyConsoleBuilder
     {
-        private static Texture2D _consoleTex;
+        private static Sprite _consoleSprite;
 
         public static void Build()
         {
@@ -38,18 +38,20 @@ namespace LevelImposter.Shop
 
         private static Sprite GetSprite()
         {
-            if (_consoleTex == null)
+            if (_consoleSprite == null)
             {
-                _consoleTex = new Texture2D(1, 1);
-                ImageConversion.LoadImage(_consoleTex, Properties.Resources.console);
+                Texture2D consoleTex = new Texture2D(1, 1);
+                ImageConversion.LoadImage(consoleTex, Properties.Resources.console);
+                _consoleSprite = Sprite.Create(
+                    consoleTex,
+                    new Rect(0, 0, consoleTex.width, consoleTex.height),
+                    new Vector2(0.5f, 0.5f),
+                    100.0f,
+                    0,
+                    SpriteMeshType.FullRect
+                );
             }
-            Sprite sprite = Sprite.Create(
-                _consoleTex,
-                new Rect(0, 0, _consoleTex.width, _consoleTex.height),
-                new Vector2(0.5f, 0.5f),
-                100.0f
-            );
-            return sprite;
+            return _consoleSprite;
         }
     }
 }

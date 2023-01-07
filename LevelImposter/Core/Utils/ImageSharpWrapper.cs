@@ -26,100 +26,66 @@ namespace LevelImposter.Core
         /// <param name="imgStream">Stream of bytes representing image data</param>
         /// <param name="textureList">Output texture metadata</param>
         /// <returns>TRUE on success</returns>
-        public static TextureList LoadImage(MemoryStream imgStream)
+        public static TextureMetadata[]? LoadImage(MemoryStream imgStream)
         {
-            using (var image = Image.Load<Rgba32>(imgStream, out IImageFormat format))
+            try
             {
-                image.Mutate(t => t.Flip(FlipMode.Vertical));
-                if (format.DefaultMimeType == "image/gif")
+                // Load Image & Formats
+                var imgFormat = Image.DetectFormat(imgStream);
+                using (var image = Image.Load<Rgba32>(imgStream))
                 {
-                    return LoadGIF(image);
-                }
-                else
-                {
-                    return LoadImage(image);
+                    // Null Check
+                    if (image == null || imgFormat == null)
+                        return null;
+
+                    bool isGif = imgFormat.DefaultMimeType == "image/gif";
+                    image.Mutate(t => t.Flip(FlipMode.Vertical)); // Fix bug where image is flipped
+                    var texMetadataArr = new TextureMetadata[image.Frames.Count];
+
+                    // Iterate Frames
+                    for (int i = 0; i < image.Frames.Count; i++)
+                    {
+                        var frame = image.Frames[i];
+
+                        // Get GIF Frame Delay
+                        float frameDelay = 0;
+                        if (isGif)
+                        {
+                            GifFrameMetadata metadata = frame.Metadata.GetGifMetadata();
+                            frameDelay = metadata.FrameDelay / 100.0f;
+                        }
+
+                        // Populate Metadata
+                        texMetadataArr[i] = new()
+                        {
+                            Width = frame.Width,
+                            Height = frame.Height,
+                            RawTextureData = new byte[frame.Width * frame.Height * 4],
+                            FrameDelay = frameDelay
+                        };
+                        frame.CopyPixelDataTo(texMetadataArr[i].RawTextureData);
+                    }
+
+                    return texMetadataArr;
                 }
             }
-        }
-
-        /// <summary>
-        /// Loads a still image from memory
-        /// </summary>
-        /// <param name="image">Image object to load in</param>
-        /// <returns><c>TextureList</c> with a singular texture</returns>
-        private static TextureList LoadImage(Image<Rgba32> image)
-        {
-            // Output Metadata
-            byte[] buffer = new byte[image.Width * image.Height * 4];
-            image.CopyPixelDataTo(buffer);
-
-            TextureMetadata texData = new()
+            catch (Exception e)
             {
-                width = image.Width,
-                height = image.Height,
-                texStream = new MemoryStream(buffer),
-            };
-
-            // Add to List
-            TextureList textureList = new();
-            textureList.texDataArr = new TextureMetadata[1];
-            textureList.texDataArr[0] = texData;
-
-            return textureList;
-        }
-
-        /// <summary>
-        /// Loads a GIF image from memory
-        /// </summary>
-        /// <param name="image">Image object to load in</param>
-        /// <returns><c>TextureList</c> with cooresponding frame times and raw image bytes</returns>
-        private static TextureList LoadGIF(Image<Rgba32> image)
-        {
-            TextureList textureList = new();
-            textureList.texDataArr = new TextureMetadata[image.Frames.Count];
-            textureList.frameTimeArr = new float[image.Frames.Count];
-
-            for (int i = 0; i < image.Frames.Count; i++)
-            {
-                ImageFrame<Rgba32> frame = image.Frames[i];
-
-                // Frame Data
-                byte[] buffer = new byte[frame.Width * frame.Height * 4];
-                frame.CopyPixelDataTo(buffer);
-
-                // Frame Delay
-                GifFrameMetadata metadata = frame.Metadata.GetGifMetadata();
-                textureList.frameTimeArr[i] = metadata.FrameDelay / 100.0f;
-                textureList.texDataArr[i] = new()
-                {
-                    width = frame.Width,
-                    height = frame.Height,
-                    texStream = new MemoryStream(buffer),
-                };
+                LILogger.Warn(e);
+                return null;
             }
-            return textureList;
         }
 
         /// <summary>
         /// Metadata to store and send texture data
         /// </summary>
-        public class TextureMetadata
+        public struct TextureMetadata
         {
-            public int width = 0;
-            public int height = 0;
-            public MemoryStream texStream;
-        }
-        public class TextureList
-        {
-            public float[] frameTimeArr = Array.Empty<float>();
-            public TextureMetadata[] texDataArr = Array.Empty<TextureMetadata>();
-            public bool isAnimated
-            {
-                get
-                {
-                    return texDataArr.Length > 1;
-                }
-            }
+            public TextureMetadata() { }
+            public float FrameDelay = 0;
+            public int Width = 0;
+            public int Height = 0;
+            public byte[] RawTextureData = Array.Empty<byte>();
         }
     }
 }

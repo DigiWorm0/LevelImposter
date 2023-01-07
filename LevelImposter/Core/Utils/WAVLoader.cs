@@ -102,10 +102,11 @@ namespace LevelImposter.Core
             AudioMetadata? audioData = ProcessWAV(b64);
             while (!_shouldLoad)
                 yield return null;
-            AudioClip audioClip = LoadWAV(audioData);
+            AudioClip? audioClip = LoadWAV(audioData);
             if (onLoad != null)
                 onLoad.Invoke(audioClip);
             onLoad = null;
+            audioData = null;
             _loadCount--;
         }
 
@@ -120,10 +121,7 @@ namespace LevelImposter.Core
             try
             {
                 // Get Image Bytes
-                MemoryStream dataStream = MapUtils.ParseBase64(b64Audio);
-                byte[] wav = new byte[dataStream.Length];
-                dataStream.Read(wav, 0, wav.Length);
-                dataStream.Dispose();
+                byte[] wav = MapUtils.ParseBase64(b64Audio);
 
                 // Metadata
                 int channelCount = wav[22];
@@ -156,6 +154,7 @@ namespace LevelImposter.Core
                     }
                     i += channelCount;
                 }
+                wav = null;
 
 
                 // Return Metadata
@@ -210,6 +209,7 @@ namespace LevelImposter.Core
             );
             clip.SetData(audioData.pcmData, 0);
             _mapClips?.Push(clip);
+            audioData = null;
 
             return clip;
         }
