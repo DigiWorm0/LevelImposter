@@ -8,6 +8,8 @@ using LevelImposter.DB;
 using LevelImposter.Core;
 using BepInEx.Unity.IL2CPP.Utils.Collections;
 using Il2CppInterop.Runtime.Attributes;
+using TMPro;
+
 
 namespace LevelImposter.Shop
 {
@@ -20,17 +22,17 @@ namespace LevelImposter.Shop
         {
         }
 
-        private static GameObject? _spinnerPrefab = null;
+        private static GameObject? _loadingPrefab = null;
     
         /// <summary>
         /// Gets the shop loading spinner prefab
         /// </summary>
         /// <returns>The loading spinner prefab</returns>
-        private static GameObject GetSpinnerPrefab()
+        private static GameObject GetLoadingPrefab()
         {
-            if (_spinnerPrefab == null)
-                _spinnerPrefab = MapUtils.LoadAssetBundle("spinner");
-            return _spinnerPrefab;
+            if (_loadingPrefab == null)
+                _loadingPrefab = MapUtils.LoadAssetBundle("loadingscreen");
+            return _loadingPrefab;
         }
 
         /// <summary>
@@ -39,10 +41,19 @@ namespace LevelImposter.Shop
         [HideFromIl2Cpp]
         public IEnumerator CoSpawnShop()
         {
-            GameObject spinner = Instantiate(GetSpinnerPrefab(), transform);
-            spinner.AddComponent<Spinner>();
+            // Loading Spinners
+            GameObject loadingPrefab = Instantiate(GetLoadingPrefab(), transform);
+            Transform spinnerTransform = loadingPrefab.transform.GetChild(0);
+            spinnerTransform.gameObject.AddComponent<Spinner>();
+            Transform statusTransform = loadingPrefab.transform.GetChild(1);
+            TMP_Text statusText = statusTransform.gameObject.GetComponent<TMP_Text>();
             while (!AssetDB.IsReady)
+            {
+                if (statusText.text != AssetDB.Instance?.Status)
+                    statusText.text = "<b>Loading Among Us Assets</b>\n" + AssetDB.Instance?.Status;
                 yield return null;
+
+            }
 
             if (ShopManager.Instance == null)
                 ShopBuilder.Build();

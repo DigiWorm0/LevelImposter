@@ -66,7 +66,7 @@ namespace LevelImposter.Shop
                 _downloadButton.interactable = false;
                 _playButton.interactable = false;
                 _deleteButton.interactable = false;
-                _externalButton.interactable = false;
+                _externalButton.gameObject.SetActive(false);
             }
             else
             {

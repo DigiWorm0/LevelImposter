@@ -20,7 +20,8 @@ namespace LevelImposter.DB
     /// </summary>
     class AssetDB : MonoBehaviour
     {
-        public static AssetDB Instance { get; private set; }
+        public static AssetDB? Instance { get; private set; }
+
         public static bool IsReady = false;
         public static Dictionary<string, TaskData> Tasks;
         public static Dictionary<string, UtilData> Utils;
@@ -29,6 +30,9 @@ namespace LevelImposter.DB
         public static Dictionary<string, RoomData> Room;
         public static Dictionary<string, SSData> Ships;
         public static Dictionary<string, SoundData> Sounds;
+
+        private string _status = "Initializing AssetDB...";
+        public string Status => _status;
 
         public void Start()
         {
@@ -56,6 +60,7 @@ namespace LevelImposter.DB
         [HideFromIl2Cpp]
         private IEnumerator CoLoadAssets()
         {
+            _status = "Loading ship references";
             LILogger.Info("Loading AssetDB...");
             for (int i = 0; i < AmongUsClient.Instance.ShipPrefabs.Count; i++)
             {
@@ -93,6 +98,7 @@ namespace LevelImposter.DB
         [HideFromIl2Cpp]
         private IEnumerator _importPrefab(GameObject prefab)
         {
+            _status = $"Loading \"{prefab.name}\"...";
             ShipStatus shipStatus = prefab.GetComponent<ShipStatus>();
             MapType mapType = MapType.Skeld;
             if (prefab.name == "AprilShip")

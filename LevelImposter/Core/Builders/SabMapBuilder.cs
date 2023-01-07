@@ -133,7 +133,7 @@ namespace LevelImposter.Core
                     //sabButton.transform.localScale *= 0.8f;
                     break;
                 default:
-                    LILogger.Error($"{elem.name} has unknown sabotage button type: {elem.type}");
+                    LILogger.Warn($"{elem.name} has unknown sabotage button type: {elem.type}");
                     return;
             }
 

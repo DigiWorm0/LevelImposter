@@ -2,6 +2,7 @@
 using HarmonyLib;
 using LevelImposter.Core;
 using System;
+using System.IO;
 using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
@@ -17,7 +18,7 @@ namespace LevelImposter.Shop
     [HarmonyPatch(typeof(VersionShower), nameof(VersionShower.Start))]
     public static class VersionPatch
     {
-        public static Texture2D _logoTex = null;
+        public static Sprite? _logoSprite = null;
 
         public static void Postfix(VersionShower __instance)
         {
@@ -34,17 +35,20 @@ namespace LevelImposter.Shop
             logoObj.layer = (int)Layer.UI;
 
             SpriteRenderer logoRenderer = logoObj.AddComponent<SpriteRenderer>();
-            if (_logoTex == null)
+            if (_logoSprite == null)
             {
-                _logoTex = new Texture2D(1, 1);
-                ImageConversion.LoadImage(_logoTex, logoData);
+                Texture2D logoTex = new Texture2D(1, 1);
+                ImageConversion.LoadImage(logoTex, logoData);
+                _logoSprite = Sprite.Create(
+                    logoTex,
+                    new Rect(0.0f, 0.0f, logoTex.width, logoTex.height),
+                    new Vector2(0.5f, 0.5f),
+                    180.0f,
+                    0,
+                    SpriteMeshType.FullRect
+                );
             }
-            logoRenderer.sprite = Sprite.Create(
-                _logoTex,
-                new Rect(0.0f, 0.0f, _logoTex.width, _logoTex.height),
-                new Vector2(0.5f, 0.5f),
-                180.0f
-            );
+            logoRenderer.sprite = _logoSprite;
 
             GameObject logoTextObj = new("LevelImposterText " + antiPiracy);
             logoTextObj.transform.SetParent(logoObj.transform);
