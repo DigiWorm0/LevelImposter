@@ -10,9 +10,9 @@ namespace LevelImposter.Shop
 {
     public static class UpdateButtonBuilder
     {
-        private static Sprite _buttonSprite;
-        private static GenericPopup _popupComponent;
-        private static GameObject _buttonObj;
+        private static Sprite? _buttonSprite;
+        private static GenericPopup? _popupComponent;
+        private static GameObject? _buttonObj;
 
         public static void Build()
         {
@@ -23,10 +23,11 @@ namespace LevelImposter.Shop
             _buttonObj.transform.localPosition = new Vector3(4.25f, -2.3f, -1.0f);
 
             // Sprite
-            Sprite btnSprite = GetSprite();
-            float btnAspect = btnSprite.rect.height / btnSprite.rect.width;
+            if (_buttonSprite == null)
+                _buttonSprite = SpriteLoader.Instance?.LoadSprite(Properties.Resources.updateButton);
+            float btnAspect = _buttonSprite != null ? _buttonSprite.rect.height / _buttonSprite.rect.width : 1.0f;
             SpriteRenderer btnRenderer = _buttonObj.GetComponent<SpriteRenderer>();
-            btnRenderer.sprite = btnSprite;
+            btnRenderer.sprite = _buttonSprite;
             btnRenderer.size = new Vector2(
                 1.3f,
                 1.3f * btnAspect
@@ -71,7 +72,7 @@ namespace LevelImposter.Shop
             _popupComponent.Show("Updating...");
             _buttonObj.SetActive(false);
 
-            GitHubAPI.Instance.UpdateMod(() =>
+            GitHubAPI.Instance?.UpdateMod(() =>
             {
                 confirmButton.SetActive(true);
                 _popupComponent.Show("<color=green>Update complete!</color>\nPlease restart your game.");
@@ -81,24 +82,6 @@ namespace LevelImposter.Shop
                 _popupComponent.Show($"<color=red>Update failed!</color>\n<size=1.5>{error}\n<i>(You may have to update manually)</i></size>");
                 _buttonObj.SetActive(true);
             });
-        }
-
-        private static Sprite GetSprite()
-        {
-            if (_buttonSprite == null)
-            {
-                Texture2D buttonTex = new Texture2D(1, 1);
-                ImageConversion.LoadImage(buttonTex, Properties.Resources.updateButton);
-                _buttonSprite = Sprite.Create(
-                    buttonTex,
-                    new Rect(0, 0, buttonTex.width, buttonTex.height),
-                    new Vector2(0.5f, 0.5f),
-                    100.0f,
-                    0,
-                    SpriteMeshType.FullRect
-                );
-            }
-            return _buttonSprite;
         }
     }
 }

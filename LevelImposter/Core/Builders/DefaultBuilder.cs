@@ -22,7 +22,7 @@ namespace LevelImposter.Core
                     spriteRenderer.color = MapUtils.LIColorToColor(elem.properties.color);
                 if (SpriteLoader.Instance == null)
                     throw new Exception("SpriteLoader not found");
-                SpriteLoader.Instance.LoadSprite(elem, obj);
+                SpriteLoader.Instance.LoadSpriteAsync(elem, obj);
             }
 
             if (elem.properties.colliders != null)

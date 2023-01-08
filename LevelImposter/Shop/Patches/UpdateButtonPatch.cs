@@ -21,7 +21,7 @@ namespace LevelImposter.Shop
         {
             if (_isCurrent)
             {
-                GitHubAPI.Instance.GetLatestRelease((release) => {
+                GitHubAPI.Instance?.GetLatestRelease((release) => {
                     _isCurrent = GitHubAPI.Instance.IsCurrent(release);
                     if (!_isCurrent)
                         UpdateButtonBuilder.Build();

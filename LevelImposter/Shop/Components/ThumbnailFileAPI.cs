@@ -70,7 +70,7 @@ namespace LevelImposter.Shop
             LILogger.Info($"Loading thumbnail [{mapID}] from filesystem");
             string thumbnailPath = GetPath(mapID);
             byte[] thumbnailBytes = File.ReadAllBytes(thumbnailPath);
-            SpriteLoader.Instance?.LoadSprite(thumbnailBytes, (spriteData) =>
+            SpriteLoader.Instance?.LoadSpriteAsync(thumbnailBytes, (spriteData) =>
             {
                 Sprite? sprite = spriteData?.Sprite;
                 if (sprite == null)

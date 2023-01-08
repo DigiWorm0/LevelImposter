@@ -61,6 +61,7 @@ namespace LevelImposter.Core
             OnLoad = null;
             _renderCount = 0;
             GC.Collect();
+            //Cpp2IL.Core.Cpp2IlApi.DisposeAndCleanupAll();
         }
 
         /// <summary>
@@ -70,12 +71,12 @@ namespace LevelImposter.Core
         /// <param name="element">LIElement to grab sprite from</param>
         /// <param name="obj">GameObject to apply sprite data to</param>
         [HideFromIl2Cpp]
-        public void LoadSprite(LIElement element, GameObject obj)
+        public void LoadSpriteAsync(LIElement element, GameObject obj)
         {
             LILogger.Info($"Loading sprite for {element}");
             
             string b64 = element.properties.spriteData ?? "";
-            LoadSprite(b64, (nullableSpriteData) =>
+            LoadSpriteAsync(b64, (nullableSpriteData) =>
             {
                 // Handle Error
                 if (nullableSpriteData == null)
@@ -109,10 +110,10 @@ namespace LevelImposter.Core
         /// <param name="b64Image">Base64 image data to read</param>
         /// <param name="onLoad">Callback on success</param>
         [HideFromIl2Cpp]
-        public void LoadSprite(string b64Image, Action<SpriteData?> onLoad)
+        public void LoadSpriteAsync(string b64Image, Action<SpriteData?> onLoad)
         {
             var imgData = MapUtils.ParseBase64(b64Image);
-            LoadSprite(imgData, (spriteList) =>
+            LoadSpriteAsync(imgData, (spriteList) =>
             {
                 onLoad(spriteList);
                 spriteList = null;
@@ -126,13 +127,13 @@ namespace LevelImposter.Core
         /// <param name="imgData">Image File Data</param>
         /// <param name="onLoad">Callback on success</param>
         [HideFromIl2Cpp]
-        public void LoadSprite(byte[] imgData, Action<SpriteData?> onLoad)
+        public void LoadSpriteAsync(byte[] imgData, Action<SpriteData?> onLoad)
         {
-            StartCoroutine(CoLoadSprite(imgData, onLoad).WrapToIl2Cpp());
+            StartCoroutine(CoLoadSpriteAsync(imgData, onLoad).WrapToIl2Cpp());
         }
 
         [HideFromIl2Cpp]
-        private IEnumerator CoLoadSprite(byte[] imgData, Action<SpriteData?>? onLoad)
+        private IEnumerator CoLoadSpriteAsync(byte[] imgData, Action<SpriteData?>? onLoad)
         {
             _renderCount++;
             yield return null;
@@ -157,10 +158,10 @@ namespace LevelImposter.Core
                     while (!_shouldRender)
                         yield return null;
                     ImageSharpWrapper.TextureMetadata texData = texMetadataList[i];
-                    Sprite sprite = LoadImage(texData);
+                    Sprite sprite = TextureMetadataToSprite(texData);
                     spriteArr[i] = sprite;
                     frameDelayArr[i] = texData.FrameDelay;
-                    texData = new();
+                    texData.RawTextureData = null;
                     sprite = null;
                 }
                 spriteData = new()
@@ -176,6 +177,7 @@ namespace LevelImposter.Core
             _renderCount--;
             if (onLoad != null)
                 onLoad.Invoke(spriteData);
+            imgData = null;
             onLoad = null;
             texMetadataList = null;
             spriteData = null;
@@ -188,7 +190,7 @@ namespace LevelImposter.Core
         /// <param name="texData">Texture Metadata to load</param>
         /// <returns>Generated sprite data</returns>
         [HideFromIl2Cpp]
-        private Sprite LoadImage(ImageSharpWrapper.TextureMetadata texData)
+        private Sprite TextureMetadataToSprite(ImageSharpWrapper.TextureMetadata texData)
         {
             // Generate Texture
             bool pixelArtMode = LIShipStatus.Instance?.CurrentMap?.properties.pixelArtMode == true;
@@ -219,6 +221,30 @@ namespace LevelImposter.Core
             _mapSprites?.Push(sprite);
 
             return sprite;
+        }
+
+        /// <summary>
+        /// Loads a sprite from byte data synchronous.
+        /// Does not get garbage collected on unload.
+        /// </summary>
+        /// <param name="imgData">Raw image file data</param>
+        /// <returns>Unity Sprite object</returns>
+        public Sprite LoadSprite(byte[] imgData)
+        {
+            Texture2D texture = new(1, 1)
+            {
+                wrapMode = TextureWrapMode.Clamp,
+                hideFlags = HideFlags.HideAndDontSave,
+            };
+            ImageConversion.LoadImage(texture, imgData);
+            return Sprite.Create(
+                texture,
+                new Rect(0, 0, texture.width, texture.height),
+                new Vector2(0.5f, 0.5f),
+                100.0f,
+                0,
+                SpriteMeshType.FullRect
+            );
         }
 
         public void Awake()

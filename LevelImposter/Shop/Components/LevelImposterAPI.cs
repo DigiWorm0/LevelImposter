@@ -215,7 +215,7 @@ namespace LevelImposter.Shop
             RequestRaw(metadata.thumbnailURL, (byte[] imgData) =>
             {
                 ThumbnailFileAPI.Instance?.Save(metadata.id, imgData);
-                SpriteLoader.Instance?.LoadSprite(imgData, (spriteData) =>
+                SpriteLoader.Instance?.LoadSpriteAsync(imgData, (spriteData) =>
                 {
                     if (spriteData == null)
                     {

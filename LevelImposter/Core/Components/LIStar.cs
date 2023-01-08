@@ -28,14 +28,10 @@ namespace LevelImposter.Core
         [HideFromIl2Cpp]
         public void Init(LIElement elem)
         {
-            if (elem.properties.starfieldHeight != null)
-                _height = (float)elem.properties.starfieldHeight;
-            if (elem.properties.starfieldLength != null)
-                _length = (float)elem.properties.starfieldLength;
-            if (elem.properties.starfieldMinSpeed != null)
-                _minSpeed = (float)elem.properties.starfieldMinSpeed;
-            if (elem.properties.starfieldMaxSpeed != null)
-                _maxSpeed = (float)elem.properties.starfieldMaxSpeed;
+            _height = elem.properties.starfieldHeight ?? _height;
+            _length = elem.properties.starfieldLength ?? _length;
+            _minSpeed = elem.properties.starfieldMinSpeed ?? _minSpeed;
+            _maxSpeed = elem.properties.starfieldMaxSpeed ?? _maxSpeed;
             elem = null;
         }
 
