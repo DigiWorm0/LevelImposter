@@ -8,13 +8,8 @@ using System.Text;
 using System.Threading.Tasks;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Formats;
-using SixLabors.ImageSharp.Memory;
-using SixLabors.ImageSharp.Advanced;
-using SixLabors.ImageSharp.Processing;
 using SixLabors.ImageSharp.Formats.Gif;
-using SixLabors.ImageSharp.Metadata;
 using SixLabors.ImageSharp.PixelFormats;
-using SixLabors.ImageSharp.Diagnostics;
 
 namespace LevelImposter.Core
 {
@@ -44,23 +39,7 @@ namespace LevelImposter.Core
                     var texMetadataArr = new TextureMetadata[image.Frames.Count];
                     for (int i = 0; i < image.Frames.Count; i++)
                     {
-                        var frame = image.Frames[i];
-                        var frameImg = image.Frames.CloneFrame(i);
-
-                        // Get GIF Frame Delay
-                        GifFrameMetadata gifMetadata = frame.Metadata.GetGifMetadata();
-                        float frameDelay = gifMetadata.FrameDelay / 100.0f;
-
-                        // Populate Metadata
-                        using (var frameStream = new MemoryStream())
-                        {
-                            frameImg.SaveAsPng(frameStream);
-                            texMetadataArr[i] = new()
-                            {
-                                FrameDelay = frameDelay,
-                                FrameData = frameStream.ToArray()
-                            };
-                        }
+                        texMetadataArr[i] = GetTextureMetadata(image, i);
                     }
                     return texMetadataArr;
                 }
@@ -69,6 +48,33 @@ namespace LevelImposter.Core
             {
                 LILogger.Warn(e);
                 return null;
+            }
+        }
+
+        /// <summary>
+        /// Loads frame from image into TextureMetadata
+        /// </summary>
+        /// <param name="image">ImageSharp Image</param>
+        /// <param name="index">Frame index</param>
+        /// <returns>TextureMetadata with frame data</returns>
+        private static TextureMetadata GetTextureMetadata(Image<Rgba32> image, int index)
+        {
+            var frame = image.Frames[index];
+            var frameImg = image.Frames.CloneFrame(index);
+
+            // Get GIF Frame Delay
+            GifFrameMetadata gifMetadata = frame.Metadata.GetGifMetadata();
+            float frameDelay = gifMetadata.FrameDelay / 100.0f;
+
+            // Populate Metadata
+            using (var frameStream = new MemoryStream())
+            {
+                frameImg.SaveAsPng(frameStream);
+                return new()
+                {
+                    FrameDelay = frameDelay,
+                    FrameData = frameStream.ToArray()
+                };
             }
         }
 
