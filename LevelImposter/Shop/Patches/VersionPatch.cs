@@ -2,6 +2,7 @@
 using HarmonyLib;
 using LevelImposter.Core;
 using System;
+using System.IO;
 using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
@@ -17,7 +18,7 @@ namespace LevelImposter.Shop
     [HarmonyPatch(typeof(VersionShower), nameof(VersionShower.Start))]
     public static class VersionPatch
     {
-        public static Texture2D _logoTex = null;
+        private static Sprite? _logoSprite = null;
 
         public static void Postfix(VersionShower __instance)
         {
@@ -26,29 +27,19 @@ namespace LevelImposter.Shop
                 return;
 
             string antiPiracy = Guid.NewGuid().ToString();
-            byte[] logoData = Properties.Resources.logo;
 
-            GameObject logoObj = new GameObject("LevelImposterVersion " + antiPiracy);
+            GameObject logoObj = new("LevelImposterVersion " + antiPiracy);
             logoObj.transform.SetParent(__instance.transform.parent);
+            logoObj.transform.localScale = new Vector3(0.55f, 0.55f, 1.0f);
             logoObj.transform.localPosition = new Vector3(4.0f, -2.75f, -1.0f);
             logoObj.layer = (int)Layer.UI;
 
             SpriteRenderer logoRenderer = logoObj.AddComponent<SpriteRenderer>();
-            if (_logoTex == null)
-            {
-                _logoTex = new Texture2D(1, 1);
-                ImageConversion.LoadImage(_logoTex, logoData);
-            }
-            logoRenderer.sprite = Sprite.Create(
-                _logoTex,
-                new Rect(0.0f, 0.0f, _logoTex.width, _logoTex.height),
-                new Vector2(0.5f, 0.5f),
-                180.0f
-            );
+            logoRenderer.sprite = GetLogoSprite();
 
-            GameObject logoTextObj = new GameObject("LevelImposterText " + antiPiracy);
+            GameObject logoTextObj = new("LevelImposterText " + antiPiracy);
             logoTextObj.transform.SetParent(logoObj.transform);
-            logoTextObj.transform.localPosition = new Vector3(1.78f, 0, 0);
+            logoTextObj.transform.localPosition = new Vector3(3.19f, 0, 0);
 
             RectTransform logoTransform = logoTextObj.AddComponent<RectTransform>();
             logoTransform.sizeDelta = new Vector2(2, 0.19f);
@@ -59,15 +50,14 @@ namespace LevelImposter.Shop
             logoText.raycastTarget = false;
             logoText.SetText("v" + LevelImposter.Version);
         }
-    }
-    /*
-    [HarmonyPatch(typeof(TranslationController), nameof(TranslationController.GetStringWithDefault), new System.Type[] { typeof(StringNames), typeof(string) })]
-    public static class RegionPatch
-    {
-        public static void Postfix(ref string __result)
+
+        private static Sprite GetLogoSprite()
         {
-            __result = __result.Replace("LevelImposter", "<color=#176be6>Level</color><color=#c13030>Impostor</color>");
+            if (_logoSprite == null)
+                _logoSprite = MapUtils.LoadSpriteResource("LevelImposterLogo.png");
+            if (_logoSprite == null)
+                throw new Exception("The \"LevelImposterLogo.png\" resource was not found in assembly");
+            return _logoSprite;
         }
     }
-    */
 }

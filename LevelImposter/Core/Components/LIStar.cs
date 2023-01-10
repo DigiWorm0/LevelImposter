@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
+using Il2CppInterop.Runtime.Attributes;
 
 namespace LevelImposter.Core
 {
@@ -20,20 +21,25 @@ namespace LevelImposter.Core
         private float _maxSpeed = 2;
         private float _currentSpeed = 0;
 
+        /// <summary>
+        /// Initializes a star from util-starfield
+        /// </summary>
+        /// <param name="elem">LIElement to extract props from</param>
+        [HideFromIl2Cpp]
         public void Init(LIElement elem)
         {
-            if (elem.properties.starfieldHeight != null)
-                _height = (float)elem.properties.starfieldHeight;
-            if (elem.properties.starfieldLength != null)
-                _length = (float)elem.properties.starfieldLength;
-            if (elem.properties.starfieldMinSpeed != null)
-                _minSpeed = (float)elem.properties.starfieldMinSpeed;
-            if (elem.properties.starfieldMaxSpeed != null)
-                _maxSpeed = (float)elem.properties.starfieldMaxSpeed;
-            Respawn(true);
+            _height = elem.properties.starfieldHeight ?? _height;
+            _length = elem.properties.starfieldLength ?? _length;
+            _minSpeed = elem.properties.starfieldMinSpeed ?? _minSpeed;
+            _maxSpeed = elem.properties.starfieldMaxSpeed ?? _maxSpeed;
+            elem = null;
         }
 
-        public void Respawn(bool isInitial)
+        /// <summary>
+        /// Respawns the Star in the Star Field
+        /// </summary>
+        /// <param name="isInitial">TRUE will also randomize the X position</param>
+        private void Respawn(bool isInitial)
         {
             _currentSpeed = UnityEngine.Random.Range(_minSpeed, _maxSpeed);
             transform.localPosition = new Vector3(
@@ -43,6 +49,10 @@ namespace LevelImposter.Core
             );
         }
 
+        public void Start()
+        {
+            Respawn(true);
+        }
         public void Update()
         {
             transform.localPosition -= new Vector3(

@@ -18,7 +18,6 @@ namespace LevelImposter.Core
 
             // Default Sprite
             SpriteRenderer spriteRenderer = obj.GetComponent<SpriteRenderer>();
-            GIFAnimator gifAnimator = obj.GetComponent<GIFAnimator>();
             obj.layer = (int)Layer.ShortObjects;
             if (!spriteRenderer)
             {
@@ -31,10 +30,6 @@ namespace LevelImposter.Core
 
                 if (elem.properties.color != null)
                     spriteRenderer.color = MapUtils.LIColorToColor(elem.properties.color);
-            }
-            else if (gifAnimator != null)
-            {
-                gifAnimator.Stop();
             }
             spriteRenderer.material = utilData.SpriteRenderer.material;
 

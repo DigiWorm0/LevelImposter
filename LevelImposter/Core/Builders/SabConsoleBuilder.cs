@@ -9,7 +9,7 @@ namespace LevelImposter.Core
 {
     public class SabConsoleBuilder : IElemBuilder
     {
-        private Dictionary<string, int> _consoleIDPairs = new Dictionary<string, int> {
+        public static readonly Dictionary<string, int> CONSOLE_ID_PAIRS = new() {
             { "sab-electric", 0 },
             { "sab-reactorleft", 0 },
             { "sab-reactorright", 1 },
@@ -22,6 +22,8 @@ namespace LevelImposter.Core
         {
             if (!elem.type.StartsWith("sab-") || elem.type.StartsWith("sab-btn") || elem.type.StartsWith("sab-door"))
                 return;
+            if (LIShipStatus.Instance?.ShipStatus == null)
+                throw new Exception("ShipStatus not found");
 
             SabData sabData = AssetDB.Sabs[elem.type];
             ShipStatus shipStatus = LIShipStatus.Instance.ShipStatus;
@@ -42,7 +44,12 @@ namespace LevelImposter.Core
 
             // Parent
             SystemTypes systemType = RoomBuilder.GetParentOrDefault(elem);
-            SabotageTask sabotageTask = SabBuilder.FindSabotage(systemType);
+            bool isFound = SabBuilder.TryGetSabotage(systemType, out SabotageTask? sabotageTask);
+            if (!isFound || sabotageTask == null)
+            {
+                LILogger.Warn($"SabotageTask not found for {obj.name}");
+                return;
+            }
             if (!string.IsNullOrEmpty(elem.properties.description))
                 MapUtils.Rename(sabotageTask.TaskType, elem.properties.description);
 
@@ -59,8 +66,8 @@ namespace LevelImposter.Core
             console.AllowImpostor = true;
             console.GhostsIgnored = true;
 
-            if (_consoleIDPairs.ContainsKey(elem.type))
-                console.ConsoleId = _consoleIDPairs[elem.type];
+            if (CONSOLE_ID_PAIRS.ContainsKey(elem.type))
+                console.ConsoleId = CONSOLE_ID_PAIRS[elem.type];
 
             // Button
             PolygonCollider2D collider = obj.AddComponent<PolygonCollider2D>();

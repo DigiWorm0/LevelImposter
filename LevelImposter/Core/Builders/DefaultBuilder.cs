@@ -20,19 +20,9 @@ namespace LevelImposter.Core
                 SpriteRenderer spriteRenderer = obj.AddComponent<SpriteRenderer>();
                 if (elem.properties.color != null)
                     spriteRenderer.color = MapUtils.LIColorToColor(elem.properties.color);
-                if (elem.properties.spriteData.StartsWith("data:image/gif;base64,"))
-                {
-                    GIFAnimator animator = obj.AddComponent<GIFAnimator>();
-                    animator.Init(elem.properties.spriteData);
-                    animator.Play(true);
-                }
-                else
-                {
-                    spriteRenderer.sprite = MapUtils.GenerateSprite(
-                        MapUtils.ParseBase64(elem.properties.spriteData),
-                        LIShipStatus.Instance.CurrentMap.properties.pixelArtMode == true
-                    );
-                }
+                if (SpriteLoader.Instance == null)
+                    throw new Exception("SpriteLoader not found");
+                SpriteLoader.Instance.LoadSpriteAsync(elem, obj);
             }
 
             if (elem.properties.colliders != null)

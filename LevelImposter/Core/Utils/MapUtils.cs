@@ -1,6 +1,8 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Text.Json;
+using System.Reflection;
 using UnityEngine.Events;
 using System.IO;
 using LevelImposter.DB;
@@ -130,7 +132,7 @@ namespace LevelImposter.Core
         /// Converts a base64 encoded string into a byte array
         /// </summary>
         /// <param name="base64">Base64 encoded data</param>
-        /// <returns>Byte array from data</returns>
+        /// <returns>Stream of bytes representing raw base64 data</returns>
         public static byte[] ParseBase64(string base64)
         {
             string sub64 = base64.Substring(base64.IndexOf(",") + 1);
@@ -138,45 +140,20 @@ namespace LevelImposter.Core
         }
 
         /// <summary>
-        /// Converts a base64 encoded string into a Unity AudioClip
-        /// </summary>
-        /// <param name="name">Name of the AudioClip object</param>
-        /// <param name="base64">Base64 encoded data</param>
-        /// <returns>Unity AudioClip from data</returns>
-        public static AudioClip ConvertToAudio(string name, string base64)
-        {
-            byte[] byteData = ParseBase64(base64);
-            AudioClip audio = WAVLoader.LoadPCM(byteData); // TODO Support other audio formats
-            LIShipStatus.Instance.AddMapSound(audio);
-            return audio;
-        }
-
-        /// <summary>
         /// Converts an LIColor to UnityEngine.Color
         /// </summary>
         /// <param name="color">Color to convert from</param>
         /// <returns>UnityEngine.Color to convert to</returns>
-        public static Color LIColorToColor(LIColor color)
+        public static Color LIColorToColor(LIColor? color)
         {
-            return new Color (
+            if (color == null)
+                return Color.white;
+            return new Color(
                 color.r / 255,
                 color.g / 255,
                 color.b / 255,
                 color.a
             );
-        }
-
-        /// <summary>
-        /// Fires trigger on an object with a specific name
-        /// </summary>
-        /// <param name="obj">Object to trigger</param>
-        /// <param name="triggerID">Trigger ID</param>
-        public static void FireTrigger(GameObject obj, string triggerID, GameObject orgin)
-        {
-            LITriggerable[] triggers = obj.GetComponents<LITriggerable>();
-            LITriggerable trigger = Array.Find(triggers, (LITriggerable t) => t.ID == triggerID);
-            if (trigger != null)
-                trigger.Trigger(orgin);
         }
 
         /// <summary>
@@ -192,39 +169,66 @@ namespace LevelImposter.Core
         }
 
         /// <summary>
-        /// Generates a Sprite from byte dara
+        /// Grabs a resource from the assembly
         /// </summary>
-        /// <param name="data">png formated texture data</param>
-        /// <returns>A Unity Sprite representing the texture data</returns>
-        public static Sprite GenerateSprite(byte[] data, bool isPixelArt = false)
+        /// <param name="name">Name of the resource file</param>
+        /// <returns>Raw resource data</returns>
+        private static byte[]? GetResource(string name)
         {
-            Texture.allowThreadedTextureCreation = true;
-            Texture2D texture = new(1, 1);
-            ImageConversion.LoadImage(texture, data);
-            if (isPixelArt)
-                texture.filterMode = FilterMode.Point;
-            texture.wrapMode = TextureWrapMode.Clamp;
-            LIShipStatus.Instance.AddMapTexture(texture);
-            return Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f), 100.0f);
+            Assembly assembly = Assembly.GetExecutingAssembly();
+            using (Stream? resourceStream = assembly.GetManifestResourceStream($"LevelImposter.Assets.{name}"))
+            {
+                if (resourceStream == null)
+                    return null;
+
+                byte[] resourceData = new byte[resourceStream.Length];
+                resourceStream.Read(resourceData);
+                return resourceData;
+            }
         }
 
         /// <summary>
-        /// Loads a GameObject from the local Asset Bundle by Name
+        /// Loads a GameObject from asembly resources
         /// </summary>
-        /// <param name="name">Name of the Asset from the Asset Bundle</param>
-        /// <returns></returns>
-        public static GameObject LoadAssetBundle(string name)
+        /// <param name="name">Name of the AssetBundle file</param>
+        /// <returns>GameObject or null if not found</returns>
+        public static GameObject? LoadAssetBundle(string name)
         {
-            Stream resourceStream = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("LevelImposter.Assets." + name);
-            using (var ms = new MemoryStream())
-            {
-                resourceStream.CopyTo(ms);
-                byte[] assetData = ms.ToArray();
-                AssetBundle assetBundle = AssetBundle.LoadFromMemory(assetData);
-                GameObject asset = assetBundle.LoadAsset(name, Il2CppType.Of<GameObject>()).Cast<GameObject>();
-                assetBundle.Unload(false);
-                return asset;
-            }
+            byte[]? assetData = GetResource(name);
+            if (assetData == null)
+                return null;
+            AssetBundle assetBundle = AssetBundle.LoadFromMemory(assetData);
+            GameObject asset = assetBundle.LoadAsset(name, Il2CppType.Of<GameObject>()).Cast<GameObject>();
+            assetBundle.Unload(false);
+            return asset;
+        }
+
+        /// <summary>
+        /// Loads a Sprite from assembly resources
+        /// </summary>
+        /// <param name="name">Name of the sprite file</param>
+        /// <returns>Sprite or null if not found</returns>
+        public static Sprite? LoadSpriteResource(string name)
+        {
+            byte[]? spriteData = GetResource(name);
+            if (spriteData == null)
+                return null;
+            return SpriteLoader.Instance?.LoadSprite(spriteData);
+        }
+
+        /// <summary>
+        /// Deserializes a JSON object from assembly resources
+        /// </summary>
+        /// <typeparam name="T">JSON type to deserialize to</typeparam>
+        /// <param name="name">Name of the json file</param>
+        /// <returns>JSON object or null if not found</returns>
+        public static T? LoadJsonResource<T>(string name) where T : class
+        {
+            byte[]? jsonData = GetResource(name);
+            if (jsonData == null)
+                return null;
+            string jsonString = Encoding.UTF8.GetString(jsonData);
+            return JsonSerializer.Deserialize<T>(jsonString);
         }
 
         /// <summary>
@@ -241,7 +245,7 @@ namespace LevelImposter.Core
             string mapIDStr = mapID.ToString();
 
             LILogger.Info("[RPC] Transmitting map ID [" + mapIDStr + "]");
-            ReactorRPC.RPCSendMapID(PlayerControl.LocalPlayer, mapIDStr);
+            MapSync.RPCSendMapID(PlayerControl.LocalPlayer, mapIDStr);
 
             // Set Skeld
             if (mapID != Guid.Empty)

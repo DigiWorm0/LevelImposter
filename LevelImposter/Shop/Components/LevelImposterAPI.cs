@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -6,6 +7,7 @@ using UnityEngine.Networking;
 using LevelImposter.Core;
 using BepInEx.Unity.IL2CPP.Utils.Collections;
 using System.Text.Json;
+using Il2CppInterop.Runtime.Attributes;
 
 namespace LevelImposter.Shop
 {
@@ -14,27 +16,14 @@ namespace LevelImposter.Shop
     /// </summary>
     public class LevelImposterAPI : MonoBehaviour
     {
-        public const string API_PATH = "https://us-central1-levelimposter-347807.cloudfunctions.net/api/";
-        public const int API_VERSION = 1;
-
-        public static LevelImposterAPI Instance;
-
         public LevelImposterAPI(IntPtr intPtr) : base(intPtr)
         {
         }
 
-        public void Awake()
-        {
-            if (Instance == null)
-            {
-                Instance = this;
-                DontDestroyOnLoad(gameObject);
-            }
-            else
-            {
-                Destroy(gameObject);
-            }
-        }
+        public const string API_PATH = "https://us-central1-levelimposter-347807.cloudfunctions.net/api/";
+        public const int API_VERSION = 1;
+
+        public static LevelImposterAPI? Instance = null;
 
         /// <summary>
         /// Runs an Async HTTP Request on a specific url.
@@ -42,7 +31,8 @@ namespace LevelImposter.Shop
         /// </summary>
         /// <param name="url">URL to request</param>
         /// <param name="callback">Callback on success</param>
-        public void Request(string url, System.Action<string> callback)
+        [HideFromIl2Cpp]
+        public void Request(string url, Action<string> callback)
         {
             StartCoroutine(CoRequest(url, callback).WrapToIl2Cpp());
         }
@@ -54,18 +44,26 @@ namespace LevelImposter.Shop
         /// </summary>
         /// <param name="url">URL to request</param>
         /// <param name="callback">Callback on success</param>
-        public IEnumerator CoRequest(string url, System.Action<string> callback)
+        [HideFromIl2Cpp]
+        public IEnumerator CoRequest(string url, Action<string>? callback)
         {
-            LILogger.Info("GET: " + url);
-            UnityWebRequest request = UnityWebRequest.Get(url);
-            yield return request.SendWebRequest();
-            LILogger.Info("RES: " + request.responseCode);
+            {
+                LILogger.Info("GET: " + url);
+                UnityWebRequest request = UnityWebRequest.Get(url);
+                yield return request.SendWebRequest();
+                LILogger.Info("RES: " + request.responseCode);
 
-            if (request.result == UnityWebRequest.Result.ConnectionError || request.result == UnityWebRequest.Result.ProtocolError)
-                LILogger.Error(request.error);
-            else
-                callback(request.downloadHandler.text);
-            request.Dispose();
+                if (request.result == UnityWebRequest.Result.ConnectionError || request.result == UnityWebRequest.Result.ProtocolError)
+                {
+                    LILogger.Error(request.error);
+                }
+                else if (callback != null)
+                {
+                    callback(request.downloadHandler.text);
+                }
+                request.Dispose();
+                callback = null;
+            }
         }
 
         /// <summary>
@@ -74,9 +72,10 @@ namespace LevelImposter.Shop
         /// </summary>
         /// <param name="url">URL to request</param>
         /// <param name="callback">Callback on success</param>
-        public void RequestTexture(string url, System.Action<Texture2D> callback)
+        [HideFromIl2Cpp]
+        public void RequestRaw(string url, Action<byte[]> callback)
         {
-            StartCoroutine(CoRequestTexture(url, callback).WrapToIl2Cpp());
+            StartCoroutine(CoRequestRaw(url, callback).WrapToIl2Cpp());
         }
 
         /// <summary>
@@ -86,22 +85,24 @@ namespace LevelImposter.Shop
         /// </summary>
         /// <param name="url">URL to request</param>
         /// <param name="callback">Callback on success</param>
-        public IEnumerator CoRequestTexture(string url, System.Action<Texture2D> callback)
+        [HideFromIl2Cpp]
+        public IEnumerator CoRequestRaw(string url, Action<byte[]> callback)
         {
-            LILogger.Info("GET: " + url);
-            UnityWebRequest request = UnityWebRequest.Get(url);
-            yield return request.SendWebRequest();
-            LILogger.Info("RES: " + request.responseCode);
-
-            if (request.result == UnityWebRequest.Result.ConnectionError || request.result == UnityWebRequest.Result.ProtocolError)
-                LILogger.Error(request.error);
-            else
             {
-                Texture2D texture = new Texture2D(1, 1);
-                ImageConversion.LoadImage(texture, request.downloadHandler.data);
-                callback(texture);
+                LILogger.Info("GET: " + url);
+                UnityWebRequest request = UnityWebRequest.Get(url);
+                yield return request.SendWebRequest();
+                LILogger.Info("RES: " + request.responseCode);
+
+                if (request.result == UnityWebRequest.Result.ConnectionError || request.result == UnityWebRequest.Result.ProtocolError)
+                    LILogger.Error(request.error);
+                else
+                {
+                    callback(request.downloadHandler.data);
+                }
+                request.Dispose();
+                request = null;
             }
-            request.Dispose();
         }
 
         /// <summary>
@@ -111,12 +112,15 @@ namespace LevelImposter.Shop
         /// <typeparam name="T"><c>Data type the LICallback uses</c></typeparam>
         /// <param name="url">URL to request</param>
         /// <param name="callback">Callback on success</param>
+        [HideFromIl2Cpp]
         public void RequestJSON<T>(string url, Action<T> callback)
         {
             Request(url, (string json) =>
             {
-                LICallback<T> response = JsonSerializer.Deserialize<LICallback<T>>(json);
-                if (response.v != API_VERSION)
+                LICallback<T>? response = JsonSerializer.Deserialize<LICallback<T>>(json);
+                if (response == null)
+                    LILogger.Error("Invalid API Response");
+                else if (response.v != API_VERSION)
                     LILogger.Error("You are running on an older version of LevelImposter " + LevelImposter.Version + ". Update to get access to the API.");
                 else if (!string.IsNullOrEmpty(response.error))
                     LILogger.Error(response.error);
@@ -129,6 +133,7 @@ namespace LevelImposter.Shop
         /// Grabs the top liked maps from the LevelImposter API.
         /// </summary>
         /// <param name="callback">Callback on success</param>
+        [HideFromIl2Cpp]
         public void GetTop(Action<LIMetadata[]> callback)
         {
             LILogger.Info("Getting top maps...");
@@ -139,6 +144,7 @@ namespace LevelImposter.Shop
         /// Grabs the most recent maps from the LevelImposter API.
         /// </summary>
         /// <param name="callback">Callback on success</param>
+        [HideFromIl2Cpp]
         public void GetRecent(Action<LIMetadata[]> callback)
         {
             LILogger.Info("Getting recent maps...");
@@ -149,6 +155,7 @@ namespace LevelImposter.Shop
         /// Grabs the featured maps from the LevelImposter API.
         /// </summary>
         /// <param name="callback">Callback on success</param>
+        [HideFromIl2Cpp]
         public void GetFeatured(Action<LIMetadata[]> callback)
         {
             LILogger.Info("Getting verified maps...");
@@ -160,6 +167,7 @@ namespace LevelImposter.Shop
         /// </summary>
         /// <param name="id">ID of the map to grab</param>
         /// <param name="callback">Callback on success</param>
+        [HideFromIl2Cpp]
         public void GetMap(Guid id, Action<LIMetadata> callback)
         {
             LILogger.Info("Getting map " + id + "...");
@@ -171,15 +179,18 @@ namespace LevelImposter.Shop
         /// </summary>
         /// <param name="id">ID of the map to download</param>
         /// <param name="callback">Callback on success</param>
+        [HideFromIl2Cpp]
         public void DownloadMap(Guid id, Action<LIMap> callback)
         {
-            LILogger.Info("Downloading map " + id + "...");
+            LILogger.Info($"Downloading map [{id}]...");
             GetMap(id, (LIMetadata metadata) =>
             {
                 Request(metadata.downloadURL, (string mapJson) =>
                 {
-                    LILogger.Info("Parsing map " + id + "...");
-                    LIMap mapData = JsonSerializer.Deserialize<LIMap>(mapJson);
+                    LILogger.Info($"Parsing map {metadata}...");
+                    LIMap? mapData = JsonSerializer.Deserialize<LIMap>(mapJson);
+                    if (mapData == null)
+                        return; // TODO: onError callback
                     mapData.v = metadata.v;
                     mapData.id = metadata.id;
                     mapData.name = metadata.name;
@@ -201,18 +212,38 @@ namespace LevelImposter.Shop
         /// </summary>
         /// <param name="metadata">Metadata of the map to grab a thumbnail for</param>
         /// <param name="callback">Callback on success</param>
-        public void DownloadThumbnail(LIMetadata metadata, Action<Texture2D> callback)
+        [HideFromIl2Cpp]
+        public void DownloadThumbnail(LIMetadata metadata, Action<Sprite> callback)
         {
-            LILogger.Info("Downloading thumbnail for map " + metadata.id + "...");
-            RequestTexture(metadata.thumbnailURL, (Texture2D thumbnail) =>
+            LILogger.Info($"Downloading thumbnail for map {metadata}...");
+            RequestRaw(metadata.thumbnailURL, (byte[] imgData) =>
             {
-                if (thumbnail.width != ThumbnailFileAPI.TEX_WIDTH || thumbnail.height != ThumbnailFileAPI.TEX_HEIGHT)
+                ThumbnailFileAPI.Instance?.Save(metadata.id, imgData);
+                SpriteLoader.Instance?.LoadSpriteAsync(imgData, false, (spriteData) =>
                 {
-                    LILogger.Error("Thumbnail for map " + metadata.id + " is not the correct size.");
-                    return;
-                }
-                callback(thumbnail);
+                    if (spriteData == null)
+                    {
+                        LILogger.Warn($"Error loading {metadata} thumbnail from API");
+                        return;
+                    }
+                    Sprite? sprite = ((SpriteLoader.SpriteData)spriteData).Sprite;
+                    if (sprite != null)
+                        callback(sprite);
+                });
             });
+        }
+
+        public void Awake()
+        {
+            if (Instance == null)
+            {
+                Instance = this;
+                DontDestroyOnLoad(gameObject);
+            }
+            else
+            {
+                Destroy(gameObject);
+            }
         }
     }
 }

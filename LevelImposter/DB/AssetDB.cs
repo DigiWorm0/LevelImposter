@@ -9,6 +9,7 @@ using LevelImposter.Core;
 using System.Text.Json;
 using System.Collections;
 using BepInEx.Unity.IL2CPP.Utils.Collections;
+using Il2CppInterop.Runtime.Attributes;
 
 namespace LevelImposter.DB
 {
@@ -19,7 +20,8 @@ namespace LevelImposter.DB
     /// </summary>
     class AssetDB : MonoBehaviour
     {
-        public static AssetDB Instance { get; private set; }
+        public static AssetDB? Instance { get; private set; }
+
         public static bool IsReady = false;
         public static Dictionary<string, TaskData> Tasks;
         public static Dictionary<string, UtilData> Utils;
@@ -29,7 +31,10 @@ namespace LevelImposter.DB
         public static Dictionary<string, SSData> Ships;
         public static Dictionary<string, SoundData> Sounds;
 
-        public void Start()
+        private string _status = "Initializing AssetDB...";
+        public string Status => _status;
+
+        public void Awake()
         {
             if (Instance != null)
             {
@@ -37,10 +42,16 @@ namespace LevelImposter.DB
                 return;
             }
             Instance = this;
+        }
+        public void Start()
+        {
 
-            AssetDBTemplate tempDB = JsonSerializer.Deserialize<AssetDBTemplate>(
-                Encoding.UTF8.GetString(Properties.Resources.AssetDB, 0, Properties.Resources.AssetDB.Length)
-            );
+            AssetDBTemplate? tempDB = MapUtils.LoadJsonResource<AssetDBTemplate>("AssetDB.json");
+            if (tempDB == null)
+            {
+                LILogger.Warn("Serialized AssetDB was not found in Assembly resources");
+                return;
+            }
 
             Tasks = tempDB.tasks;
             Utils = tempDB.utils;
@@ -52,74 +63,86 @@ namespace LevelImposter.DB
             StartCoroutine(CoLoadAssets().WrapToIl2Cpp());
         }
 
+        [HideFromIl2Cpp]
         private IEnumerator CoLoadAssets()
         {
-            LILogger.Info("Loading AssetDB...");
-            for (int i = 0; i < AmongUsClient.Instance.ShipPrefabs.Count; i++)
             {
-                AssetReference shipRef = AmongUsClient.Instance.ShipPrefabs[i];
-                while (true)
+                _status = "Loading ship references";
+                LILogger.Info("Loading AssetDB...");
+                for (int i = 0; i < AmongUsClient.Instance.ShipPrefabs.Count; i++)
                 {
-                    if (shipRef.Asset == null)
+                    AssetReference shipRef = AmongUsClient.Instance.ShipPrefabs[i];
+                    while (true)
                     {
-                        AsyncOperationHandle op = shipRef.LoadAssetAsync<GameObject>();
-                        if (!op.IsValid())
+                        if (shipRef.Asset == null)
                         {
-                            LILogger.Warn($"Could not import [{shipRef.AssetGUID}] due to invalid Async Operation. Trying again in 5 seconds...");
-                            yield return new WaitForSeconds(5);
-                            continue;
+                            AsyncOperationHandle op = shipRef.LoadAssetAsync<GameObject>();
+                            if (!op.IsValid())
+                            {
+                                LILogger.Warn($"Could not import [{shipRef.AssetGUID}] due to invalid Async Operation. Trying again in 5 seconds...");
+                                yield return new WaitForSeconds(5);
+                                continue;
+                            }
+                            yield return op;
+                            if (op.Status != AsyncOperationStatus.Succeeded)
+                                LILogger.Warn($"Could not import [{shipRef.AssetGUID}] due to failed Async Operation. Ignoring...");
                         }
-                        yield return op;
-                        if (op.Status != AsyncOperationStatus.Succeeded)
-                            LILogger.Warn($"Could not import [{shipRef.AssetGUID}] due to failed Async Operation. Ignoring...");
+                        break;
                     }
-                    break;
-                }
 
-                if (shipRef.Asset != null)
-                {
-                    GameObject shipPrefab = shipRef.Asset.Cast<GameObject>();
-                    yield return _importPrefab(shipPrefab);
-                } else
-                {
-                    LILogger.Warn($"Could not import [{shipRef.AssetGUID}] due to missing Assets. Ignoring...");
+                    if (shipRef.Asset != null)
+                    {
+                        GameObject shipPrefab = shipRef.Asset.Cast<GameObject>();
+                        yield return _importPrefab(shipPrefab);
+                    }
+                    else
+                    {
+                        LILogger.Warn($"Could not import [{shipRef.AssetGUID}] due to missing Assets. Ignoring...");
+                    }
                 }
+                IsReady = true;
             }
-            IsReady = true;
         }
 
+        [HideFromIl2Cpp]
         private IEnumerator _importPrefab(GameObject prefab)
         {
-            ShipStatus shipStatus = prefab.GetComponent<ShipStatus>();
-            MapType mapType = MapType.Skeld;
-            if (prefab.name == "AprilShip")
-                yield break;
-            if (prefab.name == "MiraShip")
-                mapType = MapType.Mira;
-            if (prefab.name == "PolusShip")
-                mapType = MapType.Polus;
-            if (prefab.name == "Airship")
-                mapType = MapType.Airship;
+            {
+                _status = $"Loading \"{prefab.name}\"...";
+                ShipStatus shipStatus = prefab.GetComponent<ShipStatus>();
+                MapType mapType = MapType.Skeld;
+                if (prefab.name == "AprilShip")
+                    yield break;
+                if (prefab.name == "MiraShip")
+                    mapType = MapType.Mira;
+                if (prefab.name == "PolusShip")
+                    mapType = MapType.Polus;
+                if (prefab.name == "Airship")
+                    mapType = MapType.Airship;
 
-            yield return _importAssets(prefab, shipStatus, mapType, Tasks);
-            yield return _importAssets(prefab, shipStatus, mapType, Utils);
-            yield return _importAssets(prefab, shipStatus, mapType, Sabs);
-            yield return _importAssets(prefab, shipStatus, mapType, Decor);
-            yield return _importAssets(prefab, shipStatus, mapType, Room);
-            yield return _importAssets(prefab, shipStatus, mapType, Ships);
-            yield return _importAssets(prefab, shipStatus, mapType, Sounds);
+                yield return _importAssets(prefab, shipStatus, mapType, Tasks);
+                yield return _importAssets(prefab, shipStatus, mapType, Utils);
+                yield return _importAssets(prefab, shipStatus, mapType, Sabs);
+                yield return _importAssets(prefab, shipStatus, mapType, Decor);
+                yield return _importAssets(prefab, shipStatus, mapType, Room);
+                yield return _importAssets(prefab, shipStatus, mapType, Ships);
+                yield return _importAssets(prefab, shipStatus, mapType, Sounds);
 
-            LILogger.Info("..." + prefab.name + " Loaded");
+                LILogger.Info("..." + prefab.name + " Loaded");
+            }
         }
 
+        [HideFromIl2Cpp]
         private IEnumerator _importAssets<T>(GameObject map, ShipStatus shipStatus, MapType mapType, Dictionary<string, T> list) where T : AssetData
         {
-            foreach (var elem in list)
             {
-                if (elem.Value.MapType == mapType)
+                foreach (var elem in list)
                 {
-                    elem.Value.ImportMap(map, shipStatus);
-                    yield return null;
+                    if (elem.Value.MapType == mapType)
+                    {
+                        elem.Value.ImportMap(map, shipStatus);
+                        yield return null;
+                    }
                 }
             }
         }

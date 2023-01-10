@@ -9,17 +9,19 @@ namespace LevelImposter.Core
 {
     public class SabBuilder : IElemBuilder
     {
-        private static Dictionary<SystemTypes, SabotageTask> _sabDB = null;
-        private GameObject _sabContainer = null;
+        private static Dictionary<SystemTypes, SabotageTask> _sabDB = new();
+        private GameObject? _sabContainer = null;
 
         public SabBuilder()
         {
-            _sabDB = new Dictionary<SystemTypes, SabotageTask>();
+            _sabDB.Clear();
         }
 
         public void Build(LIElement elem, GameObject obj)
         {
             if (!elem.type.StartsWith("sab-") || elem.type.StartsWith("sab-btn") || elem.type.StartsWith("sab-door"))
+                return;
+            if (LIShipStatus.Instance == null || LIShipStatus.Instance.ShipStatus == null)
                 return;
 
             if (_sabContainer == null)
@@ -62,13 +64,12 @@ namespace LevelImposter.Core
         /// <summary>
         /// Gets a SabotageTask from a SystemTypes
         /// </summary>
-        /// <param name="systemType">Room to search</param>
-        /// <returns>Sabotage attached to room</returns>
-        public static SabotageTask FindSabotage(SystemTypes systemType)
+        /// <param name="systemType">SystemTypes to search for</param>
+        /// <param name="sabotageTask">Output sabotage task</param>
+        /// <returns>TRUE if found</returns>
+        public static bool TryGetSabotage(SystemTypes systemType, out SabotageTask? sabotageTask)
         {
-            SabotageTask sabotage;
-            _sabDB.TryGetValue(systemType, out sabotage);
-            return sabotage;
+            return _sabDB.TryGetValue(systemType, out sabotageTask);
         }
     }
 }

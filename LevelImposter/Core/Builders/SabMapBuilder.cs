@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using UnityEngine.Events;
@@ -9,33 +9,30 @@ namespace LevelImposter.Core
 {
     public class SabMapBuilder : IElemBuilder
     {
-        private static Dictionary<SystemTypes, MapRoom> _mapRoomDB = null;
-        private readonly Dictionary<string, string> _sabToLegacyTypes = new Dictionary<string, string> {
-            { "sab-electric", "sab-btnlights" },
-            { "sab-reactorleft", "sab-btnreactor" },
-            { "sab-oxygen", "sab-btnoxygen" },
-            { "sab-comms", "sab-btncomms" },
-        };
+        private static Dictionary<SystemTypes, MapRoom> _mapRoomDB = new();
 
-        private Sprite _commsBtnSprite = null;
-        private Sprite _reactorBtnSprite = null;
-        private Sprite _oxygenBtnSprite = null;
-        private Sprite _doorsBtnSprite = null;
-        private Sprite _lightsBtnSprite = null;
-        private Material _btnMat = null;
+        private Sprite? _commsBtnSprite = null;
+        private Sprite? _reactorBtnSprite = null;
+        private Sprite? _oxygenBtnSprite = null;
+        private Sprite? _doorsBtnSprite = null;
+        private Sprite? _lightsBtnSprite = null;
+        private Material? _btnMat = null;
 
         private bool _hasSabConsoles = false;
         private bool _hasSabButtons = false;
 
         public SabMapBuilder()
         {
-            _mapRoomDB = new Dictionary<SystemTypes, MapRoom>();
+            _mapRoomDB.Clear();
         }
 
         public void Build(LIElement elem, GameObject obj)
         {
             if (!elem.type.StartsWith("sab-") || elem.type.StartsWith("sab-door"))
                 return;
+            if (LIShipStatus.Instance?.ShipStatus == null)
+                throw new Exception("ShipStatus not found");
+
             _hasSabConsoles = true;
 
             if (!elem.type.StartsWith("sab-btn"))
@@ -47,7 +44,17 @@ namespace LevelImposter.Core
             InfectedOverlay infectedOverlay = mapBehaviour.infectedOverlay;
             if (_btnMat == null)
                 GetAllAssets();
-            
+            if (_btnMat == null ||
+                _lightsBtnSprite == null ||
+                _doorsBtnSprite == null ||
+                _oxygenBtnSprite == null ||
+                _reactorBtnSprite == null ||
+                _commsBtnSprite == null)
+            {
+                LILogger.Warn("1 or more sabotage map sprites were not found");
+                return;
+            }
+
             // System
             SystemTypes systemType = RoomBuilder.GetParentOrDefault(elem);
 
@@ -96,9 +103,8 @@ namespace LevelImposter.Core
                 LILogger.Warn("Only 1 sabotage button is supported per room");
 
             ButtonBehavior button = sabButton.AddComponent<ButtonBehavior>();
-            Action btnAction = null;
-            Sprite btnSprite = null;
-
+            Action btnAction;
+            Sprite btnSprite;
             switch (elem.type) {
                 case "sab-btnreactor":
                     btnSprite = _reactorBtnSprite;
@@ -124,67 +130,45 @@ namespace LevelImposter.Core
                     btnSprite = _doorsBtnSprite;
                     btnAction = mapRoom.SabotageDoors;
                     mapRoom.door = btnRenderer;
-                    sabButton.transform.localScale *= 0.8f;
+                    //sabButton.transform.localScale *= 0.8f;
                     break;
                 default:
-                    LILogger.Error($"{elem.name} has unknown sabotage button type: {elem.type}");
+                    LILogger.Warn($"{elem.name} has unknown sabotage button type: {elem.type}");
                     return;
             }
 
             btnRenderer.sprite = btnSprite;
             btnRenderer.material = _btnMat;
             button.OnClick.AddListener(btnAction);
-            SpriteRenderer origRenderer = obj.GetComponent<SpriteRenderer>();
-            if (origRenderer != null)
+
+            // Sprite Renderer
+            if (SpriteLoader.Instance == null)
             {
-                btnRenderer.sprite = origRenderer.sprite;
-                btnRenderer.color = origRenderer.color;
+                LILogger.Warn("Spite Loader is not instantiated");
+                return;
             }
+            SpriteRenderer spriteRenderer = obj.GetComponent<SpriteRenderer>();
+            SpriteLoader.Instance.OnLoad += (LIElement loadedElem) =>
+            {
+                if (loadedElem.id != elem.id)
+                    return;
+                btnRenderer.sprite = spriteRenderer.sprite;
+                btnRenderer.color = spriteRenderer.color;
+                UnityEngine.Object.Destroy(obj);
+            };
         }
 
 
         public void PostBuild()
         {
             if (_hasSabConsoles && !_hasSabButtons)
-            {
-                LILogger.Warn("Map does not include sabotage buttons.\n(Placeholder buttons are depricated and may have weird or unexpected behaviour.)");
-                BuildAllLegacy();
-            }
+                LILogger.Warn("Map does not include sabotage buttons");
 
             MapBehaviour mapBehaviour = MinimapBuilder.GetMinimap();
             InfectedOverlay infectedOverlay = mapBehaviour.infectedOverlay;
 
-            while (infectedOverlay.transform.childCount > _mapRoomDB.Count)
+            while (infectedOverlay.transform.childCount > _mapRoomDB.Count + MinimapSpriteBuilder.SabCount)
                 UnityEngine.Object.DestroyImmediate(infectedOverlay.transform.GetChild(0).gameObject);
-        }
-
-        private void BuildAllLegacy()
-        {
-            LIMap currentMap = LIShipStatus.Instance.CurrentMap;
-
-            foreach (LIElement elem in currentMap.elements)
-            {
-                if (_sabToLegacyTypes.TryGetValue(elem.type, out string btnType))
-                {
-                    LIElement tempElem = new()
-                    {
-                        id = Guid.NewGuid(),
-                        name = elem.name,
-                        type = btnType,
-                        x = elem.x,
-                        y = elem.y,
-                        z = elem.z,
-                        xScale = elem.xScale,
-                        yScale = elem.yScale,
-                        rotation = elem.rotation,
-                        properties = new()
-                        {
-                            parent = elem.properties.parent
-                        }
-                    };
-                    LIShipStatus.Instance.AddElement(tempElem);
-                }
-            }
         }
 
         /// <summary>

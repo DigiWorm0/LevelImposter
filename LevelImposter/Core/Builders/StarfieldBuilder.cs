@@ -15,34 +15,46 @@ namespace LevelImposter.Core
                 return;
 
             // Sprite
-            GameObject prefab = UnityEngine.Object.Instantiate(obj, LIShipStatus.Instance.transform);
-            prefab.AddComponent<LIStar>();
-            SpriteRenderer prefabRenderer = obj.GetComponent<SpriteRenderer>();
-            if (prefabRenderer != null)
-            {
-                prefabRenderer.material = AssetDB.Decor["dec-rock4"].SpriteRenderer.material;
-            }
-            else
+            SpriteRenderer spriteRenderer = obj.GetComponent<SpriteRenderer>();
+            if (spriteRenderer == null)
             {
                 LILogger.Warn(elem.name + " missing a sprite");
                 return;
             }
+            spriteRenderer.material = AssetDB.Decor["dec-rock4"].SpriteRenderer.material;
 
-            // Stars
-            int count = 20;
-            if (elem.properties.starfieldCount != null)
-                count = (int)elem.properties.starfieldCount;
+            // Star Prefab
+            GameObject starPrefab = UnityEngine.Object.Instantiate(obj);
+            LIStar prefabComp = starPrefab.AddComponent<LIStar>();
+
+            int count = elem.properties.starfieldCount ?? 20;
+            LIStar[] liStars = new LIStar[count];
             for (int i = 0; i < count; i++)
             {
-                GameObject starObj = GameObject.Instantiate(prefab, obj.transform);
-                starObj.name = "Star " + i;
-                LIStar starComp = starObj.GetComponent<LIStar>();
-                starComp.Init(elem);
+                LIStar liStar = UnityEngine.Object.Instantiate(prefabComp, obj.transform);
+                liStar.Init(elem);
+                liStars[i] = liStar;
             }
+            UnityEngine.Object.Destroy(starPrefab);
 
-            // Disable Obj
-            obj.GetComponent<SpriteRenderer>().enabled = false;
-            GameObject.Destroy(prefab);
+            // Clones
+            if (SpriteLoader.Instance == null)
+            {
+                LILogger.Warn("Spite Loader is not instantiated");
+                return;
+            }
+            SpriteLoader.Instance.OnLoad += (LIElement loadedElem) =>
+            {
+                if (loadedElem.id != elem.id || liStars == null)
+                    return;
+                foreach (LIStar liStar in liStars)
+                {
+                    SpriteRenderer starRenderer = liStar.GetComponent<SpriteRenderer>();
+                    starRenderer.sprite = spriteRenderer.sprite;
+                    starRenderer.color = spriteRenderer.color;
+                }
+                liStars = null;
+            };
         }
 
         public void PostBuild() { }

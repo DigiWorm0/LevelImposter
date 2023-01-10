@@ -15,12 +15,13 @@ namespace LevelImposter.Core
         {
             if (!elem.type.StartsWith("sab-door"))
                 return;
+            if (LIShipStatus.Instance?.ShipStatus == null)
+                throw new Exception("ShipStatus not found");
 
             SabData sabData = AssetDB.Sabs[elem.type];
 
             // Default Sprite
             SpriteRenderer spriteRenderer = obj.GetComponent<SpriteRenderer>();
-            GIFAnimator gifAnimator = obj.GetComponent<GIFAnimator>();
             Animator animator = obj.AddComponent<Animator>();
             SpriteAnim spriteAnim = obj.AddComponent<SpriteAnim>();
             obj.layer = (int)Layer.ShortObjects;
@@ -34,12 +35,6 @@ namespace LevelImposter.Core
                     spriteRenderer.color = MapUtils.LIColorToColor(elem.properties.color);
 
                 isSpriteAnim = true;
-            }
-            else if (gifAnimator != null)
-            {
-                gifAnimator.Stop();
-                spriteAnim.enabled = false;
-                animator.enabled = false;
             }
             else
             {
@@ -100,8 +95,6 @@ namespace LevelImposter.Core
             }
         }
 
-        public void PostBuild() {
-            _doorId = 0;
-        }
+        public void PostBuild() {}
     }
 }

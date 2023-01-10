@@ -43,14 +43,13 @@ namespace LevelImposter.Core
                 SystemConsole console = obj.AddComponent<SystemConsole>();
                 console.Image = obj.GetComponent<SpriteRenderer>();
                 console.FreeplayOnly = origConsole.FreeplayOnly;
-                console.onlyFromBelow = false;
+                console.onlyFromBelow = elem.properties.onlyFromBelow == true;
                 console.usableDistance = origConsole.usableDistance;
                 console.MinigamePrefab = origConsole.MinigamePrefab;
                 if (elem.type == "util-cams2")
                     console.MinigamePrefab = AssetDB.Utils["util-cams"].GameObj.GetComponent<SystemConsole>().MinigamePrefab;
                 console.useIcon = origConsole.useIcon;
-                if (elem.properties.range != null)
-                    console.usableDistance = (float)elem.properties.range;
+                console.usableDistance = elem.properties.range != null ? (float)elem.properties.range : 1.0f;
                 action = console.Use;
             }
             else

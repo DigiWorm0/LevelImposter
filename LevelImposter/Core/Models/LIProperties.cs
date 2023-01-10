@@ -15,6 +15,7 @@ namespace LevelImposter.Core
         // Triggers
         public LITrigger[]? triggers { get; set; }
         public float? triggerTime { get; set; }
+        public bool? triggerClientSide { get; set; }
 
         // Sprite
         public string? spriteData { get; set; }
@@ -78,6 +79,7 @@ namespace LevelImposter.Core
 
         // Minimap
         public float? minimapScale { get; set; }
+        public bool? imposterOnly { get; set; }
 
     }
 }

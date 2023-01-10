@@ -11,18 +11,15 @@ namespace LevelImposter.Core
     {
         public const float ICON_OFFSET = -0.25f;
 
-        private static List<CounterArea> _counterAreaDB;
-        private PoolableBehavior _poolPrefab;
-
-        public AdminMapBuilder()
-        {
-            _counterAreaDB = new List<CounterArea>();
-        }
+        private List<CounterArea> _counterAreaDB = new();
+        private PoolableBehavior? _poolPrefab = null;
 
         public void Build(LIElement elem, GameObject obj)
         {
             if (elem.type != "util-room" || elem.properties.isRoomAdminVisible == false)
                 return;
+            if (LIShipStatus.Instance?.ShipStatus == null)
+                throw new Exception("ShipStatus not found");
 
             MapBehaviour mapBehaviour = MinimapBuilder.GetMinimap();
             MapCountOverlay mapCountOverlay = mapBehaviour.countOverlay;

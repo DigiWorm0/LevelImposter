@@ -7,7 +7,7 @@ using Reactor.Networking.Attributes;
 namespace LevelImposter.Core
 {
     [HarmonyPatch(typeof(AmongUsClient), nameof(AmongUsClient.CreatePlayer))]
-    public static class SendRpcPatch
+    public static class MapSyncPatch
     {
         public static void Postfix()
         {
@@ -15,29 +15,12 @@ namespace LevelImposter.Core
         }
     }
 
-    public static class ReactorRPC
+    public static class MapSync
     {
-        public enum RpcIds
-        {
-            Teleport=98,
-            SendMapId=99,
-        }
-        public const int RPC_ID = 99; // Must be <= 99 for TOU-R Support
-
         private static Guid? _activeDownloadingID = null;
 
-        [MethodRpc((uint)RpcIds.Teleport)]
-        public static void RPCTeleportPlayer(PlayerControl _p, float x, float y)
-        {
-            _p.transform.position = new Vector3(
-                x,
-                y,
-                _p.transform.position.z
-            );
-        }
-
         [MethodRpc((uint)RpcIds.SendMapId)]
-        public static void RPCSendMapID(PlayerControl _p, string mapIDStr)
+        public static void RPCSendMapID(PlayerControl _, string mapIDStr)
         {
             if (GameStartManager.Instance != null)
                 GameStartManager.Instance.ResetStartState();
@@ -49,7 +32,8 @@ namespace LevelImposter.Core
             Guid mapID;
             if (!Guid.TryParse(mapIDStr, out mapID))
             {
-                LILogger.Error("Invalid map ID");
+                LILogger.Error("Invalid map ID.");
+                return;
             }
 
             // Get Current
@@ -69,15 +53,15 @@ namespace LevelImposter.Core
             {
                 return;
             }
-            else if (MapFileAPI.Instance.Exists(mapIDStr))
+            else if (MapFileAPI.Instance?.Exists(mapIDStr) == true)
             {
-                MapLoader.LoadMap(mapIDStr);
+                MapLoader.LoadMap(mapIDStr, null);
             }
             else
             {
                 _activeDownloadingID = mapID;
                 LILogger.Notify("<color=#1a95d8>Downloading map, please wait...</color>");
-                LevelImposterAPI.Instance.DownloadMap(mapID, ((LIMap map) =>
+                LevelImposterAPI.Instance?.DownloadMap(mapID, ((LIMap map) =>
                 {
                     if (_activeDownloadingID == mapID)
                     {

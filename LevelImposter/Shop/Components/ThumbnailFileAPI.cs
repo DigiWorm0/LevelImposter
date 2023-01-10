@@ -7,6 +7,7 @@ using UnityEngine.Networking;
 using LevelImposter.Core;
 using Newtonsoft.Json;
 using BepInEx.Unity.IL2CPP.Utils.Collections;
+using Il2CppInterop.Runtime.Attributes;
 
 namespace LevelImposter.Shop
 {
@@ -19,29 +20,7 @@ namespace LevelImposter.Shop
         {
         }
 
-        public const int TEX_WIDTH = 412;
-        public const int TEX_HEIGHT = 144;
-
-        public static ThumbnailFileAPI Instance;
-
-        public void Awake()
-        {
-            if (Instance == null)
-            {
-                Instance = this;
-                DontDestroyOnLoad(gameObject);
-            }
-            else
-            {
-                Destroy(gameObject);
-            }
-        }
-
-        public void Start()
-        {
-            if (!Directory.Exists(GetDirectory()))
-                Directory.CreateDirectory(GetDirectory());
-        }
+        public static ThumbnailFileAPI? Instance = null;
 
         /// <summary>
         /// Gets the current directory where LevelImposter thumbnail files are stored.
@@ -50,8 +29,8 @@ namespace LevelImposter.Shop
         /// <returns>String path where LevelImposter map thumbnails is stored.</returns>
         public string GetDirectory()
         {
-            string gameDir = System.Reflection.Assembly.GetAssembly(typeof(LevelImposter)).Location;
-            return Path.Combine(Path.GetDirectoryName(gameDir), "LevelImposter/Thumbnails");
+            string gameDir = System.Reflection.Assembly.GetAssembly(typeof(LevelImposter))?.Location ?? "/";
+            return Path.Combine(Path.GetDirectoryName(gameDir) ?? "/", "LevelImposter/Thumbnails");
         }
 
         /// <summary>
@@ -79,20 +58,28 @@ namespace LevelImposter.Shop
         /// </summary>
         /// <param name="mapID">Map ID for the thumbnail</param>
         /// <param name="callback">Callback on success</param>
-        public void Get(string mapID, System.Action<Texture2D> callback)
+        [HideFromIl2Cpp]
+        public void Get(string mapID, Action<Sprite?> callback)
         {
             if (!Exists(mapID))
             {
-                LILogger.Error("Could not find [" + mapID + "] thumbnail in filesystem");
+                LILogger.Warn($"Could not find [{mapID}] thumbnail in filesystem");
                 return;
             }
 
-            LILogger.Info("Loading thumbnail [" + mapID + "] from filesystem");
+            LILogger.Info($"Loading thumbnail [{mapID}] from filesystem");
             string thumbnailPath = GetPath(mapID);
             byte[] thumbnailBytes = File.ReadAllBytes(thumbnailPath);
-            Texture2D texture = new Texture2D(1, 1);
-            ImageConversion.LoadImage(texture, thumbnailBytes);
-            callback(texture);
+            SpriteLoader.Instance?.LoadSpriteAsync(thumbnailBytes, false, (spriteData) =>
+            {
+                Sprite? sprite = spriteData?.Sprite;
+                if (sprite == null)
+                {
+                    LILogger.Warn($"Error loading [{mapID}] thumbnail from filesystem");
+                    return;
+                }
+                callback.Invoke(spriteData?.Sprite);
+            });
         }
 
         /// <summary>
@@ -100,13 +87,14 @@ namespace LevelImposter.Shop
         /// </summary>
         /// <param name="mapID">Map ID for the thumbnail</param>
         /// <param name="thumbnailData">PNG-encoded image data.</param>
-        public void Save(string mapID, byte[] thumbnailData)
+        [HideFromIl2Cpp]
+        public void Save(string mapID, byte[] thumbnailBytes)
         {
-            LILogger.Info("Saving [" + mapID + "] thumbnail to filesystem");
+            LILogger.Info($"Saving [{mapID}] thumbnail to filesystem");
             string thumbnailPath = GetPath(mapID);
             if (!Directory.Exists(GetDirectory()))
                 Directory.CreateDirectory(GetDirectory());
-            File.WriteAllBytes(thumbnailPath, thumbnailData);
+            File.WriteAllBytes(thumbnailPath, thumbnailBytes);
         }
 
         /// <summary>
@@ -117,9 +105,40 @@ namespace LevelImposter.Shop
         {
             if (!Exists(mapID))
                 return;
-            LILogger.Info("Deleting [" + mapID + "] thumbnail from filesystem");
+            LILogger.Info($"Deleting [{mapID}] thumbnail from filesystem");
             string mapPath = GetPath(mapID);
             File.Delete(mapPath);
+        }
+
+        /// <summary>
+        /// Deletes all thumbnail files from the local filesystem
+        /// </summary>
+        public void DeleteAll()
+        {
+            DirectoryInfo directory = new DirectoryInfo(GetDirectory());
+            if (!directory.Exists)
+                return;
+
+            LILogger.Info("Deleting all thumbnails from filesystem");
+            directory.Delete(true);
+        }
+
+        public void Awake()
+        {
+            if (Instance == null)
+            {
+                Instance = this;
+                DontDestroyOnLoad(gameObject);
+            }
+            else
+            {
+                Destroy(gameObject);
+            }
+        }
+        public void Start()
+        {
+            if (!Directory.Exists(GetDirectory()))
+                Directory.CreateDirectory(GetDirectory());
         }
     }
 }

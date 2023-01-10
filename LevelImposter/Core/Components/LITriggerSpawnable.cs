@@ -7,6 +7,7 @@ using UnityEngine.UI;
 using LevelImposter.DB;
 using LevelImposter.Core;
 using BepInEx.Unity.IL2CPP.Utils.Collections;
+using Il2CppInterop.Runtime.Attributes;
 
 namespace LevelImposter.Core
 {
@@ -19,9 +20,14 @@ namespace LevelImposter.Core
         {
         }
 
-        private GameObject _triggerTarget = null;
+        private GameObject? _triggerTarget = null;
         private string _triggerID = "";
 
+        /// <summary>
+        /// Sets spawnable trigger properties
+        /// </summary>
+        /// <param name="triggerTarget">GameObject to trigger</param>
+        /// <param name="triggerID">ID of the trigger</param>
         public void SetTrigger(GameObject triggerTarget, string triggerID)
         {
             _triggerTarget = triggerTarget;
@@ -29,15 +35,30 @@ namespace LevelImposter.Core
             gameObject.SetActive(false);
         }
 
+        /// <summary>
+        /// Coroutine that fires the trigger once the LocalPlayer is spawned in
+        /// </summary>
+        [HideFromIl2Cpp]
+        private IEnumerator CoFireTrigger()
+        {
+            while (PlayerControl.LocalPlayer == null 
+                || LIShipStatus.Instance?.IsReady != true
+                || !GameManager.Instance.GameHasStarted)
+                yield return null;
+            if (_triggerTarget != null)
+                LITriggerable.Trigger(_triggerTarget, _triggerID, PlayerControl.LocalPlayer);
+        }
+
         public void Start()
         {
             if (_triggerTarget == null || _triggerID == "")
-            {
-                LILogger.Error("A Spawnable Trigger enabled without a target");
-                return;
-            }
-
-            MapUtils.FireTrigger(_triggerTarget, _triggerID, gameObject);
+                LILogger.Warn("A Spawnable Trigger enabled without a target");
+            StartCoroutine(CoFireTrigger().WrapToIl2Cpp());
+        }
+        public void OnDestroy()
+        {
+            _triggerID = "";
+            _triggerTarget = null;
         }
     }
 }

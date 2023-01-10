@@ -23,13 +23,12 @@ namespace LevelImposter.Core
             {
                 byte ladderId = reader.ReadByte();
                 byte climbLadderSid = reader.ReadByte();
-                for (int i = 0; i < LadderBuilder.AllLadders.Count; i++)
+                bool isFound = LadderBuilder.TryGetLadder(ladderId, out Ladder? ladder);
+
+                if (isFound)
                 {
-                    if (LadderBuilder.AllLadders[i].Id == ladderId)
-                    {
-                        __instance.ClimbLadder(LadderBuilder.AllLadders[i], climbLadderSid);
-                        return false;
-                    }
+                    __instance.ClimbLadder(ladder, climbLadderSid);
+                    return false;
                 }
                 LILogger.Warn("[RPC] Could not find a ladder of id: " + ladderId);
             }

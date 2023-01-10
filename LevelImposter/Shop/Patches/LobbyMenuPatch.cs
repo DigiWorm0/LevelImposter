@@ -48,7 +48,7 @@ namespace LevelImposter.Shop
     {
         public static void Postfix()
         {
-            LobbyBuilder.OnLoad();
+            LobbyConsoleBuilder.Build();
         }
     }
 }

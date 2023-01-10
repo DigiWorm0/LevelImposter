@@ -17,7 +17,8 @@ namespace LevelImposter.Core
             foreach (Collider2D collider in colliders)
                 collider.isTrigger = true;
 
-            obj.AddComponent<LITriggerArea>();
+            LITriggerArea triggerArea = obj.AddComponent<LITriggerArea>();
+            triggerArea.SetClientSide(elem.properties.triggerClientSide != false);
         }
 
         public void PostBuild() { }

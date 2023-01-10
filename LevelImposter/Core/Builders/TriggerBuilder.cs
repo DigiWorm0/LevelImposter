@@ -7,8 +7,6 @@ namespace LevelImposter.Core
 {
     public class TriggerBuilder : IElemBuilder
     {
-        private List<LITriggerable> _triggerDB = new();
-
         public void Build(LIElement elem, GameObject obj)
         {
             if (elem.properties.triggers == null)
@@ -18,25 +16,16 @@ namespace LevelImposter.Core
             foreach (LITrigger trigger in triggers)
             {
                 LITriggerable triggerComp = obj.AddComponent<LITriggerable>();
-                triggerComp.ID = trigger.id;
-                triggerComp.ElemID = elem.id;
-                triggerComp.TargetElemID = trigger.elemID;
-                triggerComp.TargetTriggerID = trigger.triggerID;
-                triggerComp.CurrentElem = elem;
+                triggerComp.SetTrigger(
+                    elem,
+                    trigger.id,
+                    trigger.elemID,
+                    trigger.triggerID
+                );
 
-                _triggerDB.Add(triggerComp);
             }
         }
 
-        public void PostBuild()
-        {
-            foreach (LITriggerable trigger in _triggerDB)
-            {
-                if (trigger.TargetElemID != null && trigger.TargetTriggerID != null)
-                {
-                    trigger.targetTrigger = Array.Find(_triggerDB.ToArray(), (LITriggerable t) => t.ID == trigger.TargetTriggerID && t.ElemID == trigger.TargetElemID);
-                }
-            }
-        }
+        public void PostBuild() { }
     }
 }

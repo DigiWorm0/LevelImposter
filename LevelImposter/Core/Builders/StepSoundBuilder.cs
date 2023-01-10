@@ -34,34 +34,31 @@ namespace LevelImposter.Core
                 return;
             }
 
+            // Sound Group
             SoundGroup soundGroup = ScriptableObject.CreateInstance<SoundGroup>();
             soundGroup.Clips = new AudioClip[elem.properties.sounds.Length];
             for (int i = 0; i < elem.properties.sounds.Length; i++)
             {
                 LISound sound = elem.properties.sounds[i];
-
                 if (sound.data == null)
                 {
                     LILogger.Warn(elem.name + " missing audio data");
                     continue;
                 }
 
-                AudioClip clip;
-                if (sound.isPreset)
+                if (sound.isPreset) // Preset
                 {
                     SoundData soundData;
                     AssetDB.Sounds.TryGetValue(sound.data, out soundData);
-                    clip = soundData.Clip;
+                    soundGroup.Clips[i] = soundData.Clip;
                 }
-                else
+                else // WAVLoader
                 {
-                    clip = MapUtils.ConvertToAudio(elem.name, sound.data);
+                    WAVLoader.Instance?.LoadWAV(elem, sound, (AudioClip audioClip) =>
+                    {
+                        soundGroup.Clips[i] = audioClip;
+                    });
                 }
-
-                if (clip != null)
-                    soundGroup.Clips[i] = clip;
-                else
-                    LILogger.Warn(elem.name + " has corrupt audio data");
             }
 
             // Sound Player

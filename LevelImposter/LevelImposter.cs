@@ -10,12 +10,13 @@ using AmongUs.Data;
 namespace LevelImposter
 {
     [BepInAutoPlugin(ID, "LevelImposter")]
-    [BepInDependency(REACTOR_ID)]
+    [BepInDependency(ModCompatibility.REACTOR_ID)]
+    [BepInDependency(ModCompatibility.SUBMERGED_GUID, BepInDependency.DependencyFlags.SoftDependency)]
+    [BepInDependency(ModCompatibility.TOU_GUID, BepInDependency.DependencyFlags.SoftDependency)]
     [BepInProcess("Among Us.exe")]
     public partial class LevelImposter : BasePlugin
     {
         public const string ID = "com.DigiWorm.LevelImposter";
-        public const string REACTOR_ID = "gg.reactor.api";
 
         public HarmonyLib.Harmony Harmony { get; } = new HarmonyLib.Harmony(ID);
 
@@ -26,6 +27,7 @@ namespace LevelImposter
             ConfigFile = Config;
             LILogger.Init();
             LIDeepLink.Init();
+            ModCompatibility.Init();
 
             DataManager.Player.Onboarding.ViewedHideAndSeekHowToPlay = true;
 
@@ -33,22 +35,25 @@ namespace LevelImposter
             ClassInjector.RegisterTypeInIl2Cpp<LIStar>();
             ClassInjector.RegisterTypeInIl2Cpp<LIFloat>();
             ClassInjector.RegisterTypeInIl2Cpp<LITeleporter>();
-            ClassInjector.RegisterTypeInIl2Cpp<GIFAnimator>();
-            ClassInjector.RegisterTypeInIl2Cpp<AssetDB>();
-
             ClassInjector.RegisterTypeInIl2Cpp<LITriggerable>();
             ClassInjector.RegisterTypeInIl2Cpp<LITriggerArea>();
             ClassInjector.RegisterTypeInIl2Cpp<LITriggerSpawnable>();
             ClassInjector.RegisterTypeInIl2Cpp<DummyMinigame>();
+            ClassInjector.RegisterTypeInIl2Cpp<GIFAnimator>();
+            ClassInjector.RegisterTypeInIl2Cpp<SpriteLoader>();
+            ClassInjector.RegisterTypeInIl2Cpp<WAVLoader>();
+
+            ClassInjector.RegisterTypeInIl2Cpp<AssetDB>();
 
             ClassInjector.RegisterTypeInIl2Cpp<LevelImposterAPI>();
-            ClassInjector.RegisterTypeInIl2Cpp<MapBanner>();
+            ClassInjector.RegisterTypeInIl2Cpp<ThumbnailFileAPI>();
+            ClassInjector.RegisterTypeInIl2Cpp<GitHubAPI>();
             ClassInjector.RegisterTypeInIl2Cpp<MapFileAPI>();
+            ClassInjector.RegisterTypeInIl2Cpp<MapBanner>();
             ClassInjector.RegisterTypeInIl2Cpp<ShopButtons>();
             ClassInjector.RegisterTypeInIl2Cpp<ShopManager>();
             ClassInjector.RegisterTypeInIl2Cpp<ShopSpawner>();
             ClassInjector.RegisterTypeInIl2Cpp<Spinner>();
-            ClassInjector.RegisterTypeInIl2Cpp<ThumbnailFileAPI>();
 
             Harmony.PatchAll();
             LILogger.Msg("LevelImposter Initialized.");

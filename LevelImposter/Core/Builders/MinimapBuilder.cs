@@ -21,27 +21,45 @@ namespace LevelImposter.Core
                 LILogger.Warn("Only 1 minimap object should be used per map");
                 return;
             }
+
+            // Minimap
             MapBehaviour mapBehaviour = GetMinimap();
 
+            // Map Scale
             float mapScaleVal = elem.properties.minimapScale == null ? 1 : (float)elem.properties.minimapScale;
             float mapScale = mapScaleVal * DEFAULT_SCALE;
             LIShipStatus.Instance.ShipStatus.MapScale = mapScale;
+            Vector3 mapOffset = -(obj.transform.localPosition / mapScale);
 
+            // Sprite Renderer
             SpriteRenderer spriteRenderer = obj.GetComponent<SpriteRenderer>();
-            if (spriteRenderer != null)
+            if (spriteRenderer == null)
             {
-                Sprite sprite = spriteRenderer.sprite;
-                GameObject background = mapBehaviour.ColorControl.gameObject;
-                SpriteRenderer bgRenderer = background.GetComponent<SpriteRenderer>();
-                bgRenderer.sprite = sprite;
-                background.transform.localPosition = background.transform.localPosition;
-                background.transform.localScale = obj.transform.localScale / mapScale;
-                background.transform.localRotation = obj.transform.localRotation;
-                if (elem.properties.color != null)
-                    bgRenderer.color = MapUtils.LIColorToColor(elem.properties.color);
+                LILogger.Warn("Minimap object has no sprite attached");
+                return;
             }
 
-            Vector3 mapOffset = -(obj.transform.localPosition / mapScale);
+            // Background
+            GameObject background = mapBehaviour.ColorControl.gameObject;
+            SpriteRenderer bgRenderer = background.GetComponent<SpriteRenderer>();
+            background.transform.localPosition = background.transform.localPosition;
+            background.transform.localScale = obj.transform.localScale / mapScale;
+            background.transform.localRotation = obj.transform.localRotation;
+
+            // On Load
+            if (SpriteLoader.Instance == null)
+            {
+                LILogger.Warn("Spite Loader is not instantiated");
+                return;
+            }
+            SpriteLoader.Instance.OnLoad += (LIElement loadedElem) =>
+            {
+                if (loadedElem.id != elem.id)
+                    return;
+                bgRenderer.sprite = spriteRenderer.sprite;
+                bgRenderer.color = spriteRenderer.color;
+                UnityEngine.Object.Destroy(obj);
+            };
 
             // Offsets
             Transform roomNames = mapBehaviour.transform.GetChild(mapBehaviour.transform.childCount - 1);
@@ -51,7 +69,6 @@ namespace LevelImposter.Core
             mapBehaviour.countOverlay.transform.localPosition = mapOffset;
             mapBehaviour.infectedOverlay.transform.localPosition = mapOffset;
 
-            obj.SetActive(false);
             _isBuilt = true;
         }
 

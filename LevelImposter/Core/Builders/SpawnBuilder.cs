@@ -11,6 +11,8 @@ namespace LevelImposter.Core
         {
             if (!elem.type.StartsWith("util-spawn"))
                 return;
+            if (LIShipStatus.Instance?.ShipStatus == null)
+                throw new Exception("ShipStatus not found");
 
             Vector2 pos = obj.transform.position - new Vector3(0, 0);
             ShipStatus shipStatus = LIShipStatus.Instance.ShipStatus;

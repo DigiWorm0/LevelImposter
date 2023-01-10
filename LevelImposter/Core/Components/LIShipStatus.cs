@@ -1,12 +1,16 @@
 using System;
 using System.Collections.Generic;
+using System.Collections;
 using System.IO;
 using System.Text;
 using UnityEngine;
 using LevelImposter.Shop;
 using LevelImposter.DB;
 using System.Diagnostics;
+using Il2CppInterop.Runtime.Attributes;
 using Il2CppInterop.Runtime.InteropTypes.Arrays;
+using UnityEngine.SceneManagement;
+using BepInEx.Unity.IL2CPP.Utils.Collections;
 
 namespace LevelImposter.Core
 {
@@ -20,24 +24,15 @@ namespace LevelImposter.Core
         {
         }
 
+        public static LIShipStatus? Instance { get; private set; }
+
         public const float PLAYER_POS = -5.0f;
-
-        public static LIShipStatus Instance { get; private set; }
-
-        public ShipStatus ShipStatus { get; private set; }
-        public LIMap CurrentMap { get; private set; }
-
-        private BuildRouter _buildRouter = new BuildRouter();
-        private Stopwatch _buildTimer = new Stopwatch();
-        private Stack<Texture2D> _mapTextures = new Stack<Texture2D>();
-        private Stack<AudioClip> _mapClips = new Stack<AudioClip>();
-
-        private readonly List<string> _priorityTypes = new()
+        public static readonly List<string> PRIORITY_TYPES = new()
         {
             "util-minimap",
             "util-room"
         };
-        private readonly Dictionary<string, string> _exileIDs = new()
+        public static readonly Dictionary<string, string> EXILE_IDS = new()
         {
             { "Skeld", "ss-skeld" },
             { "MiraHQ", "ss-mira" },
@@ -45,33 +40,16 @@ namespace LevelImposter.Core
             { "Airship", "ss-airship" }
         };
 
-        public void Awake()
+        private LIMap? _currentMap = null;
+        private ShipStatus? _shipStatus = null;
+        private bool _isReady = true;
+
+        [HideFromIl2Cpp]
+        public LIMap? CurrentMap => _currentMap;
+        public ShipStatus? ShipStatus => _shipStatus;
+        public bool IsReady
         {
-            Destroy(GetComponent<TagAmbientSoundPlayer>());
-
-            ShipStatus = GetComponent<ShipStatus>();
-            Instance = this;
-            if (MapLoader.CurrentMap != null)
-                LoadMap(MapLoader.CurrentMap);
-            else
-                LILogger.Info("No map content, no LI data will load");
-        }
-
-        public void Start()
-        {
-            if (MapLoader.CurrentMap != null)
-                HudManager.Instance.ShadowQuad.material.SetInt("_Mask", 7);
-        }
-
-        public void OnDestroy()
-        {
-            LILogger.Info("Destroying " + _mapTextures.Count + " map textures");
-            while (_mapTextures.Count > 0)
-                Destroy(_mapTextures.Pop());
-
-            LILogger.Info("Destroying " + _mapClips.Count + " map sounds");
-            while (_mapClips.Count > 0)
-                Destroy(_mapClips.Pop());
+            get { return SpriteLoader.Instance?.RenderCount <= 0 && WAVLoader.Instance?.LoadCount <= 0 && _isReady; }
         }
         
         /// <summary>
@@ -79,6 +57,9 @@ namespace LevelImposter.Core
         /// </summary>
         public void ResetMap()
         {
+            if (ShipStatus == null)
+                return;
+
             while (transform.childCount > 0)
                 DestroyImmediate(transform.GetChild(0).gameObject);
 
@@ -125,48 +106,59 @@ namespace LevelImposter.Core
         /// Replaces the active map with LevelImposter map data
         /// </summary>
         /// <param name="map">Deserialized map data from a <c>.LIM</c> file</param>
+        [HideFromIl2Cpp]
         public void LoadMap(LIMap map)
         {
             LILogger.Info("Loading " + map.name + " [" + map.id + "]");
-            CurrentMap = map;
+            _isReady = false;
+            StartCoroutine(CoLoadingScreen().WrapToIl2Cpp());
+            _currentMap = map;
             ResetMap();
             _LoadMapProperties(map);
-            _buildRouter.ResetStack();
+            BuildRouter buildRouter = new();
 
             // Asset DB
             if (!AssetDB.IsReady)
                 LILogger.Warn("Asset DB is not ready yet!");
 
             // Priority First
-            foreach (string type in _priorityTypes)
+            foreach (string type in PRIORITY_TYPES)
                 foreach (LIElement elem in map.elements)
                     if (elem.type == type)
-                        AddElement(elem);
+                        AddElement(buildRouter, elem);
             // Everything Else
             foreach (LIElement elem in map.elements)
-                if (!_priorityTypes.Contains(elem.type))
-                    AddElement(elem);
+                if (!PRIORITY_TYPES.Contains(elem.type))
+                    AddElement(buildRouter, elem);
 
-            _buildRouter.PostBuild();
+            buildRouter.PostBuild();
+            _isReady = true;
             LILogger.Info("Map load completed");
         }
 
+        /// <summary>
+        /// Loads LIMap.properties to ShipStatus
+        /// </summary>
+        /// <param name="map">Map to read properties from</param>
+        [HideFromIl2Cpp]
         private void _LoadMapProperties(LIMap map)
         {
+            if (ShipStatus == null)
+                return;
+
             ShipStatus.name = map.name;
 
             if (!string.IsNullOrEmpty(map.properties.bgColor))
             {
-                Color bgColor;
-                ColorUtility.TryParseHtmlString(map.properties.bgColor, out bgColor);
-                Camera.main.backgroundColor = bgColor;
+                if (ColorUtility.TryParseHtmlString(map.properties.bgColor, out Color bgColor))
+                    Camera.main.backgroundColor = bgColor;
             }
 
             if (!string.IsNullOrEmpty(map.properties.exileID))
             {
-                if (_exileIDs.ContainsKey(map.properties.exileID))
+                if (EXILE_IDS.ContainsKey(map.properties.exileID))
                 {
-                    ShipStatus ship = AssetDB.Ships[_exileIDs[map.properties.exileID]].ShipStatus;
+                    ShipStatus ship = AssetDB.Ships[EXILE_IDS[map.properties.exileID]].ShipStatus;
                     ShipStatus.ExileCutscenePrefab = ship.ExileCutscenePrefab;
                 }
                 else
@@ -180,14 +172,16 @@ namespace LevelImposter.Core
         /// Adds a single <c>LIElement</c> object into the map.
         /// </summary>
         /// <param name="element"></param>
-        public void AddElement(LIElement element)
+        [HideFromIl2Cpp]
+        public void AddElement(BuildRouter buildRouter, LIElement element)
         {
-            _buildTimer.Restart();
+            Stopwatch buildTimer = new();
+            buildTimer.Restart();
 
             LILogger.Info("Adding " + element.ToString());
             try
             {
-                GameObject gameObject = _buildRouter.Build(element);
+                GameObject gameObject = buildRouter.Build(element);
                 gameObject.transform.SetParent(transform);
                 gameObject.transform.localPosition -= new Vector3(0, 0, -(element.y / 1000.0f) + PLAYER_POS);
             }
@@ -196,30 +190,71 @@ namespace LevelImposter.Core
                 LILogger.Error("Error while building " + element.name + ":\n" + e);
             }
 
-            _buildTimer.Stop();
-            if (_buildTimer.ElapsedMilliseconds > 1000)
+            // Build Timer
+            buildTimer.Stop();
+            if (buildTimer.ElapsedMilliseconds > 100)
+                LILogger.Warn($"Took {buildTimer.ElapsedMilliseconds}ms to build {element.name}");
+        }
+
+        /// <summary>
+        /// Coroutine that displayes the loading screen until map is built
+        /// </summary>
+        [HideFromIl2Cpp]
+        private IEnumerator CoLoadingScreen()
+        {
+            yield return null;
+
+            // Objects
+            bool isFreeplay = AmongUsClient.Instance.NetworkMode == NetworkModes.FreePlay;
+            SpriteRenderer fullScreen = DestroyableSingleton<HudManager>.Instance.FullScreen;
+            GameObject loadingBean = DestroyableSingleton<HudManager>.Instance.GameLoadAnimation;
+            Color sabColor = fullScreen.color;
+
+            // Loading
+            LILogger.Info($"Showing loading screen (Freeplay={isFreeplay})");
+            if (isFreeplay)
             {
-                float seconds = Mathf.Round(_buildTimer.ElapsedMilliseconds / 100f) / 10f;
-                LILogger.Warn("Took " + seconds + "s to build " + element.name);
+                fullScreen.color = new Color(0, 0, 0, 0.9f);
+                fullScreen.gameObject.SetActive(true);
             }
+            while (!IsReady)
+            {
+                loadingBean.SetActive(true);
+                yield return null;
+            }
+
+            // Sabotage
+            LILogger.Info($"Hiding loading screen (Freeplay={isFreeplay})");
+            if (isFreeplay)
+            {
+                fullScreen.color = sabColor;
+                fullScreen.gameObject.SetActive(false);
+            }
+            loadingBean.SetActive(false);
         }
 
-        /// <summary>
-        /// Adds a map texture to be garbage collected on unload
-        /// </summary>
-        /// <param name="tex">Texture to mark for garbage collection on unload</param>
-        public void AddMapTexture(Texture2D tex)
+        public void Awake()
         {
-            _mapTextures.Push(tex);
-        }
+            Destroy(GetComponent<TagAmbientSoundPlayer>());
+            _shipStatus = GetComponent<ShipStatus>();
+            Instance = this;
 
-        /// <summary>
-        /// Adds a map audio clip to be garbage collected on unload
-        /// </summary>
-        /// <param name="clip">Audio clip to mark for garbage collection on unload</param>
-        public void AddMapSound(AudioClip clip)
+            if (MapLoader.CurrentMap != null)
+                LoadMap(MapLoader.CurrentMap);
+            else
+                LILogger.Info("No map content, no LI data will load");
+        }
+        public void Start()
         {
-            _mapClips.Push(clip);
+            if (MapLoader.CurrentMap != null)
+                HudManager.Instance.ShadowQuad.material.SetInt("_Mask", 7);
+        }
+        public void OnDestroy()
+        {
+            _currentMap = null;
+            Instance = null;
+            SpriteLoader.Instance?.ClearAll();
+            WAVLoader.Instance?.ClearAll();
         }
     }
 }
