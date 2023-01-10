@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
+using LevelImposter.Core;
 
 namespace LevelImposter.Shop
 {
     public static class LobbyConsoleBuilder
     {
-        private static Sprite _consoleSprite;
+        private static Sprite? _consoleSprite;
 
         public static void Build()
         {
@@ -39,18 +40,9 @@ namespace LevelImposter.Shop
         private static Sprite GetSprite()
         {
             if (_consoleSprite == null)
-            {
-                Texture2D consoleTex = new Texture2D(1, 1);
-                ImageConversion.LoadImage(consoleTex, Properties.Resources.console);
-                _consoleSprite = Sprite.Create(
-                    consoleTex,
-                    new Rect(0, 0, consoleTex.width, consoleTex.height),
-                    new Vector2(0.5f, 0.5f),
-                    100.0f,
-                    0,
-                    SpriteMeshType.FullRect
-                );
-            }
+                _consoleSprite = MapUtils.LoadSpriteResource("LobbyConsole.png");
+            if (_consoleSprite == null)
+                throw new Exception("The \"LobbyConsole.png\" resource was not found in assembly");
             return _consoleSprite;
         }
     }

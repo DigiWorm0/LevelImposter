@@ -161,7 +161,7 @@ namespace LevelImposter.Core
                             while (!_shouldRender)
                                 yield return null;
                             ImageSharpWrapper.TextureMetadata texData = texMetadataList[i];
-                            Sprite sprite = RawImageToSprite(texData.FrameData);
+                            Sprite sprite = RawImageToSprite(texData.FrameData, true);
                             spriteArr[i] = sprite;
                             frameDelayArr[i] = texData.FrameDelay;
                         }
@@ -178,7 +178,7 @@ namespace LevelImposter.Core
                     {
                         SpriteArr = new Sprite[]
                         {
-                            RawImageToSprite(imgData)
+                            RawImageToSprite(imgData, true)
                         },
                         FrameDelayArr = new float[1]
                     };
@@ -198,7 +198,7 @@ namespace LevelImposter.Core
         /// <param name="texData">Texture Metadata to load</param>
         /// <returns>Generated sprite data</returns>
         [HideFromIl2Cpp]
-        private Sprite RawImageToSprite(byte[] imgData)
+        private Sprite RawImageToSprite(byte[] imgData, bool addToStack)
         {
             // Generate Texture
             bool pixelArtMode = LIShipStatus.Instance?.CurrentMap?.properties.pixelArtMode == true;
@@ -209,7 +209,8 @@ namespace LevelImposter.Core
                 hideFlags = HideFlags.HideAndDontSave,
             };
             ImageConversion.LoadImage(texture, imgData);
-            _mapTextures?.Push(texture);
+            if (addToStack)
+                _mapTextures?.Push(texture);
 
             // Generate Sprite
             Sprite sprite = Sprite.Create(
@@ -220,7 +221,8 @@ namespace LevelImposter.Core
                 0,
                 SpriteMeshType.FullRect
             );
-            _mapSprites?.Push(sprite);
+            if (addToStack)
+                _mapSprites?.Push(sprite);
 
             return sprite;
         }
@@ -234,20 +236,7 @@ namespace LevelImposter.Core
         [HideFromIl2Cpp]
         public Sprite LoadSprite(byte[] imgData)
         {
-            Texture2D texture = new(1, 1)
-            {
-                wrapMode = TextureWrapMode.Clamp,
-                hideFlags = HideFlags.HideAndDontSave,
-            };
-            ImageConversion.LoadImage(texture, imgData);
-            return Sprite.Create(
-                texture,
-                new Rect(0, 0, texture.width, texture.height),
-                new Vector2(0.5f, 0.5f),
-                100.0f,
-                0,
-                SpriteMeshType.FullRect
-            );
+            return RawImageToSprite(imgData, false);
         }
 
         public void Awake()

@@ -10,14 +10,13 @@ using AmongUs.Data;
 namespace LevelImposter
 {
     [BepInAutoPlugin(ID, "LevelImposter")]
-    [BepInDependency(REACTOR_ID)]
+    [BepInDependency(ModCompatibility.REACTOR_ID)]
     [BepInDependency(ModCompatibility.SUBMERGED_GUID, BepInDependency.DependencyFlags.SoftDependency)]
     [BepInDependency(ModCompatibility.TOU_GUID, BepInDependency.DependencyFlags.SoftDependency)]
     [BepInProcess("Among Us.exe")]
     public partial class LevelImposter : BasePlugin
     {
         public const string ID = "com.DigiWorm.LevelImposter";
-        public const string REACTOR_ID = "gg.reactor.api";
 
         public HarmonyLib.Harmony Harmony { get; } = new HarmonyLib.Harmony(ID);
 

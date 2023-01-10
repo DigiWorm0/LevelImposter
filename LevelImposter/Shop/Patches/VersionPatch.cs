@@ -18,7 +18,7 @@ namespace LevelImposter.Shop
     [HarmonyPatch(typeof(VersionShower), nameof(VersionShower.Start))]
     public static class VersionPatch
     {
-        public static Sprite? _logoSprite = null;
+        private static Sprite? _logoSprite = null;
 
         public static void Postfix(VersionShower __instance)
         {
@@ -35,9 +35,7 @@ namespace LevelImposter.Shop
             logoObj.layer = (int)Layer.UI;
 
             SpriteRenderer logoRenderer = logoObj.AddComponent<SpriteRenderer>();
-            if (_logoSprite == null)
-                _logoSprite = SpriteLoader.Instance?.LoadSprite(Properties.Resources.logo);
-            logoRenderer.sprite = _logoSprite;
+            logoRenderer.sprite = GetLogoSprite();
 
             GameObject logoTextObj = new("LevelImposterText " + antiPiracy);
             logoTextObj.transform.SetParent(logoObj.transform);
@@ -51,6 +49,15 @@ namespace LevelImposter.Shop
             logoText.alignment = TextAlignmentOptions.BottomLeft;
             logoText.raycastTarget = false;
             logoText.SetText("v" + LevelImposter.Version);
+        }
+
+        private static Sprite GetLogoSprite()
+        {
+            if (_logoSprite == null)
+                _logoSprite = MapUtils.LoadSpriteResource("LevelImposterLogo.png");
+            if (_logoSprite == null)
+                throw new Exception("The \"LevelImposterLogo.png\" resource was not found in assembly");
+            return _logoSprite;
         }
     }
 }

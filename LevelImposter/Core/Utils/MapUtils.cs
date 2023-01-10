@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Text.Json;
 using System.Reflection;
 using UnityEngine.Events;
 using System.IO;
@@ -168,26 +169,66 @@ namespace LevelImposter.Core
         }
 
         /// <summary>
-        /// Loads a GameObject from the local Asset Bundle by Name
+        /// Grabs a resource from the assembly
         /// </summary>
-        /// <param name="name">Name of the Asset from the Asset Bundle</param>
-        /// <returns></returns>
-        public static GameObject LoadAssetBundle(string name)
+        /// <param name="name">Name of the resource file</param>
+        /// <returns>Raw resource data</returns>
+        private static byte[]? GetResource(string name)
         {
             Assembly assembly = Assembly.GetExecutingAssembly();
             using (Stream? resourceStream = assembly.GetManifestResourceStream($"LevelImposter.Assets.{name}"))
             {
-                using (var ms = new MemoryStream())
-                {
-                    resourceStream?.CopyTo(ms);
-                    byte[] assetData = ms.ToArray();
-                    AssetBundle assetBundle = AssetBundle.LoadFromMemory(assetData);
-                    assetData = null;
-                    GameObject asset = assetBundle.LoadAsset(name, Il2CppType.Of<GameObject>()).Cast<GameObject>();
-                    assetBundle.Unload(false);
-                    return asset;
-                }
+                if (resourceStream == null)
+                    return null;
+
+                byte[] resourceData = new byte[resourceStream.Length];
+                resourceStream.Read(resourceData);
+                return resourceData;
             }
+        }
+
+        /// <summary>
+        /// Loads a GameObject from asembly resources
+        /// </summary>
+        /// <param name="name">Name of the AssetBundle file</param>
+        /// <returns>GameObject or null if not found</returns>
+        public static GameObject? LoadAssetBundle(string name)
+        {
+            byte[]? assetData = GetResource(name);
+            if (assetData == null)
+                return null;
+            AssetBundle assetBundle = AssetBundle.LoadFromMemory(assetData);
+            GameObject asset = assetBundle.LoadAsset(name, Il2CppType.Of<GameObject>()).Cast<GameObject>();
+            assetBundle.Unload(false);
+            return asset;
+        }
+
+        /// <summary>
+        /// Loads a Sprite from assembly resources
+        /// </summary>
+        /// <param name="name">Name of the sprite file</param>
+        /// <returns>Sprite or null if not found</returns>
+        public static Sprite? LoadSpriteResource(string name)
+        {
+            byte[]? spriteData = GetResource(name);
+            if (spriteData == null)
+                return null;
+            return SpriteLoader.Instance?.LoadSprite(spriteData);
+        }
+
+        /// <summary>
+        /// Deserializes a JSON object from assembly resources
+        /// </summary>
+        /// <typeparam name="T">JSON type to deserialize to</typeparam>
+        /// <param name="name">Name of the json file</param>
+        /// <returns>JSON object or null if not found</returns>
+        public static T? LoadJsonResource<T>(string name) where T : class
+        {
+            byte[]? jsonData = GetResource(name);
+            if (jsonData == null)
+                return null;
+            string jsonString = Encoding.UTF8.GetString(jsonData);
+            return JsonSerializer.Deserialize<T>(jsonString);
         }
 
         /// <summary>

@@ -34,7 +34,7 @@ namespace LevelImposter.DB
         private string _status = "Initializing AssetDB...";
         public string Status => _status;
 
-        public void Start()
+        public void Awake()
         {
             if (Instance != null)
             {
@@ -42,10 +42,16 @@ namespace LevelImposter.DB
                 return;
             }
             Instance = this;
+        }
+        public void Start()
+        {
 
-            AssetDBTemplate? tempDB = JsonSerializer.Deserialize<AssetDBTemplate>(
-                Encoding.UTF8.GetString(Properties.Resources.AssetDB, 0, Properties.Resources.AssetDB.Length)
-            );
+            AssetDBTemplate? tempDB = MapUtils.LoadJsonResource<AssetDBTemplate>("AssetDB.json");
+            if (tempDB == null)
+            {
+                LILogger.Warn("Serialized AssetDB was not found in Assembly resources");
+                return;
+            }
 
             Tasks = tempDB.tasks;
             Utils = tempDB.utils;

@@ -10,6 +10,7 @@ namespace LevelImposter.Core
 {
     public static class ModCompatibility
     {
+        public const string REACTOR_ID = "gg.reactor.api";
         public const string TOU_GUID = "com.slushiegoose.townofus";
         public const string SUBMERGED_GUID = "Submerged";
         public const ShipStatus.MapType SUBMERGED_MAP_TYPE = (ShipStatus.MapType)5;
