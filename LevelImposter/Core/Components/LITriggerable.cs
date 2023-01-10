@@ -43,8 +43,8 @@ namespace LevelImposter.Core
         /// </summary>
         /// <param name="obj">Object to search trigger</param>
         /// <param name="triggerID">Trigger ID to fire</param>
-        /// <param name="orgin">Orgin player</param>
-        public static void Trigger(GameObject obj, string triggerID, PlayerControl orgin)
+        /// <param name="orgin">Orgin player or null if the trigger should only run on the client</param>
+        public static void Trigger(GameObject obj, string triggerID, PlayerControl? orgin)
         {
             LITriggerable? trigger = AllTriggers.Find(t => t.gameObject == obj && t.SourceTrigger == triggerID);
             if (trigger == null)
@@ -105,7 +105,7 @@ namespace LevelImposter.Core
         /// Fires the trigger component
         /// </summary>
         /// <param name="orgin">Player of orgin</param>
-        public void FireTrigger(PlayerControl orgin)
+        public void FireTrigger(PlayerControl? orgin)
         {
             OnTrigger(orgin);
             if (_destTriggerComp != null)
@@ -116,7 +116,7 @@ namespace LevelImposter.Core
         /// Function that fires when the component is triggered
         /// </summary>
         /// <param name="orgin">Player of orgin</param>
-        private void OnTrigger(PlayerControl orgin)
+        private void OnTrigger(PlayerControl? orgin)
         {
             LILogger.Info($"{gameObject.name} >>> {_sourceTrigger} ({orgin?.name})");
             switch (_sourceTrigger)

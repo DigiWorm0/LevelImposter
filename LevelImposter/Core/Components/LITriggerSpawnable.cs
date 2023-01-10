@@ -41,7 +41,9 @@ namespace LevelImposter.Core
         [HideFromIl2Cpp]
         private IEnumerator CoFireTrigger()
         {
-            while (PlayerControl.LocalPlayer == null)
+            while (PlayerControl.LocalPlayer == null 
+                || LIShipStatus.Instance?.IsReady != true
+                || !GameManager.Instance.GameHasStarted)
                 yield return null;
             if (_triggerTarget != null)
                 LITriggerable.Trigger(_triggerTarget, _triggerID, PlayerControl.LocalPlayer);
