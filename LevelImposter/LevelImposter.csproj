@@ -22,12 +22,12 @@
         <PackageReference Include="AmongUs.GameLibs.Steam" Version="$(GameVersion)" PrivateAssets="all" />
         <PackageReference Include="BepInEx.AutoPlugin" Version="1.1.0" PrivateAssets="all" />
         <PackageReference Include="BepInEx.IL2CPP.MSBuild" Version="2.0.1" PrivateAssets="all" ExcludeAssets="runtime" />
-        <PackageReference Include="SixLabors.ImageSharp" Version="2.1.3" />
         <PackageReference Include="System.Text.Json" Version="6.0.3" />
     </ItemGroup>
 	
 	<ItemGroup>
 		<EmbeddedResource Include="Assets\**\*" />
+		<Reference Include="lib\**\*" />
 	</ItemGroup>
 	
 	<Target Name="Copy" AfterTargets="Build" Condition="'$(AmongUs)' != ''">

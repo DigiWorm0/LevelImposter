@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Reflection;
 using UnityEngine.Events;
 using System.IO;
 using LevelImposter.DB;
@@ -173,17 +174,19 @@ namespace LevelImposter.Core
         /// <returns></returns>
         public static GameObject LoadAssetBundle(string name)
         {
-            Stream? resourceStream = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("LevelImposter.Assets." + name);
-            using (var ms = new MemoryStream())
+            Assembly assembly = Assembly.GetExecutingAssembly();
+            using (Stream? resourceStream = assembly.GetManifestResourceStream($"LevelImposter.Assets.{name}"))
             {
-                resourceStream?.CopyTo(ms);
-                resourceStream?.Dispose();
-                byte[] assetData = ms.ToArray();
-                AssetBundle assetBundle = AssetBundle.LoadFromMemory(assetData);
-                assetData = null;
-                GameObject asset = assetBundle.LoadAsset(name, Il2CppType.Of<GameObject>()).Cast<GameObject>();
-                assetBundle.Unload(false);
-                return asset;
+                using (var ms = new MemoryStream())
+                {
+                    resourceStream?.CopyTo(ms);
+                    byte[] assetData = ms.ToArray();
+                    AssetBundle assetBundle = AssetBundle.LoadFromMemory(assetData);
+                    assetData = null;
+                    GameObject asset = assetBundle.LoadAsset(name, Il2CppType.Of<GameObject>()).Cast<GameObject>();
+                    assetBundle.Unload(false);
+                    return asset;
+                }
             }
         }
 

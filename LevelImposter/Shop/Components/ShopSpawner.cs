@@ -41,23 +41,25 @@ namespace LevelImposter.Shop
         [HideFromIl2Cpp]
         public IEnumerator CoSpawnShop()
         {
-            // Loading Spinners
-            GameObject loadingPrefab = Instantiate(GetLoadingPrefab(), transform);
-            Transform spinnerTransform = loadingPrefab.transform.GetChild(0);
-            spinnerTransform.gameObject.AddComponent<Spinner>();
-            Transform statusTransform = loadingPrefab.transform.GetChild(1);
-            TMP_Text statusText = statusTransform.gameObject.GetComponent<TMP_Text>();
-            while (!AssetDB.IsReady)
             {
-                if (statusText.text != AssetDB.Instance?.Status)
-                    statusText.text = "<b>Loading Among Us Assets</b>\n" + AssetDB.Instance?.Status;
-                yield return null;
+                // Loading Spinners
+                GameObject loadingPrefab = Instantiate(GetLoadingPrefab(), transform);
+                Transform spinnerTransform = loadingPrefab.transform.GetChild(0);
+                spinnerTransform.gameObject.AddComponent<Spinner>();
+                Transform statusTransform = loadingPrefab.transform.GetChild(1);
+                TMP_Text statusText = statusTransform.gameObject.GetComponent<TMP_Text>();
+                while (!AssetDB.IsReady)
+                {
+                    if (statusText.text != AssetDB.Instance?.Status)
+                        statusText.text = "<b>Loading Among Us Assets</b>\n" + AssetDB.Instance?.Status;
+                    yield return null;
 
+                }
+
+                if (ShopManager.Instance == null)
+                    ShopBuilder.Build();
+                Destroy(gameObject);
             }
-
-            if (ShopManager.Instance == null)
-                ShopBuilder.Build();
-            Destroy(gameObject);
         }
 
         public void Start()

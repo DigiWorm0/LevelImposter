@@ -214,7 +214,7 @@ namespace LevelImposter.Core
             LILogger.Info($"Showing loading screen (Freeplay={isFreeplay})");
             if (isFreeplay)
             {
-                fullScreen.color = new Color(0, 0, 0, 0.8f);
+                fullScreen.color = new Color(0, 0, 0, 0.9f);
                 fullScreen.gameObject.SetActive(true);
             }
             while (!IsReady)
@@ -255,7 +255,6 @@ namespace LevelImposter.Core
             Instance = null;
             SpriteLoader.Instance?.ClearAll();
             WAVLoader.Instance?.ClearAll();
-            Resources.UnloadUnusedAssets();
         }
     }
 }

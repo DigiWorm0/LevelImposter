@@ -334,12 +334,12 @@ namespace LevelImposter.Core
         }
 
         public void PostBuild() {
-            string[] keys = new string[CONSOLE_ID_INCREMENTS.Keys.Count];
-            CONSOLE_ID_INCREMENTS.Keys.CopyTo(keys, 0);
+            string[] keys = new string[_consoleIDIncrements.Keys.Count];
+            _consoleIDIncrements.Keys.CopyTo(keys, 0);
 
             foreach (var key in keys)
             {
-                byte count = (byte)CONSOLE_ID_INCREMENTS[key];
+                byte count = (byte)_consoleIDIncrements[key];
                 if (key == "task-breakers")
                     _breakerCount = count;
                 if (key == "task-toilet")
@@ -356,7 +356,7 @@ namespace LevelImposter.Core
                     _recordsCount = count;
                 if (key == "task-wires")
                     _wiresCount = count;
-                CONSOLE_ID_INCREMENTS[key] = 0;
+                _consoleIDIncrements[key] = 0;
             }
 
             // Wires Length

@@ -94,20 +94,23 @@ namespace LevelImposter.Core
         [HideFromIl2Cpp]
         private IEnumerator CoLoadAudio(string b64, Action<AudioClip?> onLoad)
         {
-            _loadCount++;
-            yield return null;
+            {
+                _loadCount++;
+                yield return null;
 
-            while (!_shouldLoad)
-                yield return null;
-            AudioMetadata? audioData = ProcessWAV(b64);
-            while (!_shouldLoad)
-                yield return null;
-            AudioClip? audioClip = LoadWAV(audioData);
-            if (onLoad != null)
-                onLoad.Invoke(audioClip);
-            onLoad = null;
-            audioData = null;
-            _loadCount--;
+                while (!_shouldLoad)
+                    yield return null;
+                AudioMetadata? audioData = ProcessWAV(b64);
+                while (!_shouldLoad)
+                    yield return null;
+                AudioClip? audioClip = LoadWAV(audioData);
+                if (onLoad != null)
+                    onLoad.Invoke(audioClip);
+                b64 = null;
+                onLoad = null;
+                audioData = null;
+                _loadCount--;
+            }
         }
 
         /// <summary>

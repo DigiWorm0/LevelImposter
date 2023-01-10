@@ -36,7 +36,6 @@ namespace LevelImposter.Core
                 liStars[i] = liStar;
             }
             UnityEngine.Object.Destroy(starPrefab);
-            liStars = null;
 
             // Clones
             if (SpriteLoader.Instance == null)
@@ -46,7 +45,7 @@ namespace LevelImposter.Core
             }
             SpriteLoader.Instance.OnLoad += (LIElement loadedElem) =>
             {
-                if (loadedElem.id != elem.id)
+                if (loadedElem.id != elem.id || liStars == null)
                     return;
                 foreach (LIStar liStar in liStars)
                 {
@@ -54,6 +53,7 @@ namespace LevelImposter.Core
                     starRenderer.sprite = spriteRenderer.sprite;
                     starRenderer.color = spriteRenderer.color;
                 }
+                liStars = null;
             };
         }
 

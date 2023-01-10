@@ -60,13 +60,12 @@ namespace LevelImposter.Core
                 Destroy(_mapSprites.Pop());
             OnLoad = null;
             _renderCount = 0;
-            GC.Collect();
-            //Cpp2IL.Core.Cpp2IlApi.DisposeAndCleanupAll();
         }
 
         /// <summary>
         /// Loads a custom sprite from an
-        /// LIElement and applies it to an object
+        /// LIElement and applies loads it
+        /// onto a GameObject asynchronously
         /// </summary>
         /// <param name="element">LIElement to grab sprite from</param>
         /// <param name="obj">GameObject to apply sprite data to</param>
@@ -96,7 +95,8 @@ namespace LevelImposter.Core
                 {
                     SpriteRenderer spriteRenderer = obj.GetComponent<SpriteRenderer>();
                     spriteRenderer.sprite = spriteData.Sprite;
-                    LILogger.Info($"Done loading sprite for {element} ({RenderCount} Left)");
+                    Rect spriteDim = spriteData.Sprite?.rect ?? new();
+                    LILogger.Info($"Done loading {spriteDim.width}x{spriteDim.height} sprite for {element} ({RenderCount} Left)");
                 }
 
                 if (OnLoad != null)
@@ -113,7 +113,8 @@ namespace LevelImposter.Core
         public void LoadSpriteAsync(string b64Image, Action<SpriteData?> onLoad)
         {
             var imgData = MapUtils.ParseBase64(b64Image);
-            LoadSpriteAsync(imgData, (spriteList) =>
+            bool isGif = b64Image.StartsWith("data:image/gif;base64,");
+            LoadSpriteAsync(imgData, isGif, (spriteList) =>
             {
                 onLoad(spriteList);
                 spriteList = null;
@@ -122,65 +123,72 @@ namespace LevelImposter.Core
 
 
         /// <summary>
-        /// Loads the custom sprite in a seperate thread
+        /// Loads a custom sprite asynchronously from raw image file data
         /// </summary>
         /// <param name="imgData">Image File Data</param>
         /// <param name="onLoad">Callback on success</param>
         [HideFromIl2Cpp]
-        public void LoadSpriteAsync(byte[] imgData, Action<SpriteData?> onLoad)
+        public void LoadSpriteAsync(byte[] imgData, bool useImageSharp, Action<SpriteData?> onLoad)
         {
-            StartCoroutine(CoLoadSpriteAsync(imgData, onLoad).WrapToIl2Cpp());
+            StartCoroutine(CoLoadSpriteAsync(imgData, useImageSharp, onLoad).WrapToIl2Cpp());
         }
 
+        /// <summary>
+        /// Loads a custom sprite asynchronously from raw image file data
+        /// </summary>
+        /// <param name="imgData">Image File Data</param>
+        /// <param name="onLoad">Callback on success</param>
         [HideFromIl2Cpp]
-        private IEnumerator CoLoadSpriteAsync(byte[] imgData, Action<SpriteData?>? onLoad)
+        private IEnumerator CoLoadSpriteAsync(byte[] imgData, bool useImageSharp, Action<SpriteData?>? onLoad)
         {
-            _renderCount++;
-            yield return null;
-            while (!_shouldRender)
+            {
+                _renderCount++;
                 yield return null;
+                while (!_shouldRender)
+                    yield return null;
 
-            // Load Texture Metadata
-            ImageSharpWrapper.TextureMetadata[]? texMetadataList;
-            using (var imgStream = new MemoryStream(imgData))
-            {
-                texMetadataList = ImageSharpWrapper.LoadImage(imgStream);
-            }
-
-            // Get Output
-            SpriteData? spriteData = null;
-            if (texMetadataList != null)
-            {
-                var spriteArr = new Sprite[texMetadataList.Length];
-                var frameDelayArr = new float[texMetadataList.Length];
-                for (int i = 0; i < texMetadataList.Length; i++)
+                // Get Output
+                SpriteData? spriteData = null;
+                if (useImageSharp)
                 {
-                    while (!_shouldRender)
-                        yield return null;
-                    ImageSharpWrapper.TextureMetadata texData = texMetadataList[i];
-                    Sprite sprite = TextureMetadataToSprite(texData);
-                    spriteArr[i] = sprite;
-                    frameDelayArr[i] = texData.FrameDelay;
-                    texData.RawTextureData = null;
-                    sprite = null;
+                    var texMetadataList = ImageSharpWrapper.LoadImage(imgData);
+                    if (texMetadataList != null)
+                    {
+                        var spriteArr = new Sprite[texMetadataList.Length];
+                        var frameDelayArr = new float[texMetadataList.Length];
+                        for (int i = 0; i < texMetadataList.Length; i++)
+                        {
+                            while (!_shouldRender)
+                                yield return null;
+                            ImageSharpWrapper.TextureMetadata texData = texMetadataList[i];
+                            Sprite sprite = RawImageToSprite(texData.FrameData);
+                            spriteArr[i] = sprite;
+                            frameDelayArr[i] = texData.FrameDelay;
+                        }
+                        spriteData = new()
+                        {
+                            SpriteArr = spriteArr,
+                            FrameDelayArr = frameDelayArr
+                        };
+                    }
                 }
-                spriteData = new()
+                else
                 {
-                    SpriteArr = spriteArr,
-                    FrameDelayArr = frameDelayArr
-                };
-                spriteArr = null;
-                frameDelayArr = null;
-            }
+                    spriteData = new()
+                    {
+                        SpriteArr = new Sprite[]
+                        {
+                            RawImageToSprite(imgData)
+                        },
+                        FrameDelayArr = new float[1]
+                    };
+                }
 
-            // Output
-            _renderCount--;
-            if (onLoad != null)
-                onLoad.Invoke(spriteData);
-            imgData = null;
-            onLoad = null;
-            texMetadataList = null;
-            spriteData = null;
+                // Output
+                _renderCount--;
+                if (onLoad != null)
+                    onLoad.Invoke(spriteData);
+            }
         }
 
         /// <summary>
@@ -190,23 +198,17 @@ namespace LevelImposter.Core
         /// <param name="texData">Texture Metadata to load</param>
         /// <returns>Generated sprite data</returns>
         [HideFromIl2Cpp]
-        private Sprite TextureMetadataToSprite(ImageSharpWrapper.TextureMetadata texData)
+        private Sprite RawImageToSprite(byte[] imgData)
         {
             // Generate Texture
             bool pixelArtMode = LIShipStatus.Instance?.CurrentMap?.properties.pixelArtMode == true;
-            Texture2D texture = new(
-                texData.Width,
-                texData.Height,
-                TextureFormat.RGBA32,
-                1,
-                false
-            )
+            Texture2D texture = new(1, 1, TextureFormat.RGBA32, false)
             {
                 wrapMode = TextureWrapMode.Clamp,
                 filterMode = pixelArtMode ? FilterMode.Point : FilterMode.Bilinear,
+                hideFlags = HideFlags.HideAndDontSave,
             };
-            texture.LoadRawTextureData(texData.RawTextureData);
-            texture.Apply(false, true);
+            ImageConversion.LoadImage(texture, imgData);
             _mapTextures?.Push(texture);
 
             // Generate Sprite
@@ -229,6 +231,7 @@ namespace LevelImposter.Core
         /// </summary>
         /// <param name="imgData">Raw image file data</param>
         /// <returns>Unity Sprite object</returns>
+        [HideFromIl2Cpp]
         public Sprite LoadSprite(byte[] imgData)
         {
             Texture2D texture = new(1, 1)

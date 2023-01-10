@@ -47,21 +47,23 @@ namespace LevelImposter.Shop
         [HideFromIl2Cpp]
         public IEnumerator CoRequest(string url, Action<string>? callback)
         {
-            LILogger.Info("GET: " + url);
-            UnityWebRequest request = UnityWebRequest.Get(url);
-            yield return request.SendWebRequest();
-            LILogger.Info("RES: " + request.responseCode);
+            {
+                LILogger.Info("GET: " + url);
+                UnityWebRequest request = UnityWebRequest.Get(url);
+                yield return request.SendWebRequest();
+                LILogger.Info("RES: " + request.responseCode);
 
-            if (request.result == UnityWebRequest.Result.ConnectionError || request.result == UnityWebRequest.Result.ProtocolError)
-            {
-                LILogger.Error(request.error);
+                if (request.result == UnityWebRequest.Result.ConnectionError || request.result == UnityWebRequest.Result.ProtocolError)
+                {
+                    LILogger.Error(request.error);
+                }
+                else if (callback != null)
+                {
+                    callback(request.downloadHandler.text);
+                }
+                request.Dispose();
+                callback = null;
             }
-            else if (callback != null)
-            {
-                callback(request.downloadHandler.text);
-            }
-            request.Dispose();
-            callback = null;
         }
 
         /// <summary>
@@ -86,19 +88,21 @@ namespace LevelImposter.Shop
         [HideFromIl2Cpp]
         public IEnumerator CoRequestRaw(string url, Action<byte[]> callback)
         {
-            LILogger.Info("GET: " + url);
-            UnityWebRequest request = UnityWebRequest.Get(url);
-            yield return request.SendWebRequest();
-            LILogger.Info("RES: " + request.responseCode);
-
-            if (request.result == UnityWebRequest.Result.ConnectionError || request.result == UnityWebRequest.Result.ProtocolError)
-                LILogger.Error(request.error);
-            else
             {
-                callback(request.downloadHandler.data);
+                LILogger.Info("GET: " + url);
+                UnityWebRequest request = UnityWebRequest.Get(url);
+                yield return request.SendWebRequest();
+                LILogger.Info("RES: " + request.responseCode);
+
+                if (request.result == UnityWebRequest.Result.ConnectionError || request.result == UnityWebRequest.Result.ProtocolError)
+                    LILogger.Error(request.error);
+                else
+                {
+                    callback(request.downloadHandler.data);
+                }
+                request.Dispose();
+                request = null;
             }
-            request.Dispose();
-            request = null;
         }
 
         /// <summary>
@@ -215,7 +219,7 @@ namespace LevelImposter.Shop
             RequestRaw(metadata.thumbnailURL, (byte[] imgData) =>
             {
                 ThumbnailFileAPI.Instance?.Save(metadata.id, imgData);
-                SpriteLoader.Instance?.LoadSpriteAsync(imgData, (spriteData) =>
+                SpriteLoader.Instance?.LoadSpriteAsync(imgData, false, (spriteData) =>
                 {
                     if (spriteData == null)
                     {

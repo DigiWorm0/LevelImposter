@@ -113,36 +113,38 @@ namespace LevelImposter.Shop
         [HideFromIl2Cpp]
         private IEnumerator CoGet<T>(string mapID, Action<T?>? callback) where T : LIMetadata
         {
-            if (!Exists(mapID))
             {
-                LILogger.Error($"Could not find [{mapID}] in filesystem");
-                yield break;
-            }
-            LILogger.Info($"Loading map [{mapID}] from filesystem");
-            _loadCount++;
-            yield return null;
-
-            // File Reader
-            while (!_shouldLoad)
+                if (!Exists(mapID))
+                {
+                    LILogger.Error($"Could not find [{mapID}] in filesystem");
+                    yield break;
+                }
+                LILogger.Info($"Loading map [{mapID}] from filesystem");
+                _loadCount++;
                 yield return null;
-            string mapPath = GetPath(mapID);
-            using (FileStream mapStream = File.OpenRead(mapPath))
-            {
-                T? mapData = JsonSerializer.Deserialize<T>(mapStream);
-                if (mapData == null)
+
+                // File Reader
+                while (!_shouldLoad)
+                    yield return null;
+                string mapPath = GetPath(mapID);
+                using (FileStream mapStream = File.OpenRead(mapPath))
                 {
-                    LILogger.Warn($"Invalid map data in [{mapID}]");
+                    T? mapData = JsonSerializer.Deserialize<T>(mapStream);
+                    if (mapData == null)
+                    {
+                        LILogger.Warn($"Invalid map data in [{mapID}]");
+                    }
+                    else
+                    {
+                        mapData.id = mapID;
+                        if (callback != null)
+                            callback(mapData);
+                        mapData = null;
+                    }
+                    _loadCount--;
                 }
-                else
-                {
-                    mapData.id = mapID;
-                    if (callback != null)
-                        callback(mapData);
-                    mapData = null;
-                }
-                _loadCount--;
+                callback = null;
             }
-            callback = null;
         }
 
         /// <summary>

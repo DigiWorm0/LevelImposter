@@ -18,6 +18,9 @@ using SixLabors.ImageSharp.Diagnostics;
 
 namespace LevelImposter.Core
 {
+    /// <summary>
+    /// A wrapper around the ImageSharp library
+    /// </summary>
     public static class ImageSharpWrapper
     {
         /// <summary>
@@ -26,46 +29,39 @@ namespace LevelImposter.Core
         /// <param name="imgStream">Stream of bytes representing image data</param>
         /// <param name="textureList">Output texture metadata</param>
         /// <returns>TRUE on success</returns>
-        public static TextureMetadata[]? LoadImage(MemoryStream imgStream)
+        public static TextureMetadata[]? LoadImage(byte[] imgData)
         {
             try
             {
                 // Load Image & Formats
-                var imgFormat = Image.DetectFormat(imgStream);
-                using (var image = Image.Load<Rgba32>(imgStream))
+                using (var image = Image.Load<Rgba32>(imgData, out IImageFormat? imgFormat))
                 {
                     // Null Check
                     if (image == null || imgFormat == null)
                         return null;
 
-                    bool isGif = imgFormat.DefaultMimeType == "image/gif";
-                    image.Mutate(t => t.Flip(FlipMode.Vertical)); // Fix bug where image is flipped
-                    var texMetadataArr = new TextureMetadata[image.Frames.Count];
-
                     // Iterate Frames
+                    var texMetadataArr = new TextureMetadata[image.Frames.Count];
                     for (int i = 0; i < image.Frames.Count; i++)
                     {
                         var frame = image.Frames[i];
+                        var frameImg = image.Frames.CloneFrame(i);
 
                         // Get GIF Frame Delay
-                        float frameDelay = 0;
-                        if (isGif)
-                        {
-                            GifFrameMetadata metadata = frame.Metadata.GetGifMetadata();
-                            frameDelay = metadata.FrameDelay / 100.0f;
-                        }
+                        GifFrameMetadata gifMetadata = frame.Metadata.GetGifMetadata();
+                        float frameDelay = gifMetadata.FrameDelay / 100.0f;
 
                         // Populate Metadata
-                        texMetadataArr[i] = new()
+                        using (var frameStream = new MemoryStream())
                         {
-                            Width = frame.Width,
-                            Height = frame.Height,
-                            RawTextureData = new byte[frame.Width * frame.Height * 4],
-                            FrameDelay = frameDelay
-                        };
-                        frame.CopyPixelDataTo(texMetadataArr[i].RawTextureData);
+                            frameImg.SaveAsPng(frameStream);
+                            texMetadataArr[i] = new()
+                            {
+                                FrameDelay = frameDelay,
+                                FrameData = frameStream.ToArray()
+                            };
+                        }
                     }
-
                     return texMetadataArr;
                 }
             }
@@ -83,9 +79,7 @@ namespace LevelImposter.Core
         {
             public TextureMetadata() { }
             public float FrameDelay = 0;
-            public int Width = 0;
-            public int Height = 0;
-            public byte[] RawTextureData = Array.Empty<byte>();
+            public byte[] FrameData = Array.Empty<byte>();
         }
     }
 }

@@ -50,25 +50,27 @@ namespace LevelImposter.Shop
         [HideFromIl2Cpp]
         public IEnumerator CoRequest(string url, Action<byte[]>? onSuccess, Action<string>? onError)
         {
-            LILogger.Info("GET: " + url);
-            UnityWebRequest request = UnityWebRequest.Get(url); // Doesn't extend IDisposable
-            yield return request.SendWebRequest();
-            LILogger.Info("RES: " + request.responseCode);
+            {
+                LILogger.Info("GET: " + url);
+                UnityWebRequest request = UnityWebRequest.Get(url); // Doesn't extend IDisposable
+                yield return request.SendWebRequest();
+                LILogger.Info("RES: " + request.responseCode);
 
-            if (request.result == UnityWebRequest.Result.ConnectionError || request.result == UnityWebRequest.Result.ProtocolError)
-            {
-                LILogger.Error(request.error);
-                if (onError != null)
-                    onError(request.error);
+                if (request.result == UnityWebRequest.Result.ConnectionError || request.result == UnityWebRequest.Result.ProtocolError)
+                {
+                    LILogger.Error(request.error);
+                    if (onError != null)
+                        onError(request.error);
+                }
+                else if (onSuccess != null)
+                {
+                    onSuccess(request.downloadHandler.data);
+                }
+                request.Dispose();
+                request = null;
+                onSuccess = null;
+                onError = null;
             }
-            else if (onSuccess != null)
-            {
-                onSuccess(request.downloadHandler.data);
-            }
-            request.Dispose();
-            request = null;
-            onSuccess = null;
-            onError = null;
         }
 
         /// <summary>
