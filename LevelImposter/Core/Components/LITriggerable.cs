@@ -18,6 +18,7 @@ namespace LevelImposter.Core
         {
         }
 
+        private const int MAX_STACK_SIZE = 128;
         private static List<LITriggerable> _allTriggers = new List<LITriggerable>();
         public static List<LITriggerable> AllTriggers => _allTriggers;
 
@@ -44,14 +45,15 @@ namespace LevelImposter.Core
         /// <param name="obj">Object to search trigger</param>
         /// <param name="triggerID">Trigger ID to fire</param>
         /// <param name="orgin">Orgin player or null if the trigger should only run on the client</param>
-        public static void Trigger(GameObject obj, string triggerID, PlayerControl? orgin)
+        /// <param name="stackSize">Size of the trigger stack</param>
+        public static void Trigger(GameObject obj, string triggerID, PlayerControl? orgin, int stackSize = 0)
         {
             LITriggerable? trigger = AllTriggers.Find(t => t.gameObject == obj && t.SourceTrigger == triggerID);
             if (trigger == null)
                 return;
 
             if (trigger.IsClientSide != false || orgin == null)
-                trigger.FireTrigger(orgin); // Client-Side
+                trigger.FireTrigger(orgin, stackSize); // Client-Side
             else
                 RPCFireTrigger(orgin, trigger.SourceID.ToString() ?? "", triggerID); // Networked
         }
@@ -99,33 +101,44 @@ namespace LevelImposter.Core
             _sourceTrigger = sourceTrigger;
             _destID = destID;
             _destTrigger = destTrigger;
+            if (!_allTriggers.Contains(this))
+                _allTriggers.Add(this);
         }
 
         /// <summary>
         /// Fires the trigger component
         /// </summary>
         /// <param name="orgin">Player of orgin</param>
-        public void FireTrigger(PlayerControl? orgin)
+        /// <param name="stackSize">Size of the trigger stack</param>
+        public void FireTrigger(PlayerControl? orgin, int stackSize = 0)
         {
-            OnTrigger(orgin);
+            if (stackSize > MAX_STACK_SIZE)
+            {
+                LILogger.Warn($"{gameObject.name} >>> {_sourceTrigger} detected an infinite trigger loop and aborted");
+                return;
+            }
+            OnTrigger(orgin, stackSize + 1);
             if (_destTriggerComp != null)
-                _destTriggerComp.FireTrigger(orgin);
+                _destTriggerComp.FireTrigger(orgin, stackSize + 1);
         }
 
         /// <summary>
         /// Function that fires when the component is triggered
         /// </summary>
         /// <param name="orgin">Player of orgin</param>
-        private void OnTrigger(PlayerControl? orgin)
+        /// <param name="stackSize">Size of the trigger stack</param>
+        private void OnTrigger(PlayerControl? orgin, int stackSize = 0)
         {
-            LILogger.Info($"{gameObject.name} >>> {_sourceTrigger} ({orgin?.name})");
+            LILogger.Info($"{new(' ', stackSize)}{gameObject.name} >>> {_sourceTrigger} ({orgin?.name})");
             switch (_sourceTrigger)
             {
                 case "enable":
                     gameObject.SetActive(true);
+                    StartSounds();
                     break;
                 case "disable":
                     gameObject.SetActive(false);
+                    StopSounds();
                     break;
                 case "show":
                     gameObject.SetActive(true);
@@ -135,10 +148,10 @@ namespace LevelImposter.Core
                     break;
                 case "repeat":
                     for (int i = 0; i < 8; i++)
-                        Trigger(gameObject, "onRepeat " + (i + 1), orgin);
+                        Trigger(gameObject, "onRepeat " + (i + 1), orgin, stackSize + 1);
                     break;
                 case "startTimer":
-                    StartCoroutine(CoTimerTrigger(orgin).WrapToIl2Cpp());
+                    StartCoroutine(CoTimerTrigger(orgin, stackSize).WrapToIl2Cpp());
                     break;
                 case "open":
                     SetDoorOpen(true);
@@ -151,16 +164,39 @@ namespace LevelImposter.Core
         }
 
         /// <summary>
+        /// Stops any ambient sound attatched to object
+        /// </summary>
+        private void StopSounds()
+        {
+            AmbientSoundPlayer? ambientSound = GetComponent<AmbientSoundPlayer>();
+            if (ambientSound == null)
+                return;
+            ambientSound.OnDestroy();
+        }
+        
+        /// <summary>
+        /// Starts any ambient sound attatched to object
+        /// </summary>
+        private void StartSounds()
+        {
+            AmbientSoundPlayer? ambientSound = GetComponent<AmbientSoundPlayer>();
+            if (ambientSound == null)
+                return;
+            ambientSound.Start();
+        }
+
+        /// <summary>
         /// Coroutine to run timer trigger. Fires onStart on the start and onFinish on completion.
         /// </summary>
         /// <param name="orgin">Player of orgin</param>
+        /// <param name="stackSize">Size of the trigger stack</param>
         [HideFromIl2Cpp]
-        private IEnumerator CoTimerTrigger(PlayerControl orgin)
+        private IEnumerator CoTimerTrigger(PlayerControl? orgin, int stackSize = 1)
         {
-            Trigger(gameObject, "onStart", orgin);
+            Trigger(gameObject, "onStart", orgin, stackSize);
             float duration = _sourceElem?.properties.triggerTime ?? 1;
             yield return new WaitForSeconds(duration);
-            Trigger(gameObject, "onFinish", orgin);
+            Trigger(gameObject, "onFinish", orgin, stackSize);
         }
 
         /// <summary>
@@ -173,10 +209,6 @@ namespace LevelImposter.Core
             doorComponent.SetDoorway(isOpen);
         }
 
-        public void Awake()
-        {
-            _allTriggers.Add(this);
-        }
         public void Start()
         {
             _destTriggerComp = AllTriggers.Find(t => _destID == t._sourceID && _destTrigger == t._sourceTrigger);
