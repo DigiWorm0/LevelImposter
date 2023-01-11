@@ -208,14 +208,15 @@ namespace LevelImposter.Core
                 _consoleID++;
             }
 
+            // Colliders
+            MapUtils.CreateTriggerColliders(obj, taskData.GameObj);
+
             // Button
-            PolygonCollider2D collider = obj.AddComponent<PolygonCollider2D>();
-            collider.isTrigger = true;
             PassiveButton origBtn = taskData.GameObj.GetComponent<PassiveButton>();
             if (origBtn != null)
             {
                 PassiveButton btn = obj.AddComponent<PassiveButton>();
-                btn.ClickMask = collider;
+                btn.ClickMask = obj.GetComponent<Collider2D>();
                 btn.OnMouseOver = new UnityEvent();
                 btn.OnMouseOut = new UnityEvent();
                 Action action = console.Use;

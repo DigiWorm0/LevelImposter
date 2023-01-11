@@ -18,9 +18,7 @@ namespace LevelImposter.Core
             // Colliders
             Collider2D[] colliders = obj.GetComponentsInChildren<Collider2D>();
             foreach (Collider2D collider in colliders)
-            {
                 collider.isTrigger = true;
-            }
             if (colliders.Length < 1)
             {
                 LILogger.Warn(elem.name + " missing cooresponding collision");

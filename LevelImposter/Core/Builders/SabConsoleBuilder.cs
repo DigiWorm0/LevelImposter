@@ -69,14 +69,15 @@ namespace LevelImposter.Core
             if (CONSOLE_ID_PAIRS.ContainsKey(elem.type))
                 console.ConsoleId = CONSOLE_ID_PAIRS[elem.type];
 
+            // Colliders
+            MapUtils.CreateTriggerColliders(obj, sabData.GameObj);
+
             // Button
-            PolygonCollider2D collider = obj.AddComponent<PolygonCollider2D>();
-            collider.isTrigger = true;
             PassiveButton origBtn = sabData.GameObj.GetComponent<PassiveButton>();
             if (origBtn != null)
             {
                 PassiveButton btn = obj.AddComponent<PassiveButton>();
-                btn.ClickMask = collider;
+                btn.ClickMask = obj.GetComponent<Collider2D>();
                 btn.OnMouseOver = new UnityEvent();
                 btn.OnMouseOut = new UnityEvent();
                 Action action = console.Use;

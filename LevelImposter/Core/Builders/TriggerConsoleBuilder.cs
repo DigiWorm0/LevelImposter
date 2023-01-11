@@ -44,17 +44,9 @@ namespace LevelImposter.Core
             console.Image = rend;
             console.MinigamePrefab = spawnableGame;
 
-            // Collider
-            PolygonCollider2D[] solidColliders = obj.GetComponentsInChildren<PolygonCollider2D>();
-            for (int i = 0; i < solidColliders.Length; i++)
-                solidColliders[i].isTrigger = true;
-            if (solidColliders.Length <= 0)
-            {
-                BoxCollider2D boxCollider = obj.AddComponent<BoxCollider2D>();
-                boxCollider.size = new Vector2(elem.xScale, elem.yScale);
-                boxCollider.offset = new Vector2(elem.xScale / 2, elem.yScale / 2);
-                boxCollider.isTrigger = true;
-            }
+
+            // Colliders
+            MapUtils.CreateTriggerColliders(obj, fpComputerData.GameObj);
         }
 
         public void PostBuild() { }

@@ -111,6 +111,22 @@ namespace LevelImposter.Core
         }
 
         /// <summary>
+        /// Either grabs colliders from prefab or
+        /// sets current colliders to trigger. Used
+        /// for any UI buttons or in-game consoles.
+        /// </summary>
+        /// <param name="src">Object to set colliders</param>
+        /// <param name="prefab">Prefab to copy colliders from</param>
+        public static void CreateTriggerColliders(GameObject src, GameObject prefab)
+        {
+            PolygonCollider2D[] solidColliders = src.GetComponentsInChildren<PolygonCollider2D>();
+            for (int i = 0; i < solidColliders.Length; i++)
+                solidColliders[i].isTrigger = true;
+            if (solidColliders.Length <= 0)
+                CloneColliders(prefab, src);
+        }
+
+        /// <summary>
         /// Renames a SystemType in the TranslationController
         /// </summary>
         /// <param name="system">System to rename</param>
