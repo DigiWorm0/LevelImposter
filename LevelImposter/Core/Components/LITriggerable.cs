@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
@@ -64,7 +64,7 @@ namespace LevelImposter.Core
         /// <param name="orgin">Orgin player</param>
         /// <param name="elemIDString">LIElement ID to fire</param>
         /// <param name="triggerID">Trigger ID to fire</param>
-        [MethodRpc((uint)RpcIds.Trigger)]
+        [MethodRpc((uint)LIRpc.FireTrigger)]
         public static void RPCFireTrigger(PlayerControl orgin, string elemIDString, string triggerID)
         {
             // Parse ID

@@ -12,6 +12,7 @@ using Il2CppInterop.Runtime.InteropTypes.Arrays;
 using Il2CppInterop.Runtime.InteropTypes;
 using Il2CppInterop.Runtime;
 using AmongUs.GameOptions;
+using Reactor.Networking.Attributes;
 
 namespace LevelImposter.Core
 {
@@ -22,6 +23,7 @@ namespace LevelImposter.Core
     {
         public static Dictionary<SystemTypes, string> SystemRenames = new();
         public static Dictionary<TaskTypes, string> TaskRenames = new();
+        private static int _randomSeed = 0;
 
         /// <summary>
         /// Adds an element to an Il2CppReferenceArray
@@ -255,6 +257,43 @@ namespace LevelImposter.Core
                 GameOptionsManager.Instance.GameHostOptions = GameOptionsManager.Instance.CurrentGameOptions;
                 GameManager.Instance.LogicOptions.SyncOptions();
             }
+        }
+
+        /// <summary>
+        /// Gets a random value based on an element GUID.
+        /// Given the same GUID, weight, and seed will always return with the same value.
+        /// Random seeds are synchronized it across all clients and
+        /// regenerated with <c>MapUtils.SyncRandomSeed()</c>
+        /// </summary>
+        /// <param name="id">GUID identifier</param>
+        /// <param name="weight">A weight value to generate new numbers with the same GUID</param>
+        /// <returns>A random float between 0.0 and 1.0 (inclusive)</returns>
+        public static float GetRandom(Guid id, int weight = 0)
+        {
+            if (_randomSeed == 0)
+                LILogger.Warn("Random value has not been set by host");
+            int trueSeed = id.GetHashCode() + _randomSeed + weight;
+            UnityEngine.Random.InitState(trueSeed);
+            return UnityEngine.Random.value;
+        }
+
+        /// <summary>
+        /// Generates a new random seed and
+        /// synchronizes it across all clients.
+        /// </summary>
+        public static void SyncRandomSeed()
+        {
+            if (!AmongUsClient.Instance.AmHost || PlayerControl.LocalPlayer == null)
+                return;
+            UnityEngine.Random.InitState((int)DateTime.Now.Ticks);
+            int newSeed = UnityEngine.Random.RandomRange(int.MinValue, int.MaxValue);
+            RPCSyncRandomSeed(PlayerControl.LocalPlayer, newSeed);
+        }
+        [MethodRpc((uint)LIRpc.SyncRandomSeed)]
+        private static void RPCSyncRandomSeed(PlayerControl _, int randomSeed)
+        {
+            LILogger.Info($"[RPC] New random seed set: {randomSeed}");
+            _randomSeed = randomSeed;
         }
     }
 }

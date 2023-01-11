@@ -43,7 +43,7 @@ namespace LevelImposter.Core
         {
             while (PlayerControl.LocalPlayer == null 
                 || LIShipStatus.Instance?.IsReady != true
-                || !GameManager.Instance.GameHasStarted)
+                || (!GameManager.Instance.GameHasStarted && GameManager.Instance.ShouldCheckForGameEnd))
                 yield return null;
             if (_triggerTarget != null)
                 LITriggerable.Trigger(_triggerTarget, _triggerID, PlayerControl.LocalPlayer);

@@ -19,7 +19,7 @@ namespace LevelImposter.Core
     {
         private static Guid? _activeDownloadingID = null;
 
-        [MethodRpc((uint)RpcIds.SendMapId)]
+        [MethodRpc((uint)LIRpc.SyncMapID)]
         public static void RPCSendMapID(PlayerControl _, string mapIDStr)
         {
             if (GameStartManager.Instance != null)

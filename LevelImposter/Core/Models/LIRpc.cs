@@ -14,10 +14,11 @@ namespace LevelImposter.Core
 
     // LI           50 - 59 (Guess I'll exist here...)
 
-    public enum RpcIds
+    public enum LIRpc
     {
-        Trigger = 50,
-        Teleport,
-        SendMapId,
+        FireTrigger = 50,
+        TeleportPlayer,
+        SyncMapID,
+        SyncRandomSeed
     }
 }
