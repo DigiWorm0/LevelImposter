@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
@@ -134,17 +134,19 @@ namespace LevelImposter.Core
             {
                 case "enable":
                     gameObject.SetActive(true);
-                    StartSounds();
+                    StartComponents();
                     break;
                 case "disable":
                     gameObject.SetActive(false);
-                    StopSounds();
+                    StopComponents();
                     break;
                 case "show":
                     gameObject.SetActive(true);
+                    StartComponents();
                     break;
                 case "hide":
                     gameObject.SetActive(false);
+                    StopComponents();
                     break;
                 case "repeat":
                     for (int i = 0; i < 8; i++)
@@ -164,25 +166,26 @@ namespace LevelImposter.Core
         }
 
         /// <summary>
-        /// Stops any ambient sound attatched to object
+        /// Stops any components attatched to object
         /// </summary>
-        private void StopSounds()
+        private void StopComponents()
         {
             AmbientSoundPlayer? ambientSound = GetComponent<AmbientSoundPlayer>();
-            if (ambientSound == null)
-                return;
-            ambientSound.OnDestroy();
+            if (ambientSound != null)
+                ambientSound.OnDestroy();
         }
         
         /// <summary>
-        /// Starts any ambient sound attatched to object
+        /// Starts any components attatched to object
         /// </summary>
-        private void StartSounds()
+        private void StartComponents()
         {
             AmbientSoundPlayer? ambientSound = GetComponent<AmbientSoundPlayer>();
-            if (ambientSound == null)
-                return;
-            ambientSound.Start();
+            if (ambientSound != null)
+                ambientSound.Start();
+            GIFAnimator? gifAnimator = GetComponent<GIFAnimator>();
+            if (gifAnimator != null)
+                gifAnimator.Play(true);
         }
 
         /// <summary>
