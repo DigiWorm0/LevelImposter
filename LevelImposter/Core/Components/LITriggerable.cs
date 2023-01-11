@@ -29,6 +29,7 @@ namespace LevelImposter.Core
         private string _destTrigger = "";
         private LITriggerable? _destTriggerComp = null;
         private bool _isClientSide => _sourceElem?.properties.triggerClientSide != false;
+        private int triggerCount = 0;
 
         [HideFromIl2Cpp]
         public LIElement? SourceElem => _sourceElem;
@@ -152,6 +153,14 @@ namespace LevelImposter.Core
                     for (int i = 0; i < 8; i++)
                         Trigger(gameObject, "onRepeat " + (i + 1), orgin, stackSize + 1);
                     break;
+                case "random":
+                    if (_sourceID == null)
+                        return;
+                    float randVal = MapUtils.GetRandom((Guid)_sourceID, triggerCount);
+                    string triggerID = randVal < 0.5f ? "onRandom 1" : "onRandom 2";
+                    Trigger(gameObject, triggerID, orgin, stackSize + 1);
+                    triggerCount++;
+                    break;
                 case "startTimer":
                     StartCoroutine(CoTimerTrigger(orgin, stackSize).WrapToIl2Cpp());
                     break;
@@ -161,7 +170,6 @@ namespace LevelImposter.Core
                 case "close":
                     SetDoorOpen(false);
                     break;
-
             }
         }
 

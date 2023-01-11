@@ -59,7 +59,7 @@ namespace LevelImposter.Core
             console.ConsoleId = 0;
             console.Image = spriteRenderer;
             console.onlyFromBelow = elem.properties.onlyFromBelow == null ? true : (bool)elem.properties.onlyFromBelow;
-            console.usableDistance = elem.properties.range == null ? 1.0f : (float)elem.properties.range;
+            console.usableDistance = elem.properties.range ?? 1.0f;
             console.Room = systemType;
             console.TaskTypes = origConsole.TaskTypes;
             console.ValidTasks = origConsole.ValidTasks;

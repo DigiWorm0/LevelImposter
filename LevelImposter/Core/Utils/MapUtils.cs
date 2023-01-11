@@ -270,8 +270,6 @@ namespace LevelImposter.Core
         /// <returns>A random float between 0.0 and 1.0 (inclusive)</returns>
         public static float GetRandom(Guid id, int weight = 0)
         {
-            if (_randomSeed == 0)
-                LILogger.Warn("Random value has not been set by host");
             int trueSeed = id.GetHashCode() + _randomSeed + weight;
             UnityEngine.Random.InitState(trueSeed);
             return UnityEngine.Random.value;
