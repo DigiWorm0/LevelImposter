@@ -63,6 +63,24 @@ namespace LevelImposter.Core
         }
 
         /// <summary>
+        /// Adds a sprite to garbage collection list
+        /// </summary>
+        /// <param name="sprite">Sprite to garbage collect on exit</param>
+        public void AddSprite(Sprite sprite)
+        {
+            _mapSprites?.Push(sprite);
+        }
+
+        /// <summary>
+        /// Adds a texture to garbage collection list
+        /// </summary>
+        /// <param name="texture">Texture2D to garbage collect on exit</param>
+        public void AddTexture(Texture2D texture)
+        {
+            _mapTextures?.Push(texture);
+        }
+
+        /// <summary>
         /// Loads a custom sprite from an
         /// LIElement and applies loads it
         /// onto a GameObject asynchronously
