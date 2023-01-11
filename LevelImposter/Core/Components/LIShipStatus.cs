@@ -233,6 +233,67 @@ namespace LevelImposter.Core
             loadingBean.SetActive(false);
         }
 
+        /// <summary>
+        /// Coroutine to respawn the player
+        /// with a specific key combo. (Ctrl + Shift + "RESPAWN")
+        /// </summary>
+        [HideFromIl2Cpp]
+        private IEnumerator CoHandleRespawn()
+        {
+            int state = 0;
+            KeyCode[] sequence = new KeyCode[]
+            {
+                KeyCode.R,
+                KeyCode.E,
+                KeyCode.S,
+                KeyCode.P,
+                KeyCode.A,
+                KeyCode.W,
+                KeyCode.N
+            };
+
+            while (true)
+            {
+                bool ctrl = Input.GetKey(KeyCode.LeftControl)
+                         || Input.GetKey(KeyCode.RightControl);
+                bool shift = Input.GetKey(KeyCode.LeftShift)
+                        || Input.GetKey(KeyCode.RightShift);
+                bool seqKey = Input.GetKeyDown(sequence[state]);
+
+                if (ctrl && shift && seqKey)
+                {
+                    state++;
+                }
+                else if (!(ctrl || shift))
+                {
+                    state = 0;
+                }
+
+                if (state >= sequence.Length)
+                {
+                    state = 0;
+                    RespawnPlayer();
+                }
+
+                yield return null;
+            }
+        }
+
+        /// <summary>
+        /// Resets the Local Player to the
+        /// ShipStatus's spawn location in the
+        /// event they are stuck.
+        /// </summary>
+        private void RespawnPlayer()
+        {
+            GameObject? playerObj = PlayerControl.LocalPlayer?.gameObject;
+            if (playerObj == null)
+                return;
+            LILogger.Info("Resetting player to spawn");
+            playerObj.transform.position = ShipStatus?.InitialSpawnCenter ?? transform.position;
+            LILogger.Notify("<color=green>You've been reset to spawn</color>");
+        }
+
         public void Awake()
         {
             Destroy(GetComponent<TagAmbientSoundPlayer>());
@@ -246,8 +307,11 @@ namespace LevelImposter.Core
         }
         public void Start()
         {
-            if (MapLoader.CurrentMap != null)
+            if (CurrentMap != null)
+            {
                 HudManager.Instance.ShadowQuad.material.SetInt("_Mask", 7);
+                StartCoroutine(CoHandleRespawn().WrapToIl2Cpp());
+            }
         }
         public void OnDestroy()
         {
