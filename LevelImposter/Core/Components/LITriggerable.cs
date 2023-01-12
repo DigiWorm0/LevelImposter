@@ -219,14 +219,13 @@ namespace LevelImposter.Core
             PlainDoor doorComponent = gameObject.GetComponent<PlainDoor>();
             doorComponent.SetDoorway(isOpen);
         }
-
         public void Start()
         {
             _destTriggerComp = AllTriggers.Find(t => _destID == t._sourceID && _destTrigger == t._sourceTrigger);
         }
         public void OnDestroy()
         {
-            _allTriggers.Remove(this);
+            _allTriggers.Clear();
             _sourceElem = null;
             _destID = null;
             _destTriggerComp = null;

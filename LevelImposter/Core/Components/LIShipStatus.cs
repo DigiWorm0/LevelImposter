@@ -62,6 +62,7 @@ namespace LevelImposter.Core
 
             while (transform.childCount > 0)
                 DestroyImmediate(transform.GetChild(0).gameObject);
+            Destroy(GetComponent<TagAmbientSoundPlayer>());
 
             FollowerCamera camera = Camera.main.GetComponent<FollowerCamera>();
             camera.shakeAmount = 0;
@@ -296,7 +297,6 @@ namespace LevelImposter.Core
 
         public void Awake()
         {
-            Destroy(GetComponent<TagAmbientSoundPlayer>());
             _shipStatus = GetComponent<ShipStatus>();
             Instance = this;
 
