@@ -21,14 +21,14 @@ namespace LevelImposter.Core
                 collider.isTrigger = true;
             if (colliders.Length < 1)
             {
-                LILogger.Warn(elem.name + " missing cooresponding collision");
+                LILogger.Warn($"{elem.name} missing cooresponding collision");
                 return;
             }
 
             // AudioClip
             if (elem.properties.sounds == null)
             {
-                LILogger.Warn(elem.name + " missing audio listing");
+                LILogger.Warn($"{elem.name} missing audio listing");
                 return;
             }
 
@@ -40,7 +40,7 @@ namespace LevelImposter.Core
                 LISound sound = elem.properties.sounds[i];
                 if (sound.data == null)
                 {
-                    LILogger.Warn(elem.name + " missing audio data");
+                    LILogger.Warn($"{elem.name} missing audio data");
                     continue;
                 }
 

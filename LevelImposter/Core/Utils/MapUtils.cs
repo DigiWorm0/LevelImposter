@@ -270,7 +270,7 @@ namespace LevelImposter.Core
                 LILogger.Error($"Invalid map ID [{mapIDStr}]");
                 return;
             }
-            LILogger.Info("[RPC] Transmitting map ID [" + mapIDStr + "]");
+            LILogger.Info($"[RPC] Transmitting map ID [{mapIDStr}]");
             MapSync.RPCSendMapID(PlayerControl.LocalPlayer, mapIDStr);
 
             // Set Skeld

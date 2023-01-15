@@ -58,9 +58,9 @@ namespace LevelImposter.Core
         public void Play(bool repeat = false, bool reverse = false)
         {
             if (_frames == null || _delays == null)
-                LILogger.Warn(name + " does not have a frame sprites or delays");
+                LILogger.Warn($"{name} does not have a frame sprites or delays");
             if (_spriteRenderer == null)
-                LILogger.Warn(name + " does not have a spriteRenderer");
+                LILogger.Warn($"{name} does not have a spriteRenderer");
             if (_animationCoroutine != null)
                 StopCoroutine(_animationCoroutine);
             _animationCoroutine = StartCoroutine(CoAnimate(repeat, reverse).WrapToIl2Cpp());

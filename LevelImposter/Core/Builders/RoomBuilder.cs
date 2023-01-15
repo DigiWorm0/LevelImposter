@@ -34,7 +34,7 @@ namespace LevelImposter.Core
             if (shipRoom.roomArea != null)
                 shipRoom.roomArea.isTrigger = true;
             else
-                LILogger.Warn(shipRoom.name + " is missing a collider");
+                LILogger.Warn($"{shipRoom.name} is missing a collider");
 
             MapUtils.Rename(systemType, obj.name);
             _systemDB.Add(elem.id, systemType);

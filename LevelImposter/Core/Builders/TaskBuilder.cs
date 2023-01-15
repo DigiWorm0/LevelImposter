@@ -228,7 +228,7 @@ namespace LevelImposter.Core
             _builtTypes.Add(elem.type);
 
             if (!isBuilt)
-                LILogger.Info("Adding task for " + elem.name + "...");
+                LILogger.Info($"Adding task for {elem}...");
 
             if (elem.type == "task-divert1" && !isBuilt)
             {

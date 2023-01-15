@@ -51,10 +51,10 @@ namespace LevelImposter.Shop
         public IEnumerator CoRequest(string url, Action<byte[]>? onSuccess, Action<string>? onError)
         {
             {
-                LILogger.Info("GET: " + url);
+                LILogger.Info($"GET: {url}");
                 UnityWebRequest request = UnityWebRequest.Get(url); // Doesn't extend IDisposable
                 yield return request.SendWebRequest();
-                LILogger.Info("RES: " + request.responseCode);
+                LILogger.Info($"RES: {request.responseCode}");
 
                 if (request.result == UnityWebRequest.Result.ConnectionError || request.result == UnityWebRequest.Result.ProtocolError)
                 {

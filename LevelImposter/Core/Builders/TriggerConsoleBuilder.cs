@@ -18,7 +18,7 @@ namespace LevelImposter.Core
             obj.layer = (int)Layer.ShortObjects;
             if (rend == null)
             {
-                LILogger.Warn(elem.name + " is missing a sprite.");
+                LILogger.Warn($"{elem.name} is missing a sprite.");
                 return;
             }
 
