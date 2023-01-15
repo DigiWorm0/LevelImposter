@@ -128,12 +128,17 @@ namespace LevelImposter.DB
                 yield return _importAssets(prefab, shipStatus, mapType, Ships);
                 yield return _importAssets(prefab, shipStatus, mapType, Sounds);
 
-                LILogger.Info("..." + prefab.name + " Loaded");
+                LILogger.Info($"...{prefab.name} Loaded");
             }
         }
 
         [HideFromIl2Cpp]
-        private IEnumerator _importAssets<T>(GameObject map, ShipStatus shipStatus, MapType mapType, Dictionary<string, T> list) where T : AssetData
+        private IEnumerator _importAssets<T>(
+            GameObject map,
+            ShipStatus shipStatus,
+            MapType mapType,
+            Dictionary<string, T> list
+        ) where T : AssetData 
         {
             {
                 foreach (var elem in list)

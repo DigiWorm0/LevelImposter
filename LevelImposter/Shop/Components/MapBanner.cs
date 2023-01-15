@@ -139,7 +139,7 @@ namespace LevelImposter.Shop
         {
             if (_currentMap == null)
                 return;
-            Application.OpenURL("https://levelimposter.net/#/map/" + _currentMap.id);
+            Application.OpenURL($"https://levelimposter.net/#/map/{_currentMap.id}");
         }
 
         /// <summary>

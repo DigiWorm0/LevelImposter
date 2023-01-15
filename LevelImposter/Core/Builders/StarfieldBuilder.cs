@@ -18,7 +18,7 @@ namespace LevelImposter.Core
             SpriteRenderer spriteRenderer = obj.GetComponent<SpriteRenderer>();
             if (spriteRenderer == null)
             {
-                LILogger.Warn(elem.name + " missing a sprite");
+                LILogger.Warn($"{elem.name} missing a sprite");
                 return;
             }
             spriteRenderer.material = AssetDB.Decor["dec-rock4"].SpriteRenderer.material;

@@ -187,7 +187,7 @@ namespace LevelImposter.Shop
         /// <param name="id">ID of the map to select</param>
         public void SelectMap(string id)
         {
-            LILogger.Info("Selecting map [" + id + "]");
+            LILogger.Info($"Selecting map [{id}]");
             MapLoader.LoadMap(id, MapUtils.SyncMapID);
             CloseShop();
         }
@@ -200,7 +200,7 @@ namespace LevelImposter.Shop
         {
             if (!AssetDB.IsReady)
                 return;
-            LILogger.Info("Launching map [" + id + "]");
+            LILogger.Info($"Launching map [{id}]");
             MapLoader.LoadMap(id, () =>
             {
                 AmongUsClient.Instance.TutorialMapId = (int)MapNames.Polus;

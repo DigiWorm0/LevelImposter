@@ -110,7 +110,7 @@ namespace LevelImposter.Core
         [HideFromIl2Cpp]
         public void LoadMap(LIMap map)
         {
-            LILogger.Info("Loading " + map.name + " [" + map.id + "]");
+            LILogger.Info($"Loading {map}");
             _isReady = false;
             StartCoroutine(CoLoadingScreen().WrapToIl2Cpp());
             _currentMap = map;
@@ -164,7 +164,7 @@ namespace LevelImposter.Core
                 }
                 else
                 {
-                    LILogger.Warn("Unknown exile ID: " + map.properties.exileID);
+                    LILogger.Warn($"Unknown exile ID: {map.properties.exileID}");
                 }
             }
         }
@@ -179,8 +179,7 @@ namespace LevelImposter.Core
             Stopwatch buildTimer = new();
             buildTimer.Restart();
 
-            LILogger.Info("Adding " + element.ToString());
-            try
+            LILogger.Info($"Adding {element}");
             {
                 GameObject gameObject = buildRouter.Build(element);
                 gameObject.transform.SetParent(transform);
@@ -188,7 +187,7 @@ namespace LevelImposter.Core
             }
             catch (Exception e)
             {
-                LILogger.Error("Error while building " + element.name + ":\n" + e);
+                LILogger.Error($"Error while building {element.name}:\n{e}");
             }
 
             // Build Timer
