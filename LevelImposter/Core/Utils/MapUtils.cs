@@ -264,16 +264,17 @@ namespace LevelImposter.Core
             if (!AmongUsClient.Instance.AmHost || DestroyableSingleton<TutorialManager>.InstanceExists || PlayerControl.LocalPlayer == null)
                 return;
 
-            Guid mapID = Guid.Empty;
-            if (MapLoader.CurrentMap != null)
-                Guid.TryParse(MapLoader.CurrentMap.id, out mapID);
-            string mapIDStr = mapID.ToString();
-
+            string mapIDStr = MapLoader.CurrentMap?.id ?? Guid.Empty.ToString();
+            if (!Guid.TryParse(mapIDStr, out _))
+            {
+                LILogger.Error($"Invalid map ID [{mapIDStr}]");
+                return;
+            }
             LILogger.Info("[RPC] Transmitting map ID [" + mapIDStr + "]");
             MapSync.RPCSendMapID(PlayerControl.LocalPlayer, mapIDStr);
 
             // Set Skeld
-            if (mapID != Guid.Empty)
+            if (mapIDStr != Guid.Empty.ToString())
             {
                 IGameOptions currentGameOptions = GameOptionsManager.Instance.CurrentGameOptions;
                 currentGameOptions.SetByte(ByteOptionNames.MapId, (int)MapNames.Polus);

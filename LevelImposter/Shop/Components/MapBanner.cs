@@ -71,11 +71,12 @@ namespace LevelImposter.Shop
             else
             {
                 bool mapExists = MapFileAPI.Instance?.Exists(_currentMap.id) ?? false;
-                bool isOnline = !string.IsNullOrEmpty(_currentMap.authorID);
+                bool isOnline = !string.IsNullOrEmpty(_currentMap.authorID) && Guid.TryParse(_currentMap.id, out _);
+                bool isPublic = _currentMap.isPublic;
                 _downloadButton.interactable = !mapExists && isOnline;
                 _playButton.interactable = mapExists && (isOnline || !_isInLobby);
                 _deleteButton.interactable = mapExists && isOnline;
-                _externalButton.gameObject.SetActive(isOnline);
+                _externalButton.gameObject.SetActive(isOnline && isPublic);
                 _errOverlay?.SetActive(mapExists && !isOnline && _isInLobby);
             }
         }

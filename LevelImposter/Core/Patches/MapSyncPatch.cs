@@ -26,13 +26,13 @@ namespace LevelImposter.Core
                 GameStartManager.Instance.ResetStartState();
             if (AmongUsClient.Instance.AmHost)
                 return;
-            LILogger.Info("[RPC] Received map ID [" + mapIDStr + "]");
+            LILogger.Info($"[RPC] Received map ID [{mapIDStr}]");
 
             // Parse ID
-            Guid mapID;
-            if (!Guid.TryParse(mapIDStr, out mapID))
+            bool isSuccess = Guid.TryParse(mapIDStr, out Guid mapID);
+            if (!isSuccess)
             {
-                LILogger.Error("Invalid map ID.");
+                LILogger.Error($"Invalid map ID [{mapIDStr}]");
                 return;
             }
 
