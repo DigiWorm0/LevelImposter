@@ -180,6 +180,7 @@ namespace LevelImposter.Core
             buildTimer.Restart();
 
             LILogger.Info($"Adding {element}");
+            try
             {
                 GameObject gameObject = buildRouter.Build(element);
                 gameObject.transform.SetParent(transform);
