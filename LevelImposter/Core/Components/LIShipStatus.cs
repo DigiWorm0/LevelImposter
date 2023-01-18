@@ -119,8 +119,8 @@ namespace LevelImposter.Core
             BuildRouter buildRouter = new();
 
             // Asset DB
-            if (!AssetDB.IsReady)
-                LILogger.Warn("Asset DB is not ready yet!");
+            if (!AssetDB.IsInit)
+                LILogger.Warn("Asset DB is not initialized yet!");
 
             // Priority First
             foreach (string type in PRIORITY_TYPES)
@@ -157,15 +157,16 @@ namespace LevelImposter.Core
 
             if (!string.IsNullOrEmpty(map.properties.exileID))
             {
-                if (EXILE_IDS.ContainsKey(map.properties.exileID))
-                {
-                    ShipStatus ship = AssetDB.Ships[EXILE_IDS[map.properties.exileID]].ShipStatus;
-                    ShipStatus.ExileCutscenePrefab = ship.ExileCutscenePrefab;
-                }
-                else
+                if (!EXILE_IDS.ContainsKey(map.properties.exileID))
                 {
                     LILogger.Warn($"Unknown exile ID: {map.properties.exileID}");
+                    return;
                 }
+                var prefabShip = AssetDB.GetObject(EXILE_IDS[map.properties.exileID]);
+                var prefabShipStatus = prefabShip?.GetComponent<ShipStatus>();
+                if (prefabShipStatus == null)
+                    return;
+                ShipStatus.ExileCutscenePrefab = prefabShipStatus.ExileCutscenePrefab;
             }
         }
 

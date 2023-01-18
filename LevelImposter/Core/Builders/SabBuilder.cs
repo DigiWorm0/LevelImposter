@@ -31,19 +31,23 @@ namespace LevelImposter.Core
         {
             if (!elem.type.StartsWith("sab-") || elem.type.StartsWith("sab-btn") || elem.type.StartsWith("sab-door"))
                 return;
+            // TODO: Standardize LIShipStatus nullity
             if (LIShipStatus.Instance == null || LIShipStatus.Instance.ShipStatus == null)
                 return;
+            ShipStatus shipStatus = LIShipStatus.Instance.ShipStatus;
 
+            // Container
             if (_sabContainer == null)
             {
                 _sabContainer = new GameObject("Sabotages");
                 _sabContainer.transform.SetParent(LIShipStatus.Instance.transform);
                 _sabContainer.SetActive(false);
             }
-
-            SabData sabData = AssetDB.Sabs[elem.type];
-            ShipStatus shipStatus = LIShipStatus.Instance.ShipStatus;
-            SabotageTask sabClone = sabData.Behavior.Cast<SabotageTask>();
+            
+            // Prefab
+            var prefabTask = AssetDB.GetTask<SabotageTask>(elem.type);
+            if (prefabTask == null)
+                return;
 
             // System
             SystemTypes roomSystem = RoomBuilder.GetParentOrDefault(elem);
@@ -57,10 +61,10 @@ namespace LevelImposter.Core
                 sabContainer.transform.SetParent(_sabContainer.transform);
 
                 // Create Task
-                SabotageTask task = sabContainer.AddComponent(sabData.Behavior.GetIl2CppType()).Cast<SabotageTask>();
-                task.StartAt = sabClone.StartAt;
-                task.TaskType = sabClone.TaskType;
-                task.MinigamePrefab = sabClone.MinigamePrefab;
+                SabotageTask task = sabContainer.AddComponent(prefabTask.GetIl2CppType()).Cast<SabotageTask>();
+                task.StartAt = prefabTask.StartAt;
+                task.TaskType = prefabTask.TaskType;
+                task.MinigamePrefab = prefabTask.MinigamePrefab;
                 task.Arrows = new(0);
 
                 // Rename Task

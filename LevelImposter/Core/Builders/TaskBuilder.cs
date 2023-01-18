@@ -10,11 +10,11 @@ namespace LevelImposter.Core
 {
     public class TaskBuilder : IElemBuilder
     {
-        public static readonly Dictionary<string, TaskType> TASK_LENGTHS = new()
+        public static readonly Dictionary<string, TaskLength> TASK_LENGTHS = new()
         {
-            { "Short", TaskType.Short },
-            { "Long", TaskType.Long },
-            { "Common", TaskType.Common }
+            { "Short", TaskLength.Short },
+            { "Long", TaskLength.Long },
+            { "Common", TaskLength.Common }
         };
         public static readonly Dictionary<string, int> CONSOLE_ID_PAIRS = new()
         {
@@ -82,8 +82,11 @@ namespace LevelImposter.Core
         {
             if (!elem.type.StartsWith("task-"))
                 return;
+
+            // ShipStatus
             if (LIShipStatus.Instance?.ShipStatus == null)
                 throw new Exception("ShipStatus not found");
+            ShipStatus shipStatus = LIShipStatus.Instance.ShipStatus;
 
             // Create Task Container
             if (_taskContainer == null)
@@ -92,9 +95,13 @@ namespace LevelImposter.Core
                 _taskContainer.transform.SetParent(LIShipStatus.Instance.transform);
             }
 
-            // Get DB
-            TaskData taskData = AssetDB.Tasks[elem.type];
-            ShipStatus shipStatus = LIShipStatus.Instance.ShipStatus;
+            // Prefab
+            var prefab = AssetDB.GetObject(elem.type);
+            if (prefab == null)
+                return;
+            var prefabRenderer = prefab.GetComponent<SpriteRenderer>();
+            var prefabConsole = prefab.GetComponent<Console>();
+            var prefabBtn = prefab.GetComponent<PassiveButton>();
 
             // Default Sprite
             obj.layer = (int)Layer.ShortObjects;
@@ -102,23 +109,22 @@ namespace LevelImposter.Core
             if (!spriteRenderer)
             {
                 spriteRenderer = obj.AddComponent<SpriteRenderer>();
-                spriteRenderer.sprite = taskData.SpriteRenderer.sprite;
+                spriteRenderer.sprite = prefabRenderer.sprite;
                 if (elem.properties.color != null)
                     spriteRenderer.color = MapUtils.LIColorToColor(elem.properties.color);
             }
-            spriteRenderer.material = taskData.SpriteRenderer.material;
+            spriteRenderer.material = prefabRenderer.material;
 
             // Parent
             SystemTypes systemType = RoomBuilder.GetParentOrDefault(elem);
 
             // Console
             Console console;
-            Console origConsole = taskData.GameObj.GetComponent<Console>();
             if (elem.type == "task-pistols1" || elem.type == "task-rifles1")
             {
                 console = obj.AddComponent<StoreArmsTaskConsole>();
                 StoreArmsTaskConsole specialConsole = console.Cast<StoreArmsTaskConsole>();
-                StoreArmsTaskConsole origSpecialConsole = origConsole.Cast<StoreArmsTaskConsole>();
+                StoreArmsTaskConsole origSpecialConsole = prefabConsole.Cast<StoreArmsTaskConsole>();
 
                 specialConsole.timesUsed = origSpecialConsole.timesUsed;
                 specialConsole.Images = origSpecialConsole.Images;
@@ -129,7 +135,7 @@ namespace LevelImposter.Core
             {
                 console = obj.AddComponent<TowelTaskConsole>();
                 TowelTaskConsole specialConsole = console.Cast<TowelTaskConsole>();
-                TowelTaskConsole origSpecialConsole = origConsole.Cast<TowelTaskConsole>();
+                TowelTaskConsole origSpecialConsole = prefabConsole.Cast<TowelTaskConsole>();
 
                 specialConsole.useSound = origSpecialConsole.useSound;
             }
@@ -142,8 +148,8 @@ namespace LevelImposter.Core
             console.onlyFromBelow = elem.properties.onlyFromBelow == true;
             console.usableDistance = elem.properties.range == null ? 1.0f : (float)elem.properties.range;
             console.Room = systemType;
-            console.TaskTypes = origConsole.TaskTypes;
-            console.ValidTasks = origConsole.ValidTasks;
+            console.TaskTypes = prefabConsole.TaskTypes;
+            console.ValidTasks = prefabConsole.ValidTasks;
             console.AllowImpostor = false;
 
             if (CONSOLE_ID_PAIRS.ContainsKey(elem.type))
@@ -209,11 +215,10 @@ namespace LevelImposter.Core
             }
 
             // Colliders
-            MapUtils.CreateTriggerColliders(obj, taskData.GameObj);
+            MapUtils.CreateTriggerColliders(obj, prefab);
 
             // Button
-            PassiveButton origBtn = taskData.GameObj.GetComponent<PassiveButton>();
-            if (origBtn != null)
+            if (prefabBtn != null)
             {
                 PassiveButton btn = obj.AddComponent<PassiveButton>();
                 btn.ClickMask = obj.GetComponent<Collider2D>();
@@ -230,6 +235,12 @@ namespace LevelImposter.Core
             if (!isBuilt)
                 LILogger.Info($"Adding task for {elem}...");
 
+            // Prefab
+            var prefabTask = AssetDB.GetTask<NormalPlayerTask>(elem.type);
+            var prefabArrow = prefabTask?.Arrow?.gameObject;
+            var prefabLength = AssetDB.GetTaskLength(elem.type);
+
+            // TODO: Clean this spaghetti mess
             if (elem.type == "task-divert1" && !isBuilt)
             {
                 List<LIElement> divertTargets = new();
@@ -240,7 +251,6 @@ namespace LevelImposter.Core
                         divertTargets.Add(mapElem);
 
                 _divertSystems = new SystemTypes[divertTargets.Count];
-                NormalPlayerTask origTask = taskData.Behavior;
                 for (int i = 0; i < divertTargets.Count; i++)
                 {
                     LIElement divertTarget = divertTargets[i];
@@ -253,49 +263,51 @@ namespace LevelImposter.Core
 
                     DivertPowerTask task = taskHolder.AddComponent<DivertPowerTask>();
                     task.StartAt = systemType;
-                    task.taskStep = origTask.taskStep;
-                    task.MaxStep = origTask.MaxStep;
-                    task.arrowSuspended = origTask.arrowSuspended;
-                    task.ShowTaskTimer = origTask.ShowTaskTimer;
-                    task.ShowTaskStep = origTask.ShowTaskStep;
-                    task.TaskTimer = origTask.TaskTimer;
-                    task.TimerStarted = origTask.TimerStarted;
-                    task.TaskType = origTask.TaskType;
-                    task.MinigamePrefab = origTask.MinigamePrefab;
+                    task.taskStep = prefabTask.taskStep;
+                    task.MaxStep = prefabTask.MaxStep;
+                    task.arrowSuspended = prefabTask.arrowSuspended;
+                    task.ShowTaskTimer = prefabTask.ShowTaskTimer;
+                    task.ShowTaskStep = prefabTask.ShowTaskStep;
+                    task.TaskTimer = prefabTask.TaskTimer;
+                    task.TimerStarted = prefabTask.TimerStarted;
+                    task.TaskType = prefabTask.TaskType;
+                    task.MinigamePrefab = prefabTask.MinigamePrefab;
                     task.TargetSystem = divertSystem;
 
-                    GameObject arrow = UnityEngine.Object.Instantiate(origTask.Arrow.gameObject);
-                    arrow.transform.SetParent(task.transform);
-                    arrow.SetActive(false);
-                    task.Arrow = arrow.GetComponent<ArrowBehaviour>();
+                    if (prefabArrow != null)
+                    {
+                        GameObject arrow = UnityEngine.Object.Instantiate(prefabArrow);
+                        arrow.transform.SetParent(task.transform);
+                        arrow.SetActive(false);
+                        task.Arrow = arrow.GetComponent<ArrowBehaviour>();
+                    }
 
                     shipStatus.LongTasks = MapUtils.AddToArr(shipStatus.LongTasks, task.Cast<NormalPlayerTask>());
                 }
             }
-            else if (!string.IsNullOrEmpty(taskData.BehaviorName) && !isBuilt)
+            else if (prefabTask != null && !isBuilt)
             {
                 if (!string.IsNullOrEmpty(elem.properties.description))
-                    MapUtils.Rename(taskData.Behavior.TaskType, elem.properties.description);
+                    MapUtils.Rename(prefabTask.TaskType, elem.properties.description);
 
                 GameObject taskHolder = new(elem.name);
                 taskHolder.transform.SetParent(_taskContainer.transform);
 
-                NormalPlayerTask origTask = taskData.Behavior;
-                NormalPlayerTask task = taskHolder.AddComponent(taskData.Behavior.GetIl2CppType()).Cast<NormalPlayerTask>();
+                NormalPlayerTask task = taskHolder.AddComponent(prefabTask.GetIl2CppType()).Cast<NormalPlayerTask>();
                 task.StartAt = systemType;
-                task.taskStep = origTask.taskStep;
-                task.MaxStep = origTask.MaxStep;
-                task.arrowSuspended = origTask.arrowSuspended;
-                task.ShowTaskTimer = origTask.ShowTaskTimer;
-                task.ShowTaskStep = origTask.ShowTaskStep;
-                task.TaskTimer = origTask.TaskTimer;
-                task.TimerStarted = origTask.TimerStarted;
-                task.TaskType = origTask.TaskType;
-                task.MinigamePrefab = origTask.MinigamePrefab;
+                task.taskStep = prefabTask.taskStep;
+                task.MaxStep = prefabTask.MaxStep;
+                task.arrowSuspended = prefabTask.arrowSuspended;
+                task.ShowTaskTimer = prefabTask.ShowTaskTimer;
+                task.ShowTaskStep = prefabTask.ShowTaskStep;
+                task.TaskTimer = prefabTask.TaskTimer;
+                task.TimerStarted = prefabTask.TimerStarted;
+                task.TaskType = prefabTask.TaskType;
+                task.MinigamePrefab = prefabTask.MinigamePrefab;
 
-                if (origTask.Arrow != null)
+                if (prefabArrow != null)
                 {
-                    GameObject arrow = UnityEngine.Object.Instantiate(origTask.Arrow.gameObject);
+                    GameObject arrow = UnityEngine.Object.Instantiate(prefabArrow);
                     arrow.transform.SetParent(task.transform);
                     arrow.SetActive(false);
 
@@ -306,7 +318,7 @@ namespace LevelImposter.Core
                 {
                     WeatherNodeTask nodeTask = task.Cast<WeatherNodeTask>();
                     nodeTask.NodeId = console.ConsoleId;
-                    nodeTask.Stage2Prefab = origTask.Cast<WeatherNodeTask>().Stage2Prefab;
+                    nodeTask.Stage2Prefab = prefabTask.Cast<WeatherNodeTask>().Stage2Prefab;
                 }
 
                 if (elem.type == "task-wires")
@@ -315,12 +327,12 @@ namespace LevelImposter.Core
                 }
 
                 string? taskLengthProp = elem.properties.taskLength;
-                TaskType taskLength = taskLengthProp != null ? TASK_LENGTHS[taskLengthProp] : taskData.TaskType;
-                if (taskLength == TaskType.Common)
+                TaskLength taskLength = taskLengthProp != null ? TASK_LENGTHS[taskLengthProp] : prefabLength;
+                if (taskLength == TaskLength.Common)
                     shipStatus.CommonTasks = MapUtils.AddToArr(shipStatus.CommonTasks, task);
-                if (taskLength == TaskType.Short)
+                if (taskLength == TaskLength.Short)
                     shipStatus.NormalTasks = MapUtils.AddToArr(shipStatus.NormalTasks, task);
-                if (taskLength == TaskType.Long)
+                if (taskLength == TaskLength.Long)
                     shipStatus.LongTasks = MapUtils.AddToArr(shipStatus.LongTasks, task);
             }
 

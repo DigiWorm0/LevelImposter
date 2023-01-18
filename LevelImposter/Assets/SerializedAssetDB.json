@@ -1,0 +1,1770 @@
+{
+  "ObjectDB": [
+    {
+      "ID": "util-button1",
+      "Map": 2,
+      "Path": "Office/caftable/EmergencyButton"
+    },
+    {
+      "ID": "util-button2",
+      "Map": 1,
+      "Path": "Cafe/Table/EmergencyConsole"
+    },
+    {
+      "ID": "util-admin",
+      "Map": 2,
+      "Path": "Admin/mapTable/panel_map"
+    },
+    {
+      "ID": "util-vitals",
+      "Map": 2,
+      "Path": "Office/panel_vitals"
+    },
+    {
+      "ID": "util-computer",
+      "Map": 2,
+      "Path": "Office/caftable/TaskAddConsole"
+    },
+    {
+      "ID": "util-vent1",
+      "Map": 0,
+      "Path": "Cafeteria/Ground/CafeVent"
+    },
+    {
+      "ID": "util-vent2",
+      "Map": 2,
+      "Path": "Office/OfficeVent"
+    },
+    {
+      "ID": "util-cam",
+      "Map": 2,
+      "Path": "camera_off"
+    },
+    {
+      "ID": "util-cams",
+      "Map": 2,
+      "Path": "Electrical/Surv_Panel"
+    },
+    {
+      "ID": "util-cams2",
+      "Map": 0,
+      "Path": "Security/Ground/map_surveillance/SurvConsole"
+    },
+    {
+      "ID": "util-cams3",
+      "Map": 3,
+      "Path": "Security/task_cams"
+    },
+    {
+      "ID": "util-ladder1",
+      "Map": 3,
+      "Path": "MeetingRoom/ladder_meeting"
+    },
+    {
+      "ID": "util-ladder2",
+      "Map": 3,
+      "Path": "HallwayMain/ladder_electrical"
+    },
+    {
+      "ID": "sab-electric",
+      "Map": 2,
+      "Path": "Electrical/panel_switches"
+    },
+    {
+      "ID": "sab-reactorleft",
+      "Map": 2,
+      "Path": "bridgeLeft/SuppressorLeft/panel_hand_left"
+    },
+    {
+      "ID": "sab-reactorright",
+      "Map": 2,
+      "Path": "bridgeRight/SuppressorRight/panel_hand_right"
+    },
+    {
+      "ID": "sab-comms",
+      "Map": 2,
+      "Path": "Comms/Walls/panel_comms"
+    },
+    {
+      "ID": "sab-doorh",
+      "Map": 0,
+      "Path": "Cafeteria/LowerDoor"
+    },
+    {
+      "ID": "sab-doorv",
+      "Map": 0,
+      "Path": "Cafeteria/RightDoor"
+    },
+    {
+      "ID": "sab-door-polus",
+      "Map": 2,
+      "Path": "Storage/RightDoor"
+    },
+    {
+      "ID": "sab-door-airship",
+      "Map": 3,
+      "Path": "HallwayL/Door_VertOpen"
+    },
+    {
+      "ID": "sab-oxygen1",
+      "Map": 0,
+      "Path": "Admin/Ground/admin_walls/NoOxyConsole"
+    },
+    {
+      "ID": "sab-oxygen2",
+      "Map": 0,
+      "Path": "Admin/Ground/admin_walls/NoOxyConsole"
+    },
+    {
+      "ID": "room-polusadmin",
+      "Map": 2,
+      "Path": "Admin/Walls"
+    },
+    {
+      "ID": "room-poluscomms",
+      "Map": 2,
+      "Path": "Comms/Walls"
+    },
+    {
+      "ID": "room-poluselectric",
+      "Map": 2,
+      "Path": "Electrical/Walls"
+    },
+    {
+      "ID": "room-polusmedbay",
+      "Map": 2,
+      "Path": "Science/Walls"
+    },
+    {
+      "ID": "room-poluso2",
+      "Map": 2,
+      "Path": "LifeSupport/Walls"
+    },
+    {
+      "ID": "room-polusspecimen",
+      "Map": 2,
+      "Path": "RightPod/Walls"
+    },
+    {
+      "ID": "room-polusspecimenhallway1",
+      "Map": 2,
+      "Path": "RightTube/Walls"
+    },
+    {
+      "ID": "room-polusspecimenhallway2",
+      "Map": 2,
+      "Path": "RightTubeTop/Walls"
+    },
+    {
+      "ID": "room-polusstorage",
+      "Map": 2,
+      "Path": "Storage/Walls"
+    },
+    {
+      "ID": "room-polusweapons",
+      "Map": 2,
+      "Path": "Weapons/Walls"
+    },
+    {
+      "ID": "room-skeldcafe",
+      "Map": 0,
+      "Path": "Cafeteria/Ground"
+    },
+    {
+      "ID": "room-skeldelectric",
+      "Map": 0,
+      "Path": "Electrical/Ground"
+    },
+    {
+      "ID": "room-skeldengine1",
+      "Map": 0,
+      "Path": "LeftEngine/Ground"
+    },
+    {
+      "ID": "room-skeldengine2",
+      "Map": 0,
+      "Path": "RightEngine/Ground"
+    },
+    {
+      "ID": "room-skeldmedbay",
+      "Map": 0,
+      "Path": "Medical/Ground"
+    },
+    {
+      "ID": "room-skeldadminhallway",
+      "Map": 0,
+      "Path": "AdminHallway"
+    },
+    {
+      "ID": "room-skeldnavhallway",
+      "Map": 0,
+      "Path": "BigYHallway"
+    },
+    {
+      "ID": "room-skeldo2",
+      "Map": 0,
+      "Path": "LifeSupport/Ground"
+    },
+    {
+      "ID": "room-skeldreactorhallway",
+      "Map": 0,
+      "Path": "CrossHallway"
+    },
+    {
+      "ID": "room-skeldsecurity",
+      "Map": 0,
+      "Path": "Security/Ground"
+    },
+    {
+      "ID": "room-skeldstorage",
+      "Map": 0,
+      "Path": "Storage/Ground"
+    },
+    {
+      "ID": "room-skeldshieldhall",
+      "Map": 0,
+      "Path": "Shields/Ground/shields_floor"
+    },
+    {
+      "ID": "room-miramedbaycomms",
+      "Map": 1,
+      "Path": "Walls/EntryWalls"
+    },
+    {
+      "ID": "room-mirayhall",
+      "Map": 1,
+      "Path": "Walls/skyBridgeWalls"
+    },
+    {
+      "ID": "room-mirareactor",
+      "Map": 1,
+      "Path": "Walls/decontamLabReactorWalls"
+    },
+    {
+      "ID": "room-miralaunchpad",
+      "Map": 1,
+      "Path": "Walls/launchPadWalls"
+    },
+    {
+      "ID": "room-mirao2admin",
+      "Map": 1,
+      "Path": "Walls/compLabGreenHouseAdminWalls"
+    },
+    {
+      "ID": "room-miracafe",
+      "Map": 1,
+      "Path": "Walls/CafeteriaWalls"
+    },
+    {
+      "ID": "room-dropship",
+      "Map": 1,
+      "Path": "Walls/Dropship"
+    },
+    {
+      "ID": "room-dropshiptop",
+      "Map": 1,
+      "Path": "Walls/Dropship/dropshipTop"
+    },
+    {
+      "ID": "room-dropshiprear",
+      "Map": 1,
+      "Path": "Walls/Dropship/dropship_rear"
+    },
+    {
+      "ID": "room-dropshipramp",
+      "Map": 2,
+      "Path": "Dropship/ramp"
+    },
+    {
+      "ID": "room-airshiparmory",
+      "Map": 3,
+      "Path": "Armory/armory_main"
+    },
+    {
+      "ID": "room-airshipbrig",
+      "Map": 3,
+      "Path": "Brig/brig_main"
+    },
+    {
+      "ID": "room-airshipcockpit",
+      "Map": 3,
+      "Path": "Cockpit/cockpit_bg"
+    },
+    {
+      "ID": "room-airshipcomms",
+      "Map": 3,
+      "Path": "Comms/comms_main"
+    },
+    {
+      "ID": "room-airshipejection",
+      "Map": 3,
+      "Path": "Ejection/Ejectionroom_main"
+    },
+    {
+      "ID": "room-airshipelctrical",
+      "Map": 3,
+      "Path": "Electrical/Electrical_main"
+    },
+    {
+      "ID": "room-airshipengines",
+      "Map": 3,
+      "Path": "Engine/engine_main"
+    },
+    {
+      "ID": "room-airshipgap",
+      "Map": 3,
+      "Path": "GapRoom/gap_main"
+    },
+    {
+      "ID": "room-airshiphallway",
+      "Map": 3,
+      "Path": "HallwayL/HallwayL_main"
+    },
+    {
+      "ID": "room-airshipkitchen",
+      "Map": 3,
+      "Path": "Kitchen/kitchen_main"
+    },
+    {
+      "ID": "room-airshiplounge",
+      "Map": 3,
+      "Path": "Lounge/lounge_main"
+    },
+    {
+      "ID": "room-airshipmainhall",
+      "Map": 3,
+      "Path": "HallwayMain/halls_main"
+    },
+    {
+      "ID": "room-airshipmedbay",
+      "Map": 3,
+      "Path": "Medbay/medbay_main"
+    },
+    {
+      "ID": "room-airshipmeeting",
+      "Map": 3,
+      "Path": "MeetingRoom/meeting_main"
+    },
+    {
+      "ID": "room-airshipmeeting2",
+      "Map": 3,
+      "Path": "MeetingRoom/meeting_side"
+    },
+    {
+      "ID": "room-airshipoutside",
+      "Map": 3,
+      "Path": "Security/security_outside"
+    },
+    {
+      "ID": "room-airshipportraits",
+      "Map": 3,
+      "Path": "HallwayPortrait/hallportrait_main"
+    },
+    {
+      "ID": "room-airshipsecurity",
+      "Map": 3,
+      "Path": "Security/security_main"
+    },
+    {
+      "ID": "room-airshipshowers",
+      "Map": 3,
+      "Path": "Showers/showers_main"
+    },
+    {
+      "ID": "room-airshipstorage",
+      "Map": 3,
+      "Path": "Storage/storage_main"
+    },
+    {
+      "ID": "room-airshipvault",
+      "Map": 3,
+      "Path": "Vault/vault_main"
+    },
+    {
+      "ID": "room-airshipvent",
+      "Map": 3,
+      "Path": "Ventilation/ventilation_main"
+    },
+    {
+      "ID": "room-airshiprecords",
+      "Map": 3,
+      "Path": "Records/records_main"
+    },
+    {
+      "ID": "task-id",
+      "Map": 2,
+      "Path": "Office/panel_scanID"
+    },
+    {
+      "ID": "task-keys",
+      "Map": 2,
+      "Path": "Dropship/panel_keys"
+    },
+    {
+      "ID": "task-pass",
+      "Map": 2,
+      "Path": "Office/panel_boardingpass"
+    },
+    {
+      "ID": "task-wires",
+      "Map": 2,
+      "Path": "Electrical/panel_electrical_elec"
+    },
+    {
+      "ID": "task-download",
+      "Map": 2,
+      "Path": "Electrical/panel_data"
+    },
+    {
+      "ID": "task-simonsays",
+      "Map": 2,
+      "Path": "RightPod/panel_simonsays"
+    },
+    {
+      "ID": "task-fuel1",
+      "Map": 2,
+      "Path": "Storage/panel_gascan"
+    },
+    {
+      "ID": "task-fuel2",
+      "Map": 2,
+      "Path": "Dropship/panel_fuel (1)"
+    },
+    {
+      "ID": "task-waterwheel1",
+      "Map": 2,
+      "Path": "LifeSupport/pipe1/panel_waterwheel"
+    },
+    {
+      "ID": "task-samples",
+      "Map": 2,
+      "Path": "Science/panel_samples"
+    },
+    {
+      "ID": "task-waterjug1",
+      "Map": 2,
+      "Path": "LifeSupport/panel_waterjug"
+    },
+    {
+      "ID": "task-waterjug2",
+      "Map": 2,
+      "Path": "LifeSupport/panel_waterjug"
+    },
+    {
+      "ID": "task-router",
+      "Map": 2,
+      "Path": "Comms/Walls/panel_wifi"
+    },
+    {
+      "ID": "task-tree",
+      "Map": 2,
+      "Path": "LifeSupport/panel_Tree"
+    },
+    {
+      "ID": "task-counting",
+      "Map": 2,
+      "Path": "RightPod/panel_manifolds"
+    },
+    {
+      "ID": "task-artifacts",
+      "Map": 2,
+      "Path": "RightPod/panel_cooler1"
+    },
+    {
+      "ID": "task-oxygen",
+      "Map": 2,
+      "Path": "LifeSupport/panel_fill02"
+    },
+    {
+      "ID": "task-garbage",
+      "Map": 2,
+      "Path": "LifeSupport/storage_middlewall/panel_garbage"
+    },
+    {
+      "ID": "task-chart",
+      "Map": 2,
+      "Path": "Dropship/panel_nav"
+    },
+    {
+      "ID": "task-medscan",
+      "Map": 2,
+      "Path": "Science/panel_medplatform"
+    },
+    {
+      "ID": "task-weapons",
+      "Map": 2,
+      "Path": "Weapons/Walls/panel_weapons"
+    },
+    {
+      "ID": "task-telescope",
+      "Map": 2,
+      "Path": "Science/telescope/panel_telescope"
+    },
+    {
+      "ID": "task-drill",
+      "Map": 2,
+      "Path": "Science/drill/panel_drill_real"
+    },
+    {
+      "ID": "task-temp1",
+      "Map": 2,
+      "Path": "Outside/panel_temphot"
+    },
+    {
+      "ID": "task-temp2",
+      "Map": 2,
+      "Path": "Science/panel_tempcold"
+    },
+    {
+      "ID": "task-node",
+      "Map": 2,
+      "Path": "Outside/panel_node_ca"
+    },
+    {
+      "ID": "task-nodeswitch",
+      "Map": 2,
+      "Path": "Science/panel_weather"
+    },
+    {
+      "ID": "task-code",
+      "Map": 1,
+      "Path": "Admin/MapTable/EnterCodeConsole"
+    },
+    {
+      "ID": "task-divert1",
+      "Map": 1,
+      "Path": "Reactor/reactor-desk-elec/DivertPowerConsoleMain"
+    },
+    {
+      "ID": "task-divert2",
+      "Map": 1,
+      "Path": "Admin/DivertPowerConsoleAdmin"
+    },
+    {
+      "ID": "task-plants1",
+      "Map": 1,
+      "Path": "Storage/StorageConsole"
+    },
+    {
+      "ID": "task-plants2",
+      "Map": 1,
+      "Path": "Garden/PlantConsole"
+    },
+    {
+      "ID": "task-crystal",
+      "Map": 1,
+      "Path": "Laboratory/AssembleArtifactConsole"
+    },
+    {
+      "ID": "task-sort",
+      "Map": 1,
+      "Path": "Laboratory/labTable/SortSamplesConsole"
+    },
+    {
+      "ID": "task-shields",
+      "Map": 0,
+      "Path": "Shields/Ground/shields_floor/ShieldLowerLeft/ShieldConsole"
+    },
+    {
+      "ID": "task-weather",
+      "Map": 1,
+      "Path": "Balcony/weatherPanel/WeatherConsole"
+    },
+    {
+      "ID": "task-vending",
+      "Map": 1,
+      "Path": "Cafe/VendingMachineConsole"
+    },
+    {
+      "ID": "task-process",
+      "Map": 1,
+      "Path": "Office/DataConsole"
+    },
+    {
+      "ID": "task-diagnostics",
+      "Map": 1,
+      "Path": "LaunchPad/launch-pad-right/CalibrateConsole"
+    },
+    {
+      "ID": "task-align1",
+      "Map": 0,
+      "Path": "RightEngine/Ground/engineRight/AlignEngineConsole"
+    },
+    {
+      "ID": "task-stabilize",
+      "Map": 0,
+      "Path": "Cockpit/Ground/StabilizeSteeringConsole"
+    },
+    {
+      "ID": "task-showers",
+      "Map": 3,
+      "Path": "Showers/task_shower"
+    },
+    {
+      "ID": "task-burger",
+      "Map": 3,
+      "Path": "Kitchen/task_burgah"
+    },
+    {
+      "ID": "task-decontaminate",
+      "Map": 3,
+      "Path": "HallwayMain/task_hose"
+    },
+    {
+      "ID": "task-rifles1",
+      "Map": 3,
+      "Path": "Armory/task_rifles2"
+    },
+    {
+      "ID": "task-rifles2",
+      "Map": 3,
+      "Path": "Armory/task_rifles"
+    },
+    {
+      "ID": "task-pistols1",
+      "Map": 3,
+      "Path": "Armory/task_Handguns2"
+    },
+    {
+      "ID": "task-pistols2",
+      "Map": 3,
+      "Path": "Armory/Task_Handguns"
+    },
+    {
+      "ID": "task-records1",
+      "Map": 3,
+      "Path": "Records/task_records_folder"
+    },
+    {
+      "ID": "task-records2",
+      "Map": 3,
+      "Path": "Records/records_left/task_records3"
+    },
+    {
+      "ID": "task-mannequin",
+      "Map": 3,
+      "Path": "Vault/panel_dummy"
+    },
+    {
+      "ID": "task-toilet",
+      "Map": 3,
+      "Path": "Lounge/task_toilet"
+    },
+    {
+      "ID": "task-towels1",
+      "Map": 3,
+      "Path": "Showers/task_towelbasket"
+    },
+    {
+      "ID": "task-towels2",
+      "Map": 3,
+      "Path": "Showers/TaskTowels/task_towelwet"
+    },
+    {
+      "ID": "task-towels3",
+      "Map": 3,
+      "Path": "Showers/TaskTowels/task_towelflat"
+    },
+    {
+      "ID": "task-towels4",
+      "Map": 3,
+      "Path": "Showers/TaskTowels/task_towelbunched"
+    },
+    {
+      "ID": "task-towels5",
+      "Map": 3,
+      "Path": "Showers/TaskTowels/task_towelhang"
+    },
+    {
+      "ID": "task-stabilize2",
+      "Map": 3,
+      "Path": "Cockpit/panel_cockpit_steering"
+    },
+    {
+      "ID": "task-ruby",
+      "Map": 3,
+      "Path": "Vault/RubyRoot/RubyTask"
+    },
+    {
+      "ID": "task-tapes",
+      "Map": 3,
+      "Path": "Security/task_tapes_right"
+    },
+    {
+      "ID": "task-photos",
+      "Map": 3,
+      "Path": "HallwayMain/task_developphotos"
+    },
+    {
+      "ID": "task-garbage2",
+      "Map": 3,
+      "Path": "HallwayMain/task_garbage2"
+    },
+    {
+      "ID": "task-garbage3",
+      "Map": 3,
+      "Path": "Medbay/task_garbage1"
+    },
+    {
+      "ID": "task-garbage4",
+      "Map": 3,
+      "Path": "Kitchen/task_garbage3"
+    },
+    {
+      "ID": "task-garbage5",
+      "Map": 3,
+      "Path": "MeetingRoom/panel_garbagelever"
+    },
+    {
+      "ID": "task-safe",
+      "Map": 3,
+      "Path": "Storage/task_safe"
+    },
+    {
+      "ID": "task-breakers",
+      "Map": 3,
+      "Path": "Electrical/task_electriclever"
+    },
+    {
+      "ID": "task-fans1",
+      "Map": 3,
+      "Path": "Ventilation/task_fans"
+    },
+    {
+      "ID": "task-fans2",
+      "Map": 3,
+      "Path": "Ventilation/task_fans (1)"
+    },
+    {
+      "ID": "task-distributor",
+      "Map": 3,
+      "Path": "Electrical/task_calibrate"
+    },
+    {
+      "ID": "ss-skeld",
+      "Map": 0,
+      "Path": ""
+    },
+    {
+      "ID": "ss-mira",
+      "Map": 1,
+      "Path": ""
+    },
+    {
+      "ID": "ss-polus",
+      "Map": 2,
+      "Path": ""
+    },
+    {
+      "ID": "ss-airship",
+      "Map": 3,
+      "Path": ""
+    },
+    {
+      "ID": "dec-barrier",
+      "Map": 2,
+      "Path": "Electrical/barrier"
+    },
+    {
+      "ID": "dec-bathroom",
+      "Map": 2,
+      "Path": "Science/bathroomabove"
+    },
+    {
+      "ID": "dec-bed1",
+      "Map": 1,
+      "Path": "MedBay/medBayBed"
+    },
+    {
+      "ID": "dec-bed2",
+      "Map": 1,
+      "Path": "MedBay/medBayBedHort"
+    },
+    {
+      "ID": "dec-bench1",
+      "Map": 1,
+      "Path": "Locker/lockersBench"
+    },
+    {
+      "ID": "dec-bench2",
+      "Map": 1,
+      "Path": "Locker/locker-bench-left-side"
+    },
+    {
+      "ID": "dec-bench3",
+      "Map": 3,
+      "Path": "Showers/showers_bench3"
+    },
+    {
+      "ID": "dec-bench4",
+      "Map": 3,
+      "Path": "Showers/shower_bench1"
+    },
+    {
+      "ID": "dec-bench5",
+      "Map": 3,
+      "Path": "Showers/shower_bench2"
+    },
+    {
+      "ID": "dec-box1",
+      "Map": 0,
+      "Path": "Storage/Ground/storage_Boxes/TumbleBox/storage_box-boxtumble0001"
+    },
+    {
+      "ID": "dec-box2",
+      "Map": 1,
+      "Path": "LaunchPad/launchPadNearShip"
+    },
+    {
+      "ID": "dec-box3",
+      "Map": 1,
+      "Path": "LaunchPad/launch-front"
+    },
+    {
+      "ID": "dec-box4",
+      "Map": 2,
+      "Path": "Outside/RocksNBoxes/boxclust2"
+    },
+    {
+      "ID": "dec-box5",
+      "Map": 2,
+      "Path": "Outside/RocksNBoxes/boxcluster"
+    },
+    {
+      "ID": "dec-box6",
+      "Map": 2,
+      "Path": "Storage/storagebox"
+    },
+    {
+      "ID": "dec-box7",
+      "Map": 0,
+      "Path": "Storage/Ground/storage_Boxes"
+    },
+    {
+      "ID": "dec-box8",
+      "Map": 1,
+      "Path": "Storage/storage-boxes1"
+    },
+    {
+      "ID": "dec-box9",
+      "Map": 1,
+      "Path": "Storage/storage-box2"
+    },
+    {
+      "ID": "dec-divingboard",
+      "Map": 2,
+      "Path": "Background/divingboard"
+    },
+    {
+      "ID": "dec-engine1",
+      "Map": 0,
+      "Path": "RightEngine/Ground/engineRight"
+    },
+    {
+      "ID": "dec-engine2",
+      "Map": 3,
+      "Path": "Engine/engine_enginetop (1)"
+    },
+    {
+      "ID": "dec-projector",
+      "Map": 2,
+      "Path": "Office/projector"
+    },
+    {
+      "ID": "dec-rock1",
+      "Map": 2,
+      "Path": "Outside/RocksNBoxes/rock1"
+    },
+    {
+      "ID": "dec-rock2",
+      "Map": 2,
+      "Path": "Outside/RocksNBoxes/rock2"
+    },
+    {
+      "ID": "dec-rock3",
+      "Map": 2,
+      "Path": "Outside/RocksNBoxes/rock3"
+    },
+    {
+      "ID": "dec-rock4",
+      "Map": 2,
+      "Path": "Outside/RocksNBoxes/rockblock1"
+    },
+    {
+      "ID": "dec-rock5",
+      "Map": 2,
+      "Path": "Outside/RocksNBoxes/bigRock"
+    },
+    {
+      "ID": "dec-snowman",
+      "Map": 2,
+      "Path": "Outside/Snowmen/snowman"
+    },
+    {
+      "ID": "dec-snowmanded",
+      "Map": 2,
+      "Path": "Outside/Snowmen/snowmanded.png"
+    },
+    {
+      "ID": "dec-table1",
+      "Map": 2,
+      "Path": "Science/sciencetable"
+    },
+    {
+      "ID": "dec-table2",
+      "Map": 0,
+      "Path": "Admin/Ground/admin_bridge"
+    },
+    {
+      "ID": "dec-table3",
+      "Map": 1,
+      "Path": "Comms/comms-top"
+    },
+    {
+      "ID": "dec-table4",
+      "Map": 1,
+      "Path": "Office/computerTableB"
+    },
+    {
+      "ID": "dec-table5",
+      "Map": 1,
+      "Path": "Office/office-mid"
+    },
+    {
+      "ID": "dec-table6",
+      "Map": 1,
+      "Path": "Office/computerTableM"
+    },
+    {
+      "ID": "dec-table7",
+      "Map": 1,
+      "Path": "Comms/comms-side"
+    },
+    {
+      "ID": "dec-table8",
+      "Map": 1,
+      "Path": "Laboratory/labTable"
+    },
+    {
+      "ID": "dec-table9",
+      "Map": 1,
+      "Path": "Laboratory/lab-right"
+    },
+    {
+      "ID": "dec-table10",
+      "Map": 1,
+      "Path": "Cafe/Table (1)"
+    },
+    {
+      "ID": "dec-table11",
+      "Map": 3,
+      "Path": "Armory/armory_table"
+    },
+    {
+      "ID": "dec-table12",
+      "Map": 3,
+      "Path": "MeetingRoom/meeting_table"
+    },
+    {
+      "ID": "dec-table13",
+      "Map": 3,
+      "Path": "Medbay/medbay_table"
+    },
+    {
+      "ID": "dec-table14",
+      "Map": 3,
+      "Path": "Records/records_table"
+    },
+    {
+      "ID": "dec-vending2",
+      "Map": 1,
+      "Path": "Cafe/cafVendMachbottom"
+    },
+    {
+      "ID": "dec-vending3",
+      "Map": 1,
+      "Path": "Cafe/cafVendingMachRight"
+    },
+    {
+      "ID": "dec-cargo1",
+      "Map": 3,
+      "Path": "Storage/storage_cargo1"
+    },
+    {
+      "ID": "dec-chair1",
+      "Map": 3,
+      "Path": "Cockpit/cockpit_chair"
+    },
+    {
+      "ID": "dec-chair2",
+      "Map": 3,
+      "Path": "Records/records_chair_left"
+    },
+    {
+      "ID": "dec-chair3",
+      "Map": 3,
+      "Path": "Lounge/lounge_stool"
+    },
+    {
+      "ID": "dec-panel1",
+      "Map": 3,
+      "Path": "Cockpit/cockpit_comms"
+    },
+    {
+      "ID": "dec-panel2",
+      "Map": 3,
+      "Path": "Cockpit/cockpit_elect"
+    },
+    {
+      "ID": "dec-pool1",
+      "Map": 3,
+      "Path": "Lounge/lounge_pooltable1"
+    },
+    {
+      "ID": "dec-pool2",
+      "Map": 3,
+      "Path": "Lounge/lounge_pooltable2"
+    },
+    {
+      "ID": "dec-scale",
+      "Map": 3,
+      "Path": "Medbay/medbay_scale"
+    },
+    {
+      "ID": "dec-shelf1",
+      "Map": 3,
+      "Path": "Kitchen/kitchen_shelf"
+    },
+    {
+      "ID": "dec-shelf2",
+      "Map": 3,
+      "Path": "Records/records_left"
+    },
+    {
+      "ID": "dec-statue1",
+      "Map": 3,
+      "Path": "Vault/vault_gun"
+    },
+    {
+      "ID": "dec-statue2",
+      "Map": 3,
+      "Path": "Vault/vault_sword"
+    },
+    {
+      "ID": "dec-stove1",
+      "Map": 3,
+      "Path": "Kitchen/kitchen_table1"
+    },
+    {
+      "ID": "dec-stove2",
+      "Map": 3,
+      "Path": "Kitchen/kitchen_table2"
+    }
+  ],
+  "TaskDB": [
+    {
+      "ID": "task-id",
+      "Map": 2,
+      "Type": 0,
+      "Name": "OfficeSwipeCardTask"
+    },
+    {
+      "ID": "task-keys",
+      "Map": 2,
+      "Type": 0,
+      "Name": "InsertKeys"
+    },
+    {
+      "ID": "task-pass",
+      "Map": 2,
+      "Type": 0,
+      "Name": "ScanBoardingPass"
+    },
+    {
+      "ID": "task-wires",
+      "Map": 2,
+      "Type": 0,
+      "Name": "FixWiring"
+    },
+    {
+      "ID": "task-code",
+      "Map": 1,
+      "Type": 0,
+      "Name": "EnterCodeTask"
+    },
+    {
+      "ID": "task-tree",
+      "Map": 2,
+      "Type": 1,
+      "Name": "MonitorOxy"
+    },
+    {
+      "ID": "task-counting",
+      "Map": 2,
+      "Type": 1,
+      "Name": "UnlockManifoldsTaskPb"
+    },
+    {
+      "ID": "task-artifacts",
+      "Map": 2,
+      "Type": 1,
+      "Name": "StoreArtifacts"
+    },
+    {
+      "ID": "task-oxygen",
+      "Map": 2,
+      "Type": 1,
+      "Name": "FillCanisters"
+    },
+    {
+      "ID": "task-garbage",
+      "Map": 2,
+      "Type": 1,
+      "Name": "EmptyOneGarbageLifeSupp"
+    },
+    {
+      "ID": "task-chart",
+      "Map": 2,
+      "Type": 1,
+      "Name": "DShipChartCourseTask"
+    },
+    {
+      "ID": "task-medscan",
+      "Map": 2,
+      "Type": 1,
+      "Name": "MedScanTask"
+    },
+    {
+      "ID": "task-weapons",
+      "Map": 2,
+      "Type": 1,
+      "Name": "ClearAsteroids"
+    },
+    {
+      "ID": "task-telescope",
+      "Map": 2,
+      "Type": 1,
+      "Name": "AlignTelescope"
+    },
+    {
+      "ID": "task-drill",
+      "Map": 2,
+      "Type": 1,
+      "Name": "RepairDrill"
+    },
+    {
+      "ID": "task-temp1",
+      "Map": 2,
+      "Type": 1,
+      "Name": "RecordHotTemperature"
+    },
+    {
+      "ID": "task-temp2",
+      "Map": 2,
+      "Type": 1,
+      "Name": "RecordColdTemperature"
+    },
+    {
+      "ID": "task-divert1",
+      "Map": 1,
+      "Type": 1,
+      "Name": "DivertLabPower"
+    },
+    {
+      "ID": "task-crystal",
+      "Map": 1,
+      "Type": 1,
+      "Name": "AssembleArtifact"
+    },
+    {
+      "ID": "task-sort",
+      "Map": 1,
+      "Type": 1,
+      "Name": "SortSamples"
+    },
+    {
+      "ID": "task-shields",
+      "Map": 0,
+      "Type": 1,
+      "Name": "PrimeShieldsTask"
+    },
+    {
+      "ID": "task-weather",
+      "Map": 1,
+      "Type": 1,
+      "Name": "MeasureWeather"
+    },
+    {
+      "ID": "task-vending",
+      "Map": 1,
+      "Type": 1,
+      "Name": "BuyBeverage"
+    },
+    {
+      "ID": "task-process",
+      "Map": 1,
+      "Type": 1,
+      "Name": "ProcessData"
+    },
+    {
+      "ID": "task-diagnostics",
+      "Map": 1,
+      "Type": 1,
+      "Name": "RunDiagnostic"
+    },
+    {
+      "ID": "task-stabilize",
+      "Map": 0,
+      "Type": 1,
+      "Name": "StabilizeSteeringTask"
+    },
+    {
+      "ID": "task-showers",
+      "Map": 3,
+      "Type": 1,
+      "Name": "FixShowerTask"
+    },
+    {
+      "ID": "task-burger",
+      "Map": 3,
+      "Type": 1,
+      "Name": "BurgerTask"
+    },
+    {
+      "ID": "task-decontaminate",
+      "Map": 3,
+      "Type": 1,
+      "Name": "WashUpTask"
+    },
+    {
+      "ID": "task-rifles1",
+      "Map": 3,
+      "Type": 1,
+      "Name": "StowRifles"
+    },
+    {
+      "ID": "task-pistols1",
+      "Map": 3,
+      "Type": 1,
+      "Name": "StowGuns"
+    },
+    {
+      "ID": "task-records1",
+      "Map": 3,
+      "Type": 1,
+      "Name": "FileRecords"
+    },
+    {
+      "ID": "task-mannequin",
+      "Map": 3,
+      "Type": 1,
+      "Name": "DressMannequin"
+    },
+    {
+      "ID": "task-toilet",
+      "Map": 3,
+      "Type": 1,
+      "Name": "PlungeToilet"
+    },
+    {
+      "ID": "task-towels1",
+      "Map": 3,
+      "Type": 1,
+      "Name": "PickUpTowelsTask"
+    },
+    {
+      "ID": "task-stabilize2",
+      "Map": 3,
+      "Type": 1,
+      "Name": "AlignAirshipEnginesTask"
+    },
+    {
+      "ID": "task-ruby",
+      "Map": 3,
+      "Type": 1,
+      "Name": "PolishRubyTask"
+    },
+    {
+      "ID": "task-download",
+      "Map": 2,
+      "Type": 2,
+      "Name": "UploadWeaponsPb"
+    },
+    {
+      "ID": "task-simonsays",
+      "Map": 2,
+      "Type": 2,
+      "Name": "StartReactorTaskPb"
+    },
+    {
+      "ID": "task-fuel1",
+      "Map": 2,
+      "Type": 2,
+      "Name": "RefuelTask"
+    },
+    {
+      "ID": "task-waterwheel1",
+      "Map": 2,
+      "Type": 2,
+      "Name": "OpenWaterways"
+    },
+    {
+      "ID": "task-samples",
+      "Map": 2,
+      "Type": 2,
+      "Name": "InspectSample"
+    },
+    {
+      "ID": "task-waterjug1",
+      "Map": 2,
+      "Type": 2,
+      "Name": "ReplaceWater"
+    },
+    {
+      "ID": "task-router",
+      "Map": 2,
+      "Type": 2,
+      "Name": "RebootWifi"
+    },
+    {
+      "ID": "task-node",
+      "Map": 2,
+      "Type": 2,
+      "Name": "WeatherGi"
+    },
+    {
+      "ID": "task-plants1",
+      "Map": 1,
+      "Type": 2,
+      "Name": "WaterPlants"
+    },
+    {
+      "ID": "task-align1",
+      "Map": 0,
+      "Type": 2,
+      "Name": "AlignEnginesTask"
+    },
+    {
+      "ID": "task-tapes",
+      "Map": 3,
+      "Type": 2,
+      "Name": "RewindTape"
+    },
+    {
+      "ID": "task-photos",
+      "Map": 3,
+      "Type": 2,
+      "Name": "DevelopPhotos"
+    },
+    {
+      "ID": "task-garbage2",
+      "Map": 3,
+      "Type": 2,
+      "Name": "HallGarbage"
+    },
+    {
+      "ID": "task-garbage3",
+      "Map": 3,
+      "Type": 2,
+      "Name": "MedGarbage"
+    },
+    {
+      "ID": "task-garbage4",
+      "Map": 3,
+      "Type": 2,
+      "Name": "KitchenGarbage"
+    },
+    {
+      "ID": "task-safe",
+      "Map": 3,
+      "Type": 2,
+      "Name": "OpenSafeTask"
+    },
+    {
+      "ID": "task-breakers",
+      "Map": 3,
+      "Type": 2,
+      "Name": "ResetBreakers"
+    },
+    {
+      "ID": "task-fans1",
+      "Map": 3,
+      "Type": 2,
+      "Name": "StartFans"
+    },
+    {
+      "ID": "task-distributor",
+      "Map": 3,
+      "Type": 2,
+      "Name": "CalibrateDistributorTask"
+    },
+    {
+      "ID": "sab-electric",
+      "Map": 2,
+      "Type": 3,
+      "Name": "FixLightsTask"
+    },
+    {
+      "ID": "sab-reactorleft",
+      "Map": 2,
+      "Type": 3,
+      "Name": "SeismicTask"
+    },
+    {
+      "ID": "sab-reactorright",
+      "Map": 2,
+      "Type": 3,
+      "Name": "SeismicTask"
+    },
+    {
+      "ID": "sab-comms",
+      "Map": 2,
+      "Type": 3,
+      "Name": "FixComms"
+    },
+    {
+      "ID": "sab-oxygen1",
+      "Map": 0,
+      "Type": 3,
+      "Name": "NoOxyTask"
+    },
+    {
+      "ID": "sab-oxygen2",
+      "Map": 0,
+      "Type": 3,
+      "Name": "NoOxyTask"
+    }
+  ],
+  "SoundDB": [
+    {
+      "ID": "FootstepCarpet01.wav",
+      "Map": 2,
+      "Path": "Admin/Sounds/Carpet",
+      "Name": "FootstepCarpet01"
+    },
+    {
+      "ID": "FootstepCarpet02.wav",
+      "Map": 2,
+      "Path": "Admin/Sounds/Carpet",
+      "Name": "FootstepCarpet02"
+    },
+    {
+      "ID": "FootstepCarpet03.wav",
+      "Map": 2,
+      "Path": "Admin/Sounds/Carpet",
+      "Name": "FootstepCarpet03"
+    },
+    {
+      "ID": "FootstepCarpet04.wav",
+      "Map": 2,
+      "Path": "Admin/Sounds/Carpet",
+      "Name": "FootstepCarpet04"
+    },
+    {
+      "ID": "FootstepCarpet05.wav",
+      "Map": 2,
+      "Path": "Admin/Sounds/Carpet",
+      "Name": "FootstepCarpet05"
+    },
+    {
+      "ID": "FootstepCarpet06.wav",
+      "Map": 2,
+      "Path": "Admin/Sounds/Carpet",
+      "Name": "FootstepCarpet06"
+    },
+    {
+      "ID": "FootstepCarpet07.wav",
+      "Map": 2,
+      "Path": "Admin/Sounds/Carpet",
+      "Name": "FootstepCarpet07"
+    },
+    {
+      "ID": "FootstepDirt01.wav",
+      "Map": 2,
+      "Path": "OuterBoundary",
+      "Name": "FootstepDirt01"
+    },
+    {
+      "ID": "FootstepDirt02.wav",
+      "Map": 2,
+      "Path": "OuterBoundary",
+      "Name": "FootstepDirt02"
+    },
+    {
+      "ID": "FootstepDirt03.wav",
+      "Map": 2,
+      "Path": "OuterBoundary",
+      "Name": "FootstepDirt03"
+    },
+    {
+      "ID": "FootstepDirt04.wav",
+      "Map": 2,
+      "Path": "OuterBoundary",
+      "Name": "FootstepDirt04"
+    },
+    {
+      "ID": "FootstepDirt05.wav",
+      "Map": 2,
+      "Path": "OuterBoundary",
+      "Name": "FootstepDirt05"
+    },
+    {
+      "ID": "FootstepDirt06.wav",
+      "Map": 2,
+      "Path": "OuterBoundary",
+      "Name": "FootstepDirt06"
+    },
+    {
+      "ID": "FootstepDirt07.wav",
+      "Map": 2,
+      "Path": "OuterBoundary",
+      "Name": "FootstepDirt07"
+    },
+    {
+      "ID": "FootstepGlass01.wav",
+      "Map": 1,
+      "Path": "SkyBridge",
+      "Name": "FootstepGlass01"
+    },
+    {
+      "ID": "FootstepGlass02.wav",
+      "Map": 1,
+      "Path": "SkyBridge",
+      "Name": "FootstepGlass02"
+    },
+    {
+      "ID": "FootstepGlass03.wav",
+      "Map": 1,
+      "Path": "SkyBridge",
+      "Name": "FootstepGlass03"
+    },
+    {
+      "ID": "FootstepGlass04.wav",
+      "Map": 1,
+      "Path": "SkyBridge",
+      "Name": "FootstepGlass04"
+    },
+    {
+      "ID": "FootstepGlass05.wav",
+      "Map": 1,
+      "Path": "SkyBridge",
+      "Name": "FootstepGlass05"
+    },
+    {
+      "ID": "FootstepGlass06.wav",
+      "Map": 1,
+      "Path": "SkyBridge",
+      "Name": "FootstepGlass06"
+    },
+    {
+      "ID": "FootstepGlass07.wav",
+      "Map": 1,
+      "Path": "SkyBridge",
+      "Name": "FootstepGlass07"
+    },
+    {
+      "ID": "FootstepMetal01.wav",
+      "Map": 2,
+      "Path": "LifeSupport/Sounds/Metal",
+      "Name": "FootstepMetal01"
+    },
+    {
+      "ID": "FootstepMetal02.wav",
+      "Map": 2,
+      "Path": "LifeSupport/Sounds/Metal",
+      "Name": "FootstepMetal02"
+    },
+    {
+      "ID": "FootstepMetal03.wav",
+      "Map": 2,
+      "Path": "LifeSupport/Sounds/Metal",
+      "Name": "FootstepMetal03"
+    },
+    {
+      "ID": "FootstepMetal04.wav",
+      "Map": 2,
+      "Path": "LifeSupport/Sounds/Metal",
+      "Name": "FootstepMetal04"
+    },
+    {
+      "ID": "FootstepMetal05.wav",
+      "Map": 2,
+      "Path": "LifeSupport/Sounds/Metal",
+      "Name": "FootstepMetal05"
+    },
+    {
+      "ID": "FootstepMetal06.wav",
+      "Map": 2,
+      "Path": "LifeSupport/Sounds/Metal",
+      "Name": "FootstepMetal06"
+    },
+    {
+      "ID": "FootstepMetal07.wav",
+      "Map": 2,
+      "Path": "LifeSupport/Sounds/Metal",
+      "Name": "FootstepMetal07"
+    },
+    {
+      "ID": "FootstepMetal08.wav",
+      "Map": 2,
+      "Path": "LifeSupport/Sounds/Metal",
+      "Name": "FootstepMetal08"
+    },
+    {
+      "ID": "FootstepPlastic01.wav",
+      "Map": 2,
+      "Path": "Electrical/Sounds/Plastic",
+      "Name": "FootstepPlastic01"
+    },
+    {
+      "ID": "FootstepPlastic02.wav",
+      "Map": 2,
+      "Path": "Electrical/Sounds/Plastic",
+      "Name": "FootstepPlastic02"
+    },
+    {
+      "ID": "FootstepPlastic03.wav",
+      "Map": 2,
+      "Path": "Electrical/Sounds/Plastic",
+      "Name": "FootstepPlastic03"
+    },
+    {
+      "ID": "FootstepPlastic04.wav",
+      "Map": 2,
+      "Path": "Electrical/Sounds/Plastic",
+      "Name": "FootstepPlastic04"
+    },
+    {
+      "ID": "FootstepPlastic05.wav",
+      "Map": 2,
+      "Path": "Electrical/Sounds/Plastic",
+      "Name": "FootstepPlastic05"
+    },
+    {
+      "ID": "FootstepSnow01.wav",
+      "Map": 2,
+      "Path": "Outside/Sounds/Snow",
+      "Name": "FootstepSnow01"
+    },
+    {
+      "ID": "FootstepSnow02.wav",
+      "Map": 2,
+      "Path": "Outside/Sounds/Snow",
+      "Name": "FootstepSnow02"
+    },
+    {
+      "ID": "FootstepSnow03.wav",
+      "Map": 2,
+      "Path": "Outside/Sounds/Snow",
+      "Name": "FootstepSnow03"
+    },
+    {
+      "ID": "FootstepSnow04.wav",
+      "Map": 2,
+      "Path": "Outside/Sounds/Snow",
+      "Name": "FootstepSnow04"
+    },
+    {
+      "ID": "FootstepSnow05.wav",
+      "Map": 2,
+      "Path": "Outside/Sounds/Snow",
+      "Name": "FootstepSnow05"
+    },
+    {
+      "ID": "FootstepSnow06.wav",
+      "Map": 2,
+      "Path": "Outside/Sounds/Snow",
+      "Name": "FootstepSnow06"
+    },
+    {
+      "ID": "FootstepSnow07.wav",
+      "Map": 2,
+      "Path": "Outside/Sounds/Snow",
+      "Name": "FootstepSnow07"
+    },
+    {
+      "ID": "FootstepTile01.wav",
+      "Map": 2,
+      "Path": "Electrical/Sounds/Tile",
+      "Name": "FootstepTile01"
+    },
+    {
+      "ID": "FootstepTile02.wav",
+      "Map": 2,
+      "Path": "Electrical/Sounds/Tile",
+      "Name": "FootstepTile02"
+    },
+    {
+      "ID": "FootstepTile03.wav",
+      "Map": 2,
+      "Path": "Electrical/Sounds/Tile",
+      "Name": "FootstepTile03"
+    },
+    {
+      "ID": "FootstepTile04.wav",
+      "Map": 2,
+      "Path": "Electrical/Sounds/Tile",
+      "Name": "FootstepTile04"
+    },
+    {
+      "ID": "FootstepTile05.wav",
+      "Map": 2,
+      "Path": "Electrical/Sounds/Tile",
+      "Name": "FootstepTile05"
+    },
+    {
+      "ID": "FootstepTile06.wav",
+      "Map": 2,
+      "Path": "Electrical/Sounds/Tile",
+      "Name": "FootstepTile06"
+    },
+    {
+      "ID": "FootstepTile07.wav",
+      "Map": 2,
+      "Path": "Electrical/Sounds/Tile",
+      "Name": "FootstepTile07"
+    },
+    {
+      "ID": "FootstepWood01.wav",
+      "Map": 2,
+      "Path": "Admin/Sounds/Wood",
+      "Name": "FootstepWood01"
+    },
+    {
+      "ID": "FootstepWood02.wav",
+      "Map": 2,
+      "Path": "Admin/Sounds/Wood",
+      "Name": "FootstepWood02"
+    },
+    {
+      "ID": "FootstepWood03.wav",
+      "Map": 2,
+      "Path": "Admin/Sounds/Wood",
+      "Name": "FootstepWood03"
+    },
+    {
+      "ID": "FootstepWood04.wav",
+      "Map": 2,
+      "Path": "Admin/Sounds/Wood",
+      "Name": "FootstepWood04"
+    },
+    {
+      "ID": "FootstepWood05.wav",
+      "Map": 2,
+      "Path": "Admin/Sounds/Wood",
+      "Name": "FootstepWood05"
+    },
+    {
+      "ID": "FootstepWood06.wav",
+      "Map": 2,
+      "Path": "Admin/Sounds/Wood",
+      "Name": "FootstepWood06"
+    },
+    {
+      "ID": "FootstepWood07.wav",
+      "Map": 2,
+      "Path": "Admin/Sounds/Wood",
+      "Name": "FootstepWood07"
+    }
+  ]
+}

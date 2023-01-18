@@ -18,7 +18,12 @@ namespace LevelImposter.Core
             if (LIShipStatus.Instance?.ShipStatus == null)
                 throw new Exception("ShipStatus not found");
 
-            SabData sabData = AssetDB.Sabs[elem.type];
+            // Prefab
+            var prefab = AssetDB.GetObject(elem.type);
+            if (prefab == null)
+                return;
+            var prefabRenderer = prefab.GetComponent<SpriteRenderer>();
+            var prefabDoor = prefab.GetComponent<PlainDoor>();
 
             // Default Sprite
             SpriteRenderer spriteRenderer = obj.GetComponent<SpriteRenderer>();
@@ -29,7 +34,7 @@ namespace LevelImposter.Core
             if (!spriteRenderer)
             {
                 spriteRenderer = obj.AddComponent<SpriteRenderer>();
-                spriteRenderer.sprite = sabData.SpriteRenderer.sprite;
+                spriteRenderer.sprite = prefabRenderer.sprite;
 
                 if (elem.properties.color != null)
                     spriteRenderer.color = MapUtils.LIColorToColor(elem.properties.color);
@@ -42,7 +47,7 @@ namespace LevelImposter.Core
                 spriteAnim.enabled = false;
                 animator.enabled = false;
             }
-            spriteRenderer.material = sabData.SpriteRenderer.material;
+            spriteRenderer.material = prefabRenderer.material;
 
             // Dummy Components
             BoxCollider2D dummyCollider = obj.AddComponent<BoxCollider2D>();
@@ -58,7 +63,6 @@ namespace LevelImposter.Core
             var doorType = elem.properties.doorType;
             bool isManualDoor = doorType == "polus" || doorType == "airship";
             ShipStatus shipStatus = LIShipStatus.Instance.ShipStatus;
-            PlainDoor doorClone = sabData.GameObj.GetComponent<PlainDoor>();
             PlainDoor doorComponent;
             if (isManualDoor)
             {
@@ -74,24 +78,24 @@ namespace LevelImposter.Core
             doorComponent.Id = _doorId++;
             doorComponent.myCollider = dummyCollider;
             doorComponent.animator = spriteAnim;
-            doorComponent.OpenSound = doorClone.OpenSound;
-            doorComponent.CloseSound = doorClone.CloseSound;
+            doorComponent.OpenSound = prefabDoor.OpenSound;
+            doorComponent.CloseSound = prefabDoor.CloseSound;
             shipStatus.AllDoors = MapUtils.AddToArr(shipStatus.AllDoors, doorComponent);
 
             // SpriteAnim
             if (isSpriteAnim)
             {
-                doorComponent.OpenDoorAnim = doorClone.OpenDoorAnim;
-                doorComponent.CloseDoorAnim = doorClone.CloseDoorAnim;
+                doorComponent.OpenDoorAnim = prefabDoor.OpenDoorAnim;
+                doorComponent.CloseDoorAnim = prefabDoor.CloseDoorAnim;
             }
 
             // Console
             if (isManualDoor)
             {
-                SabData sabData2 = AssetDB.Sabs["sab-door-" + doorType];
-                DoorConsole consoleClone = sabData2.GameObj.GetComponent<DoorConsole>();
+                var prefab2 = AssetDB.GetObject($"sab-door-{doorType}"); // "sab-door-polus" or "sab-door-airship"
+                DoorConsole? prefab2Console = prefab2?.GetComponent<DoorConsole>();
                 DoorConsole consoleComponent = obj.AddComponent<DoorConsole>();
-                consoleComponent.MinigamePrefab = consoleClone.MinigamePrefab;
+                consoleComponent.MinigamePrefab = prefab2Console?.MinigamePrefab;
             }
         }
 

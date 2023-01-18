@@ -27,8 +27,13 @@ namespace LevelImposter.Core
                 LILogger.Warn("Only 1 util-platform should be used per map");
                 return;
             }
-
-            UtilData utilData = AssetDB.Utils[elem.type];
+            
+            // Prefab
+            var prefab = AssetDB.GetObject(elem.type);
+            if (prefab == null)
+                return;
+            var prefabRenderer = prefab.GetComponent<SpriteRenderer>();
+            var prefabBehaviour = prefab.GetComponent<MovingPlatformBehaviour>();
 
             // Default Sprite
             SpriteRenderer spriteRenderer = obj.GetComponent<SpriteRenderer>();
@@ -36,11 +41,11 @@ namespace LevelImposter.Core
             if (!spriteRenderer)
             {
                 spriteRenderer = obj.AddComponent<SpriteRenderer>();
-                spriteRenderer.sprite = utilData.SpriteRenderer.sprite;
+                spriteRenderer.sprite = prefabRenderer.sprite;
                 if (elem.properties.color != null)
                     spriteRenderer.color = MapUtils.LIColorToColor(elem.properties.color);
             }
-            spriteRenderer.material = utilData.SpriteRenderer.material;
+            spriteRenderer.material = prefabRenderer.material;
 
             // Offsets
             Vector2 leftPos = obj.transform.position;
@@ -64,16 +69,16 @@ namespace LevelImposter.Core
             movingPlatform.LeftUsePosition = leftUsePos;
             movingPlatform.RightUsePosition = rightUsePos;
             movingPlatform.IsLeft = true;
-            movingPlatform.MovingSound = utilData.GameObj.GetComponent<MovingPlatformBehaviour>().MovingSound;
+            movingPlatform.MovingSound = prefabBehaviour.MovingSound;
             Platform = movingPlatform;
 
             // Consoles
             GameObject leftObj = new("Left Console");
-            leftObj.transform.SetParent(LIShipStatus.Instance.transform);
+            leftObj.transform.SetParent(LIShipStatus.Instance?.transform);
             leftObj.transform.localPosition = leftUsePos;
             leftObj.AddComponent<BoxCollider2D>().isTrigger = true;
             GameObject rightObj = new("Right Console");
-            rightObj.transform.SetParent(LIShipStatus.Instance.transform);
+            rightObj.transform.SetParent(LIShipStatus.Instance?.transform);
             rightObj.transform.localPosition = rightUsePos;
             rightObj.AddComponent<BoxCollider2D>().isTrigger = true;
 

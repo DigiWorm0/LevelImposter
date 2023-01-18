@@ -13,6 +13,12 @@ namespace LevelImposter.Core
             if (elem.type != "util-triggerconsole")
                 return;
 
+            // Prefab
+            var prefab = AssetDB.GetObject("util-computer");
+            if (prefab == null)
+                return;
+            var prefabRenderer = prefab.GetComponent<SpriteRenderer>();
+
             // Sprite
             SpriteRenderer rend = obj.GetComponent<SpriteRenderer>();
             obj.layer = (int)Layer.ShortObjects;
@@ -21,11 +27,7 @@ namespace LevelImposter.Core
                 LILogger.Warn($"{elem.name} is missing a sprite.");
                 return;
             }
-
-            // Material
-            UtilData fpComputerData = AssetDB.Utils["util-computer"];
-            SpriteRenderer fpComputerRend = fpComputerData.GameObj.GetComponent<SpriteRenderer>();
-            rend.material = fpComputerRend.material;
+            rend.material = prefabRenderer.material;
 
             // Spawnable Prefab
             GameObject spawnablePrefab = new GameObject(obj.name + "_Spawnable");
@@ -46,7 +48,7 @@ namespace LevelImposter.Core
 
 
             // Colliders
-            MapUtils.CreateTriggerColliders(obj, fpComputerData.GameObj);
+            MapUtils.CreateTriggerColliders(obj, prefab);
         }
 
         public void PostBuild() { }

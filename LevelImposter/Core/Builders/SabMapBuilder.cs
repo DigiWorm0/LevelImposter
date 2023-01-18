@@ -176,9 +176,14 @@ namespace LevelImposter.Core
         /// </summary>
         private void GetAllAssets()
         {
+            // TODO: Move Assets to a SubDB
+
             // Polus
-            ShipStatus polusShip = AssetDB.Ships["ss-polus"].ShipStatus;
-            InfectedOverlay polusOverlay = polusShip.MapPrefab.infectedOverlay;
+            var polusShip = AssetDB.GetObject("ss-polus");
+            var polusShipStatus = polusShip?.GetComponent<ShipStatus>();
+            var polusOverlay = polusShipStatus?.MapPrefab.infectedOverlay;
+            if (polusOverlay == null)
+                return;
 
             _commsBtnSprite = GetSprite(polusOverlay, "Comms", "bomb"); // um...BOMB!?
             _reactorBtnSprite = GetSprite(polusOverlay, "Laboratory", "meltdown");
@@ -187,8 +192,11 @@ namespace LevelImposter.Core
             _btnMat = polusOverlay.transform.GetChild(0).GetChild(0).GetComponent<SpriteRenderer>().material;
 
             // Mira
-            ShipStatus miraShip = AssetDB.Ships["ss-mira"].ShipStatus;
-            InfectedOverlay miraOverlay = miraShip.MapPrefab.infectedOverlay;
+            var miraShip = AssetDB.GetObject("ss-mira");
+            var miraShipStatus = miraShip?.GetComponent<ShipStatus>();
+            var miraOverlay = miraShipStatus?.MapPrefab.infectedOverlay;
+            if (miraOverlay == null)
+                return;
 
             _oxygenBtnSprite = GetSprite(miraOverlay, "LifeSupp", "bomb"); // Another bomb?
         }

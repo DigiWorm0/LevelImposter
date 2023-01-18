@@ -30,10 +30,14 @@ namespace LevelImposter.Core
         {
             if (!elem.type.StartsWith("util-ladder"))
                 return;
-
-            UtilData utilData = AssetDB.Utils[elem.type];
-            Ladder topClone = utilData.GameObj.transform.FindChild("LadderTop").GetComponent<Ladder>();
-            Ladder bottomClone = utilData.GameObj.transform.FindChild("LadderBottom").GetComponent<Ladder>();
+            
+            // Prefab
+            var prefab = AssetDB.GetObject(elem.type);
+            if (prefab == null)
+                return;
+            var prefabRenderer = prefab.GetComponent<SpriteRenderer>();
+            var topPrefab = prefab.transform.FindChild("LadderTop").GetComponent<Ladder>();
+            var bottomPrefab = prefab.transform.FindChild("LadderBottom").GetComponent<Ladder>();
 
             // Default Sprite
             SpriteRenderer spriteRenderer = obj.GetComponent<SpriteRenderer>();
@@ -41,12 +45,12 @@ namespace LevelImposter.Core
             if (!spriteRenderer)
             {
                 spriteRenderer = obj.AddComponent<SpriteRenderer>();
-                spriteRenderer.sprite = utilData.SpriteRenderer.sprite;
+                spriteRenderer.sprite = prefabRenderer.sprite;
 
                 if (elem.properties.color != null)
                     spriteRenderer.color = MapUtils.LIColorToColor(elem.properties.color);
             }
-            spriteRenderer.material = utilData.SpriteRenderer.material;
+            spriteRenderer.material = prefabRenderer.material;
 
             // Console
             float ladderHeight = elem.properties.ladderHeight == null ?
@@ -66,14 +70,14 @@ namespace LevelImposter.Core
             topConsole.Id = _ladderID++;
             topConsole.IsTop = true;
             topConsole.Destination = bottomConsole;
-            topConsole.UseSound = topClone.UseSound;
+            topConsole.UseSound = topPrefab.UseSound;
             topConsole.Image = spriteRenderer;
             _allLadders.Add(topConsole);
 
             bottomConsole.Id = _ladderID++;
             bottomConsole.IsTop = false;
             bottomConsole.Destination = topConsole;
-            bottomConsole.UseSound = bottomClone.UseSound;
+            bottomConsole.UseSound = bottomPrefab.UseSound;
             bottomConsole.Image = spriteRenderer;
             _allLadders.Add(bottomConsole);
         }

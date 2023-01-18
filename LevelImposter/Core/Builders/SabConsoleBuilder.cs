@@ -22,25 +22,30 @@ namespace LevelImposter.Core
         {
             if (!elem.type.StartsWith("sab-") || elem.type.StartsWith("sab-btn") || elem.type.StartsWith("sab-door"))
                 return;
+
+            // ShipStatus
             if (LIShipStatus.Instance?.ShipStatus == null)
                 throw new Exception("ShipStatus not found");
-
-            SabData sabData = AssetDB.Sabs[elem.type];
             ShipStatus shipStatus = LIShipStatus.Instance.ShipStatus;
-            SabotageTask sabClone = sabData.Behavior.Cast<SabotageTask>();
 
-
+            // Prefab
+            var prefab = AssetDB.GetObject(elem.type);
+            if (prefab == null)
+                return;
+            var prefabRenderer = prefab.GetComponent<SpriteRenderer>();
+            var prefabConsole = prefab.GetComponent<Console>();
+            
             // Default Sprite
             obj.layer = (int)Layer.ShortObjects;
             SpriteRenderer spriteRenderer = obj.GetComponent<SpriteRenderer>();
             if (!spriteRenderer)
             {
                 spriteRenderer = obj.AddComponent<SpriteRenderer>();
-                spriteRenderer.sprite = sabData.SpriteRenderer.sprite;
+                spriteRenderer.sprite = prefabRenderer.sprite;
                 if (elem.properties.color != null)
                     spriteRenderer.color = MapUtils.LIColorToColor(elem.properties.color);
             }
-            spriteRenderer.material = sabData.SpriteRenderer.material;
+            spriteRenderer.material = prefabRenderer.material;
 
             // Parent
             SystemTypes systemType = RoomBuilder.GetParentOrDefault(elem);
@@ -55,14 +60,13 @@ namespace LevelImposter.Core
 
             // Console
             Console console = obj.AddComponent<Console>();
-            Console origConsole = sabData.GameObj.GetComponent<Console>();
             console.ConsoleId = 0;
             console.Image = spriteRenderer;
             console.onlyFromBelow = elem.properties.onlyFromBelow == null ? true : (bool)elem.properties.onlyFromBelow;
             console.usableDistance = elem.properties.range ?? 1.0f;
             console.Room = systemType;
-            console.TaskTypes = origConsole.TaskTypes;
-            console.ValidTasks = origConsole.ValidTasks;
+            console.TaskTypes = prefabConsole.TaskTypes;
+            console.ValidTasks = prefabConsole.ValidTasks;
             console.AllowImpostor = true;
             console.GhostsIgnored = true;
 
@@ -70,10 +74,10 @@ namespace LevelImposter.Core
                 console.ConsoleId = CONSOLE_ID_PAIRS[elem.type];
 
             // Colliders
-            MapUtils.CreateTriggerColliders(obj, sabData.GameObj);
+            MapUtils.CreateTriggerColliders(obj, prefab);
 
             // Button
-            PassiveButton origBtn = sabData.GameObj.GetComponent<PassiveButton>();
+            PassiveButton origBtn = prefab.GetComponent<PassiveButton>();
             if (origBtn != null)
             {
                 PassiveButton btn = obj.AddComponent<PassiveButton>();
@@ -85,8 +89,9 @@ namespace LevelImposter.Core
             }
 
             // Arrow
-            ArrowBehaviour arrow = MakeArrow(sabotageTask.transform, $"{elem.name} Arrow");
-            sabotageTask.Arrows = MapUtils.AddToArr(sabotageTask.Arrows, arrow);
+            ArrowBehaviour? arrow = MakeArrow(sabotageTask.transform, $"{elem.name} Arrow");
+            if (arrow != null)
+                sabotageTask.Arrows = MapUtils.AddToArr(sabotageTask.Arrows, arrow);
         }
 
         public void PostBuild() { }
@@ -97,17 +102,23 @@ namespace LevelImposter.Core
         /// <param name="parent">Parent object to attatch to</param>
         /// <param name="name">Name of the arrows</param>
         /// <returns>ArrowBehaviour to append to SabotageTask</returns>
-        private ArrowBehaviour MakeArrow(Transform parent, string name)
+        private ArrowBehaviour? MakeArrow(Transform parent, string name)
         {
-            // Arrow Buttons
-            GameObject arrowClone = AssetDB.Sabs["sab-comms"].Behavior.gameObject.transform.FindChild("Arrow").gameObject;
-            SpriteRenderer arrowCloneSprite = arrowClone.GetComponent<SpriteRenderer>();
+
+            // Prefab
+            var prefab = AssetDB.GetTask<PlayerTask>("sab-comms");
+            if (prefab == null)
+                return null;
+            GameObject prefabArrow = prefab.gameObject.transform.FindChild("Arrow").gameObject;
+            SpriteRenderer prefabArrowRenderer = prefabArrow.GetComponent<SpriteRenderer>();
+
+            // Object
             GameObject arrowObj = new(name);
 
             // Sprite
             SpriteRenderer arrowSprite = arrowObj.AddComponent<SpriteRenderer>();
-            arrowSprite.sprite = arrowCloneSprite.sprite;
-            arrowSprite.material = arrowCloneSprite.material;
+            arrowSprite.sprite = prefabArrowRenderer.sprite;
+            arrowSprite.material = prefabArrowRenderer.material;
             arrowObj.layer = (int)Layer.UI;
 
             // Arrow Behaviour

@@ -26,6 +26,7 @@ namespace LevelImposter.Shop
         private string _currentListID = "downloaded";
         private HostLocalGameButton? _freeplayComp;
         private ShopButtons? _shopButtons;
+        private TMPro.TMP_FontAsset _brookFont;
         private Stack<MapBanner> _shopBanners = new();
 
         /// <summary>
@@ -198,7 +199,7 @@ namespace LevelImposter.Shop
         /// <param name="id">ID of the map to launch</param>
         public void LaunchMap(string id)
         {
-            if (!AssetDB.IsReady)
+            if (!AssetDB.IsInit)
                 return;
             LILogger.Info($"Launching map [{id}]");
             MapLoader.LoadMap(id, () =>

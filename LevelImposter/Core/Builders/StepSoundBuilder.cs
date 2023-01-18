@@ -46,9 +46,7 @@ namespace LevelImposter.Core
 
                 if (sound.isPreset) // Preset
                 {
-                    SoundData soundData;
-                    AssetDB.Sounds.TryGetValue(sound.data, out soundData);
-                    soundGroup.Clips[i] = soundData.Clip;
+                    soundGroup.Clips[i] = AssetDB.GetSound(sound.data);
                 }
                 else // WAVLoader
                 {

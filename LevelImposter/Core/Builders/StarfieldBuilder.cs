@@ -14,6 +14,12 @@ namespace LevelImposter.Core
             if (elem.type != "util-starfield")
                 return;
 
+            // Prefab
+            var prefab = AssetDB.GetObject("dec-rock4");
+            if (prefab == null)
+                return;
+            var prefabRenderer = prefab.GetComponent<SpriteRenderer>();
+
             // Sprite
             SpriteRenderer spriteRenderer = obj.GetComponent<SpriteRenderer>();
             if (spriteRenderer == null)
@@ -21,7 +27,7 @@ namespace LevelImposter.Core
                 LILogger.Warn($"{elem.name} missing a sprite");
                 return;
             }
-            spriteRenderer.material = AssetDB.Decor["dec-rock4"].SpriteRenderer.material;
+            spriteRenderer.material = prefabRenderer.material;
 
             // Star Prefab
             GameObject starPrefab = UnityEngine.Object.Instantiate(obj);

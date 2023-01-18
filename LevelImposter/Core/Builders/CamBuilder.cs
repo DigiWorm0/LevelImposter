@@ -14,7 +14,12 @@ namespace LevelImposter.Core
             if (elem.type != "util-cam")
                 return;
 
-            UtilData utilData = AssetDB.Utils[elem.type];
+            // Prefab
+            var prefab = AssetDB.GetObject(elem.type);
+            if (prefab == null)
+                return;
+            var prefabRenderer = prefab.GetComponent<SpriteRenderer>();
+            var prefabAnim = prefab.GetComponent<SpriteAnim>();
 
             // Default Sprite
             SpriteRenderer spriteRenderer = obj.GetComponent<SpriteRenderer>();
@@ -22,16 +27,15 @@ namespace LevelImposter.Core
             if (!spriteRenderer)
             {
                 spriteRenderer = obj.AddComponent<SpriteRenderer>();
-                spriteRenderer.sprite = utilData.SpriteRenderer.sprite;
+                spriteRenderer.sprite = prefabRenderer.sprite;
 
-                SpriteAnim spriteAnimClone = utilData.GameObj.GetComponent<SpriteAnim>();
                 SpriteAnim spriteAnim = obj.AddComponent<SpriteAnim>();
-                spriteAnim.Play(spriteAnimClone.m_defaultAnim, spriteAnimClone.Speed);
+                spriteAnim.Play(prefabAnim.m_defaultAnim, prefabAnim.Speed);
 
                 if (elem.properties.color != null)
                     spriteRenderer.color = MapUtils.LIColorToColor(elem.properties.color);
             }
-            spriteRenderer.material = utilData.SpriteRenderer.material;
+            spriteRenderer.material = prefabRenderer.material;
 
             // Camera
             SurvCamera survCam = obj.AddComponent<SurvCamera>();

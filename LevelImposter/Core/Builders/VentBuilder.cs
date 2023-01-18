@@ -21,10 +21,25 @@ namespace LevelImposter.Core
         {
             if (!elem.type.StartsWith("util-vent"))
                 return;
-            if (LIShipStatus.Instance?.ShipStatus == null)
+
+            // ShipStatus
+            var shipStatus = LIShipStatus.Instance?.ShipStatus;
+            if (shipStatus == null)
                 throw new Exception("ShipStatus not found");
 
-            UtilData utilData = AssetDB.Utils[elem.type];
+            // Prefab
+            var prefab = AssetDB.GetObject(elem.type);
+            if (prefab == null)
+                return;
+            var prefabRenderer = prefab.GetComponent<SpriteRenderer>();
+            var prefabAnim = prefab.GetComponent<SpriteAnim>();
+            var prefabConsole = prefab.GetComponent<VentCleaningConsole>();
+            var prefabVent = prefab.GetComponent<Vent>();
+            var prefabArrow = prefab.transform.FindChild("Arrow").gameObject;
+
+            // Skeld ShipStatus
+            var skeldShip = AssetDB.GetObject("ss-skeld");
+            var skeldShipStatus = skeldShip?.GetComponent<ShipStatus>();
 
             // Default Sprite
             SpriteRenderer spriteRenderer = obj.GetComponent<SpriteRenderer>();
@@ -32,58 +47,54 @@ namespace LevelImposter.Core
             if (!spriteRenderer)
             {
                 spriteRenderer = obj.AddComponent<SpriteRenderer>();
-                spriteRenderer.sprite = utilData.SpriteRenderer.sprite;
+                spriteRenderer.sprite = prefabRenderer.sprite;
                 if (elem.properties.color != null)
                     spriteRenderer.color = MapUtils.LIColorToColor(elem.properties.color);
                 if (elem.type == "util-vent1")
                 {
-                    SpriteAnim spriteAnimClone = utilData.GameObj.GetComponent<SpriteAnim>();
+                    SpriteAnim spriteAnimClone = prefabAnim;
                     SpriteAnim spriteAnim = obj.AddComponent<SpriteAnim>();
                     spriteAnim.Play(spriteAnimClone.m_defaultAnim, spriteAnimClone.Speed);
                 }
             }
-            spriteRenderer.material = utilData.SpriteRenderer.material;
+            spriteRenderer.material = prefabRenderer.material;
 
             // Console
-            VentCleaningConsole origConsole = utilData.GameObj.GetComponent<VentCleaningConsole>();
             VentCleaningConsole console = obj.AddComponent<VentCleaningConsole>();
             console.Image = spriteRenderer;
-            console.ImpostorDiscoveredSound = origConsole.ImpostorDiscoveredSound;
-            console.TaskTypes = origConsole.TaskTypes;
-            console.ValidTasks = origConsole.ValidTasks;
+            console.ImpostorDiscoveredSound = prefabConsole.ImpostorDiscoveredSound;
+            console.TaskTypes = prefabConsole.TaskTypes;
+            console.ValidTasks = prefabConsole.ValidTasks;
             if (elem.properties.range != null)
                 console.usableDistance = (float)elem.properties.range;
 
             // Vent
-            Vent ventData = utilData.GameObj.GetComponent<Vent>();
             Vent vent = obj.AddComponent<Vent>();
-            vent.EnterVentAnim = ventData.EnterVentAnim;
-            vent.ExitVentAnim = ventData.ExitVentAnim;
-            vent.spreadAmount = ventData.spreadAmount;
-            vent.spreadShift = ventData.spreadShift;
-            vent.Offset = ventData.Offset;
+            vent.EnterVentAnim = prefabVent.EnterVentAnim;
+            vent.ExitVentAnim = prefabVent.ExitVentAnim;
+            vent.spreadAmount = prefabVent.spreadAmount;
+            vent.spreadShift = prefabVent.spreadShift;
+            vent.Offset = prefabVent.Offset;
             vent.Buttons = new Il2CppReferenceArray<ButtonBehavior>(0);
             vent.CleaningIndicators = new Il2CppReferenceArray<GameObject>(0);
             vent.Id = _ventID;
 
             // Arrows
-            GameObject arrowPrefab = utilData.GameObj.transform.FindChild("Arrow").gameObject;
             GameObject arrowParent = new GameObject($"{obj.name}_arrows");
             arrowParent.transform.position = obj.transform.position;
             for (int i = 0; i < 3; i++)
-                GenerateArrow(arrowPrefab, vent, i).transform.SetParent(arrowParent.transform);
+                GenerateArrow(prefabArrow, vent, i).transform.SetParent(arrowParent.transform);
 
             // Sounds
-            ShipStatus shipStatus = LIShipStatus.Instance.ShipStatus;
-            if (!_hasVentSound && shipStatus != null)
+            if (!_hasVentSound)
             {
-                shipStatus.VentEnterSound = AssetDB.Ships["ss-skeld"].ShipStatus.VentEnterSound;
-                shipStatus.VentMoveSounds = AssetDB.Ships["ss-skeld"].ShipStatus.VentMoveSounds;
+                shipStatus.VentEnterSound = skeldShipStatus?.VentEnterSound;
+                shipStatus.VentMoveSounds = skeldShipStatus?.VentMoveSounds;
                 _hasVentSound = true;
             }
 
             // Colliders
-            MapUtils.CreateTriggerColliders(obj, utilData.GameObj);
+            MapUtils.CreateTriggerColliders(obj, prefab);
 
             // DB
             _ventElementDb.Add(_ventID, elem);
