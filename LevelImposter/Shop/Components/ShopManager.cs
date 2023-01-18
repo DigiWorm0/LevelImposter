@@ -26,7 +26,6 @@ namespace LevelImposter.Shop
         private string _currentListID = "downloaded";
         private HostLocalGameButton? _freeplayComp;
         private ShopButtons? _shopButtons;
-        private TMPro.TMP_FontAsset _brookFont;
         private Stack<MapBanner> _shopBanners = new();
 
         /// <summary>
@@ -204,7 +203,7 @@ namespace LevelImposter.Shop
             LILogger.Info($"Launching map [{id}]");
             MapLoader.LoadMap(id, () =>
             {
-                AmongUsClient.Instance.TutorialMapId = (int)MapNames.Polus;
+                AmongUsClient.Instance.TutorialMapId = (int)MapNames.Mira;
                 _freeplayComp?.OnClick();
             });
         }
