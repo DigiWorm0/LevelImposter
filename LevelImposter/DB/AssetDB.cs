@@ -60,6 +60,17 @@ namespace LevelImposter.DB
         }
 
         /// <summary>
+        /// Gets whether or not an element ID contains a task behaviour 
+        /// </summary>
+        /// <param name="id">ID of the task</param>
+        /// <returns>TRUE if the task exists</returns>
+        public static bool HasTask(string id)
+        {
+            var taskPrefab = Instance?._taskDB?.Get(id);
+            return taskPrefab != null;
+        }
+
+        /// <summary>
         /// Gets the length of a task from the TaskDB
         /// </summary>
         /// <param name="id">ID to lookup</param>

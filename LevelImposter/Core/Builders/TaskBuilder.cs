@@ -235,14 +235,15 @@ namespace LevelImposter.Core
             if (!isBuilt)
                 LILogger.Info($"Adding task for {elem}...");
 
-            // Prefab
-            var prefabTask = AssetDB.GetTask<NormalPlayerTask>(elem.type);
-            var prefabArrow = prefabTask?.Arrow?.gameObject;
-            var prefabLength = AssetDB.GetTaskLength(elem.type);
 
             // TODO: Clean this spaghetti mess
             if (elem.type == "task-divert1" && !isBuilt)
             {
+                // Prefab
+                var prefabTask = AssetDB.GetTask<NormalPlayerTask>(elem.type);
+                var prefabArrow = prefabTask?.Arrow?.gameObject;
+                var prefabLength = AssetDB.GetTaskLength(elem.type);
+
                 List<LIElement> divertTargets = new();
                 if (LIShipStatus.Instance.CurrentMap == null)
                     throw new Exception("Current map is unavailable");
@@ -285,8 +286,13 @@ namespace LevelImposter.Core
                     shipStatus.LongTasks = MapUtils.AddToArr(shipStatus.LongTasks, task.Cast<NormalPlayerTask>());
                 }
             }
-            else if (prefabTask != null && !isBuilt)
+            else if (AssetDB.HasTask(elem.type) && !isBuilt)
             {
+                // Prefab
+                var prefabTask = AssetDB.GetTask<NormalPlayerTask>(elem.type);
+                var prefabArrow = prefabTask?.Arrow?.gameObject;
+                var prefabLength = AssetDB.GetTaskLength(elem.type);
+
                 if (!string.IsNullOrEmpty(elem.properties.description))
                     MapUtils.Rename(prefabTask.TaskType, elem.properties.description);
 
