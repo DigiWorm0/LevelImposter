@@ -100,8 +100,8 @@ namespace LevelImposter.Core
             if (prefab == null)
                 return;
             var prefabRenderer = prefab.GetComponent<SpriteRenderer>();
-            var prefabConsole = prefab.GetComponent<Console>();
-            var prefabBtn = prefab.GetComponent<PassiveButton>();
+            var prefabConsole = prefab.GetComponentInChildren<Console>();
+            var prefabBtn = prefab.GetComponentInChildren<PassiveButton>();
 
             // Default Sprite
             obj.layer = (int)Layer.ShortObjects;

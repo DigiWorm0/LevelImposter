@@ -66,6 +66,11 @@
       "Path": "HallwayMain/ladder_electrical"
     },
     {
+      "ID": "util-platform",
+      "Map": 3,
+      "Path": "GapRoom/Platform"
+    },
+    {
       "ID": "sab-electric",
       "Map": 2,
       "Path": "Electrical/panel_switches"
@@ -498,7 +503,7 @@
     {
       "ID": "task-telescope",
       "Map": 2,
-      "Path": "Science/telescope/panel_telescope"
+      "Path": "Science/telescope"
     },
     {
       "ID": "task-drill",
