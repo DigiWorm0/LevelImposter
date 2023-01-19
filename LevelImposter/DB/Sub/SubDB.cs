@@ -30,7 +30,7 @@ namespace LevelImposter.DB
         /// </summary>
         /// <param name="shipStatus">ShipStatus to load</param>
         /// <param name="mapType">MapType of ShipStatus</param>
-        public virtual void LoadShip(ShipStatus shipStatus, MapType mapType) { }
+        public virtual void LoadShip(ShipStatus shipStatus, MapNames mapType) { }
 
         /// <summary>
         /// Gets an object from the DB

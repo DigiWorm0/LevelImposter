@@ -13,7 +13,7 @@ namespace LevelImposter.DB
     {
         public TaskDB(SerializedAssetDB serializedDB) : base(serializedDB) { }
 
-        public override void LoadShip(ShipStatus shipStatus, MapType mapType)
+        public override void LoadShip(ShipStatus shipStatus, MapNames mapType)
         {
             DB.TaskDB.ForEach((elem) =>
             {
@@ -53,7 +53,7 @@ namespace LevelImposter.DB
             public int Type { get; set; }
 
             [JsonIgnore]
-            public MapType MapType => (MapType)Map;
+            public MapNames MapType => (MapNames)Map;
             [JsonIgnore]
             public TaskLength TaskType => (TaskLength)Type;
         }

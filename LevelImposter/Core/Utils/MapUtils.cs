@@ -277,7 +277,7 @@ namespace LevelImposter.Core
             if (mapIDStr != Guid.Empty.ToString())
             {
                 IGameOptions currentGameOptions = GameOptionsManager.Instance.CurrentGameOptions;
-                currentGameOptions.SetByte(ByteOptionNames.MapId, (int)MapNames.Mira); // TODO: Move MapID outside default range
+                currentGameOptions.SetByte(ByteOptionNames.MapId, (int)LIShipStatus.MAP_TYPE); // TODO: Move MapID outside default range
                 GameOptionsManager.Instance.GameHostOptions = GameOptionsManager.Instance.CurrentGameOptions;
                 GameManager.Instance.LogicOptions.SyncOptions();
             }

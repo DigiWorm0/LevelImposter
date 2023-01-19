@@ -165,15 +165,16 @@ namespace LevelImposter.DB
         {
             _status = $"Loading \"{prefab.name}\"...";
             ShipStatus shipStatus = prefab.GetComponent<ShipStatus>();
-            MapType mapType = MapType.Skeld;
-            if (prefab.name == "AprilShip")
+            MapNames mapType = prefab.name switch
+            {
+                "SkeldShip" => MapNames.Skeld,
+                "MiraShip" => MapNames.Mira,
+                "PolusShip" => MapNames.Polus,
+                "Airship" => MapNames.Airship,
+                _ => MapNames.Dleks
+            };
+            if (mapType == MapNames.Dleks)
                 return;
-            if (prefab.name == "MiraShip")
-                mapType = MapType.Mira;
-            if (prefab.name == "PolusShip")
-                mapType = MapType.Polus;
-            if (prefab.name == "Airship")
-                mapType = MapType.Airship;
 
             _objectDB?.LoadShip(shipStatus, mapType);
             _taskDB?.LoadShip(shipStatus, mapType);

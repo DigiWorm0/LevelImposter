@@ -52,22 +52,22 @@
     },
     {
       "ID": "util-cams3",
-      "Map": 3,
+      "Map": 4,
       "Path": "Security/task_cams"
     },
     {
       "ID": "util-ladder1",
-      "Map": 3,
+      "Map": 4,
       "Path": "MeetingRoom/ladder_meeting"
     },
     {
       "ID": "util-ladder2",
-      "Map": 3,
+      "Map": 4,
       "Path": "HallwayMain/ladder_electrical"
     },
     {
       "ID": "util-platform",
-      "Map": 3,
+      "Map": 4,
       "Path": "GapRoom/Platform"
     },
     {
@@ -107,7 +107,7 @@
     },
     {
       "ID": "sab-door-airship",
-      "Map": 3,
+      "Map": 4,
       "Path": "HallwayL/Door_VertOpen"
     },
     {
@@ -282,117 +282,117 @@
     },
     {
       "ID": "room-airshiparmory",
-      "Map": 3,
+      "Map": 4,
       "Path": "Armory/armory_main"
     },
     {
       "ID": "room-airshipbrig",
-      "Map": 3,
+      "Map": 4,
       "Path": "Brig/brig_main"
     },
     {
       "ID": "room-airshipcockpit",
-      "Map": 3,
+      "Map": 4,
       "Path": "Cockpit/cockpit_bg"
     },
     {
       "ID": "room-airshipcomms",
-      "Map": 3,
+      "Map": 4,
       "Path": "Comms/comms_main"
     },
     {
       "ID": "room-airshipejection",
-      "Map": 3,
+      "Map": 4,
       "Path": "Ejection/Ejectionroom_main"
     },
     {
       "ID": "room-airshipelctrical",
-      "Map": 3,
+      "Map": 4,
       "Path": "Electrical/Electrical_main"
     },
     {
       "ID": "room-airshipengines",
-      "Map": 3,
+      "Map": 4,
       "Path": "Engine/engine_main"
     },
     {
       "ID": "room-airshipgap",
-      "Map": 3,
+      "Map": 4,
       "Path": "GapRoom/gap_main"
     },
     {
       "ID": "room-airshiphallway",
-      "Map": 3,
+      "Map": 4,
       "Path": "HallwayL/HallwayL_main"
     },
     {
       "ID": "room-airshipkitchen",
-      "Map": 3,
+      "Map": 4,
       "Path": "Kitchen/kitchen_main"
     },
     {
       "ID": "room-airshiplounge",
-      "Map": 3,
+      "Map": 4,
       "Path": "Lounge/lounge_main"
     },
     {
       "ID": "room-airshipmainhall",
-      "Map": 3,
+      "Map": 4,
       "Path": "HallwayMain/halls_main"
     },
     {
       "ID": "room-airshipmedbay",
-      "Map": 3,
+      "Map": 4,
       "Path": "Medbay/medbay_main"
     },
     {
       "ID": "room-airshipmeeting",
-      "Map": 3,
+      "Map": 4,
       "Path": "MeetingRoom/meeting_main"
     },
     {
       "ID": "room-airshipmeeting2",
-      "Map": 3,
+      "Map": 4,
       "Path": "MeetingRoom/meeting_side"
     },
     {
       "ID": "room-airshipoutside",
-      "Map": 3,
+      "Map": 4,
       "Path": "Security/security_outside"
     },
     {
       "ID": "room-airshipportraits",
-      "Map": 3,
+      "Map": 4,
       "Path": "HallwayPortrait/hallportrait_main"
     },
     {
       "ID": "room-airshipsecurity",
-      "Map": 3,
+      "Map": 4,
       "Path": "Security/security_main"
     },
     {
       "ID": "room-airshipshowers",
-      "Map": 3,
+      "Map": 4,
       "Path": "Showers/showers_main"
     },
     {
       "ID": "room-airshipstorage",
-      "Map": 3,
+      "Map": 4,
       "Path": "Storage/storage_main"
     },
     {
       "ID": "room-airshipvault",
-      "Map": 3,
+      "Map": 4,
       "Path": "Vault/vault_main"
     },
     {
       "ID": "room-airshipvent",
-      "Map": 3,
+      "Map": 4,
       "Path": "Ventilation/ventilation_main"
     },
     {
       "ID": "room-airshiprecords",
-      "Map": 3,
+      "Map": 4,
       "Path": "Records/records_main"
     },
     {
@@ -602,147 +602,147 @@
     },
     {
       "ID": "task-showers",
-      "Map": 3,
+      "Map": 4,
       "Path": "Showers/task_shower"
     },
     {
       "ID": "task-burger",
-      "Map": 3,
+      "Map": 4,
       "Path": "Kitchen/task_burgah"
     },
     {
       "ID": "task-decontaminate",
-      "Map": 3,
+      "Map": 4,
       "Path": "HallwayMain/task_hose"
     },
     {
       "ID": "task-rifles1",
-      "Map": 3,
+      "Map": 4,
       "Path": "Armory/task_rifles2"
     },
     {
       "ID": "task-rifles2",
-      "Map": 3,
+      "Map": 4,
       "Path": "Armory/task_rifles"
     },
     {
       "ID": "task-pistols1",
-      "Map": 3,
+      "Map": 4,
       "Path": "Armory/task_Handguns2"
     },
     {
       "ID": "task-pistols2",
-      "Map": 3,
+      "Map": 4,
       "Path": "Armory/Task_Handguns"
     },
     {
       "ID": "task-records1",
-      "Map": 3,
+      "Map": 4,
       "Path": "Records/task_records_folder"
     },
     {
       "ID": "task-records2",
-      "Map": 3,
+      "Map": 4,
       "Path": "Records/records_left/task_records3"
     },
     {
       "ID": "task-mannequin",
-      "Map": 3,
+      "Map": 4,
       "Path": "Vault/panel_dummy"
     },
     {
       "ID": "task-toilet",
-      "Map": 3,
+      "Map": 4,
       "Path": "Lounge/task_toilet"
     },
     {
       "ID": "task-towels1",
-      "Map": 3,
+      "Map": 4,
       "Path": "Showers/task_towelbasket"
     },
     {
       "ID": "task-towels2",
-      "Map": 3,
+      "Map": 4,
       "Path": "Showers/TaskTowels/task_towelwet"
     },
     {
       "ID": "task-towels3",
-      "Map": 3,
+      "Map": 4,
       "Path": "Showers/TaskTowels/task_towelflat"
     },
     {
       "ID": "task-towels4",
-      "Map": 3,
+      "Map": 4,
       "Path": "Showers/TaskTowels/task_towelbunched"
     },
     {
       "ID": "task-towels5",
-      "Map": 3,
+      "Map": 4,
       "Path": "Showers/TaskTowels/task_towelhang"
     },
     {
       "ID": "task-stabilize2",
-      "Map": 3,
+      "Map": 4,
       "Path": "Cockpit/panel_cockpit_steering"
     },
     {
       "ID": "task-ruby",
-      "Map": 3,
+      "Map": 4,
       "Path": "Vault/RubyRoot/RubyTask"
     },
     {
       "ID": "task-tapes",
-      "Map": 3,
+      "Map": 4,
       "Path": "Security/task_tapes_right"
     },
     {
       "ID": "task-photos",
-      "Map": 3,
+      "Map": 4,
       "Path": "HallwayMain/task_developphotos"
     },
     {
       "ID": "task-garbage2",
-      "Map": 3,
+      "Map": 4,
       "Path": "HallwayMain/task_garbage2"
     },
     {
       "ID": "task-garbage3",
-      "Map": 3,
+      "Map": 4,
       "Path": "Medbay/task_garbage1"
     },
     {
       "ID": "task-garbage4",
-      "Map": 3,
+      "Map": 4,
       "Path": "Kitchen/task_garbage3"
     },
     {
       "ID": "task-garbage5",
-      "Map": 3,
+      "Map": 4,
       "Path": "MeetingRoom/panel_garbagelever"
     },
     {
       "ID": "task-safe",
-      "Map": 3,
+      "Map": 4,
       "Path": "Storage/task_safe"
     },
     {
       "ID": "task-breakers",
-      "Map": 3,
+      "Map": 4,
       "Path": "Electrical/task_electriclever"
     },
     {
       "ID": "task-fans1",
-      "Map": 3,
+      "Map": 4,
       "Path": "Ventilation/task_fans"
     },
     {
       "ID": "task-fans2",
-      "Map": 3,
+      "Map": 4,
       "Path": "Ventilation/task_fans (1)"
     },
     {
       "ID": "task-distributor",
-      "Map": 3,
+      "Map": 4,
       "Path": "Electrical/task_calibrate"
     },
     {
@@ -762,7 +762,7 @@
     },
     {
       "ID": "ss-airship",
-      "Map": 3,
+      "Map": 4,
       "Path": ""
     },
     {
@@ -797,17 +797,17 @@
     },
     {
       "ID": "dec-bench3",
-      "Map": 3,
+      "Map": 4,
       "Path": "Showers/showers_bench3"
     },
     {
       "ID": "dec-bench4",
-      "Map": 3,
+      "Map": 4,
       "Path": "Showers/shower_bench1"
     },
     {
       "ID": "dec-bench5",
-      "Map": 3,
+      "Map": 4,
       "Path": "Showers/shower_bench2"
     },
     {
@@ -867,7 +867,7 @@
     },
     {
       "ID": "dec-engine2",
-      "Map": 3,
+      "Map": 4,
       "Path": "Engine/engine_enginetop (1)"
     },
     {
@@ -962,22 +962,22 @@
     },
     {
       "ID": "dec-table11",
-      "Map": 3,
+      "Map": 4,
       "Path": "Armory/armory_table"
     },
     {
       "ID": "dec-table12",
-      "Map": 3,
+      "Map": 4,
       "Path": "MeetingRoom/meeting_table"
     },
     {
       "ID": "dec-table13",
-      "Map": 3,
+      "Map": 4,
       "Path": "Medbay/medbay_table"
     },
     {
       "ID": "dec-table14",
-      "Map": 3,
+      "Map": 4,
       "Path": "Records/records_table"
     },
     {
@@ -992,77 +992,77 @@
     },
     {
       "ID": "dec-cargo1",
-      "Map": 3,
+      "Map": 4,
       "Path": "Storage/storage_cargo1"
     },
     {
       "ID": "dec-chair1",
-      "Map": 3,
+      "Map": 4,
       "Path": "Cockpit/cockpit_chair"
     },
     {
       "ID": "dec-chair2",
-      "Map": 3,
+      "Map": 4,
       "Path": "Records/records_chair_left"
     },
     {
       "ID": "dec-chair3",
-      "Map": 3,
+      "Map": 4,
       "Path": "Lounge/lounge_stool"
     },
     {
       "ID": "dec-panel1",
-      "Map": 3,
+      "Map": 4,
       "Path": "Cockpit/cockpit_comms"
     },
     {
       "ID": "dec-panel2",
-      "Map": 3,
+      "Map": 4,
       "Path": "Cockpit/cockpit_elect"
     },
     {
       "ID": "dec-pool1",
-      "Map": 3,
+      "Map": 4,
       "Path": "Lounge/lounge_pooltable1"
     },
     {
       "ID": "dec-pool2",
-      "Map": 3,
+      "Map": 4,
       "Path": "Lounge/lounge_pooltable2"
     },
     {
       "ID": "dec-scale",
-      "Map": 3,
+      "Map": 4,
       "Path": "Medbay/medbay_scale"
     },
     {
       "ID": "dec-shelf1",
-      "Map": 3,
+      "Map": 4,
       "Path": "Kitchen/kitchen_shelf"
     },
     {
       "ID": "dec-shelf2",
-      "Map": 3,
+      "Map": 4,
       "Path": "Records/records_left"
     },
     {
       "ID": "dec-statue1",
-      "Map": 3,
+      "Map": 4,
       "Path": "Vault/vault_gun"
     },
     {
       "ID": "dec-statue2",
-      "Map": 3,
+      "Map": 4,
       "Path": "Vault/vault_sword"
     },
     {
       "ID": "dec-stove1",
-      "Map": 3,
+      "Map": 4,
       "Path": "Kitchen/kitchen_table1"
     },
     {
       "ID": "dec-stove2",
-      "Map": 3,
+      "Map": 4,
       "Path": "Kitchen/kitchen_table2"
     }
   ],
@@ -1225,67 +1225,67 @@
     },
     {
       "ID": "task-showers",
-      "Map": 3,
+      "Map": 4,
       "Type": 1,
       "Name": "FixShowerTask"
     },
     {
       "ID": "task-burger",
-      "Map": 3,
+      "Map": 4,
       "Type": 1,
       "Name": "BurgerTask"
     },
     {
       "ID": "task-decontaminate",
-      "Map": 3,
+      "Map": 4,
       "Type": 1,
       "Name": "WashUpTask"
     },
     {
       "ID": "task-rifles1",
-      "Map": 3,
+      "Map": 4,
       "Type": 1,
       "Name": "StowRifles"
     },
     {
       "ID": "task-pistols1",
-      "Map": 3,
+      "Map": 4,
       "Type": 1,
       "Name": "StowGuns"
     },
     {
       "ID": "task-records1",
-      "Map": 3,
+      "Map": 4,
       "Type": 1,
       "Name": "FileRecords"
     },
     {
       "ID": "task-mannequin",
-      "Map": 3,
+      "Map": 4,
       "Type": 1,
       "Name": "DressMannequin"
     },
     {
       "ID": "task-toilet",
-      "Map": 3,
+      "Map": 4,
       "Type": 1,
       "Name": "PlungeToilet"
     },
     {
       "ID": "task-towels1",
-      "Map": 3,
+      "Map": 4,
       "Type": 1,
       "Name": "PickUpTowelsTask"
     },
     {
       "ID": "task-stabilize2",
-      "Map": 3,
+      "Map": 4,
       "Type": 1,
       "Name": "AlignAirshipEnginesTask"
     },
     {
       "ID": "task-ruby",
-      "Map": 3,
+      "Map": 4,
       "Type": 1,
       "Name": "PolishRubyTask"
     },
@@ -1351,55 +1351,55 @@
     },
     {
       "ID": "task-tapes",
-      "Map": 3,
+      "Map": 4,
       "Type": 2,
       "Name": "RewindTape"
     },
     {
       "ID": "task-photos",
-      "Map": 3,
+      "Map": 4,
       "Type": 2,
       "Name": "DevelopPhotos"
     },
     {
       "ID": "task-garbage2",
-      "Map": 3,
+      "Map": 4,
       "Type": 2,
       "Name": "HallGarbage"
     },
     {
       "ID": "task-garbage3",
-      "Map": 3,
+      "Map": 4,
       "Type": 2,
       "Name": "MedGarbage"
     },
     {
       "ID": "task-garbage4",
-      "Map": 3,
+      "Map": 4,
       "Type": 2,
       "Name": "KitchenGarbage"
     },
     {
       "ID": "task-safe",
-      "Map": 3,
+      "Map": 4,
       "Type": 2,
       "Name": "OpenSafeTask"
     },
     {
       "ID": "task-breakers",
-      "Map": 3,
+      "Map": 4,
       "Type": 2,
       "Name": "ResetBreakers"
     },
     {
       "ID": "task-fans1",
-      "Map": 3,
+      "Map": 4,
       "Type": 2,
       "Name": "StartFans"
     },
     {
       "ID": "task-distributor",
-      "Map": 3,
+      "Map": 4,
       "Type": 2,
       "Name": "CalibrateDistributorTask"
     },

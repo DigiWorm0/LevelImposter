@@ -16,7 +16,7 @@ namespace LevelImposter.DB
     {
         public ObjectDB(SerializedAssetDB serializedDB) : base(serializedDB) { }
 
-        public override void LoadShip(ShipStatus shipStatus, MapType mapType)
+        public override void LoadShip(ShipStatus shipStatus, MapNames mapType)
         {
             DB.ObjectDB.ForEach((elem) =>
             {
@@ -43,7 +43,7 @@ namespace LevelImposter.DB
             public int Map { get; set; }
 
             [JsonIgnore]
-            public MapType MapType => (MapType)Map;
+            public MapNames MapType => (MapNames)Map;
         }
     }
 }
