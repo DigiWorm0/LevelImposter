@@ -35,22 +35,11 @@ namespace LevelImposter.Core
             var prefab = AssetDB.GetObject(elem.type);
             if (prefab == null)
                 return;
-            var prefabRenderer = prefab.GetComponent<SpriteRenderer>();
             var topPrefab = prefab.transform.FindChild("LadderTop").GetComponent<Ladder>();
             var bottomPrefab = prefab.transform.FindChild("LadderBottom").GetComponent<Ladder>();
 
             // Default Sprite
-            SpriteRenderer spriteRenderer = obj.GetComponent<SpriteRenderer>();
-            obj.layer = (int)Layer.ShortObjects;
-            if (!spriteRenderer)
-            {
-                spriteRenderer = obj.AddComponent<SpriteRenderer>();
-                spriteRenderer.sprite = prefabRenderer.sprite;
-
-                if (elem.properties.color != null)
-                    spriteRenderer.color = MapUtils.LIColorToColor(elem.properties.color);
-            }
-            spriteRenderer.material = prefabRenderer.material;
+            SpriteRenderer spriteRenderer = MapUtils.CloneSprite(obj, prefab);
 
             // Console
             float ladderHeight = elem.properties.ladderHeight == null ?

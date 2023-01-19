@@ -11,9 +11,14 @@ namespace LevelImposter.Core
         {
             if (elem.type != "util-dummy")
                 return;
+            if (LIShipStatus.Instance?.ShipStatus == null)
+                throw new Exception("ShipStatus not found");
 
+            // Add Location
             ShipStatus shipStatus = LIShipStatus.Instance.ShipStatus;
             shipStatus.DummyLocations = MapUtils.AddToArr(shipStatus.DummyLocations, obj.transform);
+
+            // TODO: Customize each dummy location with name/outfit
         }
 
         public void PostBuild() { }

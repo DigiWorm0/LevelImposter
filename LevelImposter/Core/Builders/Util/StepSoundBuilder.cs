@@ -37,6 +37,7 @@ namespace LevelImposter.Core
             soundGroup.Clips = new AudioClip[elem.properties.sounds.Length];
             for (int i = 0; i < elem.properties.sounds.Length; i++)
             {
+                // Sound Data
                 LISound sound = elem.properties.sounds[i];
                 if (sound.data == null)
                 {
@@ -44,11 +45,13 @@ namespace LevelImposter.Core
                     continue;
                 }
 
-                if (sound.isPreset) // Preset
+                // Preset
+                if (sound.isPreset)
                 {
                     soundGroup.Clips[i] = AssetDB.GetSound(sound.data);
                 }
-                else // WAVLoader
+                // WAVLoader
+                else
                 {
                     WAVLoader.Instance?.LoadWAV(elem, sound, (AudioClip audioClip) =>
                     {

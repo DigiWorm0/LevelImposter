@@ -16,6 +16,8 @@ namespace LevelImposter.Core
         {
             if (elem.type != "util-minimap")
                 return;
+            if (LIShipStatus.Instance?.ShipStatus == null)
+                throw new Exception("ShipStatus not found");
             if (_isBuilt)
             {
                 LILogger.Warn("Only 1 minimap object should be used per map");
@@ -90,6 +92,8 @@ namespace LevelImposter.Core
         /// <returns>The current Minimap Behaviour</returns>
         public static MapBehaviour GetMinimap()
         {
+            if (LIShipStatus.Instance?.ShipStatus == null)
+                throw new Exception("ShipStatus not found");
             MapBehaviour mapBehaviour = MapBehaviour.Instance;
             if (mapBehaviour == null)
             {

@@ -18,24 +18,9 @@ namespace LevelImposter.Core
             var prefab = AssetDB.GetObject(elem.type);
             if (prefab == null)
                 return;
-            var prefabRenderer = prefab.GetComponent<SpriteRenderer>();
-            var prefabAnim = prefab.GetComponent<SpriteAnim>();
 
-            // Default Sprite
-            SpriteRenderer spriteRenderer = obj.GetComponent<SpriteRenderer>();
-            obj.layer = (int)Layer.ShortObjects;
-            if (!spriteRenderer)
-            {
-                spriteRenderer = obj.AddComponent<SpriteRenderer>();
-                spriteRenderer.sprite = prefabRenderer.sprite;
-
-                SpriteAnim spriteAnim = obj.AddComponent<SpriteAnim>();
-                spriteAnim.Play(prefabAnim.m_defaultAnim, prefabAnim.Speed);
-
-                if (elem.properties.color != null)
-                    spriteRenderer.color = MapUtils.LIColorToColor(elem.properties.color);
-            }
-            spriteRenderer.material = prefabRenderer.material;
+            // Sprite
+            MapUtils.CloneSprite(obj, prefab, true);
 
             // Camera
             SurvCamera survCam = obj.AddComponent<SurvCamera>();

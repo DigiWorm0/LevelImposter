@@ -32,20 +32,10 @@ namespace LevelImposter.Core
             var prefab = AssetDB.GetObject(elem.type);
             if (prefab == null)
                 return;
-            var prefabRenderer = prefab.GetComponent<SpriteRenderer>();
             var prefabConsole = prefab.GetComponent<Console>();
             
             // Default Sprite
-            obj.layer = (int)Layer.ShortObjects;
-            SpriteRenderer spriteRenderer = obj.GetComponent<SpriteRenderer>();
-            if (!spriteRenderer)
-            {
-                spriteRenderer = obj.AddComponent<SpriteRenderer>();
-                spriteRenderer.sprite = prefabRenderer.sprite;
-                if (elem.properties.color != null)
-                    spriteRenderer.color = MapUtils.LIColorToColor(elem.properties.color);
-            }
-            spriteRenderer.material = prefabRenderer.material;
+            SpriteRenderer spriteRenderer = MapUtils.CloneSprite(obj, prefab);
 
             // Parent
             SystemTypes systemType = RoomBuilder.GetParentOrDefault(elem);

@@ -104,23 +104,17 @@ namespace LevelImposter.Core
             var prefabBtn = prefab.GetComponentInChildren<PassiveButton>();
 
             // Default Sprite
-            obj.layer = (int)Layer.ShortObjects;
-            SpriteRenderer spriteRenderer = obj.GetComponent<SpriteRenderer>();
-            if (!spriteRenderer)
-            {
-                spriteRenderer = obj.AddComponent<SpriteRenderer>();
-                spriteRenderer.sprite = prefabRenderer.sprite;
-                if (elem.properties.color != null)
-                    spriteRenderer.color = MapUtils.LIColorToColor(elem.properties.color);
-            }
-            spriteRenderer.material = prefabRenderer.material;
+            SpriteRenderer spriteRenderer = MapUtils.CloneSprite(obj, prefab);
 
             // Parent
             SystemTypes systemType = RoomBuilder.GetParentOrDefault(elem);
 
+            bool isArms = elem.type == "task-pistols1" || elem.type == "task-rifles1";
+            bool isTowel = elem.type.StartsWith("task-towels") && elem.type != "task-towels1";
+
             // Console
             Console console;
-            if (elem.type == "task-pistols1" || elem.type == "task-rifles1")
+            if (isArms)
             {
                 console = obj.AddComponent<StoreArmsTaskConsole>();
                 StoreArmsTaskConsole specialConsole = console.Cast<StoreArmsTaskConsole>();
@@ -131,7 +125,7 @@ namespace LevelImposter.Core
                 specialConsole.useSound = origSpecialConsole.useSound;
                 specialConsole.usesPerStep = origSpecialConsole.usesPerStep;
             }
-            else if (elem.type.StartsWith("task-towels") && elem.type != "task-towels1")
+            else if (isTowel)
             {
                 console = obj.AddComponent<TowelTaskConsole>();
                 TowelTaskConsole specialConsole = console.Cast<TowelTaskConsole>();
@@ -152,11 +146,17 @@ namespace LevelImposter.Core
             console.ValidTasks = prefabConsole.ValidTasks;
             console.AllowImpostor = false;
 
+
+            bool isWaterJug = elem.type == "task-waterjug2";
+            bool isTowels = elem.type.StartsWith("task-towels");
+            bool isFuel = elem.type == "task-fuel1";
+            bool isFuelOutput = elem.type == "task-fuel2";
+
             if (CONSOLE_ID_PAIRS.ContainsKey(elem.type))
             {
                 console.ConsoleId = CONSOLE_ID_PAIRS[elem.type];
             }
-            else if (elem.type == "task-waterjug2")
+            else if (isWaterJug)
             {
                 TaskSet taskSet = new()
                 {
@@ -167,7 +167,7 @@ namespace LevelImposter.Core
                     taskSet
                 });
             }
-            else if (elem.type.StartsWith("task-towels"))
+            else if (isTowels)
             {
                 if (elem.type == "task-towels1")
                     console.ConsoleId = 255;
@@ -177,7 +177,7 @@ namespace LevelImposter.Core
                     _consoleIDIncrements["task-towels"]++;
                 }
             }
-            else if (elem.type == "task-fuel1")
+            else if (isFuel)
             {
                 console.ValidTasks = new Il2CppReferenceArray<TaskSet>(byte.MaxValue / 2);
                 for (byte i = 0; i < byte.MaxValue - 1; i+=2)
@@ -190,7 +190,7 @@ namespace LevelImposter.Core
                     console.ValidTasks[i / 2] = taskSet;
                 }
             }
-            else if (elem.type == "task-fuel2")
+            else if (isFuelOutput)
             {
                 console.ConsoleId = _consoleIDIncrements[elem.type];
                 TaskSet taskSet = new()
@@ -343,7 +343,8 @@ namespace LevelImposter.Core
             }
 
             // Medscan
-            if (elem.type == "task-medscan")
+            bool isMedscan = elem.type == "task-medscan";
+            if (isMedscan)
             {
                 if (shipStatus.MedScanner != null)
                     LILogger.Warn("Only 1 med scanner can be used per map");

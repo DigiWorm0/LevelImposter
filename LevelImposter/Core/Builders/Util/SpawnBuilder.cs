@@ -14,6 +14,7 @@ namespace LevelImposter.Core
             if (LIShipStatus.Instance?.ShipStatus == null)
                 throw new Exception("ShipStatus not found");
 
+            // Set Spawn Point
             Vector2 pos = obj.transform.position - new Vector3(0, 0);
             ShipStatus shipStatus = LIShipStatus.Instance.ShipStatus;
             if (elem.type == "util-spawn1")
@@ -24,6 +25,10 @@ namespace LevelImposter.Core
             {
                 shipStatus.MeetingSpawnCenter = pos;
                 shipStatus.MeetingSpawnCenter2 = pos;
+            }
+            else
+            {
+                LILogger.Warn($"{elem.name} has an unknown spawn type");
             }
         }
 

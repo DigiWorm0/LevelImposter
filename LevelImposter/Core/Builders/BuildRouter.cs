@@ -9,7 +9,9 @@ namespace LevelImposter.Core
     public class BuildRouter
     {
         private List<IElemBuilder> _buildStack = new() {
-            new DefaultBuilder(),
+            new TransformBuilder(),
+            new SpriteBuilder(),
+            new ColliderBuilder(),
 
             new RoomBuilder(),
             new AdminMapBuilder(),
@@ -41,7 +43,8 @@ namespace LevelImposter.Core
             new TriggerConsoleBuilder(),
             new TriggerStartBuilder(),
 
-            new TriggerBuilder()
+            new TriggerBuilder(),
+            new ColorBuilder()
         };
 
         /// <summary>

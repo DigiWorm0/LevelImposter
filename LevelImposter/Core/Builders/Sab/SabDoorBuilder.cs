@@ -35,10 +35,6 @@ namespace LevelImposter.Core
             {
                 spriteRenderer = obj.AddComponent<SpriteRenderer>();
                 spriteRenderer.sprite = prefabRenderer.sprite;
-
-                if (elem.properties.color != null)
-                    spriteRenderer.color = MapUtils.LIColorToColor(elem.properties.color);
-
                 isSpriteAnim = true;
             }
             else

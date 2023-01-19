@@ -317,5 +317,34 @@ namespace LevelImposter.Core
             LILogger.Info($"[RPC] New random seed set: {randomSeed}");
             _randomSeed = randomSeed;
         }
+
+        /// <summary>
+        /// Clones the sprite from a prefab if the
+        /// object does not already have one.
+        /// </summary>
+        /// <param name="obj">Object to append sprite to</param>
+        /// <param name="prefab">Prefab to clone sprite from</param>
+        /// <param name="isSpriteAnim">TRUE if it should clone SpriteAnim components too</param>
+        /// <returns>obj's SpriteRenderer</returns>
+        public static SpriteRenderer CloneSprite(GameObject obj, GameObject prefab, bool isSpriteAnim = false)
+        {
+            var prefabRenderer = prefab.GetComponent<SpriteRenderer>();
+            var spriteRenderer = obj.GetComponent<SpriteRenderer>();
+            if (!spriteRenderer)
+            {
+                spriteRenderer = obj.AddComponent<SpriteRenderer>();
+                spriteRenderer.sprite = prefabRenderer.sprite;
+
+                if (isSpriteAnim)
+                {
+                    var prefabAnim = prefab.GetComponent<PowerTools.SpriteAnim>();
+                    var spriteAnim = obj.AddComponent<PowerTools.SpriteAnim>();
+                    spriteAnim.Play(prefabAnim.m_defaultAnim, prefabAnim.Speed);
+                }
+            }
+            spriteRenderer.material = prefabRenderer.material;
+            obj.layer = (int)Layer.ShortObjects;
+            return spriteRenderer;
+        }
     }
 }

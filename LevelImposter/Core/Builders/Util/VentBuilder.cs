@@ -42,22 +42,8 @@ namespace LevelImposter.Core
             var skeldShipStatus = skeldShip?.GetComponent<ShipStatus>();
 
             // Default Sprite
-            SpriteRenderer spriteRenderer = obj.GetComponent<SpriteRenderer>();
-            obj.layer = (int)Layer.ShortObjects;
-            if (!spriteRenderer)
-            {
-                spriteRenderer = obj.AddComponent<SpriteRenderer>();
-                spriteRenderer.sprite = prefabRenderer.sprite;
-                if (elem.properties.color != null)
-                    spriteRenderer.color = MapUtils.LIColorToColor(elem.properties.color);
-                if (elem.type == "util-vent1")
-                {
-                    SpriteAnim spriteAnimClone = prefabAnim;
-                    SpriteAnim spriteAnim = obj.AddComponent<SpriteAnim>();
-                    spriteAnim.Play(spriteAnimClone.m_defaultAnim, spriteAnimClone.Speed);
-                }
-            }
-            spriteRenderer.material = prefabRenderer.material;
+            bool isAnim = elem.type == "util-vent1";
+            SpriteRenderer spriteRenderer = MapUtils.CloneSprite(obj, prefab, isAnim);
 
             // Console
             VentCleaningConsole console = obj.AddComponent<VentCleaningConsole>();
