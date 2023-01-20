@@ -38,6 +38,12 @@ namespace LevelImposter.Core
             list.Add(value);
             return list.ToArray();
         }
+        public static Il2CppStringArray AddToArr(Il2CppStringArray arr, string value)
+        {
+            List<string> list = new(arr);
+            list.Add(value);
+            return list.ToArray();
+        }
 
         /// <summary>
         /// Shuffles an Il2CppStructArray
@@ -277,7 +283,7 @@ namespace LevelImposter.Core
             if (mapIDStr != Guid.Empty.ToString())
             {
                 IGameOptions currentGameOptions = GameOptionsManager.Instance.CurrentGameOptions;
-                currentGameOptions.SetByte(ByteOptionNames.MapId, (int)LIShipStatus.MAP_TYPE); // TODO: Move MapID outside default range
+                currentGameOptions.SetByte(ByteOptionNames.MapId, (byte)MapType.LevelImposter); // TODO: Move MapID outside default range
                 GameOptionsManager.Instance.GameHostOptions = GameOptionsManager.Instance.CurrentGameOptions;
                 GameManager.Instance.LogicOptions.SyncOptions();
             }

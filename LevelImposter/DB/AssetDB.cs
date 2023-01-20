@@ -25,6 +25,7 @@ namespace LevelImposter.DB
 
         private string _status = "Initializing AssetDB...";
         private bool _isInit = false;
+        private Stack<MapType> _loadedShips = new();
         private SerializedAssetDB? _serializedAssetDB;
         private ObjectDB? _objectDB;
         private TaskDB? _taskDB;
@@ -101,6 +102,14 @@ namespace LevelImposter.DB
         private IEnumerator CoLoadAssets()
         {
             {
+                // Add Ship Prefab
+                var shipPrefabs = AmongUsClient.Instance.ShipPrefabs;
+                int mapCount = (int)MapType.LevelImposter;
+                while (shipPrefabs.Count <= mapCount)
+                    shipPrefabs.Add(shipPrefabs[(int)MapType.Mira]);
+                while (Constants.MapNames.Count <= mapCount)
+                    Constants.MapNames = MapUtils.AddToArr(Constants.MapNames, "LevelImposter");
+
                 // Deserialize AssetDB
                 _serializedAssetDB = MapUtils.LoadJsonResource<SerializedAssetDB>("SerializedAssetDB.json");
                 if (_serializedAssetDB == null)
@@ -117,10 +126,10 @@ namespace LevelImposter.DB
                 // Ship References
                 _status = "Loading ship references";
                 LILogger.Info("Loading AssetDB...");
-                for (int i = 0; i < AmongUsClient.Instance.ShipPrefabs.Count; i++)
+                for (int i = 0; i < shipPrefabs.Count; i++)
                 {
                     // Load AssetReference
-                    AssetReference shipRef = AmongUsClient.Instance.ShipPrefabs[i];
+                    AssetReference shipRef = shipPrefabs[i];
                     while (true)
                     {
                         if (shipRef.Asset != null)
@@ -154,6 +163,7 @@ namespace LevelImposter.DB
                 _taskDB.Load();
                 _soundDB.Load();
                 _isInit = true;
+
             }
         }
 
@@ -165,21 +175,23 @@ namespace LevelImposter.DB
         {
             _status = $"Loading \"{prefab.name}\"...";
             ShipStatus shipStatus = prefab.GetComponent<ShipStatus>();
-            MapNames mapType = prefab.name switch
+            var mapType = prefab.name switch
             {
-                "SkeldShip" => MapNames.Skeld,
-                "MiraShip" => MapNames.Mira,
-                "PolusShip" => MapNames.Polus,
-                "Airship" => MapNames.Airship,
-                _ => MapNames.Dleks
+                "SkeldShip" => MapType.Skeld,
+                "MiraShip" => MapType.Mira,
+                "PolusShip" => MapType.Polus,
+                "Airship" => MapType.Airship,
+                _ => MapType.LevelImposter
             };
-            if (mapType == MapNames.Dleks)
+            if (mapType == MapType.LevelImposter)
                 return;
+            if (_loadedShips.Contains(mapType))
+                return;
+            _loadedShips.Push(mapType);
 
             _objectDB?.LoadShip(shipStatus, mapType);
             _taskDB?.LoadShip(shipStatus, mapType);
             _soundDB?.LoadShip(shipStatus, mapType);
-
 
             LILogger.Info($"...{prefab.name} Loaded");
         }

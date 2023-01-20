@@ -27,7 +27,6 @@ namespace LevelImposter.Core
         public static LIShipStatus? Instance { get; private set; }
 
         public const float PLAYER_POS = -5.0f;
-        public const MapNames MAP_TYPE = MapNames.Mira;
         public static readonly List<string> PRIORITY_TYPES = new()
         {
             "util-minimap",

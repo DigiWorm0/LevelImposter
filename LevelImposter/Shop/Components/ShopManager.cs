@@ -203,7 +203,7 @@ namespace LevelImposter.Shop
             LILogger.Info($"Launching map [{id}]");
             MapLoader.LoadMap(id, () =>
             {
-                AmongUsClient.Instance.TutorialMapId = (int)LIShipStatus.MAP_TYPE;
+                AmongUsClient.Instance.TutorialMapId = (int)MapType.LevelImposter;
                 _freeplayComp?.OnClick();
             });
         }

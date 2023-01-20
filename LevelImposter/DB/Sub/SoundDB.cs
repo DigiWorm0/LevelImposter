@@ -13,7 +13,7 @@ namespace LevelImposter.DB
     {
         public SoundDB(SerializedAssetDB serializedDB) : base(serializedDB) { }
 
-        public override void LoadShip(ShipStatus shipStatus, MapNames mapType)
+        public override void LoadShip(ShipStatus shipStatus, MapType mapType)
         {
             DB.SoundDB.ForEach((elem) =>
             {
@@ -77,7 +77,7 @@ namespace LevelImposter.DB
             public int Map { get; set; }
 
             [JsonIgnore]
-            public MapNames MapType => (MapNames)Map;
+            public MapType MapType => (MapType)Map;
         }
     }
 }
