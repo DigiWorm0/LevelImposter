@@ -201,6 +201,7 @@ namespace LevelImposter.Shop
                     mapData.isVerified = metadata.isVerified;
                     mapData.createdAt = metadata.createdAt;
                     mapData.thumbnailURL = metadata.thumbnailURL;
+                    mapData.remixOf = metadata.remixOf;
 
                     callback(mapData);
                 });
