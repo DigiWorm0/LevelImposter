@@ -13,7 +13,7 @@ namespace LevelImposter.DB
         private Dictionary<string, T> _data = new();
         private SerializedAssetDB _serializedDB;
 
-        public SerializedAssetDB DB => _serializedDB;
+        protected SerializedAssetDB DB => _serializedDB;
 
         public SubDB(SerializedAssetDB serializedDB)
         {
@@ -48,12 +48,18 @@ namespace LevelImposter.DB
         /// </summary>
         /// <param name="id">ID of the object</param>
         /// <param name="obj">Object to add</param>
-        public void Add(string id, T obj)
+        protected void Add(string id, T obj)
         {
             _data.Add(id, obj);
         }
 
-        public Transform FollowPath(string path, Transform parent)
+        /// <summary>
+        /// Follows a path of transforms from parent to child
+        /// </summary>
+        /// <param name="path">"/" seperated path string</param>
+        /// <param name="parent">Parent Transform to follow</param>
+        /// <returns>Child Transform or null if not found</returns>
+        protected Transform? FollowPath(string path, Transform parent)
         {
             List<string> parentName = new(path.Split("/"));
             Transform? transform = parent;
