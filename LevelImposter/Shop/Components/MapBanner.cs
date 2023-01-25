@@ -16,7 +16,6 @@ namespace LevelImposter.Shop
         }
 
         private LIMetadata? _currentMap = null;
-        private LIMetadata? _remixedMap = null;
         private GameObject? _loadingOverlay = null;
         private GameObject? _errOverlay = null;
         private GameObject? _remixIcon = null;
