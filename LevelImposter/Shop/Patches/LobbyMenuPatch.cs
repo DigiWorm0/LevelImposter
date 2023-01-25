@@ -16,9 +16,9 @@ namespace LevelImposter.Shop
     {
         [HarmonyPrefix]
         [HarmonyPatch(nameof(KeyValueOption.FixedUpdate))]
-        public static bool EnableFix(KeyValueOption __instance)
+        public static bool UpdateFix(KeyValueOption __instance)
         {
-            if (MapLoader.CurrentMap != null && __instance.Title == StringNames.GameMapName && __instance.oldValue != __instance.Selected)
+            if (__instance.Title == StringNames.GameMapName && MapLoader.CurrentMap != null && __instance.oldValue != __instance.Selected)
             {
                 __instance.oldValue = __instance.Selected;
                 __instance.ValueText.text = MapLoader.CurrentMap.name;
@@ -49,6 +49,23 @@ namespace LevelImposter.Shop
         public static void Postfix()
         {
             LobbyConsoleBuilder.Build();
+        }
+    }
+
+    /*
+     *      Initializes a new Map Console in the Lobby
+     */
+    [HarmonyPatch(typeof(CreateOptionsPicker), nameof(CreateOptionsPicker.Refresh))]
+    public static class LobbyOptionsRefreshPatch
+    {
+        public static void Prefix(CreateOptionsPicker __instance)
+        {
+            var options = __instance.GetTargetOptions();
+            if (Constants.MapNames[options.MapId] == "LevelImposter")
+            {
+                options.SetByte(AmongUs.GameOptions.ByteOptionNames.MapId, (byte)MapType.Skeld);
+                __instance.SetTargetOptions(options);
+            }
         }
     }
 }

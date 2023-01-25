@@ -1,10 +1,10 @@
 ManifestFileVersion: 0
-CRC: 3126810990
+CRC: 2046999012
 AssetBundleManifest:
   AssetBundleInfos:
     Info_0:
-      Name: shop
+      Name: loadingscreen
       Dependencies: {}
     Info_1:
-      Name: loadingscreen
+      Name: shop
       Dependencies: {}

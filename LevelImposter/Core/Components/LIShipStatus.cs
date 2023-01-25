@@ -62,6 +62,7 @@ namespace LevelImposter.Core
 
             while (transform.childCount > 0)
                 DestroyImmediate(transform.GetChild(0).gameObject);
+            Destroy(GetComponent<TagAmbientSoundPlayer>());
 
             FollowerCamera camera = Camera.main.GetComponent<FollowerCamera>();
             camera.shakeAmount = 0;
@@ -88,7 +89,7 @@ namespace LevelImposter.Core
             ShipStatus.Systems.Add(SystemTypes.Doors, new AutoDoorsSystemType().Cast<ISystemType>()); // (Default)
             ShipStatus.Systems.Add(SystemTypes.Comms, new HudOverrideSystemType().Cast<ISystemType>());
             ShipStatus.Systems.Add(SystemTypes.Security, new SecurityCameraSystemType().Cast<ISystemType>());
-            ShipStatus.Systems.Add(SystemTypes.Laboratory, new ReactorSystemType(60f, SystemTypes.Laboratory).Cast<ISystemType>()); // <- Seconds, SystemType
+            ShipStatus.Systems.Add(SystemTypes.Laboratory, new ReactorSystemType(45f, SystemTypes.Laboratory).Cast<ISystemType>()); // <- Seconds, SystemType
             ShipStatus.Systems.Add(SystemTypes.LifeSupp, new LifeSuppSystemType(45f).Cast<ISystemType>()); // <- Seconds
             ShipStatus.Systems.Add(SystemTypes.Ventilation, new VentilationSystem().Cast<ISystemType>());
             ShipStatus.Systems.Add(SystemTypes.Sabotage, new SabotageSystemType(new IActivatable[] {
@@ -109,7 +110,7 @@ namespace LevelImposter.Core
         [HideFromIl2Cpp]
         public void LoadMap(LIMap map)
         {
-            LILogger.Info("Loading " + map.name + " [" + map.id + "]");
+            LILogger.Info($"Loading {map}");
             _isReady = false;
             StartCoroutine(CoLoadingScreen().WrapToIl2Cpp());
             _currentMap = map;
@@ -118,8 +119,8 @@ namespace LevelImposter.Core
             BuildRouter buildRouter = new();
 
             // Asset DB
-            if (!AssetDB.IsReady)
-                LILogger.Warn("Asset DB is not ready yet!");
+            if (!AssetDB.IsInit)
+                LILogger.Warn("Asset DB is not initialized yet!");
 
             // Priority First
             foreach (string type in PRIORITY_TYPES)
@@ -156,15 +157,16 @@ namespace LevelImposter.Core
 
             if (!string.IsNullOrEmpty(map.properties.exileID))
             {
-                if (EXILE_IDS.ContainsKey(map.properties.exileID))
+                if (!EXILE_IDS.ContainsKey(map.properties.exileID))
                 {
-                    ShipStatus ship = AssetDB.Ships[EXILE_IDS[map.properties.exileID]].ShipStatus;
-                    ShipStatus.ExileCutscenePrefab = ship.ExileCutscenePrefab;
+                    LILogger.Warn($"Unknown exile ID: {map.properties.exileID}");
+                    return;
                 }
-                else
-                {
-                    LILogger.Warn("Unknown exile ID: " + map.properties.exileID);
-                }
+                var prefabShip = AssetDB.GetObject(EXILE_IDS[map.properties.exileID]);
+                var prefabShipStatus = prefabShip?.GetComponent<ShipStatus>();
+                if (prefabShipStatus == null)
+                    return;
+                ShipStatus.ExileCutscenePrefab = prefabShipStatus.ExileCutscenePrefab;
             }
         }
 
@@ -178,7 +180,7 @@ namespace LevelImposter.Core
             Stopwatch buildTimer = new();
             buildTimer.Restart();
 
-            LILogger.Info("Adding " + element.ToString());
+            LILogger.Info($"Adding {element}");
             try
             {
                 GameObject gameObject = buildRouter.Build(element);
@@ -187,7 +189,7 @@ namespace LevelImposter.Core
             }
             catch (Exception e)
             {
-                LILogger.Error("Error while building " + element.name + ":\n" + e);
+                LILogger.Error($"Error while building {element.name}:\n{e}");
             }
 
             // Build Timer
@@ -233,9 +235,69 @@ namespace LevelImposter.Core
             loadingBean.SetActive(false);
         }
 
+        /// <summary>
+        /// Coroutine to respawn the player
+        /// with a specific key combo. (Ctrl + Shift + "RESPAWN")
+        /// </summary>
+        [HideFromIl2Cpp]
+        private IEnumerator CoHandleRespawn()
+        {
+            int state = 0;
+            KeyCode[] sequence = new KeyCode[]
+            {
+                KeyCode.R,
+                KeyCode.E,
+                KeyCode.S,
+                KeyCode.P,
+                KeyCode.A,
+                KeyCode.W,
+                KeyCode.N
+            };
+
+            while (true)
+            {
+                bool ctrl = Input.GetKey(KeyCode.LeftControl)
+                         || Input.GetKey(KeyCode.RightControl);
+                bool shift = Input.GetKey(KeyCode.LeftShift)
+                        || Input.GetKey(KeyCode.RightShift);
+                bool seqKey = Input.GetKeyDown(sequence[state]);
+
+                if (ctrl && shift && seqKey)
+                {
+                    state++;
+                }
+                else if (!(ctrl || shift))
+                {
+                    state = 0;
+                }
+
+                if (state >= sequence.Length)
+                {
+                    state = 0;
+                    RespawnPlayer();
+                }
+
+                yield return null;
+            }
+        }
+
+        /// <summary>
+        /// Resets the Local Player to the
+        /// ShipStatus's spawn location in the
+        /// event they are stuck.
+        /// </summary>
+        private void RespawnPlayer()
+        {
+            GameObject? playerObj = PlayerControl.LocalPlayer?.gameObject;
+            if (playerObj == null)
+                return;
+            LILogger.Info("Resetting player to spawn");
+            playerObj.transform.position = ShipStatus?.InitialSpawnCenter ?? transform.position;
+            LILogger.Notify("<color=green>You've been reset to spawn</color>");
+        }
+
         public void Awake()
         {
-            Destroy(GetComponent<TagAmbientSoundPlayer>());
             _shipStatus = GetComponent<ShipStatus>();
             Instance = this;
 
@@ -246,8 +308,11 @@ namespace LevelImposter.Core
         }
         public void Start()
         {
-            if (MapLoader.CurrentMap != null)
+            if (CurrentMap != null)
+            {
                 HudManager.Instance.ShadowQuad.material.SetInt("_Mask", 7);
+                StartCoroutine(CoHandleRespawn().WrapToIl2Cpp());
+            }
         }
         public void OnDestroy()
         {

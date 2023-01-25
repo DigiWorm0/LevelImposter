@@ -12,6 +12,7 @@ using Il2CppInterop.Runtime.InteropTypes.Arrays;
 using Il2CppInterop.Runtime.InteropTypes;
 using Il2CppInterop.Runtime;
 using AmongUs.GameOptions;
+using Reactor.Networking.Attributes;
 
 namespace LevelImposter.Core
 {
@@ -22,6 +23,7 @@ namespace LevelImposter.Core
     {
         public static Dictionary<SystemTypes, string> SystemRenames = new();
         public static Dictionary<TaskTypes, string> TaskRenames = new();
+        private static int _randomSeed = 0;
 
         /// <summary>
         /// Adds an element to an Il2CppReferenceArray
@@ -33,6 +35,12 @@ namespace LevelImposter.Core
         public static Il2CppReferenceArray<T> AddToArr<T>(Il2CppReferenceArray<T> arr, T value) where T : Il2CppObjectBase
         {
             List<T> list = new(arr);
+            list.Add(value);
+            return list.ToArray();
+        }
+        public static Il2CppStringArray AddToArr(Il2CppStringArray arr, string value)
+        {
+            List<string> list = new(arr);
             list.Add(value);
             return list.ToArray();
         }
@@ -106,6 +114,29 @@ namespace LevelImposter.Core
                 box.offset = origBox.offset;
                 box.isTrigger = true;
             }
+        }
+
+        /// <summary>
+        /// Either grabs colliders from prefab or
+        /// sets current colliders to trigger. Used
+        /// for any UI buttons or in-game consoles.
+        /// </summary>
+        /// <param name="src">Object to set colliders</param>
+        /// <param name="prefab">Prefab to copy colliders from</param>
+        public static Collider2D CreateTriggerColliders(GameObject src, GameObject prefab)
+        {
+            PolygonCollider2D[] solidColliders = src.GetComponentsInChildren<PolygonCollider2D>();
+            for (int i = 0; i < solidColliders.Length; i++)
+                solidColliders[i].isTrigger = true;
+            if (solidColliders.Length <= 0)
+                CloneColliders(prefab, src);
+            Collider2D? collider = src.GetComponent<Collider2D>();
+            if (collider == null)
+            {
+                collider = src.AddComponent<BoxCollider2D>();
+                collider.isTrigger = true; 
+            }
+            return collider;
         }
 
         /// <summary>
@@ -239,22 +270,87 @@ namespace LevelImposter.Core
             if (!AmongUsClient.Instance.AmHost || DestroyableSingleton<TutorialManager>.InstanceExists || PlayerControl.LocalPlayer == null)
                 return;
 
-            Guid mapID = Guid.Empty;
-            if (MapLoader.CurrentMap != null)
-                Guid.TryParse(MapLoader.CurrentMap.id, out mapID);
-            string mapIDStr = mapID.ToString();
-
-            LILogger.Info("[RPC] Transmitting map ID [" + mapIDStr + "]");
+            string mapIDStr = MapLoader.CurrentMap?.id ?? Guid.Empty.ToString();
+            if (!Guid.TryParse(mapIDStr, out _))
+            {
+                LILogger.Error($"Invalid map ID [{mapIDStr}]");
+                return;
+            }
+            LILogger.Info($"[RPC] Transmitting map ID [{mapIDStr}]");
             MapSync.RPCSendMapID(PlayerControl.LocalPlayer, mapIDStr);
 
             // Set Skeld
-            if (mapID != Guid.Empty)
+            if (mapIDStr != Guid.Empty.ToString())
             {
                 IGameOptions currentGameOptions = GameOptionsManager.Instance.CurrentGameOptions;
-                currentGameOptions.SetByte(ByteOptionNames.MapId, (int)MapNames.Polus);
+                currentGameOptions.SetByte(ByteOptionNames.MapId, (byte)MapType.LevelImposter); // TODO: Move MapID outside default range
                 GameOptionsManager.Instance.GameHostOptions = GameOptionsManager.Instance.CurrentGameOptions;
                 GameManager.Instance.LogicOptions.SyncOptions();
             }
+        }
+
+        /// <summary>
+        /// Gets a random value based on an element GUID.
+        /// Given the same GUID, weight, and seed will always return with the same value.
+        /// Random seeds are synchronized it across all clients and
+        /// regenerated with <c>MapUtils.SyncRandomSeed()</c>
+        /// </summary>
+        /// <param name="id">GUID identifier</param>
+        /// <param name="weight">A weight value to generate new numbers with the same GUID</param>
+        /// <returns>A random float between 0.0 and 1.0 (inclusive)</returns>
+        public static float GetRandom(Guid id, int weight = 0)
+        {
+            int trueSeed = id.GetHashCode() + _randomSeed + weight;
+            UnityEngine.Random.InitState(trueSeed);
+            return UnityEngine.Random.value;
+        }
+
+        /// <summary>
+        /// Generates a new random seed and
+        /// synchronizes it across all clients.
+        /// </summary>
+        public static void SyncRandomSeed()
+        {
+            if (!AmongUsClient.Instance.AmHost || PlayerControl.LocalPlayer == null)
+                return;
+            UnityEngine.Random.InitState((int)DateTime.Now.Ticks);
+            int newSeed = UnityEngine.Random.RandomRange(int.MinValue, int.MaxValue);
+            RPCSyncRandomSeed(PlayerControl.LocalPlayer, newSeed);
+        }
+        [MethodRpc((uint)LIRpc.SyncRandomSeed)]
+        private static void RPCSyncRandomSeed(PlayerControl _, int randomSeed)
+        {
+            LILogger.Info($"[RPC] New random seed set: {randomSeed}");
+            _randomSeed = randomSeed;
+        }
+
+        /// <summary>
+        /// Clones the sprite from a prefab if the
+        /// object does not already have one.
+        /// </summary>
+        /// <param name="obj">Object to append sprite to</param>
+        /// <param name="prefab">Prefab to clone sprite from</param>
+        /// <param name="isSpriteAnim">TRUE if it should clone SpriteAnim components too</param>
+        /// <returns>obj's SpriteRenderer</returns>
+        public static SpriteRenderer CloneSprite(GameObject obj, GameObject prefab, bool isSpriteAnim = false)
+        {
+            var prefabRenderer = prefab.GetComponent<SpriteRenderer>();
+            var spriteRenderer = obj.GetComponent<SpriteRenderer>();
+            if (!spriteRenderer)
+            {
+                spriteRenderer = obj.AddComponent<SpriteRenderer>();
+                spriteRenderer.sprite = prefabRenderer.sprite;
+
+                if (isSpriteAnim)
+                {
+                    var prefabAnim = prefab.GetComponent<PowerTools.SpriteAnim>();
+                    var spriteAnim = obj.AddComponent<PowerTools.SpriteAnim>();
+                    spriteAnim.Play(prefabAnim.m_defaultAnim, prefabAnim.Speed);
+                }
+            }
+            spriteRenderer.material = prefabRenderer.material;
+            obj.layer = (int)Layer.ShortObjects;
+            return spriteRenderer;
         }
     }
 }

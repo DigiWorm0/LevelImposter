@@ -1,14 +1,19 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace LevelImposter.Core
 {
-    public enum MapType
+    public enum MapType : int
     {
         Skeld,
         Mira,
         Polus,
-        Airship
+        Dleks,
+        Airship,
+        Submerged,
+        LevelImposter
     }
 }

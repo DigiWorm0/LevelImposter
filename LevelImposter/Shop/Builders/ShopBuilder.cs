@@ -60,8 +60,11 @@ namespace LevelImposter.Shop
 
             // Star Renderer
             MeshRenderer starRenderer = starField.gameObject.GetComponent<MeshRenderer>();
-            Transform skeld = AssetDB.Ships["ss-skeld"].ShipStatus.transform;
-            starRenderer.material = skeld.FindChild("starfield").gameObject.GetComponent<MeshRenderer>().material;
+            var prefabShip = AssetDB.GetObject("ss-skeld");
+            if (prefabShip == null)
+                return null;
+            // TODO: Move Starfield to ObjectDB
+            starRenderer.material = prefabShip.transform.FindChild("starfield").gameObject.GetComponent<MeshRenderer>().material;
 
             // Background
             GameObject background = mapShop.transform.FindChild("Background").gameObject;

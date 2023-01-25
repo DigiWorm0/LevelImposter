@@ -42,7 +42,7 @@ namespace LevelImposter.Core
         /// <param name="player">PlayerControl that is teleported</param>
         /// <param name="x">Global X position to teleport to</param>
         /// <param name="y">Global Y position to teleport to</param>
-        [MethodRpc((uint)RpcIds.Teleport)]
+        [MethodRpc((uint)LIRpc.TeleportPlayer)]
         public static void RPCTeleport(PlayerControl player, float x, float y)
         {
             player.transform.position = new Vector3(

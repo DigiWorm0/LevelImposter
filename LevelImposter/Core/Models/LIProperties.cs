@@ -72,6 +72,7 @@ namespace LevelImposter.Core
         // Tasks
         public string? description { get; set; }
         public string? taskLength { get; set; }
+        public float? sabDuration { get; set; } 
 
         // Room
         public bool? isRoomNameVisible { get; set; }

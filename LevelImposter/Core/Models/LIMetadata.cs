@@ -18,6 +18,7 @@ namespace LevelImposter.Core
         public long createdAt { get; set; }
         public string downloadURL { get; set; }
         public string thumbnailURL { get; set; }
+        public Guid? remixOf { get; set; }
 
         public override string ToString()
         {

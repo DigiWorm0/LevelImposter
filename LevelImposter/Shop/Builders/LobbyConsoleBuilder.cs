@@ -35,6 +35,10 @@ namespace LevelImposter.Shop
             liConsole.HostOnly = true;
             liConsole.MenuPrefab = shopSpawner;
             liConsole.Outline = liRenderer;
+
+            // Collider
+            var liCollider = liConsoleObj.GetComponentInChildren<BoxCollider2D>();
+            liCollider.size = new Vector2(0.01f, 0.01f);
         }
 
         private static Sprite GetSprite()

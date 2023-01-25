@@ -18,10 +18,12 @@ namespace LevelImposter.Shop
         private LIMetadata? _currentMap = null;
         private GameObject? _loadingOverlay = null;
         private GameObject? _errOverlay = null;
+        private GameObject? _remixIcon = null;
         private Image? _thumbnail = null;
         private TMPro.TMP_Text? _nameText = null;
         private TMPro.TMP_Text? _authorText = null;
         private TMPro.TMP_Text? _descText = null;
+        private TMPro.TMP_Text? _remixText = null;
         private Button? _downloadButton = null;
         private Button? _playButton = null;
         private Button? _deleteButton = null;
@@ -52,6 +54,7 @@ namespace LevelImposter.Shop
             _descText.text = map.description;
             UpdateButtons();
             GetThumbnail();
+            GetRemix();
         }
 
         /// <summary>
@@ -71,12 +74,16 @@ namespace LevelImposter.Shop
             else
             {
                 bool mapExists = MapFileAPI.Instance?.Exists(_currentMap.id) ?? false;
-                bool isOnline = !string.IsNullOrEmpty(_currentMap.authorID);
+                bool isOnline = !string.IsNullOrEmpty(_currentMap.authorID) && Guid.TryParse(_currentMap.id, out _);
+                bool isPublic = _currentMap.isPublic;
+                bool isRemix = _currentMap.remixOf != null;
                 _downloadButton.interactable = !mapExists && isOnline;
                 _playButton.interactable = mapExists && (isOnline || !_isInLobby);
                 _deleteButton.interactable = mapExists && isOnline;
-                _externalButton.gameObject.SetActive(isOnline);
+                _externalButton.gameObject.SetActive(isOnline && isPublic);
                 _errOverlay?.SetActive(mapExists && !isOnline && _isInLobby);
+                _remixIcon?.SetActive(isRemix);
+                _remixText?.gameObject.SetActive(isRemix);
             }
         }
 
@@ -138,7 +145,7 @@ namespace LevelImposter.Shop
         {
             if (_currentMap == null)
                 return;
-            Application.OpenURL("https://levelimposter.net/#/map/" + _currentMap.id);
+            Application.OpenURL($"https://levelimposter.net/#/map/{_currentMap.id}");
         }
 
         /// <summary>
@@ -171,6 +178,24 @@ namespace LevelImposter.Shop
         }
 
         /// <summary>
+        /// Updates the map banner's remix info
+        /// </summary>
+        private void GetRemix()
+        {
+            if (_currentMap?.remixOf == null)
+                return;
+
+            if (_remixText != null)
+                _remixText.text = "Remix of\n<i>Unknown Map</i>";
+
+            LevelImposterAPI.Instance?.GetMap((Guid)_currentMap.remixOf, (metadata) =>
+            {
+                if (_remixText != null)
+                    _remixText.text = $"Remix of\n<b>{metadata.name}</b> by {metadata.authorName}";
+            });
+        }
+
+        /// <summary>
         /// Sets the button to be enabled or disabled
         /// </summary>
         /// <param name="isEnabled">TRUE if enabled</param>
@@ -184,10 +209,12 @@ namespace LevelImposter.Shop
         {
             _loadingOverlay = transform.FindChild("LoadOverlay").gameObject;
             _errOverlay = transform.FindChild("ErrOverlay").gameObject;
+            _remixIcon = transform.FindChild("RemixIcon").gameObject;
             _thumbnail = transform.FindChild("Thumbnail").GetComponent<Image>();
             _nameText = transform.FindChild("Title").GetComponent<TMPro.TMP_Text>();
             _authorText = transform.FindChild("Author").GetComponent<TMPro.TMP_Text>();
             _descText = transform.FindChild("Description").GetComponent<TMPro.TMP_Text>();
+            _remixText = transform.FindChild("Remix").GetComponent<TMPro.TMP_Text>();
             _downloadButton = transform.FindChild("DownloadBtn").GetComponent<Button>();
             _playButton = transform.FindChild("PlayBtn").GetComponent<Button>();
             _deleteButton = transform.FindChild("DeleteBtn").GetComponent<Button>();
@@ -197,6 +224,8 @@ namespace LevelImposter.Shop
                 LILogger.Warn("Could not find Loading Overlay in Map Banner");
             if (_errOverlay == null)
                 LILogger.Warn("Could not find Error Overlay in Map Banner");
+            if (_remixIcon == null)
+                LILogger.Warn("Could not find Remix Icon in Map Banner");
             if (_thumbnail == null)
                 LILogger.Warn("Could not find Thumbnail in Map Banner");
             if (_nameText == null)
@@ -205,6 +234,8 @@ namespace LevelImposter.Shop
                 LILogger.Warn("Could not find Author Text in Map Banner");
             if (_descText == null)
                 LILogger.Warn("Could not find Description Text in Map Banner");
+            if (_remixText == null)
+                LILogger.Warn("Could not find Remix Text in Map Banner");
             if (_downloadButton == null)
                 LILogger.Warn("Could not find Download Button in Map Banner");
             if (_playButton == null)
@@ -237,6 +268,8 @@ namespace LevelImposter.Shop
             _playButton = null;
             _deleteButton = null;
             _externalButton = null;
+            _remixIcon = null;
+            _remixText = null;
         }
     }
 }

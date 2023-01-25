@@ -48,10 +48,11 @@ namespace LevelImposter.Shop
                 spinnerTransform.gameObject.AddComponent<Spinner>();
                 Transform statusTransform = loadingPrefab.transform.GetChild(1);
                 TMP_Text statusText = statusTransform.gameObject.GetComponent<TMP_Text>();
-                while (!AssetDB.IsReady)
+                while (!AssetDB.IsInit)
                 {
-                    if (statusText.text != AssetDB.Instance?.Status)
-                        statusText.text = "<b>Loading Among Us Assets</b>\n" + AssetDB.Instance?.Status;
+                    var status = AssetDB.Instance?.Status ?? "";
+                    if (statusText.text != status)
+                        statusText.text = $"<b>Loading Among Us Assets</b>\n{status}";
                     yield return null;
 
                 }

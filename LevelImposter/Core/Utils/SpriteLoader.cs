@@ -1,22 +1,11 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
-using System.Text;
-using System.Threading.Tasks;
-using System.Runtime.InteropServices;
 using UnityEngine;
-using Unity.Collections;
-using Unity.Jobs;
-using UnityEngine.Events;
-using LevelImposter.Shop;
-using LevelImposter.DB;
 using System.Diagnostics;
 using Il2CppInterop.Runtime.Attributes;
-using Il2CppInterop.Runtime.InteropTypes.Arrays;
 using BepInEx.Unity.IL2CPP.Utils.Collections;
-using System.Collections;
-using System.Threading;
-using Reactor.Utilities;
 
 namespace LevelImposter.Core
 {
@@ -60,6 +49,24 @@ namespace LevelImposter.Core
                 Destroy(_mapSprites.Pop());
             OnLoad = null;
             _renderCount = 0;
+        }
+
+        /// <summary>
+        /// Adds a sprite to garbage collection list
+        /// </summary>
+        /// <param name="sprite">Sprite to garbage collect on exit</param>
+        public void AddSprite(Sprite sprite)
+        {
+            _mapSprites?.Push(sprite);
+        }
+
+        /// <summary>
+        /// Adds a texture to garbage collection list
+        /// </summary>
+        /// <param name="texture">Texture2D to garbage collect on exit</param>
+        public void AddTexture(Texture2D texture)
+        {
+            _mapTextures?.Push(texture);
         }
 
         /// <summary>

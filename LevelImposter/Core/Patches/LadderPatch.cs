@@ -30,7 +30,7 @@ namespace LevelImposter.Core
                     __instance.ClimbLadder(ladder, climbLadderSid);
                     return false;
                 }
-                LILogger.Warn("[RPC] Could not find a ladder of id: " + ladderId);
+                LILogger.Warn($"[RPC] Could not find a ladder of id: {ladderId}");
             }
             return true;
         }

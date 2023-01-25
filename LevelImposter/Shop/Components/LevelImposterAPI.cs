@@ -48,10 +48,10 @@ namespace LevelImposter.Shop
         public IEnumerator CoRequest(string url, Action<string>? callback)
         {
             {
-                LILogger.Info("GET: " + url);
+                LILogger.Info($"GET: {url}");
                 UnityWebRequest request = UnityWebRequest.Get(url);
                 yield return request.SendWebRequest();
-                LILogger.Info("RES: " + request.responseCode);
+                LILogger.Info($"RES: {request.responseCode}");
 
                 if (request.result == UnityWebRequest.Result.ConnectionError || request.result == UnityWebRequest.Result.ProtocolError)
                 {
@@ -89,10 +89,10 @@ namespace LevelImposter.Shop
         public IEnumerator CoRequestRaw(string url, Action<byte[]> callback)
         {
             {
-                LILogger.Info("GET: " + url);
+                LILogger.Info($"GET: {url}");
                 UnityWebRequest request = UnityWebRequest.Get(url);
                 yield return request.SendWebRequest();
-                LILogger.Info("RES: " + request.responseCode);
+                LILogger.Info($"RES: {request.responseCode}");
 
                 if (request.result == UnityWebRequest.Result.ConnectionError || request.result == UnityWebRequest.Result.ProtocolError)
                     LILogger.Error(request.error);
@@ -121,7 +121,7 @@ namespace LevelImposter.Shop
                 if (response == null)
                     LILogger.Error("Invalid API Response");
                 else if (response.v != API_VERSION)
-                    LILogger.Error("You are running on an older version of LevelImposter " + LevelImposter.Version + ". Update to get access to the API.");
+                    LILogger.Error($"You are running on an older version of LevelImposter {LevelImposter.Version}. Update to get access to the API.");
                 else if (!string.IsNullOrEmpty(response.error))
                     LILogger.Error(response.error);
                 else
@@ -170,7 +170,7 @@ namespace LevelImposter.Shop
         [HideFromIl2Cpp]
         public void GetMap(Guid id, Action<LIMetadata> callback)
         {
-            LILogger.Info("Getting map " + id + "...");
+            LILogger.Info($"Getting map {id}...");
             RequestJSON(API_PATH + "map/" + id, callback);
         }
 
@@ -201,6 +201,7 @@ namespace LevelImposter.Shop
                     mapData.isVerified = metadata.isVerified;
                     mapData.createdAt = metadata.createdAt;
                     mapData.thumbnailURL = metadata.thumbnailURL;
+                    mapData.remixOf = metadata.remixOf;
 
                     callback(mapData);
                 });

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
@@ -21,19 +21,181 @@ namespace LevelImposter.DB
     class AssetDB : MonoBehaviour
     {
         public static AssetDB? Instance { get; private set; }
-
-        public static bool IsReady = false;
-        public static Dictionary<string, TaskData> Tasks;
-        public static Dictionary<string, UtilData> Utils;
-        public static Dictionary<string, SabData> Sabs;
-        public static Dictionary<string, DecData> Decor;
-        public static Dictionary<string, RoomData> Room;
-        public static Dictionary<string, SSData> Ships;
-        public static Dictionary<string, SoundData> Sounds;
+        public static bool IsInit => Instance?._isInit == true;
 
         private string _status = "Initializing AssetDB...";
+        private bool _isInit = false;
+        private Stack<MapType> _loadedShips = new();
+        private SerializedAssetDB? _serializedAssetDB;
+        private ObjectDB? _objectDB;
+        private TaskDB? _taskDB;
+        private SoundDB? _soundDB;
+
         public string Status => _status;
 
+        /// <summary>
+        /// Gets a GameObject from the ObjectDB
+        /// </summary>
+        /// <param name="id">ID to lookup</param>
+        /// <returns>GameObject or null if couldn't be found</returns>
+        public static GameObject? GetObject(string id)
+        {
+            var prefab = Instance?._objectDB?.Get(id);
+            if (prefab == null)
+                LILogger.Warn($"Could not find prefab of type {id}");
+            return prefab;
+        }
+
+        /// <summary>
+        /// Gets a PlayerTask from the TaskDB
+        /// </summary>
+        /// <typeparam name="T">Type to cast abstract PlayerTask to</typeparam>
+        /// <param name="id">ID to lookup</param>
+        /// <returns>PlayerCast or null if couldn't be found</returns>
+        public static T? GetTask<T>(string id) where T : PlayerTask
+        {
+            var taskPrefab = Instance?._taskDB?.Get(id);
+            if (taskPrefab == null)
+                LILogger.Warn($"Could not find task of type {id}");
+            return taskPrefab?.Cast<T>();
+        }
+
+        /// <summary>
+        /// Gets whether or not an element ID contains a task behaviour 
+        /// </summary>
+        /// <param name="id">ID of the task</param>
+        /// <returns>TRUE if the task exists</returns>
+        public static bool HasTask(string id)
+        {
+            var taskPrefab = Instance?._taskDB?.Get(id);
+            return taskPrefab != null;
+        }
+
+        /// <summary>
+        /// Gets the length of a task from the TaskDB
+        /// </summary>
+        /// <param name="id">ID to lookup</param>
+        /// <returns>TaskLength or TaskLength.Short if couldn't be found</returns>
+        public static TaskLength GetTaskLength(string id)
+        {
+            var serializedTask = Instance?._serializedAssetDB?.TaskDB.Find((elem) => elem.ID == id);
+            return serializedTask?.TaskType ?? TaskLength.Short;
+        }
+
+        /// <summary>
+        /// Gets an AudioClip from the SoundDB
+        /// </summary>
+        /// <param name="id">ID to lookup</param>
+        /// <returns>AudioClip or null if couldn't be found</returns>
+        public static AudioClip? GetSound(string id)
+        {
+            var audioClip = Instance?._soundDB?.Get(id);
+            if (audioClip == null)
+                LILogger.Warn($"Could not find audio of type {id}");
+            return audioClip;
+        }
+
+        /// <summary>
+        /// Coroutine to load all assets into the AssetDB
+        /// </summary>
+        [HideFromIl2Cpp]
+        private IEnumerator CoLoadAssets()
+        {
+            {
+                // Add Ship Prefab
+                var shipPrefabs = AmongUsClient.Instance.ShipPrefabs;
+                int mapCount = (int)MapType.LevelImposter;
+                while (shipPrefabs.Count <= mapCount)
+                    shipPrefabs.Add(shipPrefabs[(int)MapType.Mira]);
+                while (Constants.MapNames.Count <= mapCount)
+                    Constants.MapNames = MapUtils.AddToArr(Constants.MapNames, "LevelImposter");
+
+                // Deserialize AssetDB
+                _serializedAssetDB = MapUtils.LoadJsonResource<SerializedAssetDB>("SerializedAssetDB.json");
+                if (_serializedAssetDB == null)
+                {
+                    LILogger.Warn("Serialized AssetDB was not found in Assembly resources");
+                    yield break;
+                }
+
+                // Sub-DBs
+                _objectDB = new(_serializedAssetDB);
+                _taskDB = new(_serializedAssetDB);
+                _soundDB = new(_serializedAssetDB);
+
+                // Ship References
+                _status = "Loading ship references";
+                LILogger.Info("Loading AssetDB...");
+                for (int i = 0; i < shipPrefabs.Count; i++)
+                {
+                    // Load AssetReference
+                    AssetReference shipRef = shipPrefabs[i];
+                    while (true)
+                    {
+                        if (shipRef.Asset != null)
+                            break;
+                        AsyncOperationHandle op = shipRef.LoadAssetAsync<GameObject>();
+                        if (!op.IsValid())
+                        {
+                            LILogger.Warn($"Could not import [{shipRef.AssetGUID}] due to invalid Async Operation. Trying again in 5 seconds...");
+                            yield return new WaitForSeconds(5);
+                            continue;
+                        }
+                        yield return op;
+                        if (op.Status != AsyncOperationStatus.Succeeded)
+                            LILogger.Warn($"Could not import [{shipRef.AssetGUID}] due to failed Async Operation. Ignoring...");
+                    }
+
+                    // Import GameObject
+                    if (shipRef.Asset != null)
+                    {
+                        GameObject shipPrefab = shipRef.Asset.Cast<GameObject>();
+                        LoadShip(shipPrefab);
+                        yield return null;
+                    }
+                    else
+                    {
+                        LILogger.Warn($"Could not import [{shipRef.AssetGUID}] due to missing Assets. Ignoring...");
+                    }
+                }
+
+                _objectDB.Load();
+                _taskDB.Load();
+                _soundDB.Load();
+                _isInit = true;
+
+            }
+        }
+
+        /// <summary>
+        /// Imports a single prefab into the AssetDB
+        /// </summary>
+        /// <param name="prefab">Ship prefab to load</param>
+        private void LoadShip(GameObject prefab)
+        {
+            _status = $"Loading \"{prefab.name}\"...";
+            ShipStatus shipStatus = prefab.GetComponent<ShipStatus>();
+            var mapType = prefab.name switch
+            {
+                "SkeldShip" => MapType.Skeld,
+                "MiraShip" => MapType.Mira,
+                "PolusShip" => MapType.Polus,
+                "Airship" => MapType.Airship,
+                _ => MapType.LevelImposter
+            };
+            if (mapType == MapType.LevelImposter)
+                return;
+            if (_loadedShips.Contains(mapType))
+                return;
+            _loadedShips.Push(mapType);
+
+            _objectDB?.LoadShip(shipStatus, mapType);
+            _taskDB?.LoadShip(shipStatus, mapType);
+            _soundDB?.LoadShip(shipStatus, mapType);
+
+            LILogger.Info($"...{prefab.name} Loaded");
+        }
+        
         public void Awake()
         {
             if (Instance != null)
@@ -45,106 +207,7 @@ namespace LevelImposter.DB
         }
         public void Start()
         {
-
-            AssetDBTemplate? tempDB = MapUtils.LoadJsonResource<AssetDBTemplate>("AssetDB.json");
-            if (tempDB == null)
-            {
-                LILogger.Warn("Serialized AssetDB was not found in Assembly resources");
-                return;
-            }
-
-            Tasks = tempDB.tasks;
-            Utils = tempDB.utils;
-            Sabs = tempDB.sabs;
-            Decor = tempDB.dec;
-            Room = tempDB.room;
-            Ships = tempDB.ss;
-            Sounds = tempDB.sounds;
             StartCoroutine(CoLoadAssets().WrapToIl2Cpp());
-        }
-
-        [HideFromIl2Cpp]
-        private IEnumerator CoLoadAssets()
-        {
-            {
-                _status = "Loading ship references";
-                LILogger.Info("Loading AssetDB...");
-                for (int i = 0; i < AmongUsClient.Instance.ShipPrefabs.Count; i++)
-                {
-                    AssetReference shipRef = AmongUsClient.Instance.ShipPrefabs[i];
-                    while (true)
-                    {
-                        if (shipRef.Asset == null)
-                        {
-                            AsyncOperationHandle op = shipRef.LoadAssetAsync<GameObject>();
-                            if (!op.IsValid())
-                            {
-                                LILogger.Warn($"Could not import [{shipRef.AssetGUID}] due to invalid Async Operation. Trying again in 5 seconds...");
-                                yield return new WaitForSeconds(5);
-                                continue;
-                            }
-                            yield return op;
-                            if (op.Status != AsyncOperationStatus.Succeeded)
-                                LILogger.Warn($"Could not import [{shipRef.AssetGUID}] due to failed Async Operation. Ignoring...");
-                        }
-                        break;
-                    }
-
-                    if (shipRef.Asset != null)
-                    {
-                        GameObject shipPrefab = shipRef.Asset.Cast<GameObject>();
-                        yield return _importPrefab(shipPrefab);
-                    }
-                    else
-                    {
-                        LILogger.Warn($"Could not import [{shipRef.AssetGUID}] due to missing Assets. Ignoring...");
-                    }
-                }
-                IsReady = true;
-            }
-        }
-
-        [HideFromIl2Cpp]
-        private IEnumerator _importPrefab(GameObject prefab)
-        {
-            {
-                _status = $"Loading \"{prefab.name}\"...";
-                ShipStatus shipStatus = prefab.GetComponent<ShipStatus>();
-                MapType mapType = MapType.Skeld;
-                if (prefab.name == "AprilShip")
-                    yield break;
-                if (prefab.name == "MiraShip")
-                    mapType = MapType.Mira;
-                if (prefab.name == "PolusShip")
-                    mapType = MapType.Polus;
-                if (prefab.name == "Airship")
-                    mapType = MapType.Airship;
-
-                yield return _importAssets(prefab, shipStatus, mapType, Tasks);
-                yield return _importAssets(prefab, shipStatus, mapType, Utils);
-                yield return _importAssets(prefab, shipStatus, mapType, Sabs);
-                yield return _importAssets(prefab, shipStatus, mapType, Decor);
-                yield return _importAssets(prefab, shipStatus, mapType, Room);
-                yield return _importAssets(prefab, shipStatus, mapType, Ships);
-                yield return _importAssets(prefab, shipStatus, mapType, Sounds);
-
-                LILogger.Info("..." + prefab.name + " Loaded");
-            }
-        }
-
-        [HideFromIl2Cpp]
-        private IEnumerator _importAssets<T>(GameObject map, ShipStatus shipStatus, MapType mapType, Dictionary<string, T> list) where T : AssetData
-        {
-            {
-                foreach (var elem in list)
-                {
-                    if (elem.Value.MapType == mapType)
-                    {
-                        elem.Value.ImportMap(map, shipStatus);
-                        yield return null;
-                    }
-                }
-            }
         }
     }
 }
