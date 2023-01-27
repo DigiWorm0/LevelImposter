@@ -1,4 +1,5 @@
 using HarmonyLib;
+using System.Text;
 using UnityEngine;
 using LevelImposter.Core;
 using LevelImposter.Shop;
@@ -25,18 +26,30 @@ namespace LevelImposter.Core
 
             bool isPublished = !string.IsNullOrEmpty(currentMap.authorID);
             bool isInLobby = LobbyBehaviour.Instance != null;
+            StringBuilder pingBuilder = new();
 
-            __instance.text.text = 
-                (isInLobby ? 
-                    $"<size=2.5><color=#1a95d8>Level</color><color=#cb2828>Imposter</color> v{LevelImposter.Version}\n" :
-                    "<size=2.5>") +
-                $"{__instance.text.text}\n" +
-                $"<color=#1a95d8>{currentMap.name}\n" +
-                (isPublished ?
-                    $"<size=2>by {currentMap.authorName}</size></color>" :
-                    $"<size=2><i>(Freeplay Only)</i></size></color>");
+            // Shrink all to fit
+            pingBuilder.Append("<size=2.5>");
 
-            
+            // LevelImposter "Logo"
+            if (isInLobby)
+                pingBuilder.Append($"<color=#1a95d8>Level</color><color=#cb2828>Imposter</color> v{LevelImposter.Version}\n");
+
+            // Existing Ping/Mods
+            pingBuilder.Append(__instance.text.text);
+            if (!__instance.text.text.EndsWith("\n"))
+                pingBuilder.Append("\n");
+
+            // Map Name
+            pingBuilder.Append($"<color=#1a95d8>{currentMap.name}\n");
+
+            // Map Author
+            if (isPublished)
+                pingBuilder.Append($"<size=2>by {currentMap.authorName}</size></color>");
+            else
+                pingBuilder.Append($"<size=2><i>(Freeplay Only)</i></size></color>");
+
+            __instance.text.text = pingBuilder.ToString();
         }
     }
 }

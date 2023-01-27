@@ -48,7 +48,7 @@ namespace LevelImposter.Core
 
 
             // Colliders
-            MapUtils.CreateTriggerColliders(obj, prefab);
+            MapUtils.CreateDefaultColliders(obj, prefab);
         }
 
         public void PostBuild() { }

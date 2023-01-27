@@ -69,7 +69,7 @@ namespace LevelImposter.Core
             btn.OnClick.AddListener(action);
 
             // Colliders
-            MapUtils.CreateTriggerColliders(obj, prefab);
+            MapUtils.CreateDefaultColliders(obj, prefab);
         }
 
         public void PostBuild() { }

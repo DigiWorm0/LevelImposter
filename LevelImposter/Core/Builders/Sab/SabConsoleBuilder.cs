@@ -64,7 +64,7 @@ namespace LevelImposter.Core
                 console.ConsoleId = CONSOLE_ID_PAIRS[elem.type];
 
             // Colliders
-            MapUtils.CreateTriggerColliders(obj, prefab);
+            MapUtils.CreateDefaultColliders(obj, prefab);
 
             // Button
             PassiveButton origBtn = prefab.GetComponent<PassiveButton>();

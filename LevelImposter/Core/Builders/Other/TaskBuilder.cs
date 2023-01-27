@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using UnityEngine.Events;
@@ -23,7 +23,9 @@ namespace LevelImposter.Core
             { "task-garbage4", 2 },
             { "task-fans1", 0 },
             { "task-fans2", 1 },
-            { "task-records1", 0 }
+            { "task-records1", 0 },
+            { "task-pistols1", 1 },
+            { "task-pistols2", 1 }
         };
         public static readonly Dictionary<string, int> CONSOLE_ID_INCREMENTS = new()
         {
@@ -215,7 +217,7 @@ namespace LevelImposter.Core
             }
 
             // Colliders
-            MapUtils.CreateTriggerColliders(obj, prefab);
+            MapUtils.CreateDefaultColliders(obj, prefab);
 
             // Button
             if (prefabBtn != null)

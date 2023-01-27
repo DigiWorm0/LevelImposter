@@ -80,7 +80,7 @@ namespace LevelImposter.Core
             }
 
             // Colliders
-            MapUtils.CreateTriggerColliders(obj, prefab);
+            MapUtils.CreateDefaultColliders(obj, prefab);
 
             // DB
             _ventElementDb.Add(_ventID, elem);

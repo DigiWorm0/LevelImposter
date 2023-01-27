@@ -71,6 +71,7 @@ namespace LevelImposter.Shop
                 return;
             if (MapFileAPI.Instance == null)
                 return;
+            LILogger.Info("Listing downloaded maps");
             ClearList();
             _currentListID = "downloaded";
             string[] mapIDs = MapFileAPI.Instance.ListIDs();
@@ -92,6 +93,7 @@ namespace LevelImposter.Shop
         /// </summary>
         public void ListTop()
         {
+            LILogger.Info("Listing top maps");
             ClearList();
             _currentListID = "top";
             LevelImposterAPI.Instance?.GetTop(OnTop);
@@ -124,6 +126,7 @@ namespace LevelImposter.Shop
         {
             if (LevelImposterAPI.Instance == null)
                 return;
+            LILogger.Info("Listing recent maps");
             ClearList();
             _currentListID = "recent";
             LevelImposterAPI.Instance.GetRecent(OnRecent);
@@ -156,6 +159,7 @@ namespace LevelImposter.Shop
         {
             if (LevelImposterAPI.Instance == null)
                 return;
+            LILogger.Info("Listing featured maps");
             ClearList();
             _currentListID = "featured";
             LevelImposterAPI.Instance.GetFeatured(OnFeatured);
@@ -206,6 +210,16 @@ namespace LevelImposter.Shop
                 AmongUsClient.Instance.TutorialMapId = (int)MapType.LevelImposter;
                 _freeplayComp?.OnClick();
             });
+        }
+
+        /// <summary>
+        /// Launches a map in browser
+        /// </summary>
+        /// <param name="id">ID of the map to view. Must be in LevelImposter API</param>
+        public void ViewMap(string id)
+        {
+            LILogger.Info($"Viewing map [{id}]");
+            Application.OpenURL($"https://levelimposter.net/#/map/{id}");
         }
 
         /// <summary>

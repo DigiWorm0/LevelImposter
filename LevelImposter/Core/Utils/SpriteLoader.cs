@@ -19,6 +19,11 @@ namespace LevelImposter.Core
         }
 
         public const float MIN_FRAMERATE = 15.0f;
+        public readonly List<string> CONVERT_TYPES = new()
+        {
+            "data:image/webp",
+            "data:image/gif"
+        };
 
         public static SpriteLoader? Instance;
 
@@ -120,8 +125,8 @@ namespace LevelImposter.Core
         public void LoadSpriteAsync(string b64Image, Action<SpriteData?> onLoad)
         {
             var imgData = MapUtils.ParseBase64(b64Image);
-            bool isGif = b64Image.StartsWith("data:image/gif;base64,");
-            LoadSpriteAsync(imgData, isGif, (spriteList) =>
+            bool shouldConvert = CONVERT_TYPES.Find((prefix) => b64Image.StartsWith(prefix)) != null;
+            LoadSpriteAsync(imgData, shouldConvert, (spriteList) =>
             {
                 onLoad(spriteList);
                 spriteList = null;
