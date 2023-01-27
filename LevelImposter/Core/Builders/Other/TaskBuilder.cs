@@ -24,6 +24,7 @@ namespace LevelImposter.Core
             { "task-fans1", 0 },
             { "task-fans2", 1 },
             { "task-records1", 0 },
+            { "task-pistols1", 1 },
             { "task-pistols2", 1 }
         };
         public static readonly Dictionary<string, int> CONSOLE_ID_INCREMENTS = new()
