@@ -30,7 +30,7 @@ namespace LevelImposter.Core
                 (isInLobby ? 
                     $"<size=2.5><color=#1a95d8>Level</color><color=#cb2828>Imposter</color> v{LevelImposter.Version}\n" :
                     "<size=2.5>") +
-                $"{__instance.text.text}\n" +
+                $"{__instance.text.text}{(__instance.text.text.EndsWith("\n") ? "" : "\n")}" +
                 $"<color=#1a95d8>{currentMap.name}\n" +
                 (isPublished ?
                     $"<size=2>by {currentMap.authorName}</size></color>" :
