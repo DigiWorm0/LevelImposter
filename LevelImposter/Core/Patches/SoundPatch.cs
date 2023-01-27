@@ -1,5 +1,6 @@
 ﻿using HarmonyLib;
 using UnityEngine;
+using LevelImposter.Shop;
 
 namespace LevelImposter.Core
 {
@@ -12,7 +13,12 @@ namespace LevelImposter.Core
     {
         public static bool Prefix([HarmonyArgument(0)] AudioSource source, AmbientSoundPlayer __instance)
         {
-            if (!__instance.gameObject.active)
+            if (MapLoader.CurrentMap == null)
+                return true;
+
+            bool isActive = __instance.gameObject.active;
+            bool isMeeting = MeetingHud.Instance != null;
+            if (!isActive || isMeeting)
             {
                 source.volume = 0.0f;
                 return false;

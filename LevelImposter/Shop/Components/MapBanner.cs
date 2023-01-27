@@ -145,7 +145,7 @@ namespace LevelImposter.Shop
         {
             if (_currentMap == null)
                 return;
-            Application.OpenURL($"https://levelimposter.net/#/map/{_currentMap.id}");
+            ShopManager.Instance?.ViewMap(_currentMap.id);
         }
 
         /// <summary>
@@ -180,6 +180,7 @@ namespace LevelImposter.Shop
         /// <summary>
         /// Updates the map banner's remix info
         /// </summary>
+        [HideFromIl2Cpp]
         private void GetRemix()
         {
             if (_currentMap?.remixOf == null)
