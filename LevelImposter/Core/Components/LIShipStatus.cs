@@ -247,26 +247,20 @@ namespace LevelImposter.Core
             {
                 KeyCode.R,
                 KeyCode.E,
-                KeyCode.S,
-                KeyCode.P,
-                KeyCode.A,
-                KeyCode.W,
-                KeyCode.N
+                KeyCode.S
             };
 
             while (true)
             {
-                bool ctrl = Input.GetKey(KeyCode.LeftControl)
-                         || Input.GetKey(KeyCode.RightControl);
                 bool shift = Input.GetKey(KeyCode.LeftShift)
                         || Input.GetKey(KeyCode.RightShift);
                 bool seqKey = Input.GetKeyDown(sequence[state]);
 
-                if (ctrl && shift && seqKey)
+                if (shift && seqKey)
                 {
                     state++;
                 }
-                else if (!(ctrl || shift))
+                else if (!shift)
                 {
                     state = 0;
                 }
