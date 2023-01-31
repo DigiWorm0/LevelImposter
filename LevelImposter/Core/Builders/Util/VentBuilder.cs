@@ -95,16 +95,29 @@ namespace LevelImposter.Core
 
             foreach (var currentVent in _ventElementDb)
             {
-                bool exists = _ventComponentDb.TryGetValue(currentVent.Value.id, out Vent? ventComponent);
-                if (!exists || ventComponent == null)
+                Vent? ventComponent = GetVentComponent(currentVent.Value.id);
+                if (ventComponent == null)
                     continue;
                 if (currentVent.Value.properties.leftVent != null)
-                    ventComponent.Left = _ventComponentDb[(Guid)currentVent.Value.properties.leftVent];
+                    ventComponent.Left = GetVentComponent((Guid)currentVent.Value.properties.leftVent);
                 if (currentVent.Value.properties.middleVent != null)
-                    ventComponent.Center = _ventComponentDb[(Guid)currentVent.Value.properties.middleVent];
+                    ventComponent.Center = GetVentComponent((Guid)currentVent.Value.properties.middleVent);
                 if (currentVent.Value.properties.rightVent != null)
-                    ventComponent.Right = _ventComponentDb[(Guid)currentVent.Value.properties.rightVent];
+                    ventComponent.Right = GetVentComponent((Guid)currentVent.Value.properties.rightVent);
             }
+        }
+
+        /// <summary>
+        /// Gets a vent component from the vent component db
+        /// </summary>
+        /// <param name="id">GUID of the vent</param>
+        /// <returns>Vent component or null if not found</returns>
+        private Vent? GetVentComponent(Guid id)
+        {
+            bool exists = _ventComponentDb.TryGetValue(id, out Vent? ventComponent);
+            if (!exists)
+                return null;
+            return ventComponent;
         }
 
         /// <summary>
