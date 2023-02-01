@@ -20,6 +20,10 @@ namespace LevelImposter.Shop
         {
             if (__instance.Title == StringNames.GameMapName && MapLoader.CurrentMap != null && __instance.oldValue != __instance.Selected)
             {
+                for (int i = __instance.Values.Count - 1; i >= 0; i--)
+                    if (__instance.Values[i].Key == "LevelImposter")
+                        __instance.Values.RemoveAt(i);
+
                 __instance.oldValue = __instance.Selected;
                 __instance.ValueText.text = MapLoader.CurrentMap.name;
                 return false;
