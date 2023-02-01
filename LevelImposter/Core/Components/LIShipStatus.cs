@@ -281,6 +281,7 @@ namespace LevelImposter.Core
         /// ShipStatus's spawn location in the
         /// event they are stuck.
         /// </summary>
+        /// <param name="playerControl">Player to respawn</param>
         [MethodRpc((uint)LIRpc.ResetPlayer)]
         private void RespawnPlayer(PlayerControl playerControl)
         {
