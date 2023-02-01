@@ -283,13 +283,14 @@ namespace LevelImposter.Core
         /// </summary>
         /// <param name="playerControl">Player to respawn</param>
         [MethodRpc((uint)LIRpc.ResetPlayer)]
-        private void RespawnPlayer(PlayerControl playerControl)
+        private static void RespawnPlayer(PlayerControl playerControl)
         {
-            if (playerControl == null)
+            ShipStatus? shipStatus = Instance?.ShipStatus;
+            if (playerControl == null || shipStatus == null)
                 return;
             LILogger.Info($"Resetting {playerControl.name} to spawn");
             PlayerPhysics playerPhysics = playerControl.GetComponent<PlayerPhysics>();
-            playerPhysics.transform.position = ShipStatus?.InitialSpawnCenter ?? transform.position;
+            playerPhysics.transform.position = shipStatus.InitialSpawnCenter;
             if (playerPhysics.AmOwner)
             {
                 playerPhysics.ExitAllVents();

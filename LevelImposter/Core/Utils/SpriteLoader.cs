@@ -200,6 +200,9 @@ namespace LevelImposter.Core
                 _renderCount--;
                 if (onLoad != null)
                     onLoad.Invoke(spriteData);
+
+                onLoad = null;
+                imgData = null;
             }
         }
 
