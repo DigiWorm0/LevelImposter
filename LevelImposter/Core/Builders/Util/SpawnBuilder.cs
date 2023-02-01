@@ -15,7 +15,7 @@ namespace LevelImposter.Core
                 throw new Exception("ShipStatus not found");
 
             // Set Spawn Point
-            Vector2 pos = obj.transform.position - new Vector3(0, 0);
+            Vector2 pos = obj.transform.position - new Vector3(0f, 0.3636f, 0f);
             ShipStatus shipStatus = LIShipStatus.Instance.ShipStatus;
             shipStatus.SpawnRadius = 1.55f;
             if (elem.type == "util-spawn1")
