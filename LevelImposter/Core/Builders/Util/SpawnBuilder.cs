@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
@@ -17,6 +17,7 @@ namespace LevelImposter.Core
             // Set Spawn Point
             Vector2 pos = obj.transform.position - new Vector3(0, 0);
             ShipStatus shipStatus = LIShipStatus.Instance.ShipStatus;
+            shipStatus.SpawnRadius = 1.55f;
             if (elem.type == "util-spawn1")
             {
                 shipStatus.InitialSpawnCenter = pos;

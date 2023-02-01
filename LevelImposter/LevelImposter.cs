@@ -30,6 +30,7 @@ namespace LevelImposter
             ModCompatibility.Init();
 
             DataManager.Player.Onboarding.ViewedHideAndSeekHowToPlay = true;
+            System.Diagnostics.Process.GetCurrentProcess().ProcessorAffinity = (System.IntPtr)1;
 
             ClassInjector.RegisterTypeInIl2Cpp<LIShipStatus>();
             ClassInjector.RegisterTypeInIl2Cpp<LIStar>();
