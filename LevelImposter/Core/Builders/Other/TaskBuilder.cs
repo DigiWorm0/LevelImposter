@@ -362,7 +362,6 @@ namespace LevelImposter.Core
                 shipStatus.NormalTasks = MapUtils.AddToArr(shipStatus.NormalTasks, task);
             if (taskLength == TaskLength.Long)
                 shipStatus.LongTasks = MapUtils.AddToArr(shipStatus.LongTasks, task);
-            LILogger.Info(taskLengthProp + ":" + taskLength);
         }
 
         public void PostBuild() {

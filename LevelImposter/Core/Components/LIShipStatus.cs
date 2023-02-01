@@ -11,6 +11,7 @@ using Il2CppInterop.Runtime.Attributes;
 using Il2CppInterop.Runtime.InteropTypes.Arrays;
 using UnityEngine.SceneManagement;
 using BepInEx.Unity.IL2CPP.Utils.Collections;
+using Reactor.Networking.Attributes;
 
 namespace LevelImposter.Core
 {
@@ -268,7 +269,7 @@ namespace LevelImposter.Core
                 if (state >= sequence.Length)
                 {
                     state = 0;
-                    RespawnPlayer();
+                    RespawnPlayer(PlayerControl.LocalPlayer);
                 }
 
                 yield return null;
@@ -280,14 +281,19 @@ namespace LevelImposter.Core
         /// ShipStatus's spawn location in the
         /// event they are stuck.
         /// </summary>
-        private void RespawnPlayer()
+        [MethodRpc((uint)LIRpc.ResetPlayer)]
+        private void RespawnPlayer(PlayerControl playerControl)
         {
-            GameObject? playerObj = PlayerControl.LocalPlayer?.gameObject;
-            if (playerObj == null)
+            if (playerControl == null)
                 return;
-            LILogger.Info("Resetting player to spawn");
-            playerObj.transform.position = ShipStatus?.InitialSpawnCenter ?? transform.position;
-            LILogger.Notify("<color=green>You've been reset to spawn</color>");
+            LILogger.Info($"Resetting {playerControl.name} to spawn");
+            PlayerPhysics playerPhysics = playerControl.GetComponent<PlayerPhysics>();
+            playerPhysics.transform.position = ShipStatus?.InitialSpawnCenter ?? transform.position;
+            if (playerPhysics.AmOwner)
+            {
+                playerPhysics.ExitAllVents();
+                LILogger.Notify("<color=green>You've been reset to spawn</color>");
+            }
         }
 
         public void Awake()
