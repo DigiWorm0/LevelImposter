@@ -31,8 +31,6 @@ namespace LevelImposter.Core
             var prefab = AssetDB.GetObject(elem.type);
             if (prefab == null)
                 return;
-            var prefabRenderer = prefab.GetComponent<SpriteRenderer>();
-            var prefabAnim = prefab.GetComponent<SpriteAnim>();
             var prefabConsole = prefab.GetComponent<VentCleaningConsole>();
             var prefabVent = prefab.GetComponent<Vent>();
             var prefabArrow = prefab.transform.FindChild("Arrow").gameObject;
@@ -67,7 +65,8 @@ namespace LevelImposter.Core
 
             // Arrows
             GameObject arrowParent = new GameObject($"{obj.name}_arrows");
-            arrowParent.transform.position = obj.transform.position;
+            arrowParent.transform.SetParent(obj.transform);
+            arrowParent.transform.localPosition = Vector3.zero;
             for (int i = 0; i < 3; i++)
                 GenerateArrow(prefabArrow, vent, i).transform.SetParent(arrowParent.transform);
 
