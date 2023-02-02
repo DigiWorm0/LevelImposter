@@ -19,6 +19,7 @@ namespace LevelImposter.Core
         FireTrigger = 50,
         TeleportPlayer,
         SyncMapID,
-        SyncRandomSeed
+        SyncRandomSeed,
+        ResetPlayer
     }
 }

@@ -285,7 +285,7 @@ namespace LevelImposter.Core
                         task.Arrow = arrow.GetComponent<ArrowBehaviour>();
                     }
 
-                    shipStatus.LongTasks = MapUtils.AddToArr(shipStatus.LongTasks, task.Cast<NormalPlayerTask>());
+                    AddTaskToShip(elem, shipStatus, prefabLength, task);
                 }
             }
             else if (AssetDB.HasTask(elem.type) && !isBuilt)
@@ -334,14 +334,7 @@ namespace LevelImposter.Core
                     _wiresTask = task;
                 }
 
-                string? taskLengthProp = elem.properties.taskLength;
-                TaskLength taskLength = taskLengthProp != null ? TASK_LENGTHS[taskLengthProp] : prefabLength;
-                if (taskLength == TaskLength.Common)
-                    shipStatus.CommonTasks = MapUtils.AddToArr(shipStatus.CommonTasks, task);
-                if (taskLength == TaskLength.Short)
-                    shipStatus.NormalTasks = MapUtils.AddToArr(shipStatus.NormalTasks, task);
-                if (taskLength == TaskLength.Long)
-                    shipStatus.LongTasks = MapUtils.AddToArr(shipStatus.LongTasks, task);
+                AddTaskToShip(elem, shipStatus, prefabLength, task);
             }
 
             // Medscan
@@ -353,6 +346,22 @@ namespace LevelImposter.Core
                 MedScannerBehaviour medscan = obj.AddComponent<MedScannerBehaviour>();
                 shipStatus.MedScanner = medscan;
             }
+        }
+
+        private void AddTaskToShip(
+            LIElement elem,
+            ShipStatus shipStatus,
+            TaskLength prefabLength,
+            NormalPlayerTask task)
+        {
+            string? taskLengthProp = elem.properties.taskLength;
+            TaskLength taskLength = taskLengthProp != null ? TASK_LENGTHS[taskLengthProp] : prefabLength;
+            if (taskLength == TaskLength.Common)
+                shipStatus.CommonTasks = MapUtils.AddToArr(shipStatus.CommonTasks, task);
+            if (taskLength == TaskLength.Short)
+                shipStatus.NormalTasks = MapUtils.AddToArr(shipStatus.NormalTasks, task);
+            if (taskLength == TaskLength.Long)
+                shipStatus.LongTasks = MapUtils.AddToArr(shipStatus.LongTasks, task);
         }
 
         public void PostBuild() {

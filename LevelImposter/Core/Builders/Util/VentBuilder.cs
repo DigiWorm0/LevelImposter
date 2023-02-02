@@ -31,8 +31,6 @@ namespace LevelImposter.Core
             var prefab = AssetDB.GetObject(elem.type);
             if (prefab == null)
                 return;
-            var prefabRenderer = prefab.GetComponent<SpriteRenderer>();
-            var prefabAnim = prefab.GetComponent<SpriteAnim>();
             var prefabConsole = prefab.GetComponent<VentCleaningConsole>();
             var prefabVent = prefab.GetComponent<Vent>();
             var prefabArrow = prefab.transform.FindChild("Arrow").gameObject;
@@ -67,7 +65,8 @@ namespace LevelImposter.Core
 
             // Arrows
             GameObject arrowParent = new GameObject($"{obj.name}_arrows");
-            arrowParent.transform.position = obj.transform.position;
+            arrowParent.transform.SetParent(obj.transform);
+            arrowParent.transform.localPosition = Vector3.zero;
             for (int i = 0; i < 3; i++)
                 GenerateArrow(prefabArrow, vent, i).transform.SetParent(arrowParent.transform);
 
@@ -95,16 +94,29 @@ namespace LevelImposter.Core
 
             foreach (var currentVent in _ventElementDb)
             {
-                bool exists = _ventComponentDb.TryGetValue(currentVent.Value.id, out Vent? ventComponent);
-                if (!exists || ventComponent == null)
+                Vent? ventComponent = GetVentComponent(currentVent.Value.id);
+                if (ventComponent == null)
                     continue;
                 if (currentVent.Value.properties.leftVent != null)
-                    ventComponent.Left = _ventComponentDb[(Guid)currentVent.Value.properties.leftVent];
+                    ventComponent.Left = GetVentComponent((Guid)currentVent.Value.properties.leftVent);
                 if (currentVent.Value.properties.middleVent != null)
-                    ventComponent.Center = _ventComponentDb[(Guid)currentVent.Value.properties.middleVent];
+                    ventComponent.Center = GetVentComponent((Guid)currentVent.Value.properties.middleVent);
                 if (currentVent.Value.properties.rightVent != null)
-                    ventComponent.Right = _ventComponentDb[(Guid)currentVent.Value.properties.rightVent];
+                    ventComponent.Right = GetVentComponent((Guid)currentVent.Value.properties.rightVent);
             }
+        }
+
+        /// <summary>
+        /// Gets a vent component from the vent component db
+        /// </summary>
+        /// <param name="id">GUID of the vent</param>
+        /// <returns>Vent component or null if not found</returns>
+        private Vent? GetVentComponent(Guid id)
+        {
+            bool exists = _ventComponentDb.TryGetValue(id, out Vent? ventComponent);
+            if (!exists)
+                return null;
+            return ventComponent;
         }
 
         /// <summary>

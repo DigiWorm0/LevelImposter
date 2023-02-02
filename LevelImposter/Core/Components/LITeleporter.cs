@@ -20,6 +20,7 @@ namespace LevelImposter.Core
 
         private LIElement? _elem = null;
         private LITeleporter? _target = null;
+        private bool _preserveOffset = true;
 
         [HideFromIl2Cpp]
         public LIElement? CurrentElem => _elem;
@@ -34,6 +35,7 @@ namespace LevelImposter.Core
         public void SetElement(LIElement elem)
         {
             _elem = elem;
+            _preserveOffset = elem.properties.preserveOffset ?? true;
         }
 
         /// <summary>
@@ -65,7 +67,7 @@ namespace LevelImposter.Core
                 Guid? targetID = _elem.properties.teleporter;
                 if (targetID != null)
                 {
-                    _target = _teleList.Find((tele) => tele.CurrentElem.id == targetID);
+                    _target = _teleList.Find((tele) => tele.CurrentElem?.id == targetID);
                 }
             }
         }
@@ -86,7 +88,11 @@ namespace LevelImposter.Core
                 return;
 
             // Offset
-            Vector3 offset = transform.position - _target.transform.position;
+            Vector3 offset;
+            if (_preserveOffset)
+                offset = transform.position - _target.transform.position;
+            else
+                offset = player.transform.position - _target.transform.position;
             offset.z = 0;
 
             // Pet

@@ -14,7 +14,7 @@ namespace LevelImposter.Core
         // Set to true to log Unity Stack traces to the BepInEx console. Useful when debugging.
         private const bool LOG_UNITY_STACK_TRACE = false;
 
-        private static ManualLogSource _logger;
+        private static ManualLogSource? _logger;
 
         /// <summary>
         /// Initializes LILogger instance.
@@ -49,7 +49,7 @@ namespace LevelImposter.Core
         /// <param name="data">String or object to log</param>
         public static void Log(LogLevel logLevel, object data)
         {
-            _logger.Log(logLevel, data);
+            _logger?.Log(logLevel, data);
         }
 
         /// <summary>

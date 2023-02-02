@@ -37,6 +37,7 @@ namespace LevelImposter.Core
 
         // Teleporter
         public Guid? teleporter { get; set; }
+        public bool? preserveOffset { get; set; }
 
         // Camera
         public float? camXOffset { get; set; }
