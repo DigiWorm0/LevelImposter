@@ -7,6 +7,7 @@ using UnityEngine;
 using LevelImposter.Shop;
 using LevelImposter.DB;
 using System.Diagnostics;
+using System.Runtime.InteropServices;
 using Il2CppInterop.Runtime.Attributes;
 using Il2CppInterop.Runtime.InteropTypes.Arrays;
 using UnityEngine.SceneManagement;
@@ -39,6 +40,16 @@ namespace LevelImposter.Core
             { "MiraHQ", "ss-mira" },
             { "Polus", "ss-polus" },
             { "Airship", "ss-airship" }
+        };
+        public static readonly KeyCode[] RESPAWN_SEQ = new KeyCode[] {
+            KeyCode.R,
+            KeyCode.E,
+            KeyCode.S
+        };
+        public static readonly KeyCode[] CPU_SEQ = new KeyCode[] {
+            KeyCode.C,
+            KeyCode.P,
+            KeyCode.U
         };
 
         private LIMap? _currentMap = null;
@@ -238,18 +249,12 @@ namespace LevelImposter.Core
 
         /// <summary>
         /// Coroutine to respawn the player
-        /// with a specific key combo. (Ctrl + Shift + "RESPAWN")
+        /// with a specific key combo. (Shift + "RES" or Shift + "CPU")
         /// </summary>
         [HideFromIl2Cpp]
-        private IEnumerator CoHandleRespawn()
+        private IEnumerator CoHandleKeyCombo(KeyCode[] sequence, Action onSequence)
         {
             int state = 0;
-            KeyCode[] sequence = new KeyCode[]
-            {
-                KeyCode.R,
-                KeyCode.E,
-                KeyCode.S
-            };
 
             while (true)
             {
@@ -269,7 +274,7 @@ namespace LevelImposter.Core
                 if (state >= sequence.Length)
                 {
                     state = 0;
-                    RespawnPlayer(PlayerControl.LocalPlayer);
+                    onSequence.Invoke();
                 }
 
                 yield return null;
@@ -298,6 +303,32 @@ namespace LevelImposter.Core
             }
         }
 
+        /// <summary>
+        /// Sets the CPU Affinity of Among Us to CPUs 1 and 2 as per 
+        /// https://github.com/eDonnes124/Town-Of-Us-R/issues/81
+        /// </summary>
+        private static void SetCPUAffinity()
+        {
+            var isWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
+            var isLinux = RuntimeInformation.IsOSPlatform(OSPlatform.Linux);
+            var process = Process.GetCurrentProcess();
+
+            if (!isWindows && !isLinux)
+            {
+                LILogger.Notify("<color=red>System Incompatible</color>");
+            }
+            else if (process.ProcessorAffinity.ToInt32() == 6)
+            {
+                process.ProcessorAffinity = (IntPtr)(Math.Pow(2, Environment.ProcessorCount) - 1);
+                LILogger.Notify("<color=red>Reset CPU affinity</color>");
+            }
+            else
+            {
+                process.ProcessorAffinity = (IntPtr)6;
+                LILogger.Notify("<color=green>Set CPU affinity to 1 & 2</color>");
+            }
+        }
+
         public void Awake()
         {
             _shipStatus = GetComponent<ShipStatus>();
@@ -313,7 +344,13 @@ namespace LevelImposter.Core
             if (CurrentMap != null)
             {
                 HudManager.Instance.ShadowQuad.material.SetInt("_Mask", 7);
-                StartCoroutine(CoHandleRespawn().WrapToIl2Cpp());
+
+                StartCoroutine(CoHandleKeyCombo(RESPAWN_SEQ, () =>{
+                    RespawnPlayer(PlayerControl.LocalPlayer);
+                }).WrapToIl2Cpp());
+                StartCoroutine(CoHandleKeyCombo(CPU_SEQ, () => {
+                    SetCPUAffinity();
+                }).WrapToIl2Cpp());
             }
         }
         public void OnDestroy()
