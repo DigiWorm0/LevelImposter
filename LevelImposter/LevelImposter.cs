@@ -6,6 +6,7 @@ using LevelImposter.DB;
 using LevelImposter.Shop;
 using Il2CppInterop.Runtime.Injection;
 using AmongUs.Data;
+using Reactor.Networking.Attributes;
 
 namespace LevelImposter
 {
@@ -13,6 +14,7 @@ namespace LevelImposter
     [BepInDependency(ModCompatibility.REACTOR_ID)]
     [BepInDependency(ModCompatibility.SUBMERGED_GUID, BepInDependency.DependencyFlags.SoftDependency)]
     [BepInDependency(ModCompatibility.TOU_GUID, BepInDependency.DependencyFlags.SoftDependency)]
+    [ReactorModFlags(Reactor.Networking.ModFlags.RequireOnAllClients)]
     [BepInProcess("Among Us.exe")]
     public partial class LevelImposter : BasePlugin
     {
