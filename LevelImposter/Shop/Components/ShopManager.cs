@@ -205,6 +205,7 @@ namespace LevelImposter.Shop
             if (!AssetDB.IsInit)
                 return;
             LILogger.Info($"Launching map [{id}]");
+            MapUtils.SyncRandomSeed();
             MapLoader.LoadMap(id, () =>
             {
                 AmongUsClient.Instance.TutorialMapId = (int)MapType.LevelImposter;

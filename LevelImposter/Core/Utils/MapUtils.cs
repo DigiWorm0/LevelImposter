@@ -306,11 +306,15 @@ namespace LevelImposter.Core
         /// </summary>
         public static void SyncRandomSeed()
         {
-            if (!AmongUsClient.Instance.AmHost || PlayerControl.LocalPlayer == null)
+            bool isConnected = AmongUsClient.Instance.AmConnected;
+            if (isConnected && (!AmongUsClient.Instance.AmHost || PlayerControl.LocalPlayer == null))
                 return;
             UnityEngine.Random.InitState((int)DateTime.Now.Ticks);
             int newSeed = UnityEngine.Random.RandomRange(int.MinValue, int.MaxValue);
-            RPCSyncRandomSeed(PlayerControl.LocalPlayer, newSeed);
+            if (isConnected)
+                RPCSyncRandomSeed(PlayerControl.LocalPlayer, newSeed);
+            else
+                _randomSeed = newSeed;
         }
         [MethodRpc((uint)LIRpc.SyncRandomSeed)]
         private static void RPCSyncRandomSeed(PlayerControl _, int randomSeed)
