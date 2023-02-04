@@ -3,16 +3,18 @@ using System.Collections.Generic;
 using System.Text;
 using System.Text.Json;
 using System.Reflection;
+using UnityEngine;
 using UnityEngine.Events;
 using System.IO;
 using LevelImposter.DB;
 using LevelImposter.Shop;
-using UnityEngine;
 using Il2CppInterop.Runtime.InteropTypes.Arrays;
 using Il2CppInterop.Runtime.InteropTypes;
 using Il2CppInterop.Runtime;
 using AmongUs.GameOptions;
 using Reactor.Networking.Attributes;
+using Reactor.Utilities;
+using System.Collections;
 
 namespace LevelImposter.Core
 {
@@ -281,6 +283,21 @@ namespace LevelImposter.Core
                 currentGameOptions.SetByte(ByteOptionNames.MapId, (byte)MapType.LevelImposter); // TODO: Move MapID outside default range
                 GameOptionsManager.Instance.GameHostOptions = GameOptionsManager.Instance.CurrentGameOptions;
                 GameManager.Instance.LogicOptions.SyncOptions();
+            }
+        }
+
+        public static void WaitForPlayer(Action onFinish)
+        {
+            Coroutines.Start(CoWaitForPlayer(onFinish));
+        }
+
+        private static IEnumerator CoWaitForPlayer(Action onFinish)
+        {
+            {
+                while (PlayerControl.LocalPlayer == null)
+                    yield return null;
+                onFinish.Invoke();
+                onFinish = null;
             }
         }
 

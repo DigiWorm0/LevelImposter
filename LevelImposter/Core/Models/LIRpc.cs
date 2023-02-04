@@ -20,6 +20,7 @@ namespace LevelImposter.Core
         TeleportPlayer,
         SyncMapID,
         SyncRandomSeed,
-        ResetPlayer
+        ResetPlayer,
+        DownloadCheck
     }
 }
