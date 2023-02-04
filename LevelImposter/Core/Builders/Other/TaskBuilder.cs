@@ -67,6 +67,10 @@ namespace LevelImposter.Core
         public static byte RecordsCount => _recordsCount;
         public static byte WiresCount => _wiresCount;
 
+        private static int MIN_SHORT_TASKS = 3;
+        private static int MIN_COMMON_TASKS = 2;
+        private static int MIN_LONG_TASKS = 1;
+
         public TaskBuilder()
         {
             _divertSystems = Array.Empty<SystemTypes>();
@@ -396,6 +400,21 @@ namespace LevelImposter.Core
                 _wiresTask.MaxStep = Math.Min(WiresCount, (byte)3);
             }
             _wiresTask = null;
+
+            // Check Task Counts
+            ShipStatus? shipStatus = LIShipStatus.Instance?.ShipStatus;
+            if (shipStatus != null)
+            {
+                if (shipStatus.NormalTasks.Count < MIN_SHORT_TASKS)
+                    LILogger.Warn($"Freeplay requires {MIN_SHORT_TASKS} short tasks (Currently has {shipStatus.NormalTasks.Count})");
+
+                if (shipStatus.CommonTasks.Count < MIN_COMMON_TASKS)
+                    LILogger.Warn($"Freeplay requires {MIN_COMMON_TASKS} common tasks (Currently has {shipStatus.CommonTasks.Count})");
+
+                if (shipStatus.LongTasks.Count < MIN_LONG_TASKS)
+                    LILogger.Warn($"Freeplay requires {MIN_LONG_TASKS} long tasks (Currently has {shipStatus.LongTasks.Count})");
+
+            }
         }
     }
 }
