@@ -43,4 +43,17 @@ namespace LevelImposter.Shop
             }
         }
     }
+
+    /*
+    *      Disables the Start Button
+    *      when the map isn't downloaded
+    */
+    [HarmonyPatch(typeof(GameStartManager), nameof(GameStartManager.BeginGame))]
+    public static class LobbyStartPatch
+    {
+        public static bool Prefix()
+        {
+            return DownloadManager.CanStart;
+        }
+    }
 }
