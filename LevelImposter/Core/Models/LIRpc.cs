@@ -21,6 +21,9 @@ namespace LevelImposter.Core
         SyncMapID,
         SyncRandomSeed,
         ResetPlayer,
-        DownloadCheck
+        DownloadCheck,
+
+        TOU_FixLights = 139,
+        TOU_EngineerFix = 140 // Fixes the engineer fix on LevelImposter maps
     }
 }
