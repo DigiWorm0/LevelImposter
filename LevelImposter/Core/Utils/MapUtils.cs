@@ -352,7 +352,7 @@ namespace LevelImposter.Core
             if (sounds == null)
                 return null;
             foreach (LISound sound in sounds)
-                if (sound.name == name)
+                if (sound.type == name)
                     return sound;
             return null;
         }
