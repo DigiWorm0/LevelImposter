@@ -342,17 +342,17 @@ namespace LevelImposter.Core
 
         /// <summary>
         /// Searches an array of LISounds
-        /// for a specific sound by name
+        /// for a specific sound by type
         /// </summary>
         /// <param name="sounds">List of sounds to search</param>
-        /// <param name="name">Search query</param>
-        /// <returns>LISound with name or null</returns>
-        public static LISound? FindSound(LISound[]? sounds, string name)
+        /// <param name="type">Search query</param>
+        /// <returns>LISound with type or null</returns>
+        public static LISound? FindSound(LISound[]? sounds, string type)
         {
             if (sounds == null)
                 return null;
             foreach (LISound sound in sounds)
-                if (sound.type == name)
+                if (sound.type == type)
                     return sound;
             return null;
         }

@@ -12,6 +12,9 @@ namespace LevelImposter.Core
 {
     class VentBuilder : IElemBuilder
     {
+        private const string OPEN_SOUND_NAME = "ventOpen";
+        private const string MOVE_SOUND_NAME = "ventMove";
+
         private Dictionary<int, LIElement> _ventElementDb = new();
         private Dictionary<Guid, Vent> _ventComponentDb = new();
         private int _ventID = 0;
@@ -73,9 +76,24 @@ namespace LevelImposter.Core
             // Sounds
             if (!_hasVentSound)
             {
-                shipStatus.VentEnterSound = skeldShipStatus?.VentEnterSound;
-                shipStatus.VentMoveSounds = skeldShipStatus?.VentMoveSounds;
                 _hasVentSound = true;
+
+                LISound? openSound = MapUtils.FindSound(elem.properties.sounds, OPEN_SOUND_NAME);
+                if (openSound != null)
+                    WAVLoader.Instance?.LoadWAV(openSound?.data, (AudioClip? clip) => {
+                        shipStatus.VentEnterSound = clip;
+                    });
+
+                LISound? moveSound = MapUtils.FindSound(elem.properties.sounds, MOVE_SOUND_NAME);
+                if (moveSound != null)
+                    WAVLoader.Instance?.LoadWAV(moveSound?.data, (AudioClip? clip) => {
+                        if (clip != null)
+                        {
+                            shipStatus.VentMoveSounds = new Il2CppReferenceArray<AudioClip>(new AudioClip[] {
+                                clip
+                            });
+                        }
+                    });
             }
 
             // Colliders
