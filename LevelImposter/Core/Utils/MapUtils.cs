@@ -21,7 +21,7 @@ namespace LevelImposter.Core
     /// <summary>
     /// A variety of utility functions for constructing the map
     /// </summary>
-    public class MapUtils
+    public static class MapUtils
     {
         public static Dictionary<SystemTypes, string> SystemRenames = new();
         public static Dictionary<TaskTypes, string> TaskRenames = new();
@@ -338,6 +338,23 @@ namespace LevelImposter.Core
         {
             LILogger.Info($"[RPC] New random seed set: {randomSeed}");
             _randomSeed = randomSeed;
+        }
+
+        /// <summary>
+        /// Searches an array of LISounds
+        /// for a specific sound by name
+        /// </summary>
+        /// <param name="sounds">List of sounds to search</param>
+        /// <param name="name">Search query</param>
+        /// <returns>LISound with name or null</returns>
+        public static LISound? FindSound(LISound[]? sounds, string name)
+        {
+            if (sounds == null)
+                return null;
+            foreach (LISound sound in sounds)
+                if (sound.name == name)
+                    return sound;
+            return null;
         }
 
         /// <summary>

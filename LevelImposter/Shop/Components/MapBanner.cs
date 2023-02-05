@@ -199,11 +199,18 @@ namespace LevelImposter.Shop
             if (_remixText != null)
                 _remixText.text = "Remix of\n<i>Unknown Map</i>";
 
-            LevelImposterAPI.Instance?.GetMap((Guid)_currentMap.remixOf, (metadata) =>
-            {
-                if (_remixText != null)
-                    _remixText.text = $"Remix of\n<b>{metadata.name}</b> by {metadata.authorName}";
-            }, OnError);
+            LevelImposterAPI.Instance?.GetMap((Guid)_currentMap.remixOf, OnRemix, OnError);
+        }
+
+        /// <summary>
+        /// Callback function on remix info
+        /// </summary>
+        /// <param name="metadata">Remix map metadata</param>
+        [HideFromIl2Cpp]
+        private void OnRemix(LIMetadata metadata)
+        {
+            if (_remixText != null)
+                _remixText.text = $"Remix of\n<b>{metadata.name}</b> by {metadata.authorName}";
         }
 
         /// <summary>

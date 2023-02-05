@@ -9,6 +9,8 @@ namespace LevelImposter.Core
 {
     public class SabDoorBuilder : IElemBuilder
     {
+        private const string OPEN_SOUND_NAME = "doorOpen";
+        private const string CLOSE_SOUND_NAME = "doorClose";
         private int _doorId = 0;
 
         public void Build(LIElement elem, GameObject obj)
@@ -77,6 +79,19 @@ namespace LevelImposter.Core
             doorComponent.OpenSound = prefabDoor.OpenSound;
             doorComponent.CloseSound = prefabDoor.CloseSound;
             shipStatus.AllDoors = MapUtils.AddToArr(shipStatus.AllDoors, doorComponent);
+
+            // Sound
+            LISound? openSound = MapUtils.FindSound(elem.properties.sounds, OPEN_SOUND_NAME);
+            if (openSound != null)
+                WAVLoader.Instance?.LoadWAV(openSound?.data, (AudioClip? clip) => {
+                    doorComponent.OpenSound = clip;
+                });
+
+            LISound? closeSound = MapUtils.FindSound(elem.properties.sounds, CLOSE_SOUND_NAME);
+            if (closeSound != null)
+                WAVLoader.Instance?.LoadWAV(closeSound?.data, (AudioClip? clip) => {
+                    doorComponent.CloseSound = clip;
+                });
 
             // SpriteAnim
             if (isSpriteAnim)
