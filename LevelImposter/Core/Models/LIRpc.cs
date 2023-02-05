@@ -16,6 +16,7 @@ namespace LevelImposter.Core
 
     public enum LIRpc
     {
+        // LevelImposter
         FireTrigger = 50,
         TeleportPlayer,
         SyncMapID,
@@ -23,7 +24,8 @@ namespace LevelImposter.Core
         ResetPlayer,
         DownloadCheck,
 
+        // Town of Us
         TOU_FixLights = 139,
-        TOU_EngineerFix = 140 // Fixes the engineer fix on LevelImposter maps
+        TOU_EngineerFix = 140
     }
 }

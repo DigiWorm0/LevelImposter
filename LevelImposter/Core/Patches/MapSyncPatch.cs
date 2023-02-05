@@ -63,7 +63,7 @@ namespace LevelImposter.Core
                 _activeDownloadingID = mapID;
                 LILogger.Notify("<color=#1a95d8>Downloading map, please wait...</color>");
                 DownloadManager.StartDownload();
-                LevelImposterAPI.Instance?.DownloadMap(mapID, ((LIMap map) =>
+                LevelImposterAPI.Instance?.DownloadMap(mapID, (LIMap map) =>
                 {
                     if (_activeDownloadingID == mapID)
                     {
@@ -73,7 +73,10 @@ namespace LevelImposter.Core
                         _activeDownloadingID = null;
                         //MapFileAPI.Instance.Save(map); // Maybe another time...
                     }
-                }));
+                }, (string error) => {
+                    if (_activeDownloadingID == mapID)
+                        DownloadManager.SetError(error);
+                });
             }
         }
     }

@@ -31,10 +31,11 @@ namespace LevelImposter.Shop
         /// </summary>
         /// <param name="url">URL to request</param>
         /// <param name="callback">Callback on success</param>
+        /// <param name="onError">Callback on error</param>
         [HideFromIl2Cpp]
-        public void Request(string url, Action<string> callback)
+        public void Request(string url, Action<string> callback, Action<string>? onError)
         {
-            StartCoroutine(CoRequest(url, callback).WrapToIl2Cpp());
+            StartCoroutine(CoRequest(url, callback, onError).WrapToIl2Cpp());
         }
 
         /// <summary>
@@ -44,8 +45,9 @@ namespace LevelImposter.Shop
         /// </summary>
         /// <param name="url">URL to request</param>
         /// <param name="callback">Callback on success</param>
+        /// <param name="onError">Callback on error</param>
         [HideFromIl2Cpp]
-        public IEnumerator CoRequest(string url, Action<string>? callback)
+        public IEnumerator CoRequest(string url, Action<string>? callback, Action<string>? onError)
         {
             {
                 LILogger.Info($"GET: {url}");
@@ -56,6 +58,8 @@ namespace LevelImposter.Shop
                 if (request.result == UnityWebRequest.Result.ConnectionError || request.result == UnityWebRequest.Result.ProtocolError)
                 {
                     LILogger.Error(request.error);
+                    if (onError != null)
+                        onError(request.error);
                 }
                 else if (callback != null)
                 {
@@ -63,6 +67,7 @@ namespace LevelImposter.Shop
                 }
                 request.Dispose();
                 callback = null;
+                onError = null;
             }
         }
 
@@ -113,20 +118,20 @@ namespace LevelImposter.Shop
         /// <param name="url">URL to request</param>
         /// <param name="callback">Callback on success</param>
         [HideFromIl2Cpp]
-        public void RequestJSON<T>(string url, Action<T> callback)
+        public void RequestJSON<T>(string url, Action<T> callback, Action<string> onError)
         {
             Request(url, (string json) =>
             {
                 LICallback<T>? response = JsonSerializer.Deserialize<LICallback<T>>(json);
                 if (response == null)
-                    LILogger.Error("Invalid API Response");
+                    onError("Invalid API Response");
                 else if (response.v != API_VERSION)
-                    LILogger.Error($"You are running on an older version of LevelImposter {LevelImposter.Version}. Update to get access to the API.");
+                    onError($"You are running on an older version of LevelImposter {LevelImposter.Version}. Update to get access to the API.");
                 else if (!string.IsNullOrEmpty(response.error))
-                    LILogger.Error(response.error);
+                    onError(response.error);
                 else
                     callback(response.data);
-            });
+            }, onError);
         }
 
         /// <summary>
@@ -134,10 +139,10 @@ namespace LevelImposter.Shop
         /// </summary>
         /// <param name="callback">Callback on success</param>
         [HideFromIl2Cpp]
-        public void GetTop(Action<LIMetadata[]> callback)
+        public void GetTop(Action<LIMetadata[]> callback, Action<string> onError)
         {
             LILogger.Info("Getting top maps...");
-            RequestJSON(API_PATH + "maps/top", callback);
+            RequestJSON(API_PATH + "maps/top", callback, onError);
         }
 
         /// <summary>
@@ -145,10 +150,10 @@ namespace LevelImposter.Shop
         /// </summary>
         /// <param name="callback">Callback on success</param>
         [HideFromIl2Cpp]
-        public void GetRecent(Action<LIMetadata[]> callback)
+        public void GetRecent(Action<LIMetadata[]> callback, Action<string> onError)
         {
             LILogger.Info("Getting recent maps...");
-            RequestJSON(API_PATH + "maps/recent", callback);
+            RequestJSON(API_PATH + "maps/recent", callback, onError);
         }
 
         /// <summary>
@@ -156,10 +161,10 @@ namespace LevelImposter.Shop
         /// </summary>
         /// <param name="callback">Callback on success</param>
         [HideFromIl2Cpp]
-        public void GetFeatured(Action<LIMetadata[]> callback)
+        public void GetFeatured(Action<LIMetadata[]> callback, Action<string> onError)
         {
             LILogger.Info("Getting verified maps...");
-            RequestJSON(API_PATH + "maps/verified", callback);
+            RequestJSON(API_PATH + "maps/verified", callback, onError);
         }
 
         /// <summary>
@@ -168,10 +173,10 @@ namespace LevelImposter.Shop
         /// <param name="id">ID of the map to grab</param>
         /// <param name="callback">Callback on success</param>
         [HideFromIl2Cpp]
-        public void GetMap(Guid id, Action<LIMetadata> callback)
+        public void GetMap(Guid id, Action<LIMetadata> callback, Action<string> onError)
         {
             LILogger.Info($"Getting map {id}...");
-            RequestJSON(API_PATH + "map/" + id, callback);
+            RequestJSON(API_PATH + "map/" + id, callback, onError);
         }
 
         /// <summary>
@@ -180,7 +185,7 @@ namespace LevelImposter.Shop
         /// <param name="id">ID of the map to download</param>
         /// <param name="callback">Callback on success</param>
         [HideFromIl2Cpp]
-        public void DownloadMap(Guid id, Action<LIMap> callback)
+        public void DownloadMap(Guid id, Action<LIMap> callback, Action<string> onError)
         {
             LILogger.Info($"Downloading map [{id}]...");
             GetMap(id, (LIMetadata metadata) =>
@@ -190,7 +195,10 @@ namespace LevelImposter.Shop
                     LILogger.Info($"Parsing map {metadata}...");
                     LIMap? mapData = JsonSerializer.Deserialize<LIMap>(mapJson);
                     if (mapData == null)
-                        return; // TODO: onError callback
+                    {
+                        onError("Map was null");
+                        return;
+                    }
                     mapData.v = metadata.v;
                     mapData.id = metadata.id;
                     mapData.name = metadata.name;
@@ -204,8 +212,8 @@ namespace LevelImposter.Shop
                     mapData.remixOf = metadata.remixOf;
 
                     callback(mapData);
-                });
-            });
+                }, onError);
+            }, onError);
         }
 
         /// <summary>

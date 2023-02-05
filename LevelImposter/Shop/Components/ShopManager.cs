@@ -63,6 +63,14 @@ namespace LevelImposter.Shop
         }
 
         /// <summary>
+        /// Event that is called on download error
+        /// </summary>
+        private void OnError(string error)
+        {
+            LILogger.Error(error);
+        }
+
+        /// <summary>
         /// Lists all downloaded maps
         /// </summary>
         public void ListDownloaded()
@@ -96,7 +104,7 @@ namespace LevelImposter.Shop
             LILogger.Info("Listing top maps");
             ClearList();
             _currentListID = "top";
-            LevelImposterAPI.Instance?.GetTop(OnTop);
+            LevelImposterAPI.Instance?.GetTop(OnTop, OnError);
         }
 
         /// <summary>
@@ -129,7 +137,7 @@ namespace LevelImposter.Shop
             LILogger.Info("Listing recent maps");
             ClearList();
             _currentListID = "recent";
-            LevelImposterAPI.Instance.GetRecent(OnRecent);
+            LevelImposterAPI.Instance.GetRecent(OnRecent, OnError);
         }
 
         /// <summary>
@@ -162,7 +170,7 @@ namespace LevelImposter.Shop
             LILogger.Info("Listing featured maps");
             ClearList();
             _currentListID = "featured";
-            LevelImposterAPI.Instance.GetFeatured(OnFeatured);
+            LevelImposterAPI.Instance.GetFeatured(OnFeatured, OnError);
         }
 
         /// <summary>

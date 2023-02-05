@@ -14,10 +14,11 @@ namespace LevelImposter.Shop
     public static class DownloadManager
     {
         private static List<PlayerControl> _playersDownloading = new();
+        private static string _downloadError = null;
 
         public static bool CanStart
         {
-            get { return _playersDownloading.Count <= 0; }
+            get { return _playersDownloading.Count <= 0 && _downloadError == null; }
         }
 
         /// <summary>
@@ -53,8 +54,14 @@ namespace LevelImposter.Shop
         public static void Reset()
         {
             _playersDownloading.Clear();
+            _downloadError = null;
         }
 
+        /// <summary>
+        /// Checks whether or not the local player
+        /// is currently downloading the map
+        /// </summary>
+        /// <returns>TRUE if the client is downloading. FALSE otherwise.</returns>
         private static bool IsDownloading()
         {
             foreach (PlayerControl player in _playersDownloading)
@@ -63,14 +70,21 @@ namespace LevelImposter.Shop
             return false;
         }
 
+        public static void SetError(string error)
+        {
+            _downloadError = error;
+        }
+
         /// <summary>
         /// Gets the text to display above start button
         /// </summary>
         /// <returns>A string with status text</returns>
         public static string GetStartText()
         {
-            if (IsDownloading())
-                return $"<size=4><color=#1a95d8>Downloading map...</size>";
+            if (_downloadError != null)
+                return $"<size=4><color=red>{_downloadError}</color></size>";
+            else if (IsDownloading())
+                return $"<size=4><color=#1a95d8>Downloading map...</color></size>";
             else if (_playersDownloading.Count > 1)
                 return $"<size=4><color=#1a95d8>Waiting on </color>{_playersDownloading.Count}<color=#1a95d8> players to download map...</color></size>";
             else if (_playersDownloading.Count == 1)
