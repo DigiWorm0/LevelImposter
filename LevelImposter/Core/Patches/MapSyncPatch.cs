@@ -22,12 +22,13 @@ namespace LevelImposter.Core
         [MethodRpc((uint)LIRpc.SyncMapID)]
         public static void RPCSendMapID(PlayerControl _, string mapIDStr)
         {
+            LILogger.Info($"[RPC] Received map ID [{mapIDStr}]");
+
+            DownloadManager.Reset();
             if (GameStartManager.Instance != null)
                 GameStartManager.Instance.ResetStartState();
-            DownloadManager.Reset();
             if (AmongUsClient.Instance.AmHost)
                 return;
-            LILogger.Info($"[RPC] Received map ID [{mapIDStr}]");
 
             // Parse ID
             bool isSuccess = Guid.TryParse(mapIDStr, out Guid mapID);

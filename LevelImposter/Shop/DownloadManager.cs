@@ -30,6 +30,8 @@ namespace LevelImposter.Shop
         public static void RPCDownload(PlayerControl player, bool isDownloaded)
         {
             LILogger.Info($"[RPC] {player.name} {(isDownloaded ? "has downloaded" : "is downloading")} the map");
+            if (GameStartManager.Instance != null)
+                GameStartManager.Instance.ResetStartState();
             if (isDownloaded)
                 RemovePlayer(player);
             else

@@ -36,6 +36,7 @@ namespace LevelImposter.Shop
             }
             else if (_isDownloadTextDisplayed)
             {
+                __instance.LastPlayerCount = -1;
                 __instance.StartButton.color = Palette.EnabledColor;
                 __instance.startLabelText.color = Palette.EnabledColor;
                 __instance.GameStartText.text = string.Empty;
