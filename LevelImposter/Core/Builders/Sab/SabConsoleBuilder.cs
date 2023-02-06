@@ -59,6 +59,7 @@ namespace LevelImposter.Core
             console.ValidTasks = prefabConsole.ValidTasks;
             console.AllowImpostor = true;
             console.GhostsIgnored = true;
+            console.checkWalls = elem.properties.checkCollision ?? false;
 
             if (CONSOLE_ID_PAIRS.ContainsKey(elem.type))
                 console.ConsoleId = CONSOLE_ID_PAIRS[elem.type];

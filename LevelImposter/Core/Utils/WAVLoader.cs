@@ -76,8 +76,13 @@ namespace LevelImposter.Core
         /// <param name="b64">Base64 audio data</param>
         /// <param name="onLoad">Callback on load</param>
         [HideFromIl2Cpp]
-        public void LoadWAV(string b64, Action<AudioClip?> onLoad)
+        public void LoadWAV(string? b64, Action<AudioClip?> onLoad)
         {
+            if (b64 == null)
+            {
+                onLoad(null);
+                return;
+            }
             if (LIShipStatus.Instance == null)
             {
                 LILogger.Error("Cannot load audio, LIShipStatus.Instance is null");

@@ -24,7 +24,12 @@ namespace LevelImposter.Core
         public static void Init()
         {
             _isTOUEnabled = IL2CPPChainloader.Instance.Plugins.TryGetValue(TOU_GUID, out PluginInfo _);
+            if (_isTOUEnabled)
+                LILogger.Info("LevelImposter detected TOU installed, compatibility enabled");
+
             _isSubmergedEnabled = IL2CPPChainloader.Instance.Plugins.TryGetValue(SUBMERGED_GUID, out PluginInfo _);
+            if (_isSubmergedEnabled)
+                LILogger.Info("LevelImposter detected Submerged installed, currently unsupported");
         }
     }
 }

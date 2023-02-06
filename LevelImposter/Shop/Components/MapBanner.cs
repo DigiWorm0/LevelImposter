@@ -97,7 +97,7 @@ namespace LevelImposter.Shop
             _downloadButton.interactable = false;
             _loadingOverlay.SetActive(true);
             ShopManager.Instance?.SetEnabled(false);
-            LevelImposterAPI.Instance?.DownloadMap(new Guid(_currentMap.id), OnDownload);
+            LevelImposterAPI.Instance?.DownloadMap(new Guid(_currentMap.id), OnDownload, OnError);
         }
 
         /// <summary>
@@ -111,6 +111,16 @@ namespace LevelImposter.Shop
             _loadingOverlay?.SetActive(false);
             ShopManager.Instance?.SetEnabled(true);
             UpdateButtons();
+        }
+
+        /// <summary>
+        /// Event that is called when there is a download error
+        /// </summary>
+        /// <param name="map"></param>
+        [HideFromIl2Cpp]
+        private void OnError(string error)
+        {
+            LILogger.Error(error);
         }
 
         /// <summary>
@@ -189,11 +199,18 @@ namespace LevelImposter.Shop
             if (_remixText != null)
                 _remixText.text = "Remix of\n<i>Unknown Map</i>";
 
-            LevelImposterAPI.Instance?.GetMap((Guid)_currentMap.remixOf, (metadata) =>
-            {
-                if (_remixText != null)
-                    _remixText.text = $"Remix of\n<b>{metadata.name}</b> by {metadata.authorName}";
-            });
+            LevelImposterAPI.Instance?.GetMap((Guid)_currentMap.remixOf, OnRemix, OnError);
+        }
+
+        /// <summary>
+        /// Callback function on remix info
+        /// </summary>
+        /// <param name="metadata">Remix map metadata</param>
+        [HideFromIl2Cpp]
+        private void OnRemix(LIMetadata metadata)
+        {
+            if (_remixText != null)
+                _remixText.text = $"Remix of\n<b>{metadata.name}</b> by {metadata.authorName}";
         }
 
         /// <summary>

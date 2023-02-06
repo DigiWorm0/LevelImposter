@@ -3,23 +3,25 @@ using System.Collections.Generic;
 using System.Text;
 using System.Text.Json;
 using System.Reflection;
+using UnityEngine;
 using UnityEngine.Events;
 using System.IO;
 using LevelImposter.DB;
 using LevelImposter.Shop;
-using UnityEngine;
 using Il2CppInterop.Runtime.InteropTypes.Arrays;
 using Il2CppInterop.Runtime.InteropTypes;
 using Il2CppInterop.Runtime;
 using AmongUs.GameOptions;
 using Reactor.Networking.Attributes;
+using Reactor.Utilities;
+using System.Collections;
 
 namespace LevelImposter.Core
 {
     /// <summary>
     /// A variety of utility functions for constructing the map
     /// </summary>
-    public class MapUtils
+    public static class MapUtils
     {
         public static Dictionary<SystemTypes, string> SystemRenames = new();
         public static Dictionary<TaskTypes, string> TaskRenames = new();
@@ -284,6 +286,21 @@ namespace LevelImposter.Core
             }
         }
 
+        public static void WaitForPlayer(Action onFinish)
+        {
+            Coroutines.Start(CoWaitForPlayer(onFinish));
+        }
+
+        private static IEnumerator CoWaitForPlayer(Action onFinish)
+        {
+            {
+                while (PlayerControl.LocalPlayer == null)
+                    yield return null;
+                onFinish.Invoke();
+                onFinish = null;
+            }
+        }
+
         /// <summary>
         /// Gets a random value based on an element GUID.
         /// Given the same GUID, weight, and seed will always return with the same value.
@@ -306,17 +323,38 @@ namespace LevelImposter.Core
         /// </summary>
         public static void SyncRandomSeed()
         {
-            if (!AmongUsClient.Instance.AmHost || PlayerControl.LocalPlayer == null)
+            bool isConnected = AmongUsClient.Instance.AmConnected;
+            if (isConnected && (!AmongUsClient.Instance.AmHost || PlayerControl.LocalPlayer == null))
                 return;
             UnityEngine.Random.InitState((int)DateTime.Now.Ticks);
             int newSeed = UnityEngine.Random.RandomRange(int.MinValue, int.MaxValue);
-            RPCSyncRandomSeed(PlayerControl.LocalPlayer, newSeed);
+            if (isConnected)
+                RPCSyncRandomSeed(PlayerControl.LocalPlayer, newSeed);
+            else
+                _randomSeed = newSeed;
         }
         [MethodRpc((uint)LIRpc.SyncRandomSeed)]
         private static void RPCSyncRandomSeed(PlayerControl _, int randomSeed)
         {
             LILogger.Info($"[RPC] New random seed set: {randomSeed}");
             _randomSeed = randomSeed;
+        }
+
+        /// <summary>
+        /// Searches an array of LISounds
+        /// for a specific sound by type
+        /// </summary>
+        /// <param name="sounds">List of sounds to search</param>
+        /// <param name="type">Search query</param>
+        /// <returns>LISound with type or null</returns>
+        public static LISound? FindSound(LISound[]? sounds, string type)
+        {
+            if (sounds == null)
+                return null;
+            foreach (LISound sound in sounds)
+                if (sound.type == type)
+                    return sound;
+            return null;
         }
 
         /// <summary>

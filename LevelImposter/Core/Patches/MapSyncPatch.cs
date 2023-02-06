@@ -22,11 +22,13 @@ namespace LevelImposter.Core
         [MethodRpc((uint)LIRpc.SyncMapID)]
         public static void RPCSendMapID(PlayerControl _, string mapIDStr)
         {
+            LILogger.Info($"[RPC] Received map ID [{mapIDStr}]");
+
+            DownloadManager.Reset();
             if (GameStartManager.Instance != null)
                 GameStartManager.Instance.ResetStartState();
             if (AmongUsClient.Instance.AmHost)
                 return;
-            LILogger.Info($"[RPC] Received map ID [{mapIDStr}]");
 
             // Parse ID
             bool isSuccess = Guid.TryParse(mapIDStr, out Guid mapID);
@@ -61,16 +63,21 @@ namespace LevelImposter.Core
             {
                 _activeDownloadingID = mapID;
                 LILogger.Notify("<color=#1a95d8>Downloading map, please wait...</color>");
-                LevelImposterAPI.Instance?.DownloadMap(mapID, ((LIMap map) =>
+                DownloadManager.StartDownload();
+                LevelImposterAPI.Instance?.DownloadMap(mapID, (LIMap map) =>
                 {
                     if (_activeDownloadingID == mapID)
                     {
                         MapLoader.LoadMap(map);
+                        DownloadManager.StopDownload();
                         LILogger.Notify("<color=#1a95d8>Download finished!</color>");
                         _activeDownloadingID = null;
                         //MapFileAPI.Instance.Save(map); // Maybe another time...
                     }
-                }));
+                }, (string error) => {
+                    if (_activeDownloadingID == mapID)
+                        DownloadManager.SetError(error);
+                });
             }
         }
     }

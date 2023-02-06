@@ -15,7 +15,7 @@ namespace LevelImposter.Core
     [HarmonyPatch(typeof(AmongUsClient), nameof(AmongUsClient.CreatePlayer))]
     public static class RandomPatch
     {
-        public static void Postfix(FollowerCamera __instance)
+        public static void Postfix()
         {
             MapUtils.SyncRandomSeed();
         }
