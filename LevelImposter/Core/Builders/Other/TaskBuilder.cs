@@ -151,6 +151,7 @@ namespace LevelImposter.Core
             console.TaskTypes = prefabConsole.TaskTypes;
             console.ValidTasks = prefabConsole.ValidTasks;
             console.AllowImpostor = false;
+            console.checkWalls = elem.properties.checkCollision ?? false;
 
 
             bool isWaterJug = elem.type == "task-waterjug2";

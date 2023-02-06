@@ -46,6 +46,7 @@ namespace LevelImposter.Core
 
         // Console
         public bool? onlyFromBelow { get; set; }
+        public bool? checkCollision { get; set; }
         public float? range { get; set; }
 
         // Ladder
