@@ -89,6 +89,10 @@ namespace LevelImposter.Core
             string b64 = element.properties.spriteData ?? "";
             LoadSpriteAsync(b64, (nullableSpriteData) =>
             {
+                // Abort on Exit
+                if (obj == null)
+                    return;
+
                 // Handle Error
                 if (nullableSpriteData == null)
                 {
