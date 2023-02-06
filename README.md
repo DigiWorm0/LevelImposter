@@ -45,12 +45,23 @@ Custom Among Us Mapping Studio
 </p>
 <hr />
 
+
 ## Features
 - 🗺️ Download from a [library of maps](https://levelimposter.net/#/maps) in-game
 - 🔀 Switch between any map within the lobby
 - 🚀 Play with any user with LevelImposter installed
 - 🤝 Supports use with other mods
 - ✏️ Online [map editor](https://editor.levelimposter.net/)
+
+## Mod Compatibility
+| Mod | Support | Notes |
+|:-:|:-:|:-:|
+| [BetterCrewLink](https://github.com/OhMyGuus/BetterCrewLink) | ✅ | Wall detection is unsupported |
+| [Town of Us-R](https://github.com/eDonnes124/Town-Of-Us-R) | ✅ |  |
+| [The Other Roles](https://github.com/TheOtherRolesAU/TheOtherRoles) | 🟨 | Jack in the Boxes are not inter-connected |
+| [Submerged](https://github.com/SubmergedAmongUs/Submerged) | ⛔ | Isn\'t up-to-date w/ the latest AU |
+
+Don\'t see a compatible mod here? Create a [Pull Request](https://github.com/DigiWorm0/LevelImposter/pulls)!
 
 ## Installation
 
@@ -104,6 +115,7 @@ git push feature/cool-feature
 [Digi#0069](https://github.com/DigiWorm0) - Lead Developer\
 [PAF_huier_cn#8777](https://github.com/MC-AS-Huier) - Simplified Chinese Translation\
 [PalmForest#1404](https://github.com/RealPalmForest) - Russian Translation
+[miniduikbook](https://github.com/miniduikboot) - Owns/Maintains Modded Servers
 
 ### Dependencies
 [Firebase](https://firebase.google.com/) - API Database and Servers\
