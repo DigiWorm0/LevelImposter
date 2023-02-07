@@ -20,7 +20,7 @@ namespace LevelImposter.Core
         {
             if (MapLoader.CurrentMap == null)
                 return;
-            if (!ModCompatibility.IsTOUEnabled)
+            if (!ModCompatibility.IsTOUEnabled && !ModCompatibility.IsTOREnabled)
                 return;
             if (_ventTotal == ShipStatus.Instance.AllVents.Count)
                 return;
@@ -28,9 +28,10 @@ namespace LevelImposter.Core
             _ventTotal = ShipStatus.Instance.AllVents.Count;
             foreach (var vent in ShipStatus.Instance.AllVents)
             {
-                if (vent.name.EndsWith("(Clone)") && vent.transform.childCount == 1)
+                if ((vent.name.EndsWith("(Clone)") || vent.name.StartsWith("JackInTheBoxVent")) && vent.transform.childCount == 1)
                 {
-                    vent.name = $"TOU_Vent{vent.Id}";
+                    if (ModCompatibility.IsTOUEnabled)
+                        vent.name = $"TOU_Vent{vent.Id}";
 
                     ButtonBehavior[] ventButtons = vent.GetComponentsInChildren<ButtonBehavior>(true);
                     foreach (var ventButton in ventButtons)
