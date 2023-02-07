@@ -8,11 +8,12 @@ using LevelImposter.Shop;
 namespace LevelImposter.Core
 {
     /*
-     *      Fixes the TOU miner vents
+     *      Fixes the TOU miner
+     *      and TOR JackInTheBox vents
      *      to work in LevelImposter.
      */
     [HarmonyPatch(typeof(ShipStatus), nameof(ShipStatus.FixedUpdate))]
-    public static class TOU_MinerPatch
+    public static class VentPatch
     {
         private static int _ventTotal = -1;
 
@@ -25,14 +26,17 @@ namespace LevelImposter.Core
             if (_ventTotal == ShipStatus.Instance.AllVents.Count)
                 return;
 
+            // Iterate Vents
             _ventTotal = ShipStatus.Instance.AllVents.Count;
             foreach (var vent in ShipStatus.Instance.AllVents)
             {
-                if ((vent.name.EndsWith("(Clone)") || vent.name.StartsWith("JackInTheBoxVent")) && vent.transform.childCount == 1)
+                // Filter Vents
+                bool isCloneVent = vent.name.EndsWith("(Clone)") || vent.name.StartsWith("JackInTheBoxVent");
+                if (isCloneVent && vent.transform.childCount == 1)
                 {
-                    if (ModCompatibility.IsTOUEnabled)
-                        vent.name = $"TOU_Vent{vent.Id}";
+                    vent.name = $"AU_Vent{vent.Id}";
 
+                    // Reset Vent Buttons
                     ButtonBehavior[] ventButtons = vent.GetComponentsInChildren<ButtonBehavior>(true);
                     foreach (var ventButton in ventButtons)
                     {
