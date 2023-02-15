@@ -30,7 +30,7 @@ namespace LevelImposter.Core
                 shipStatus.InitialSpawnCenter = pos;
                 _hasInitialSpawn = true;
             }
-            if (elem.type == "util-spawn2")
+            else if (elem.type == "util-spawn2")
             {
                 shipStatus.MeetingSpawnCenter = pos;
                 shipStatus.MeetingSpawnCenter2 = pos;
