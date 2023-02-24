@@ -395,7 +395,6 @@ namespace LevelImposter.Core
         {
             _currentMap = null;
             Instance = null;
-            SpriteLoader.Instance?.ClearAll();
             WAVLoader.Instance?.ClearAll();
         }
     }

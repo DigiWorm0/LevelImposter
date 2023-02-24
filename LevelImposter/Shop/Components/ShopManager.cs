@@ -50,16 +50,6 @@ namespace LevelImposter.Shop
                 MapBanner banner = _shopBanners.Pop();
                 Destroy(banner.gameObject);
             }
-            CleanAssets();
-        }
-
-        /// <summary>
-        /// Mark all assets for garbage collection
-        /// </summary>
-        private void CleanAssets()
-        {
-            SpriteLoader.Instance?.ClearAll();
-            WAVLoader.Instance?.ClearAll();
         }
 
         /// <summary>
@@ -281,7 +271,6 @@ namespace LevelImposter.Shop
             CloseButton = null;
             _freeplayComp = null;
             _shopBanners.Clear();
-            CleanAssets();
         }
     }
 }
