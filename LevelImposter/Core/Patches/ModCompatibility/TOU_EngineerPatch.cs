@@ -11,6 +11,9 @@ namespace LevelImposter.Core
      *      Fixes the TOU engineer fix
      *      to work in LevelImposter.
      *      
+     *      Temporary fix until PR is merged:
+     *      https://github.com/eDonnes124/Town-Of-Us-R/pull/115
+     *      
      *      Note: A bug w/ Engineer where the
      *      PlayerId is transmitted instead of the NetId
      *      requires a high Harmony priority to execute
