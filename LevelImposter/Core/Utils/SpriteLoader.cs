@@ -31,7 +31,7 @@ namespace LevelImposter.Core
         public event SpriteEventHandle? OnLoad;
         public delegate void SpriteEventHandle(LIElement elem);
 
-        private Stack<Sprite>? _mapSprites = new();
+        private Stack<SpriteData>? _spriteList = new();
         private Stopwatch? _renderTimer = new();
         private int _renderCount = 0;
         private bool _shouldRender
@@ -46,18 +46,21 @@ namespace LevelImposter.Core
         /// </summary>
         public void ClearAll()
         {
-            LILogger.Info($"Destroying {_mapSprites?.Count} sprites");
-            while (_mapSprites?.Count > 0)
+            LILogger.Info($"Destroying {_spriteList?.Count} sprites");
+            while (_spriteList?.Count > 0)
             {
-                Sprite sprite = _mapSprites.Pop();
-                try
+                SpriteData spriteData = _spriteList.Pop();
+                foreach (Sprite sprite in spriteData.SpriteArr)
                 {
-                    Destroy(sprite?.texture);
-                    Destroy(sprite);
-                }
-                catch (Exception e)
-                {
-                    LILogger.Warn(e);
+                    try
+                    {
+                        Destroy(sprite?.texture);
+                        Destroy(sprite);
+                    }
+                    catch (Exception e)
+                    {
+                        LILogger.Warn(e);
+                    }
                 }
             }
             OnLoad = null;
@@ -65,13 +68,14 @@ namespace LevelImposter.Core
         }
 
         /// <summary>
-        /// Adds a sprite to cache + gc list
+        /// Adds a sprite data to the stack
         /// </summary>
-        /// <param name="sprite">Sprite to garbage collect on exit</param>
-        public void AddSprite(Sprite sprite)
+        /// <param name="sprite">Sprite to add to managed stack</param>
+        public void AddSpriteData(SpriteData spriteData)
         {
-            _mapSprites?.Push(sprite);
-            sprite.hideFlags = HideFlags.DontUnloadUnusedAsset;
+            _spriteList?.Push(spriteData);
+            foreach (Sprite sprite in spriteData.SpriteArr)
+                sprite.hideFlags = HideFlags.DontUnloadUnusedAsset;
         }
 
         /// <summary>
@@ -79,16 +83,16 @@ namespace LevelImposter.Core
         /// </summary>
         /// <param name="spriteID">GUID of the sprite or associated object</param>
         /// <returns>Sprite from cache or NULL if none found</returns>
-        private Sprite? GetSpriteFromCache(string? spriteID)
+        private SpriteData? GetSpriteFromCache(string? spriteID)
         {
-            if (_mapSprites == null || spriteID == null)
+            if (_spriteList == null || string.IsNullOrEmpty(spriteID))
                 return null;
-            foreach (Sprite sprite in _mapSprites)
+            foreach (SpriteData spriteData in _spriteList)
             {
-                if (sprite?.name == spriteID)
+                if (spriteData.ID == spriteID)
                 {
-                    LILogger.Info($"    Found sprite in cache [{spriteID}]");
-                    return sprite;
+                    LILogger.Info($"+ Found sprite in cache [{spriteID}]");
+                    return spriteData;
                 }
             }
             return null;
@@ -184,15 +188,10 @@ namespace LevelImposter.Core
                     yield return null;
 
                 // Search Cache
-                Sprite? cachedSprite = GetSpriteFromCache(spriteID);
-                SpriteData? spriteData = null;
-                if (cachedSprite != null)
+                SpriteData? spriteData = GetSpriteFromCache(spriteID);
+                if (spriteData != null)
                 {
-                    spriteData = new()
-                    {
-                        SpriteArr = new Sprite[1] { cachedSprite },
-                        FrameDelayArr = new float[0]
-                    };
+
                 }
                 else if (useImageSharp)
                 {
@@ -206,27 +205,31 @@ namespace LevelImposter.Core
                             while (!_shouldRender)
                                 yield return null;
                             ImageSharpWrapper.TextureMetadata texData = texMetadataList[i];
-                            Sprite sprite = RawImageToSprite(texData.FrameData, true, spriteID);
+                            Sprite sprite = RawImageToSprite(texData.FrameData);
                             spriteArr[i] = sprite;
                             frameDelayArr[i] = texData.FrameDelay;
                         }
                         spriteData = new()
                         {
+                            ID = spriteID ?? "",
                             SpriteArr = spriteArr,
                             FrameDelayArr = frameDelayArr
                         };
+                        AddSpriteData((SpriteData)spriteData);
                     }
                 }
                 else
                 {
                     spriteData = new()
                     {
+                        ID = spriteID ?? "",
                         SpriteArr = new Sprite[]
                         {
-                            RawImageToSprite(imgData, true, spriteID)
+                            RawImageToSprite(imgData)
                         },
                         FrameDelayArr = new float[1]
                     };
+                    AddSpriteData((SpriteData)spriteData);
                 }
 
                 // Output
@@ -246,7 +249,7 @@ namespace LevelImposter.Core
         /// <param name="texData">Texture Metadata to load</param>
         /// <returns>Generated sprite data</returns>
         [HideFromIl2Cpp]
-        private Sprite RawImageToSprite(byte[] imgData, bool addToStack, string? spriteID)
+        private Sprite RawImageToSprite(byte[] imgData)
         {
             // Generate Texture
             bool pixelArtMode = LIShipStatus.Instance?.CurrentMap?.properties.pixelArtMode == true;
@@ -267,10 +270,6 @@ namespace LevelImposter.Core
                 0,
                 SpriteMeshType.FullRect
             );
-            if (spriteID != null)
-                sprite.name = spriteID.ToString();
-            if (addToStack)
-                AddSprite(sprite);
 
             return sprite;
         }
@@ -284,10 +283,20 @@ namespace LevelImposter.Core
         [HideFromIl2Cpp]
         public Sprite LoadSprite(byte[] imgData, string? spriteID)
         {
-            Sprite? cachedSprite = GetSpriteFromCache(spriteID);
-            if (cachedSprite != null)
-                return cachedSprite;
-            return RawImageToSprite(imgData, false, spriteID);
+            SpriteData? spriteData = GetSpriteFromCache(spriteID);
+            Sprite? sprite = spriteData?.Sprite;
+            if (sprite == null)
+            {
+                sprite = RawImageToSprite(imgData);
+                spriteData = new()
+                {
+                    ID = spriteID ?? "",
+                    SpriteArr = new Sprite[1] { sprite },
+                    FrameDelayArr = new float[1],
+                };
+                AddSpriteData((SpriteData)spriteData);
+            }
+            return sprite;
         }
 
         public void Awake()
@@ -314,6 +323,7 @@ namespace LevelImposter.Core
         public struct SpriteData
         {
             public SpriteData() { }
+            public string ID = "";
             public Sprite[] SpriteArr = Array.Empty<Sprite>();
             public float[] FrameDelayArr = Array.Empty<float>();
             public Sprite? Sprite

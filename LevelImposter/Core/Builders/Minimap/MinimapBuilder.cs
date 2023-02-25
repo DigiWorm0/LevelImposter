@@ -56,7 +56,7 @@ namespace LevelImposter.Core
             }
             SpriteLoader.Instance.OnLoad += (LIElement loadedElem) =>
             {
-                if (loadedElem.id != elem.id)
+                if (loadedElem.id != elem.id || bgRenderer == null)
                     return;
                 bgRenderer.sprite = spriteRenderer.sprite;
                 bgRenderer.color = spriteRenderer.color;

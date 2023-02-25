@@ -37,7 +37,7 @@ namespace LevelImposter.Core
                     new Vector2(0.5f, 0.5f)
                 );
                 spriteRenderer.sprite = sprite;
-                SpriteLoader.Instance?.AddSprite(sprite);
+                sprite.hideFlags = HideFlags.HideAndDontSave;
             }
             if (isRoom)
                 obj.layer = (int)Layer.Ship;
