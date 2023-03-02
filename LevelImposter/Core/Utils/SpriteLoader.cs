@@ -91,7 +91,7 @@ namespace LevelImposter.Core
             {
                 if (spriteData.ID == spriteID)
                 {
-                    LILogger.Info($"+ Found sprite in cache [{spriteID}]");
+                    LILogger.Info($" + Found sprite in cache [{spriteID}]");
                     return spriteData;
                 }
             }
@@ -275,8 +275,7 @@ namespace LevelImposter.Core
         }
 
         /// <summary>
-        /// Loads a sprite from byte data synchronous.
-        /// Does not get garbage collected on unload.
+        /// Loads a sprite from byte data synchronously.
         /// </summary>
         /// <param name="imgData">Raw image file data</param>
         /// <returns>Unity Sprite object</returns>

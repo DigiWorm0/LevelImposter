@@ -240,7 +240,7 @@ namespace LevelImposter.Core
             _builtTypes.Add(elem.type);
 
             if (!isBuilt)
-                LILogger.Info($"Adding task for {elem}...");
+                LILogger.Info($" + Adding task for {elem}...");
 
 
             // TODO: Clean this spaghetti mess

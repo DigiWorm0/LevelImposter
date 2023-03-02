@@ -13,10 +13,10 @@ namespace LevelImposter.Core
      *      Prevents the intro scene from 
      *      playing until the map is loaded in
      */
-    [HarmonyPatch(typeof(HudManager._CoShowIntro_d__82), nameof(HudManager._CoShowIntro_d__82.MoveNext))]
+    [HarmonyPatch(typeof(HudManager._CoShowIntro_d__83), nameof(HudManager._CoShowIntro_d__83.MoveNext))]
     public static class IntroPatch
     {
-        public static bool Prefix(HudManager._CoShowIntro_d__82 __instance)
+        public static bool Prefix()
         {
             if (MapLoader.CurrentMap == null)
                 return true;
