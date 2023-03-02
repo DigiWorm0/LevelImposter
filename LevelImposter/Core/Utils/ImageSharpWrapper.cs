@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.IO;
 using System.Buffers;
 using System.Runtime.InteropServices;
@@ -18,6 +19,22 @@ namespace LevelImposter.Core
     /// </summary>
     public static class ImageSharpWrapper
     {
+        public const string DLL_NAME = "SixLabors.ImageSharp.dll";
+
+        private static bool? _isInstalled = null;
+        public static bool IsInstalled
+        {
+            get
+            {
+                if (_isInstalled != null)
+                    return (bool)_isInstalled;
+                string gameDir = Assembly.GetAssembly(typeof(LevelImposter))?.Location ?? "/";
+                string imgSharpDir = Path.Combine(Path.GetDirectoryName(gameDir) ?? "/", DLL_NAME);
+                _isInstalled = File.Exists(imgSharpDir);
+                return (bool)_isInstalled;
+            }
+        }
+
         /// <summary>
         /// Loads texture metadata from array
         /// </summary>

@@ -193,7 +193,7 @@ namespace LevelImposter.Core
                 {
 
                 }
-                else if (useImageSharp)
+                else if (useImageSharp && ImageSharpWrapper.IsInstalled)
                 {
                     var texMetadataList = ImageSharpWrapper.LoadImage(imgData);
                     if (texMetadataList != null)
