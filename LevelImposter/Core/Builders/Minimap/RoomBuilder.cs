@@ -33,7 +33,7 @@ namespace LevelImposter.Core
             shipRoom.roomArea = obj.GetComponentInChildren<Collider2D>();
             if (shipRoom.roomArea != null)
                 shipRoom.roomArea.isTrigger = true;
-            else
+            else if ((elem.properties.isRoomAdminVisible ?? true) || (elem.properties.isRoomNameVisible ?? true))
                 LILogger.Warn($"{shipRoom.name} is missing a collider");
 
             MapUtils.Rename(systemType, obj.name);

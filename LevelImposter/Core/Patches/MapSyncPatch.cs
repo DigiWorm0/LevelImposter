@@ -51,7 +51,11 @@ namespace LevelImposter.Core
             {
                 MapLoader.UnloadMap();
             }
-            else if (currentMapID == mapIDStr || _activeDownloadingID == mapID)
+            else if (_activeDownloadingID == mapID)
+            {
+                DownloadManager.StartDownload();
+            }
+            else if (currentMapID == mapIDStr)
             {
                 return;
             }
@@ -77,6 +81,7 @@ namespace LevelImposter.Core
                 }, (string error) => {
                     if (_activeDownloadingID == mapID)
                         DownloadManager.SetError(error);
+                    _activeDownloadingID = null;
                 });
             }
         }

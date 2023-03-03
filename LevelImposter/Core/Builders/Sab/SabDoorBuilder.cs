@@ -31,7 +31,7 @@ namespace LevelImposter.Core
             SpriteRenderer spriteRenderer = obj.GetComponent<SpriteRenderer>();
             Animator animator = obj.AddComponent<Animator>();
             SpriteAnim spriteAnim = obj.AddComponent<SpriteAnim>();
-            obj.layer = (int)Layer.ShortObjects;
+            obj.layer = (int)Layer.Objects; // Prevents kills through doors
             bool isSpriteAnim = false;
             if (!spriteRenderer)
             {

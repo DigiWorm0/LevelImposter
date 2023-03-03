@@ -150,7 +150,7 @@ namespace LevelImposter.Core
             SpriteRenderer spriteRenderer = obj.GetComponent<SpriteRenderer>();
             SpriteLoader.Instance.OnLoad += (LIElement loadedElem) =>
             {
-                if (loadedElem.id != elem.id)
+                if (loadedElem.id != elem.id || btnRenderer == null)
                     return;
                 btnRenderer.sprite = spriteRenderer.sprite;
                 btnRenderer.color = spriteRenderer.color;

@@ -28,7 +28,6 @@ namespace LevelImposter.Shop
         private Button? _playButton = null;
         private Button? _deleteButton = null;
         private Button? _externalButton = null;
-        private bool _isCustomTex = false;
         private bool _isEnabled = true;
         private bool _isInLobby
         {
@@ -173,7 +172,6 @@ namespace LevelImposter.Shop
                 {
                     if (_thumbnail != null)
                         _thumbnail.sprite = sprite;
-                    _isCustomTex = true;
                 });
             }
             else
@@ -182,7 +180,6 @@ namespace LevelImposter.Shop
                 {
                     if (_thumbnail != null)
                         _thumbnail.sprite = sprite;
-                    _isCustomTex = true;
                 });
             }
         }
@@ -273,8 +270,7 @@ namespace LevelImposter.Shop
         }
         public void OnDestroy()
         {
-            if (_isCustomTex)
-                Destroy(_thumbnail?.sprite.texture);
+            _thumbnail = null;
             _currentMap = null;
             _loadingOverlay = null;
             _errOverlay = null;

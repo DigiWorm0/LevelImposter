@@ -90,7 +90,7 @@ namespace LevelImposter.Core
             ShipStatus.SystemNames = new Il2CppStructArray<StringNames>(0);
             ShipStatus.Systems = new Il2CppSystem.Collections.Generic.Dictionary<SystemTypes, ISystemType>();
             ShipStatus.MedScanner = null;
-            ShipStatus.Type = ShipStatus.MapType.Ship;
+            ShipStatus.Type = (ShipStatus.MapType)MapType.LevelImposter;
             ShipStatus.WeaponsImage = null;
 
             ShipStatus.InitialSpawnCenter = new Vector2(0, 0);
@@ -395,7 +395,6 @@ namespace LevelImposter.Core
         {
             _currentMap = null;
             Instance = null;
-            SpriteLoader.Instance?.ClearAll();
             WAVLoader.Instance?.ClearAll();
         }
     }

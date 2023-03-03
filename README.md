@@ -56,9 +56,9 @@ Custom Among Us Mapping Studio
 ## Mod Compatibility
 | Mod | Support | Notes |
 |:-:|:-:|:-:|
-| [BetterCrewLink](https://github.com/OhMyGuus/BetterCrewLink) | ✅ | Wall detection is unsupported |
-| [Town of Us-R](https://github.com/eDonnes124/Town-Of-Us-R) | ✅ |  |
-| [The Other Roles](https://github.com/TheOtherRolesAU/TheOtherRoles) | 🟨 | Jack in the Boxes are not inter-connected |
+| [BetterCrewLink](https://github.com/OhMyGuus/BetterCrewLink) | ✅ | No wall detection |
+| [Town of Us-R](https://github.com/eDonnes124/Town-Of-Us-R) | 🟨 | Camo comms do not function |
+| [The Other Roles](https://github.com/TheOtherRolesAU/TheOtherRoles) | ✅ |  |
 | [Submerged](https://github.com/SubmergedAmongUs/Submerged) | ⛔ | Isn\'t up-to-date w/ the latest AU |
 
 Don\'t see a compatible mod here? Create a [Pull Request](https://github.com/DigiWorm0/LevelImposter/pulls)!

@@ -217,7 +217,9 @@ namespace LevelImposter.Core
         private void SetDoorOpen(bool isOpen)
         {
             PlainDoor doorComponent = gameObject.GetComponent<PlainDoor>();
-            doorComponent.SetDoorway(isOpen);
+            if (doorComponent == null)
+                LILogger.Warn($"{name} does not have a PlainDoor component");
+            doorComponent?.SetDoorway(isOpen);
         }
         public void Start()
         {

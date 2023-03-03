@@ -241,7 +241,7 @@ namespace LevelImposter.Core
             byte[]? spriteData = GetResource(name);
             if (spriteData == null)
                 return null;
-            return SpriteLoader.Instance?.LoadSprite(spriteData);
+            return SpriteLoader.Instance?.LoadSprite(spriteData, name);
         }
 
         /// <summary>

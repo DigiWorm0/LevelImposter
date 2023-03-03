@@ -7,6 +7,7 @@ namespace LevelImposter.Shop
 {
     public static class MapLoader
     {
+        private static string? _lastMapID = null;
         private static LIMap? _currentMap = null;
         public static LIMap CurrentMap => _currentMap;
 
@@ -16,6 +17,9 @@ namespace LevelImposter.Shop
         /// <param name="map">LevelImposter map data</param>
         public static void LoadMap(LIMap? map)
         {
+            if (_lastMapID != map?.id)
+                CleanAssets();
+            _lastMapID = map?.id;
             _currentMap = map;
         }
 
@@ -40,6 +44,18 @@ namespace LevelImposter.Shop
         public static void UnloadMap()
         {
             _currentMap = null;
+        }
+
+        /// <summary>
+        /// Cleans all assets from cache and runs GC
+        /// </summary>
+        private static void CleanAssets()
+        {
+            LILogger.Msg("Clearing all created assets");
+            SpriteLoader.Instance?.ClearAll();
+            WAVLoader.Instance?.ClearAll();
+
+            GC.Collect();
         }
     }
 }

@@ -79,7 +79,7 @@ namespace LevelImposter.Shop
                     return;
                 }
                 callback.Invoke(spriteData?.Sprite);
-            });
+            }, mapID);
         }
 
         /// <summary>
