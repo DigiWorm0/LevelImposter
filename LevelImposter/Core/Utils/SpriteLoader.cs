@@ -191,7 +191,7 @@ namespace LevelImposter.Core
                 SpriteData? spriteData = GetSpriteFromCache(spriteID);
                 if (spriteData != null)
                 {
-
+                    // Using sprite data from cache
                 }
                 else if (useImageSharp && ImageSharpWrapper.IsInstalled)
                 {

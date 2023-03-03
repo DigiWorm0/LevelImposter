@@ -26,11 +26,12 @@ namespace LevelImposter.Core
         {
             get
             {
-                if (_isInstalled != null)
-                    return (bool)_isInstalled;
-                string gameDir = Assembly.GetAssembly(typeof(LevelImposter))?.Location ?? "/";
-                string imgSharpDir = Path.Combine(Path.GetDirectoryName(gameDir) ?? "/", DLL_NAME);
-                _isInstalled = File.Exists(imgSharpDir);
+                if (_isInstalled == null)
+                {
+                    string gameDir = Assembly.GetAssembly(typeof(LevelImposter))?.Location ?? "/";
+                    string imgSharpDir = Path.Combine(Path.GetDirectoryName(gameDir) ?? "/", DLL_NAME);
+                    _isInstalled = File.Exists(imgSharpDir);
+                }
                 return (bool)_isInstalled;
             }
         }
