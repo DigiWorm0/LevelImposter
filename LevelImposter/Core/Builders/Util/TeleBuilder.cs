@@ -19,6 +19,8 @@ namespace LevelImposter.Core
             Collider2D[] colliders = obj.GetComponentsInChildren<Collider2D>();
             foreach (Collider2D collider in colliders)
                 collider.isTrigger = true;
+            if (elem.properties.isGhostEnabled ?? false)
+                obj.layer = (int)Layer.Default;
 
             // Teleporter
             LITeleporter tele = obj.AddComponent<LITeleporter>();
