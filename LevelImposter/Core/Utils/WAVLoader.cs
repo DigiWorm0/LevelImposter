@@ -129,7 +129,7 @@ namespace LevelImposter.Core
             try
             {
                 // Get Image Bytes
-                byte[] wav = MapUtils.ParseBase64(b64Audio);
+                var wav = MapUtils.ParseBase64(b64Audio);
 
                 // Metadata
                 int channelCount = wav[22];

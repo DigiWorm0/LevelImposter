@@ -162,7 +162,7 @@ namespace LevelImposter.Core
         /// </summary>
         /// <param name="base64">Base64 encoded data</param>
         /// <returns>Stream of bytes representing raw base64 data</returns>
-        public static byte[] ParseBase64(string base64)
+        public static Il2CppStructArray<byte> ParseBase64(string base64)
         {
             string sub64 = base64.Substring(base64.IndexOf(",") + 1);
             return Convert.FromBase64String(sub64);

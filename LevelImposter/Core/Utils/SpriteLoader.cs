@@ -169,7 +169,7 @@ namespace LevelImposter.Core
         /// <param name="imgData">Image File Data</param>
         /// <param name="onLoad">Callback on success</param>
         [HideFromIl2Cpp]
-        public void LoadSpriteAsync(byte[] imgData, bool useImageSharp, Action<SpriteData?> onLoad, string? spriteID)
+        public void LoadSpriteAsync(Il2CppStructArray<byte> imgData, bool useImageSharp, Action<SpriteData?> onLoad, string? spriteID)
         {
             StartCoroutine(CoLoadSpriteAsync(imgData, useImageSharp, onLoad, spriteID).WrapToIl2Cpp());
         }
@@ -180,7 +180,7 @@ namespace LevelImposter.Core
         /// <param name="imgData">Image File Data</param>
         /// <param name="onLoad">Callback on success</param>
         [HideFromIl2Cpp]
-        private IEnumerator CoLoadSpriteAsync(byte[] imgData, bool useImageSharp, Action<SpriteData?>? onLoad, string? spriteID)
+        private IEnumerator CoLoadSpriteAsync(Il2CppStructArray<byte> imgData, bool useImageSharp, Action<SpriteData?>? onLoad, string? spriteID)
         {
             {
                 _renderCount++;
