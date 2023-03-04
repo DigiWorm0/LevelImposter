@@ -6,6 +6,7 @@ using UnityEngine;
 using System.Diagnostics;
 using Il2CppInterop.Runtime.Attributes;
 using BepInEx.Unity.IL2CPP.Utils.Collections;
+using Il2CppInterop.Runtime.InteropTypes.Arrays;
 
 namespace LevelImposter.Core
 {
@@ -250,7 +251,7 @@ namespace LevelImposter.Core
         /// <param name="texData">Texture Metadata to load</param>
         /// <returns>Generated sprite data</returns>
         [HideFromIl2Cpp]
-        private Sprite RawImageToSprite(byte[] imgData)
+        private Sprite RawImageToSprite(Il2CppStructArray<byte> imgData)
         {
             // Generate Texture
             bool pixelArtMode = LIShipStatus.Instance?.CurrentMap?.properties.pixelArtMode == true;
@@ -282,7 +283,7 @@ namespace LevelImposter.Core
         /// <param name="imgData">Raw image file data</param>
         /// <returns>Unity Sprite object</returns>
         [HideFromIl2Cpp]
-        public Sprite LoadSprite(byte[] imgData, string? spriteID)
+        public Sprite LoadSprite(Il2CppStructArray<byte> imgData, string? spriteID)
         {
             SpriteData? spriteData = GetSpriteFromCache(spriteID);
             Sprite? sprite = spriteData?.Sprite;

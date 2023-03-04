@@ -15,6 +15,7 @@ using AmongUs.GameOptions;
 using Reactor.Networking.Attributes;
 using Reactor.Utilities;
 using System.Collections;
+using Reactor.Utilities.Extensions;
 
 namespace LevelImposter.Core
 {
@@ -214,6 +215,21 @@ namespace LevelImposter.Core
                 return resourceData;
             }
         }
+        
+        private static Il2CppStructArray<byte>? GetResourceAsIl2Cpp(string name)
+        {
+            Assembly assembly = Assembly.GetExecutingAssembly();
+            using (Stream? resourceStream = assembly.GetManifestResourceStream($"LevelImposter.Assets.{name}"))
+            {
+                if (resourceStream == null)
+                    return null;
+
+                var length = (int) resourceStream.Length;
+                Il2CppStructArray<byte> resourceData = new Il2CppStructArray<byte>(length);
+                resourceStream.AsIl2Cpp().Read(resourceData, 0, length);
+                return resourceData;
+            }
+        }
 
         /// <summary>
         /// Loads a GameObject from asembly resources
@@ -222,10 +238,13 @@ namespace LevelImposter.Core
         /// <returns>GameObject or null if not found</returns>
         public static GameObject? LoadAssetBundle(string name)
         {
-            byte[]? assetData = GetResource(name);
-            if (assetData == null)
+            Assembly assembly = Assembly.GetExecutingAssembly();
+            Stream? assetStream = assembly.GetManifestResourceStream($"LevelImposter.Assets.{name}");
+            
+            if (assetStream == null)
                 return null;
-            AssetBundle assetBundle = AssetBundle.LoadFromMemory(assetData);
+
+            AssetBundle assetBundle = AssetBundle.LoadFromStream(assetStream.AsIl2Cpp());
             GameObject asset = assetBundle.LoadAsset(name, Il2CppType.Of<GameObject>()).Cast<GameObject>();
             assetBundle.Unload(false);
             return asset;
@@ -238,7 +257,7 @@ namespace LevelImposter.Core
         /// <returns>Sprite or null if not found</returns>
         public static Sprite? LoadSpriteResource(string name)
         {
-            byte[]? spriteData = GetResource(name);
+            Il2CppStructArray<byte>? spriteData = GetResourceAsIl2Cpp(name);
             if (spriteData == null)
                 return null;
             return SpriteLoader.Instance?.LoadSprite(spriteData, name);
