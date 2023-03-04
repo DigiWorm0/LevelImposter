@@ -18,7 +18,7 @@ namespace LevelImposter.Core
         {
         }
 
-        public const float MIN_FRAMERATE = 10.0f;
+        public const float MIN_FRAME_TIME = 1500.0f;
         public readonly List<string> CONVERT_TYPES = new()
         {
             "data:image/webp",
@@ -36,7 +36,7 @@ namespace LevelImposter.Core
         private int _renderCount = 0;
         private bool _shouldRender
         {
-            get { return _renderTimer?.ElapsedMilliseconds <= (1000.0f / MIN_FRAMERATE); }
+            get { return _renderTimer?.ElapsedMilliseconds <= MIN_FRAME_TIME; }
         }
 
         public int RenderCount => _renderCount;
@@ -184,6 +184,7 @@ namespace LevelImposter.Core
             {
                 _renderCount++;
                 yield return null;
+                yield return null;
                 while (!_shouldRender)
                     yield return null;
 
@@ -258,6 +259,7 @@ namespace LevelImposter.Core
                 wrapMode = TextureWrapMode.Clamp,
                 filterMode = pixelArtMode ? FilterMode.Point : FilterMode.Bilinear,
                 hideFlags = HideFlags.HideAndDontSave,
+                requestedMipmapLevel = 0
             };
             ImageConversion.LoadImage(texture, imgData);
 
