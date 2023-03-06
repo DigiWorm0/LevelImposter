@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Il2CppInterop.Runtime.InteropTypes.Arrays;
 using System.Text;
 using UnityEngine;
 using LevelImposter.DB;
@@ -29,23 +30,9 @@ namespace LevelImposter.Core
             }
             rend.material = prefabRenderer.material;
 
-            // Spawnable Prefab
-            GameObject spawnablePrefab = new GameObject(obj.name + "_Spawnable");
-            LITriggerSpawnable spawnableTrigger = spawnablePrefab.AddComponent<LITriggerSpawnable>();
-            Minigame spawnableGame = spawnablePrefab.AddComponent<DummyMinigame>();
-            spawnableTrigger.SetTrigger(obj, "onUse");
-            spawnablePrefab.SetActive(false);
-
             // Console
-            SystemConsole console = obj.AddComponent<SystemConsole>();
-            console.SafePositionLocal = new Vector2(0, 0);
-            console.useIcon = ImageNames.UseButton;
-            console.usableDistance = elem.properties.range == null ? 1.0f : (float)elem.properties.range;
-            console.FreeplayOnly = false;
-            console.onlyFromBelow = elem.properties.onlyFromBelow == true;
-            console.Image = rend;
-            console.MinigamePrefab = spawnableGame;
-
+            TriggerConsole console = obj.AddComponent<TriggerConsole>();
+            console.Init(elem);
 
             // Colliders
             MapUtils.CreateDefaultColliders(obj, prefab);

@@ -88,6 +88,7 @@ namespace LevelImposter.Shop
         /// </summary>
         /// <param name="onSuccess">Callback on success</param>
         /// <param name="onError">Callback on error</param>
+        [HideFromIl2Cpp]
         private void GetLatestReleases(Action<GHRelease[]> onSuccess, Action<string> onError)
         {
             LILogger.Info("Getting latest release info from GitHub");
@@ -121,6 +122,7 @@ namespace LevelImposter.Shop
         /// </summary>
         /// <param name="releases">List of releases in order of relevancy</param>
         /// <returns>TRUE if the update is forbidden. FALSE otherwise</returns>
+        [HideFromIl2Cpp]
         private bool IsUpdateForbidden(GHRelease[] releases)
         {
             foreach (GHRelease release in releases)

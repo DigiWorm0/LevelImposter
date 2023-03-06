@@ -23,16 +23,21 @@ namespace LevelImposter
 
         public HarmonyLib.Harmony Harmony { get; } = new HarmonyLib.Harmony(ID);
 
-        public static ConfigFile ConfigFile { get; private set; }
-        
         public override void Load()
         {
-            ConfigFile = Config;
             LILogger.Init();
             LIDeepLink.Init();
             ModCompatibility.Init();
 
             DataManager.Player.Onboarding.ViewedHideAndSeekHowToPlay = true;
+            
+            RegisterTypeOptions usableInterface = new()
+            {
+                Interfaces = new(new System.Type[]
+                {
+                    typeof(IUsable)
+                })
+            };
 
             ClassInjector.RegisterTypeInIl2Cpp<LIShipStatus>();
             ClassInjector.RegisterTypeInIl2Cpp<LIStar>();
@@ -45,6 +50,7 @@ namespace LevelImposter
             ClassInjector.RegisterTypeInIl2Cpp<GIFAnimator>();
             ClassInjector.RegisterTypeInIl2Cpp<SpriteLoader>();
             ClassInjector.RegisterTypeInIl2Cpp<WAVLoader>();
+            ClassInjector.RegisterTypeInIl2Cpp<TriggerConsole>(usableInterface);
 
             ClassInjector.RegisterTypeInIl2Cpp<AssetDB>();
 
