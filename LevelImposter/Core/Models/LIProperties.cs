@@ -16,6 +16,7 @@ namespace LevelImposter.Core
         public LITrigger[]? triggers { get; set; }
         public float? triggerTime { get; set; }
         public bool? triggerClientSide { get; set; }
+        public LIColor? highlightColor { get; set; }
 
         // Sprite
         public string? spriteData { get; set; }

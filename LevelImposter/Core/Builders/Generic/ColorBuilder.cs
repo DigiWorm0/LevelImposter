@@ -15,8 +15,8 @@ namespace LevelImposter.Core
         public void Build(LIElement elem, GameObject obj)
         {
             var spriteRenderer = obj.GetComponent<SpriteRenderer>();
-            if (elem.properties.color != null && spriteRenderer != null)
-                spriteRenderer.color = MapUtils.LIColorToColor(elem.properties.color);
+            if (spriteRenderer)
+                spriteRenderer.color = elem.properties.color?.ToUnity() ?? Color.white;
         }
 
         public void PostBuild() { }

@@ -18,6 +18,8 @@ namespace LevelImposter.Core
 
         private float _usableDistance = 1.0f;
         private bool _onlyFromBelow = false;
+        private bool _ghostsEnabled = false;
+        private Color _highlightColor = Color.yellow;
         private SpriteRenderer? _spriteRenderer;
 
         public float UsableDistance => _usableDistance;
@@ -33,21 +35,23 @@ namespace LevelImposter.Core
         {
             _usableDistance = elem.properties.range ?? 1.0f;
             _onlyFromBelow = elem.properties.onlyFromBelow ?? false;
+            _ghostsEnabled = elem.properties.isGhostEnabled ?? false;
+            _highlightColor = elem.properties.highlightColor?.ToUnity() ?? Color.yellow;
         }
 
         /// <summary>
         /// Updates the sprite outline for the consoles
         /// </summary>
-        /// <param name="isHighlighted">TRUE iff the console is within vision</param>
-        /// <param name="isMainTarget">TRUE iff the console is the main target selected</param>
-        public void SetOutline(bool isHighlighted, bool isMainTarget)
+        /// <param name="isVisible">TRUE iff the console is within vision</param>
+        /// <param name="isTargeted">TRUE iff the console is the main target selected</param>
+        public void SetOutline(bool isVisible, bool isTargeted)
         {
             if (_spriteRenderer == null)
                 return;
             
-            _spriteRenderer.material.SetFloat("_Outline", isHighlighted ? 1 : 0);
-            _spriteRenderer.material.SetColor("_OutlineColor", Color.yellow);
-            _spriteRenderer.material.SetColor("_AddColor", isMainTarget ? Color.yellow : Color.clear);
+            _spriteRenderer.material.SetFloat("_Outline", isVisible ? 1 : 0);
+            _spriteRenderer.material.SetColor("_OutlineColor", _highlightColor);
+            _spriteRenderer.material.SetColor("_AddColor", isTargeted ? _highlightColor : Color.clear);
         }
 
         /// <summary>
@@ -63,7 +67,7 @@ namespace LevelImposter.Core
             Vector2 truePosition = playerControl.GetTruePosition();
             Vector3 position = transform.position;
 
-            couldUse = !playerInfo.IsDead &&
+            couldUse = (!playerInfo.IsDead || _ghostsEnabled) &&
                     playerControl.CanMove &&
                     (!_onlyFromBelow || truePosition.y < position.y);
             canUse = couldUse;

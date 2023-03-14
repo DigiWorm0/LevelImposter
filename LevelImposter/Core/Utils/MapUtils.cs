@@ -169,23 +169,6 @@ namespace LevelImposter.Core
         }
 
         /// <summary>
-        /// Converts an LIColor to UnityEngine.Color
-        /// </summary>
-        /// <param name="color">Color to convert from</param>
-        /// <returns>UnityEngine.Color to convert to</returns>
-        public static Color LIColorToColor(LIColor? color)
-        {
-            if (color == null)
-                return Color.white;
-            return new Color(
-                color.r / 255,
-                color.g / 255,
-                color.b / 255,
-                color.a
-            );
-        }
-
-        /// <summary>
         /// Checks if a GameObject is the local player
         /// </summary>
         /// <param name="obj">Game Object to check</param>
