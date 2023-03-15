@@ -25,6 +25,7 @@ namespace LevelImposter.Core
             new CamBuilder(),
             new TaskBuilder(),
             new DecBuilder(),
+            new PhysicsObjectBuilder(),
 
             new SabBuilder(),
             new SabConsoleBuilder(),
