@@ -69,7 +69,7 @@ namespace LevelImposter.Core
         }
 
         /// <summary>
-        /// Adds a sprite data to the stack
+        /// Adds a sprite data to managed stack to enable GC and cache
         /// </summary>
         /// <param name="sprite">Sprite to add to managed stack</param>
         public void AddSpriteData(SpriteData spriteData)
@@ -288,16 +288,7 @@ namespace LevelImposter.Core
             SpriteData? spriteData = GetSpriteFromCache(spriteID);
             Sprite? sprite = spriteData?.Sprite;
             if (sprite == null)
-            {
                 sprite = RawImageToSprite(imgData);
-                spriteData = new()
-                {
-                    ID = spriteID ?? "",
-                    SpriteArr = new Sprite[1] { sprite },
-                    FrameDelayArr = new float[1],
-                };
-                AddSpriteData((SpriteData)spriteData);
-            }
             return sprite;
         }
 
