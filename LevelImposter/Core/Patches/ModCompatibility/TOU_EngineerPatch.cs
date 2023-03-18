@@ -11,7 +11,8 @@ namespace LevelImposter.Core
      *      Fixes the TOU engineer fix
      *      to work in LevelImposter.
      *      
-     *      Temporary fix until PR is merged:
+     *      [OBSELETE] - The PR has been merged,
+     *      this patch is no longer necessary.
      *      https://github.com/eDonnes124/Town-Of-Us-R/pull/115
      *      
      *      Note: A bug w/ Engineer where the
@@ -19,6 +20,8 @@ namespace LevelImposter.Core
      *      requires a high Harmony priority to execute
      *      the patch before an exception is thrown
      */
+    /*
+    [Obsolete("A bug fix has been implemented in the latest TOU")]
     [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.HandleRpc))]
     public static class TOU_EngineerPatch
     {
@@ -37,4 +40,5 @@ namespace LevelImposter.Core
             }
         }
     }
+    */
 }

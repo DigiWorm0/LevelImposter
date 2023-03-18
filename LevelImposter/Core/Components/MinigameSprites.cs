@@ -21,12 +21,20 @@ namespace LevelImposter.Core
 
         private LIMinigame[]? minigameDataArr = null;
 
+        /// <summary>
+        /// Initializes component with LIElement
+        /// </summary>
+        /// <param name="elem">Element that GameObject represents</param>
         [HideFromIl2Cpp]
         public void Init(LIElement elem)
         {
             minigameDataArr = elem.properties.minigames ?? new LIMinigame[0];
         }
 
+        /// <summary>
+        /// Loads the sprites onto a minigame
+        /// </summary>
+        /// <param name="minigame">Minigame to load sprites to</param>
         public void LoadMinigame(Minigame minigame)
         {
             if (minigameDataArr == null)
@@ -39,6 +47,12 @@ namespace LevelImposter.Core
             }
         }
 
+        /// <summary>
+        /// Loads individual sprites onto a minigame
+        /// </summary>
+        /// <param name="minigame">Minigame to load sprite to</param>
+        /// <param name="type">Type of LIMinigame</param>
+        /// <param name="sprite">Sprite to load</param>
         private void LoadMinigameSprite(Minigame minigame, string type, Sprite? sprite)
         {
             string[]? spritePaths = AssetDB.GetPaths(type);
