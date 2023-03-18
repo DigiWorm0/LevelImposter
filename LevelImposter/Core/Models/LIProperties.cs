@@ -24,6 +24,9 @@ namespace LevelImposter.Core
         public bool? noShadowsBehaviour { get; set; }
         public LIColor? color { get; set; }
 
+        // Minigame
+        public LIMinigame[]? minigames { get; set; }
+
         // Sound
         public LISound[]? sounds { get; set; }
         public int? soundPriority { get; set; }

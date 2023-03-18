@@ -24,7 +24,7 @@ namespace LevelImposter.DB
                     return;
 
                 // Transform
-                var transform = FollowPath(elem.Path, shipStatus.transform);
+                var transform = shipStatus.transform.Find(elem.Path);
                 if (transform == null)
                 {
                     LILogger.Warn($"ObjectDB could not find {elem.ID} in {shipStatus.name}");

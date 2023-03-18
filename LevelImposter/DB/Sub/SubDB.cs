@@ -8,6 +8,11 @@ using LevelImposter.Core;
 
 namespace LevelImposter.DB
 {
+    /// <summary>
+    /// A miniature DB designed to search and
+    /// contain various types of objects within Among Us
+    /// </summary>
+    /// <typeparam name="T">Type of object to contain</typeparam>
     public abstract class SubDB<T>
     {
         private Dictionary<string, T> _data = new();
@@ -51,24 +56,6 @@ namespace LevelImposter.DB
         protected void Add(string id, T obj)
         {
             _data.Add(id, obj);
-        }
-
-        /// <summary>
-        /// Follows a path of transforms from parent to child
-        /// </summary>
-        /// <param name="path">"/" seperated path string</param>
-        /// <param name="parent">Parent Transform to follow</param>
-        /// <returns>Child Transform or null if not found</returns>
-        protected Transform? FollowPath(string path, Transform parent)
-        {
-            List<string> parentName = new(path.Split("/"));
-            Transform? transform = parent;
-            parentName.ForEach((name) =>
-            {
-                if (transform != null)
-                    transform = transform.Find(name);
-            });
-            return transform;
         }
     }
 }
