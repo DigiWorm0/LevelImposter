@@ -102,6 +102,17 @@ namespace LevelImposter.Core
             }
         }
 
+        /// <summary>
+        /// Copies animation data from another GIFAnimator
+        /// </summary>
+        /// <param name="component">GIFAnimator to copy data from</param>
+        public void CopyFrom(GIFAnimator component)
+        {
+            _spriteRenderer = GetComponent<SpriteRenderer>();
+            _frames = component._frames;
+            _delays = component._delays;
+        }
+
         public void OnDestroy()
         {
             _delays = null;

@@ -47,16 +47,18 @@ namespace LevelImposter.Core
         /// <param name="triggerID">Trigger ID to fire</param>
         /// <param name="orgin">Orgin player or null if the trigger should only run on the client</param>
         /// <param name="stackSize">Size of the trigger stack</param>
-        public static void Trigger(GameObject obj, string triggerID, PlayerControl? orgin, int stackSize = 0)
+        /// <returns>TRUE iff the trigger is successful</returns>
+        public static bool Trigger(GameObject obj, string triggerID, PlayerControl? orgin, int stackSize = 0)
         {
             LITriggerable? trigger = AllTriggers.Find(t => t.gameObject == obj && t.SourceTrigger == triggerID);
             if (trigger == null)
-                return;
+                return false;
 
             if (trigger.IsClientSide != false || orgin == null)
                 trigger.FireTrigger(orgin, stackSize); // Client-Side
             else
                 RPCFireTrigger(orgin, trigger.SourceID.ToString() ?? "", triggerID); // Networked
+            return true;
         }
 
         /// <summary>

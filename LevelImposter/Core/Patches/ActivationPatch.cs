@@ -9,6 +9,9 @@ using System.Reflection;
 
 namespace LevelImposter.Core
 {
+    /// <summary>
+    /// Fires "onUse" triggers on a variety of console objects
+    /// </summary>
     [HarmonyPatch]
     public class ActivationPatch
     {
@@ -16,11 +19,12 @@ namespace LevelImposter.Core
         {
             yield return AccessTools.Method(typeof(Console), nameof(Console.Use));
             yield return AccessTools.Method(typeof(SystemConsole), nameof(SystemConsole.Use));
+            yield return AccessTools.Method(typeof(DoorConsole), nameof(DoorConsole.Use));
         }
 
-        public static void Postfix(MonoBehaviour __instance)
+        public static bool Prefix(MonoBehaviour __instance)
         {
-            LITriggerable.Trigger(__instance.gameObject, "onUse", PlayerControl.LocalPlayer);
+            return !LITriggerable.Trigger(__instance.gameObject, "onUse", PlayerControl.LocalPlayer);
         }
     }
 }

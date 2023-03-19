@@ -96,5 +96,9 @@ namespace LevelImposter.Core
         {
             _spriteRenderer = GetComponent<SpriteRenderer>();
         }
+        public void OnDestroy()
+        {
+            _spriteRenderer = null;
+        }
     }
 }
