@@ -21,7 +21,7 @@ namespace LevelImposter.Shop
         {
         }
 
-        public const string API_PATH = "https://api.github.com/repos/DigiWorm0/LevelImposter/releases?per_page=1";
+        public const string API_PATH = "https://api.github.com/repos/DigiWorm0/LevelImposter/releases?per_page=5";
         public const string UPDATE_FORBIDDEN_FLAG = "[NoAutoUpdate]";
 
         public static GitHubAPI? Instance = null;
@@ -84,12 +84,12 @@ namespace LevelImposter.Shop
         }
 
         /// <summary>
-        /// Gets the latest release data from GitHub
+        /// Gets the latest release info from GitHub
         /// </summary>
         /// <param name="onSuccess">Callback on success</param>
         /// <param name="onError">Callback on error</param>
         [HideFromIl2Cpp]
-        public void GetLatestRelease(Action<GHRelease> onSuccess, Action<string> onError)
+        private void GetLatestReleases(Action<GHRelease[]> onSuccess, Action<string> onError)
         {
             LILogger.Info("Getting latest release info from GitHub");
             Request(API_PATH, (byte[] rawData) =>
@@ -97,10 +97,42 @@ namespace LevelImposter.Shop
                 string json = Encoding.UTF8.GetString(rawData);
                 GHRelease[]? response = JsonSerializer.Deserialize<GHRelease[]>(json);
                 if (response != null)
-                    onSuccess(response[0]);
+                    onSuccess(response);
                 else
                     onError("Invalid API response");
             }, onError);
+        }
+
+        /// <summary>
+        /// Gets the latest release data from GitHub
+        /// </summary>
+        /// <param name="onSuccess">Callback on success</param>
+        /// <param name="onError">Callback on error</param>
+        [HideFromIl2Cpp]
+        public void GetLatestRelease(Action<GHRelease> onSuccess, Action<string> onError)
+        {
+            GetLatestReleases((releases) =>
+            {
+                onSuccess(releases[0]);
+            }, onError);
+        }
+
+        /// <summary>
+        /// Checks release chain if update is forbidden
+        /// </summary>
+        /// <param name="releases">List of releases in order of relevancy</param>
+        /// <returns>TRUE if the update is forbidden. FALSE otherwise</returns>
+        [HideFromIl2Cpp]
+        private bool IsUpdateForbidden(GHRelease[] releases)
+        {
+            foreach (GHRelease release in releases)
+            {
+                if (IsCurrent(release))
+                    return false;
+                if (release.body.Contains(UPDATE_FORBIDDEN_FLAG))
+                    return true;
+            }
+            return false;
         }
 
         /// <summary>
@@ -125,8 +157,9 @@ namespace LevelImposter.Shop
         public void UpdateMod(Action onSuccess, Action<string> onError)
         {
             LILogger.Info("Updating mod from GitHub");
-            GetLatestRelease((release) =>
+            GetLatestReleases((releases) =>
             {
+                GHRelease release = releases[0];
                 LILogger.Info($"Downloading DLL from {release}");
                 if (release.assets.Length <= 0)
                 {
@@ -135,7 +168,7 @@ namespace LevelImposter.Shop
                     onError(errorMsg);
                     return;
                 }
-                if (release.body.Contains(UPDATE_FORBIDDEN_FLAG))
+                if (IsUpdateForbidden(releases))
                 {
                     string errorMsg = $"Auto-update to {release} is unavailable.";
                     LILogger.Error(errorMsg);

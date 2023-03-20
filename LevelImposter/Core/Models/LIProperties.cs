@@ -16,12 +16,16 @@ namespace LevelImposter.Core
         public LITrigger[]? triggers { get; set; }
         public float? triggerTime { get; set; }
         public bool? triggerClientSide { get; set; }
+        public LIColor? highlightColor { get; set; }
 
         // Sprite
         public string? spriteData { get; set; }
         public bool? noShadows { get; set; }
         public bool? noShadowsBehaviour { get; set; }
         public LIColor? color { get; set; }
+
+        // Minigame
+        public LIMinigame[]? minigames { get; set; }
 
         // Sound
         public LISound[]? sounds { get; set; }
@@ -38,6 +42,7 @@ namespace LevelImposter.Core
         // Teleporter
         public Guid? teleporter { get; set; }
         public bool? preserveOffset { get; set; }
+        public bool? isGhostEnabled { get; set; }
 
         // Camera
         public float? camXOffset { get; set; }

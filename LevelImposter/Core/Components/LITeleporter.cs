@@ -73,7 +73,7 @@ namespace LevelImposter.Core
         }
         public void OnDestroy()
         {
-            _teleList.Remove(this);
+            _teleList.Clear();
             _elem = null;
             _target = null;
         }

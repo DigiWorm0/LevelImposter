@@ -6,6 +6,7 @@ using UnityEngine;
 using System.Diagnostics;
 using Il2CppInterop.Runtime.Attributes;
 using BepInEx.Unity.IL2CPP.Utils.Collections;
+using Il2CppInterop.Runtime.InteropTypes.Arrays;
 
 namespace LevelImposter.Core
 {
@@ -18,7 +19,7 @@ namespace LevelImposter.Core
         {
         }
 
-        public const float MIN_FRAMERATE = 10.0f;
+        public const float MIN_FRAME_TIME = 1500.0f;
         public readonly List<string> CONVERT_TYPES = new()
         {
             "data:image/webp",
@@ -36,7 +37,7 @@ namespace LevelImposter.Core
         private int _renderCount = 0;
         private bool _shouldRender
         {
-            get { return _renderTimer?.ElapsedMilliseconds <= (1000.0f / MIN_FRAMERATE); }
+            get { return _renderTimer?.ElapsedMilliseconds <= MIN_FRAME_TIME; }
         }
 
         public int RenderCount => _renderCount;
@@ -68,7 +69,7 @@ namespace LevelImposter.Core
         }
 
         /// <summary>
-        /// Adds a sprite data to the stack
+        /// Adds a sprite data to managed stack to enable GC and cache
         /// </summary>
         /// <param name="sprite">Sprite to add to managed stack</param>
         public void AddSpriteData(SpriteData spriteData)
@@ -168,7 +169,7 @@ namespace LevelImposter.Core
         /// <param name="imgData">Image File Data</param>
         /// <param name="onLoad">Callback on success</param>
         [HideFromIl2Cpp]
-        public void LoadSpriteAsync(byte[] imgData, bool useImageSharp, Action<SpriteData?> onLoad, string? spriteID)
+        public void LoadSpriteAsync(Il2CppStructArray<byte> imgData, bool useImageSharp, Action<SpriteData?> onLoad, string? spriteID)
         {
             StartCoroutine(CoLoadSpriteAsync(imgData, useImageSharp, onLoad, spriteID).WrapToIl2Cpp());
         }
@@ -179,10 +180,11 @@ namespace LevelImposter.Core
         /// <param name="imgData">Image File Data</param>
         /// <param name="onLoad">Callback on success</param>
         [HideFromIl2Cpp]
-        private IEnumerator CoLoadSpriteAsync(byte[] imgData, bool useImageSharp, Action<SpriteData?>? onLoad, string? spriteID)
+        private IEnumerator CoLoadSpriteAsync(Il2CppStructArray<byte> imgData, bool useImageSharp, Action<SpriteData?>? onLoad, string? spriteID)
         {
             {
                 _renderCount++;
+                yield return null;
                 yield return null;
                 while (!_shouldRender)
                     yield return null;
@@ -249,7 +251,7 @@ namespace LevelImposter.Core
         /// <param name="texData">Texture Metadata to load</param>
         /// <returns>Generated sprite data</returns>
         [HideFromIl2Cpp]
-        private Sprite RawImageToSprite(byte[] imgData)
+        private Sprite RawImageToSprite(Il2CppStructArray<byte> imgData)
         {
             // Generate Texture
             bool pixelArtMode = LIShipStatus.Instance?.CurrentMap?.properties.pixelArtMode == true;
@@ -258,6 +260,7 @@ namespace LevelImposter.Core
                 wrapMode = TextureWrapMode.Clamp,
                 filterMode = pixelArtMode ? FilterMode.Point : FilterMode.Bilinear,
                 hideFlags = HideFlags.HideAndDontSave,
+                requestedMipmapLevel = 0
             };
             ImageConversion.LoadImage(texture, imgData);
 
@@ -280,21 +283,12 @@ namespace LevelImposter.Core
         /// <param name="imgData">Raw image file data</param>
         /// <returns>Unity Sprite object</returns>
         [HideFromIl2Cpp]
-        public Sprite LoadSprite(byte[] imgData, string? spriteID)
+        public Sprite LoadSprite(Il2CppStructArray<byte> imgData, string? spriteID)
         {
             SpriteData? spriteData = GetSpriteFromCache(spriteID);
             Sprite? sprite = spriteData?.Sprite;
             if (sprite == null)
-            {
                 sprite = RawImageToSprite(imgData);
-                spriteData = new()
-                {
-                    ID = spriteID ?? "",
-                    SpriteArr = new Sprite[1] { sprite },
-                    FrameDelayArr = new float[1],
-                };
-                AddSpriteData((SpriteData)spriteData);
-            }
             return sprite;
         }
 

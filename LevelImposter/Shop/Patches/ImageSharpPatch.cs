@@ -32,7 +32,7 @@ namespace LevelImposter.Shop
             GenericPopup popupComponent = popupObject.GetComponent<GenericPopup>();
             TextMeshPro popupText = popupComponent.TextAreaTMP;
             popupText.enableAutoSizing = false;
-            popupComponent.Show($"<color=yellow>Warning!</color>\n<size=1.5>LevelImposter is missing\n{ImageSharpWrapper.DLL_NAME}</size>");
+            popupComponent.Show($"<color=yellow>Warning!</color>\n<size=1.5>Missing {ImageSharpWrapper.DLL_NAME}\nMaps may not load properly</size>");
         }
     }
 }

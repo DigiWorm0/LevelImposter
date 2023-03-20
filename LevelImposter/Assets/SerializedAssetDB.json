@@ -1771,5 +1771,228 @@
       "Path": "Admin/Sounds/Wood",
       "Name": "FootstepWood07"
     }
+  ],
+  "PathDB": [
+    {
+      "ID": "sab-comms_bg",
+      "Paths": [
+        "Background"
+      ]
+    },
+    {
+      "ID": "sab-comms_dial",
+      "Paths": [
+        "Background/Dial/DialTop"
+      ]
+    },
+    {
+      "ID": "sab-comms_glasspanel",
+      "Paths": [
+        "TopCurve/comms_panelGlass",
+        "BottomCurve/comms_panelGlass"
+      ]
+    },
+    {
+      "ID": "sab-electric_bg",
+      "Paths": [
+        "Background"
+      ]
+    },
+    {
+      "ID": "sab-electric_bgwires",
+      "Paths": [
+        "Background/electricity_switches_wiresTop"
+      ]
+    },
+    {
+      "ID": "sab-electric_switch",
+      "Paths": [
+        "switch",
+        "switch (1)",
+        "switch (2)",
+        "switch (3)",
+        "switch (4)"
+      ]
+    },
+    {
+      "ID": "sab-oxygen1_bg",
+      "Paths": [
+        "Background"
+      ]
+    },
+    {
+      "ID": "sab-oxygen1_note",
+      "Paths": [
+        "StickyNote/Background"
+      ]
+    },
+    {
+      "ID": "sab-oxygen1_0",
+      "Paths": [
+        "reactorButton10"
+      ]
+    },
+    {
+      "ID": "sab-oxygen1_1",
+      "Paths": [
+        "reactorButton01"
+      ]
+    },
+    {
+      "ID": "sab-oxygen1_2",
+      "Paths": [
+        "reactorButton02"
+      ]
+    },
+    {
+      "ID": "sab-oxygen1_3",
+      "Paths": [
+        "reactorButton03"
+      ]
+    },
+    {
+      "ID": "sab-oxygen1_4",
+      "Paths": [
+        "reactorButton04"
+      ]
+    },
+    {
+      "ID": "sab-oxygen1_5",
+      "Paths": [
+        "reactorButton05"
+      ]
+    },
+    {
+      "ID": "sab-oxygen1_6",
+      "Paths": [
+        "reactorButton06"
+      ]
+    },
+    {
+      "ID": "sab-oxygen1_7",
+      "Paths": [
+        "reactorButton07"
+      ]
+    },
+    {
+      "ID": "sab-oxygen1_8",
+      "Paths": [
+        "reactorButton08"
+      ]
+    },
+    {
+      "ID": "sab-oxygen1_9",
+      "Paths": [
+        "reactorButton09"
+      ]
+    },
+    {
+      "ID": "sab-oxygen1_x",
+      "Paths": [
+        "admin_keypad_x"
+      ]
+    },
+    {
+      "ID": "sab-oxygen1_check",
+      "Paths": [
+        "admin_keypad_check"
+      ]
+    },
+    {
+      "ID": "sab-oxygen2_bg",
+      "Paths": [
+        "Background"
+      ]
+    },
+    {
+      "ID": "sab-oxygen2_note",
+      "Paths": [
+        "StickyNote/Background"
+      ]
+    },
+    {
+      "ID": "sab-oxygen2_0",
+      "Paths": [
+        "reactorButton10"
+      ]
+    },
+    {
+      "ID": "sab-oxygen2_1",
+      "Paths": [
+        "reactorButton01"
+      ]
+    },
+    {
+      "ID": "sab-oxygen2_2",
+      "Paths": [
+        "reactorButton02"
+      ]
+    },
+    {
+      "ID": "sab-oxygen2_3",
+      "Paths": [
+        "reactorButton03"
+      ]
+    },
+    {
+      "ID": "sab-oxygen2_4",
+      "Paths": [
+        "reactorButton04"
+      ]
+    },
+    {
+      "ID": "sab-oxygen2_5",
+      "Paths": [
+        "reactorButton05"
+      ]
+    },
+    {
+      "ID": "sab-oxygen2_6",
+      "Paths": [
+        "reactorButton06"
+      ]
+    },
+    {
+      "ID": "sab-oxygen2_7",
+      "Paths": [
+        "reactorButton07"
+      ]
+    },
+    {
+      "ID": "sab-oxygen2_8",
+      "Paths": [
+        "reactorButton08"
+      ]
+    },
+    {
+      "ID": "sab-oxygen2_9",
+      "Paths": [
+        "reactorButton09"
+      ]
+    },
+    {
+      "ID": "sab-oxygen2_x",
+      "Paths": [
+        "admin_keypad_x"
+      ]
+    },
+    {
+      "ID": "sab-oxygen2_check",
+      "Paths": [
+        "admin_keypad_check"
+      ]
+    },
+    {
+      "ID": "sab-reactorleft_bg",
+      "Paths": [
+        "Background"
+      ]
+    },
+    {
+      "ID": "sab-reactorright_bg",
+      "Paths": [
+        "Background"
+      ]
+    }
   ]
 }

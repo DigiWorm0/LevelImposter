@@ -9,6 +9,9 @@ using Il2CppInterop.Runtime.InteropTypes.Arrays;
 
 namespace LevelImposter.DB
 {
+    /// <summary>
+    /// Database of PlayerTask objects
+    /// </summary>
     public class TaskDB : SubDB<PlayerTask>
     {
         public TaskDB(SerializedAssetDB serializedDB) : base(serializedDB) { }

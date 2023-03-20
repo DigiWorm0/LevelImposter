@@ -30,6 +30,7 @@ namespace LevelImposter.DB
         private ObjectDB? _objectDB;
         private TaskDB? _taskDB;
         private SoundDB? _soundDB;
+        private PathDB? _pathDB;
 
         public string Status => _status;
 
@@ -58,6 +59,20 @@ namespace LevelImposter.DB
             if (taskPrefab == null)
                 LILogger.Warn($"Could not find task of type {id}");
             return taskPrefab?.Cast<T>();
+        }
+
+        /// <summary>
+        /// Gets a list of paths for an object
+        /// within a transform from the PathDB
+        /// </summary>
+        /// <param name="id">ID to lookup</param>
+        /// <returns>String or null if couldn't be found</returns>
+        public static string[]? GetPaths(string id)
+        {
+            var path = Instance?._pathDB?.Get(id);
+            if (path == null || path.Length == 0)
+                LILogger.Warn($"Could not find path of type {id}");
+            return path;
         }
 
         /// <summary>
@@ -122,6 +137,7 @@ namespace LevelImposter.DB
                 _objectDB = new(_serializedAssetDB);
                 _taskDB = new(_serializedAssetDB);
                 _soundDB = new(_serializedAssetDB);
+                _pathDB = new(_serializedAssetDB);
 
                 // Ship References
                 _status = "Loading ship references";
@@ -162,6 +178,7 @@ namespace LevelImposter.DB
                 _objectDB.Load();
                 _taskDB.Load();
                 _soundDB.Load();
+                _pathDB.Load();
                 _isInit = true;
 
             }
@@ -192,6 +209,7 @@ namespace LevelImposter.DB
             _objectDB?.LoadShip(shipStatus, mapType);
             _taskDB?.LoadShip(shipStatus, mapType);
             _soundDB?.LoadShip(shipStatus, mapType);
+            _pathDB?.LoadShip(shipStatus, mapType);
 
             LILogger.Info($"...{prefab.name} Loaded");
         }

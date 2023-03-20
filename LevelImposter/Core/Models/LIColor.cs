@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using UnityEngine;
 
 namespace LevelImposter.Core
 {
@@ -12,5 +13,15 @@ namespace LevelImposter.Core
         public float g { get; set; }
         public float b { get; set; }
         public float a { get; set; }
+
+        public Color ToUnity()
+        {
+            return new Color(
+                r / 255.0f,
+                g / 255.0f,
+                b / 255.0f,
+                a
+            );
+        }
     }
 }

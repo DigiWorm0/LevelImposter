@@ -8,15 +8,16 @@ using UnityEngine;
 namespace LevelImposter.Core
 {
     /// <summary>
-    /// Adds color to SpriteRenderers
+    /// Adds the MinigameSprites component (if needed)
     /// </summary>
-    public class ColorBuilder : IElemBuilder
+    public class MinigameSpriteBuilder : IElemBuilder
     {
         public void Build(LIElement elem, GameObject obj)
         {
-            var spriteRenderer = obj.GetComponent<SpriteRenderer>();
-            if (spriteRenderer)
-                spriteRenderer.color = elem.properties.color?.ToUnity() ?? Color.white;
+            if (elem.properties.minigames == null)
+                return;
+            MinigameSprites minigameSprites = obj.AddComponent<MinigameSprites>();
+            minigameSprites.Init(elem);
         }
 
         public void PostBuild() { }

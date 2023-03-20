@@ -9,6 +9,9 @@ using System.Text.Json.Serialization;
 
 namespace LevelImposter.DB
 {
+    /// <summary>
+    /// Database of Among Us AudioClips
+    /// </summary>
     public class SoundDB : SubDB<AudioClip>
     {
         public SoundDB(SerializedAssetDB serializedDB) : base(serializedDB) { }
@@ -21,7 +24,7 @@ namespace LevelImposter.DB
                     return;
 
                 // Transform
-                var transform = FollowPath(elem.Path, shipStatus.transform);
+                var transform = shipStatus.transform.Find(elem.Path);
                 if (transform == null)
                 {
                     LILogger.Warn($"SoundDB could not find {elem.ID} in {shipStatus.name}");

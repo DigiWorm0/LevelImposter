@@ -32,12 +32,12 @@ namespace LevelImposter.Core
             if (player == null)
                 return;
 
-            bool triggerServer = _currentPlayersIDs?.Count <= 0 && !_isClientSide;
-            bool triggerClient = MapUtils.IsLocalPlayer(collider.gameObject) && _isClientSide;
-            if (triggerClient || triggerServer)
+            bool triggerServerSided = _currentPlayersIDs?.Count <= 0 && !_isClientSide;
+            bool triggerClientSided = MapUtils.IsLocalPlayer(collider.gameObject) && _isClientSide;
+            if (triggerClientSided || triggerServerSided)
                 LITriggerable.Trigger(transform.gameObject, "onEnter", null);
 
-            if (_currentPlayersIDs?.Contains(player.PlayerId) != true)
+            if (_currentPlayersIDs?.Contains(player.PlayerId) ?? false)
                 _currentPlayersIDs?.Add(player.PlayerId);
         }
         public void OnTriggerExit2D(Collider2D collider)

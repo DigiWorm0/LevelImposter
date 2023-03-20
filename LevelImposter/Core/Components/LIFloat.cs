@@ -23,10 +23,8 @@ namespace LevelImposter.Core
         [HideFromIl2Cpp]
         public void Init(LIElement elem)
         {
-            if (elem.properties.floatingHeight != null)
-                _height = (float)elem.properties.floatingHeight;
-            if (elem.properties.floatingSpeed != null)
-                _speed = (float)elem.properties.floatingSpeed;
+            _height = elem.properties.floatingHeight ?? _height;
+            _speed = elem.properties.floatingSpeed ?? _speed;
             _yOffset = elem.y;
         }
 

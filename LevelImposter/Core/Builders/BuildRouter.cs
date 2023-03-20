@@ -12,6 +12,7 @@ namespace LevelImposter.Core
             new TransformBuilder(),
             new SpriteBuilder(),
             new ColliderBuilder(),
+            new MinigameSpriteBuilder(),
 
             new RoomBuilder(),
             new AdminMapBuilder(),
@@ -25,6 +26,7 @@ namespace LevelImposter.Core
             new CamBuilder(),
             new TaskBuilder(),
             new DecBuilder(),
+            new PhysicsObjectBuilder(),
 
             new SabBuilder(),
             new SabConsoleBuilder(),
