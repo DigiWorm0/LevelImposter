@@ -6,7 +6,7 @@ using UnityEngine;
 namespace LevelImposter.Core
 {
     [Serializable]
-    public class LIMinigame
+    public class LIMinigameSprite
     {
         public Guid id { get; set; }
         public string type { get; set; }

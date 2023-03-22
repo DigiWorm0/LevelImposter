@@ -19,7 +19,7 @@ namespace LevelImposter.Core
         {
         }
 
-        private LIMinigame[]? minigameDataArr = null;
+        private LIMinigameSprite[]? minigameDataArr = null;
 
         /// <summary>
         /// Initializes component with LIElement
@@ -28,7 +28,7 @@ namespace LevelImposter.Core
         [HideFromIl2Cpp]
         public void Init(LIElement elem)
         {
-            minigameDataArr = elem.properties.minigames ?? new LIMinigame[0];
+            minigameDataArr = elem.properties.minigames ?? new LIMinigameSprite[0];
         }
 
         /// <summary>
@@ -39,7 +39,7 @@ namespace LevelImposter.Core
         {
             if (minigameDataArr == null)
                 return;
-            foreach (LIMinigame minigameData in minigameDataArr)
+            foreach (LIMinigameSprite minigameData in minigameDataArr)
             {
                 SpriteLoader.Instance?.LoadSpriteAsync(minigameData.spriteData, (spriteData) => {
                     LoadMinigameSprite(minigame, minigameData.type, spriteData?.Sprite);

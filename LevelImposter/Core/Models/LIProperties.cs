@@ -25,7 +25,7 @@ namespace LevelImposter.Core
         public LIColor? color { get; set; }
 
         // Minigame
-        public LIMinigame[]? minigames { get; set; }
+        public LIMinigameSprite[]? minigames { get; set; }
 
         // Sound
         public LISound[]? sounds { get; set; }
