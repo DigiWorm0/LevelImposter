@@ -41,6 +41,7 @@ namespace LevelImposter.Core
                     return false;
                 }
             }
+            LILogger.Warn($"Could not find sabotage for {systemType}");
 
             return true;
         }

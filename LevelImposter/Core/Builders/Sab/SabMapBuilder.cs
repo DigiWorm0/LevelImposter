@@ -100,7 +100,7 @@ namespace LevelImposter.Core
 
             SpriteRenderer btnRenderer = sabButton.AddComponent<SpriteRenderer>();
             if (mapRoom.special != null)
-                LILogger.Warn("Only 1 sabotage button is supported per room");
+                LILogger.Warn("Only 1 sabotage is supported per room");
 
             ButtonBehavior button = sabButton.AddComponent<ButtonBehavior>();
             Action btnAction;
