@@ -49,7 +49,7 @@ namespace LevelImposter.Shop
         /// <summary>
         /// Cleans all assets from cache and runs GC
         /// </summary>
-        private static void CleanAssets()
+        public static void CleanAssets()
         {
             LILogger.Msg("Clearing all created assets");
             SpriteLoader.Instance?.ClearAll();
