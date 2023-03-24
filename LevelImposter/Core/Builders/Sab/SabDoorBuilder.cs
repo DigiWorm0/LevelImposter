@@ -31,7 +31,7 @@ namespace LevelImposter.Core
             SpriteRenderer spriteRenderer = obj.GetComponent<SpriteRenderer>();
             Animator animator = obj.AddComponent<Animator>();
             SpriteAnim spriteAnim = obj.AddComponent<SpriteAnim>();
-            obj.layer = (int)Layer.Objects; // Prevents kills through doors
+            obj.layer = (int)Layer.Ship;
             bool isSpriteAnim = false;
             if (!spriteRenderer)
             {
@@ -103,10 +103,23 @@ namespace LevelImposter.Core
             // Console
             if (isManualDoor)
             {
+                // Prefab
                 var prefab2 = AssetDB.GetObject($"sab-door-{doorType}"); // "sab-door-polus" or "sab-door-airship"
                 DoorConsole? prefab2Console = prefab2?.GetComponent<DoorConsole>();
-                DoorConsole consoleComponent = obj.AddComponent<DoorConsole>();
+
+                // Object
+                GameObject doorConsole = new GameObject(obj.name + "_Console");
+                doorConsole.transform.position = obj.transform.position;
+                doorConsole.layer = (int)Layer.Objects;
+
+                // Console
+                DoorConsole consoleComponent = doorConsole.AddComponent<DoorConsole>();
                 consoleComponent.MinigamePrefab = prefab2Console?.MinigamePrefab;
+                consoleComponent.MyDoor = doorComponent;
+                consoleComponent.Image = spriteRenderer;
+
+                // Colliders
+                MapUtils.CreateDefaultColliders(doorConsole, obj);
             }
         }
 

@@ -92,13 +92,13 @@
     },
     {
       "ID": "sab-doorh",
-      "Map": 0,
-      "Path": "Cafeteria/LowerDoor"
+      "Map": 2,
+      "Path": "Electrical/BottomDoor"
     },
     {
       "ID": "sab-doorv",
-      "Map": 0,
-      "Path": "Cafeteria/RightDoor"
+      "Map": 2,
+      "Path": "Electrical/RightDoor"
     },
     {
       "ID": "sab-door-polus",
