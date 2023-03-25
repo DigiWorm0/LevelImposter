@@ -15,8 +15,7 @@ namespace LevelImposter.Core
         public static void Postfix(Minigame __instance)
         {
             var minigameSprites = __instance.Console?.GetComponent<MinigameSprites>();
-            if (minigameSprites != null)
-                minigameSprites.LoadMinigame(__instance);
+            minigameSprites?.LoadMinigame(__instance);
         }
     }
 }

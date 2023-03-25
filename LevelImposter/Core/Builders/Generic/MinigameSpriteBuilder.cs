@@ -14,7 +14,7 @@ namespace LevelImposter.Core
     {
         public void Build(LIElement elem, GameObject obj)
         {
-            if (elem.properties.minigames == null)
+            if (elem.properties.minigames == null && elem.properties.minigameProps == null)
                 return;
             MinigameSprites minigameSprites = obj.AddComponent<MinigameSprites>();
             minigameSprites.Init(elem);
