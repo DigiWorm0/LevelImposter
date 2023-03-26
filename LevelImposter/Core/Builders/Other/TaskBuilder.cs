@@ -158,6 +158,7 @@ namespace LevelImposter.Core
             bool isTowels = elem.type.StartsWith("task-towels");
             bool isFuel = elem.type == "task-fuel1";
             bool isFuelOutput = elem.type == "task-fuel2";
+            bool isNode = elem.type == "task-node";
 
             if (CONSOLE_ID_PAIRS.ContainsKey(elem.type))
             {
@@ -293,7 +294,7 @@ namespace LevelImposter.Core
                     AddTaskToShip(elem, shipStatus, prefabLength, task);
                 }
             }
-            else if (AssetDB.HasTask(elem.type) && !isBuilt)
+            else if (AssetDB.HasTask(elem.type) && (!isBuilt || isNode))
             {
                 // Prefab
                 var prefabTask = AssetDB.GetTask<NormalPlayerTask>(elem.type);
@@ -327,7 +328,7 @@ namespace LevelImposter.Core
                     task.Arrow = arrow.GetComponent<ArrowBehaviour>();
                 }
 
-                if (elem.type == "task-node")
+                if (isNode)
                 {
                     WeatherNodeTask nodeTask = task.Cast<WeatherNodeTask>();
                     nodeTask.NodeId = console.ConsoleId;
