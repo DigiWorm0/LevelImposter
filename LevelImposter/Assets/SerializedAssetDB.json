@@ -1989,9 +1989,21 @@
       ]
     },
     {
+      "ID": "sab-reactorleft_sweep",
+      "Paths": [
+        "reactorMeltdown_glowBar"
+      ]
+    },
+    {
       "ID": "sab-reactorright_bg",
       "Paths": [
         "Background"
+      ]
+    },
+    {
+      "ID": "sab-reactorright_sweep",
+      "Paths": [
+        "reactorMeltdown_glowBar"
       ]
     }
   ]
