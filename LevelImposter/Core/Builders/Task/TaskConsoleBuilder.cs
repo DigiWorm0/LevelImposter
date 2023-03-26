@@ -11,7 +11,7 @@ namespace LevelImposter.Core
     {
         private int _consoleID = 0;
 
-        public static readonly Dictionary<string, int> CONSOLE_ID_PAIRS = new()
+        private static readonly Dictionary<string, int> CONSOLE_ID_PAIRS = new()
         {
             { "task-garbage2", 1 },
             { "task-garbage3", 0 },
@@ -22,7 +22,7 @@ namespace LevelImposter.Core
             { "task-pistols1", 1 },
             { "task-pistols2", 1 }
         };
-        public static readonly Dictionary<string, int> CONSOLE_ID_INCREMENTS = new()
+        private static readonly Dictionary<string, int> CONSOLE_ID_INCREMENTS = new()
         {
             { "task-toilet", 0 },
             { "task-breakers", 0 },
@@ -65,7 +65,6 @@ namespace LevelImposter.Core
         {
             // Prefab
             var prefabConsole = prefab.GetComponentInChildren<Console>();
-            var spriteRenderer = prefab.GetComponent<SpriteRenderer>();
 
             // Specific Types
             bool isArms = elem.type == "task-pistols1" || elem.type == "task-rifles1";
@@ -96,7 +95,7 @@ namespace LevelImposter.Core
             {
                 console = obj.AddComponent<Console>();
             }
-            console.Image = spriteRenderer;
+            console.Image = obj.GetComponent<SpriteRenderer>();
             console.ConsoleId = GetConsoleID(elem.type);
             console.Room = RoomBuilder.GetParentOrDefault(elem);
             console.TaskTypes =  prefabConsole.TaskTypes;
@@ -184,6 +183,9 @@ namespace LevelImposter.Core
             return null;
         }
 
+        /// <summary>
+        /// Performs final clean-up
+        /// </summary>
         public void PostBuild()
         {
             string[] keys = new string[_consoleIDIncrements.Keys.Count];

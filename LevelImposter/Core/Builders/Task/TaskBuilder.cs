@@ -32,11 +32,11 @@ namespace LevelImposter.Core
 
             // Button
             var prefabBtn = prefab.GetComponentInChildren<PassiveButton>();
-            MapUtils.CreateDefaultColliders(obj, prefab);
+            var collider = MapUtils.CreateDefaultColliders(obj, prefab);
             if (prefabBtn != null)
             {
                 PassiveButton btn = obj.AddComponent<PassiveButton>();
-                btn.ClickMask = obj.GetComponent<Collider2D>();
+                btn.ClickMask = collider;
                 btn.OnMouseOver = new UnityEvent();
                 btn.OnMouseOut = new UnityEvent();
                 Action action = console.Use;

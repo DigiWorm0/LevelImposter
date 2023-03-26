@@ -23,7 +23,7 @@ namespace LevelImposter.Core
         };
 
         private List<string> _builtTypes = new();
-        private GameObject _taskParent = new("TaskParent");
+        private GameObject _taskParent = null;
         private NormalPlayerTask? _wiresTask = null;
 
         private static SystemTypes[] _divertSystems = Array.Empty<SystemTypes>();
@@ -107,7 +107,7 @@ namespace LevelImposter.Core
                     if (prefabArrow != null)
                     {
                         GameObject arrow = UnityEngine.Object.Instantiate(prefabArrow);
-                        arrow.transform.SetParent(task.transform);
+                        arrow.transform.SetParent(taskContainer.transform);
                         arrow.SetActive(false);
                         task.Arrow = arrow.GetComponent<ArrowBehaviour>();
                     }
@@ -135,7 +135,7 @@ namespace LevelImposter.Core
                 if (prefabArrow != null)
                 {
                     GameObject arrow = UnityEngine.Object.Instantiate(prefabArrow);
-                    arrow.transform.SetParent(task.transform);
+                    arrow.transform.SetParent(taskContainer.transform);
                     arrow.SetActive(false);
                     task.Arrow = arrow.GetComponent<ArrowBehaviour>();
                 }
@@ -154,6 +154,9 @@ namespace LevelImposter.Core
             }
         }
 
+        /// <summary>
+        /// Performs final clean-up
+        /// </summary>
         public void PostBuild()
         {
             if (_wiresTask != null)
