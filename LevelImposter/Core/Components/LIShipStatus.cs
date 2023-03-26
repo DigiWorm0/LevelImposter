@@ -92,6 +92,7 @@ namespace LevelImposter.Core
             ShipStatus.MedScanner = null;
             ShipStatus.Type = (ShipStatus.MapType)MapType.LevelImposter;
             ShipStatus.WeaponsImage = null;
+            ShipStatus.EmergencyButton = null;
 
             ShipStatus.InitialSpawnCenter = new Vector2(0, 0);
             ShipStatus.MeetingSpawnCenter = new Vector2(0, 0);

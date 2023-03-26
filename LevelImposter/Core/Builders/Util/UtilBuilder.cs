@@ -38,16 +38,18 @@ namespace LevelImposter.Core
             if (prefabSystem != null)
             {
                 SystemConsole console = obj.AddComponent<SystemConsole>();
-                console.Image = obj.GetComponent<SpriteRenderer>();
+                console.Image = spriteRenderer;
                 console.FreeplayOnly = prefabSystem.FreeplayOnly;
                 console.onlyFromBelow = elem.properties.onlyFromBelow == true;
                 console.usableDistance = prefabSystem.usableDistance;
                 console.MinigamePrefab = prefabSystem.MinigamePrefab;
-                if (elem.type == "util-cams2")
-                    console.MinigamePrefab = AssetDB.GetObject("util-cams")?.GetComponent<SystemConsole>().MinigamePrefab;
                 console.useIcon = prefabSystem.useIcon;
                 console.usableDistance = elem.properties.range != null ? (float)elem.properties.range : 1.0f;
                 action = console.Use;
+
+                // Cams
+                if (elem.type == "util-cams2")
+                    console.MinigamePrefab = AssetDB.GetObject("util-cams")?.GetComponent<SystemConsole>().MinigamePrefab;
             }
             else
             {

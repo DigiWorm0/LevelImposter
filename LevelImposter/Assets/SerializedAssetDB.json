@@ -92,13 +92,13 @@
     },
     {
       "ID": "sab-doorh",
-      "Map": 0,
-      "Path": "Cafeteria/LowerDoor"
+      "Map": 2,
+      "Path": "Electrical/BottomDoor"
     },
     {
       "ID": "sab-doorv",
-      "Map": 0,
-      "Path": "Cafeteria/RightDoor"
+      "Map": 2,
+      "Path": "Electrical/RightDoor"
     },
     {
       "ID": "sab-door-polus",
@@ -1989,9 +1989,21 @@
       ]
     },
     {
+      "ID": "sab-reactorleft_sweep",
+      "Paths": [
+        "reactorMeltdown_glowBar"
+      ]
+    },
+    {
       "ID": "sab-reactorright_bg",
       "Paths": [
         "Background"
+      ]
+    },
+    {
+      "ID": "sab-reactorright_sweep",
+      "Paths": [
+        "reactorMeltdown_glowBar"
       ]
     }
   ]

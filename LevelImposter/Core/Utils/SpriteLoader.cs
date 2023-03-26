@@ -124,8 +124,12 @@ namespace LevelImposter.Core
                     LILogger.Warn($"Error loading sprite for {element}");
                     return;
                 }
-                var spriteData = (SpriteData)nullableSpriteData;
 
+                // Sprite is in cache, we can reduce memory usage
+                element.properties.spriteData = "";
+                
+                // Load Components
+                var spriteData = (SpriteData)nullableSpriteData;
                 if (spriteData.IsAnimated) // Animated GIF
                 {
                     GIFAnimator gifAnimator = obj.AddComponent<GIFAnimator>();
@@ -153,7 +157,7 @@ namespace LevelImposter.Core
         [HideFromIl2Cpp]
         public void LoadSpriteAsync(string b64Image, Action<SpriteData?> onLoad, string? spriteID)
         {
-            var imgData = MapUtils.ParseBase64(b64Image);
+            var imgData = string.IsNullOrEmpty(b64Image) ? new(0) : MapUtils.ParseBase64(b64Image);
             bool shouldConvert = CONVERT_TYPES.Find((prefix) => b64Image.StartsWith(prefix)) != null;
             LoadSpriteAsync(imgData, shouldConvert, (spriteList) =>
             {

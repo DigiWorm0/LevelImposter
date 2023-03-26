@@ -56,7 +56,7 @@ namespace LevelImposter.Core
             if (!_sabDB.ContainsKey(roomSystem))
             {
                 // Sabotage Task
-                LILogger.Info($"Adding sabotage for {elem}...");
+                LILogger.Info($" + Adding sabotage for {elem}...");
                 GameObject sabContainer = new GameObject(elem.name);
                 sabContainer.transform.SetParent(_sabContainer.transform);
 
