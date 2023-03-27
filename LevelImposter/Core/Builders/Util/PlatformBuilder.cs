@@ -11,7 +11,7 @@ namespace LevelImposter.Core
     class PlatformBuilder : IElemBuilder
     {
         // TODO: Support multiple moving platforms in 1 map
-        public static MovingPlatformBehaviour Platform = null;
+        public static MovingPlatformBehaviour? Platform = null;
 
         public PlatformBuilder()
         {
