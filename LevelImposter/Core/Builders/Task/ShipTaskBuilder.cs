@@ -59,7 +59,7 @@ namespace LevelImposter.Core
             SystemTypes systemType = RoomBuilder.GetParentOrDefault(elem);
 
             // Rename
-            if (!string.IsNullOrEmpty(elem.properties.description))
+            if (prefabTask != null && !string.IsNullOrEmpty(elem.properties.description))
                 MapUtils.Rename(prefabTask.TaskType, elem.properties.description);
 
             // Built List
