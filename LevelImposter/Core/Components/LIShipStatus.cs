@@ -14,6 +14,7 @@ using UnityEngine.SceneManagement;
 using BepInEx.Unity.IL2CPP.Utils.Collections;
 using Reactor.Networking.Attributes;
 using Hazel;
+using LevelImposter.Builders;
 
 namespace LevelImposter.Core
 {
@@ -129,7 +130,7 @@ namespace LevelImposter.Core
             StartCoroutine(CoLoadingScreen().WrapToIl2Cpp());
             _currentMap = map;
             ResetMap();
-            _LoadMapProperties(map);
+            LoadMapProperties(map);
             BuildRouter buildRouter = new();
 
             // Asset DB
@@ -156,7 +157,7 @@ namespace LevelImposter.Core
         /// </summary>
         /// <param name="map">Map to read properties from</param>
         [HideFromIl2Cpp]
-        private void _LoadMapProperties(LIMap map)
+        private void LoadMapProperties(LIMap map)
         {
             if (ShipStatus == null)
                 return;
@@ -384,9 +385,12 @@ namespace LevelImposter.Core
             {
                 HudManager.Instance.ShadowQuad.material.SetInt("_Mask", 7);
 
+                // Respawn the player on key combo
                 StartCoroutine(CoHandleKeyCombo(RESPAWN_SEQ, () =>{
                     RespawnPlayer(PlayerControl.LocalPlayer);
                 }).WrapToIl2Cpp());
+
+                // Set CPU affinity on key combo
                 StartCoroutine(CoHandleKeyCombo(CPU_SEQ, () => {
                     SetCPUAffinity();
                 }).WrapToIl2Cpp());

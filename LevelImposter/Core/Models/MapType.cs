@@ -8,7 +8,7 @@ namespace LevelImposter.Core
 {
     public enum MapType : int
     {
-        Skeld,
+        Skeld = 0,
         Mira,
         Polus,
         Dleks,
