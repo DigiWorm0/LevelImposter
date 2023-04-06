@@ -2,6 +2,7 @@ using HarmonyLib;
 using UnityEngine;
 using LevelImposter.Shop;
 using Hazel;
+using LevelImposter.Builders;
 
 namespace LevelImposter.Core
 {

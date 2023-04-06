@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
 using LevelImposter.Shop;
+using LevelImposter.Builders;
 
 namespace LevelImposter.Core
 {
