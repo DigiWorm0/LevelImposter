@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Text.Json;
+using System.Linq;
 using System.Reflection;
 using UnityEngine;
 using UnityEngine.Events;
@@ -386,6 +387,39 @@ namespace LevelImposter.Core
             spriteRenderer.material = prefabRenderer.material;
             obj.layer = (int)Layer.ShortObjects;
             return spriteRenderer;
+        }
+
+        /// <summary>
+        /// Traverses a transform hierarchy and returns a list of transforms that match the given path.
+        /// </summary>
+        /// <param name="path">The path to search for.  The path is a string of transform names separated by forward slashes.</param>
+        /// <param name="parent">The transform to start the search from.</param>
+        /// <returns>A list of transforms that match the given path.</returns>
+        public static List<Transform> GetTransforms(string path, Transform parent)
+        {
+            var pathParts = path.Split('/');
+
+            // Abort Recursion
+            if (pathParts.Length == 0)
+                return new List<Transform>();
+            if (pathParts.Length == 1)
+            {
+                List<Transform> transforms = new();
+                for (int i = 0; i < parent.childCount; i++)
+                    if (parent.GetChild(i).name == pathParts[0])
+                        transforms.Add(parent.GetChild(i));
+                return transforms;
+            }
+
+            // Continue Recursion
+            var firstPart = pathParts[0];
+            var remainingPath = string.Join("/", pathParts.Skip(1).ToArray());
+            var firstPartTransforms = GetTransforms(firstPart, parent);
+            var results = new List<Transform>();
+            foreach (var firstPartTransform in firstPartTransforms)
+                results.AddRange(GetTransforms(remainingPath, firstPartTransform));
+
+            return results;
         }
     }
 }

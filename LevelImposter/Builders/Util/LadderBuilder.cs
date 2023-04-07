@@ -43,8 +43,7 @@ namespace LevelImposter.Builders
             SpriteRenderer spriteRenderer = MapUtils.CloneSprite(obj, prefab);
 
             // Console
-            float ladderHeight = elem.properties.ladderHeight == null ?
-                DEFAULT_LADDER_HEIGHTS[elem.type] : (float)elem.properties.ladderHeight;
+            float ladderHeight = elem.properties.ladderHeight ?? DEFAULT_LADDER_HEIGHTS[elem.type];
             
             GameObject topObj = new("LadderTop");
             topObj.transform.SetParent(obj.transform);
