@@ -115,6 +115,13 @@ namespace LevelImposter.Core
                     spriteRenderer.sprite = sprite;
                 }
             }
+
+            /* task-telescope */
+            if (type.StartsWith("task-telescope"))
+            {
+                var telescopeMinigame = minigame.Cast<TelescopeGame>();
+                telescopeMinigame.ItemDisplay.sprite = telescopeMinigame.TargetItem.GetComponent<SpriteRenderer>().sprite;
+            }
         }
 
 

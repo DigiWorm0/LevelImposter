@@ -2211,7 +2211,7 @@
     },
     {
       "ID": "task-fans1_square",
-      "Paths": [ "fans_square", "ConfirmButton", "fans_square", "fans_square", "fans_square" ]
+      "Paths": [ "fans_square", "ConfirmButton" ]
     },
     {
       "ID": "task-fans2_bg",
@@ -2223,7 +2223,7 @@
     },
     {
       "ID": "task-fans2_square",
-      "Paths": [ "fans_square", "ConfirmButton", "fans_square", "fans_square", "fans_square" ]
+      "Paths": [ "fans_square", "ConfirmButton" ]
     },
     {
       "ID": "task-garbage_bg",
@@ -2271,7 +2271,7 @@
     },
     {
       "ID": "task-keys_bg",
-      "Paths": [ "panel_key_panel (1)", "panel_key_panel (2)", "panel_key_panel" ]
+      "Paths": [ "panel_key_panel", "panel_key_panel (1)", "panel_key_panel (2)" ]
     },
     {
       "ID": "task-keys_keychainmask",
@@ -2382,22 +2382,6 @@
       "Paths": [ "photos_polaroid", "photos_polaroid (1)", "photos_polaroid (2)" ]
     },
     {
-      "ID": "task-pistols1_bg",
-      "Paths": [ "weapons_bg" ]
-    },
-    {
-      "ID": "task-pistols1_hook",
-      "Paths": [ "GunVersion/weapon_handoutline/weapon_gunholder", "GunVersion/weapon_handoutline/weapon_gunholder", "GunVersion/weapon_handoutline/weapon_gunholder", "GunVersion/weapon_handoutline/weapon_gunholder", "GunVersion/weapon_handoutline/weapon_gunholder", "GunVersion/weapon_handoutline/weapon_gunholder", "GunVersion/weapon_handoutline/weapon_gunholder", "GunVersion/weapon_handoutline/weapon_gunholder" ]
-    },
-    {
-      "ID": "task-pistols1_outline",
-      "Paths": [ "GunVersion/weapon_handoutline", "GunVersion/weapon_handoutline", "GunVersion/weapon_handoutline", "GunVersion/weapon_handoutline" ]
-    },
-    {
-      "ID": "task-pistols1_pistol",
-      "Paths": [ "GunVersion/weapon_handmain", "GunVersion/weapon_handmain", "GunVersion/weapon_handmain", "GunVersion/weapon_handmain" ]
-    },
-    {
       "ID": "task-plants1_bg",
       "Paths": [ "Stage1Content/Background" ]
     },
@@ -2438,28 +2422,60 @@
       "Paths": [ "Slider/processData_road" ]
     },
     {
-      "ID": "task-records1_divider",
+      "ID": "task-records2_drawerdivider",
       "Paths": [ "Part2-Drawer/Drawer/Targetfolder/records_filedivider", "Part2-Drawer/Drawer/records_folderplaced/records_filedivider", "Part2-Drawer/Drawer/records_folderplaced/records_filedivider (1)", "Part2-Drawer/Drawer/records_folderplaced (2)/records_filedivider", "Part2-Drawer/Drawer/records_folderplaced (2)/records_filedivider (1)", "Part2-Drawer/Drawer/records_folderplaced (1)/records_filedivider", "Part2-Drawer/Drawer/records_folderplaced (1)/records_filedivider (1)", "Part2-Drawer/Drawer/Targetfolder/records_filedivider (1)" ]
     },
     {
-      "ID": "task-records1_folder",
+      "ID": "task-records2_drawerfolder",
       "Paths": [ "Part2-Drawer/Drawer/records_folderplaced (2)", "Part2-Drawer/Drawer/records_folderplaced (2)/records_folderplaced", "Part2-Drawer/Drawer/records_folderplaced (1)", "Part2-Drawer/Drawer/records_folderplaced" ]
     },
     {
-      "ID": "task-records1_front",
+      "ID": "task-records2_drawerfront",
       "Paths": [ "Part2-Drawer/Drawer/records_droorfront" ]
     },
     {
-      "ID": "task-rifles1_bg",
+      "ID": "task-records2_shelfbg",
+      "Paths": [ "Part2-Shelf/records_shelfback" ]
+    },
+    {
+      "ID": "task-records2_shelfplatform",
+      "Paths": [ "Part2-Shelf/records_shelfmain" ]
+    },
+    {
+      "ID": "task-records1_folder",
+      "Paths": [ "Part1/records_folder", "Part1/records_folder (1)", "Part1/records_folder (2)", "Part1/records_folder (3)" ]
+    },
+    {
+      "ID": "task-pistols2_bg",
       "Paths": [ "weapons_bg" ]
     },
     {
-      "ID": "task-rifles1_hook",
-      "Paths": [ "GunVersion/weapon_handoutline/weapon_gunholder", "GunVersion/weapon_handoutline/weapon_gunholder", "GunVersion/weapon_handoutline/weapon_gunholder", "GunVersion/weapon_handoutline/weapon_gunholder", "GunVersion/weapon_handoutline/weapon_gunholder", "GunVersion/weapon_handoutline/weapon_gunholder", "GunVersion/weapon_handoutline/weapon_gunholder", "GunVersion/weapon_handoutline/weapon_gunholder" ]
+      "ID": "task-pistols2_hook",
+      "Paths": [ "GunVersion/weapon_handoutline/weapon_gunholder" ]
     },
     {
-      "ID": "task-rifles1_outline",
-      "Paths": [ "GunVersion/weapon_handoutline", "GunVersion/weapon_handoutline", "GunVersion/weapon_handoutline", "GunVersion/weapon_handoutline" ]
+      "ID": "task-pistols2_outline",
+      "Paths": [ "GunVersion/weapon_handoutline" ]
+    },
+    {
+      "ID": "task-pistols2_pistols",
+      "Paths": [ "GunVersion/weapon_handmain" ]
+    },
+    {
+      "ID": "task-rifles2_bg",
+      "Paths": [ "weapons_bg" ]
+    },
+    {
+      "ID": "task-rifles2_hook",
+      "Paths": [ "RifleVersion/weapons_gunrifleoutlineMain/weapon_gunholder", "RifleVersion/weapons_gunrifleoutlineMain (1)/weapon_gunholder" ]
+    },
+    {
+      "ID": "task-rifles2_outline",
+      "Paths": [ "RifleVersion/weapons_gunrifleoutlineMain", "RifleVersion/weapons_gunrifleoutlineMain (1)" ]
+    },
+    {
+      "ID": "task-rifles2_rifles",
+      "Paths": [ "RifleVersion/weapons_gunrilfemain" ]
     },
     {
       "ID": "task-router_bg",
@@ -2611,11 +2627,11 @@
     },
     {
       "ID": "task-sort_animal1",
-      "Paths": [ "sortingSamples_animal1" ]
+      "Paths": [ "sortingSamples_animal1", "sortingSamples_animal1/shadow" ]
     },
     {
       "ID": "task-sort_stone2",
-      "Paths": [ "sortingSamples_stone2" ]
+      "Paths": [ "sortingSamples_stone2", "sortingSamples_stone2/shadow" ]
     },
     {
       "ID": "task-sort_box",
@@ -2635,19 +2651,19 @@
     },
     {
       "ID": "task-sort_animal2",
-      "Paths": [ "sortingSamples_animal2" ]
+      "Paths": [ "sortingSamples_animal2", "sortingSamples_animal2/shadow" ]
     },
     {
       "ID": "task-sort_plant1",
-      "Paths": [ "sortingSamples_plant1" ]
+      "Paths": [ "sortingSamples_plant1", "sortingSamples_plant1/shadow" ]
     },
     {
       "ID": "task-sort_plant2",
-      "Paths": [ "sortingSamples_plant2" ]
+      "Paths": [ "sortingSamples_plant2", "sortingSamples_plant2/shadow" ]
     },
     {
       "ID": "task-sort_stone1",
-      "Paths": [ "sortingSamples_stone1" ]
+      "Paths": [ "sortingSamples_stone1", "sortingSamples_stone1/shadow" ]
     },
     {
       "ID": "task-stabilize_bg",
@@ -2787,7 +2803,7 @@
     },
     {
       "ID": "task-towels1_towel",
-      "Paths": [ "towel_towel", "towel_towel", "towel_towel", "towel_towel", "towel_towel", "towel_towel", "towel_towel", "towel_towel" ]
+      "Paths": [ "towel_towel" ]
     },
     {
       "ID": "task-towels1_bg",
@@ -2816,6 +2832,18 @@
     {
       "ID": "task-vending_bg",
       "Paths": [ "Background" ]
+    },
+    {
+      "ID": "task-vending_1",
+      "Paths": [ "vending_button1" ]
+    },
+    {
+      "ID": "task-vending_2",
+      "Paths": [ "vending_button2" ]
+    },
+    {
+      "ID": "task-vending_3",
+      "Paths": [ "vending_button3" ]
     },
     {
       "ID": "task-vending_4",
