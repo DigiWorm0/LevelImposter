@@ -1775,236 +1775,1171 @@
   "PathDB": [
     {
       "ID": "sab-comms_bg",
-      "Paths": [
-        "Background"
-      ]
+      "Paths": [ "Background" ]
     },
     {
       "ID": "sab-comms_dial",
-      "Paths": [
-        "Background/Dial/DialTop"
-      ]
+      "Paths": [ "Background/Dial/DialTop" ]
     },
     {
       "ID": "sab-comms_glasspanel",
-      "Paths": [
-        "TopCurve/comms_panelGlass",
-        "BottomCurve/comms_panelGlass"
-      ]
+      "Paths": [ "TopCurve/comms_panelGlass", "BottomCurve/comms_panelGlass" ]
     },
     {
       "ID": "sab-electric_bg",
-      "Paths": [
-        "Background"
-      ]
+      "Paths": [ "Background" ]
     },
     {
       "ID": "sab-electric_bgwires",
-      "Paths": [
-        "Background/electricity_switches_wiresTop"
-      ]
+      "Paths": [ "Background/electricity_switches_wiresTop" ]
     },
     {
       "ID": "sab-electric_switch",
-      "Paths": [
-        "switch",
-        "switch (1)",
-        "switch (2)",
-        "switch (3)",
-        "switch (4)"
-      ]
+      "Paths": [ "switch", "switch (1)", "switch (2)", "switch (3)", "switch (4)" ]
     },
     {
       "ID": "sab-oxygen1_bg",
-      "Paths": [
-        "Background"
-      ]
+      "Paths": [ "Background" ]
     },
     {
       "ID": "sab-oxygen1_note",
-      "Paths": [
-        "StickyNote/Background"
-      ]
+      "Paths": [ "StickyNote/Background" ]
     },
     {
       "ID": "sab-oxygen1_0",
-      "Paths": [
-        "reactorButton10"
-      ]
+      "Paths": [ "reactorButton10" ]
     },
     {
       "ID": "sab-oxygen1_1",
-      "Paths": [
-        "reactorButton01"
-      ]
+      "Paths": [ "reactorButton01" ]
     },
     {
       "ID": "sab-oxygen1_2",
-      "Paths": [
-        "reactorButton02"
-      ]
+      "Paths": [ "reactorButton02" ]
     },
     {
       "ID": "sab-oxygen1_3",
-      "Paths": [
-        "reactorButton03"
-      ]
+      "Paths": [ "reactorButton03" ]
     },
     {
       "ID": "sab-oxygen1_4",
-      "Paths": [
-        "reactorButton04"
-      ]
+      "Paths": [ "reactorButton04" ]
     },
     {
       "ID": "sab-oxygen1_5",
-      "Paths": [
-        "reactorButton05"
-      ]
+      "Paths": [ "reactorButton05" ]
     },
     {
       "ID": "sab-oxygen1_6",
-      "Paths": [
-        "reactorButton06"
-      ]
+      "Paths": [ "reactorButton06" ]
     },
     {
       "ID": "sab-oxygen1_7",
-      "Paths": [
-        "reactorButton07"
-      ]
+      "Paths": [ "reactorButton07" ]
     },
     {
       "ID": "sab-oxygen1_8",
-      "Paths": [
-        "reactorButton08"
-      ]
+      "Paths": [ "reactorButton08" ]
     },
     {
       "ID": "sab-oxygen1_9",
-      "Paths": [
-        "reactorButton09"
-      ]
+      "Paths": [ "reactorButton09" ]
     },
     {
       "ID": "sab-oxygen1_x",
-      "Paths": [
-        "admin_keypad_x"
-      ]
+      "Paths": [ "admin_keypad_x" ]
     },
     {
       "ID": "sab-oxygen1_check",
-      "Paths": [
-        "admin_keypad_check"
-      ]
+      "Paths": [ "admin_keypad_check" ]
     },
     {
       "ID": "sab-oxygen2_bg",
-      "Paths": [
-        "Background"
-      ]
+      "Paths": [ "Background" ]
     },
     {
       "ID": "sab-oxygen2_note",
-      "Paths": [
-        "StickyNote/Background"
-      ]
+      "Paths": [ "StickyNote/Background" ]
     },
     {
       "ID": "sab-oxygen2_0",
-      "Paths": [
-        "reactorButton10"
-      ]
+      "Paths": [ "reactorButton10" ]
     },
     {
       "ID": "sab-oxygen2_1",
-      "Paths": [
-        "reactorButton01"
-      ]
+      "Paths": [ "reactorButton01" ]
     },
     {
       "ID": "sab-oxygen2_2",
-      "Paths": [
-        "reactorButton02"
-      ]
+      "Paths": [ "reactorButton02" ]
     },
     {
       "ID": "sab-oxygen2_3",
-      "Paths": [
-        "reactorButton03"
-      ]
+      "Paths": [ "reactorButton03" ]
     },
     {
       "ID": "sab-oxygen2_4",
-      "Paths": [
-        "reactorButton04"
-      ]
+      "Paths": [ "reactorButton04" ]
     },
     {
       "ID": "sab-oxygen2_5",
-      "Paths": [
-        "reactorButton05"
-      ]
+      "Paths": [ "reactorButton05" ]
     },
     {
       "ID": "sab-oxygen2_6",
-      "Paths": [
-        "reactorButton06"
-      ]
+      "Paths": [ "reactorButton06" ]
     },
     {
       "ID": "sab-oxygen2_7",
-      "Paths": [
-        "reactorButton07"
-      ]
+      "Paths": [ "reactorButton07" ]
     },
     {
       "ID": "sab-oxygen2_8",
-      "Paths": [
-        "reactorButton08"
-      ]
+      "Paths": [ "reactorButton08" ]
     },
     {
       "ID": "sab-oxygen2_9",
-      "Paths": [
-        "reactorButton09"
-      ]
+      "Paths": [ "reactorButton09" ]
     },
     {
       "ID": "sab-oxygen2_x",
-      "Paths": [
-        "admin_keypad_x"
-      ]
+      "Paths": [ "admin_keypad_x" ]
     },
     {
       "ID": "sab-oxygen2_check",
-      "Paths": [
-        "admin_keypad_check"
-      ]
+      "Paths": [ "admin_keypad_check" ]
     },
     {
       "ID": "sab-reactorleft_bg",
-      "Paths": [
-        "Background"
-      ]
+      "Paths": [ "Background" ]
     },
     {
       "ID": "sab-reactorleft_sweep",
-      "Paths": [
-        "reactorMeltdown_glowBar"
-      ]
+      "Paths": [ "reactorMeltdown_glowBar" ]
     },
     {
       "ID": "sab-reactorright_bg",
-      "Paths": [
-        "Background"
-      ]
+      "Paths": [ "Background" ]
     },
     {
       "ID": "sab-reactorright_sweep",
+      "Paths": [ "reactorMeltdown_glowBar" ]
+    },
+    {
+      "ID": "task-align1_bg",
+      "Paths": [ "Background" ]
+    },
+    {
+      "ID": "task-align1_slider",
+      "Paths": [ "engineAlign_slider", "engineAlign_slider/engineAlign_sliderShadow" ]
+    },
+    {
+      "ID": "task-align1_engine",
+      "Paths": [ "engineAlign_engine" ]
+    },
+    {
+      "ID": "task-artifacts_bg",
+      "Paths": [ "Background" ]
+    },
+    {
+      "ID": "task-artifacts_lid1",
+      "Paths": [ "panel_specimen_lidclose" ]
+    },
+    {
+      "ID": "task-artifacts_lid2",
+      "Paths": [ "panel_specimen_lidclose/panel_specimen_lidbottom" ]
+    },
+    {
+      "ID": "task-artifacts_obja",
+      "Paths": [ "panel_speciment_undertalesans" ]
+    },
+    {
+      "ID": "task-artifacts_objb",
+      "Paths": [ "panel_specimen_diamando" ]
+    },
+    {
+      "ID": "task-artifacts_objc",
+      "Paths": [ "panel_specimen_leaf" ]
+    },
+    {
+      "ID": "task-artifacts_objd",
+      "Paths": [ "panel_specimen_crystal" ]
+    },
+    {
+      "ID": "task-breakers_bg",
+      "Paths": [ "eleclever_backpanel" ]
+    },
+    {
+      "ID": "task-breakers_leverbar",
+      "Paths": [ "elecLever_lever" ]
+    },
+    {
+      "ID": "task-breakers_leverhead",
+      "Paths": [ "elecLever_head" ]
+    },
+    {
+      "ID": "task-burger_bg",
+      "Paths": [ "burger_bg" ]
+    },
+    {
+      "ID": "task-burger_lettuce2",
+      "Paths": [ "burger_lettuce2" ]
+    },
+    {
+      "ID": "task-burger_lettuce3",
+      "Paths": [ "burger_lettuce3" ]
+    },
+    {
+      "ID": "task-burger_bunbottom",
+      "Paths": [ "burger_bunB" ]
+    },
+    {
+      "ID": "task-burger_buntop",
+      "Paths": [ "burger_bunT" ]
+    },
+    {
+      "ID": "task-burger_meat",
+      "Paths": [ "burger_meat", "burger_meat (1)" ]
+    },
+    {
+      "ID": "task-burger_onion1",
+      "Paths": [ "burger_onion1" ]
+    },
+    {
+      "ID": "task-burger_onion2",
+      "Paths": [ "burger_onion2" ]
+    },
+    {
+      "ID": "task-burger_tomato1",
+      "Paths": [ "burger_tomato1" ]
+    },
+    {
+      "ID": "task-burger_tomato2",
+      "Paths": [ "burger_tomato2" ]
+    },
+    {
+      "ID": "task-burger_paper",
+      "Paths": [ "PaperBase/burger_paper" ]
+    },
+    {
+      "ID": "task-burger_paperbuntop",
+      "Paths": [ "PaperBase/burger_paper_bunT" ]
+    },
+    {
+      "ID": "task-burger_paperlettuce",
+      "Paths": [ "PaperBase/burger_paper_lettuce" ]
+    },
+    {
+      "ID": "task-burger_paperonion",
+      "Paths": [ "PaperBase/burger_paper_onion" ]
+    },
+    {
+      "ID": "task-burger_papertomato",
+      "Paths": [ "PaperBase/burger_paper_tomato" ]
+    },
+    {
+      "ID": "task-burger_paperbunbottom",
+      "Paths": [ "PaperBase/burger_paper_bunB" ]
+    },
+    {
+      "ID": "task-burger_lettuce1",
+      "Paths": [ "burger_lettuce1" ]
+    },
+    {
+      "ID": "task-chart_bg",
+      "Paths": [ "Background" ]
+    },
+    {
+      "ID": "task-chart_icon",
+      "Paths": [ "Ship" ]
+    },
+    {
+      "ID": "task-chart_end",
+      "Paths": [ "Destination/nav_chartCourse_end" ]
+    },
+    {
+      "ID": "task-code_bg",
+      "Paths": [ "Background" ]
+    },
+    {
+      "ID": "task-code_wallet",
+      "Paths": [ "admin_Wallet" ]
+    },
+    {
+      "ID": "task-code_walletmask",
+      "Paths": [ "admin_Wallet/admin_walletFront" ]
+    },
+    {
+      "ID": "task-code_card",
+      "Paths": [ "admin_Wallet/admin_Card" ]
+    },
+    {
+      "ID": "task-counting_bg",
+      "Paths": [ "Background" ]
+    },
+    {
+      "ID": "task-counting_glass",
+      "Paths": [ "Background/reactorPanelGlass" ]
+    },
+    {
+      "ID": "task-counting_4",
+      "Paths": [ "Numbers_3" ]
+    },
+    {
+      "ID": "task-counting_5",
+      "Paths": [ "Numbers_4" ]
+    },
+    {
+      "ID": "task-counting_6",
+      "Paths": [ "Numbers_5" ]
+    },
+    {
+      "ID": "task-counting_7",
+      "Paths": [ "Numbers_6" ]
+    },
+    {
+      "ID": "task-counting_8",
+      "Paths": [ "Numbers_7" ]
+    },
+    {
+      "ID": "task-counting_bgwires",
+      "Paths": [ "Background/reactorWire" ]
+    },
+    {
+      "ID": "task-counting_9",
+      "Paths": [ "Numbers_8" ]
+    },
+    {
+      "ID": "task-counting_10",
+      "Paths": [ "Numbers_9" ]
+    },
+    {
+      "ID": "task-counting_1",
+      "Paths": [ "Numbers_0" ]
+    },
+    {
+      "ID": "task-counting_2",
+      "Paths": [ "Numbers_1" ]
+    },
+    {
+      "ID": "task-counting_3",
+      "Paths": [ "Numbers_2" ]
+    },
+    {
+      "ID": "task-crystal_bg",
+      "Paths": [ "reasembleSample_panel" ]
+    },
+    {
+      "ID": "task-crystal_3",
+      "Paths": [ "reasembleSample_3/ControllerHighlight2", "reasembleSample_3", "reasembleSample_3/ControllerHighlight" ]
+    },
+    {
+      "ID": "task-crystal_4",
+      "Paths": [ "reasembleSample_4", "reasembleSample_4/ControllerHighlight", "reasembleSample_4/ControllerHighlight2" ]
+    },
+    {
+      "ID": "task-crystal_5",
+      "Paths": [ "reasembleSample_5", "reasembleSample_5/ControllerHighlight", "reasembleSample_5/ControllerHighlight2" ]
+    },
+    {
+      "ID": "task-crystal_bgbase",
+      "Paths": [ "reassembleSample_rings0001" ]
+    },
+    {
+      "ID": "task-crystal_1",
+      "Paths": [ "reasembleSample_1", "reasembleSample_1/ControllerHighlight", "reasembleSample_1/ControllerHighlight2" ]
+    },
+    {
+      "ID": "task-crystal_2",
+      "Paths": [ "reasembleSample_2", "reasembleSample_2/ControllerHighlight", "reasembleSample_2/ControllerHighlight2" ]
+    },
+    {
+      "ID": "task-decontaminate_bg",
+      "Paths": [ "dirty_bg" ]
+    },
+    {
+      "ID": "task-decontaminate_playeroutline",
+      "Paths": [ "dirty_outline" ]
+    },
+    {
+      "ID": "task-decontaminate_playerfill",
+      "Paths": [ "dirty_outline/dirty_interior (1)" ]
+    },
+    {
+      "ID": "task-distributor_bg",
+      "Paths": [ "Background" ]
+    },
+    {
+      "ID": "task-distributor_spin3",
+      "Paths": [ "Sweeper3 (1)/Shadow3", "Sweeper3 (1)/Sweeper3" ]
+    },
+    {
+      "ID": "task-distributor_spin1",
+      "Paths": [ "Sweeper (1)/Sweeper", "Sweeper (1)/Shadow1" ]
+    },
+    {
+      "ID": "task-distributor_spin2",
+      "Paths": [ "Sweeper2 (1)/Sweeper2", "Sweeper2 (1)/Shadow2" ]
+    },
+    {
+      "ID": "task-download_bg",
+      "Paths": [ "Background" ]
+    },
+    {
+      "ID": "task-download_file",
+      "Paths": [ "Runner/Letter", "LeftFront/dataTransfer_fileFill" ]
+    },
+    {
+      "ID": "task-drill_bg",
+      "Paths": [ "Background" ]
+    },
+    {
+      "ID": "task-drill_drill",
+      "Paths": [ "panel_drill_drill" ]
+    },
+    {
+      "ID": "task-drill_bgoutline",
+      "Paths": [ "panel_drill_Phone" ]
+    },
+    {
+      "ID": "task-fans1_bg",
+      "Paths": [ "fans_BG" ]
+    },
+    {
+      "ID": "task-fans1_squarehover",
+      "Paths": [ "fans_square/fans_symbol3/fans_buttonhighlight", "fans_square/fans_symbol4/fans_buttonhighlight", "ConfirmButton/fans_buttonhighlight (1)", "fans_square/fans_symbol1/fans_buttonhighlight", "fans_square/fans_symbol2/fans_buttonhighlight" ]
+    },
+    {
+      "ID": "task-fans1_square",
+      "Paths": [ "fans_square", "ConfirmButton" ]
+    },
+    {
+      "ID": "task-fans2_bg",
+      "Paths": [ "fans_BG" ]
+    },
+    {
+      "ID": "task-fans2_squarehover",
+      "Paths": [ "fans_square/fans_symbol3/fans_buttonhighlight", "fans_square/fans_symbol4/fans_buttonhighlight", "ConfirmButton/fans_buttonhighlight (1)", "fans_square/fans_symbol1/fans_buttonhighlight", "fans_square/fans_symbol2/fans_buttonhighlight" ]
+    },
+    {
+      "ID": "task-fans2_square",
+      "Paths": [ "fans_square", "ConfirmButton" ]
+    },
+    {
+      "ID": "task-garbage_bg",
+      "Paths": [ "ShakePivot/Background" ]
+    },
+    {
+      "ID": "task-garbage_leverbase",
+      "Paths": [ "ShakePivot/garbage_leverBase" ]
+    },
+    {
+      "ID": "task-garbage_leverbar",
+      "Paths": [ "ShakePivot/garbage_leverBase/garbage_leverBars" ]
+    },
+    {
+      "ID": "task-garbage_leverhandle",
+      "Paths": [ "ShakePivot/garbage_leverBase/garbage_leverHandle" ]
+    },
+    {
+      "ID": "task-id_bg",
+      "Paths": [ "Background" ]
+    },
+    {
+      "ID": "task-id_card",
+      "Paths": [ "admin_Card" ]
+    },
+    {
+      "ID": "task-id_bgslidetop",
+      "Paths": [ "admin_sliderTop" ]
+    },
+    {
+      "ID": "task-id_bgslidebottom",
+      "Paths": [ "admin_sliderBottom" ]
+    },
+    {
+      "ID": "task-id_wallet",
+      "Paths": [ "admin_sliderBottom/admin_Wallet" ]
+    },
+    {
+      "ID": "task-id_walletmask",
+      "Paths": [ "admin_sliderBottom/admin_Wallet/admin_walletFront" ]
+    },
+    {
+      "ID": "task-keys_keychain",
+      "Paths": [ "panel_key_keychain" ]
+    },
+    {
+      "ID": "task-keys_bg",
+      "Paths": [ "panel_key_panel", "panel_key_panel (1)", "panel_key_panel (2)" ]
+    },
+    {
+      "ID": "task-keys_keychainmask",
+      "Paths": [ "panel_key_keychain/panel_key_top" ]
+    },
+    {
+      "ID": "task-keys_key",
+      "Paths": [ "Panel_keys_Mainkey" ]
+    },
+    {
+      "ID": "task-keys_keyslot",
       "Paths": [
-        "reactorMeltdown_glowBar"
+        "panel_key_panel/panel_key_keyslot",
+        "panel_key_panel/panel_key_keyslot (1)",
+        "panel_key_panel/panel_key_keyslot (2)",
+        "panel_key_panel/panel_key_keyslot (3)",
+        "panel_key_panel/panel_key_keyslot (4)",
+        "panel_key_panel (1)/panel_key_keyslot",
+        "panel_key_panel (1)/panel_key_keyslot (1)",
+        "panel_key_panel (1)/panel_key_keyslot (2)",
+        "panel_key_panel (1)/panel_key_keyslot (3)",
+        "panel_key_panel (1)/panel_key_keyslot (4)",
+        "panel_key_panel (2)/panel_key_keyslot",
+        "panel_key_panel (2)/panel_key_keyslot (1)",
+        "panel_key_panel (2)/panel_key_keyslot (2)",
+        "panel_key_panel (2)/panel_key_keyslot (3)",
+        "panel_key_panel (2)/panel_key_keyslot (4)"
       ]
+    },
+    {
+      "ID": "task-mannequin_targetbg",
+      "Paths": [ "dressup_bglittle" ]
+    },
+    {
+      "ID": "task-mannequin_bg",
+      "Paths": [ "dressup_bgmid", "dressup_bg_bottom", "dressup_bgtop" ]
+    },
+    {
+      "ID": "task-mannequin_faceicon",
+      "Paths": [ "dressup_bgmid/dressup_glassesicon" ]
+    },
+    {
+      "ID": "task-mannequin_minidummy",
+      "Paths": [ "dressup_bglittle/dummybig" ]
+    },
+    {
+      "ID": "task-mannequin_clothesicon",
+      "Paths": [ "dressup_bg_bottom/dressup_clothes" ]
+    },
+    {
+      "ID": "task-mannequin_dummy",
+      "Paths": [ "dummybig" ]
+    },
+    {
+      "ID": "task-mannequin_haticon",
+      "Paths": [ "dressup_bgtop/dressup_haticon" ]
+    },
+    {
+      "ID": "task-medscan_paneltop",
+      "Paths": [ "Background/BackgroundTop" ]
+    },
+    {
+      "ID": "task-medscan_panelbottom",
+      "Paths": [ "Background/BackgroundBottom" ]
+    },
+    {
+      "ID": "task-medscan_wires",
+      "Paths": [ "Background/medbayScan_wires" ]
+    },
+    {
+      "ID": "task-node_bg",
+      "Paths": [ "Background" ]
+    },
+    {
+      "ID": "task-oxygen_cannister",
+      "Paths": [ "panel_o2fill_cannister" ]
+    },
+    {
+      "ID": "task-oxygen_fillbar",
+      "Paths": [ "panel_o2fill_cannister/panel_o2fill_bar" ]
+    },
+    {
+      "ID": "task-oxygen_bg",
+      "Paths": [ "panel_o2fill_bg" ]
+    },
+    {
+      "ID": "task-oxygen_plug",
+      "Paths": [ "panel_o2fill_bg/panel_o2fill_plug" ]
+    },
+    {
+      "ID": "task-pass_front",
+      "Paths": [ "panel_boardingFront" ]
+    },
+    {
+      "ID": "task-pass_scanner",
+      "Paths": [ "Panel_scanner" ]
+    },
+    {
+      "ID": "task-photos_bg",
+      "Paths": [ "photos_bucket" ]
+    },
+    {
+      "ID": "task-photos_mask",
+      "Paths": [ "photos_bucket/photos_bucketfront" ]
+    },
+    {
+      "ID": "task-photos_photobg",
+      "Paths": [ "photos_polaroid", "photos_polaroid (1)", "photos_polaroid (2)" ]
+    },
+    {
+      "ID": "task-plants1_bg",
+      "Paths": [ "Stage1Content/Background" ]
+    },
+    {
+      "ID": "task-plants1_fg",
+      "Paths": [ "Stage1Content/storageForeG" ]
+    },
+    {
+      "ID": "task-plants1_watercan",
+      "Paths": [ "Stage1Content/storage_waterCan", "SelectorObject/HoldingCanSelector/WaterCan", "SelectorObject/WateringPlantsSelector/WaterCan" ]
+    },
+    {
+      "ID": "task-process_bg",
+      "Paths": [ "Background" ]
+    },
+    {
+      "ID": "task-process_flower",
+      "Paths": [ "Slider/processData_flower (2)", "Slider/processData_flower", "Slider/processData_flower (1)" ]
+    },
+    {
+      "ID": "task-process_tree",
+      "Paths": [ "Slider/processData_tree (1)", "Slider/processData_tree", "Slider/processData_tree" ]
+    },
+    {
+      "ID": "task-process_btn",
+      "Paths": [ "dataTransfer_uploadButton (1)" ]
+    },
+    {
+      "ID": "task-process_file",
+      "Paths": [ "Runner/Letter" ]
+    },
+    {
+      "ID": "task-process_mountain",
+      "Paths": [ "Slider/processData_mt" ]
+    },
+    {
+      "ID": "task-process_road",
+      "Paths": [ "Slider/processData_road" ]
+    },
+    {
+      "ID": "task-records2_drawerdivider",
+      "Paths": [ "Part2-Drawer/Drawer/Targetfolder/records_filedivider", "Part2-Drawer/Drawer/records_folderplaced/records_filedivider", "Part2-Drawer/Drawer/records_folderplaced/records_filedivider (1)", "Part2-Drawer/Drawer/records_folderplaced (2)/records_filedivider", "Part2-Drawer/Drawer/records_folderplaced (2)/records_filedivider (1)", "Part2-Drawer/Drawer/records_folderplaced (1)/records_filedivider", "Part2-Drawer/Drawer/records_folderplaced (1)/records_filedivider (1)", "Part2-Drawer/Drawer/Targetfolder/records_filedivider (1)" ]
+    },
+    {
+      "ID": "task-records2_drawerfolder",
+      "Paths": [ "Part2-Drawer/Drawer/records_folderplaced (2)", "Part2-Drawer/Drawer/records_folderplaced (2)/records_folderplaced", "Part2-Drawer/Drawer/records_folderplaced (1)", "Part2-Drawer/Drawer/records_folderplaced" ]
+    },
+    {
+      "ID": "task-records2_drawerfront",
+      "Paths": [ "Part2-Drawer/Drawer/records_droorfront" ]
+    },
+    {
+      "ID": "task-records2_shelfbg",
+      "Paths": [ "Part2-Shelf/records_shelfback" ]
+    },
+    {
+      "ID": "task-records2_shelfplatform",
+      "Paths": [ "Part2-Shelf/records_shelfmain" ]
+    },
+    {
+      "ID": "task-records1_folder",
+      "Paths": [ "Part1/records_folder", "Part1/records_folder (1)", "Part1/records_folder (2)", "Part1/records_folder (3)" ]
+    },
+    {
+      "ID": "task-pistols2_bg",
+      "Paths": [ "weapons_bg" ]
+    },
+    {
+      "ID": "task-pistols2_hook",
+      "Paths": [ "GunVersion/weapon_handoutline/weapon_gunholder" ]
+    },
+    {
+      "ID": "task-pistols2_outline",
+      "Paths": [ "GunVersion/weapon_handoutline" ]
+    },
+    {
+      "ID": "task-pistols2_pistols",
+      "Paths": [ "GunVersion/weapon_handmain" ]
+    },
+    {
+      "ID": "task-rifles2_bg",
+      "Paths": [ "weapons_bg" ]
+    },
+    {
+      "ID": "task-rifles2_hook",
+      "Paths": [ "RifleVersion/weapons_gunrifleoutlineMain/weapon_gunholder", "RifleVersion/weapons_gunrifleoutlineMain (1)/weapon_gunholder" ]
+    },
+    {
+      "ID": "task-rifles2_outline",
+      "Paths": [ "RifleVersion/weapons_gunrifleoutlineMain", "RifleVersion/weapons_gunrifleoutlineMain (1)" ]
+    },
+    {
+      "ID": "task-rifles2_rifles",
+      "Paths": [ "RifleVersion/weapons_gunrilfemain" ]
+    },
+    {
+      "ID": "task-router_bg",
+      "Paths": [ "panel_wifi_bg" ]
+    },
+    {
+      "ID": "task-router_handle",
+      "Paths": [ "panel_wifi_bg/panel_wifi-lever" ]
+    },
+    {
+      "ID": "task-router_sidepanel",
+      "Paths": [ "panel_wifi_bg/panel_wifi_closingthing" ]
+    },
+    {
+      "ID": "task-router_lid",
+      "Paths": [ "panel_wifi_bg/panel_wifi_lidside" ]
+    },
+    {
+      "ID": "task-ruby_bg",
+      "Paths": [ "ruby_ruby" ]
+    },
+    {
+      "ID": "task-ruby_mark5",
+      "Paths": [ "ruby_mark5" ]
+    },
+    {
+      "ID": "task-ruby_mark6",
+      "Paths": [ "ruby_mark6" ]
+    },
+    {
+      "ID": "task-ruby_mark7",
+      "Paths": [ "ruby_mark7" ]
+    },
+    {
+      "ID": "task-ruby_towel",
+      "Paths": [ "HandCursor/HandWipeCenter/Cloth" ]
+    },
+    {
+      "ID": "task-ruby_mark1",
+      "Paths": [ "ruby_mark1" ]
+    },
+    {
+      "ID": "task-ruby_mark2",
+      "Paths": [ "ruby_mark2" ]
+    },
+    {
+      "ID": "task-ruby_mark3",
+      "Paths": [ "ruby_mark3" ]
+    },
+    {
+      "ID": "task-ruby_mark4",
+      "Paths": [ "ruby_mark4" ]
+    },
+    {
+      "ID": "task-safe_bg",
+      "Paths": [ "safe_BG" ]
+    },
+    {
+      "ID": "task-safe_tumblerbg",
+      "Paths": [ "safe_BG/safe_tumblerbehind" ]
+    },
+    {
+      "ID": "task-safe_note",
+      "Paths": [ "safe_note" ]
+    },
+    {
+      "ID": "task-safe_handle",
+      "Paths": [ "safe_rotator" ]
+    },
+    {
+      "ID": "task-safe_tumbler",
+      "Paths": [ "safe_tumbler" ]
+    },
+    {
+      "ID": "task-samples_bg",
+      "Paths": [ "Background" ]
+    },
+    {
+      "ID": "task-samples_top",
+      "Paths": [ "Background/medBay_panelTop" ]
+    },
+    {
+      "ID": "task-samples_platform",
+      "Paths": [ "Background/medBay_panelCenter" ]
+    },
+    {
+      "ID": "task-samples_glassback",
+      "Paths": [ "Background/medBay_panelCenter/medBay_glassBack" ]
+    },
+    {
+      "ID": "task-samples_glassfront",
+      "Paths": [ "Background/medBay_panelCenter/medBay_glassBack/medBay_glassFrontTestTubes" ]
+    },
+    {
+      "ID": "task-samples_liquid",
+      "Paths": [ "Background/medBay_panelCenter/medBay_glassBack/medBay_liquid", "Background/medBay_panelCenter/medBay_glassBack/medBay_liquid (1)", "Background/medBay_panelCenter/medBay_glassBack/medBay_liquid (2)", "Background/medBay_panelCenter/medBay_glassBack/medBay_liquid (3)", "Background/medBay_panelCenter/medBay_glassBack/medBay_liquid (4)" ]
+    },
+    {
+      "ID": "task-samples_dispenser",
+      "Paths": [ "Background/medBay_panelTop/medBay_dispenser" ]
+    },
+    {
+      "ID": "task-samples_bottom",
+      "Paths": [ "Background/medBay_panelBottom" ]
+    },
+    {
+      "ID": "task-shields_bg",
+      "Paths": [ "Background" ]
+    },
+    {
+      "ID": "task-shields_panel",
+      "Paths": [ "SelectedShieldHighlight", "ShieldButton", "ShieldButton (1)", "ShieldButton (2)", "ShieldButton (3)", "ShieldButton (4)", "ShieldButton (5)", "ShieldButton (6)" ]
+    },
+    {
+      "ID": "task-shields_guage",
+      "Paths": [ "shield_Panel" ]
+    },
+    {
+      "ID": "task-showers_head",
+      "Paths": [ "shower_showerhead" ]
+    },
+    {
+      "ID": "task-showers_mallet",
+      "Paths": [ "showeR_mallet" ]
+    },
+    {
+      "ID": "task-showers_bg",
+      "Paths": [ "shower_bg" ]
+    },
+    {
+      "ID": "task-showers_powerbar",
+      "Paths": [ "shower_powerbar" ]
+    },
+    {
+      "ID": "task-simonsays_bgleft",
+      "Paths": [ "Background" ]
+    },
+    {
+      "ID": "task-simonsays_screen",
+      "Paths": [ "Background/simonSaysScreen" ]
+    },
+    {
+      "ID": "task-simonsays_bgright",
+      "Paths": [ "BackgroundRight" ]
+    },
+    {
+      "ID": "task-sort_bg",
+      "Paths": [ "reasembleSample_panel" ]
+    },
+    {
+      "ID": "task-sort_animal1",
+      "Paths": [ "sortingSamples_animal1", "sortingSamples_animal1/shadow" ]
+    },
+    {
+      "ID": "task-sort_stone2",
+      "Paths": [ "sortingSamples_stone2", "sortingSamples_stone2/shadow" ]
+    },
+    {
+      "ID": "task-sort_box",
+      "Paths": [ "plantbox/sortingSamples_boxFront", "mineralbox/sortingSamples_boxFront", "animalbox/sortingSamples_boxFront" ]
+    },
+    {
+      "ID": "task-sort_plantemblem",
+      "Paths": [ "plantbox/sortingSamples_boxFront/sortingSamples_emblem_Plant" ]
+    },
+    {
+      "ID": "task-sort_mineralemblem",
+      "Paths": [ "mineralbox/sortingSamples_boxFront/sortingSamples_emblem_Mineral" ]
+    },
+    {
+      "ID": "task-sort_animalemblem",
+      "Paths": [ "animalbox/sortingSamples_boxFront/sortingSamples_emblem_animal" ]
+    },
+    {
+      "ID": "task-sort_animal2",
+      "Paths": [ "sortingSamples_animal2", "sortingSamples_animal2/shadow" ]
+    },
+    {
+      "ID": "task-sort_plant1",
+      "Paths": [ "sortingSamples_plant1", "sortingSamples_plant1/shadow" ]
+    },
+    {
+      "ID": "task-sort_plant2",
+      "Paths": [ "sortingSamples_plant2", "sortingSamples_plant2/shadow" ]
+    },
+    {
+      "ID": "task-sort_stone1",
+      "Paths": [ "sortingSamples_stone1", "sortingSamples_stone1/shadow" ]
+    },
+    {
+      "ID": "task-stabilize_bg",
+      "Paths": [ "Background" ]
+    },
+    {
+      "ID": "task-stabilize_fg",
+      "Paths": [ "Border" ]
+    },
+    {
+      "ID": "task-stabilize_target",
+      "Paths": [ "CrossHairs" ]
+    },
+    {
+      "ID": "task-stabilize2_bg",
+      "Paths": [ "steering_thrustback" ]
+    },
+    {
+      "ID": "task-stabilize2_handle",
+      "Paths": [ "steering_thrust" ]
+    },
+    {
+      "ID": "task-stabilize2_arrow",
+      "Paths": [ "steering_arrow" ]
+    },
+    {
+      "ID": "task-stabilize2_outline",
+      "Paths": [ "Steering_wheelOutline" ]
+    },
+    {
+      "ID": "task-stabilize2_wheel",
+      "Paths": [ "Steering_wheel" ]
+    },
+    {
+      "ID": "task-tapes_bg",
+      "Paths": [ "vcr_bg" ]
+    },
+    {
+      "ID": "task-tapes_vcrbg",
+      "Paths": [ "vcr_bg/vcr_farbg" ]
+    },
+    {
+      "ID": "task-tapes_wheel",
+      "Paths": [ "vcr_bg/vcr_leftwheel", "vcr_bg/vcr_rightwheel" ]
+    },
+    {
+      "ID": "task-tapes_tape",
+      "Paths": [ "vcr_bg/vcr_leftwheel/vcr_blacktape", "vcr_bg/vcr_rightwheel/vcr_blacktape" ]
+    },
+    {
+      "ID": "task-tapes_note",
+      "Paths": [ "vcr_note" ]
+    },
+    {
+      "ID": "task-telescope_reticle",
+      "Paths": [ "Reticle" ]
+    },
+    {
+      "ID": "task-telescope_target",
+      "Paths": [ "Target" ]
+    },
+    {
+      "ID": "task-telescope_planet1",
+      "Paths": [ "BlackBg/tele_01" ]
+    },
+    {
+      "ID": "task-telescope_planet2",
+      "Paths": [ "BlackBg/tele_02" ]
+    },
+    {
+      "ID": "task-telescope_planet3",
+      "Paths": [ "BlackBg/tele_03" ]
+    },
+    {
+      "ID": "task-telescope_planet4",
+      "Paths": [ "BlackBg/tele_04" ]
+    },
+    {
+      "ID": "task-telescope_planet5",
+      "Paths": [ "BlackBg/tele_05" ]
+    },
+    {
+      "ID": "task-telescope_planet6",
+      "Paths": [ "BlackBg/tele_06" ]
+    },
+    {
+      "ID": "task-telescope_planet7",
+      "Paths": [ "BlackBg/tele_07" ]
+    },
+    {
+      "ID": "task-temp1_bg",
+      "Paths": [ "panel_temp_backgroundHot" ]
+    },
+    {
+      "ID": "task-temp1_btn",
+      "Paths": [ "panel_temp_button", "panel_temp_buttonDown" ]
+    },
+    {
+      "ID": "task-temp2_bg",
+      "Paths": [ "panel_temp_backgroundCold" ]
+    },
+    {
+      "ID": "task-temp2_btn",
+      "Paths": [ "panel_temp_button", "panel_temp_buttonDown" ]
+    },
+    {
+      "ID": "task-toilet_pipe",
+      "Paths": [ "toilet_pipesystem" ]
+    },
+    {
+      "ID": "task-toilet_needle",
+      "Paths": [ "toilet_pipesystem/toilet_needle" ]
+    },
+    {
+      "ID": "task-toilet_front",
+      "Paths": [ "toilet_front" ]
+    },
+    {
+      "ID": "task-toilet_back",
+      "Paths": [ "toilet_front/toilet_back" ]
+    },
+    {
+      "ID": "task-toilet_stick",
+      "Paths": [ "toilet_plungerstick" ]
+    },
+    {
+      "ID": "task-toilet_plungerup",
+      "Paths": [ "toilet_plungerstick/toilet_plungerup" ]
+    },
+    {
+      "ID": "task-toilet_plungerdown",
+      "Paths": [ "" ]
+    },
+    {
+      "ID": "task-towels1_basket",
+      "Paths": [ "towels_front" ]
+    },
+    {
+      "ID": "task-towels1_towel",
+      "Paths": [ "towel_towel" ]
+    },
+    {
+      "ID": "task-towels1_bg",
+      "Paths": [ "towels_front/towels_back" ]
+    },
+    {
+      "ID": "task-towels1_towelfill",
+      "Paths": [ "towels_front/towels_filled" ]
+    },
+    {
+      "ID": "task-tree_bg",
+      "Paths": [ "Background" ]
+    },
+    {
+      "ID": "task-tree_bar",
+      "Paths": [ "tree_box (1)", "tree_box (2)", "tree_box", "tree_box (3)" ]
+    },
+    {
+      "ID": "task-tree_arrow",
+      "Paths": [ "tree_box (1)/tree_point", "tree_box (2)/tree_point", "tree_box (3)/tree_point", "tree_box/tree_point" ]
+    },
+    {
+      "ID": "task-tree_slider",
+      "Paths": [ "tree_box (1)/tree_slider", "tree_box (2)/tree_slider", "tree_box (3)/tree_slider", "tree_box/tree_slider" ]
+    },
+    {
+      "ID": "task-vending_bg",
+      "Paths": [ "Background" ]
+    },
+    {
+      "ID": "task-vending_1",
+      "Paths": [ "vending_button1" ]
+    },
+    {
+      "ID": "task-vending_2",
+      "Paths": [ "vending_button2" ]
+    },
+    {
+      "ID": "task-vending_3",
+      "Paths": [ "vending_button3" ]
+    },
+    {
+      "ID": "task-vending_4",
+      "Paths": [ "vending_button4" ]
+    },
+    {
+      "ID": "task-vending_x",
+      "Paths": [ "admin_keypad_x" ]
+    },
+    {
+      "ID": "task-vending_check",
+      "Paths": [ "admin_keypad_check" ]
+    },
+    {
+      "ID": "task-vending_A",
+      "Paths": [ "vending_buttonA" ]
+    },
+    {
+      "ID": "task-vending_B",
+      "Paths": [ "vending_buttonB" ]
+    },
+    {
+      "ID": "task-vending_front",
+      "Paths": [ "vending_front" ]
+    },
+    {
+      "ID": "task-vending_C",
+      "Paths": [ "vending_buttonC" ]
+    },
+    {
+      "ID": "task-vending_glass",
+      "Paths": [ "DropSlot/vending_glass", "DropSlot (1)/vending_glass", "DropSlot (2)/vending_glass", "DropSlot (3)/vending_glass", "DropSlot (4)/vending_glass", "DropSlot (5)/vending_glass", "DropSlot (6)/vending_glass", "DropSlot (7)/vending_glass", "DropSlot (8)/vending_glass", "DropSlot (9)/vending_glass", "DropSlot (10)/vending_glass", "DropSlot (11)/vending_glass" ]
+    },
+    {
+      "ID": "task-vending_note",
+      "Paths": [ "paperSlip" ]
+    },
+    {
+      "ID": "task-waterwheel1_bg",
+      "Paths": [ "Background" ]
+    },
+    {
+      "ID": "task-waterwheel1_pipefront",
+      "Paths": [ "panel_water_pipeside" ]
+    },
+    {
+      "ID": "task-waterwheel1_pipeback",
+      "Paths": [ "panel_water_pipeside/panel_water_pipesideback" ]
+    },
+    {
+      "ID": "task-waterwheel1_wheel",
+      "Paths": [ "panel_wheelMain" ]
+    },
+    {
+      "ID": "task-weapons_bg",
+      "Paths": [ "Background" ]
+    },
+    {
+      "ID": "task-weapons_target",
+      "Paths": [ "TargetReticle" ]
+    },
+    {
+      "ID": "task-weather_bg",
+      "Paths": [ "Background" ]
+    },
+    {
+      "ID": "task-weather_balloon",
+      "Paths": [ "weatherBalloon (1)", "weatherBalloon (2)", "weatherBalloon" ]
+    },
+    {
+      "ID": "task-weather_cloud1",
+      "Paths": [ "weatherData_cloud1" ]
+    },
+    {
+      "ID": "task-weather_cloud2",
+      "Paths": [ "weatherData_cloud2" ]
+    },
+    {
+      "ID": "task-weather_cloud3",
+      "Paths": [ "weatherData_cloud3" ]
+    },
+    {
+      "ID": "task-wires_bg",
+      "Paths": [ "Background" ]
+    },
+    {
+      "ID": "task-wires_wiretip3",
+      "Paths": [ "RightWires/RightWireNode (2)" ]
+    },
+    {
+      "ID": "task-wires_wiretip1",
+      "Paths": [ "RightWires/RightWireNode (3)", "LeftWires/LeftWireNode/Head", "LeftWires/LeftWireNode (1)/Head", "RightWires/RightWireNode", "LeftWires/LeftWireNode (2)/Head", "LeftWires/LeftWireNode (3)/Head" ]
+    },
+    {
+      "ID": "task-wires_wiretip2",
+      "Paths": [ "RightWires/RightWireNode (1)" ]
     }
   ]
 }

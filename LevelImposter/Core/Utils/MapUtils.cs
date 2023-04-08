@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Text.Json;
+using System.Linq;
 using System.Reflection;
 using UnityEngine;
 using UnityEngine.Events;
@@ -24,6 +25,8 @@ namespace LevelImposter.Core
     /// </summary>
     public static class MapUtils
     {
+        public const float PLAYER_POS = -5.0f;
+
         public static Dictionary<SystemTypes, string> SystemRenames = new();
         public static Dictionary<TaskTypes, string> TaskRenames = new();
         private static int _randomSeed = 0;
@@ -386,6 +389,50 @@ namespace LevelImposter.Core
             spriteRenderer.material = prefabRenderer.material;
             obj.layer = (int)Layer.ShortObjects;
             return spriteRenderer;
+        }
+
+        /// <summary>
+        /// Adjusts a Vector3 position's Z value by it's Y value
+        /// such that the player is always on Z=-5
+        /// </summary>
+        /// <param name="vector">Vector to scale</param>
+        /// <returns>Vector with adjusted Z</returns>
+        public static Vector3 ScaleZPositionByY(Vector3 vector)
+        {
+            return vector - new Vector3(0, 0, -(vector.y / 1000.0f) + PLAYER_POS);
+        }
+
+        /// <summary>
+        /// Traverses a transform hierarchy and returns a list of transforms that match the given path.
+        /// </summary>
+        /// <param name="path">The path to search for.  The path is a string of transform names separated by forward slashes.</param>
+        /// <param name="parent">The transform to start the search from.</param>
+        /// <returns>A list of transforms that match the given path.</returns>
+        public static List<Transform> GetTransforms(string path, Transform parent)
+        {
+            var pathParts = path.Split('/');
+
+            // Abort Recursion
+            if (pathParts.Length == 0)
+                return new List<Transform>();
+            if (pathParts.Length == 1)
+            {
+                List<Transform> transforms = new();
+                for (int i = 0; i < parent.childCount; i++)
+                    if (parent.GetChild(i).name == pathParts[0])
+                        transforms.Add(parent.GetChild(i));
+                return transforms;
+            }
+
+            // Continue Recursion
+            var firstPart = pathParts[0];
+            var remainingPath = string.Join("/", pathParts.Skip(1).ToArray());
+            var firstPartTransforms = GetTransforms(firstPart, parent);
+            var results = new List<Transform>();
+            foreach (var firstPartTransform in firstPartTransforms)
+                results.AddRange(GetTransforms(remainingPath, firstPartTransform));
+
+            return results;
         }
     }
 }

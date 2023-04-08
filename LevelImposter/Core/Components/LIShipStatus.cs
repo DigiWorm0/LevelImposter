@@ -14,6 +14,7 @@ using UnityEngine.SceneManagement;
 using BepInEx.Unity.IL2CPP.Utils.Collections;
 using Reactor.Networking.Attributes;
 using Hazel;
+using LevelImposter.Builders;
 
 namespace LevelImposter.Core
 {
@@ -29,7 +30,6 @@ namespace LevelImposter.Core
 
         public static LIShipStatus? Instance { get; private set; }
 
-        public const float PLAYER_POS = -5.0f;
         public static readonly List<string> PRIORITY_TYPES = new()
         {
             "util-minimap",
@@ -129,7 +129,7 @@ namespace LevelImposter.Core
             StartCoroutine(CoLoadingScreen().WrapToIl2Cpp());
             _currentMap = map;
             ResetMap();
-            _LoadMapProperties(map);
+            LoadMapProperties(map);
             BuildRouter buildRouter = new();
 
             // Asset DB
@@ -156,7 +156,7 @@ namespace LevelImposter.Core
         /// </summary>
         /// <param name="map">Map to read properties from</param>
         [HideFromIl2Cpp]
-        private void _LoadMapProperties(LIMap map)
+        private void LoadMapProperties(LIMap map)
         {
             if (ShipStatus == null)
                 return;
@@ -199,7 +199,7 @@ namespace LevelImposter.Core
             {
                 GameObject gameObject = buildRouter.Build(element);
                 gameObject.transform.SetParent(transform);
-                gameObject.transform.localPosition -= new Vector3(0, 0, -(element.y / 1000.0f) + PLAYER_POS);
+                gameObject.transform.localPosition = MapUtils.ScaleZPositionByY(gameObject.transform.localPosition);
             }
             catch (Exception e)
             {
@@ -384,9 +384,12 @@ namespace LevelImposter.Core
             {
                 HudManager.Instance.ShadowQuad.material.SetInt("_Mask", 7);
 
+                // Respawn the player on key combo
                 StartCoroutine(CoHandleKeyCombo(RESPAWN_SEQ, () =>{
                     RespawnPlayer(PlayerControl.LocalPlayer);
                 }).WrapToIl2Cpp());
+
+                // Set CPU affinity on key combo
                 StartCoroutine(CoHandleKeyCombo(CPU_SEQ, () => {
                     SetCPUAffinity();
                 }).WrapToIl2Cpp());

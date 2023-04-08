@@ -9,8 +9,9 @@ using PowerTools;
 namespace LevelImposter.Core
 {
     /*
-     *      Disables horse mod
+     *      Uncomment to disable the Horse Mod
      */
+    /*
     [HarmonyPatch(typeof(Constants), nameof(Constants.ShouldHorseAround))]
     public static class HorsePatch
     {
@@ -20,4 +21,5 @@ namespace LevelImposter.Core
             return false;
         }
     }
+    */
 }
