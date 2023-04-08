@@ -19,7 +19,6 @@ namespace LevelImposter.Core
         {
         }
 
-        private string? _elemType = null;
         private LIMinigameSprite[]? _minigameDataArr = null;
         private LIMinigameProps? _minigameProps = null;
 
@@ -30,7 +29,6 @@ namespace LevelImposter.Core
         [HideFromIl2Cpp]
         public void Init(LIElement elem)
         {
-            _elemType = elem.type;
             _minigameDataArr = elem.properties.minigames ?? new LIMinigameSprite[0];
             _minigameProps = elem.properties.minigameProps ?? new();
         }
@@ -116,7 +114,7 @@ namespace LevelImposter.Core
                 }
             }
 
-            /* task-telescope */
+            /* Fixes a bug with task-telescope */
             if (type.StartsWith("task-telescope"))
             {
                 var telescopeMinigame = minigame.Cast<TelescopeGame>();
@@ -189,6 +187,7 @@ namespace LevelImposter.Core
         public void OnDestroy()
         {
             _minigameDataArr = null;
+            _minigameProps = null;
         }
     }
 }

@@ -1931,7 +1931,7 @@
     },
     {
       "ID": "task-align1_slider",
-      "Paths": [ "engineAlign_slider" ]
+      "Paths": [ "engineAlign_slider", "engineAlign_slider/engineAlign_sliderShadow" ]
     },
     {
       "ID": "task-align1_engine",
