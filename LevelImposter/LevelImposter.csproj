@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <Title>LevelImposter</Title>
-        <Version>0.13.3</Version>
+        <Version>0.13.4</Version>
         <Description>Custom Among Us Mapping Studio</Description>
         <Authors>DigiWorm</Authors>
 		
