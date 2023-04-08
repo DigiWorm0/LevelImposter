@@ -30,7 +30,6 @@ namespace LevelImposter.Core
 
         public static LIShipStatus? Instance { get; private set; }
 
-        public const float PLAYER_POS = -5.0f;
         public static readonly List<string> PRIORITY_TYPES = new()
         {
             "util-minimap",
@@ -200,7 +199,7 @@ namespace LevelImposter.Core
             {
                 GameObject gameObject = buildRouter.Build(element);
                 gameObject.transform.SetParent(transform);
-                gameObject.transform.localPosition -= new Vector3(0, 0, -(element.y / 1000.0f) + PLAYER_POS);
+                gameObject.transform.localPosition = MapUtils.ScaleZPositionByY(gameObject.transform.localPosition);
             }
             catch (Exception e)
             {

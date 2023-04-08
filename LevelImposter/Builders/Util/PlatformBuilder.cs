@@ -39,26 +39,29 @@ namespace LevelImposter.Builders
             SpriteRenderer spriteRenderer = MapUtils.CloneSprite(obj, prefab);
 
             // Offsets
-            Vector2 leftPos = obj.transform.position;
-            Vector2 leftUsePos = new(
-                (elem.properties.platformXEntranceOffset == null ? -1.5f : (float)elem.properties.platformXEntranceOffset) + leftPos.x,
-                (elem.properties.platformYEntranceOffset == null ? 0 : (float)elem.properties.platformYEntranceOffset) + leftPos.y
+            Vector3 leftPos = obj.transform.position;
+            Vector3 leftUsePos = leftPos + new Vector3(
+                elem.properties.platformXEntranceOffset ?? -1.5f,
+                elem.properties.platformYEntranceOffset ?? 0,
+                0
             );
-            Vector2 rightPos = new(
-                (elem.properties.platformXOffset == null ? 3 : (float)elem.properties.platformXOffset) + leftPos.x,
-                (elem.properties.platformYOffset == null ? 0 : (float)elem.properties.platformYOffset) + leftPos.y
+            Vector3 rightPos = leftPos + new Vector3(
+                elem.properties.platformXOffset ?? 3,
+                elem.properties.platformYOffset ?? 0,
+                0
             );
-            Vector2 rightUsePos = new(
-                (elem.properties.platformXExitOffset == null ? 1.5f : (float)elem.properties.platformXExitOffset) + rightPos.x,
-                (elem.properties.platformYExitOffset == null ? 0 : (float)elem.properties.platformYExitOffset) + rightPos.y
+            Vector3 rightUsePos = rightPos + new Vector3(
+                elem.properties.platformXExitOffset ?? 1.5f,
+                elem.properties.platformYExitOffset ?? 0,
+                0
             );
 
             // Platform
             MovingPlatformBehaviour movingPlatform = obj.AddComponent<MovingPlatformBehaviour>();
-            movingPlatform.LeftPosition = leftPos;
-            movingPlatform.RightPosition = rightPos;
-            movingPlatform.LeftUsePosition = leftUsePos;
-            movingPlatform.RightUsePosition = rightUsePos;
+            movingPlatform.LeftPosition = MapUtils.ScaleZPositionByY(leftPos);
+            movingPlatform.RightPosition = MapUtils.ScaleZPositionByY(rightPos);
+            movingPlatform.LeftUsePosition = MapUtils.ScaleZPositionByY(leftUsePos);
+            movingPlatform.RightUsePosition = MapUtils.ScaleZPositionByY(rightUsePos);
             movingPlatform.IsLeft = true;
             movingPlatform.MovingSound = prefabBehaviour.MovingSound;
             Platform = movingPlatform;

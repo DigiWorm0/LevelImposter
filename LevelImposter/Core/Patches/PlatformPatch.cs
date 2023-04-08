@@ -56,4 +56,25 @@ namespace LevelImposter.Core
             return true;
         }
     }
+
+    /*
+     *      This removes the magnitude maximum
+     *      when using a Moving Platform
+     */
+    [HarmonyPatch(typeof(MovingPlatformBehaviour), nameof(MovingPlatformBehaviour.Use), typeof(PlayerControl))]
+    public static class PlatformUsePatch
+    {
+        public static bool Prefix([HarmonyArgument(0)] PlayerControl player, MovingPlatformBehaviour __instance)
+        {
+            if (MapLoader.CurrentMap == null)
+                return true;
+            if (player.Data.IsDead || player.Data.Disconnected || __instance.Target)
+                return true;
+
+            __instance.IsDirty = true;
+            __instance.StartCoroutine(__instance.UsePlatform(player));
+
+            return false;
+        }
+    }
 }

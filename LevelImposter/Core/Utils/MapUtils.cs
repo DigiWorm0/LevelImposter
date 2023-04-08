@@ -25,6 +25,8 @@ namespace LevelImposter.Core
     /// </summary>
     public static class MapUtils
     {
+        public const float PLAYER_POS = -5.0f;
+
         public static Dictionary<SystemTypes, string> SystemRenames = new();
         public static Dictionary<TaskTypes, string> TaskRenames = new();
         private static int _randomSeed = 0;
@@ -387,6 +389,17 @@ namespace LevelImposter.Core
             spriteRenderer.material = prefabRenderer.material;
             obj.layer = (int)Layer.ShortObjects;
             return spriteRenderer;
+        }
+
+        /// <summary>
+        /// Adjusts a Vector3 position's Z value by it's Y value
+        /// such that the player is always on Z=-5
+        /// </summary>
+        /// <param name="vector">Vector to scale</param>
+        /// <returns>Vector with adjusted Z</returns>
+        public static Vector3 ScaleZPositionByY(Vector3 vector)
+        {
+            return vector - new Vector3(0, 0, -(vector.y / 1000.0f) + PLAYER_POS);
         }
 
         /// <summary>
