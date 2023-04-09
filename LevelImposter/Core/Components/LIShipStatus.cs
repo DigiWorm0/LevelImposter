@@ -331,43 +331,6 @@ namespace LevelImposter.Core
             }
         }
 
-        /// <summary>
-        /// Fixes and ends all ongoing sabotages
-        /// in the ShipStatus (except doors)
-        /// </summary>
-        public void FixAllSabotages()
-        {
-            // Lights
-            var lightsSystem = ShipStatus?.Systems[SystemTypes.Electrical].Cast<SwitchSystem>();
-            if (lightsSystem?.IsActive == true)
-            {
-                var writer = AmongUsClient.Instance.StartRpcImmediately(
-                    PlayerControl.LocalPlayer.NetId,
-                    (byte)LIRpc.TOU_FixLights,
-                    SendOption.Reliable,
-                    -1
-                );
-                AmongUsClient.Instance.FinishRpcImmediately(writer);
-
-                lightsSystem.ActualSwitches = lightsSystem.ExpectedSwitches;
-            }
-
-            // Comms
-            var commsSystem = ShipStatus?.Systems[SystemTypes.Comms].Cast<HudOverrideSystemType>();
-            if (commsSystem?.IsActive == true)
-                ShipStatus?.RpcRepairSystem(SystemTypes.Comms, 0);
-
-            // Reactor
-            var reactorSystem = ShipStatus?.Systems[SystemTypes.Laboratory].Cast<ReactorSystemType>();
-            if (reactorSystem?.IsActive == true)
-                ShipStatus?.RpcRepairSystem(SystemTypes.Laboratory, 16);
-
-            // Oxygen
-            var oxygenSystem = ShipStatus?.Systems[SystemTypes.LifeSupp].Cast<LifeSuppSystemType>();
-            if (oxygenSystem?.IsActive == true)
-                ShipStatus?.RpcRepairSystem(SystemTypes.LifeSupp, 16);
-        }
-
         public void Awake()
         {
             _shipStatus = GetComponent<ShipStatus>();
