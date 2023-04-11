@@ -2950,6 +2950,14 @@
       "Paths": [ "First/water_buttonUp" ]
     },
     {
+      "ID": "task-waterjug1_leftwaterfill",
+      "Paths": [ "First/DestGauge/BackFillColor" ]
+    },
+    {
+      "ID": "task-waterjug1_rightwaterfill",
+      "Paths": [ "First/SrcGauge/BackFillColor" ]
+    },
+    {
       "ID": "task-waterjug2_leftoutline",
       "Paths": [ "Second/SrcGauge/Outline" ]
     },
@@ -2968,6 +2976,14 @@
     {
       "ID": "task-waterjug2_btnup",
       "Paths": [ "Second/water_buttonDown" ]
+    },
+    {
+      "ID": "task-waterjug2_leftwaterfill",
+      "Paths": [ "Second/SrcGauge/BackFillColor" ]
+    },
+    {
+      "ID": "task-waterjug2_rightwaterfill",
+      "Paths": [ "Second/DestGauge/BackFillColor" ]
     },
     {
       "ID": "task-waterwheel1_bg",

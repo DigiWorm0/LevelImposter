@@ -39,14 +39,21 @@ namespace LevelImposter.Core
         /// <param name="minigame">Minigame to load sprites to</param>
         public void LoadMinigame(Minigame minigame)
         {
-            LoadMinigameProps(minigame);
-            if (_minigameDataArr == null)
-                return;
-            foreach (LIMinigameSprite minigameData in _minigameDataArr)
+            try
             {
-                SpriteLoader.Instance?.LoadSpriteAsync(minigameData.spriteData, (spriteData) => {
-                    LoadMinigameSprite(minigame, minigameData.type, spriteData?.Sprite);
-                }, minigameData.id.ToString());
+                LoadMinigameProps(minigame);
+                if (_minigameDataArr == null)
+                    return;
+                foreach (LIMinigameSprite minigameData in _minigameDataArr)
+                {
+                    SpriteLoader.Instance?.LoadSpriteAsync(minigameData.spriteData, (spriteData) => {
+                        LoadMinigameSprite(minigame, minigameData.type, spriteData?.Sprite);
+                    }, minigameData.id.ToString());
+                }
+            }
+            catch (Exception e)
+            {
+                LILogger.Error($"Error while editing minigame:\n{e}");
             }
         }
 
@@ -57,6 +64,7 @@ namespace LevelImposter.Core
         {
             bool isLights = _minigameProps?.lightsColorOn != null || _minigameProps?.lightsColorOff != null;
             bool isReactor = _minigameProps?.reactorColorBad != null || _minigameProps?.reactorColorGood != null;
+            bool isFuel = _minigameProps?.fuelColor != null || _minigameProps?.fuelBgColor != null;
             LILogger.Info($"Loading minigame props for {minigame}");
 
             // Lights Panel
@@ -76,6 +84,26 @@ namespace LevelImposter.Core
                 reactorMinigame.bad = _minigameProps?.reactorColorBad?.ToUnity() ?? reactorMinigame.bad;
                 LILogger.Info("Applied Reactor Props");
             }
+
+            // Fuel Task
+            if (isFuel)
+            {
+                var multistageMinigame = minigame.Cast<MultistageMinigame>();
+                foreach (var stage in multistageMinigame.Stages)
+                {
+                    var fuelRenderer1 = stage.transform.Find("DestGauge/BackFillMask/BackFillColor").GetComponent<SpriteRenderer>();
+                    fuelRenderer1.color = _minigameProps?.fuelColor?.ToUnity() ?? fuelRenderer1.color;
+
+                    var bgRenderer = stage.transform.Find("blank").GetComponent<SpriteRenderer>();
+                    bgRenderer.color = _minigameProps?.fuelBgColor?.ToUnity() ?? bgRenderer.color;
+
+                    // Only on Stage 2
+                    var fuelRenderer2 = stage.transform.Find("SrcGauge/BackFillMask/BackFillColor")?.GetComponent<SpriteRenderer>();
+                    if (fuelRenderer2 != null)
+                        fuelRenderer2.color = _minigameProps?.fuelColor?.ToUnity() ?? fuelRenderer2.color;
+                }
+                LILogger.Info("Applied Fuel Props");
+            }
         }
 
         /// <summary>
@@ -86,42 +114,51 @@ namespace LevelImposter.Core
         /// <param name="sprite">Sprite to load</param>
         private void LoadMinigameSprite(Minigame minigame, string type, Sprite? sprite)
         {
-            if (!LoadMinigameFieldSprite(minigame, type, sprite))
-                return;
-
-            string[]? spritePaths = AssetDB.GetPaths(type);
-            if (spritePaths == null)
-                return;
-
-            // Iterate through sprite path
-            foreach (string path in spritePaths)
+            try
             {
-                LILogger.Info($"Loading minigame sprite {type} at '{path}'");
-                var spriteObjs = MapUtils.GetTransforms(path, minigame.transform);
-                if (spriteObjs.Count <= 0)
-                {
-                    LILogger.Warn($"Could not find {type} at '{path}'");
-                    continue;
-                }
+                if (!LoadMinigameFieldSprite(minigame, type, sprite))
+                    return;
 
-                // Iterate through objects located at path
-                foreach (var spriteObj in spriteObjs)
+                // Get all sprite paths
+                string[]? spritePaths = AssetDB.GetPaths(type);
+                if (spritePaths == null)
+                    return;
+
+                // Iterate through sprite path
+                foreach (string path in spritePaths)
                 {
-                    var spriteRenderer = spriteObj?.GetComponent<SpriteRenderer>();
-                    if (spriteRenderer == null)
+                    LILogger.Info($"Loading minigame sprite {type} at '{path}'");
+                    var spriteObjs = MapUtils.GetTransforms(path, minigame.transform);
+                    if (spriteObjs.Count <= 0)
                     {
-                        LILogger.Warn($"{type} SpriteRenderer is null at '{path}'");
+                        LILogger.Warn($"Could not find {type} at '{path}'");
                         continue;
                     }
-                    spriteRenderer.sprite = sprite;
+
+                    // Iterate through objects located at path
+                    foreach (var spriteObj in spriteObjs)
+                    {
+                        var spriteRenderer = spriteObj?.GetComponent<SpriteRenderer>();
+                        if (spriteRenderer == null)
+                        {
+                            LILogger.Warn($"{type} SpriteRenderer is null at '{path}'");
+                            continue;
+                        }
+                        spriteRenderer.sprite = sprite;
+                    }
+                }
+
+                // Fixes a bug with task-telescope
+                if (type.StartsWith("task-telescope"))
+                {
+                    var telescopeMinigame = minigame.Cast<TelescopeGame>();
+                    var telescopeRenderer = telescopeMinigame.TargetItem.GetComponent<SpriteRenderer>();
+                    telescopeMinigame.ItemDisplay.sprite = telescopeRenderer.sprite;
                 }
             }
-
-            /* Fixes a bug with task-telescope */
-            if (type.StartsWith("task-telescope"))
+            catch (Exception e)
             {
-                var telescopeMinigame = minigame.Cast<TelescopeGame>();
-                telescopeMinigame.ItemDisplay.sprite = telescopeMinigame.TargetItem.GetComponent<SpriteRenderer>().sprite;
+                LILogger.Error($"Error while editing sprite {type}:\n{e}");
             }
         }
 
