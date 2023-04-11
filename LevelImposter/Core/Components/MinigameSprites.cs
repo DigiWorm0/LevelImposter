@@ -122,6 +122,18 @@ namespace LevelImposter.Core
             }
         }
 
+        /// <summary>
+        /// Gets the index from an underscore seperated minigame type
+        /// </summary>
+        /// <param name="type">Minigame type</param>
+        /// <returns>Index appended to the end</returns>
+        private int GetIndex(string type)
+        {
+            var splitType = type.Split("_");
+            if (splitType.Length > 2)
+                return int.Parse(splitType[2]) - 1;
+            return -1;
+        }
 
         /// <summary>
         /// Loads a minigame's sprite into the minigame's class fields
@@ -171,6 +183,81 @@ namespace LevelImposter.Core
                         keySlot.Finished = sprite;
                     return true;
 
+                /* task-vending */
+                case "task-vending_item_1":
+                case "task-vending_item_2":
+                case "task-vending_item_3":
+                case "task-vending_item_4":
+                case "task-vending_item_5":
+                    int vendingIndex1 = GetIndex(type);
+                    var vendingMinigame1 = minigame.Cast<VendingMinigame>();
+                    var currentVendingSprite1 = vendingMinigame1.Drinks[vendingIndex1];
+                    // Find & update any slots
+                    foreach (var vendingSlot in vendingMinigame1.Slots)
+                        if (vendingSlot.DrinkImage.sprite == currentVendingSprite1)
+                            vendingSlot.DrinkImage.sprite = sprite;
+                    vendingMinigame1.Drinks[vendingIndex1] = sprite;
+                    return false;
+                case "task-vending_drawing_1":
+                case "task-vending_drawing_2":
+                case "task-vending_drawing_3":
+                case "task-vending_drawing_4":
+                case "task-vending_drawing_5":
+                    int vendingIndex2 = GetIndex(type);
+                    var vendingMinigame2 = minigame.Cast<VendingMinigame>();
+                    var currentVendingSprite2 = vendingMinigame2.DrawnDrinks[vendingIndex2];
+                    // Update cooresponding drawing
+                    if (vendingMinigame2.TargetImage.sprite == currentVendingSprite2)
+                        vendingMinigame2.TargetImage.sprite = sprite;
+                    vendingMinigame2.DrawnDrinks[vendingIndex2] = sprite;
+                    return false;
+
+                /* task-weapons */
+                case "task-weapons_asteroid_1":
+                case "task-weapons_asteroid_2":
+                case "task-weapons_asteroid_3":
+                case "task-weapons_asteroid_4":
+                case "task-weapons_asteroid_5":
+                    ObjectPoolBehavior asteroidPool1 = minigame.Cast<WeaponsMinigame>().asteroidPool;
+                    int asteroidIndex1 = GetIndex(type);
+                    UpdateObjectPool(asteroidPool1, (Asteroid asteroid) =>
+                    {
+                        asteroid.AsteroidImages[asteroidIndex1] = sprite;
+                        asteroid.GetComponent<SpriteRenderer>().sprite = asteroid.AsteroidImages[asteroid.imgIdx];
+                    });
+                    return false;
+                case "task-weapons_broken_1":
+                case "task-weapons_broken_2":
+                case "task-weapons_broken_3":
+                case "task-weapons_broken_4":
+                case "task-weapons_broken_5":
+                    ObjectPoolBehavior asteroidPool2 = minigame.Cast<WeaponsMinigame>().asteroidPool;
+                    int asteroidIndex2 = GetIndex(type);
+                    UpdateObjectPool(asteroidPool2, (Asteroid asteroid) =>
+                    {
+                        asteroid.BrokenImages[asteroidIndex2] = sprite;
+                    });
+                    return false;
+
+                /* task-fans */
+                case "task-fans1_symbol_1":
+                case "task-fans1_symbol_2":
+                case "task-fans1_symbol_3":
+                case "task-fans1_symbol_4":
+                case "task-fans2_symbol_1":
+                case "task-fans2_symbol_2":
+                case "task-fans2_symbol_3":
+                case "task-fans2_symbol_4":
+                    int fansIndex = GetIndex(type);
+                    var fansMinigame = minigame.Cast<StartFansMinigame>();
+                    var currentFanSprite = fansMinigame.IconSprites[fansIndex];
+                    // Find & update any symbols
+                    foreach (var codeIcon in fansMinigame.CodeIcons)
+                        if (codeIcon.sprite == currentFanSprite)
+                            codeIcon.sprite = sprite;
+                    fansMinigame.IconSprites[fansIndex] = sprite;
+                    return false;
+
                 /* task-toilet */
                 case "task-toilet_plungerdown":
                     minigame.Cast<ToiletMinigame>().PlungerDown = sprite;
@@ -182,6 +269,21 @@ namespace LevelImposter.Core
                 default:
                     return true;
             }
+        }
+
+        /// <summary>
+        /// Runs an update function on an entire object pool
+        /// </summary>
+        /// <typeparam name="T">Type to cast PoolableBehaviour to</typeparam>
+        /// <param name="objectPool">ObjectPool to iterate over</param>
+        /// <param name="onUpdate">Function to run on update</param>
+        private void UpdateObjectPool<T>(ObjectPoolBehavior objectPool, Action<T> onUpdate) where T : Il2CppSystem.Object
+        {
+            foreach (var child in objectPool.activeChildren)
+                onUpdate(child.Cast<T>());
+            foreach (var child in objectPool.inactiveChildren)
+                onUpdate(child.Cast<T>());
+            onUpdate(objectPool.Prefab.Cast<T>());
         }
 
         public void OnDestroy()
