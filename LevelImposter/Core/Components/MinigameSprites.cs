@@ -93,6 +93,7 @@ namespace LevelImposter.Core
             if (spritePaths == null)
                 return;
 
+            // Iterate through sprite path
             foreach (string path in spritePaths)
             {
                 LILogger.Info($"Loading minigame sprite {type} at '{path}'");
@@ -102,6 +103,8 @@ namespace LevelImposter.Core
                     LILogger.Warn($"Could not find {type} at '{path}'");
                     continue;
                 }
+
+                // Iterate through objects located at path
                 foreach (var spriteObj in spriteObjs)
                 {
                     var spriteRenderer = spriteObj?.GetComponent<SpriteRenderer>();
@@ -266,6 +269,20 @@ namespace LevelImposter.Core
                     minigame.Cast<ToiletMinigame>().PlungerUp = sprite;
                     return true;
 
+                /* task-waterjug */
+                case "task-waterjug1_btnup":
+                case "task-waterjug2_btnup":
+                    var multistageMinigame1 = minigame.Cast<MultistageMinigame>();
+                    foreach (var stage in multistageMinigame1.Stages)
+                        stage.Cast<WaterStage>().buttonUpSprite = sprite;
+                    return true;
+                case "task-waterjug1_btndown":
+                case "task-waterjug2_btndown":
+                    var multistageMinigame2 = minigame.Cast<MultistageMinigame>();
+                    foreach (var stage in multistageMinigame2.Stages)
+                        stage.Cast<WaterStage>().buttonDownSprite = sprite;
+                    return false;
+
                 default:
                     return true;
             }
@@ -277,6 +294,7 @@ namespace LevelImposter.Core
         /// <typeparam name="T">Type to cast PoolableBehaviour to</typeparam>
         /// <param name="objectPool">ObjectPool to iterate over</param>
         /// <param name="onUpdate">Function to run on update</param>
+        [HideFromIl2Cpp]
         private void UpdateObjectPool<T>(ObjectPoolBehavior objectPool, Action<T> onUpdate) where T : Il2CppSystem.Object
         {
             foreach (var child in objectPool.activeChildren)

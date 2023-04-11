@@ -70,7 +70,7 @@ namespace LevelImposter.DB
         public static string[]? GetPaths(string id)
         {
             var path = Instance?._pathDB?.Get(id);
-            if (path == null || path.Length == 0)
+            if (path == null || path.Length <= 0)
                 LILogger.Warn($"Could not find path of type {id}");
             return path;
         }
