@@ -186,18 +186,23 @@ namespace LevelImposter.Core
         {
             switch (type)
             {
-                /* task-pass */
-                case "task-pass_back":
-                    minigame.Cast<BoardPassGame>().passBack = sprite;
-                    return false;
-                case "task-pass_scanner":
-                    minigame.Cast<BoardPassGame>().ScannerWaiting = sprite;
-                    return true;
-                case "task-pass_scanninga":
-                    minigame.Cast<BoardPassGame>().ScannerAccept = sprite;
-                    return false;
-                case "task-pass_scanningb":
-                    minigame.Cast<BoardPassGame>().ScannerScanning = sprite;
+                /* task-fans */
+                case "task-fans1_symbol_1":
+                case "task-fans1_symbol_2":
+                case "task-fans1_symbol_3":
+                case "task-fans1_symbol_4":
+                case "task-fans2_symbol_1":
+                case "task-fans2_symbol_2":
+                case "task-fans2_symbol_3":
+                case "task-fans2_symbol_4":
+                    int fansIndex = GetIndex(type);
+                    var fansMinigame = minigame.Cast<StartFansMinigame>();
+                    var currentFanSprite = fansMinigame.IconSprites[fansIndex];
+                    // Find & update any symbols
+                    foreach (var codeIcon in fansMinigame.CodeIcons)
+                        if (codeIcon.sprite == currentFanSprite)
+                            codeIcon.sprite = sprite;
+                    fansMinigame.IconSprites[fansIndex] = sprite;
                     return false;
 
                 /* task-keys */
@@ -221,6 +226,50 @@ namespace LevelImposter.Core
                     var keySlotsC = minigame.Cast<KeyMinigame>().Slots;
                     foreach (var keySlot in keySlotsC)
                         keySlot.Finished = sprite;
+                    return true;
+
+                /* task-nodeswitch */
+                case "task-nodeswitch_lighton":
+                    var weatherGame1 = minigame.Cast<WeatherSwitchGame>();
+                    foreach (var control in weatherGame1.Controls)
+                        control.lightOn = sprite;
+                    return false;
+                case "task-nodeswitch_lightoff":
+                    var weatherGame2 = minigame.Cast<WeatherSwitchGame>();
+                    foreach (var control in weatherGame2.Controls)
+                        control.lightOff = sprite;
+                    return true;
+                case "task-nodeswitch_screenlight":
+                    var weatherGame3 = minigame.Cast<WeatherSwitchGame>();
+                    foreach (var control in weatherGame3.Controls)
+                        control.backgroundLight = sprite;
+                    return true;
+                case "task-nodeswitch_screendark":
+                    var weatherGame4 = minigame.Cast<WeatherSwitchGame>();
+                    foreach (var control in weatherGame4.Controls)
+                        control.backgroundDark = sprite;
+                    return false;
+
+                /* task-pass */
+                case "task-pass_back":
+                    minigame.Cast<BoardPassGame>().passBack = sprite;
+                    return false;
+                case "task-pass_scanner":
+                    minigame.Cast<BoardPassGame>().ScannerWaiting = sprite;
+                    return true;
+                case "task-pass_scanninga":
+                    minigame.Cast<BoardPassGame>().ScannerAccept = sprite;
+                    return false;
+                case "task-pass_scanningb":
+                    minigame.Cast<BoardPassGame>().ScannerScanning = sprite;
+                    return false;
+
+                /* task-toilet */
+                case "task-toilet_plungerdown":
+                    minigame.Cast<ToiletMinigame>().PlungerDown = sprite;
+                    return false;
+                case "task-toilet_plungerup":
+                    minigame.Cast<ToiletMinigame>().PlungerUp = sprite;
                     return true;
 
                 /* task-vending */
@@ -252,6 +301,20 @@ namespace LevelImposter.Core
                     vendingMinigame2.DrawnDrinks[vendingIndex2] = sprite;
                     return false;
 
+                /* task-waterjug */
+                case "task-waterjug1_btnup":
+                case "task-waterjug2_btnup":
+                    var multistageMinigame1 = minigame.Cast<MultistageMinigame>();
+                    foreach (var stage in multistageMinigame1.Stages)
+                        stage.Cast<WaterStage>().buttonUpSprite = sprite;
+                    return true;
+                case "task-waterjug1_btndown":
+                case "task-waterjug2_btndown":
+                    var multistageMinigame2 = minigame.Cast<MultistageMinigame>();
+                    foreach (var stage in multistageMinigame2.Stages)
+                        stage.Cast<WaterStage>().buttonDownSprite = sprite;
+                    return false;
+
                 /* task-weapons */
                 case "task-weapons_asteroid_1":
                 case "task-weapons_asteroid_2":
@@ -277,47 +340,6 @@ namespace LevelImposter.Core
                     {
                         asteroid.BrokenImages[asteroidIndex2] = sprite;
                     });
-                    return false;
-
-                /* task-fans */
-                case "task-fans1_symbol_1":
-                case "task-fans1_symbol_2":
-                case "task-fans1_symbol_3":
-                case "task-fans1_symbol_4":
-                case "task-fans2_symbol_1":
-                case "task-fans2_symbol_2":
-                case "task-fans2_symbol_3":
-                case "task-fans2_symbol_4":
-                    int fansIndex = GetIndex(type);
-                    var fansMinigame = minigame.Cast<StartFansMinigame>();
-                    var currentFanSprite = fansMinigame.IconSprites[fansIndex];
-                    // Find & update any symbols
-                    foreach (var codeIcon in fansMinigame.CodeIcons)
-                        if (codeIcon.sprite == currentFanSprite)
-                            codeIcon.sprite = sprite;
-                    fansMinigame.IconSprites[fansIndex] = sprite;
-                    return false;
-
-                /* task-toilet */
-                case "task-toilet_plungerdown":
-                    minigame.Cast<ToiletMinigame>().PlungerDown = sprite;
-                    return false;
-                case "task-toilet_plungerup":
-                    minigame.Cast<ToiletMinigame>().PlungerUp = sprite;
-                    return true;
-
-                /* task-waterjug */
-                case "task-waterjug1_btnup":
-                case "task-waterjug2_btnup":
-                    var multistageMinigame1 = minigame.Cast<MultistageMinigame>();
-                    foreach (var stage in multistageMinigame1.Stages)
-                        stage.Cast<WaterStage>().buttonUpSprite = sprite;
-                    return true;
-                case "task-waterjug1_btndown":
-                case "task-waterjug2_btndown":
-                    var multistageMinigame2 = minigame.Cast<MultistageMinigame>();
-                    foreach (var stage in multistageMinigame2.Stages)
-                        stage.Cast<WaterStage>().buttonDownSprite = sprite;
                     return false;
 
                 default:

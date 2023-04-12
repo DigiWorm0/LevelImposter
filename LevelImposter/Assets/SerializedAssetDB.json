@@ -2394,6 +2394,43 @@
       "Paths": [ "Background" ]
     },
     {
+      "ID": "task-nodeswitch_bg",
+      "Paths": [ "Background" ]
+    },
+    {
+      "ID": "task-nodeswitch_switch",
+      "Paths": [
+        "Node_CA/panel_weather2_switch",
+        "Node_TB/panel_weather2_switch",
+        "Node_IRO/panel_weather2_switch",
+        "Node_PD/panel_weather2_switch",
+        "Node_GI/panel_weather2_switch",
+        "Node_MLG/panel_weather2_switch"
+      ]
+    },
+    {
+      "ID": "task-nodeswitch_lightoff",
+      "Paths": [
+        "Node_CA/panel_weather2_lampOff",
+        "Node_TB/panel_weather2_lampOff",
+        "Node_IRO/panel_weather2_lampOff",
+        "Node_PD/panel_weather2_lampOff",
+        "Node_GI/panel_weather2_lampOff",
+        "Node_MLG/panel_weather2_lampOff"
+      ]
+    },
+    {
+      "ID": "task-nodeswitch_screenlight",
+      "Paths": [
+        "Node_CA",
+        "Node_TB",
+        "Node_IRO",
+        "Node_PD",
+        "Node_GI",
+        "Node_MLG"
+      ]
+    },
+    {
       "ID": "task-oxygen_cannister",
       "Paths": [ "panel_o2fill_cannister" ]
     },

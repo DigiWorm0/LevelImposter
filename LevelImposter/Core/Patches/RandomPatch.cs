@@ -12,12 +12,19 @@ namespace LevelImposter.Core
      *      value to all connected clients
      */
     [HarmonyPatch(typeof(LobbyBehaviour), nameof(LobbyBehaviour.Start))]
-    [HarmonyPatch(typeof(AmongUsClient), nameof(AmongUsClient.CreatePlayer))]
-    public static class RandomPatch
+    public static class RandomStartPatch
     {
         public static void Postfix()
         {
             MapUtils.SyncRandomSeed();
+        }
+    }
+    [HarmonyPatch(typeof(AmongUsClient), nameof(AmongUsClient.CreatePlayer))]
+    public static class RandomJoinPatch
+    {
+        public static void Postfix()
+        {
+            RandomStartPatch.Postfix();
         }
     }
 }

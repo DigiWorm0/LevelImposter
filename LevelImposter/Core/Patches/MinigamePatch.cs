@@ -10,13 +10,20 @@ namespace LevelImposter.Core
      *      Loads custom minigame sprites
      */
     [HarmonyPatch(typeof(Minigame), nameof(Minigame.Begin))]
-    [HarmonyPatch(typeof(MultistageMinigame), nameof(MultistageMinigame.Begin))]
     public static class MinigamePatch
     {
         public static void Postfix(Minigame __instance)
         {
             var minigameSprites = __instance.Console?.GetComponent<MinigameSprites>();
             minigameSprites?.LoadMinigame(__instance);
+        }
+    }
+    [HarmonyPatch(typeof(MultistageMinigame), nameof(MultistageMinigame.Begin))]
+    public static class MultistageMinigamePatch
+    {
+        public static void Postfix(MultistageMinigame __instance)
+        {
+            MinigamePatch.Postfix(__instance);
         }
     }
 }
