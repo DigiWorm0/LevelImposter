@@ -41,6 +41,10 @@ namespace LevelImposter.Core
         {
             try
             {
+                var divertMinigame = minigame.TryCast<DivertPowerMetagame>();
+                if (divertMinigame != null)
+                    return;
+
                 LoadMinigameProps(minigame);
                 if (_minigameDataArr == null)
                     return;

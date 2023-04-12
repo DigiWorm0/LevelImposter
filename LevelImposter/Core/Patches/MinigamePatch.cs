@@ -12,10 +12,15 @@ namespace LevelImposter.Core
     [HarmonyPatch(typeof(Minigame), nameof(Minigame.Begin))]
     public static class MinigamePatch
     {
+        private static Console? _lastConsole = null;
+
         public static void Postfix(Minigame __instance)
         {
-            var minigameSprites = __instance.Console?.GetComponent<MinigameSprites>();
+            var currentConsole = __instance.Console ?? _lastConsole;
+            var minigameSprites = currentConsole?.GetComponent<MinigameSprites>();
             minigameSprites?.LoadMinigame(__instance);
+
+            _lastConsole = currentConsole;
         }
     }
     [HarmonyPatch(typeof(MultistageMinigame), nameof(MultistageMinigame.Begin))]

@@ -2182,6 +2182,31 @@
       "Paths": [ "Sweeper2 (1)/Sweeper2", "Sweeper2 (1)/Shadow2" ]
     },
     {
+      "ID": "task-divert1_bg",
+      "Paths": [ "Background" ]
+    },
+    {
+      "ID": "task-divert1_slider",
+      "Paths": [
+        "Sliders/REngineSlider",
+        "Sliders/LEngineSlider",
+        "Sliders/WeaponSlider",
+        "Sliders/ShieldSlider",
+        "Sliders/NavSlider",
+        "Sliders/CommsSlider",
+        "Sliders/LifeSuppSlider",
+        "Sliders/SecuritySlider"
+      ]
+    },
+    {
+      "ID": "task-divert2_bg",
+      "Paths": [ "electricity_Receive_Bg" ]
+    },
+    {
+      "ID": "task-divert2_switch",
+      "Paths": [ "electricity_Receive_switch" ]
+    },
+    {
       "ID": "task-download_bg",
       "Paths": [ "Background" ]
     },
