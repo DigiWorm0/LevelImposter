@@ -23,10 +23,9 @@ namespace LevelImposter.Builders
         {
             if (!elem.type.StartsWith("sab-") || elem.type.StartsWith("sab-btn") || elem.type.StartsWith("sab-door"))
                 return;
-
-            // ShipStatus
             if (LIShipStatus.Instance?.ShipStatus == null)
-                throw new Exception("ShipStatus not found");
+                throw new MissingShipException();
+
             ShipStatus shipStatus = LIShipStatus.Instance.ShipStatus;
 
             // Prefab
@@ -47,7 +46,7 @@ namespace LevelImposter.Builders
                 return;
             }
             if (!string.IsNullOrEmpty(elem.properties.description))
-                MapUtils.Rename(sabotageTask.TaskType, elem.properties.description);
+                LIShipStatus.Instance.Renames.Add(sabotageTask.TaskType, elem.properties.description);
 
             // Console
             Console console = obj.AddComponent<Console>();

@@ -25,7 +25,7 @@ namespace LevelImposter.Core
 
         public static void Postfix([HarmonyArgument(0)] bool open, PlainDoor __instance)
         {
-            if (MapLoader.CurrentMap == null)
+            if (LIShipStatus.Instance == null)
                 return;
 
             // Colliders

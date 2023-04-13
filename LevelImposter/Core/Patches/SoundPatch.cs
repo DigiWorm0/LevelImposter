@@ -13,7 +13,7 @@ namespace LevelImposter.Core
     {
         public static bool Prefix([HarmonyArgument(0)] AudioSource source, AmbientSoundPlayer __instance)
         {
-            if (MapLoader.CurrentMap == null)
+            if (LIShipStatus.Instance == null)
                 return true;
 
             bool isActive = __instance.gameObject.active;
@@ -36,7 +36,7 @@ namespace LevelImposter.Core
     {
         public static bool Prefix(AmbientSoundPlayer __instance)
         {
-            if (MapLoader.CurrentMap == null)
+            if (LIShipStatus.Instance == null)
                 return true;
             string soundName = __instance.name + __instance.GetInstanceID().ToString();
             SoundManager.Instance.PlayDynamicSound(

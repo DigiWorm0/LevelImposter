@@ -39,7 +39,7 @@ namespace LevelImposter.Core
             }
 
             // Get Current
-            string currentMapID = MapLoader.CurrentMap == null ? "" : MapLoader.CurrentMap.id;
+            string currentMapID = MapLoader.CurrentMap?.id ?? "";
             if (_activeDownloadingID != null)
             {
                 LILogger.Notify("Download stopped.");

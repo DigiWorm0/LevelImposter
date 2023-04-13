@@ -18,7 +18,7 @@ namespace LevelImposter.Core
     {
         public static void Postfix(NormalPlayerTask __instance)
         {
-            if (MapLoader.CurrentMap == null)
+            if (LIShipStatus.Instance == null)
                 return;
 
             TaskTypes taskType = __instance.TaskType;
@@ -66,7 +66,7 @@ namespace LevelImposter.Core
     {
         public static void Postfix(NormalPlayerTask __instance)
         {
-            if (MapLoader.CurrentMap == null)
+            if (LIShipStatus.Instance == null)
                 return;
 
             __instance.Data = new byte[TaskConsoleBuilder.WaterWheelCount];
@@ -82,7 +82,7 @@ namespace LevelImposter.Core
     {
         public static void Prefix([HarmonyArgument(0)] PlayerTask task, DivertPowerMinigame __instance)
         {
-            if (MapLoader.CurrentMap == null)
+            if (LIShipStatus.Instance == null)
                 return;
 
             __instance.SliderOrder = ShipTaskBuilder.DivertSystems;
@@ -97,7 +97,7 @@ namespace LevelImposter.Core
     {
         public static bool Prefix([HarmonyArgument(0)] PlayerTask task, MultistageMinigame __instance)
         {
-            if (MapLoader.CurrentMap == null)
+            if (LIShipStatus.Instance == null)
                 return true;
 
             NormalPlayerTask normalPlayerTask = task.Cast<NormalPlayerTask>();
@@ -137,7 +137,7 @@ namespace LevelImposter.Core
     {
         public static bool Prefix([HarmonyArgument(0)] SpriteRenderer folder, RecordsMinigame __instance)
         {
-            if (MapLoader.CurrentMap == null)
+            if (LIShipStatus.Instance == null)
                 return true;
 
             if (__instance.amClosing != Minigame.CloseState.None)

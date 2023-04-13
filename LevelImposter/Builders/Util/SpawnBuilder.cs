@@ -16,11 +16,13 @@ namespace LevelImposter.Builders
         {
             if (!elem.type.StartsWith("util-spawn"))
                 return;
-            if (LIShipStatus.Instance?.ShipStatus == null)
-                throw new Exception("ShipStatus not found");
 
-            // Ship Status
-            ShipStatus shipStatus = LIShipStatus.Instance.ShipStatus;
+            // ShipStatus
+            var shipStatus = LIShipStatus.Instance?.ShipStatus;
+            if (shipStatus == null)
+                throw new MissingShipException();
+
+            // Set Spawn Radius
             shipStatus.SpawnRadius = 1.55f;
 
             // Set Spawn Point
@@ -45,9 +47,10 @@ namespace LevelImposter.Builders
 
         public void PostBuild()
         {
-            if (LIShipStatus.Instance?.ShipStatus == null)
-                throw new Exception("ShipStatus not found");
-            ShipStatus shipStatus = LIShipStatus.Instance.ShipStatus;
+            // ShipStatus
+            var shipStatus = LIShipStatus.Instance?.ShipStatus;
+            if (shipStatus == null)
+                throw new MissingShipException();
 
             if (!_hasMeetingSpawn)
             {

@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
+using LevelImposter.DB;
 
 namespace LevelImposter.Shop
 {
@@ -21,7 +22,7 @@ namespace LevelImposter.Shop
             if (__instance.Title == StringNames.GameMapName && MapLoader.CurrentMap != null && __instance.oldValue != __instance.Selected)
             {
                 for (int i = __instance.Values.Count - 1; i >= 0; i--)
-                    if (__instance.Values[i].Key == "LevelImposter")
+                    if (__instance.Values[i].Key == LIConstants.MAP_NAME)
                         __instance.Values.RemoveAt(i);
 
                 __instance.oldValue = __instance.Selected;

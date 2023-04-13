@@ -2,9 +2,8 @@ using HarmonyLib;
 using System.Text;
 using UnityEngine;
 using LevelImposter.Core;
-using LevelImposter.Shop;
 
-namespace LevelImposter.Core
+namespace LevelImposter.Shop
 {
     /*
      *      Gives credit to map makers
@@ -16,10 +15,8 @@ namespace LevelImposter.Core
     {
         public static void Postfix(PingTracker __instance)
         {
-            LIMap currentMap = MapLoader.CurrentMap;
-            if (currentMap == null)
-                return;
-            if (currentMap.properties.showPingIndicator == false)
+            LIMap? currentMap = MapLoader.CurrentMap;
+            if (currentMap == null || currentMap.properties.showPingIndicator == false)
                 return;
             if (!__instance.gameObject.active)
                 __instance.gameObject.SetActive(true);

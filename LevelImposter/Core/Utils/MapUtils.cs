@@ -28,8 +28,6 @@ namespace LevelImposter.Core
     {
         public const float PLAYER_POS = -5.0f;
 
-        public static Dictionary<SystemTypes, string> SystemRenames = new();
-        public static Dictionary<TaskTypes, string> TaskRenames = new();
         private static int _randomSeed = 0;
 
         /// <summary>
@@ -139,26 +137,6 @@ namespace LevelImposter.Core
             if (collider == null)
                 collider = src.AddComponent<BoxCollider2D>();
             return collider;
-        }
-
-        /// <summary>
-        /// Renames a SystemType in the TranslationController
-        /// </summary>
-        /// <param name="system">System to rename</param>
-        /// <param name="name">String to rename to</param>
-        public static void Rename(SystemTypes system, string name)
-        {
-            SystemRenames[system] = name;
-        }
-
-        /// <summary>
-        /// Renames a TaskTypes in the TranslationController
-        /// </summary>
-        /// <param name="system">Task to rename</param>
-        /// <param name="name">String to rename to</param>
-        public static void Rename(TaskTypes system, string name)
-        {
-            TaskRenames[system] = name;
         }
 
         /// <summary>
@@ -286,7 +264,7 @@ namespace LevelImposter.Core
             if (mapIDStr != Guid.Empty.ToString())
             {
                 IGameOptions currentGameOptions = GameOptionsManager.Instance.CurrentGameOptions;
-                currentGameOptions.SetByte(ByteOptionNames.MapId, (byte)MapType.LevelImposter); // TODO: Move MapID outside default range
+                currentGameOptions.SetByte(ByteOptionNames.MapId, (byte)MapType.LevelImposter);
                 GameOptionsManager.Instance.GameHostOptions = GameOptionsManager.Instance.CurrentGameOptions;
                 GameManager.Instance.LogicOptions.SyncOptions();
             }
@@ -304,6 +282,24 @@ namespace LevelImposter.Core
         {
             {
                 while (PlayerControl.LocalPlayer == null)
+                    yield return null;
+                onFinish.Invoke();
+                onFinish = null;
+            }
+        }
+
+        /// <summary>
+        /// Waits for ShipStatus to be ready, then calls Action
+        /// </summary>
+        /// <param name="onFinish">Action to call when the map is initialized</param>
+        public static void WaitForShip(Action onFinish)
+        {
+            Coroutines.Start(CoWaitForShip(onFinish));
+        }
+        private static IEnumerator CoWaitForShip(Action onFinish)
+        {
+            {
+                while (LIShipStatus.Instance?.IsReady == false)
                     yield return null;
                 onFinish.Invoke();
                 onFinish = null;

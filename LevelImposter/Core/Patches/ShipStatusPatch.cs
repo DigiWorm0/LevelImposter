@@ -2,6 +2,7 @@ using HarmonyLib;
 using UnityEngine;
 using LevelImposter.Core;
 using LevelImposter.Shop;
+using InnerNet;
 
 namespace LevelImposter.Core
 {
@@ -14,7 +15,30 @@ namespace LevelImposter.Core
     {
         public static void Prefix(ShipStatus __instance)
         {
-            __instance.gameObject.AddComponent<LIShipStatus>();
+            bool isFreeplay = AmongUsClient.Instance.NetworkMode == NetworkModes.FreePlay;
+            var mapType = (MapType)(isFreeplay ? AmongUsClient.Instance.TutorialMapId : GameOptionsManager.Instance.CurrentGameOptions.MapId);
+            LILogger.Info(mapType);
+            if (mapType == MapType.LevelImposter)
+                __instance.gameObject.AddComponent<LIShipStatus>();
+        }
+    }
+
+    /*
+     *      Syncs all players' games
+     */
+    [HarmonyPatch(typeof(InnerNetClient), nameof(InnerNetClient.SendClientReady))]
+    public static class ReadyPatch
+    {
+        public static bool Prefix(InnerNetClient __instance)
+        {
+            if (LIShipStatus.Instance == null || LIShipStatus.Instance.IsReady)
+                return true;
+
+            MapUtils.WaitForShip(() =>
+            {
+                __instance.SendClientReady();
+            });
+            return false;
         }
     }
 

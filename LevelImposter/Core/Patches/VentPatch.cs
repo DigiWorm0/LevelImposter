@@ -18,7 +18,7 @@ namespace LevelImposter.Core
     {
         public static bool Prefix([HarmonyArgument(0)] PlayerControl pc, Vent __instance)
         {
-            if (MapLoader.CurrentMap == null)
+            if (LIShipStatus.Instance == null)
                 return true;
 
             // Player
@@ -59,7 +59,7 @@ namespace LevelImposter.Core
     {
         public static bool Prefix([HarmonyArgument(0)] PlayerControl pc, Vent __instance)
         {
-            if (MapLoader.CurrentMap == null)
+            if (LIShipStatus.Instance == null)
                 return true;
 
             // Player

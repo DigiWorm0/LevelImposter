@@ -1,6 +1,5 @@
 using HarmonyLib;
 using UnityEngine;
-using LevelImposter.Core;
 using LevelImposter.Shop;
 using AmongUs.GameOptions;
 
@@ -15,15 +14,11 @@ namespace LevelImposter.Core
     {
         public static bool Prefix([HarmonyArgument(0)] SystemTypes systemType, ref string __result)
         {
-            if (MapLoader.CurrentMap == null)
+            if (LIShipStatus.Instance == null || !LIShipStatus.Instance.Renames.Contains(systemType))
                 return true;
 
-            if (MapUtils.SystemRenames.ContainsKey(systemType))
-            {
-                __result = MapUtils.SystemRenames[systemType];
-                return false;
-            }
-            return true;
+            __result = LIShipStatus.Instance.Renames.Get(systemType);
+            return false;
         }
     }
     [HarmonyPatch(typeof(TranslationController), nameof(TranslationController.GetString), new System.Type[] { typeof(TaskTypes) })]
@@ -31,15 +26,11 @@ namespace LevelImposter.Core
     {
         public static bool Prefix([HarmonyArgument(0)] TaskTypes taskType, ref string __result)
         {
-            if (MapLoader.CurrentMap == null)
+            if (LIShipStatus.Instance == null || !LIShipStatus.Instance.Renames.Contains(taskType))
                 return true;
 
-            if (MapUtils.TaskRenames.ContainsKey(taskType))
-            {
-                __result = MapUtils.TaskRenames[taskType];
-                return false;
-            }
-            return true;
+            __result = LIShipStatus.Instance.Renames.Get(taskType);
+            return false;
         }
     }
     
@@ -51,7 +42,7 @@ namespace LevelImposter.Core
             if (MapLoader.CurrentMap == null)
                 return;
 
-            __result = __result.Replace("LevelImposter", MapLoader.CurrentMap.name);
+            __result = __result.Replace(LIConstants.MAP_NAME, MapLoader.CurrentMap.name);
         }
     }
 }

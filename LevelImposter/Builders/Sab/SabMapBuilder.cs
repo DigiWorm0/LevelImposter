@@ -31,8 +31,11 @@ namespace LevelImposter.Builders
         {
             if (!elem.type.StartsWith("sab-") || elem.type.StartsWith("sab-door"))
                 return;
-            if (LIShipStatus.Instance?.ShipStatus == null)
-                throw new Exception("ShipStatus not found");
+
+            // ShipStatus
+            var shipStatus = LIShipStatus.Instance?.ShipStatus;
+            if (shipStatus == null)
+                throw new MissingShipException();
 
             _hasSabConsoles = true;
 
@@ -83,7 +86,7 @@ namespace LevelImposter.Builders
             }
 
             // Button
-            float mapScale = LIShipStatus.Instance.ShipStatus.MapScale;
+            float mapScale = shipStatus.MapScale;
             GameObject sabButton = new(elem.name);
             sabButton.layer = (int)Layer.UI;
             sabButton.transform.SetParent(mapRoom.transform);

@@ -12,11 +12,13 @@ namespace LevelImposter.Builders
         {
             if (elem.type != "util-dummy")
                 return;
-            if (LIShipStatus.Instance?.ShipStatus == null)
-                throw new Exception("ShipStatus not found");
+
+            // ShipStatus
+            var shipStatus = LIShipStatus.Instance?.ShipStatus;
+            if (shipStatus == null)
+                throw new MissingShipException();
 
             // Add Location
-            ShipStatus shipStatus = LIShipStatus.Instance.ShipStatus;
             shipStatus.DummyLocations = MapUtils.AddToArr(shipStatus.DummyLocations, obj.transform);
 
             // TODO: Customize each dummy location with name/outfit

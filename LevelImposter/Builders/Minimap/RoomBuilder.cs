@@ -20,6 +20,8 @@ namespace LevelImposter.Builders
         {
             if (elem.type != "util-room")
                 return;
+            if (LIShipStatus.Instance?.ShipStatus == null)
+                throw new MissingShipException();
 
             SystemTypes systemType;
             do
@@ -37,13 +39,15 @@ namespace LevelImposter.Builders
             else if ((elem.properties.isRoomAdminVisible ?? true) || (elem.properties.isRoomNameVisible ?? true))
                 LILogger.Warn($"{shipRoom.name} is missing a collider");
 
-            MapUtils.Rename(systemType, obj.name);
+            LIShipStatus.Instance.Renames.Add(systemType, obj.name);
             _systemDB.Add(elem.id, systemType);
         }
 
         public void PostBuild()
         {
-            MapUtils.Rename((SystemTypes)0, "Default Room");
+            if (LIShipStatus.Instance == null)
+                throw new MissingShipException();
+            LIShipStatus.Instance.Renames.Add((SystemTypes)0, "Default Room");
             _roomId = 1;
         }
 

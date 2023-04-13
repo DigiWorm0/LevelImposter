@@ -32,9 +32,9 @@ namespace LevelImposter.Builders
         {
             if (!elem.type.StartsWith("sab-") || elem.type.StartsWith("sab-btn") || elem.type.StartsWith("sab-door"))
                 return;
-            // TODO: Standardize LIShipStatus nullity
-            if (LIShipStatus.Instance == null || LIShipStatus.Instance.ShipStatus == null)
-                return;
+            if (LIShipStatus.Instance?.ShipStatus == null)
+                throw new MissingShipException();
+
             ShipStatus shipStatus = LIShipStatus.Instance.ShipStatus;
 
             // Container
@@ -70,7 +70,7 @@ namespace LevelImposter.Builders
 
                 // Rename Task
                 if (!string.IsNullOrEmpty(elem.properties.description))
-                    MapUtils.Rename(task.TaskType, elem.properties.description);
+                    LIShipStatus.Instance.Renames.Add(task.TaskType, elem.properties.description);
 
                 // Add Task
                 shipStatus.SpecialTasks = MapUtils.AddToArr(shipStatus.SpecialTasks, task);

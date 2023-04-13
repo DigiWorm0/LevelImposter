@@ -10,7 +10,6 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 using Il2CppInterop.Runtime.Attributes;
 using Il2CppInterop.Runtime.InteropTypes.Arrays;
-using UnityEngine.SceneManagement;
 using BepInEx.Unity.IL2CPP.Utils.Collections;
 using Reactor.Networking.Attributes;
 using Hazel;
@@ -53,11 +52,13 @@ namespace LevelImposter.Core
             KeyCode.U
         };
 
+        private RenameHandler _renames = new();
         private LIMap? _currentMap = null;
         private ShipStatus? _shipStatus = null;
         private bool _isReady = true;
 
         [HideFromIl2Cpp]
+        public RenameHandler Renames => _renames;
         public LIMap? CurrentMap => _currentMap;
         public ShipStatus? ShipStatus => _shipStatus;
         public bool IsReady
@@ -113,8 +114,7 @@ namespace LevelImposter.Core
                 ShipStatus.Systems[SystemTypes.LifeSupp].Cast<IActivatable>(),
             }).Cast<ISystemType>());
 
-            MapUtils.SystemRenames.Clear();
-            MapUtils.TaskRenames.Clear();
+            _renames.Clear();
         }
 
         /// <summary>
@@ -339,7 +339,7 @@ namespace LevelImposter.Core
             if (MapLoader.CurrentMap != null)
                 LoadMap(MapLoader.CurrentMap);
             else
-                LILogger.Info("No map content, no LI data will load");
+                LILogger.Warn("No map content, no LI map will load");
         }
         public void Start()
         {
@@ -360,8 +360,10 @@ namespace LevelImposter.Core
         }
         public void OnDestroy()
         {
+            _renames = null;
             _currentMap = null;
             Instance = null;
+
             WAVLoader.Instance?.ClearAll();
         }
     }

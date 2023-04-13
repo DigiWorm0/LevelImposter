@@ -18,7 +18,7 @@ namespace LevelImposter.Core
     {
         public static bool Prefix([HarmonyArgument(0)] bool on, SurvCamera __instance)
         {
-            if (MapLoader.CurrentMap == null)
+            if (LIShipStatus.Instance == null)
                 return true;
 
             // Animation

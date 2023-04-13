@@ -126,7 +126,7 @@ namespace LevelImposter.DB
                 while (shipPrefabs.Count <= mapCount)
                     shipPrefabs.Add(miraPrefab); // TODO: Map Randomization and Using Own Ship Prefab
                 while (Constants.MapNames.Count <= mapCount)
-                    Constants.MapNames = MapUtils.AddToArr(Constants.MapNames, LEVELIMPOSTER_MAP_NAME);
+                    Constants.MapNames = MapUtils.AddToArr(Constants.MapNames, LIConstants.MAP_NAME);
 
                 // Deserialize AssetDB
                 _serializedAssetDB = MapUtils.LoadJsonResource<SerializedAssetDB>("SerializedAssetDB.json");
