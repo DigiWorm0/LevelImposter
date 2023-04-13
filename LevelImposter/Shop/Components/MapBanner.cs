@@ -18,16 +18,20 @@ namespace LevelImposter.Shop
         private LIMetadata? _currentMap = null;
         private GameObject? _loadingOverlay = null;
         private GameObject? _errOverlay = null;
+        private GameObject? _randomOverlay = null;
         private GameObject? _remixIcon = null;
         private Image? _thumbnail = null;
         private TMPro.TMP_Text? _nameText = null;
         private TMPro.TMP_Text? _authorText = null;
         private TMPro.TMP_Text? _descText = null;
         private TMPro.TMP_Text? _remixText = null;
+        private TMPro.TMP_Text? _randomText = null;
         private Button? _downloadButton = null;
         private Button? _playButton = null;
         private Button? _deleteButton = null;
+        private Button? _randomButton = null;
         private Button? _externalButton = null;
+        private Slider? _randomSlider = null;
         private bool _isEnabled = true;
         private bool _isInLobby
         {
@@ -44,13 +48,14 @@ namespace LevelImposter.Shop
         [HideFromIl2Cpp]
         public void SetMap(LIMetadata map)
         {
-            if (_nameText == null || _authorText == null || _descText == null)
+            if (_nameText == null || _authorText == null || _descText == null || _randomSlider == null)
                 return;
             _currentMap = map;
             _loadingOverlay?.SetActive(false);
             _nameText.text = map.name;
             _authorText.text = map.authorName;
             _descText.text = map.description;
+            _randomSlider.value = (ConfigAPI.Instance?.GetMapWeight(_currentMap.id) ?? 1.0f) * 10;
             UpdateButtons();
             GetThumbnail();
             GetRemix();
@@ -61,13 +66,14 @@ namespace LevelImposter.Shop
         /// </summary>
         private void UpdateButtons()
         {
-            if (_downloadButton == null || _playButton == null || _deleteButton == null || _externalButton == null)
+            if (_downloadButton == null || _playButton == null || _deleteButton == null || _randomButton == null || _externalButton == null)
                 return;
             if (_currentMap == null || !_isEnabled)
             {
                 _downloadButton.interactable = false;
                 _playButton.interactable = false;
                 _deleteButton.interactable = false;
+                _randomButton.interactable = false;
                 _externalButton.gameObject.SetActive(false);
             }
             else
@@ -79,6 +85,7 @@ namespace LevelImposter.Shop
                 _downloadButton.interactable = !mapExists && isOnline;
                 _playButton.interactable = mapExists && (isOnline || !_isInLobby);
                 _deleteButton.interactable = mapExists && isOnline;
+                _randomButton.interactable = mapExists && _isInLobby;
                 _externalButton.gameObject.SetActive(isOnline && isPublic);
                 _errOverlay?.SetActive(mapExists && !isOnline && _isInLobby);
                 _remixIcon?.SetActive(isRemix);
@@ -148,6 +155,16 @@ namespace LevelImposter.Shop
         }
 
         /// <summary>
+        /// Event that is called when the random button is pressed
+        /// </summary>
+        public void OnRandomClick()
+        {
+            if (_currentMap == null || _randomOverlay == null)
+                return;
+            _randomOverlay.active = !_randomOverlay.active;
+        }
+
+        /// <summary>
         /// Event that is called when the external button is pressed
         /// </summary>
         public void OnExternalClick()
@@ -155,6 +172,19 @@ namespace LevelImposter.Shop
             if (_currentMap == null)
                 return;
             ShopManager.Instance?.ViewMap(_currentMap.id);
+        }
+
+        /// <summary>
+        /// Event that is called whenever the random slider is moved
+        /// </summary>
+        /// <param name="newValue">New value of the slider from 0 to 10</param>
+        public void OnRandomSliderChange(float newValue)
+        {
+            if (_randomText == null || _currentMap == null)
+                return;
+            float actualValue = newValue * 0.1f;
+            _randomText.text = $"{Mathf.Round(actualValue * 100.0f)}%";
+            ConfigAPI.Instance?.SetMapWeight(_currentMap.id, actualValue);
         }
 
         /// <summary>
@@ -222,23 +252,29 @@ namespace LevelImposter.Shop
 
         public void Awake()
         {
-            _loadingOverlay = transform.FindChild("LoadOverlay").gameObject;
-            _errOverlay = transform.FindChild("ErrOverlay").gameObject;
-            _remixIcon = transform.FindChild("RemixIcon").gameObject;
-            _thumbnail = transform.FindChild("Thumbnail").GetComponent<Image>();
-            _nameText = transform.FindChild("Title").GetComponent<TMPro.TMP_Text>();
-            _authorText = transform.FindChild("Author").GetComponent<TMPro.TMP_Text>();
-            _descText = transform.FindChild("Description").GetComponent<TMPro.TMP_Text>();
-            _remixText = transform.FindChild("Remix").GetComponent<TMPro.TMP_Text>();
-            _downloadButton = transform.FindChild("DownloadBtn").GetComponent<Button>();
-            _playButton = transform.FindChild("PlayBtn").GetComponent<Button>();
-            _deleteButton = transform.FindChild("DeleteBtn").GetComponent<Button>();
-            _externalButton = transform.FindChild("ExternalBtn").GetComponent<Button>();
+            _loadingOverlay = transform.FindChild("LoadOverlay")?.gameObject;
+            _errOverlay = transform.FindChild("ErrOverlay")?.gameObject;
+            _randomOverlay = transform.FindChild("RandomOverlay")?.gameObject;
+            _remixIcon = transform.FindChild("RemixIcon")?.gameObject;
+            _thumbnail = transform.FindChild("Thumbnail")?.GetComponent<Image>();
+            _nameText = transform.FindChild("Title")?.GetComponent<TMPro.TMP_Text>();
+            _authorText = transform.FindChild("Author")?.GetComponent<TMPro.TMP_Text>();
+            _descText = transform.FindChild("Description")?.GetComponent<TMPro.TMP_Text>();
+            _remixText = transform.FindChild("Remix")?.GetComponent<TMPro.TMP_Text>();
+            _randomText = _randomOverlay?.transform.FindChild("Percent")?.GetComponent<TMPro.TMP_Text>();
+            _downloadButton = transform.FindChild("DownloadBtn")?.GetComponent<Button>();
+            _playButton = transform.FindChild("PlayBtn")?.GetComponent<Button>();
+            _randomButton = transform.FindChild("RandomBtn")?.GetComponent<Button>();
+            _deleteButton = transform.FindChild("DeleteBtn")?.GetComponent<Button>();
+            _externalButton = transform.FindChild("ExternalBtn")?.GetComponent<Button>();
+            _randomSlider = _randomOverlay?.transform.FindChild("Slider")?.GetComponent<Slider>();
 
             if (_loadingOverlay == null)
                 LILogger.Warn("Could not find Loading Overlay in Map Banner");
             if (_errOverlay == null)
                 LILogger.Warn("Could not find Error Overlay in Map Banner");
+            if (_randomOverlay == null)
+                LILogger.Warn("Could not find Random Overlay in Map Banner");
             if (_remixIcon == null)
                 LILogger.Warn("Could not find Remix Icon in Map Banner");
             if (_thumbnail == null)
@@ -251,22 +287,31 @@ namespace LevelImposter.Shop
                 LILogger.Warn("Could not find Description Text in Map Banner");
             if (_remixText == null)
                 LILogger.Warn("Could not find Remix Text in Map Banner");
+            if (_randomText == null)
+                LILogger.Warn("Could not find Random Text in Map Banner");
             if (_downloadButton == null)
                 LILogger.Warn("Could not find Download Button in Map Banner");
             if (_playButton == null)
                 LILogger.Warn("Could not find Play Button in Map Banner");
             if (_deleteButton == null)
                 LILogger.Warn("Could not find Delete Button in Map Banner");
+            if (_randomButton == null)
+                LILogger.Warn("Could not find Random Button in Map Banner");
             if (_externalButton == null)
                 LILogger.Warn("Could not find External Button in Map Banner");
+            if (_randomSlider == null)
+                LILogger.Warn("Could not find Random Slider in Map Banner");
         }
         public void Start()
         {
             _downloadButton?.onClick.AddListener((Action)OnDownloadClick);
             _playButton?.onClick.AddListener((Action)OnPlayClick);
             _deleteButton?.onClick.AddListener((Action)OnDeleteClick);
+            _randomButton?.onClick.AddListener((Action)OnRandomClick);
             _externalButton?.onClick.AddListener((Action)OnExternalClick);
             UpdateButtons();
+
+            _randomSlider?.onValueChanged.AddListener((Action<float>)OnRandomSliderChange);
         }
         public void OnDestroy()
         {
@@ -274,6 +319,7 @@ namespace LevelImposter.Shop
             _currentMap = null;
             _loadingOverlay = null;
             _errOverlay = null;
+            _randomOverlay = null;
             _thumbnail = null;
             _nameText = null;
             _authorText = null;
@@ -281,9 +327,12 @@ namespace LevelImposter.Shop
             _downloadButton = null;
             _playButton = null;
             _deleteButton = null;
+            _randomButton = null;
             _externalButton = null;
             _remixIcon = null;
             _remixText = null;
+            _randomText = null;
+            _randomSlider = null;
         }
     }
 }

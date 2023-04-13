@@ -6,6 +6,7 @@ using System.Linq;
 using System.Reflection;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.SceneManagement;
 using System.IO;
 using LevelImposter.DB;
 using LevelImposter.Shop;
@@ -291,11 +292,14 @@ namespace LevelImposter.Core
             }
         }
 
+        /// <summary>
+        /// Waits for PlayerControl.LocalPlayer to be initialized, then calls Action
+        /// </summary>
+        /// <param name="onFinish">Action to call when the local player is initialized</param>
         public static void WaitForPlayer(Action onFinish)
         {
             Coroutines.Start(CoWaitForPlayer(onFinish));
         }
-
         private static IEnumerator CoWaitForPlayer(Action onFinish)
         {
             {

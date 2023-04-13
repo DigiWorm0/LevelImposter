@@ -33,6 +33,7 @@ namespace LevelImposter.Shop
         /// </summary>
         public void Close()
         {
+            ConfigAPI.Instance?.Save();
             if (SceneManager.GetActiveScene().name == "HowToPlay")
                 SceneManager.LoadScene("MainMenu");
             else
@@ -191,6 +192,8 @@ namespace LevelImposter.Shop
         {
             LILogger.Info($"Selecting map [{id}]");
             MapLoader.LoadMap(id, MapUtils.SyncMapID);
+            ConfigAPI.Instance?.SetLastMapID(id);
+
             CloseShop();
         }
 

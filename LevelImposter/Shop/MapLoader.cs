@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using LevelImposter.Core;
@@ -9,7 +9,7 @@ namespace LevelImposter.Shop
     {
         private static string? _lastMapID = null;
         private static LIMap? _currentMap = null;
-        public static LIMap CurrentMap => _currentMap;
+        public static LIMap? CurrentMap => _currentMap;
 
         /// <summary>
         /// Loads a map from <c>LIMap</c> model

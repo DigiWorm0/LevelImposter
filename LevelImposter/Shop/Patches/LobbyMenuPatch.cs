@@ -40,6 +40,7 @@ namespace LevelImposter.Shop
             {
                 MapLoader.UnloadMap();
                 MapUtils.SyncMapID();
+                ConfigAPI.Instance?.SetLastMapID(null);
             }
         }
     }
@@ -53,6 +54,11 @@ namespace LevelImposter.Shop
         public static void Postfix()
         {
             LobbyConsoleBuilder.Build();
+
+            // Load Last Map
+            var lastMapID = ConfigAPI.Instance?.GetLastMapID();
+            if (lastMapID != null && MapFileAPI.Instance?.Exists(lastMapID) == true)
+                MapLoader.LoadMap(lastMapID, MapUtils.SyncMapID);
         }
     }
 
