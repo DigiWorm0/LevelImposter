@@ -161,7 +161,9 @@ namespace LevelImposter.Shop
         {
             if (_currentMap == null || _randomOverlay == null)
                 return;
-            _randomOverlay.active = !_randomOverlay.active;
+            bool isActive = _randomOverlay.active;
+            ShopManager.Instance?.CloseAllPopups();
+            _randomOverlay.active = !isActive;
         }
 
         /// <summary>
@@ -248,6 +250,16 @@ namespace LevelImposter.Shop
         {
             _isEnabled = isEnabled;
             UpdateButtons();
+        }
+
+        /// <summary>
+        /// Closes all popups open
+        /// </summary>
+        public void CloseAllPopups()
+        {
+            if (_randomOverlay == null)
+                return;
+            _randomOverlay.active = false;
         }
 
         public void Awake()

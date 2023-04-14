@@ -17,7 +17,15 @@ namespace LevelImposter.Shop
         public static void Postfix()
         {
             RandomizerSync.SyncRandomSeed();
-            MapSync.SyncMapID(true);
+
+            string? lastMapID = ConfigAPI.Instance?.GetLastMapID();
+
+            if (MapLoader.CurrentMap == null && lastMapID != null)
+                MapLoader.LoadMap(lastMapID, false, MapSync.SyncMapID);
+            else if (MapLoader.IsFallback || MapLoader.CurrentMap == null)
+                MapSync.RegenerateFallbackID();
+            else
+                MapSync.SyncMapID();
         }
     }
     [HarmonyPatch(typeof(AmongUsClient), nameof(AmongUsClient.CreatePlayer))]

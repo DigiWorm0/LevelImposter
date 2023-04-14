@@ -46,8 +46,12 @@ namespace LevelImposter.Shop
         {
             if (__instance.Title == StringNames.GameMapName)
             {
-                MapSync.SyncMapID(!MapLoader.IsFallback);
                 ConfigAPI.Instance?.SetLastMapID(null);
+
+                if (!MapLoader.IsFallback)
+                    MapSync.RegenerateFallbackID();
+                else
+                    MapSync.SyncMapID();
             }
         }
     }

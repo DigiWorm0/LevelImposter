@@ -15,31 +15,26 @@ namespace LevelImposter.Shop
 
         public static bool IsDownloadingMap => _activeDownloadingID != null;
 
+        /// <summary>
+        /// Regenerates the fallback ID and sets it as current map
+        /// </summary>
+        public static void RegenerateFallbackID()
+        {
+            string? randomMapID = GetRandomMapID(new());
+            if (randomMapID != null)
+            {
+                MapLoader.LoadMap(randomMapID, true, SyncMapID);
+                return;
+            }
+        }
 
         /// <summary>
         /// Syncs the map ID across all clients
         /// </summary>
-        public static void SyncMapID() => SyncMapID(false);
-
-        /// <summary>
-        /// Syncs the map ID across all clients
-        /// </summary>
-        /// <param name="regenerateFallbackID">True iff the fallback map ID should be regenerated</param>
-        public static void SyncMapID(bool regenerateFallbackID)
+        public static void SyncMapID()
         {
             if (!AmongUsClient.Instance.AmHost || DestroyableSingleton<TutorialManager>.InstanceExists || PlayerControl.LocalPlayer == null)
                 return;
-
-            // Regenerate Fallback Map
-            if (MapLoader.CurrentMap == null || regenerateFallbackID)
-            {
-                string? randomMapID = GetRandomMapID(new());
-                if (randomMapID != null)
-                {
-                    MapLoader.LoadMap(randomMapID, true, SyncMapID);
-                    return;
-                }
-            }
 
             // Get ID
             string mapIDStr = MapLoader.CurrentMap?.id ?? Guid.Empty.ToString();

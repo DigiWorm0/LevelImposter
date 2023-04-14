@@ -241,6 +241,17 @@ namespace LevelImposter.Shop
         }
 
         /// <summary>
+        /// Closes all map banner popups
+        /// </summary>
+        public void CloseAllPopups()
+        {
+            foreach (MapBanner banner in _shopBanners)
+            {
+                banner.CloseAllPopups();
+            }
+        }
+
+        /// <summary>
         /// Closes the shop Instance, if one exists
         /// </summary>
         public static void CloseShop()
