@@ -59,11 +59,17 @@ namespace LevelImposter.Core
 
         [HideFromIl2Cpp]
         public RenameHandler Renames => _renames;
+        [HideFromIl2Cpp]
         public LIMap? CurrentMap => _currentMap;
         public ShipStatus? ShipStatus => _shipStatus;
         public bool IsReady
         {
-            get { return SpriteLoader.Instance?.RenderCount <= 0 && WAVLoader.Instance?.LoadCount <= 0 && _isReady; }
+            get {
+                return SpriteLoader.Instance?.RenderCount <= 0 &&
+                        WAVLoader.Instance?.LoadCount <= 0 &&
+                        !MapSync.IsDownloadingMap &&
+                        _isReady;
+            }
         }
         
         /// <summary>

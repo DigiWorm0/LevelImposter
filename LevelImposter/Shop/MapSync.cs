@@ -1,0 +1,176 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Reactor.Networking.Attributes;
+using AmongUs.GameOptions;
+using LevelImposter.Core;
+
+namespace LevelImposter.Shop
+{
+    public static class MapSync
+    {
+        private static Guid? _activeDownloadingID = null;
+
+        public static bool IsDownloadingMap => _activeDownloadingID != null;
+
+
+        /// <summary>
+        /// Syncs the map ID across all clients
+        /// </summary>
+        public static void SyncMapID() => SyncMapID(false);
+
+        /// <summary>
+        /// Syncs the map ID across all clients
+        /// </summary>
+        /// <param name="regenerateFallbackID">True iff the fallback map ID should be regenerated</param>
+        public static void SyncMapID(bool regenerateFallbackID)
+        {
+            if (!AmongUsClient.Instance.AmHost || DestroyableSingleton<TutorialManager>.InstanceExists || PlayerControl.LocalPlayer == null)
+                return;
+
+            // Regenerate Fallback Map
+            if (MapLoader.CurrentMap == null || regenerateFallbackID)
+            {
+                string? randomMapID = GetRandomMapID(new());
+                if (randomMapID != null)
+                {
+                    MapLoader.LoadMap(randomMapID, true, SyncMapID);
+                    return;
+                }
+            }
+
+            // Get ID
+            string mapIDStr = MapLoader.CurrentMap?.id ?? Guid.Empty.ToString();
+            if (!Guid.TryParse(mapIDStr, out _))
+            {
+                LILogger.Error($"Invalid map ID [{mapIDStr}]");
+                return;
+            }
+            LILogger.Info($"[RPC] Transmitting map ID [{mapIDStr}]");
+            RPCSendMapID(PlayerControl.LocalPlayer, mapIDStr, MapLoader.IsFallback);
+
+            // Set Map ID
+            if (mapIDStr != Guid.Empty.ToString() && !MapLoader.IsFallback)
+            {
+                IGameOptions currentGameOptions = GameOptionsManager.Instance.CurrentGameOptions;
+                currentGameOptions.SetByte(ByteOptionNames.MapId, (byte)MapType.LevelImposter);
+                GameOptionsManager.Instance.GameHostOptions = GameOptionsManager.Instance.CurrentGameOptions;
+                GameManager.Instance.LogicOptions.SyncOptions();
+            }
+        }
+
+        [MethodRpc((uint)LIRpc.SyncMapID)]
+        private static void RPCSendMapID(PlayerControl _, string mapIDStr, bool isFallback)
+        {
+            LILogger.Info($"[RPC] Received map ID [{mapIDStr}]");
+
+            DownloadManager.Reset();
+            if (GameStartManager.Instance != null)
+                GameStartManager.Instance.ResetStartState();
+
+            // Parse ID
+            bool isSuccess = Guid.TryParse(mapIDStr, out Guid mapID);
+            if (!isSuccess)
+            {
+                LILogger.Error($"Invalid map ID [{mapIDStr}]");
+                return;
+            }
+
+            // Get Current
+            string currentMapID = MapLoader.CurrentMap?.id ?? "";
+            if (_activeDownloadingID != null)
+            {
+                LILogger.Notify("Download stopped.");
+                _activeDownloadingID = null;
+            }
+
+            // Handle ID
+            if (mapID.Equals(Guid.Empty))
+            {
+                MapLoader.UnloadMap();
+            }
+            else if (_activeDownloadingID == mapID)
+            {
+                DownloadManager.StartDownload();
+            }
+            else if (currentMapID == mapIDStr)
+            {
+                return;
+            }
+            else if (MapFileAPI.Instance?.Exists(mapIDStr) == true)
+            {
+                MapLoader.LoadMap(mapIDStr, isFallback, null);
+            }
+            else
+            {
+                _activeDownloadingID = mapID;
+                LILogger.Notify("<color=#1a95d8>Downloading map, please wait...</color>");
+                MapLoader.UnloadMap();
+                DownloadManager.StartDownload();
+                LevelImposterAPI.Instance?.DownloadMap(mapID, (LIMap map) =>
+                {
+                    if (_activeDownloadingID == mapID)
+                    {
+                        MapLoader.LoadMap(map, isFallback);
+                        DownloadManager.StopDownload();
+                        LILogger.Notify("<color=#1a95d8>Download finished!</color>");
+                        _activeDownloadingID = null;
+                        // TODO: Add map to local cache folder
+                    }
+                }, (string error) => {
+                    if (_activeDownloadingID == mapID)
+                        DownloadManager.SetError(error);
+                    _activeDownloadingID = null;
+                });
+            }
+        }
+
+        private static string? GetRandomMapID(List<string> blacklistMaps)
+        {
+            if (MapFileAPI.Instance == null)
+                throw new Exception("Missing MapFileAPI");
+            if (ConfigAPI.Instance == null)
+                throw new Exception("Missing ConfigAPI");
+
+            LILogger.Info("Choosing a random map...");
+
+            // Get all custom maps
+            var fileIDs = new List<string>(MapFileAPI.Instance.ListIDs());
+            var mapIDs = fileIDs.FindAll(id => !blacklistMaps.Contains(id));
+            if (mapIDs.Count <= 0)
+            {
+                LILogger.Warn("No custom maps installed; Mira is loaded by default.");
+                return null;
+            }
+
+            // Get map weights
+            float[] mapWeights = new float[mapIDs.Count];
+            float mapWeightSum = 0;
+            for (int i = 0; i < mapIDs.Count; i++)
+            {
+                var mapWeight = ConfigAPI.Instance.GetMapWeight(mapIDs[i]);
+                mapWeights[i] = mapWeightSum + mapWeight;
+                mapWeightSum += mapWeight;
+            }
+
+            // Choose a random map
+            float randomSum = UnityEngine.Random.Range(0, mapWeightSum);
+            for (int i = 0; i < mapIDs.Count; i++)
+            {
+                string mapID = mapIDs[i];
+                bool isOnline = Guid.TryParse(mapID, out _);
+                if (mapWeights[i] >= randomSum)
+                {
+                    if (isOnline)
+                        return mapID;
+                    blacklistMaps.Add(mapID);
+                    return GetRandomMapID(blacklistMaps);
+                }
+            }
+
+            throw new Exception("Map randomizer reached an impossible state");
+        }
+    }
+}

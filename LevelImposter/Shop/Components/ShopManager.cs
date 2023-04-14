@@ -191,7 +191,7 @@ namespace LevelImposter.Shop
         public void SelectMap(string id)
         {
             LILogger.Info($"Selecting map [{id}]");
-            MapLoader.LoadMap(id, MapUtils.SyncMapID);
+            MapLoader.LoadMap(id, false, MapSync.SyncMapID);
             ConfigAPI.Instance?.SetLastMapID(id);
 
             CloseShop();
@@ -206,9 +206,9 @@ namespace LevelImposter.Shop
             if (!AssetDB.IsInit)
                 return;
             LILogger.Info($"Launching map [{id}]");
-            SyncRandomizer.SyncRandomSeed();
+            RandomizerSync.SyncRandomSeed();
             MapLoader.CleanAssets();
-            MapLoader.LoadMap(id, () =>
+            MapLoader.LoadMap(id, false, () =>
             {
                 AmongUsClient.Instance.TutorialMapId = (int)MapType.LevelImposter;
                 _freeplayComp?.OnClick();

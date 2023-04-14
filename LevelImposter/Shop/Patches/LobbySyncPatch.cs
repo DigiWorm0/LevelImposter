@@ -3,28 +3,30 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
-using LevelImposter.Shop;
+using LevelImposter.Core;
 
-namespace LevelImposter.Core
+namespace LevelImposter.Shop
 {
     /*
      *      Synchronizes a random seed
      *      value to all connected clients
      */
     [HarmonyPatch(typeof(LobbyBehaviour), nameof(LobbyBehaviour.Start))]
-    public static class RandomStartPatch
+    public static class LobbyStartSyncPatch
     {
         public static void Postfix()
         {
-            SyncRandomizer.SyncRandomSeed();
+            RandomizerSync.SyncRandomSeed();
+            MapSync.SyncMapID(true);
         }
     }
     [HarmonyPatch(typeof(AmongUsClient), nameof(AmongUsClient.CreatePlayer))]
-    public static class RandomJoinPatch
+    public static class ClientJoinSyncPatch
     {
         public static void Postfix()
         {
-            RandomStartPatch.Postfix();
+            RandomizerSync.SyncRandomSeed();
+            MapSync.SyncMapID();
         }
     }
 }

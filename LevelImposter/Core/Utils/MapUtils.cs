@@ -240,33 +240,6 @@ namespace LevelImposter.Core
         }
 
         /// <summary>
-        /// Syncs the current map over RPC
-        /// </summary>
-        public static void SyncMapID()
-        {
-            if (!AmongUsClient.Instance.AmHost || DestroyableSingleton<TutorialManager>.InstanceExists || PlayerControl.LocalPlayer == null)
-                return;
-
-            string mapIDStr = MapLoader.CurrentMap?.id ?? Guid.Empty.ToString();
-            if (!Guid.TryParse(mapIDStr, out _))
-            {
-                LILogger.Error($"Invalid map ID [{mapIDStr}]");
-                return;
-            }
-            LILogger.Info($"[RPC] Transmitting map ID [{mapIDStr}]");
-            MapSync.RPCSendMapID(PlayerControl.LocalPlayer, mapIDStr);
-
-            // Set Skeld
-            if (mapIDStr != Guid.Empty.ToString())
-            {
-                IGameOptions currentGameOptions = GameOptionsManager.Instance.CurrentGameOptions;
-                currentGameOptions.SetByte(ByteOptionNames.MapId, (byte)MapType.LevelImposter);
-                GameOptionsManager.Instance.GameHostOptions = GameOptionsManager.Instance.CurrentGameOptions;
-                GameManager.Instance.LogicOptions.SyncOptions();
-            }
-        }
-
-        /// <summary>
         /// Waits for PlayerControl.LocalPlayer to be initialized, then calls Action
         /// </summary>
         /// <param name="onFinish">Action to call when the local player is initialized</param>

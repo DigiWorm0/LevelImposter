@@ -22,6 +22,7 @@ namespace LevelImposter.Core
         SyncMapID,          // Syncs the map ID in the lobby
         SyncRandomSeed,     // Syncs a random seed for util-triggerrand
         ResetPlayer,        // Resets the player on Ctrl-R E S
-        DownloadCheck       // Warns the host that the client is still downloading the map
+        DownloadCheck,       // Warns the host that the client is still downloading the map
+        SyncRandomMapID     // Syncs the fallback randomized map ID in the lobby
     }
 }

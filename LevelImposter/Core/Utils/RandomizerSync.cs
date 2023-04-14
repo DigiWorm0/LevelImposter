@@ -10,7 +10,7 @@ namespace LevelImposter.Core
     /// <summary>
     /// A randomizer class that is synced across all clients
     /// </summary>
-    public static class SyncRandomizer
+    public static class RandomizerSync
     {
         private static int _randomSeed = 0;
 
@@ -37,7 +37,8 @@ namespace LevelImposter.Core
         public static void SyncRandomSeed()
         {
             bool isConnected = AmongUsClient.Instance.AmConnected;
-            if (isConnected && (!AmongUsClient.Instance.AmHost || PlayerControl.LocalPlayer == null))
+            bool isHost = AmongUsClient.Instance.AmHost;
+            if (isConnected && (!isHost || PlayerControl.LocalPlayer == null))
                 return;
             UnityEngine.Random.InitState((int)DateTime.Now.Ticks);
             int newSeed = UnityEngine.Random.RandomRange(int.MinValue, int.MaxValue);

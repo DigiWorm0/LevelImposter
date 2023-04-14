@@ -33,16 +33,4 @@ namespace LevelImposter.Core
             return false;
         }
     }
-    
-    [HarmonyPatch(typeof(IGameOptionsExtensions), nameof(IGameOptionsExtensions.ToHudString))]
-    public static class StringRenamePatch
-    {
-        public static void Postfix(ref string __result)
-        {
-            if (MapLoader.CurrentMap == null)
-                return;
-
-            __result = __result.Replace(LIConstants.MAP_NAME, MapLoader.CurrentMap.name);
-        }
-    }
 }

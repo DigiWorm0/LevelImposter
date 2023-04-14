@@ -16,7 +16,8 @@ namespace LevelImposter.Shop
         public static void Postfix(PingTracker __instance)
         {
             LIMap? currentMap = MapLoader.CurrentMap;
-            if (currentMap == null || currentMap.properties.showPingIndicator == false)
+            bool isFallback = MapLoader.IsFallback;
+            if (currentMap == null || currentMap.properties.showPingIndicator == false || isFallback)
                 return;
             if (!__instance.gameObject.active)
                 __instance.gameObject.SetActive(true);
