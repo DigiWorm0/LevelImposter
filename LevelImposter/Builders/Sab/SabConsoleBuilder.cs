@@ -23,10 +23,11 @@ namespace LevelImposter.Builders
         {
             if (!elem.type.StartsWith("sab-") || elem.type.StartsWith("sab-btn") || elem.type.StartsWith("sab-door"))
                 return;
-            if (LIShipStatus.Instance?.ShipStatus == null)
-                throw new MissingShipException();
 
-            ShipStatus shipStatus = LIShipStatus.Instance.ShipStatus;
+            // ShipStatus
+            var shipStatus = LIShipStatus.Instance?.ShipStatus;
+            if (shipStatus == null)
+                throw new MissingShipException();
 
             // Prefab
             var prefab = AssetDB.GetObject(elem.type);

@@ -9,6 +9,7 @@ namespace LevelImposter.Shop
     {
         private static string? _lastMapID = null;
         private static LIMap? _currentMap = null;
+
         public static LIMap? CurrentMap => _currentMap;
 
         /// <summary>

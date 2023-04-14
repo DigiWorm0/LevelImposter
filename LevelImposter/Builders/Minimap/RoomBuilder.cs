@@ -20,7 +20,7 @@ namespace LevelImposter.Builders
         {
             if (elem.type != "util-room")
                 return;
-            if (LIShipStatus.Instance?.ShipStatus == null)
+            if (LIShipStatus.Instance == null)
                 throw new MissingShipException();
 
             SystemTypes systemType;

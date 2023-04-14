@@ -206,7 +206,7 @@ namespace LevelImposter.Shop
             if (!AssetDB.IsInit)
                 return;
             LILogger.Info($"Launching map [{id}]");
-            MapUtils.SyncRandomSeed();
+            SyncRandomizer.SyncRandomSeed();
             MapLoader.CleanAssets();
             MapLoader.LoadMap(id, () =>
             {

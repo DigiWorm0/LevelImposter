@@ -158,7 +158,7 @@ namespace LevelImposter.Core
                 case "random":
                     if (_sourceID == null)
                         return;
-                    float randVal = MapUtils.GetRandom((Guid)_sourceID, triggerCount);
+                    float randVal = SyncRandomizer.GetRandom((Guid)_sourceID, triggerCount);
                     string triggerID = randVal < 0.5f ? "onRandom 1" : "onRandom 2";
                     Trigger(gameObject, triggerID, orgin, stackSize + 1);
                     triggerCount++;

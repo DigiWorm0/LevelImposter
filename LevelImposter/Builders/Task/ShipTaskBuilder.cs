@@ -40,14 +40,16 @@ namespace LevelImposter.Builders
         /// <exception cref="Exception"></exception>
         public void Build(LIElement elem, Console console)
         {
-            if (LIShipStatus.Instance?.ShipStatus == null)
+            // ShipStatus
+            var shipStatus = LIShipStatus.Instance?.ShipStatus;
+            if (shipStatus == null)
                 throw new MissingShipException();
 
             // Task Container
             if (_taskParent == null)
             {
                 _taskParent = new GameObject("Tasks");
-                _taskParent.transform.SetParent(LIShipStatus.Instance?.transform);
+                _taskParent.transform.SetParent(shipStatus.transform);
             }
 
             // Values
@@ -64,7 +66,7 @@ namespace LevelImposter.Builders
 
             // Rename
             if (prefabTask != null && !string.IsNullOrEmpty(elem.properties.description))
-                LIShipStatus.Instance.Renames.Add(prefabTask.TaskType, elem.properties.description);
+                LIShipStatus.Instance?.Renames.Add(prefabTask.TaskType, elem.properties.description);
 
             // Built List
             bool isBuilt = _builtTypes.Contains(elem.type);

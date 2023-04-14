@@ -16,7 +16,7 @@ namespace LevelImposter.Core
     {
         public static void Postfix()
         {
-            MapUtils.SyncRandomSeed();
+            SyncRandomizer.SyncRandomSeed();
         }
     }
     [HarmonyPatch(typeof(AmongUsClient), nameof(AmongUsClient.CreatePlayer))]

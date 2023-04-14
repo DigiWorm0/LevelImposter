@@ -26,10 +26,6 @@ namespace LevelImposter.Core
     /// </summary>
     public static class MapUtils
     {
-        public const float PLAYER_POS = -5.0f;
-
-        private static int _randomSeed = 0;
-
         /// <summary>
         /// Adds an element to an Il2CppReferenceArray
         /// </summary>
@@ -307,45 +303,6 @@ namespace LevelImposter.Core
         }
 
         /// <summary>
-        /// Gets a random value based on an element GUID.
-        /// Given the same GUID, weight, and seed will always return with the same value.
-        /// Random seeds are synchronized it across all clients and
-        /// regenerated with <c>MapUtils.SyncRandomSeed()</c>
-        /// </summary>
-        /// <param name="id">GUID identifier</param>
-        /// <param name="weight">A weight value to generate new numbers with the same GUID</param>
-        /// <returns>A random float between 0.0 and 1.0 (inclusive)</returns>
-        public static float GetRandom(Guid id, int weight = 0)
-        {
-            int trueSeed = id.GetHashCode() + _randomSeed + weight;
-            UnityEngine.Random.InitState(trueSeed);
-            return UnityEngine.Random.value;
-        }
-
-        /// <summary>
-        /// Generates a new random seed and
-        /// synchronizes it across all clients.
-        /// </summary>
-        public static void SyncRandomSeed()
-        {
-            bool isConnected = AmongUsClient.Instance.AmConnected;
-            if (isConnected && (!AmongUsClient.Instance.AmHost || PlayerControl.LocalPlayer == null))
-                return;
-            UnityEngine.Random.InitState((int)DateTime.Now.Ticks);
-            int newSeed = UnityEngine.Random.RandomRange(int.MinValue, int.MaxValue);
-            if (isConnected)
-                RPCSyncRandomSeed(PlayerControl.LocalPlayer, newSeed);
-            else
-                _randomSeed = newSeed;
-        }
-        [MethodRpc((uint)LIRpc.SyncRandomSeed)]
-        private static void RPCSyncRandomSeed(PlayerControl _, int randomSeed)
-        {
-            LILogger.Info($"[RPC] New random seed set: {randomSeed}");
-            _randomSeed = randomSeed;
-        }
-
-        /// <summary>
         /// Searches an array of LISounds
         /// for a specific sound by type
         /// </summary>
@@ -399,11 +356,12 @@ namespace LevelImposter.Core
         /// <returns>Vector with adjusted Z</returns>
         public static Vector3 ScaleZPositionByY(Vector3 vector)
         {
-            return vector - new Vector3(0, 0, -(vector.y / 1000.0f) + PLAYER_POS);
+            return vector - new Vector3(0, 0, -(vector.y / 1000.0f) + LIConstants.PLAYER_POS);
         }
 
         /// <summary>
         /// Traverses a transform hierarchy and returns a list of transforms that match the given path.
+        /// <c>Transform.Find("path/to/transform");</c> would perform this. However, it only returns 1 transform per path.
         /// </summary>
         /// <param name="path">The path to search for.  The path is a string of transform names separated by forward slashes.</param>
         /// <param name="parent">The transform to start the search from.</param>
