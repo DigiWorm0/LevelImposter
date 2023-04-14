@@ -24,7 +24,11 @@ namespace LevelImposter.Shop
             if (randomMapID != null)
             {
                 MapLoader.LoadMap(randomMapID, true, SyncMapID);
-                return;
+            }
+            else
+            {
+                MapLoader.UnloadMap();
+                SyncMapID();
             }
         }
 
@@ -47,13 +51,12 @@ namespace LevelImposter.Shop
             RPCSendMapID(PlayerControl.LocalPlayer, mapIDStr, MapLoader.IsFallback);
 
             // Set Map ID
-            if (mapIDStr != Guid.Empty.ToString() && !MapLoader.IsFallback)
-            {
-                IGameOptions currentGameOptions = GameOptionsManager.Instance.CurrentGameOptions;
-                currentGameOptions.SetByte(ByteOptionNames.MapId, (byte)MapType.LevelImposter);
-                GameOptionsManager.Instance.GameHostOptions = GameOptionsManager.Instance.CurrentGameOptions;
-                GameManager.Instance.LogicOptions.SyncOptions();
-            }
+            bool isEmpty = MapLoader.CurrentMap == null;
+            if (!isEmpty && !MapLoader.IsFallback)
+                MapUtils.SetLobbyMapType(MapType.LevelImposter);
+            else if (isEmpty && GameOptionsManager.Instance.CurrentGameOptions.MapId == (byte)MapType.LevelImposter)
+                MapUtils.SetLobbyMapType(MapType.Skeld);
+
         }
 
         [MethodRpc((uint)LIRpc.SyncMapID)]
@@ -129,8 +132,6 @@ namespace LevelImposter.Shop
             if (ConfigAPI.Instance == null)
                 throw new Exception("Missing ConfigAPI");
 
-            LILogger.Info("Choosing a random map...");
-
             // Get all custom maps
             var fileIDs = new List<string>(MapFileAPI.Instance.ListIDs());
             var mapIDs = fileIDs.FindAll(id => !blacklistMaps.Contains(id));
@@ -158,6 +159,7 @@ namespace LevelImposter.Shop
                 bool isOnline = Guid.TryParse(mapID, out _);
                 if (mapWeights[i] >= randomSum)
                 {
+                    LILogger.Info($"Map randomizer chose [{mapID}]");
                     if (isOnline)
                         return mapID;
                     blacklistMaps.Add(mapID);

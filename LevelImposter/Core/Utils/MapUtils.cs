@@ -365,5 +365,13 @@ namespace LevelImposter.Core
 
             return results;
         }
+
+        public static void SetLobbyMapType(MapType mapType)
+        {
+            IGameOptions currentGameOptions = GameOptionsManager.Instance.CurrentGameOptions;
+            currentGameOptions.SetByte(ByteOptionNames.MapId, (byte)mapType);
+            GameOptionsManager.Instance.GameHostOptions = GameOptionsManager.Instance.CurrentGameOptions;
+            GameManager.Instance.LogicOptions.SyncOptions();
+        }
     }
 }

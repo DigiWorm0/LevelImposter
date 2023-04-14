@@ -34,6 +34,7 @@ namespace LevelImposter.Shop
         public void Close()
         {
             ConfigAPI.Instance?.Save();
+
             if (SceneManager.GetActiveScene().name == "HowToPlay")
                 SceneManager.LoadScene("MainMenu");
             else
