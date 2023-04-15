@@ -26,7 +26,7 @@ namespace LevelImposter.Core
         private Guid? _sourceID => _sourceElem?.id;
         private string _sourceTrigger = "";
         private Guid? _destID = null;
-        private string _destTrigger = "";
+        private string? _destTrigger = "";
         private LITriggerable? _destTriggerComp = null;
         private bool _isClientSide => _sourceElem?.properties.triggerClientSide != false;
         private int triggerCount = 0;
@@ -98,7 +98,7 @@ namespace LevelImposter.Core
         /// <param name="destID">LIElement ID destination</param>
         /// <param name="destTrigger">Trigger ID destination</param>
         [HideFromIl2Cpp]
-        public void SetTrigger(LIElement sourceElem, string sourceTrigger, Guid? destID, string destTrigger)
+        public void SetTrigger(LIElement sourceElem, string sourceTrigger, Guid? destID, string? destTrigger)
         {
             _sourceElem = sourceElem;
             _sourceTrigger = sourceTrigger;
@@ -169,6 +169,9 @@ namespace LevelImposter.Core
                     break;
                 case "close":
                     SetDoorOpen(false);
+                    break;
+                case "callMeeting":
+                    PlayerControl.LocalPlayer.CmdReportDeadBody(null);
                     break;
             }
         }

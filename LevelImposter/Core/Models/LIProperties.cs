@@ -90,6 +90,9 @@ namespace LevelImposter.Core
         // Spawn
         public bool? spawnDummies { get; set; }
 
+        // Meeting
+        public string? meetingBackground { get; set; }
+
         // Minimap
         public float? minimapScale { get; set; }
         public bool? imposterOnly { get; set; }

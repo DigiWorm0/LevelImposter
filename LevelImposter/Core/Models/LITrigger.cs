@@ -10,6 +10,6 @@ namespace LevelImposter.Core
     {
         public string id { get; set; }
         public Guid? elemID { get; set; }
-        public string triggerID { get; set; }
+        public string? triggerID { get; set; }
     }
 }

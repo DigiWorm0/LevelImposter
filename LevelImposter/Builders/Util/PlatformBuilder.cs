@@ -23,6 +23,8 @@ namespace LevelImposter.Builders
         {
             if (elem.type != "util-platform")
                 return;
+
+            // Singleton
             if (Platform != null)
             {
                 LILogger.Warn("Only 1 util-platform should be used per map");
