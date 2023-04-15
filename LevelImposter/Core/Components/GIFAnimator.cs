@@ -26,6 +26,7 @@ namespace LevelImposter.Core
             "util-cam"
         };
 
+        private bool _defaultLoopGIF = false;
         private bool _isAnimating = false;
         private float[]? _delays;
         private Sprite[]? _frames;
@@ -46,16 +47,26 @@ namespace LevelImposter.Core
             _spriteRenderer = GetComponent<SpriteRenderer>();
             _frames = sprites;
             _delays = frameTimes;
-            Play(true);
+            _defaultLoopGIF = element.properties.loopGIF ?? true;
+            Play();
             if (AUTOPLAY_BLACKLIST.Contains(element.type))
                 Stop();
         }
 
         /// <summary>
-        /// Plays the GIF animation
+        /// Plays the GIF animation with default options
         /// </summary>
-        /// <param name="repeat">True if the GIF should repeat. False otherwise</param>
-        public void Play(bool repeat = false, bool reverse = false)
+        public void Play()
+        {
+            Play(_defaultLoopGIF, false); ;
+        }
+
+        /// <summary>
+        /// Plays the GIF animation with custom options
+        /// </summary>
+        /// <param name="repeat">True iff the GIF should loop</param>
+        /// <param name="reverse">True iff the GIF should play in reverse</param>
+        public void Play(bool repeat, bool reverse)
         {
             if (_frames == null || _delays == null)
                 LILogger.Warn($"{name} does not have a frame sprites or delays");

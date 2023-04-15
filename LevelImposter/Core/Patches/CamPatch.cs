@@ -32,7 +32,7 @@ namespace LevelImposter.Core
             else if (gifAnim != null)
             {
                 if (on)
-                    gifAnim.Play(true);
+                    gifAnim.Play();
                 else
                     gifAnim.Stop();
             }

@@ -13,6 +13,7 @@ namespace LevelImposter.Builders
             if (elem.type != "util-triggerstart")
                 return;
 
+            // TODO: Add onHideAndSeekStart & onClassicStart
             LITriggerSpawnable trigger = obj.AddComponent<LITriggerSpawnable>();
             trigger.SetTrigger(obj, "onStart");
             obj.SetActive(true);

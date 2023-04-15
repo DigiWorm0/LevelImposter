@@ -23,6 +23,7 @@ namespace LevelImposter.Core
         public bool? noShadows { get; set; }
         public bool? noShadowsBehaviour { get; set; }
         public LIColor? color { get; set; }
+        public bool? loopGIF { get; set; }
 
         // Minigame
         public LIMinigameSprite[]? minigames { get; set; }

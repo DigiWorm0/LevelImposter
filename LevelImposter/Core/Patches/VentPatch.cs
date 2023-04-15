@@ -37,7 +37,7 @@ namespace LevelImposter.Core
             }
             else if (gifAnim != null)
             {
-                gifAnim.Play(false);
+                gifAnim.Play(false, false);
             }
             else
             {
@@ -77,7 +77,7 @@ namespace LevelImposter.Core
             }
             else if (gifAnim != null)
             {
-                gifAnim.Play(false);
+                gifAnim.Play(false, false);
             }
             else
             {

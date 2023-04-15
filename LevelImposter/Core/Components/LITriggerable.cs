@@ -136,11 +136,9 @@ namespace LevelImposter.Core
             switch (_sourceTrigger)
             {
                 case "enable":
-                    gameObject.SetActive(true);
                     StartComponents();
                     break;
                 case "disable":
-                    gameObject.SetActive(false);
                     StopComponents();
                     break;
                 case "show":
@@ -183,6 +181,12 @@ namespace LevelImposter.Core
             AmbientSoundPlayer? ambientSound = GetComponent<AmbientSoundPlayer>();
             if (ambientSound != null)
                 ambientSound.OnDestroy();
+            TriggerConsole triggerConsole = GetComponent<TriggerConsole>();
+            if (triggerConsole != null)
+                triggerConsole.SetEnabled(false);
+            SystemConsole sysConsole = GetComponent<SystemConsole>();
+            if (sysConsole != null)
+                sysConsole.enabled = false;
         }
         
         /// <summary>
@@ -195,7 +199,13 @@ namespace LevelImposter.Core
                 ambientSound.Start();
             GIFAnimator? gifAnimator = GetComponent<GIFAnimator>();
             if (gifAnimator != null)
-                gifAnimator.Play(true);
+                gifAnimator.Play();
+            TriggerConsole triggerConsole = GetComponent<TriggerConsole>();
+            if (triggerConsole != null)
+                triggerConsole.SetEnabled(true);
+            SystemConsole sysConsole = GetComponent<SystemConsole>();
+            if (sysConsole != null)
+                sysConsole.enabled = true;
         }
 
         /// <summary>
