@@ -86,6 +86,9 @@ namespace LevelImposter.Core
         public bool? isRoomNameVisible { get; set; }
         public bool? isRoomAdminVisible { get; set; }
 
+        // Spawn
+        public bool? spawnDummies { get; set; }
+
         // Minimap
         public float? minimapScale { get; set; }
         public bool? imposterOnly { get; set; }
