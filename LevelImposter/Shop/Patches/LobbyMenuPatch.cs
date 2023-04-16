@@ -10,11 +10,33 @@ using LevelImposter.DB;
 namespace LevelImposter.Shop
 {
     /*
-     *      Replace Map Name in Options Console
+     *      Replace Map Name in Options Console.
+     *      Also skips Submerged, if it isn't present.
      */
     [HarmonyPatch(typeof(KeyValueOption))]
     public static class MapNameValuePatch
     {
+        /// <summary>
+        /// Removes all placeholder or unavailable maps
+        /// </summary>
+        /// <param name="__instance">KeyValueOption Instance</param>
+        private static void RemoveElems(KeyValueOption __instance)
+        {
+            bool isMapLoaded = MapLoader.CurrentMap != null;
+            for (int i = __instance.Values.Count - 1; i >= 0; i--)
+            {
+                string mapName = __instance.Values[i].Key;
+                bool isPlaceholder = string.IsNullOrEmpty(mapName);
+                bool isUnavailable = !isMapLoaded && mapName == LIConstants.MAP_NAME;
+                if (isPlaceholder || isUnavailable)
+                {
+                    __instance.Values.RemoveAt(i);
+                    if (__instance.Selected >= __instance.Values.Count)
+                        __instance.Selected--;
+                }
+            }
+        }
+
         [HarmonyPrefix]
         [HarmonyPatch(nameof(KeyValueOption.FixedUpdate))]
         public static bool UpdateFix(KeyValueOption __instance)
@@ -24,17 +46,21 @@ namespace LevelImposter.Shop
             bool shouldShowName = __instance.Selected == (int)MapType.LevelImposter || !MapLoader.IsFallback;
             bool isMapLoaded = MapLoader.CurrentMap != null;
 
-            if (isMapTitle && hasChanged && shouldShowName && isMapLoaded)
+            if (isMapTitle && hasChanged)
             {
-                __instance.oldValue = __instance.Selected;
-                __instance.ValueText.text = MapLoader.IsFallback ? LIConstants.MAP_NAME : MapLoader.CurrentMap?.name;
-                return false;
-            }
-            else if (isMapTitle && hasChanged && !isMapLoaded)
-            {
-                for (int i = __instance.Values.Count - 1; i >= 0; i--)
-                    if (__instance.Values[i].Key == LIConstants.MAP_NAME)
-                        __instance.Values.RemoveAt(i);
+                RemoveElems(__instance);
+                if (shouldShowName && isMapLoaded)
+                {
+                    __instance.oldValue = __instance.Selected;
+
+                    
+                    if (MapLoader.IsFallback) // Random Map
+                        __instance.ValueText.text = LIConstants.MAP_NAME;
+                    else // Map Name
+                        __instance.ValueText.text = $"{MapLoader.CurrentMap?.name}\n<size=0.9>by {MapLoader.CurrentMap?.authorName}";
+
+                    return false;
+                }
             }
             return true;
         }
@@ -46,9 +72,10 @@ namespace LevelImposter.Shop
         {
             if (__instance.Title == StringNames.GameMapName)
             {
+                RemoveElems(__instance);
                 ConfigAPI.Instance?.SetLastMapID(null);
 
-                if (!MapLoader.IsFallback)
+                if (!MapLoader.IsFallback || MapLoader.CurrentMap == null)
                     MapSync.RegenerateFallbackID();
                 else
                     MapSync.SyncMapID();
@@ -65,13 +92,6 @@ namespace LevelImposter.Shop
         public static void Postfix()
         {
             LobbyConsoleBuilder.Build();
-
-            // Load Last Map
-            /*
-            var lastMapID = ConfigAPI.Instance?.GetLastMapID();
-            if (lastMapID != null && MapFileAPI.Instance?.Exists(lastMapID) == true)
-                MapLoader.LoadMap(lastMapID, false, () => MapSync.SyncMapID(true));
-            */
         }
     }
 
@@ -89,22 +109,4 @@ namespace LevelImposter.Shop
             __result = __result.Replace(LIConstants.MAP_NAME, MapLoader.CurrentMap.name);
         }
     }
-    /*
-     *      ???
-     */
-    /*
-    [HarmonyPatch(typeof(CreateOptionsPicker), nameof(CreateOptionsPicker.Refresh))]
-    public static class LobbyOptionsRefreshPatch
-    {
-        public static void Prefix(CreateOptionsPicker __instance)
-        {
-            var options = __instance.GetTargetOptions();
-            if (Constants.MapNames[options.MapId] == LIConstants.MAP_NAME)
-            {
-                options.SetByte(AmongUs.GameOptions.ByteOptionNames.MapId, (byte)MapType.Skeld);
-                __instance.SetTargetOptions(options);
-            }
-        }
-    }
-    */
 }

@@ -55,7 +55,7 @@ namespace LevelImposter.Shop
             _nameText.text = map.name;
             _authorText.text = map.authorName;
             _descText.text = map.description;
-            _randomSlider.value = (ConfigAPI.Instance?.GetMapWeight(_currentMap.id) ?? 1.0f) * 10;
+            _randomSlider.value = (ConfigAPI.Instance?.GetMapWeight(_currentMap.id) ?? 1) * 10;
             UpdateButtons();
             GetThumbnail();
             GetRemix();
@@ -116,6 +116,7 @@ namespace LevelImposter.Shop
             MapFileAPI.Instance?.Save(map);
             _loadingOverlay?.SetActive(false);
             ShopManager.Instance?.SetEnabled(true);
+            ShopManager.RegenerateFallback(true);
             UpdateButtons();
         }
 
@@ -152,6 +153,7 @@ namespace LevelImposter.Shop
             MapFileAPI.Instance?.Delete(_currentMap?.id ?? "");
             ThumbnailFileAPI.Instance?.Delete(_currentMap?.id ?? "");
             UpdateButtons();
+            ShopManager.RegenerateFallback(true);
         }
 
         /// <summary>
@@ -184,7 +186,12 @@ namespace LevelImposter.Shop
         {
             if (_randomText == null || _currentMap == null)
                 return;
+
             float actualValue = newValue * 0.1f;
+            bool hasChanged = actualValue != ConfigAPI.Instance?.GetMapWeight(_currentMap.id);
+            if (hasChanged)
+                ShopManager.RegenerateFallback(true);
+
             _randomText.text = $"{Mathf.Round(actualValue * 100.0f)}%";
             ConfigAPI.Instance?.SetMapWeight(_currentMap.id, actualValue);
         }

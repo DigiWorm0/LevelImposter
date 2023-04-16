@@ -19,8 +19,9 @@ namespace LevelImposter.Shop
             RandomizerSync.SyncRandomSeed();
 
             string? lastMapID = ConfigAPI.Instance?.GetLastMapID();
+            bool hasLastMap = lastMapID != null && (MapFileAPI.Instance?.Exists(lastMapID) ?? false);
 
-            if (MapLoader.CurrentMap == null && lastMapID != null)
+            if (MapLoader.CurrentMap == null && lastMapID != null && hasLastMap)
                 MapLoader.LoadMap(lastMapID, false, MapSync.SyncMapID);
             else if (MapLoader.IsFallback || MapLoader.CurrentMap == null)
                 MapSync.RegenerateFallbackID();

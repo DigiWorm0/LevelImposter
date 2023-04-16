@@ -11,7 +11,7 @@ namespace LevelImposter.Core
     /// </summary>
     public static class LIConstants
     {
-        public const string MAP_NAME = "Random LI Map";
+        public const string MAP_NAME = "Random Custom Map";
         public const float PLAYER_POS = -5.0f;
     }
 }

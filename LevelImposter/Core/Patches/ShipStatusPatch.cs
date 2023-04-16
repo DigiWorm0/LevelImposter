@@ -15,10 +15,7 @@ namespace LevelImposter.Core
     {
         public static void Prefix(ShipStatus __instance)
         {
-            bool isFreeplay = AmongUsClient.Instance.NetworkMode == NetworkModes.FreePlay;
-            var mapType = (MapType)(isFreeplay ? AmongUsClient.Instance.TutorialMapId : GameOptionsManager.Instance.CurrentGameOptions.MapId);
-            LILogger.Info(mapType);
-            if (mapType == MapType.LevelImposter)
+            if (MapUtils.GetCurrentMapType() == MapType.LevelImposter)
                 __instance.gameObject.AddComponent<LIShipStatus>();
         }
     }

@@ -51,6 +51,16 @@ namespace LevelImposter.Shop
         public static void UnloadMap()
         {
             _currentMap = null;
+            _isFallback = false;
+        }
+
+        /// <summary>
+        /// Manually sets the fallback flag on the loaded map
+        /// </summary>
+        /// <param name="isFallback">True iff the current map is fallback</param>
+        public static void SetFallback(bool isFallback)
+        {
+            _isFallback = isFallback;
         }
 
         /// <summary>

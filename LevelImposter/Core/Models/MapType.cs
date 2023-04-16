@@ -13,7 +13,7 @@ namespace LevelImposter.Core
         Polus,
         Dleks,
         Airship,
-        //Submerged, // TODO: Add Submerged Support
+        Submerged, // TODO: Add Submerged Support
         LevelImposter
     }
 }

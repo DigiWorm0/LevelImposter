@@ -47,7 +47,7 @@ namespace LevelImposter.Shop
                 LILogger.Error($"Invalid map ID [{mapIDStr}]");
                 return;
             }
-            LILogger.Info($"[RPC] Transmitting map ID [{mapIDStr}]");
+            LILogger.Info($"[RPC] Transmitting map ID [{mapIDStr}] (fallback={MapLoader.IsFallback})");
             RPCSendMapID(PlayerControl.LocalPlayer, mapIDStr, MapLoader.IsFallback);
 
             // Set Map ID
@@ -62,7 +62,7 @@ namespace LevelImposter.Shop
         [MethodRpc((uint)LIRpc.SyncMapID)]
         private static void RPCSendMapID(PlayerControl _, string mapIDStr, bool isFallback)
         {
-            LILogger.Info($"[RPC] Received map ID [{mapIDStr}]");
+            LILogger.Info($"[RPC] Received map ID [{mapIDStr}] (fallback={isFallback})");
 
             DownloadManager.Reset();
             if (GameStartManager.Instance != null)
@@ -78,29 +78,34 @@ namespace LevelImposter.Shop
 
             // Get Current
             string currentMapID = MapLoader.CurrentMap?.id ?? "";
-            if (_activeDownloadingID != null)
+            if (_activeDownloadingID != null && _activeDownloadingID != mapID)
             {
                 LILogger.Notify("Download stopped.");
                 _activeDownloadingID = null;
             }
 
-            // Handle ID
+            // Disable Fallback
             if (mapID.Equals(Guid.Empty))
             {
                 MapLoader.UnloadMap();
             }
+            // Currently Downloading
             else if (_activeDownloadingID == mapID)
             {
                 DownloadManager.StartDownload();
             }
+            // Already Loaded
             else if (currentMapID == mapIDStr)
             {
+                MapLoader.SetFallback(isFallback);
                 return;
             }
+            // In Local Filesystem
             else if (MapFileAPI.Instance?.Exists(mapIDStr) == true)
             {
                 MapLoader.LoadMap(mapIDStr, isFallback, null);
             }
+            // Download if Unavailable
             else
             {
                 _activeDownloadingID = mapID;
@@ -137,7 +142,7 @@ namespace LevelImposter.Shop
             var mapIDs = fileIDs.FindAll(id => !blacklistMaps.Contains(id));
             if (mapIDs.Count <= 0)
             {
-                LILogger.Warn("No custom maps installed; Mira is loaded by default.");
+                LILogger.Warn("Map randomizer could not find any custom maps.");
                 return null;
             }
 
@@ -159,9 +164,11 @@ namespace LevelImposter.Shop
                 bool isOnline = Guid.TryParse(mapID, out _);
                 if (mapWeights[i] >= randomSum)
                 {
-                    LILogger.Info($"Map randomizer chose [{mapID}]");
                     if (isOnline)
+                    {
+                        LILogger.Info($"Map randomizer chose [{mapID}]");
                         return mapID;
+                    }
                     blacklistMaps.Add(mapID);
                     return GetRandomMapID(blacklistMaps);
                 }

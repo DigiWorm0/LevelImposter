@@ -366,12 +366,27 @@ namespace LevelImposter.Core
             return results;
         }
 
+        /// <summary>
+        /// Sets the current map type
+        /// </summary>
+        /// <param name="mapType">Current MapType enum</param>
         public static void SetLobbyMapType(MapType mapType)
         {
             IGameOptions currentGameOptions = GameOptionsManager.Instance.CurrentGameOptions;
             currentGameOptions.SetByte(ByteOptionNames.MapId, (byte)mapType);
             GameOptionsManager.Instance.GameHostOptions = GameOptionsManager.Instance.CurrentGameOptions;
             GameManager.Instance.LogicOptions.SyncOptions();
+        }
+
+        /// <summary>
+        /// Gets the current map type
+        /// </summary>
+        /// <returns>Current MapType enum</returns>
+        public static MapType GetCurrentMapType()
+        {
+            bool isFreeplay = AmongUsClient.Instance.NetworkMode == NetworkModes.FreePlay;
+            var mapID = isFreeplay ? AmongUsClient.Instance.TutorialMapId : GameOptionsManager.Instance.CurrentGameOptions.MapId;
+            return (MapType)mapID;
         }
     }
 }
