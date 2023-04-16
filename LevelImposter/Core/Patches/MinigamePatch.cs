@@ -12,15 +12,15 @@ namespace LevelImposter.Core
     [HarmonyPatch(typeof(Minigame), nameof(Minigame.Begin))]
     public static class MinigamePatch
     {
-        private static Console? _lastConsole = null;
+        public static Console? LastConsole = null;
 
         public static void Postfix(Minigame __instance)
         {
-            var currentConsole = __instance.Console ?? _lastConsole;
+            var currentConsole = __instance.Console ?? LastConsole;
             var minigameSprites = currentConsole?.GetComponent<MinigameSprites>();
             minigameSprites?.LoadMinigame(__instance);
 
-            _lastConsole = currentConsole;
+            LastConsole = currentConsole;
         }
     }
     [HarmonyPatch(typeof(MultistageMinigame), nameof(MultistageMinigame.Begin))]
@@ -29,6 +29,14 @@ namespace LevelImposter.Core
         public static void Postfix(MultistageMinigame __instance)
         {
             MinigamePatch.Postfix(__instance);
+        }
+    }
+    [HarmonyPatch(typeof(Minigame), nameof(Minigame.Close), new System.Type[0])]
+    public static class MinigameClosePatch
+    {
+        public static void Postfix(MultistageMinigame __instance)
+        {
+            MinigamePatch.LastConsole = null;
         }
     }
 }
