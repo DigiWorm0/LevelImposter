@@ -2166,6 +2166,14 @@
       "Paths": [ "dirty_outline/dirty_interior (1)" ]
     },
     {
+      "ID": "task-diagnostics_bg",
+      "Paths": [ "Background" ]
+    },
+    {
+      "ID": "task-diagnostics_ship",
+      "Paths": [ "Gauge/Fill" ]
+    },
+    {
       "ID": "task-distributor_bg",
       "Paths": [ "Background" ]
     },
@@ -2501,7 +2509,31 @@
     },
     {
       "ID": "task-plants1_watercan",
-      "Paths": [ "Stage1Content/storage_waterCan", "SelectorObject/HoldingCanSelector/WaterCan", "SelectorObject/WateringPlantsSelector/WaterCan" ]
+      "Paths": [ "Stage1Content/storage_waterCan", "SelectorObject/HoldingCanSelector/WaterCan" ]
+    },
+    {
+      "ID": "task-plants2_watercan",
+      "Paths": [ "SelectorObject/WateringPlantsSelector/WaterCan" ]
+    },
+    {
+      "ID": "task-plants2_bg",
+      "Paths": [ "Stage2Content/Background" ]
+    },
+    {
+      "ID": "task-plants2_plant1",
+      "Paths": [ "Stage2Content/waterPlants_1" ]
+    },
+    {
+      "ID": "task-plants2_plant2",
+      "Paths": [ "Stage2Content/waterPlants_2" ]
+    },
+    {
+      "ID": "task-plants2_plant3",
+      "Paths": [ "Stage2Content/waterPlants_3" ]
+    },
+    {
+      "ID": "task-plants2_plant4",
+      "Paths": [ "Stage2Content/waterPlants_4" ]
     },
     {
       "ID": "task-process_bg",

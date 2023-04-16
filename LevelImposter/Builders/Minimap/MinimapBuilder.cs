@@ -104,7 +104,7 @@ namespace LevelImposter.Builders
                 throw new MissingShipException();
 
             // Minimap Prefab
-            MapBehaviour mapBehaviour = MapBehaviour.Instance;
+            MapBehaviour? mapBehaviour = MapBehaviour.Instance;
             if (mapBehaviour == null)
             {
                 mapBehaviour = UnityEngine.Object.Instantiate(shipStatus.MapPrefab, HudManager.Instance.transform);
