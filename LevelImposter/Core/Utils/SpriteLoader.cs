@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using UnityEngine;
 using System.Diagnostics;
 using Il2CppInterop.Runtime.Attributes;
@@ -97,6 +98,18 @@ namespace LevelImposter.Core
                 }
             }
             return null;
+        }
+
+        /// <summary>
+        /// Gets whether or not a sprite is in the sprite cache
+        /// </summary>
+        /// <param name="spriteID">GUID of the sprite or associated object</param>
+        /// <returns>True iff the sprite is in the sprite cache</returns>
+        public bool IsSpriteInCache(string? spriteID)
+        {
+            if (_spriteList == null || string.IsNullOrEmpty(spriteID))
+                return false;
+            return _spriteList.Any((spriteData) => spriteData.ID == spriteID);
         }
 
         /// <summary>

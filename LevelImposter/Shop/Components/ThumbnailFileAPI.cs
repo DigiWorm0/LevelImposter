@@ -68,8 +68,8 @@ namespace LevelImposter.Shop
             }
 
             LILogger.Info($"Loading thumbnail [{mapID}] from filesystem");
-            string thumbnailPath = GetPath(mapID);
-            byte[] thumbnailBytes = File.ReadAllBytes(thumbnailPath);
+            bool isInCache = SpriteLoader.Instance?.IsSpriteInCache(mapID) ?? false;
+            byte[] thumbnailBytes = !isInCache ? File.ReadAllBytes(GetPath(mapID)) : new byte[0];
             SpriteLoader.Instance?.LoadSpriteAsync(thumbnailBytes, false, (spriteData) =>
             {
                 Sprite? sprite = spriteData?.Sprite;
