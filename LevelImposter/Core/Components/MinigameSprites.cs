@@ -325,7 +325,7 @@ namespace LevelImposter.Core
                 case "task-weapons_asteroid_3":
                 case "task-weapons_asteroid_4":
                 case "task-weapons_asteroid_5":
-                    ObjectPoolBehavior asteroidPool1 = minigame.Cast<WeaponsMinigame>().asteroidPool;
+                    var asteroidPool1 = minigame.Cast<WeaponsMinigame>().asteroidPool;
                     int asteroidIndex1 = GetIndex(type);
                     UpdateObjectPool(asteroidPool1, (Asteroid asteroid) =>
                     {
@@ -338,12 +338,26 @@ namespace LevelImposter.Core
                 case "task-weapons_broken_3":
                 case "task-weapons_broken_4":
                 case "task-weapons_broken_5":
-                    ObjectPoolBehavior asteroidPool2 = minigame.Cast<WeaponsMinigame>().asteroidPool;
+                    var asteroidPool2 = minigame.Cast<WeaponsMinigame>().asteroidPool;
                     int asteroidIndex2 = GetIndex(type);
                     UpdateObjectPool(asteroidPool2, (Asteroid asteroid) =>
                     {
                         asteroid.BrokenImages[asteroidIndex2] = sprite;
                     });
+                    return false;
+                case "task-garbage_leaf_1":
+                case "task-garbage_leaf_2":
+                case "task-garbage_leaf_3":
+                case "task-garbage_leaf_4":
+                case "task-garbage_leaf_5":
+                case "task-garbage_leaf_6":
+                case "task-garbage_leaf_7":
+                    var garbageMinigame1 = minigame.Cast<EmptyGarbageMinigame>();
+                    var leafIndex = GetIndex(type);
+                    var currentLeafPrefab = garbageMinigame1.LeafPrefabs[leafIndex];
+                    foreach (var obj in garbageMinigame1.Objects)
+                        if (obj.sprite == currentLeafPrefab.sprite)
+                            obj.sprite = sprite;
                     return false;
 
                 default:
