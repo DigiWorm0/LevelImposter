@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
 
-namespace LevelImposter.Core
+namespace LevelImposter.Shop
 {
     [Serializable]
     public class GHAsset

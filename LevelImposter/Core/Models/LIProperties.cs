@@ -23,6 +23,7 @@ namespace LevelImposter.Core
         public bool? noShadows { get; set; }
         public bool? noShadowsBehaviour { get; set; }
         public LIColor? color { get; set; }
+        public bool? loopGIF { get; set; }
 
         // Minigame
         public LIMinigameSprite[]? minigames { get; set; }
@@ -85,6 +86,12 @@ namespace LevelImposter.Core
         // Room
         public bool? isRoomNameVisible { get; set; }
         public bool? isRoomAdminVisible { get; set; }
+
+        // Spawn
+        public bool? spawnDummies { get; set; }
+
+        // Meeting
+        public string? meetingBackground { get; set; }
 
         // Minimap
         public float? minimapScale { get; set; }

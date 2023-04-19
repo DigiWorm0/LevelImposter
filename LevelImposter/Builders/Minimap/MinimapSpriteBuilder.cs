@@ -22,8 +22,11 @@ namespace LevelImposter.Builders
         {
             if (elem.type != "util-minimapsprite")
                 return;
-            if (LIShipStatus.Instance?.ShipStatus == null)
-                throw new Exception("ShipStatus not found");
+
+            // ShipStatus
+            var shipStatus = LIShipStatus.Instance?.ShipStatus;
+            if (shipStatus == null)
+                throw new MissingShipException();
 
             // Minimap
             MapBehaviour mapBehaviour = MinimapBuilder.GetMinimap();
@@ -35,7 +38,7 @@ namespace LevelImposter.Builders
                 _sabCount++;
 
             // GameObject
-            float mapScale = LIShipStatus.Instance.ShipStatus.MapScale;
+            float mapScale = shipStatus.MapScale;
             GameObject spriteObj = new(elem.name);
             spriteObj.layer = (int)Layer.UI;
             spriteObj.transform.SetParent(parentTransform);

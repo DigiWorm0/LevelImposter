@@ -26,7 +26,7 @@ namespace LevelImposter.Core
         private Guid? _sourceID => _sourceElem?.id;
         private string _sourceTrigger = "";
         private Guid? _destID = null;
-        private string _destTrigger = "";
+        private string? _destTrigger = "";
         private LITriggerable? _destTriggerComp = null;
         private bool _isClientSide => _sourceElem?.properties.triggerClientSide != false;
         private int triggerCount = 0;
@@ -98,7 +98,7 @@ namespace LevelImposter.Core
         /// <param name="destID">LIElement ID destination</param>
         /// <param name="destTrigger">Trigger ID destination</param>
         [HideFromIl2Cpp]
-        public void SetTrigger(LIElement sourceElem, string sourceTrigger, Guid? destID, string destTrigger)
+        public void SetTrigger(LIElement sourceElem, string sourceTrigger, Guid? destID, string? destTrigger)
         {
             _sourceElem = sourceElem;
             _sourceTrigger = sourceTrigger;
@@ -136,11 +136,9 @@ namespace LevelImposter.Core
             switch (_sourceTrigger)
             {
                 case "enable":
-                    gameObject.SetActive(true);
                     StartComponents();
                     break;
                 case "disable":
-                    gameObject.SetActive(false);
                     StopComponents();
                     break;
                 case "show":
@@ -158,7 +156,7 @@ namespace LevelImposter.Core
                 case "random":
                     if (_sourceID == null)
                         return;
-                    float randVal = MapUtils.GetRandom((Guid)_sourceID, triggerCount);
+                    float randVal = RandomizerSync.GetRandom((Guid)_sourceID, triggerCount);
                     string triggerID = randVal < 0.5f ? "onRandom 1" : "onRandom 2";
                     Trigger(gameObject, triggerID, orgin, stackSize + 1);
                     triggerCount++;
@@ -172,6 +170,9 @@ namespace LevelImposter.Core
                 case "close":
                     SetDoorOpen(false);
                     break;
+                case "callMeeting":
+                    PlayerControl.LocalPlayer.CmdReportDeadBody(null);
+                    break;
             }
         }
 
@@ -183,6 +184,12 @@ namespace LevelImposter.Core
             AmbientSoundPlayer? ambientSound = GetComponent<AmbientSoundPlayer>();
             if (ambientSound != null)
                 ambientSound.OnDestroy();
+            TriggerConsole triggerConsole = GetComponent<TriggerConsole>();
+            if (triggerConsole != null)
+                triggerConsole.SetEnabled(false);
+            SystemConsole sysConsole = GetComponent<SystemConsole>();
+            if (sysConsole != null)
+                sysConsole.enabled = false;
         }
         
         /// <summary>
@@ -195,7 +202,13 @@ namespace LevelImposter.Core
                 ambientSound.Start();
             GIFAnimator? gifAnimator = GetComponent<GIFAnimator>();
             if (gifAnimator != null)
-                gifAnimator.Play(true);
+                gifAnimator.Play();
+            TriggerConsole triggerConsole = GetComponent<TriggerConsole>();
+            if (triggerConsole != null)
+                triggerConsole.SetEnabled(true);
+            SystemConsole sysConsole = GetComponent<SystemConsole>();
+            if (sysConsole != null)
+                sysConsole.enabled = true;
         }
 
         /// <summary>

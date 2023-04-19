@@ -83,11 +83,6 @@ namespace LevelImposter.Core
                 onLoad(null);
                 return;
             }
-            if (LIShipStatus.Instance == null)
-            {
-                LILogger.Error("Cannot load audio, LIShipStatus.Instance is null");
-                return;
-            }
             StartCoroutine(CoLoadAudio(b64, onLoad).WrapToIl2Cpp());
         }
 

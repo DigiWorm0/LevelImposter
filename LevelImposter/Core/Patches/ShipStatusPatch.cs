@@ -2,6 +2,7 @@ using HarmonyLib;
 using UnityEngine;
 using LevelImposter.Core;
 using LevelImposter.Shop;
+using InnerNet;
 
 namespace LevelImposter.Core
 {
@@ -14,7 +15,29 @@ namespace LevelImposter.Core
     {
         public static void Prefix(ShipStatus __instance)
         {
-            __instance.gameObject.AddComponent<LIShipStatus>();
+            if (MapUtils.GetCurrentMapType() == MapType.LevelImposter)
+                __instance.gameObject.AddComponent<LIShipStatus>();
+            else if (!MapLoader.IsFallback)
+                LILogger.Error("Another mod has changed the map.\nMake sure other map randomizers are disabled.");
+        }
+    }
+
+    /*
+     *      Syncs all players' games
+     */
+    [HarmonyPatch(typeof(InnerNetClient), nameof(InnerNetClient.SendClientReady))]
+    public static class ReadyPatch
+    {
+        public static bool Prefix(InnerNetClient __instance)
+        {
+            if (LIShipStatus.Instance == null || LIShipStatus.Instance.IsReady)
+                return true;
+
+            MapUtils.WaitForShip(() =>
+            {
+                __instance.SendClientReady();
+            });
+            return false;
         }
     }
 

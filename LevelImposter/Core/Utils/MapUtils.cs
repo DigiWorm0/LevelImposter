@@ -6,6 +6,7 @@ using System.Linq;
 using System.Reflection;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.SceneManagement;
 using System.IO;
 using LevelImposter.DB;
 using LevelImposter.Shop;
@@ -25,12 +26,6 @@ namespace LevelImposter.Core
     /// </summary>
     public static class MapUtils
     {
-        public const float PLAYER_POS = -5.0f;
-
-        public static Dictionary<SystemTypes, string> SystemRenames = new();
-        public static Dictionary<TaskTypes, string> TaskRenames = new();
-        private static int _randomSeed = 0;
-
         /// <summary>
         /// Adds an element to an Il2CppReferenceArray
         /// </summary>
@@ -141,26 +136,6 @@ namespace LevelImposter.Core
         }
 
         /// <summary>
-        /// Renames a SystemType in the TranslationController
-        /// </summary>
-        /// <param name="system">System to rename</param>
-        /// <param name="name">String to rename to</param>
-        public static void Rename(SystemTypes system, string name)
-        {
-            SystemRenames[system] = name;
-        }
-
-        /// <summary>
-        /// Renames a TaskTypes in the TranslationController
-        /// </summary>
-        /// <param name="system">Task to rename</param>
-        /// <param name="name">String to rename to</param>
-        public static void Rename(TaskTypes system, string name)
-        {
-            TaskRenames[system] = name;
-        }
-
-        /// <summary>
         /// Converts a base64 encoded string into a byte array
         /// </summary>
         /// <param name="base64">Base64 encoded data</param>
@@ -265,37 +240,13 @@ namespace LevelImposter.Core
         }
 
         /// <summary>
-        /// Syncs the current map over RPC
+        /// Waits for PlayerControl.LocalPlayer to be initialized, then calls Action
         /// </summary>
-        public static void SyncMapID()
-        {
-            if (!AmongUsClient.Instance.AmHost || DestroyableSingleton<TutorialManager>.InstanceExists || PlayerControl.LocalPlayer == null)
-                return;
-
-            string mapIDStr = MapLoader.CurrentMap?.id ?? Guid.Empty.ToString();
-            if (!Guid.TryParse(mapIDStr, out _))
-            {
-                LILogger.Error($"Invalid map ID [{mapIDStr}]");
-                return;
-            }
-            LILogger.Info($"[RPC] Transmitting map ID [{mapIDStr}]");
-            MapSync.RPCSendMapID(PlayerControl.LocalPlayer, mapIDStr);
-
-            // Set Skeld
-            if (mapIDStr != Guid.Empty.ToString())
-            {
-                IGameOptions currentGameOptions = GameOptionsManager.Instance.CurrentGameOptions;
-                currentGameOptions.SetByte(ByteOptionNames.MapId, (byte)MapType.LevelImposter); // TODO: Move MapID outside default range
-                GameOptionsManager.Instance.GameHostOptions = GameOptionsManager.Instance.CurrentGameOptions;
-                GameManager.Instance.LogicOptions.SyncOptions();
-            }
-        }
-
+        /// <param name="onFinish">Action to call when the local player is initialized</param>
         public static void WaitForPlayer(Action onFinish)
         {
             Coroutines.Start(CoWaitForPlayer(onFinish));
         }
-
         private static IEnumerator CoWaitForPlayer(Action onFinish)
         {
             {
@@ -307,42 +258,21 @@ namespace LevelImposter.Core
         }
 
         /// <summary>
-        /// Gets a random value based on an element GUID.
-        /// Given the same GUID, weight, and seed will always return with the same value.
-        /// Random seeds are synchronized it across all clients and
-        /// regenerated with <c>MapUtils.SyncRandomSeed()</c>
+        /// Waits for ShipStatus to be ready, then calls Action
         /// </summary>
-        /// <param name="id">GUID identifier</param>
-        /// <param name="weight">A weight value to generate new numbers with the same GUID</param>
-        /// <returns>A random float between 0.0 and 1.0 (inclusive)</returns>
-        public static float GetRandom(Guid id, int weight = 0)
+        /// <param name="onFinish">Action to call when the map is initialized</param>
+        public static void WaitForShip(Action onFinish)
         {
-            int trueSeed = id.GetHashCode() + _randomSeed + weight;
-            UnityEngine.Random.InitState(trueSeed);
-            return UnityEngine.Random.value;
+            Coroutines.Start(CoWaitForShip(onFinish));
         }
-
-        /// <summary>
-        /// Generates a new random seed and
-        /// synchronizes it across all clients.
-        /// </summary>
-        public static void SyncRandomSeed()
+        private static IEnumerator CoWaitForShip(Action onFinish)
         {
-            bool isConnected = AmongUsClient.Instance.AmConnected;
-            if (isConnected && (!AmongUsClient.Instance.AmHost || PlayerControl.LocalPlayer == null))
-                return;
-            UnityEngine.Random.InitState((int)DateTime.Now.Ticks);
-            int newSeed = UnityEngine.Random.RandomRange(int.MinValue, int.MaxValue);
-            if (isConnected)
-                RPCSyncRandomSeed(PlayerControl.LocalPlayer, newSeed);
-            else
-                _randomSeed = newSeed;
-        }
-        [MethodRpc((uint)LIRpc.SyncRandomSeed)]
-        private static void RPCSyncRandomSeed(PlayerControl _, int randomSeed)
-        {
-            LILogger.Info($"[RPC] New random seed set: {randomSeed}");
-            _randomSeed = randomSeed;
+            {
+                while (LIShipStatus.Instance?.IsReady == false)
+                    yield return null;
+                onFinish.Invoke();
+                onFinish = null;
+            }
         }
 
         /// <summary>
@@ -399,11 +329,12 @@ namespace LevelImposter.Core
         /// <returns>Vector with adjusted Z</returns>
         public static Vector3 ScaleZPositionByY(Vector3 vector)
         {
-            return vector - new Vector3(0, 0, -(vector.y / 1000.0f) + PLAYER_POS);
+            return vector - new Vector3(0, 0, -(vector.y / 1000.0f) + LIConstants.PLAYER_POS);
         }
 
         /// <summary>
         /// Traverses a transform hierarchy and returns a list of transforms that match the given path.
+        /// <c>Transform.Find("path/to/transform");</c> would perform this. However, it only returns 1 transform per path.
         /// </summary>
         /// <param name="path">The path to search for.  The path is a string of transform names separated by forward slashes.</param>
         /// <param name="parent">The transform to start the search from.</param>
@@ -433,6 +364,29 @@ namespace LevelImposter.Core
                 results.AddRange(GetTransforms(remainingPath, firstPartTransform));
 
             return results;
+        }
+
+        /// <summary>
+        /// Sets the current map type
+        /// </summary>
+        /// <param name="mapType">Current MapType enum</param>
+        public static void SetLobbyMapType(MapType mapType)
+        {
+            IGameOptions currentGameOptions = GameOptionsManager.Instance.CurrentGameOptions;
+            currentGameOptions.SetByte(ByteOptionNames.MapId, (byte)mapType);
+            GameOptionsManager.Instance.GameHostOptions = GameOptionsManager.Instance.CurrentGameOptions;
+            GameManager.Instance.LogicOptions.SyncOptions();
+        }
+
+        /// <summary>
+        /// Gets the current map type
+        /// </summary>
+        /// <returns>Current MapType enum</returns>
+        public static MapType GetCurrentMapType()
+        {
+            bool isFreeplay = AmongUsClient.Instance.NetworkMode == NetworkModes.FreePlay;
+            var mapID = isFreeplay ? AmongUsClient.Instance.TutorialMapId : GameOptionsManager.Instance.CurrentGameOptions.MapId;
+            return (MapType)mapID;
         }
     }
 }

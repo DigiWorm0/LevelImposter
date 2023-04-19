@@ -18,7 +18,7 @@ namespace LevelImposter.Core
     {
         public static bool Prefix([HarmonyArgument(0)] PlayerControl pc, Vent __instance)
         {
-            if (MapLoader.CurrentMap == null)
+            if (LIShipStatus.Instance == null)
                 return true;
 
             // Player
@@ -37,7 +37,7 @@ namespace LevelImposter.Core
             }
             else if (gifAnim != null)
             {
-                gifAnim.Play(false);
+                gifAnim.Play(false, false);
             }
             else
             {
@@ -59,7 +59,7 @@ namespace LevelImposter.Core
     {
         public static bool Prefix([HarmonyArgument(0)] PlayerControl pc, Vent __instance)
         {
-            if (MapLoader.CurrentMap == null)
+            if (LIShipStatus.Instance == null)
                 return true;
 
             // Player
@@ -77,7 +77,7 @@ namespace LevelImposter.Core
             }
             else if (gifAnim != null)
             {
-                gifAnim.Play(false);
+                gifAnim.Play(false, false);
             }
             else
             {

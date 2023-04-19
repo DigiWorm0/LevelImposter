@@ -12,5 +12,7 @@ namespace LevelImposter.Core
         public LIColor? reactorColorBad { get; set; }
         public LIColor? lightsColorOn { get; set; }
         public LIColor? lightsColorOff { get; set; }
+        public LIColor? fuelColor { get; set; }
+        public LIColor? fuelBgColor { get; set; }
     }
 }

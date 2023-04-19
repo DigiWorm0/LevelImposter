@@ -29,7 +29,7 @@ namespace LevelImposter.Builders
             // ShipStatus
             var shipStatus = LIShipStatus.Instance?.ShipStatus;
             if (shipStatus == null)
-                throw new Exception("ShipStatus not found");
+                throw new MissingShipException();
 
             // Prefab
             var prefab = AssetDB.GetObject(elem.type);

@@ -19,8 +19,11 @@ namespace LevelImposter.Builders
         {
             if (elem.type != "util-room" || elem.properties.isRoomAdminVisible == false)
                 return;
-            if (LIShipStatus.Instance?.ShipStatus == null)
-                throw new Exception("ShipStatus not found");
+
+            // ShipStatus
+            var shipStatus = LIShipStatus.Instance?.ShipStatus;
+            if (shipStatus == null)
+                throw new MissingShipException();
 
             MapBehaviour mapBehaviour = MinimapBuilder.GetMinimap();
             MapCountOverlay mapCountOverlay = mapBehaviour.countOverlay;
@@ -33,7 +36,7 @@ namespace LevelImposter.Builders
             SystemTypes systemType = RoomBuilder.GetSystem(elem.id);
 
             // Map Room
-            float overlayScale = mapCountOverlay.transform.localScale.x * LIShipStatus.Instance.ShipStatus.MapScale;
+            float overlayScale = mapCountOverlay.transform.localScale.x * shipStatus.MapScale;
             GameObject roomObj = new(elem.name);
             roomObj.transform.SetParent(mapCountOverlay.transform);
             roomObj.transform.localPosition = new Vector3(

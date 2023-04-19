@@ -24,7 +24,7 @@ namespace LevelImposter.Core
 
         public static bool Prefix([HarmonyArgument(0)] SystemTypes systemType)
         {
-            if (MapLoader.CurrentMap == null)
+            if (LIShipStatus.Instance == null)
                 return true;
 
             TaskTypes taskType = _systemTaskPairs[systemType];

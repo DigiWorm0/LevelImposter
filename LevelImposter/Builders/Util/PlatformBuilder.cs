@@ -23,12 +23,19 @@ namespace LevelImposter.Builders
         {
             if (elem.type != "util-platform")
                 return;
+
+            // Singleton
             if (Platform != null)
             {
                 LILogger.Warn("Only 1 util-platform should be used per map");
                 return;
             }
-            
+
+            // ShipStatus
+            var shipStatus = LIShipStatus.Instance?.ShipStatus;
+            if (shipStatus == null)
+                throw new MissingShipException();
+
             // Prefab
             var prefab = AssetDB.GetObject(elem.type);
             if (prefab == null)
@@ -68,11 +75,11 @@ namespace LevelImposter.Builders
 
             // Consoles
             GameObject leftObj = new("Left Console");
-            leftObj.transform.SetParent(LIShipStatus.Instance?.transform);
+            leftObj.transform.SetParent(shipStatus.transform);
             leftObj.transform.localPosition = leftUsePos;
             leftObj.AddComponent<BoxCollider2D>().isTrigger = true;
             GameObject rightObj = new("Right Console");
-            rightObj.transform.SetParent(LIShipStatus.Instance?.transform);
+            rightObj.transform.SetParent(shipStatus.transform);
             rightObj.transform.localPosition = rightUsePos;
             rightObj.AddComponent<BoxCollider2D>().isTrigger = true;
 

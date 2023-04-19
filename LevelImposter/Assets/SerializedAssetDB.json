@@ -2166,6 +2166,14 @@
       "Paths": [ "dirty_outline/dirty_interior (1)" ]
     },
     {
+      "ID": "task-diagnostics_bg",
+      "Paths": [ "Background" ]
+    },
+    {
+      "ID": "task-diagnostics_ship",
+      "Paths": [ "Gauge/Fill" ]
+    },
+    {
       "ID": "task-distributor_bg",
       "Paths": [ "Background" ]
     },
@@ -2180,6 +2188,31 @@
     {
       "ID": "task-distributor_spin2",
       "Paths": [ "Sweeper2 (1)/Sweeper2", "Sweeper2 (1)/Shadow2" ]
+    },
+    {
+      "ID": "task-divert1_bg",
+      "Paths": [ "Background" ]
+    },
+    {
+      "ID": "task-divert1_slider",
+      "Paths": [
+        "Sliders/REngineSlider",
+        "Sliders/LEngineSlider",
+        "Sliders/WeaponSlider",
+        "Sliders/ShieldSlider",
+        "Sliders/NavSlider",
+        "Sliders/CommsSlider",
+        "Sliders/LifeSuppSlider",
+        "Sliders/SecuritySlider"
+      ]
+    },
+    {
+      "ID": "task-divert2_bg",
+      "Paths": [ "electricity_Receive_Bg" ]
+    },
+    {
+      "ID": "task-divert2_switch",
+      "Paths": [ "electricity_Receive_switch" ]
     },
     {
       "ID": "task-download_bg",
@@ -2224,6 +2257,54 @@
     {
       "ID": "task-fans2_square",
       "Paths": [ "fans_square", "ConfirmButton" ]
+    },
+    {
+      "ID": "task-fuel1_bg",
+      "Paths": [ "First/Background" ]
+    },
+    {
+      "ID": "task-fuel1_wires",
+      "Paths": [ "First/Background/engineFuel_wires" ]
+    },
+    {
+      "ID": "task-fuel1_btnbg",
+      "Paths": [ "First/Background/engineFuel_buttonBase" ]
+    },
+    {
+      "ID": "task-fuel1_btn",
+      "Paths": [ "First/Background/engineFuel_buttonBase/engineFuel_Button" ]
+    },
+    {
+      "ID": "task-fuel1_redlight",
+      "Paths": [ "First/Background/engineFuel_buttonBase/redLight" ]
+    },
+    {
+      "ID": "task-fuel1_greenlight",
+      "Paths": [ "First/Background/engineFuel_buttonBase/GreenLight" ]
+    },
+    {
+      "ID": "task-fuel2_bg",
+      "Paths": [ "Second/Background" ]
+    },
+    {
+      "ID": "task-fuel2_wires",
+      "Paths": [ "Second/Background/engineFuel_wires" ]
+    },
+    {
+      "ID": "task-fuel2_btnbg",
+      "Paths": [ "Second/Background/engineFuel_buttonBase" ]
+    },
+    {
+      "ID": "task-fuel2_btn",
+      "Paths": [ "Second/Background/engineFuel_buttonBase/engineFuel_Button" ]
+    },
+    {
+      "ID": "task-fuel2_redlight",
+      "Paths": [ "Second/Background/engineFuel_buttonBase/redLight" ]
+    },
+    {
+      "ID": "task-fuel2_greenlight",
+      "Paths": [ "Second/Background/engineFuel_buttonBase/GreenLight" ]
     },
     {
       "ID": "task-garbage_bg",
@@ -2346,6 +2427,43 @@
       "Paths": [ "Background" ]
     },
     {
+      "ID": "task-nodeswitch_bg",
+      "Paths": [ "Background" ]
+    },
+    {
+      "ID": "task-nodeswitch_switch",
+      "Paths": [
+        "Node_CA/panel_weather2_switch",
+        "Node_TB/panel_weather2_switch",
+        "Node_IRO/panel_weather2_switch",
+        "Node_PD/panel_weather2_switch",
+        "Node_GI/panel_weather2_switch",
+        "Node_MLG/panel_weather2_switch"
+      ]
+    },
+    {
+      "ID": "task-nodeswitch_lightoff",
+      "Paths": [
+        "Node_CA/panel_weather2_lampOff",
+        "Node_TB/panel_weather2_lampOff",
+        "Node_IRO/panel_weather2_lampOff",
+        "Node_PD/panel_weather2_lampOff",
+        "Node_GI/panel_weather2_lampOff",
+        "Node_MLG/panel_weather2_lampOff"
+      ]
+    },
+    {
+      "ID": "task-nodeswitch_screenlight",
+      "Paths": [
+        "Node_CA",
+        "Node_TB",
+        "Node_IRO",
+        "Node_PD",
+        "Node_GI",
+        "Node_MLG"
+      ]
+    },
+    {
       "ID": "task-oxygen_cannister",
       "Paths": [ "panel_o2fill_cannister" ]
     },
@@ -2391,7 +2509,31 @@
     },
     {
       "ID": "task-plants1_watercan",
-      "Paths": [ "Stage1Content/storage_waterCan", "SelectorObject/HoldingCanSelector/WaterCan", "SelectorObject/WateringPlantsSelector/WaterCan" ]
+      "Paths": [ "Stage1Content/storage_waterCan", "SelectorObject/HoldingCanSelector/WaterCan" ]
+    },
+    {
+      "ID": "task-plants2_watercan",
+      "Paths": [ "SelectorObject/WateringPlantsSelector/WaterCan" ]
+    },
+    {
+      "ID": "task-plants2_bg",
+      "Paths": [ "Stage2Content/Background" ]
+    },
+    {
+      "ID": "task-plants2_plant1",
+      "Paths": [ "Stage2Content/waterPlants_1" ]
+    },
+    {
+      "ID": "task-plants2_plant2",
+      "Paths": [ "Stage2Content/waterPlants_2" ]
+    },
+    {
+      "ID": "task-plants2_plant3",
+      "Paths": [ "Stage2Content/waterPlants_3" ]
+    },
+    {
+      "ID": "task-plants2_plant4",
+      "Paths": [ "Stage2Content/waterPlants_4" ]
     },
     {
       "ID": "task-process_bg",
@@ -2880,6 +3022,62 @@
     {
       "ID": "task-vending_note",
       "Paths": [ "paperSlip" ]
+    },
+    {
+      "ID": "task-waterjug1_leftoutline",
+      "Paths": [ "First/DestGauge/Outline" ]
+    },
+    {
+      "ID": "task-waterjug1_leftbg",
+      "Paths": [ "First/DestGauge/panel_water_bg" ]
+    },
+    {
+      "ID": "task-waterjug1_rightoutline",
+      "Paths": [ "First/SrcGauge/Outline" ]
+    },
+    {
+      "ID": "task-waterjug1_rightbg",
+      "Paths": [ "First/SrcGauge/panel_water_bg" ]
+    },
+    {
+      "ID": "task-waterjug1_btnup",
+      "Paths": [ "First/water_buttonUp" ]
+    },
+    {
+      "ID": "task-waterjug1_leftwaterfill",
+      "Paths": [ "First/DestGauge/BackFillColor" ]
+    },
+    {
+      "ID": "task-waterjug1_rightwaterfill",
+      "Paths": [ "First/SrcGauge/BackFillColor" ]
+    },
+    {
+      "ID": "task-waterjug2_leftoutline",
+      "Paths": [ "Second/SrcGauge/Outline" ]
+    },
+    {
+      "ID": "task-waterjug2_leftbg",
+      "Paths": [ "Second/SrcGauge/panel_water_bg" ]
+    },
+    {
+      "ID": "task-waterjug2_rightoutline",
+      "Paths": [ "Second/DestGauge/Outline" ]
+    },
+    {
+      "ID": "task-waterjug2_rightbg",
+      "Paths": [ "Second/DestGauge/panel_water_bg" ]
+    },
+    {
+      "ID": "task-waterjug2_btnup",
+      "Paths": [ "Second/water_buttonDown" ]
+    },
+    {
+      "ID": "task-waterjug2_leftwaterfill",
+      "Paths": [ "Second/SrcGauge/BackFillColor" ]
+    },
+    {
+      "ID": "task-waterjug2_rightwaterfill",
+      "Paths": [ "Second/DestGauge/BackFillColor" ]
     },
     {
       "ID": "task-waterwheel1_bg",

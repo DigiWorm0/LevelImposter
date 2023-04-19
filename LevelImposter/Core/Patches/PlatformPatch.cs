@@ -17,7 +17,7 @@ namespace LevelImposter.Core
     {
         public static bool Prefix([HarmonyArgument(0)] byte callId, [HarmonyArgument(1)] MessageReader reader, PlayerControl __instance)
         {
-            if (MapLoader.CurrentMap == null)
+            if (LIShipStatus.Instance == null)
                 return true;
 
             if (callId == 32 && AmongUsClient.Instance.AmHost)
@@ -38,7 +38,7 @@ namespace LevelImposter.Core
     {
         public static bool Prefix(PlayerControl __instance)
         {
-            if (MapLoader.CurrentMap == null)
+            if (LIShipStatus.Instance == null)
                 return true;
 
             if (AmongUsClient.Instance.AmHost)
@@ -66,7 +66,7 @@ namespace LevelImposter.Core
     {
         public static bool Prefix([HarmonyArgument(0)] PlayerControl player, MovingPlatformBehaviour __instance)
         {
-            if (MapLoader.CurrentMap == null)
+            if (LIShipStatus.Instance == null)
                 return true;
             if (player.Data.IsDead || player.Data.Disconnected || __instance.Target)
                 return true;

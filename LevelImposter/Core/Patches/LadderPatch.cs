@@ -17,7 +17,7 @@ namespace LevelImposter.Core
     {
         public static bool Prefix([HarmonyArgument(0)] byte callId, [HarmonyArgument(1)] MessageReader reader, PlayerPhysics __instance)
         {
-            if (MapLoader.CurrentMap == null)
+            if (LIShipStatus.Instance == null)
                 return true;
 
             if (callId == 31)

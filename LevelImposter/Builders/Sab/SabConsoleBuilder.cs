@@ -25,9 +25,9 @@ namespace LevelImposter.Builders
                 return;
 
             // ShipStatus
-            if (LIShipStatus.Instance?.ShipStatus == null)
-                throw new Exception("ShipStatus not found");
-            ShipStatus shipStatus = LIShipStatus.Instance.ShipStatus;
+            var shipStatus = LIShipStatus.Instance?.ShipStatus;
+            if (shipStatus == null)
+                throw new MissingShipException();
 
             // Prefab
             var prefab = AssetDB.GetObject(elem.type);
@@ -47,7 +47,7 @@ namespace LevelImposter.Builders
                 return;
             }
             if (!string.IsNullOrEmpty(elem.properties.description))
-                MapUtils.Rename(sabotageTask.TaskType, elem.properties.description);
+                LIShipStatus.Instance.Renames.Add(sabotageTask.TaskType, elem.properties.description);
 
             // Console
             Console console = obj.AddComponent<Console>();

@@ -19,7 +19,7 @@ namespace LevelImposter.Core
 
         public static void Postfix()
         {
-            if (MapLoader.CurrentMap == null)
+            if (LIShipStatus.Instance == null)
                 return;
             if (!ModCompatibility.IsTOUEnabled && !ModCompatibility.IsTOREnabled)
                 return;

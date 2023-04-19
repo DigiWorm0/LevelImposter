@@ -48,9 +48,12 @@ namespace LevelImposter.Builders
             bool isMedscan = elem.type == "task-medscan";
             if (isMedscan)
             {
-                ShipStatus? shipStatus = LIShipStatus.Instance?.ShipStatus;
+                // ShipStatus
+                var shipStatus = LIShipStatus.Instance?.ShipStatus;
                 if (shipStatus == null)
-                    throw new Exception("Missing ShipStatus");
+                    throw new MissingShipException();
+
+                // MedScanner
                 if (shipStatus.MedScanner != null)
                     LILogger.Warn("Only 1 med scanner can be used per map");
                 MedScannerBehaviour medscan = obj.AddComponent<MedScannerBehaviour>();

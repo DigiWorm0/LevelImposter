@@ -18,6 +18,11 @@ namespace LevelImposter.Builders
             if (elem.type != "util-room" || elem.properties.isRoomNameVisible == false)
                 return;
 
+            // ShipStatus
+            var shipStatus = LIShipStatus.Instance?.ShipStatus;
+            if (shipStatus == null)
+                throw new MissingShipException();
+
             MapBehaviour mapBehaviour = MinimapBuilder.GetMinimap();
 
             // Clone
@@ -25,7 +30,7 @@ namespace LevelImposter.Builders
             GameObject roomNameClone = roomNames.GetChild(0).gameObject;
 
             // Object
-            float mapScale = LIShipStatus.Instance.ShipStatus.MapScale;
+            float mapScale = shipStatus.MapScale;
             GameObject roomName = UnityEngine.Object.Instantiate(roomNameClone, roomNames);
             roomName.name = elem.name;
             roomName.layer = (int)Layer.UI;

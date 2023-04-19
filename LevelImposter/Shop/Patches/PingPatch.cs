@@ -2,9 +2,8 @@ using HarmonyLib;
 using System.Text;
 using UnityEngine;
 using LevelImposter.Core;
-using LevelImposter.Shop;
 
-namespace LevelImposter.Core
+namespace LevelImposter.Shop
 {
     /*
      *      Gives credit to map makers
@@ -16,14 +15,17 @@ namespace LevelImposter.Core
     {
         public static void Postfix(PingTracker __instance)
         {
-            LIMap currentMap = MapLoader.CurrentMap;
-            if (currentMap == null)
-                return;
-            if (currentMap.properties.showPingIndicator == false)
+            LIMap? currentMap = MapLoader.CurrentMap;
+            MapType mapType = MapUtils.GetCurrentMapType();
+
+            if (mapType != MapType.LevelImposter || 
+                currentMap == null ||
+                currentMap.properties.showPingIndicator == false)
                 return;
             if (!__instance.gameObject.active)
                 __instance.gameObject.SetActive(true);
 
+            bool isFallback = MapLoader.IsFallback;
             bool isPublished = !string.IsNullOrEmpty(currentMap.authorID);
             bool isInLobby = LobbyBehaviour.Instance != null;
             StringBuilder pingBuilder = new();
@@ -41,10 +43,15 @@ namespace LevelImposter.Core
                 pingBuilder.Append("\n");
 
             // Map Name
-            pingBuilder.Append($"<color=#1a95d8>{currentMap.name}\n");
+            if (isFallback && isInLobby)
+                pingBuilder.Append($"<color=#1a95d8>{LIConstants.MAP_NAME}\n");
+            else
+                pingBuilder.Append($"<color=#1a95d8>{currentMap.name}\n");
 
             // Map Author
-            if (isPublished)
+            if (isFallback && isInLobby)
+                pingBuilder.Append($"<size=2>by ???</size></color>");
+            else if (isPublished)
                 pingBuilder.Append($"<size=2>by {currentMap.authorName}</size></color>");
             else
                 pingBuilder.Append($"<size=2><i>(Freeplay Only)</i></size></color>");

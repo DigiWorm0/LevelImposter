@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using LevelImposter.Core;
@@ -9,18 +9,25 @@ namespace LevelImposter.Shop
     {
         private static string? _lastMapID = null;
         private static LIMap? _currentMap = null;
-        public static LIMap CurrentMap => _currentMap;
+        private static bool _isFallback = false;
+
+        public static LIMap? CurrentMap => _currentMap;
+        public static bool IsFallback => _isFallback;
 
         /// <summary>
         /// Loads a map from <c>LIMap</c> model
         /// </summary>
         /// <param name="map">LevelImposter map data</param>
-        public static void LoadMap(LIMap? map)
+        public static void LoadMap(LIMap? map, bool isFallback)
         {
             if (_lastMapID != map?.id)
                 CleanAssets();
             _lastMapID = map?.id;
             _currentMap = map;
+            _isFallback = isFallback;
+
+            if (map != null && LIShipStatus.Instance != null)
+                LIShipStatus.Instance.LoadMap(map);
         }
 
         /// <summary>
@@ -28,11 +35,11 @@ namespace LevelImposter.Shop
         /// </summary>
         /// <param name="mapID">Map file name or ID without extension</param>
         /// <param name="callback">Callback on success</param>
-        public static void LoadMap(string mapID, Action? callback)
+        public static void LoadMap(string mapID, bool isFallback, Action? callback)
         {
             MapFileAPI.Instance?.Get(mapID, (mapData) =>
             {
-                LoadMap(mapData);
+                LoadMap(mapData, isFallback);
                 if (callback != null)
                     callback();
             });
@@ -44,6 +51,16 @@ namespace LevelImposter.Shop
         public static void UnloadMap()
         {
             _currentMap = null;
+            _isFallback = false;
+        }
+
+        /// <summary>
+        /// Manually sets the fallback flag on the loaded map
+        /// </summary>
+        /// <param name="isFallback">True iff the current map is fallback</param>
+        public static void SetFallback(bool isFallback)
+        {
+            _isFallback = isFallback;
         }
 
         /// <summary>

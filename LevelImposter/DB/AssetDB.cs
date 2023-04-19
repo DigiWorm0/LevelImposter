@@ -23,6 +23,8 @@ namespace LevelImposter.DB
         public static AssetDB? Instance { get; private set; }
         public static bool IsInit => Instance?._isInit == true;
 
+        public const string LEVELIMPOSTER_MAP_NAME = "Random LI Map";
+
         private string _status = "Initializing AssetDB...";
         private bool _isInit = false;
         private Stack<MapType> _loadedShips = new();
@@ -70,7 +72,7 @@ namespace LevelImposter.DB
         public static string[]? GetPaths(string id)
         {
             var path = Instance?._pathDB?.Get(id);
-            if (path == null || path.Length == 0)
+            if (path == null || path.Length <= 0)
                 LILogger.Warn($"Could not find path of type {id}");
             return path;
         }
@@ -119,11 +121,12 @@ namespace LevelImposter.DB
             {
                 // Add Ship Prefab
                 var shipPrefabs = AmongUsClient.Instance.ShipPrefabs;
+                var miraPrefab = shipPrefabs[(int)MapType.Mira];
                 int mapCount = (int)MapType.LevelImposter;
                 while (shipPrefabs.Count <= mapCount)
-                    shipPrefabs.Add(shipPrefabs[(int)MapType.Mira]);
+                    shipPrefabs.Add(miraPrefab); // TODO: Map Randomization and Using Own Ship Prefab
                 while (Constants.MapNames.Count <= mapCount)
-                    Constants.MapNames = MapUtils.AddToArr(Constants.MapNames, "LevelImposter");
+                    Constants.MapNames = MapUtils.AddToArr(Constants.MapNames, Constants.MapNames.Count == mapCount ? LIConstants.MAP_NAME : "");
 
                 // Deserialize AssetDB
                 _serializedAssetDB = MapUtils.LoadJsonResource<SerializedAssetDB>("SerializedAssetDB.json");

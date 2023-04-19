@@ -17,8 +17,13 @@ namespace LevelImposter.Builders
         {
             if (elem.type != "util-minimap")
                 return;
-            if (LIShipStatus.Instance?.ShipStatus == null)
-                throw new Exception("ShipStatus not found");
+
+            // ShipStatus
+            var shipStatus = LIShipStatus.Instance?.ShipStatus;
+            if (shipStatus == null)
+                throw new MissingShipException();
+
+            // Check Singleton
             if (_isBuilt)
             {
                 LILogger.Warn("Only 1 minimap object should be used per map");
@@ -31,7 +36,7 @@ namespace LevelImposter.Builders
             // Map Scale
             float mapScaleVal = elem.properties.minimapScale == null ? 1 : (float)elem.properties.minimapScale;
             float mapScale = mapScaleVal * DEFAULT_SCALE;
-            LIShipStatus.Instance.ShipStatus.MapScale = mapScale;
+            shipStatus.MapScale = mapScale;
             Vector3 mapOffset = -(obj.transform.localPosition / mapScale);
 
             // Sprite Renderer
@@ -93,12 +98,16 @@ namespace LevelImposter.Builders
         /// <returns>The current Minimap Behaviour</returns>
         public static MapBehaviour GetMinimap()
         {
-            if (LIShipStatus.Instance?.ShipStatus == null)
-                throw new Exception("ShipStatus not found");
-            MapBehaviour mapBehaviour = MapBehaviour.Instance;
+            // ShipStatus
+            var shipStatus = LIShipStatus.Instance?.ShipStatus;
+            if (shipStatus == null)
+                throw new MissingShipException();
+
+            // Minimap Prefab
+            MapBehaviour? mapBehaviour = MapBehaviour.Instance;
             if (mapBehaviour == null)
             {
-                mapBehaviour = UnityEngine.Object.Instantiate(LIShipStatus.Instance.ShipStatus.MapPrefab, HudManager.Instance.transform);
+                mapBehaviour = UnityEngine.Object.Instantiate(shipStatus.MapPrefab, HudManager.Instance.transform);
                 mapBehaviour.gameObject.SetActive(false);
             }
             return mapBehaviour;

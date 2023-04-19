@@ -40,11 +40,16 @@ namespace LevelImposter.Builders
         /// <exception cref="Exception"></exception>
         public void Build(LIElement elem, Console console)
         {
+            // ShipStatus
+            var shipStatus = LIShipStatus.Instance?.ShipStatus;
+            if (shipStatus == null)
+                throw new MissingShipException();
+
             // Task Container
             if (_taskParent == null)
             {
                 _taskParent = new GameObject("Tasks");
-                _taskParent.transform.SetParent(LIShipStatus.Instance?.transform);
+                _taskParent.transform.SetParent(shipStatus.transform);
             }
 
             // Values
@@ -61,7 +66,7 @@ namespace LevelImposter.Builders
 
             // Rename
             if (prefabTask != null && !string.IsNullOrEmpty(elem.properties.description))
-                MapUtils.Rename(prefabTask.TaskType, elem.properties.description);
+                LIShipStatus.Instance?.Renames.Add(prefabTask.TaskType, elem.properties.description);
 
             // Built List
             bool isBuilt = _builtTypes.Contains(elem.type);
@@ -176,10 +181,12 @@ namespace LevelImposter.Builders
             TaskLength prefabLength,
             NormalPlayerTask task)
         {
-            ShipStatus? shipStatus = LIShipStatus.Instance?.ShipStatus;
+            // ShipStatus
+            var shipStatus = LIShipStatus.Instance?.ShipStatus;
             if (shipStatus == null)
-                throw new Exception("ShipStatus not found");
+                throw new MissingShipException();
 
+            // TaskLength
             string? taskLengthProp = elem.properties.taskLength;
             TaskLength taskLength = taskLengthProp != null ? TASK_LENGTHS[taskLengthProp] : prefabLength;
             if (taskLength == TaskLength.Common)

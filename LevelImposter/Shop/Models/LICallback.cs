@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace LevelImposter.Core
+namespace LevelImposter.Shop
 {
     [Serializable]
     public class LICallback<T>

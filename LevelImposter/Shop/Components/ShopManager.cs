@@ -19,20 +19,28 @@ namespace LevelImposter.Shop
 
         public static ShopManager? Instance { get; private set; }
 
-        public MapBanner? MapBannerPrefab;
-        public Transform? ShopParent;
-        public Button? CloseButton;
+        public MapBanner? MapBannerPrefab = null;
+        public Transform? ShopParent = null;
+        public Button? CloseButton = null;
 
         private string _currentListID = "downloaded";
-        private HostLocalGameButton? _freeplayComp;
-        private ShopButtons? _shopButtons;
+        private HostLocalGameButton? _freeplayComp = null;
+        private ShopButtons? _shopButtons = null;
         private Stack<MapBanner> _shopBanners = new();
+        private bool _shouldRegenerateFallback = false;
 
         /// <summary>
         /// Closes the Map Shop
         /// </summary>
         public void Close()
         {
+            ConfigAPI.Instance?.Save();
+
+            bool isInLobby = LobbyBehaviour.Instance != null;
+            bool isMapLoaded = MapLoader.CurrentMap != null && !MapLoader.IsFallback;
+            if (isInLobby && !isMapLoaded && _shouldRegenerateFallback)
+                MapSync.RegenerateFallbackID();
+
             if (SceneManager.GetActiveScene().name == "HowToPlay")
                 SceneManager.LoadScene("MainMenu");
             else
@@ -190,7 +198,10 @@ namespace LevelImposter.Shop
         public void SelectMap(string id)
         {
             LILogger.Info($"Selecting map [{id}]");
-            MapLoader.LoadMap(id, MapUtils.SyncMapID);
+            MapLoader.LoadMap(id, false, MapSync.SyncMapID);
+            ConfigAPI.Instance?.SetLastMapID(id);
+
+            _shouldRegenerateFallback = false;
             CloseShop();
         }
 
@@ -203,9 +214,9 @@ namespace LevelImposter.Shop
             if (!AssetDB.IsInit)
                 return;
             LILogger.Info($"Launching map [{id}]");
-            MapUtils.SyncRandomSeed();
+            RandomizerSync.SyncRandomSeed();
             MapLoader.CleanAssets();
-            MapLoader.LoadMap(id, () =>
+            MapLoader.LoadMap(id, false, () =>
             {
                 AmongUsClient.Instance.TutorialMapId = (int)MapType.LevelImposter;
                 _freeplayComp?.OnClick();
@@ -238,12 +249,33 @@ namespace LevelImposter.Shop
         }
 
         /// <summary>
+        /// Closes all map banner popups
+        /// </summary>
+        public void CloseAllPopups()
+        {
+            foreach (MapBanner banner in _shopBanners)
+            {
+                banner.CloseAllPopups();
+            }
+        }
+
+        /// <summary>
         /// Closes the shop Instance, if one exists
         /// </summary>
         public static void CloseShop()
         {
             if (Instance != null)
                 Instance.Close();
+        }
+
+        /// <summary>
+        /// Set to true to regenerate the fallback map on close
+        /// </summary>
+        /// <param name="shouldRegenerateFallback">True iff the fallback map should be reset</param>
+        public static void RegenerateFallback(bool shouldRegenerateFallback)
+        {
+            if (Instance != null)
+                Instance._shouldRegenerateFallback = shouldRegenerateFallback;
         }
         
         public void Awake()

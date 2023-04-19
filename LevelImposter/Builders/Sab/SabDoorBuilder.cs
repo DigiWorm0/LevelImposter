@@ -18,8 +18,11 @@ namespace LevelImposter.Builders
         {
             if (!elem.type.StartsWith("sab-door"))
                 return;
-            if (LIShipStatus.Instance?.ShipStatus == null)
-                throw new Exception("ShipStatus not found");
+
+            // ShipStatus
+            var shipStatus = LIShipStatus.Instance?.ShipStatus;
+            if (shipStatus == null)
+                throw new MissingShipException();
 
             // Prefab
             var prefab = AssetDB.GetObject(elem.type);
@@ -61,7 +64,6 @@ namespace LevelImposter.Builders
             // Door
             var doorType = elem.properties.doorType;
             bool isManualDoor = doorType == "polus" || doorType == "airship";
-            ShipStatus shipStatus = LIShipStatus.Instance.ShipStatus;
             PlainDoor doorComponent;
             if (isManualDoor)
             {

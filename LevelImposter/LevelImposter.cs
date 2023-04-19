@@ -58,6 +58,7 @@ namespace LevelImposter
             ClassInjector.RegisterTypeInIl2Cpp<ThumbnailFileAPI>();
             ClassInjector.RegisterTypeInIl2Cpp<GitHubAPI>();
             ClassInjector.RegisterTypeInIl2Cpp<MapFileAPI>();
+            ClassInjector.RegisterTypeInIl2Cpp<ConfigAPI>();
             ClassInjector.RegisterTypeInIl2Cpp<MapBanner>();
             ClassInjector.RegisterTypeInIl2Cpp<ShopButtons>();
             ClassInjector.RegisterTypeInIl2Cpp<ShopManager>();

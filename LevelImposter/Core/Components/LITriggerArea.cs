@@ -14,6 +14,9 @@ namespace LevelImposter.Core
         {
         }
 
+        private const string ENTER_TRIGGGER_ID = "onEnter";
+        private const string EXIT_TRIGGER_ID = "onExit";
+
         private List<byte>? _currentPlayersIDs = new();
         private bool _isClientSide = false;
 
@@ -35,7 +38,7 @@ namespace LevelImposter.Core
             bool triggerServerSided = _currentPlayersIDs?.Count <= 0 && !_isClientSide;
             bool triggerClientSided = MapUtils.IsLocalPlayer(collider.gameObject) && _isClientSide;
             if (triggerClientSided || triggerServerSided)
-                LITriggerable.Trigger(transform.gameObject, "onEnter", null);
+                LITriggerable.Trigger(transform.gameObject, ENTER_TRIGGGER_ID, null);
 
             if (_currentPlayersIDs?.Contains(player.PlayerId) ?? false)
                 _currentPlayersIDs?.Add(player.PlayerId);
@@ -51,7 +54,7 @@ namespace LevelImposter.Core
             bool triggerServer = _currentPlayersIDs?.Count <= 0 && !_isClientSide;
             bool triggerClient = MapUtils.IsLocalPlayer(collider.gameObject) && _isClientSide;
             if (triggerClient || triggerServer)
-                LITriggerable.Trigger(transform.gameObject, "onExit", null);
+                LITriggerable.Trigger(transform.gameObject, EXIT_TRIGGER_ID, null);
         }
         public void OnDestroy()
         {

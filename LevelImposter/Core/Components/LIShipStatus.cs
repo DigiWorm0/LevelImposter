@@ -10,7 +10,6 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 using Il2CppInterop.Runtime.Attributes;
 using Il2CppInterop.Runtime.InteropTypes.Arrays;
-using UnityEngine.SceneManagement;
 using BepInEx.Unity.IL2CPP.Utils.Collections;
 using Reactor.Networking.Attributes;
 using Hazel;
@@ -53,16 +52,24 @@ namespace LevelImposter.Core
             KeyCode.U
         };
 
+        private RenameHandler _renames = new();
         private LIMap? _currentMap = null;
         private ShipStatus? _shipStatus = null;
         private bool _isReady = true;
 
         [HideFromIl2Cpp]
+        public RenameHandler Renames => _renames;
+        [HideFromIl2Cpp]
         public LIMap? CurrentMap => _currentMap;
         public ShipStatus? ShipStatus => _shipStatus;
         public bool IsReady
         {
-            get { return SpriteLoader.Instance?.RenderCount <= 0 && WAVLoader.Instance?.LoadCount <= 0 && _isReady; }
+            get {
+                return SpriteLoader.Instance?.RenderCount <= 0 &&
+                        WAVLoader.Instance?.LoadCount <= 0 &&
+                        !MapSync.IsDownloadingMap &&
+                        _isReady;
+            }
         }
         
         /// <summary>
@@ -113,8 +120,7 @@ namespace LevelImposter.Core
                 ShipStatus.Systems[SystemTypes.LifeSupp].Cast<IActivatable>(),
             }).Cast<ISystemType>());
 
-            MapUtils.SystemRenames.Clear();
-            MapUtils.TaskRenames.Clear();
+            _renames.Clear();
         }
 
         /// <summary>
@@ -331,43 +337,6 @@ namespace LevelImposter.Core
             }
         }
 
-        /// <summary>
-        /// Fixes and ends all ongoing sabotages
-        /// in the ShipStatus (except doors)
-        /// </summary>
-        public void FixAllSabotages()
-        {
-            // Lights
-            var lightsSystem = ShipStatus?.Systems[SystemTypes.Electrical].Cast<SwitchSystem>();
-            if (lightsSystem?.IsActive == true)
-            {
-                var writer = AmongUsClient.Instance.StartRpcImmediately(
-                    PlayerControl.LocalPlayer.NetId,
-                    (byte)LIRpc.TOU_FixLights,
-                    SendOption.Reliable,
-                    -1
-                );
-                AmongUsClient.Instance.FinishRpcImmediately(writer);
-
-                lightsSystem.ActualSwitches = lightsSystem.ExpectedSwitches;
-            }
-
-            // Comms
-            var commsSystem = ShipStatus?.Systems[SystemTypes.Comms].Cast<HudOverrideSystemType>();
-            if (commsSystem?.IsActive == true)
-                ShipStatus?.RpcRepairSystem(SystemTypes.Comms, 0);
-
-            // Reactor
-            var reactorSystem = ShipStatus?.Systems[SystemTypes.Laboratory].Cast<ReactorSystemType>();
-            if (reactorSystem?.IsActive == true)
-                ShipStatus?.RpcRepairSystem(SystemTypes.Laboratory, 16);
-
-            // Oxygen
-            var oxygenSystem = ShipStatus?.Systems[SystemTypes.LifeSupp].Cast<LifeSuppSystemType>();
-            if (oxygenSystem?.IsActive == true)
-                ShipStatus?.RpcRepairSystem(SystemTypes.LifeSupp, 16);
-        }
-
         public void Awake()
         {
             _shipStatus = GetComponent<ShipStatus>();
@@ -376,7 +345,7 @@ namespace LevelImposter.Core
             if (MapLoader.CurrentMap != null)
                 LoadMap(MapLoader.CurrentMap);
             else
-                LILogger.Info("No map content, no LI data will load");
+                LILogger.Warn("No map content, no LI map will load");
         }
         public void Start()
         {
@@ -397,8 +366,10 @@ namespace LevelImposter.Core
         }
         public void OnDestroy()
         {
+            _renames = null;
             _currentMap = null;
             Instance = null;
+
             WAVLoader.Instance?.ClearAll();
         }
     }

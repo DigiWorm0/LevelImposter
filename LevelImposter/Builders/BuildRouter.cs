@@ -28,6 +28,7 @@ namespace LevelImposter.Builders
             new TaskBuilder(),
             new DecBuilder(),
             new PhysicsObjectBuilder(),
+            new MeetingBuilder(),
 
             new SabBuilder(),
             new SabConsoleBuilder(),

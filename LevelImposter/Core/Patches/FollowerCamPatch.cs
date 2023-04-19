@@ -16,8 +16,6 @@ namespace LevelImposter.Core
     {
         public static bool Prefix(FollowerCamera __instance)
         {
-            if (MapLoader.CurrentMap == null)
-                return true;
             if (SpriteLoader.Instance == null || LIShipStatus.Instance == null)
                 return true;
 

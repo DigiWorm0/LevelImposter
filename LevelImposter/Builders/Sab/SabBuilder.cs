@@ -32,16 +32,17 @@ namespace LevelImposter.Builders
         {
             if (!elem.type.StartsWith("sab-") || elem.type.StartsWith("sab-btn") || elem.type.StartsWith("sab-door"))
                 return;
-            // TODO: Standardize LIShipStatus nullity
-            if (LIShipStatus.Instance == null || LIShipStatus.Instance.ShipStatus == null)
-                return;
-            ShipStatus shipStatus = LIShipStatus.Instance.ShipStatus;
+
+            // ShipStatus
+            var shipStatus = LIShipStatus.Instance?.ShipStatus;
+            if (shipStatus == null)
+                throw new MissingShipException();
 
             // Container
             if (_sabContainer == null)
             {
                 _sabContainer = new GameObject("Sabotages");
-                _sabContainer.transform.SetParent(LIShipStatus.Instance.transform);
+                _sabContainer.transform.SetParent(shipStatus.transform);
                 _sabContainer.SetActive(false);
             }
             
@@ -70,7 +71,7 @@ namespace LevelImposter.Builders
 
                 // Rename Task
                 if (!string.IsNullOrEmpty(elem.properties.description))
-                    MapUtils.Rename(task.TaskType, elem.properties.description);
+                    LIShipStatus.Instance.Renames.Add(task.TaskType, elem.properties.description);
 
                 // Add Task
                 shipStatus.SpecialTasks = MapUtils.AddToArr(shipStatus.SpecialTasks, task);
