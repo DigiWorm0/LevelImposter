@@ -19,8 +19,7 @@ namespace LevelImposter.Shop
             MapType mapType = MapUtils.GetCurrentMapType();
 
             if (mapType != MapType.LevelImposter || 
-                currentMap == null ||
-                currentMap.properties.showPingIndicator == false)
+                currentMap == null)
                 return;
             if (!__instance.gameObject.active)
                 __instance.gameObject.SetActive(true);
@@ -28,6 +27,10 @@ namespace LevelImposter.Shop
             bool isFallback = MapLoader.IsFallback;
             bool isPublished = !string.IsNullOrEmpty(currentMap.authorID);
             bool isInLobby = LobbyBehaviour.Instance != null;
+            bool isPingDisabled = currentMap.properties.showPingIndicator ?? false;
+            if (isPingDisabled && !isFallback)
+                return;
+
             StringBuilder pingBuilder = new();
 
             // Shrink all to fit
