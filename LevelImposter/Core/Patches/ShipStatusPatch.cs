@@ -17,6 +17,8 @@ namespace LevelImposter.Core
         {
             if (MapUtils.GetCurrentMapType() == MapType.LevelImposter)
                 __instance.gameObject.AddComponent<LIShipStatus>();
+            else if (!MapLoader.IsFallback)
+                LILogger.Error("Another mod has changed the map.\nMake sure other map randomizers are disabled.");
         }
     }
 
