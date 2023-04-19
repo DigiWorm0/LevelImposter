@@ -282,6 +282,7 @@ namespace LevelImposter.Core
                 case "task-vending_item_3":
                 case "task-vending_item_4":
                 case "task-vending_item_5":
+                case "task-vending_item_6":
                     int vendingIndex1 = GetIndex(type);
                     var vendingMinigame1 = minigame.Cast<VendingMinigame>();
                     var currentVendingSprite1 = vendingMinigame1.Drinks[vendingIndex1];
@@ -301,6 +302,7 @@ namespace LevelImposter.Core
                 case "task-vending_drawing_3":
                 case "task-vending_drawing_4":
                 case "task-vending_drawing_5":
+                case "task-vending_drawing_6":
                     int vendingIndex2 = GetIndex(type);
                     var vendingMinigame2 = minigame.Cast<VendingMinigame>();
                     var currentVendingSprite2 = vendingMinigame2.DrawnDrinks[vendingIndex2];

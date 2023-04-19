@@ -8,13 +8,15 @@ using LevelImposter.Shop;
 namespace LevelImposter.Core
 {
     /*
-     *      Fixes the TOU miner
-     *      and TOR JackInTheBox vents
-     *      to work in LevelImposter.
+     *      Fixes instantiated vents 
+     *      (TOU miner / TOR JackInTheBox)
+     *      to append UnityAction
      */
     [HarmonyPatch(typeof(ShipStatus), nameof(ShipStatus.FixedUpdate))]
     public static class VentPatch
     {
+        public const string FIXED_VENT_TAG = "(LIFixed)";
+
         private static int _ventTotal = -1;
 
         public static void Postfix()
@@ -25,36 +27,37 @@ namespace LevelImposter.Core
                 return;
             if (_ventTotal == ShipStatus.Instance.AllVents.Count)
                 return;
+            _ventTotal = ShipStatus.Instance.AllVents.Count;
 
             // Iterate Vents
-            _ventTotal = ShipStatus.Instance.AllVents.Count;
             foreach (var vent in ShipStatus.Instance.AllVents)
             {
                 // Filter Vents
-                bool isCloneVent = vent.name.EndsWith("(Clone)") || vent.name.StartsWith("JackInTheBoxVent");
-                if (isCloneVent && vent.transform.childCount == 1)
+                bool isFixed = vent.name.Contains(FIXED_VENT_TAG);
+                bool isLIVent = vent.transform.childCount == 1;
+                if (isFixed || !isLIVent)
+                    continue;
+
+                // Update Button Actions
+                vent.name = $"{vent.name}{FIXED_VENT_TAG}";
+                for (int i = 0; i < vent.Buttons.Length; i++)
                 {
-                    vent.name = $"AU_Vent{vent.Id}";
-
-                    // Reset Vent Buttons
-                    ButtonBehavior[] ventButtons = vent.GetComponentsInChildren<ButtonBehavior>(true);
-                    foreach (var ventButton in ventButtons)
+                    var ventButton = vent.Buttons[i];
+                    Action action = i switch
                     {
-                        string[] split = ventButton.name.Split("-");
-                        int dir = split.Length > 1 ? int.Parse(split[1]) : 0;
-                            
-                        Action action;
-                        if (dir == 0)
-                            action = vent.ClickRight;
-                        else if (dir == 1)
-                            action = vent.ClickLeft;
-                        else
-                            action = vent.ClickCenter;
-
-                        ventButton.OnClick.AddListener(action);
-                    }
+                        0 => vent.ClickRight,
+                        1 => vent.ClickLeft,
+                        2 => vent.ClickCenter,
+                        _ => HandleError
+                    };
+                    ventButton.OnClick.AddListener(action);
                 }
             }
+        }
+
+        private static void HandleError()
+        {
+            LILogger.Warn("Vent object has an extra button assigned");
         }
     }
 }
