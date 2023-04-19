@@ -287,8 +287,13 @@ namespace LevelImposter.Core
                     var currentVendingSprite1 = vendingMinigame1.Drinks[vendingIndex1];
                     // Find & update any slots
                     foreach (var vendingSlot in vendingMinigame1.Slots)
-                        if (vendingSlot.DrinkImage.sprite == currentVendingSprite1)
+                        if (vendingSlot.DrinkImage.sprite == currentVendingSprite1 && sprite != null)
+                        {
+                            // Align Object with Base of Vending Slot
+                            float yOffset = (sprite.textureRect.height / 2) / sprite.pixelsPerUnit - 0.01f;
+                            vendingSlot.DrinkImage.transform.position += new Vector3(0, yOffset);
                             vendingSlot.DrinkImage.sprite = sprite;
+                        }
                     vendingMinigame1.Drinks[vendingIndex1] = sprite;
                     return false;
                 case "task-vending_drawing_1":
