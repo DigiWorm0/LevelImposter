@@ -5,6 +5,7 @@ using System.Text;
 using UnityEngine;
 using Reactor.Networking.Attributes;
 using LevelImposter.Core;
+using System.Linq;
 
 namespace LevelImposter.Shop
 {
@@ -30,12 +31,12 @@ namespace LevelImposter.Shop
         public static void RPCDownload(PlayerControl player, bool isDownloaded)
         {
             LILogger.Info($"[RPC] {player.name} {(isDownloaded ? "has downloaded" : "is downloading")} the map");
-            if (GameStartManager.Instance != null)
-                GameStartManager.Instance.ResetStartState();
+            if (DestroyableSingleton<GameStartManager>.InstanceExists)
+                DestroyableSingleton<GameStartManager>.Instance.ResetStartState();
             if (isDownloaded)
                 RemovePlayer(player);
             else
-                _playersDownloading.Add(player);
+                AddPlayer(player);
         }
 
         /// <summary>
@@ -44,10 +45,17 @@ namespace LevelImposter.Shop
         /// <param name="player">PlayerControl that disconnected</param>
         public static void RemovePlayer(PlayerControl player)
         {
-            _playersDownloading.RemoveAll((PlayerControl p) =>
-            {
-                return p.PlayerId == player.PlayerId;
-            });
+            _playersDownloading.RemoveAll(p => p.PlayerId == player.PlayerId);
+        }
+
+        /// <summary>
+        /// Adds a player to the downloading list
+        /// </summary>
+        /// <param name="player">PlayerControl that connected</param>
+        public static void AddPlayer(PlayerControl player)
+        {
+            if (!_playersDownloading.Any(p => p.PlayerId == player.PlayerId))
+                _playersDownloading.Add(player);
         }
 
         /// <summary>
