@@ -19,7 +19,7 @@ namespace LevelImposter.Core
     {
         public static void Postfix()
         {
-            ModManager.Instance.ShowModStamp();
+            DestroyableSingleton<ModManager>.Instance.ShowModStamp();
 
             if (LevelImposterAPI.Instance == null)
             {

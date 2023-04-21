@@ -351,7 +351,7 @@ namespace LevelImposter.Core
         {
             if (CurrentMap != null)
             {
-                HudManager.Instance.ShadowQuad.material.SetInt("_Mask", 7);
+                DestroyableSingleton<HudManager>.Instance.ShadowQuad.material.SetInt("_Mask", 7);
 
                 // Respawn the player on key combo
                 StartCoroutine(CoHandleKeyCombo(RESPAWN_SEQ, () =>{

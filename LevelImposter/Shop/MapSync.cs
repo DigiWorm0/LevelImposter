@@ -65,7 +65,8 @@ namespace LevelImposter.Shop
             LILogger.Info($"[RPC] Received map ID [{mapIDStr}] (fallback={isFallback})");
 
             DownloadManager.Reset();
-            GameStartManager.Instance?.ResetStartState();
+            if (DestroyableSingleton<GameStartManager>.InstanceExists)
+                GameStartManager.Instance.ResetStartState();
 
             // Parse ID
             bool isSuccess = Guid.TryParse(mapIDStr, out Guid mapID);

@@ -41,7 +41,7 @@ namespace LevelImposter.Shop
             UnityEngine.Object.Destroy(aspectComponent);
 
             // Popup
-            GameObject popupPrefab = TwitchManager.Instance.TwitchPopup.gameObject;
+            GameObject popupPrefab = DestroyableSingleton<TwitchManager>.Instance.TwitchPopup.gameObject;
             GameObject popupObject = UnityEngine.Object.Instantiate(popupPrefab);
             _popupComponent = popupObject.GetComponent<GenericPopup>();
             TextMeshPro popupText = _popupComponent.TextAreaTMP;

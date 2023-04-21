@@ -68,7 +68,8 @@ namespace LevelImposter.Shop
         {
             if (_downloadButton == null || _playButton == null || _deleteButton == null || _randomButton == null || _externalButton == null)
                 return;
-            bool isStarting = GameStartManager.Instance?.startState == GameStartManager.StartingStates.Starting;
+            bool isStarting = DestroyableSingleton<GameStartManager>.InstanceExists &&
+                GameStartManager.Instance?.startState == GameStartManager.StartingStates.Starting;
             if (_currentMap == null || !_isEnabled || isStarting)
             {
                 _downloadButton.interactable = false;
