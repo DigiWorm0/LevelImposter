@@ -107,7 +107,10 @@ namespace LevelImposter.Builders
             MapBehaviour? mapBehaviour = MapBehaviour.Instance;
             if (mapBehaviour == null)
             {
-                mapBehaviour = UnityEngine.Object.Instantiate(shipStatus.MapPrefab, HudManager.Instance.transform);
+                mapBehaviour = UnityEngine.Object.Instantiate(
+                    shipStatus.MapPrefab,
+                    DestroyableSingleton<HudManager>.Instance.transform
+                );
                 mapBehaviour.gameObject.SetActive(false);
             }
             return mapBehaviour;

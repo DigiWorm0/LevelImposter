@@ -25,9 +25,9 @@ namespace LevelImposter.Shop
 
             LILogger.Error($"{ImageSharpWrapper.DLL_NAME} is missing from the plugins directory");
 
-            GameObject? popupPrefab = TwitchManager.Instance?.TwitchPopup?.gameObject;
-            if (popupPrefab == null)
+            if (!DestroyableSingleton<TwitchManager>.InstanceExists)
                 return;
+            GameObject popupPrefab = DestroyableSingleton<TwitchManager>.Instance.TwitchPopup.gameObject;
             GameObject popupObject = UnityEngine.Object.Instantiate(popupPrefab);
             GenericPopup popupComponent = popupObject.GetComponent<GenericPopup>();
             TextMeshPro popupText = popupComponent.TextAreaTMP;
