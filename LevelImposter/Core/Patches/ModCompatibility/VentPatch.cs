@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
+using UnityEngine.Events;
 using LevelImposter.Shop;
 
 namespace LevelImposter.Core
@@ -15,8 +16,6 @@ namespace LevelImposter.Core
     [HarmonyPatch(typeof(ShipStatus), nameof(ShipStatus.FixedUpdate))]
     public static class VentPatch
     {
-        public const string FIXED_VENT_TAG = "(LIFixed)";
-
         private static int _ventTotal = -1;
 
         public static void Postfix()
@@ -30,20 +29,25 @@ namespace LevelImposter.Core
             _ventTotal = ShipStatus.Instance.AllVents.Count;
 
             // Iterate Vents
-            foreach (var vent in ShipStatus.Instance.AllVents)
+            for (int i = 0; i < ShipStatus.Instance.AllVents.Count; i++)
             {
+                Vent vent = ShipStatus.Instance.AllVents[i];
+
                 // Filter Vents
-                bool isFixed = vent.name.Contains(FIXED_VENT_TAG);
+                string fixedVentTag = $"(V{i})";
+                bool isFixed = vent.name.Contains(fixedVentTag);
                 bool isLIVent = vent.transform.childCount == 1;
                 if (isFixed || !isLIVent)
                     continue;
 
                 // Update Button Actions
-                vent.name = $"{vent.name}{FIXED_VENT_TAG}";
-                for (int i = 0; i < vent.Buttons.Length; i++)
+                vent.name = $"{vent.name}{fixedVentTag}";
+                for (int b = 0; b < vent.Buttons.Length; b++)
                 {
-                    var ventButton = vent.Buttons[i];
-                    Action action = i switch
+                    var ventButton = vent.Buttons[b];
+                    ventButton.OnMouseOver = new UnityEvent();
+                    ventButton.OnMouseOut = new UnityEvent();
+                    Action action = b switch
                     {
                         0 => vent.ClickRight,
                         1 => vent.ClickLeft,

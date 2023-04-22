@@ -112,7 +112,7 @@ namespace LevelImposter.Builders
             switch (elem.type) {
                 case "sab-btnreactor":
                     btnSprite = _reactorBtnSprite;
-                    btnAction = mapRoom.SabotageSeismic;
+                    btnAction = mapRoom.SabotageReactor;
                     mapRoom.special = btnRenderer;
                     break;
                 case "sab-btnoxygen":
