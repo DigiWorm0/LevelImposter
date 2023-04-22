@@ -77,13 +77,13 @@
     },
     {
       "ID": "sab-reactorleft",
-      "Map": 2,
-      "Path": "bridgeLeft/SuppressorLeft/panel_hand_left"
+      "Map": 0,
+      "Path": "Reactor/Ground/reactor_wireTop/UpperHandConsole"
     },
     {
       "ID": "sab-reactorright",
-      "Map": 2,
-      "Path": "bridgeRight/SuppressorRight/panel_hand_right"
+      "Map": 0,
+      "Path": "Reactor/Ground/reactor_wireBot/LowerHandConsole"
     },
     {
       "ID": "sab-comms",
