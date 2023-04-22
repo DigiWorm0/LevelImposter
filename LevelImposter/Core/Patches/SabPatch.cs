@@ -17,7 +17,7 @@ namespace LevelImposter.Core
     {
         private static Dictionary<SystemTypes, TaskTypes> _systemTaskPairs = new Dictionary<SystemTypes, TaskTypes> {
             { SystemTypes.Electrical, TaskTypes.FixLights },
-            { SystemTypes.Laboratory, TaskTypes.ResetSeismic },
+            { SystemTypes.Reactor, TaskTypes.ResetReactor },
             { SystemTypes.LifeSupp, TaskTypes.RestoreOxy },
             { SystemTypes.Comms, TaskTypes.FixComms },
         };

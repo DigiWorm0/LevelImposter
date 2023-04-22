@@ -49,6 +49,9 @@ namespace LevelImposter.Core
         public static readonly KeyCode[] CPU_SEQ = new KeyCode[] {
             KeyCode.C,
             KeyCode.P,
+            KeyCode.U,
+            KeyCode.C,
+            KeyCode.P,
             KeyCode.U
         };
 
@@ -110,13 +113,13 @@ namespace LevelImposter.Core
             ShipStatus.Systems.Add(SystemTypes.Doors, new AutoDoorsSystemType().Cast<ISystemType>()); // (Default)
             ShipStatus.Systems.Add(SystemTypes.Comms, new HudOverrideSystemType().Cast<ISystemType>());
             ShipStatus.Systems.Add(SystemTypes.Security, new SecurityCameraSystemType().Cast<ISystemType>());
-            ShipStatus.Systems.Add(SystemTypes.Laboratory, new ReactorSystemType(45f, SystemTypes.Laboratory).Cast<ISystemType>()); // <- Seconds, SystemType
+            ShipStatus.Systems.Add(SystemTypes.Reactor, new ReactorSystemType(45f, SystemTypes.Reactor).Cast<ISystemType>()); // <- Seconds, SystemType
             ShipStatus.Systems.Add(SystemTypes.LifeSupp, new LifeSuppSystemType(45f).Cast<ISystemType>()); // <- Seconds
             ShipStatus.Systems.Add(SystemTypes.Ventilation, new VentilationSystem().Cast<ISystemType>());
             ShipStatus.Systems.Add(SystemTypes.Sabotage, new SabotageSystemType(new IActivatable[] {
                 ShipStatus.Systems[SystemTypes.Electrical].Cast<IActivatable>(),
                 ShipStatus.Systems[SystemTypes.Comms].Cast<IActivatable>(),
-                ShipStatus.Systems[SystemTypes.Laboratory].Cast<IActivatable>(),
+                ShipStatus.Systems[SystemTypes.Reactor].Cast<IActivatable>(),
                 ShipStatus.Systems[SystemTypes.LifeSupp].Cast<IActivatable>(),
             }).Cast<ISystemType>());
 
@@ -269,12 +272,13 @@ namespace LevelImposter.Core
                 bool shift = Input.GetKey(KeyCode.LeftShift)
                         || Input.GetKey(KeyCode.RightShift);
                 bool seqKey = Input.GetKeyDown(sequence[state]);
+                bool backKey = Input.GetKeyDown(KeyCode.Backspace);
 
                 if (shift && seqKey)
                 {
                     state++;
                 }
-                else if (!shift)
+                else if (!shift || backKey)
                 {
                     state = 0;
                 }

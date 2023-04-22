@@ -12,9 +12,9 @@ namespace LevelImposter.Builders
     {
         private static readonly Dictionary<string, SystemTypes> SAB_SYSTEMS = new()
         {
-            { "sab-reactorleft", SystemTypes.Laboratory },
-            { "sab-reactorright", SystemTypes.Laboratory },
-            { "sab-btnreactor", SystemTypes.Laboratory },
+            { "sab-reactorleft", SystemTypes.Reactor },
+            { "sab-reactorright", SystemTypes.Reactor },
+            { "sab-btnreactor", SystemTypes.Reactor },
             { "sab-oxygen1", SystemTypes.LifeSupp },
             { "sab-oxygen2", SystemTypes.LifeSupp },
             { "sab-btnoxygen", SystemTypes.LifeSupp },
@@ -92,7 +92,7 @@ namespace LevelImposter.Builders
                 sabSystem.specials.Remove(oldSystem);
 
                 // Add New System
-                if (sabSystemType == SystemTypes.Laboratory)
+                if (sabSystemType == SystemTypes.Reactor)
                     shipStatus.Systems[sabSystemType] = new ReactorSystemType((float)sabDuration, sabSystemType).Cast<ISystemType>();
                 if (sabSystemType == SystemTypes.LifeSupp)
                     shipStatus.Systems[sabSystemType] = new LifeSuppSystemType((float)sabDuration).Cast<ISystemType>();

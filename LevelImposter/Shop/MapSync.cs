@@ -20,6 +20,12 @@ namespace LevelImposter.Shop
         /// </summary>
         public static void RegenerateFallbackID()
         {
+            bool isHost = AmongUsClient.Instance.AmHost;
+            bool isPlayerInit = PlayerControl.LocalPlayer != null;
+            bool isFreeplay = DestroyableSingleton<TutorialManager>.InstanceExists;
+            if (!isHost || isFreeplay || !isPlayerInit)
+                return;
+
             string? randomMapID = GetRandomMapID(new());
             if (randomMapID != null)
             {
@@ -37,7 +43,10 @@ namespace LevelImposter.Shop
         /// </summary>
         public static void SyncMapID()
         {
-            if (!AmongUsClient.Instance.AmHost || DestroyableSingleton<TutorialManager>.InstanceExists || PlayerControl.LocalPlayer == null)
+            bool isHost = AmongUsClient.Instance.AmHost;
+            bool isPlayerInit = PlayerControl.LocalPlayer != null;
+            bool isFreeplay = DestroyableSingleton<TutorialManager>.InstanceExists;
+            if (!isHost || isFreeplay || !isPlayerInit)
                 return;
 
             // Get ID

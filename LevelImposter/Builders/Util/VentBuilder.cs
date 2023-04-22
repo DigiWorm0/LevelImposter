@@ -63,7 +63,7 @@ namespace LevelImposter.Builders
             vent.spreadAmount = prefabVent.spreadAmount;
             vent.spreadShift = prefabVent.spreadShift;
             vent.Offset = prefabVent.Offset;
-            vent.Buttons = new Il2CppReferenceArray<ButtonBehavior>(0);
+            vent.Buttons = new Il2CppReferenceArray<ButtonBehavior>(3);
             vent.CleaningIndicators = new Il2CppReferenceArray<GameObject>(0);
             vent.Id = _ventID;
 
@@ -71,7 +71,7 @@ namespace LevelImposter.Builders
             GameObject arrowParent = new GameObject($"{obj.name}_arrows");
             arrowParent.transform.SetParent(obj.transform);
             arrowParent.transform.localPosition = Vector3.zero;
-            for (int i = 0; i < 3; i++)
+            for (int i = 0; i < vent.Buttons.Length; i++)
                 GenerateArrow(prefabArrow, vent, i).transform.SetParent(arrowParent.transform);
 
             // Sounds
@@ -167,17 +167,18 @@ namespace LevelImposter.Builders
             ButtonBehavior arrowBtn = arrowObj.AddComponent<ButtonBehavior>();
             arrowBtn.OnMouseOver = new UnityEvent();
             arrowBtn.OnMouseOut = new UnityEvent();
-            Action action;
-            if (dir == 0)
-                action = vent.ClickRight;
-            else if (dir == 1)
-                action = vent.ClickLeft;
-            else
-                action = vent.ClickCenter;
+
+            Action action = dir switch
+            {
+                0 => vent.ClickRight,
+                1 => vent.ClickLeft,
+                2 => vent.ClickCenter,
+                _ => vent.ClickCenter
+            };
             arrowBtn.OnClick.AddListener(action);
 
             // Transform
-            vent.Buttons = MapUtils.AddToArr(vent.Buttons, arrowBtn);
+            vent.Buttons[dir] = arrowBtn;
             arrowObj.transform.localScale = new Vector3(
                 0.4f,
                 0.4f,
