@@ -49,6 +49,9 @@ namespace LevelImposter.Core
         public static readonly KeyCode[] CPU_SEQ = new KeyCode[] {
             KeyCode.C,
             KeyCode.P,
+            KeyCode.U,
+            KeyCode.C,
+            KeyCode.P,
             KeyCode.U
         };
 
@@ -269,12 +272,13 @@ namespace LevelImposter.Core
                 bool shift = Input.GetKey(KeyCode.LeftShift)
                         || Input.GetKey(KeyCode.RightShift);
                 bool seqKey = Input.GetKeyDown(sequence[state]);
+                bool backKey = Input.GetKeyDown(KeyCode.Backspace);
 
                 if (shift && seqKey)
                 {
                     state++;
                 }
-                else if (!shift)
+                else if (!shift || backKey)
                 {
                     state = 0;
                 }
