@@ -42,6 +42,18 @@ namespace LevelImposter.Core
     }
 
     /*
+     *      Increase Max Wait Time
+     */
+    [HarmonyPatch(typeof(AmongUsClient), nameof(AmongUsClient.Awake))]
+    public static class WaitTimePatch
+    {
+        public static void Postfix(AmongUsClient __instance)
+        {
+            __instance.MAX_CLIENT_WAIT_TIME = LIConstants.MAX_LOAD_TIME;
+        }
+    }
+
+    /*
      *      Unloads maps after disconnect
      */
     [HarmonyPatch(typeof(AmongUsClient), nameof(AmongUsClient.ExitGame))]

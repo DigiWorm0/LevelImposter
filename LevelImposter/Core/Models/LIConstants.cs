@@ -13,5 +13,6 @@ namespace LevelImposter.Core
     {
         public const string MAP_NAME = "Random Custom Map";
         public const float PLAYER_POS = -5.0f;
+        public const int MAX_LOAD_TIME = 30;
     }
 }
