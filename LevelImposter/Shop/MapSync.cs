@@ -114,6 +114,11 @@ namespace LevelImposter.Shop
             {
                 MapLoader.LoadMap(mapIDStr, isFallback, null);
             }
+            // In Local Cache
+            else if (MapCacheAPI.Instance?.Exists(mapIDStr) == true)
+            {
+                MapLoader.LoadMap(MapCacheAPI.Instance?.Get(mapIDStr), isFallback);
+            }
             // Download if Unavailable
             else
             {
@@ -123,6 +128,7 @@ namespace LevelImposter.Shop
                 DownloadManager.StartDownload();
                 LevelImposterAPI.Instance?.DownloadMap(mapID, (LIMap map) =>
                 {
+                    MapCacheAPI.Instance?.Save(map);
                     if (_activeDownloadingID == mapID)
                     {
                         MapLoader.LoadMap(map, isFallback);

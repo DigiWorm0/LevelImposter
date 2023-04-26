@@ -27,6 +27,7 @@ namespace LevelImposter.Core
                 apiParent.AddComponent<LevelImposterAPI>();
                 apiParent.AddComponent<MapFileAPI>();
                 apiParent.AddComponent<ThumbnailFileAPI>();
+                apiParent.AddComponent<MapCacheAPI>();
                 apiParent.AddComponent<GitHubAPI>();
                 apiParent.AddComponent<ConfigAPI>();
                 apiParent.AddComponent<SpriteLoader>();
