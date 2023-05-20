@@ -20,8 +20,9 @@ namespace LevelImposter.Shop
 
             string? lastMapID = ConfigAPI.Instance?.GetLastMapID();
             bool hasLastMap = lastMapID != null && (MapFileAPI.Instance?.Exists(lastMapID) ?? false);
+            bool isHost = AmongUsClient.Instance.AmHost;
 
-            if (MapLoader.CurrentMap == null && lastMapID != null && hasLastMap)
+            if (MapLoader.CurrentMap == null && lastMapID != null && hasLastMap && isHost)
                 MapLoader.LoadMap(lastMapID, false, MapSync.SyncMapID);
             else if (MapLoader.IsFallback || MapLoader.CurrentMap == null)
                 MapSync.RegenerateFallbackID();
