@@ -19,6 +19,7 @@ namespace LevelImposter.Builders
             var prefab = AssetDB.GetObject(elem.type);
             if (prefab == null)
                 return;
+            var prefabCam = prefab.GetComponent<SurvCamera>();
 
             // Sprite
             MapUtils.CloneSprite(obj, prefab, true);
@@ -31,6 +32,8 @@ namespace LevelImposter.Builders
                 elem.properties.camYOffset == null ? 0 : (float)elem.properties.camYOffset
             );
             survCam.CamSize = elem.properties.camZoom == null ? 3 : (float)elem.properties.camZoom;
+            survCam.OnAnim = prefabCam.OnAnim;
+            survCam.OffAnim = prefabCam.OffAnim;
         }
 
         public void PostBuild() { }

@@ -123,7 +123,7 @@ namespace LevelImposter.Core
         /// Fires when the animator is cloned
         /// </summary>
         /// <param name="original"></param>
-        public void OnClone(GIFAnimator originalAnim)
+        private void OnClone(GIFAnimator originalAnim)
         {
             _spriteRenderer = GetComponent<SpriteRenderer>();
             _frames = originalAnim._frames;

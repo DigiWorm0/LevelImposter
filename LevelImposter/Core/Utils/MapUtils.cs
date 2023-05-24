@@ -318,7 +318,9 @@ namespace LevelImposter.Core
                 {
                     var prefabAnim = prefab.GetComponent<PowerTools.SpriteAnim>();
                     var spriteAnim = obj.AddComponent<PowerTools.SpriteAnim>();
-                    spriteAnim.Play(prefabAnim.m_defaultAnim, prefabAnim.Speed);
+                    spriteAnim.m_defaultAnim = prefabAnim.m_defaultAnim;
+                    spriteAnim.m_speed = prefabAnim.m_speed;
+                    spriteAnim.Play(prefabAnim.m_defaultAnim, prefabAnim.m_speed);
                 }
             }
             spriteRenderer.material = prefabRenderer.material;
