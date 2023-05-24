@@ -14,44 +14,13 @@ namespace LevelImposter.Shop
     /// <summary>
     /// API to manage thumbnail files in the local filesystem
     /// </summary>
-    public class ThumbnailFileAPI : MonoBehaviour
+    public class ThumbnailFileAPI : FileCache
     {
         public ThumbnailFileAPI(IntPtr intPtr) : base(intPtr)
         {
         }
 
         public static ThumbnailFileAPI? Instance = null;
-
-        /// <summary>
-        /// Gets the current directory where LevelImposter thumbnail files are stored.
-        /// Usually in a sub-directory within the LevelImposter folder beside the LevelImposter.dll.
-        /// </summary>
-        /// <returns>String path where LevelImposter map thumbnails is stored.</returns>
-        public string GetDirectory()
-        {
-            string gameDir = System.Reflection.Assembly.GetAssembly(typeof(LevelImposter))?.Location ?? "/";
-            return Path.Combine(Path.GetDirectoryName(gameDir) ?? "/", "LevelImposter/Thumbnails");
-        }
-
-        /// <summary>
-        /// Gets the path where a specific map thumbnail file is stored.
-        /// </summary>
-        /// <param name="mapID">Map ID for the thumbnail</param>
-        /// <returns>The path where a specific map thumbnail file is stored</returns>
-        public string GetPath(string mapID)
-        {
-            return Path.Combine(GetDirectory(), mapID + ".png");
-        }
-
-        /// <summary>
-        /// Checks the existance of a map thumbnail file based on ID
-        /// </summary>
-        /// <param name="mapID">Map ID for the thumbnail</param>
-        /// <returns>True if a map thumbnail file with the cooresponding ID exists</returns>
-        public bool Exists(string mapID)
-        {
-            return File.Exists(GetPath(mapID));
-        }
 
         /// <summary>
         /// Reads and parses a thumbnail file into a Texture2D.
@@ -69,7 +38,7 @@ namespace LevelImposter.Shop
 
             LILogger.Info($"Loading thumbnail [{mapID}] from filesystem");
             bool isInCache = SpriteLoader.Instance?.IsSpriteInCache(mapID) ?? false;
-            byte[] thumbnailBytes = !isInCache ? File.ReadAllBytes(GetPath(mapID)) : new byte[0];
+            byte[] thumbnailBytes = !isInCache ? (Get(mapID) ?? new byte[0]) : new byte[0];
             SpriteLoader.Instance?.LoadSpriteAsync(thumbnailBytes, false, (spriteData) =>
             {
                 Sprite? sprite = spriteData?.Sprite;
@@ -83,44 +52,14 @@ namespace LevelImposter.Shop
         }
 
         /// <summary>
-        /// Saves a map thumbnail file to the local filesystem.
+        /// Finds and deletes the old thumbnail directory
         /// </summary>
-        /// <param name="mapID">Map ID for the thumbnail</param>
-        /// <param name="thumbnailData">PNG-encoded image data.</param>
-        [HideFromIl2Cpp]
-        public void Save(string mapID, byte[] thumbnailBytes)
+        private static void DeleteLegacyDir()
         {
-            LILogger.Info($"Saving [{mapID}] thumbnail to filesystem");
-            string thumbnailPath = GetPath(mapID);
-            if (!Directory.Exists(GetDirectory()))
-                Directory.CreateDirectory(GetDirectory());
-            File.WriteAllBytes(thumbnailPath, thumbnailBytes);
-        }
-
-        /// <summary>
-        /// Deletes a map thumbnail file from the local filesystem
-        /// </summary>
-        /// <param name="mapID">Map ID for the thumbnail</param>
-        public void Delete(string mapID)
-        {
-            if (!Exists(mapID))
-                return;
-            LILogger.Info($"Deleting [{mapID}] thumbnail from filesystem");
-            string mapPath = GetPath(mapID);
-            File.Delete(mapPath);
-        }
-
-        /// <summary>
-        /// Deletes all thumbnail files from the local filesystem
-        /// </summary>
-        public void DeleteAll()
-        {
-            DirectoryInfo directory = new DirectoryInfo(GetDirectory());
-            if (!directory.Exists)
-                return;
-
-            LILogger.Info("Deleting all thumbnails from filesystem");
-            directory.Delete(true);
+            string gameDir = System.Reflection.Assembly.GetAssembly(typeof(LevelImposter))?.Location ?? "/";
+            string legacyDir = Path.Combine(Path.GetDirectoryName(gameDir) ?? "/", "LevelImposter/Thumbnails");
+            if (Directory.Exists(legacyDir))
+                Directory.Delete(legacyDir, true);
         }
 
         public void Awake()
@@ -129,16 +68,13 @@ namespace LevelImposter.Shop
             {
                 Instance = this;
                 DontDestroyOnLoad(gameObject);
+                DeleteLegacyDir();
+                SetFileExtension(".png");
             }
             else
             {
                 Destroy(gameObject);
             }
-        }
-        public void Start()
-        {
-            if (!Directory.Exists(GetDirectory()))
-                Directory.CreateDirectory(GetDirectory());
         }
     }
 }

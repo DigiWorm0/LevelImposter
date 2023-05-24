@@ -193,7 +193,7 @@ namespace LevelImposter.Shop
                             fileStream.Write(dllBytes, 0, dllBytes.Length);
                         }
 
-                        ThumbnailFileAPI.Instance?.DeleteAll();
+                        FileCache.Clear();
 
                         LILogger.Info("Update complete");
                         onSuccess();

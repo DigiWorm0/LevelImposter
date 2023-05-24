@@ -66,12 +66,10 @@ namespace LevelImposter.Core
         /// </summary>
         private void LoadMinigameProps(Minigame minigame)
         {
-            bool isLights = _minigameProps?.lightsColorOn != null || _minigameProps?.lightsColorOff != null;
-            bool isReactor = _minigameProps?.reactorColorBad != null || _minigameProps?.reactorColorGood != null;
-            bool isFuel = _minigameProps?.fuelColor != null || _minigameProps?.fuelBgColor != null;
             LILogger.Info($"Loading minigame props for {minigame}");
 
             // Lights Panel
+            bool isLights = _minigameProps?.lightsColorOn != null || _minigameProps?.lightsColorOff != null;
             if (isLights)
             {
                 var lightsMinigame = minigame.Cast<SwitchMinigame>();
@@ -81,6 +79,7 @@ namespace LevelImposter.Core
             }
 
             // Reactor Panel
+            bool isReactor = _minigameProps?.reactorColorBad != null || _minigameProps?.reactorColorGood != null;
             if (isReactor)
             {
                 var reactorMinigame = minigame.Cast<ReactorMinigame>();
@@ -90,6 +89,7 @@ namespace LevelImposter.Core
             }
 
             // Fuel Task
+            bool isFuel = _minigameProps?.fuelColor != null || _minigameProps?.fuelBgColor != null;
             if (isFuel)
             {
                 var multistageMinigame = minigame.Cast<MultistageMinigame>();

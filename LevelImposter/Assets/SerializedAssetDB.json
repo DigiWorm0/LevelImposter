@@ -83,7 +83,7 @@
     {
       "ID": "sab-reactorright",
       "Map": 0,
-      "Path": "Reactor/Ground/reactor_wireBot/LowerHandConsole"
+      "Path": "Reactor/Ground/reactor_wireTop/UpperHandConsole"
     },
     {
       "ID": "sab-comms",

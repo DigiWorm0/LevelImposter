@@ -61,7 +61,7 @@ namespace LevelImposter.Builders
         public GameObject Build(LIElement element)
         {
             string objName = element.name.Replace("\\n", " ");
-            GameObject gameObject = new GameObject(objName);
+            var gameObject = new GameObject(objName);
             foreach (IElemBuilder builder in _buildStack)
             {
                 builder.Build(element, gameObject);

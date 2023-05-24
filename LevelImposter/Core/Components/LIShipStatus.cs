@@ -14,6 +14,7 @@ using BepInEx.Unity.IL2CPP.Utils.Collections;
 using Reactor.Networking.Attributes;
 using Hazel;
 using LevelImposter.Builders;
+using System.Linq;
 
 namespace LevelImposter.Core
 {
@@ -53,6 +54,13 @@ namespace LevelImposter.Core
             KeyCode.C,
             KeyCode.P,
             KeyCode.U
+        };
+        public static readonly KeyCode[] DEBUG_SEQ = new KeyCode[] {
+            KeyCode.D,
+            KeyCode.E,
+            KeyCode.B,
+            KeyCode.U,
+            KeyCode.G
         };
 
         private RenameHandler _renames = new();
@@ -341,6 +349,11 @@ namespace LevelImposter.Core
             }
         }
 
+        private static void RunDebugTests()
+        {
+            // ============= Insert Debug Tests Here =============
+        }
+
         public void Awake()
         {
             _shipStatus = GetComponent<ShipStatus>();
@@ -365,6 +378,11 @@ namespace LevelImposter.Core
                 // Set CPU affinity on key combo
                 StartCoroutine(CoHandleKeyCombo(CPU_SEQ, () => {
                     SetCPUAffinity();
+                }).WrapToIl2Cpp());
+
+                // Run Debug Tests
+                StartCoroutine(CoHandleKeyCombo(DEBUG_SEQ, () => {
+                    RunDebugTests();
                 }).WrapToIl2Cpp());
             }
         }

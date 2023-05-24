@@ -33,11 +33,23 @@ namespace LevelImposter.Core
             if (LIShipStatus.Instance == null || LIShipStatus.Instance.IsReady)
                 return true;
 
-            MapUtils.WaitForShip(() =>
+            MapUtils.WaitForShip(LIConstants.MAX_LOAD_TIME, () =>
             {
                 __instance.SendClientReady();
             });
             return false;
+        }
+    }
+
+    /*
+     *      Increase Max Wait Time
+     */
+    [HarmonyPatch(typeof(AmongUsClient), nameof(AmongUsClient.Awake))]
+    public static class WaitTimePatch
+    {
+        public static void Postfix(AmongUsClient __instance)
+        {
+            __instance.MAX_CLIENT_WAIT_TIME = LIConstants.CONNECTION_TIMEOUT;
         }
     }
 

@@ -153,7 +153,6 @@ namespace LevelImposter.Shop
             if (_currentMap == null)
                 return;
             MapFileAPI.Instance?.Delete(_currentMap?.id ?? "");
-            ThumbnailFileAPI.Instance?.Delete(_currentMap?.id ?? "");
             UpdateButtons();
             ShopManager.RegenerateFallback(true);
         }

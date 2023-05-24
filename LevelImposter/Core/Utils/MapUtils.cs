@@ -260,16 +260,21 @@ namespace LevelImposter.Core
         /// <summary>
         /// Waits for ShipStatus to be ready, then calls Action
         /// </summary>
+        /// <param name="timeout">Max amount of time in seconds to wait</param>
         /// <param name="onFinish">Action to call when the map is initialized</param>
-        public static void WaitForShip(Action onFinish)
+        public static void WaitForShip(float timeout, Action onFinish)
         {
-            Coroutines.Start(CoWaitForShip(onFinish));
+            Coroutines.Start(CoWaitForShip(timeout, onFinish));
         }
-        private static IEnumerator CoWaitForShip(Action onFinish)
+        private static IEnumerator CoWaitForShip(float timeout, Action onFinish)
         {
             {
-                while (LIShipStatus.Instance?.IsReady == false)
+                float timer = 0;
+                while (LIShipStatus.Instance?.IsReady == false && timer < timeout)
+                {
+                    timer += Time.deltaTime;
                     yield return null;
+                }
                 onFinish.Invoke();
                 onFinish = null;
             }
@@ -313,7 +318,9 @@ namespace LevelImposter.Core
                 {
                     var prefabAnim = prefab.GetComponent<PowerTools.SpriteAnim>();
                     var spriteAnim = obj.AddComponent<PowerTools.SpriteAnim>();
-                    spriteAnim.Play(prefabAnim.m_defaultAnim, prefabAnim.Speed);
+                    spriteAnim.m_defaultAnim = prefabAnim.m_defaultAnim;
+                    spriteAnim.m_speed = prefabAnim.m_speed;
+                    spriteAnim.Play(prefabAnim.m_defaultAnim, prefabAnim.m_speed);
                 }
             }
             spriteRenderer.material = prefabRenderer.material;
