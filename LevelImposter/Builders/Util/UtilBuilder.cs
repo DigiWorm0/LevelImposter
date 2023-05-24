@@ -48,7 +48,7 @@ namespace LevelImposter.Builders
                 console.usableDistance = prefabSystem.usableDistance;
                 console.MinigamePrefab = prefabSystem.MinigamePrefab;
                 console.useIcon = prefabSystem.useIcon;
-                console.usableDistance = elem.properties.range != null ? (float)elem.properties.range : 1.0f;
+                console.usableDistance = elem.properties.range ?? 1.0f;
                 action = console.Use;
 
                 // Always set minigame to polus cams

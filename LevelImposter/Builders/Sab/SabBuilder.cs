@@ -71,7 +71,7 @@ namespace LevelImposter.Builders
 
                 // Rename Task
                 if (!string.IsNullOrEmpty(elem.properties.description))
-                    LIShipStatus.Instance.Renames.Add(task.TaskType, elem.properties.description);
+                    LIShipStatus.Instance?.Renames.Add(task.TaskType, elem.properties.description);
 
                 // Add Task
                 shipStatus.SpecialTasks = MapUtils.AddToArr(shipStatus.SpecialTasks, task);

@@ -65,7 +65,7 @@ namespace LevelImposter.Builders
             FootstepWatcher stepPlayer = obj.AddComponent<FootstepWatcher>();
             stepPlayer.Area = colliders[0];
             stepPlayer.Sounds = soundGroup;
-            stepPlayer.priority = elem.properties.soundPriority == null ? 0 : (int)elem.properties.soundPriority;
+            stepPlayer.priority = elem.properties.soundPriority ?? 0;
         }
 
         public void PostBuild() { }

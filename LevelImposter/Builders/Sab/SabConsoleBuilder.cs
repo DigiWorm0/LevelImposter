@@ -47,7 +47,7 @@ namespace LevelImposter.Builders
                 return;
             }
             if (!string.IsNullOrEmpty(elem.properties.description))
-                LIShipStatus.Instance.Renames.Add(sabotageTask.TaskType, elem.properties.description);
+                LIShipStatus.Instance?.Renames.Add(sabotageTask.TaskType, elem.properties.description);
 
             // Console
             Console console = obj.AddComponent<Console>();
