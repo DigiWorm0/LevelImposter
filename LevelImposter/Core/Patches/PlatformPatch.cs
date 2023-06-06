@@ -68,7 +68,7 @@ namespace LevelImposter.Core
                     SendOption.Reliable
                 ).EndMessage();
             }
-            return true;
+            return false;
         }
     }
     [HarmonyPatch(typeof(ShipStatus), nameof(ShipStatus.StartMeeting))]

@@ -75,6 +75,9 @@ namespace LevelImposter.Builders
             movingPlatform.MovingSound = prefabBehaviour.MovingSound;
             Platform = movingPlatform;
 
+            // ShipStatus
+            shipStatus.Systems.Add(SystemTypes.GapRoom, movingPlatform.Cast<ISystemType>());
+
             // Sound
             LISound? moveSound = MapUtils.FindSound(elem.properties.sounds, MOVE_SOUND_NAME);
             if (moveSound != null)
