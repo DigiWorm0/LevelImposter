@@ -15,22 +15,27 @@ namespace LevelImposter.Core
     [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.HandleRpc))]
     public static class PlatformPatchHandle
     {
-        public static bool Prefix([HarmonyArgument(0)] byte callId, [HarmonyArgument(1)] MessageReader reader, PlayerControl __instance)
+        public static bool Prefix([HarmonyArgument(0)] byte callId, PlayerControl __instance)
         {
             if (LIShipStatus.Instance == null)
                 return true;
+            if (!AmongUsClient.Instance.AmHost)
+                return true;
+            if (callId != (byte)RpcCalls.UsePlatform)
+                return true;
 
-            if (callId == 32 && AmongUsClient.Instance.AmHost)
+            // No platform
+            var platform = PlatformBuilder.Platform;
+            if (platform == null)
             {
-                if (PlatformBuilder.Platform != null)
-                {
-                    PlatformBuilder.Platform.Use(__instance);
-                    __instance.SetDirtyBit(4096U);
-                    return false;
-                }
                 LILogger.Warn("[RPC] Could not find a moving platform");
+                return true;
             }
-            return true;
+
+            // Use Platform
+            platform.Use(__instance);
+            __instance.SetDirtyBit(4096U);
+            return false;
         }
     }
     [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.RpcUsePlatform))]
@@ -41,19 +46,43 @@ namespace LevelImposter.Core
             if (LIShipStatus.Instance == null)
                 return true;
 
+            // No platform
+            var platform = PlatformBuilder.Platform;
+            if (platform == null)
+            {
+                LILogger.Warn("[RPC] Could not find a moving platform");
+                return true;
+            }
+
             if (AmongUsClient.Instance.AmHost)
             {
-                if (PlatformBuilder.Platform != null)
-                {
-                    PlatformBuilder.Platform.Use(__instance);
-                    __instance.SetDirtyBit(4096U);
-                }
-                else
-                {
-                    LILogger.Warn("[RPC] Could not find a moving platform");
-                }
+                // Use Platform
+                platform.Use(__instance);
+            }
+            else
+            {
+                // Request Use Platform
+                AmongUsClient.Instance.StartRpc(
+                    __instance.NetId,
+                    (byte)RpcCalls.UsePlatform,
+                    SendOption.Reliable
+                ).EndMessage();
             }
             return true;
+        }
+    }
+    [HarmonyPatch(typeof(ShipStatus), nameof(ShipStatus.StartMeeting))]
+    public static class PlatformResetPatch
+    {
+        public static void Postfix()
+        {
+            if (LIShipStatus.Instance == null)
+                return;
+
+            LILogger.Info("Meeting Called!");
+
+            // Reset Platform
+            PlatformBuilder.Platform?.MeetingCalled();
         }
     }
 
