@@ -2203,7 +2203,15 @@
         "Sliders/NavSlider",
         "Sliders/CommsSlider",
         "Sliders/LifeSuppSlider",
-        "Sliders/SecuritySlider"
+        "Sliders/SecuritySlider",
+        "Sliders/REngineSlider/electricity_Divert_switchShadow",
+        "Sliders/LEngineSlider/electricity_Divert_switchShadow",
+        "Sliders/WeaponSlider/electricity_Divert_switchShadow (1)",
+        "Sliders/ShieldSlider/electricity_Divert_switchShadow",
+        "Sliders/NavSlider/electricity_Divert_switchShadow (1)",
+        "Sliders/CommsSlider/electricity_Divert_switchShadow",
+        "Sliders/LifeSuppSlider/electricity_Divert_switchShadow (1)",
+        "Sliders/SecuritySlider/electricity_Divert_switchShadow"
       ]
     },
     {

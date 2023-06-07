@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
@@ -47,11 +47,15 @@ namespace LevelImposter.Core
         [MethodRpc((uint)LIRpc.TeleportPlayer)]
         public static void RPCTeleport(PlayerControl player, float x, float y)
         {
+            LILogger.Info($"Teleported {player.name} to ({x},{y})");
             player.transform.position = new Vector3(
                 x,
                 y,
                 player.transform.position.z
             );
+
+            player.NetTransform.targetSyncPosition = player.transform.position;
+            player.NetTransform.prevPosSent = player.transform.position;
         }
 
         public void Awake()

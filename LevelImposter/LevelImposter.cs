@@ -25,12 +25,19 @@ namespace LevelImposter
 
         public override void Load()
         {
+            // Init Subsystems
             LILogger.Init();
             LIDeepLink.Init();
             ModCompatibility.Init();
-
-            DataManager.Player.Onboarding.ViewedHideAndSeekHowToPlay = true;
             
+            // Bypass Hide and Seek Tutorial
+            DataManager.Player.Onboarding.ViewedHideAndSeekHowToPlay = true;
+
+            // Increase max X and Y range from -50 - 50 >>> -500 - 500
+            NetHelpers.XRange = new FloatRange(-500f, 500f);
+            NetHelpers.YRange = new FloatRange(-500f, 500f);
+            
+            // IUsable Interface
             RegisterTypeOptions usableInterface = new()
             {
                 Interfaces = new(new System.Type[]
@@ -39,6 +46,7 @@ namespace LevelImposter
                 })
             };
 
+            // Inject MonoBehaviours
             ClassInjector.RegisterTypeInIl2Cpp<LIShipStatus>();
             ClassInjector.RegisterTypeInIl2Cpp<LIStar>();
             ClassInjector.RegisterTypeInIl2Cpp<LIFloat>();
@@ -66,6 +74,7 @@ namespace LevelImposter
             ClassInjector.RegisterTypeInIl2Cpp<ShopSpawner>();
             ClassInjector.RegisterTypeInIl2Cpp<Spinner>();
 
+            // Patch Methods
             Harmony.PatchAll();
             LILogger.Msg("LevelImposter Initialized.");
         }

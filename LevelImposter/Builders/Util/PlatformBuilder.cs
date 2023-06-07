@@ -11,6 +11,8 @@ namespace LevelImposter.Builders
 {
     class PlatformBuilder : IElemBuilder
     {
+        private const string MOVE_SOUND_NAME = "platformMove";
+
         // TODO: Support multiple moving platforms in 1 map
         public static MovingPlatformBehaviour? Platform = null;
 
@@ -72,6 +74,16 @@ namespace LevelImposter.Builders
             movingPlatform.IsLeft = true;
             movingPlatform.MovingSound = prefabBehaviour.MovingSound;
             Platform = movingPlatform;
+
+            // ShipStatus
+            shipStatus.Systems.Add(SystemTypes.GapRoom, movingPlatform.Cast<ISystemType>());
+
+            // Sound
+            LISound? moveSound = MapUtils.FindSound(elem.properties.sounds, MOVE_SOUND_NAME);
+            if (moveSound != null)
+                WAVLoader.Instance?.LoadWAV(moveSound?.data, (AudioClip? clip) => {
+                    movingPlatform.MovingSound = clip;
+                });
 
             // Consoles
             GameObject leftObj = new("Left Console");
