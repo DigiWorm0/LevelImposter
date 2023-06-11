@@ -50,16 +50,20 @@ namespace LevelImposter.Builders
             // Meeting Sound
             LISound? buttonSound = MapUtils.FindSound(elem.properties.sounds, BUTTON_SOUND_NAME);
             if (buttonSound != null)
-                WAVLoader.Instance?.LoadWAV(buttonSound?.data, (AudioClip? clip) => {
-                    LoadMeetingSound(elem, clip, false);
-                });
+                LoadMeetingSound(
+                    elem,
+                    WAVFile.Load(buttonSound?.data),
+                    false
+                );
 
             // Report Sound
             LISound? reportSound = MapUtils.FindSound(elem.properties.sounds, REPORT_SOUND_NAME);
             if (reportSound != null)
-                WAVLoader.Instance?.LoadWAV(reportSound?.data, (AudioClip? clip) => {
-                    LoadMeetingSound(elem, clip, true);
-                });
+                LoadMeetingSound(
+                    elem,
+                    WAVFile.Load(reportSound?.data),
+                    false
+                );
         }
 
         private void LoadMeetingBackground(LIElement elem, SpriteLoader.SpriteData? nullableSpriteData) {

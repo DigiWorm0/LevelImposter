@@ -54,10 +54,7 @@ namespace LevelImposter.Builders
                 // WAVLoader
                 else
                 {
-                    WAVLoader.Instance?.LoadWAV(elem, sound, (AudioClip audioClip) =>
-                    {
-                        soundGroup.Clips[i] = audioClip;
-                    });
+                    soundGroup.Clips[i] = WAVFile.Load(sound.data);
                 }
             }
 

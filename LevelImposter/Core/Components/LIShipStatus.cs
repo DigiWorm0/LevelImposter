@@ -68,16 +68,13 @@ namespace LevelImposter.Core
         private ShipStatus? _shipStatus = null;
         private bool _isReady = true;
 
-        [HideFromIl2Cpp]
-        public RenameHandler Renames => _renames;
-        [HideFromIl2Cpp]
-        public LIMap? CurrentMap => _currentMap;
+        [HideFromIl2Cpp] public RenameHandler Renames => _renames;
+        [HideFromIl2Cpp] public LIMap? CurrentMap => _currentMap;
         public ShipStatus? ShipStatus => _shipStatus;
         public bool IsReady
         {
             get {
                 return SpriteLoader.Instance?.RenderCount <= 0 &&
-                        WAVLoader.Instance?.LoadCount <= 0 &&
                         !MapSync.IsDownloadingMap &&
                         _isReady;
             }
@@ -391,8 +388,6 @@ namespace LevelImposter.Core
             _renames = null;
             _currentMap = null;
             Instance = null;
-
-            WAVLoader.Instance?.ClearAll();
         }
     }
 }

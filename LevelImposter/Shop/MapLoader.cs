@@ -21,7 +21,7 @@ namespace LevelImposter.Shop
         public static void LoadMap(LIMap? map, bool isFallback)
         {
             if (_lastMapID != map?.id)
-                CleanAssets();
+                GCHandler.Clean();
             _lastMapID = map?.id;
             _currentMap = map;
             _isFallback = isFallback;
@@ -61,18 +61,6 @@ namespace LevelImposter.Shop
         public static void SetFallback(bool isFallback)
         {
             _isFallback = isFallback;
-        }
-
-        /// <summary>
-        /// Cleans all assets from cache and runs GC
-        /// </summary>
-        public static void CleanAssets()
-        {
-            LILogger.Msg("Clearing all created assets");
-            SpriteLoader.Instance?.ClearAll();
-            WAVLoader.Instance?.ClearAll();
-
-            GC.Collect();
         }
     }
 }

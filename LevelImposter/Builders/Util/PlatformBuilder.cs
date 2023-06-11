@@ -81,9 +81,7 @@ namespace LevelImposter.Builders
             // Sound
             LISound? moveSound = MapUtils.FindSound(elem.properties.sounds, MOVE_SOUND_NAME);
             if (moveSound != null)
-                WAVLoader.Instance?.LoadWAV(moveSound?.data, (AudioClip? clip) => {
-                    movingPlatform.MovingSound = clip;
-                });
+                movingPlatform.MovingSound = WAVFile.Load(moveSound?.data);
 
             // Consoles
             GameObject leftObj = new("Left Console");

@@ -57,7 +57,6 @@ namespace LevelImposter
             ClassInjector.RegisterTypeInIl2Cpp<MinigameSprites>();
             ClassInjector.RegisterTypeInIl2Cpp<GIFAnimator>();
             ClassInjector.RegisterTypeInIl2Cpp<SpriteLoader>();
-            ClassInjector.RegisterTypeInIl2Cpp<WAVLoader>();
             ClassInjector.RegisterTypeInIl2Cpp<TriggerConsole>(usableInterface);
 
             ClassInjector.RegisterTypeInIl2Cpp<AssetDB>();

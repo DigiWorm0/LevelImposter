@@ -10,13 +10,15 @@ namespace LevelImposter.Core
     /// <summary>
     /// Represents a GIF file.
     /// </summary>
-    public class GIFFile
+    public class GIFFile : IDisposable
     {
         private static readonly Color[] DEFAULT_COLOR_TABLE = new Color[]
         {
             new Color(0, 0, 0, 0),
             new Color(1, 1, 1, 1)
         };
+
+        public bool IsLoaded { get; private set; }
 
         // LZW Decoder
         private ushort[][]? _codeTable = null; // Code to indices table
@@ -32,7 +34,6 @@ namespace LevelImposter.Core
         private ushort _backgroundColorIndex = 0;
 
         // Image Descriptor
-        public bool IsLoaded { get; private set; }
         public ushort Width { get; private set; }
         public ushort Height { get; private set; }
         public List<GIFFrame> Frames { get; private set; }
@@ -50,7 +51,8 @@ namespace LevelImposter.Core
                 ReadDescriptor(reader);
                 ReadGlobalColorTable(reader);
                 while (ReadBlock(reader)) { }
-                FreeMemory();
+                _pixelBuffer = null;
+                _codeTable = null;
                 IsLoaded = true;
             }
         }
@@ -78,9 +80,10 @@ namespace LevelImposter.Core
         /// <summary>
         /// Destroys the GIF file and frees up memory.
         /// </summary>
-        public void Destroy()
+        public void Dispose()
         {
-            FreeMemory();
+            _pixelBuffer = null;
+            _codeTable = null;
             foreach (var frame in Frames)
             {
                 if (frame.sprite != null)
@@ -536,15 +539,6 @@ namespace LevelImposter.Core
                 frame.texture = texture;
                 frame.sprite = sprite;
             }
-        }
-
-        /// <summary>
-        /// Releases memory resources used for decoding.
-        /// </summary>
-        private void FreeMemory()
-        {
-            _pixelBuffer = null;
-            _codeTable = null;
         }
 
         /// <summary>

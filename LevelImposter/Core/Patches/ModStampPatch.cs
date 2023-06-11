@@ -31,7 +31,6 @@ namespace LevelImposter.Core
                 apiParent.AddComponent<GitHubAPI>();
                 apiParent.AddComponent<ConfigAPI>();
                 apiParent.AddComponent<SpriteLoader>();
-                apiParent.AddComponent<WAVLoader>();
                 UnityEngine.Object.DontDestroyOnLoad(apiParent);
             }
         }

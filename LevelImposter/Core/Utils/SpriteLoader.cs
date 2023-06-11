@@ -28,7 +28,7 @@ namespace LevelImposter.Core
         public event SpriteEventHandle? OnLoad;
         public delegate void SpriteEventHandle(LIElement elem);
 
-        private Stack<SpriteData>? _spriteList = new();
+        private Stack<SpriteData>? _spriteCache = new();
         private Stopwatch? _renderTimer = new();
         private int _renderCount = 0;
         private bool _shouldRender
@@ -39,52 +39,15 @@ namespace LevelImposter.Core
         public int RenderCount => _renderCount;
 
         /// <summary>
-        /// Marks all sprites and textures for garbage collection
-        /// </summary>
-        public void ClearAll()
-        {
-            LILogger.Info($"Destroying {_spriteList?.Count} sprites");
-            while (_spriteList?.Count > 0)
-            {
-                try
-                {
-                    // Still Image
-                    SpriteData spriteData = _spriteList.Pop();
-                    Destroy(spriteData.Sprite?.texture);
-                    Destroy(spriteData.Sprite);
-
-                    // GIF
-                    if (spriteData.GIFData != null)
-                        spriteData.GIFData.Destroy();
-                }
-                catch (Exception e)
-                {
-                    LILogger.Warn(e);
-                }
-            }
-            OnLoad = null;
-            _renderCount = 0;
-        }
-
-        /// <summary>
-        /// Adds a sprite data to managed stack to enable GC and cache
-        /// </summary>
-        /// <param name="sprite">Sprite to add to managed stack</param>
-        public void AddSpriteData(SpriteData spriteData)
-        {
-            _spriteList?.Push(spriteData);
-        }
-
-        /// <summary>
         /// Searches for a Sprite in cache by GUID
         /// </summary>
         /// <param name="spriteID">GUID of the sprite or associated object</param>
         /// <returns>Sprite from cache or NULL if none found</returns>
         private SpriteData? GetSpriteFromCache(string? spriteID)
         {
-            if (_spriteList == null || string.IsNullOrEmpty(spriteID))
+            if (_spriteCache == null || string.IsNullOrEmpty(spriteID))
                 return null;
-            foreach (SpriteData spriteData in _spriteList)
+            foreach (SpriteData spriteData in _spriteCache)
             {
                 if (spriteData.ID == spriteID)
                 {
@@ -102,9 +65,9 @@ namespace LevelImposter.Core
         /// <returns>True iff the sprite is in the sprite cache</returns>
         public bool IsSpriteInCache(string? spriteID)
         {
-            if (_spriteList == null || string.IsNullOrEmpty(spriteID))
+            if (_spriteCache == null || string.IsNullOrEmpty(spriteID))
                 return false;
-            return _spriteList.Any((spriteData) => spriteData.ID == spriteID);
+            return _spriteCache.Any((spriteData) => spriteData.ID == spriteID);
         }
 
         /// <summary>
@@ -244,7 +207,7 @@ namespace LevelImposter.Core
                             Sprite = gifFile.GetFrameSprite(0),
                             GIFData = gifFile
                         };
-                        AddSpriteData((SpriteData)spriteData);
+                        GCHandler.Register(spriteData);
                     }
                 }
                 else
@@ -254,9 +217,8 @@ namespace LevelImposter.Core
                         ID = spriteID ?? "",
                         Sprite = RawImageToSprite(imgData)
                     };
-                    var castedSpriteData = (SpriteData)spriteData;
-                    AddSpriteData(castedSpriteData);
-                    castedSpriteData.Sprite.hideFlags = HideFlags.DontUnloadUnusedAsset;
+                    GCHandler.Register(spriteData);
+                    spriteData.Sprite.hideFlags = HideFlags.DontUnloadUnusedAsset;
                 }
 
                 // Output
@@ -338,7 +300,7 @@ namespace LevelImposter.Core
         /// <summary>
         /// Metadata to store and send animated texture data
         /// </summary>
-        public struct SpriteData
+        public class SpriteData : IDisposable
         {
             public SpriteData() { }
             public string ID = "";
@@ -346,6 +308,16 @@ namespace LevelImposter.Core
 
             public bool IsGIF => GIFData != null;
             public GIFFile? GIFData { get; set; }
+
+            public void Dispose()
+            {
+                if (GIFData != null)
+                    GIFData.Dispose();
+                if (Sprite != null)
+                    Destroy(Sprite.texture);
+                Sprite = null;
+                GIFData = null;
+            }
         }
     }
 }
