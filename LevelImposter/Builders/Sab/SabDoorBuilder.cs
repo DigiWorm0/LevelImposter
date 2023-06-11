@@ -100,7 +100,8 @@ namespace LevelImposter.Builders
             }
 
             // Console
-            if (isManualDoor)
+            bool isInteractable = elem.properties.isDoorInteractable ?? true;
+            if (isManualDoor && isInteractable)
             {
                 // Prefab
                 var prefab2 = AssetDB.GetObject($"sab-door-{doorType}"); // "sab-door-polus" or "sab-door-airship"

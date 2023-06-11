@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
-using UnityEngine.Tilemaps;
 
 namespace LevelImposter.Core
 {
@@ -390,7 +389,8 @@ namespace LevelImposter.Core
                     indexStream.AddRange(currentCodeArray);
 
                     // Add to Code Table
-                    _codeTable[codeTableIndex] = newCode;
+                    if (codeTableIndex < _codeTable.Length)
+                        _codeTable[codeTableIndex] = newCode;
                     codeTableIndex++;
                 }
                 else
@@ -405,7 +405,8 @@ namespace LevelImposter.Core
                     indexStream.AddRange(newCode);
 
                     // Add to Code Table
-                    _codeTable[codeTableIndex] = newCode;
+                    if (codeTableIndex < _codeTable.Length)
+                        _codeTable[codeTableIndex] = newCode;
                     codeTableIndex++;
                 }
 
