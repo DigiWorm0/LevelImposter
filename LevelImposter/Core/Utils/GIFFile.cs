@@ -436,13 +436,16 @@ namespace LevelImposter.Core
                 throw new Exception("GIF is not loaded");
             if (frameIndex < 0 || frameIndex >= Frames.Count)
                 throw new Exception($"Frame index {frameIndex} is out of range");
+
+            // Create pixel buffer
             if (_pixelBuffer == null)
             {
                 _pixelBuffer = new Color[Width * Height];
                 for (int i = 0; i < _pixelBuffer.Length; i++)
-                    _pixelBuffer[i] = Color.clear;
+                    _pixelBuffer[i] = _backgroundColor;
             }
 
+            // Render all frames up to the target frame
             for (int i = 0; i <= frameIndex; i++)
             {
                 // Frame
@@ -452,22 +455,6 @@ namespace LevelImposter.Core
                 if (frame.IndexStream == null)
                     throw new Exception($"Frame {i} index stream is null");
                 var graphicsControl = frame.GraphicsControl;
-
-                // Background Color
-                if (i == 0)
-                {
-                    _backgroundColor = _globalColorTable[_backgroundColorIndex];
-                    if (graphicsControl?.TransparentColorFlag == true && _backgroundColorIndex == graphicsControl?.TransparentColorIndex)
-                        _backgroundColor = Color.clear;
-                }
-
-                // Create pixel buffer
-                if (_pixelBuffer == null)
-                {
-                    _pixelBuffer = new Color[Width * Height];
-                    for (int o = 0; o < _pixelBuffer.Length; o++)
-                        _pixelBuffer[o] = _backgroundColor;
-                }
 
                 // Create temp pixel buffer
                 Color[]? tempBuffer = null;
