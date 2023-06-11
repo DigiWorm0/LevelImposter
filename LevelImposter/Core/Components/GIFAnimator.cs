@@ -110,7 +110,7 @@ namespace LevelImposter.Core
             {
                 int frame = reverse ? _gifData.Frames.Count - t - 1 : t;
                 _spriteRenderer.sprite = _gifData.GetFrameSprite(frame);
-                yield return new WaitForSeconds(_gifData.Frames[frame].delay);
+                yield return new WaitForSeconds(_gifData.Frames[frame].Delay);
                 t = (t + 1) % _gifData.Frames.Count;
                 if (t == 0 && !repeat)
                     Stop(!reverse);

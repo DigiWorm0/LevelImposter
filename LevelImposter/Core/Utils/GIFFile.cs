@@ -21,17 +21,17 @@ namespace LevelImposter.Core
         public bool IsLoaded { get; private set; }
 
         // LZW Decoder
-        private ushort[][]? _codeTable = null; // Code to indices table
-        private Color[]? _pixelBuffer = null; // Pixel buffer
+        private ushort[][]? _codeTable = null; // Table of "code"s to color indexes
+        private Color[]? _pixelBuffer = null; // Buffer of pixel colors
 
         // Graphic Control Extension
         private GIFGraphicsControl? _lastGraphicsControl { get; set; }
 
         // Logical Screen Descriptor
-        private Color[] _globalColorTable = DEFAULT_COLOR_TABLE;
-        private bool _hasGlobalColorTable = false;
-        private int _globalColorTableSize = 0;
-        private ushort _backgroundColorIndex = 0;
+        private Color[] _globalColorTable = DEFAULT_COLOR_TABLE; // Table of indexes to colors
+        private bool _hasGlobalColorTable = false; // True if there is a global color table
+        private int _globalColorTableSize = 0; // Size of the global color table
+        private ushort _backgroundColorIndex = 0; // Index of the background color in the global color table
 
         // Image Descriptor
         public ushort Width { get; private set; }
@@ -70,11 +70,11 @@ namespace LevelImposter.Core
                 throw new IndexOutOfRangeException("Frame index out of range");
 
             var frame = Frames[frameIndex];
-            if (!frame.isRendered)
+            if (!frame.IsRendered)
                 RenderFrame(frameIndex);
-            if (frame.sprite == null)
+            if (frame.RenderedSprite == null)
                 throw new Exception("Frame sprite is null");
-            return frame.sprite;
+            return frame.RenderedSprite;
         }
 
         /// <summary>
@@ -86,11 +86,11 @@ namespace LevelImposter.Core
             _codeTable = null;
             foreach (var frame in Frames)
             {
-                if (frame.sprite != null)
-                    UnityEngine.Object.Destroy(frame.sprite);
-                if (frame.texture != null)
-                    UnityEngine.Object.Destroy(frame.texture);
-                frame.indexStream = null;
+                if (frame.RenderedSprite?.texture != null)
+                    UnityEngine.Object.Destroy(frame.RenderedSprite.texture);
+                if (frame.RenderedSprite != null)
+                    UnityEngine.Object.Destroy(frame.RenderedSprite);
+                frame.IndexStream = null;
             }
         }
 
@@ -132,13 +132,13 @@ namespace LevelImposter.Core
             reader.ReadByte(); // Pixel Aspect Ratio
 
             // GIFData
-            this._hasGlobalColorTable = hasGlobalColorTable;
-            this._globalColorTableSize = globalColorTableSize;
-            this._backgroundColorIndex = backgroundColorIndex;
+            _hasGlobalColorTable = hasGlobalColorTable;
+            _globalColorTableSize = globalColorTableSize;
+            _backgroundColorIndex = backgroundColorIndex;
 
-            this.Width = width;
-            this.Height = height;
-            this.Frames = new List<GIFFrame>();
+            Width = width;
+            Height = height;
+            Frames = new List<GIFFrame>();
         }
 
         /// <summary>
@@ -148,12 +148,12 @@ namespace LevelImposter.Core
         /// <param name="gifData">GIFData to store color data</param>
         private void ReadGlobalColorTable(BinaryReader reader)
         {
-            if (!this._hasGlobalColorTable)
+            if (!_hasGlobalColorTable)
                 return;
 
             // Global Color Table
-            var globalColorTable = new Color[this._globalColorTableSize];
-            for (int i = 0; i < this._globalColorTableSize; i++)
+            var globalColorTable = new Color[_globalColorTableSize];
+            for (int i = 0; i < _globalColorTableSize; i++)
             {
                 byte r = reader.ReadByte();
                 byte g = reader.ReadByte();
@@ -161,7 +161,7 @@ namespace LevelImposter.Core
 
                 globalColorTable[i] = new Color(r / 255f, g / 255f, b / 255f);
             }
-            this._globalColorTable = globalColorTable;
+            _globalColorTable = globalColorTable;
         }
 
         /// <summary>
@@ -218,12 +218,12 @@ namespace LevelImposter.Core
                         throw new Exception("Invalid block terminator " + blockTerminator);
 
                     // GIFGraphicsControl
-                    this._lastGraphicsControl = new GIFGraphicsControl()
+                    _lastGraphicsControl = new GIFGraphicsControl()
                     {
-                        delay = delay,
-                        disposalMethod = disposalMethod,
-                        transparentColorFlag = transparentColorFlag,
-                        transparentColorIndex = transparentColorIndex
+                        Delay = delay,
+                        DisposalMethod = disposalMethod,
+                        TransparentColorFlag = transparentColorFlag,
+                        TransparentColorIndex = transparentColorIndex
                     };
 
                     break;
@@ -301,22 +301,22 @@ namespace LevelImposter.Core
             // GIFFrame
             GIFFrame frame = new GIFFrame()
             {
-                graphicsControl = this._lastGraphicsControl,
-                hasLocalColorTable = hasLocalColorTable,
-                localColorTable = localColorTable,
-                interlaceFlag = interlaceFlag,
-                sortFlag = sortFlag,
+                GraphicsControl = _lastGraphicsControl,
+                HasLocalColorTable = hasLocalColorTable,
+                LocalColorTable = localColorTable,
+                InterlaceFlag = interlaceFlag,
+                SortFlag = sortFlag,
 
-                leftPosition = imageLeftPosition,
-                topPosition = imageTopPosition,
-                width = imageWidth,
-                height = imageHeight,
+                LeftPosition = imageLeftPosition,
+                TopPosition = imageTopPosition,
+                Width = imageWidth,
+                Height = imageHeight,
 
-                indexStream = indexStream
+                IndexStream = indexStream
             };
-            this.Frames.Add(frame);
+            Frames.Add(frame);
 
-            this._lastGraphicsControl = null;
+            _lastGraphicsControl = null;
         }
 
         /// <summary>
@@ -436,7 +436,7 @@ namespace LevelImposter.Core
                 throw new Exception($"Frame index {frameIndex} is out of range");
             if (_pixelBuffer == null)
             {
-                _pixelBuffer = new Color[this.Width * this.Height];
+                _pixelBuffer = new Color[Width * Height];
                 for (int i = 0; i < _pixelBuffer.Length; i++)
                     _pixelBuffer[i] = Color.clear;
             }
@@ -444,15 +444,23 @@ namespace LevelImposter.Core
             for (int i = 0; i <= frameIndex; i++)
             {
                 var frame = Frames[i];
-                if (frame.isRendered) // Skip rendered frames
+                if (frame.IsRendered) // Skip rendered frames
                     continue;
-                if (frame.indexStream == null)
+                if (frame.IndexStream == null)
                     throw new Exception($"Frame {i} index stream is null");
 
+                // Create temp pixel buffer
+                Color[]? tempBuffer = null;
+                if (frame.DisposalMethod == FrameDisposalMethod.RestoreToPrevious)
+                {
+                    tempBuffer = new Color[_pixelBuffer.Length];
+                    _pixelBuffer.CopyTo(tempBuffer, 0);
+                }
+
                 // Create frame texture
-                var graphicsControl = frame.graphicsControl;
+                var graphicsControl = frame.GraphicsControl;
                 bool pixelArtMode = LIShipStatus.Instance?.CurrentMap?.properties.pixelArtMode == true;
-                var texture = new Texture2D(this.Width, this.Height, TextureFormat.RGBA32, false)
+                var texture = new Texture2D(Width, Height, TextureFormat.RGBA32, false)
                 {
                     wrapMode = TextureWrapMode.Clamp,
                     filterMode = pixelArtMode ? FilterMode.Point : FilterMode.Bilinear,
@@ -461,21 +469,21 @@ namespace LevelImposter.Core
                 };
 
                 // Get frame data
-                var colorTable = frame.hasLocalColorTable ? frame.localColorTable : this._globalColorTable;
-                var x = frame.leftPosition;
-                var y = frame.topPosition;
-                var w = frame.width;
-                var h = frame.height;
+                var colorTable = frame.HasLocalColorTable ? frame.LocalColorTable : _globalColorTable;
+                var x = frame.LeftPosition;
+                var y = frame.TopPosition;
+                var w = frame.Width;
+                var h = frame.Height;
 
                 // Loop through pixels
                 for (int o = 0; o < w * h; o++)
                 {
-                    var colorIndex = frame.indexStream[o];
+                    var colorIndex = frame.IndexStream[o];
 
                     // Skip transparent pixels
                     if (graphicsControl != null &&
-                        graphicsControl.transparentColorFlag &&
-                        colorIndex == graphicsControl.transparentColorIndex)
+                        graphicsControl.TransparentColorFlag &&
+                        colorIndex == graphicsControl.TransparentColorIndex)
                     {
                         continue;
                     }
@@ -483,7 +491,7 @@ namespace LevelImposter.Core
                     // Calculate pixel index based on frame position
                     int newX = o % w;
                     int newY = o / w;
-                    int pixelIndex = (this.Height - 1 - (y + newY)) * this.Width + (x + newX);
+                    int pixelIndex = (Height - 1 - (y + newY)) * Width + (x + newX);
 
                     // Set pixel color
                     var color = colorTable[colorIndex];
@@ -495,15 +503,18 @@ namespace LevelImposter.Core
                 texture.Apply();
 
                 // Handle frame disposal
-                switch (frame.disposalMethod)
+                switch (frame.DisposalMethod)
                 {
                     case FrameDisposalMethod.RestoreToPrevious:
-                        throw new NotImplementedException("RestoreToPrevious disposal method not implemented");
+                        // Restore previous buffer
+                        if (tempBuffer != null)
+                            _pixelBuffer = tempBuffer;
+                        break;
                     case FrameDisposalMethod.RestoreToBackgroundColor:
                         // Get background color
-                        var backgroundColor = this._globalColorTable[this._backgroundColorIndex];
-                        if (graphicsControl?.transparentColorFlag == true &&
-                            graphicsControl.transparentColorIndex == this._backgroundColorIndex)
+                        var backgroundColor = _globalColorTable[_backgroundColorIndex];
+                        if (graphicsControl?.TransparentColorFlag == true &&
+                            graphicsControl.TransparentColorIndex == _backgroundColorIndex)
                             backgroundColor = Color.clear;
 
                         // Fill pixel buffer with background color
@@ -512,7 +523,7 @@ namespace LevelImposter.Core
                             // Calculate pixel index based on frame position
                             int newX = o % w;
                             int newY = o / w;
-                            int pixelIndex = (this.Height - 1 - (y + newY)) * this.Width + (x + newX);
+                            int pixelIndex = (Height - 1 - (y + newY)) * Width + (x + newX);
 
                             // Set pixel color
                             _pixelBuffer[pixelIndex] = backgroundColor;
@@ -520,6 +531,7 @@ namespace LevelImposter.Core
                         break;
                     case FrameDisposalMethod.NoDisposal:
                     case FrameDisposalMethod.DoNotDispose:
+                        // Do nothing
                         break;
                 }
 
@@ -535,9 +547,8 @@ namespace LevelImposter.Core
                 sprite.hideFlags = HideFlags.DontUnloadUnusedAsset;
 
                 // Apply to frame
-                frame.indexStream = null; // Free memory
-                frame.texture = texture;
-                frame.sprite = sprite;
+                frame.IndexStream = null; // Free memory
+                frame.RenderedSprite = sprite;
             }
         }
 
@@ -546,10 +557,10 @@ namespace LevelImposter.Core
         /// </summary>
         public class GIFGraphicsControl
         {
-            public float delay { get; set; } // seconds
-            public FrameDisposalMethod disposalMethod { get; set; }
-            public bool transparentColorFlag { get; set; }
-            public int transparentColorIndex { get; set; }
+            public float Delay { get; set; } // seconds
+            public FrameDisposalMethod DisposalMethod { get; set; }
+            public bool TransparentColorFlag { get; set; }
+            public int TransparentColorIndex { get; set; }
         }
 
         /// <summary>
@@ -558,26 +569,25 @@ namespace LevelImposter.Core
         public class GIFFrame
         {
             // Graphic Control Extension
-            public GIFGraphicsControl? graphicsControl { get; set; }
+            public GIFGraphicsControl? GraphicsControl { get; set; }
 
-            public float delay { get { return graphicsControl?.delay ?? 0; } }
-            public FrameDisposalMethod disposalMethod { get { return graphicsControl?.disposalMethod ?? FrameDisposalMethod.DoNotDispose; } }
-            public bool isRendered { get { return texture != null; } }
+            public float Delay { get { return GraphicsControl?.Delay ?? 0; } }
+            public FrameDisposalMethod DisposalMethod { get { return GraphicsControl?.DisposalMethod ?? FrameDisposalMethod.DoNotDispose; } }
+            public bool IsRendered { get { return RenderedSprite != null; } }
 
             // Image Descriptor
-            public Color[]? localColorTable { get; set; }
-            public bool hasLocalColorTable { get; set; }
-            public bool interlaceFlag { get; set; }
-            public bool sortFlag { get; set; }
+            public Color[]? LocalColorTable { get; set; }
+            public bool HasLocalColorTable { get; set; }
+            public bool InterlaceFlag { get; set; }
+            public bool SortFlag { get; set; }
 
-            public int leftPosition { get; set; }
-            public int topPosition { get; set; }
-            public int width { get; set; }
-            public int height { get; set; }
+            public int LeftPosition { get; set; }
+            public int TopPosition { get; set; }
+            public int Width { get; set; }
+            public int Height { get; set; }
 
-            public List<ushort>? indexStream { get; set; }
-            public Texture2D? texture { get; set; }
-            public Sprite? sprite { get; set; }
+            public List<ushort>? IndexStream { get; set; }
+            public Sprite? RenderedSprite { get; set; }
 
         }
 

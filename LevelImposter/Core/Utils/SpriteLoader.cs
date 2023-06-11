@@ -43,6 +43,7 @@ namespace LevelImposter.Core
         /// </summary>
         /// <param name="spriteID">GUID of the sprite or associated object</param>
         /// <returns>Sprite from cache or NULL if none found</returns>
+        [HideFromIl2Cpp]
         private SpriteData? GetSpriteFromCache(string? spriteID)
         {
             if (_spriteCache == null || string.IsNullOrEmpty(spriteID))
