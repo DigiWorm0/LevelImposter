@@ -27,11 +27,15 @@ namespace LevelImposter.Core
         /// </summary>
         public static void Clean()
         {
+            // Disposables
             LILogger.Info($"Disposing of {_disposables.Count} objects");
             while (_disposables.Count > 0)
-            {
                 _disposables.Pop().Dispose();
-            }
+
+            // SpriteLoader
+            SpriteLoader.Instance?.Clean();
+
+            // GC
             GC.Collect();
         }
     }

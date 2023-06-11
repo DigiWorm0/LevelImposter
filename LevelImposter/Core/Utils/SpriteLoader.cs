@@ -1,13 +1,13 @@
-﻿using System;
+﻿using BepInEx.Unity.IL2CPP.Utils.Collections;
+using Il2CppInterop.Runtime.Attributes;
+using Il2CppInterop.Runtime.InteropTypes.Arrays;
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using UnityEngine;
-using System.Diagnostics;
-using Il2CppInterop.Runtime.Attributes;
-using BepInEx.Unity.IL2CPP.Utils.Collections;
-using Il2CppInterop.Runtime.InteropTypes.Arrays;
 
 namespace LevelImposter.Core
 {
@@ -60,6 +60,14 @@ namespace LevelImposter.Core
         }
 
         /// <summary>
+        /// Cleans the sprite cache
+        /// </summary>
+        public void Clean()
+        {
+            _spriteCache?.Clear();
+        }
+
+        /// <summary>
         /// Gets whether or not a sprite is in the sprite cache
         /// </summary>
         /// <param name="spriteID">GUID of the sprite or associated object</param>
@@ -82,7 +90,7 @@ namespace LevelImposter.Core
         public void LoadSpriteAsync(LIElement element, GameObject obj)
         {
             LILogger.Info($"Loading sprite for {element}");
-            
+
             string b64 = element.properties.spriteData ?? "";
             LoadSpriteAsync(b64, (nullableSpriteData) =>
             {
@@ -99,7 +107,7 @@ namespace LevelImposter.Core
 
                 // Sprite is in cache, we can reduce memory usage
                 element.properties.spriteData = "";
-                
+
                 // Load Components
                 var spriteData = (SpriteData)nullableSpriteData;
                 if (spriteData.IsGIF) // Animated GIF
@@ -173,42 +181,17 @@ namespace LevelImposter.Core
                 }
                 else if (isGIF)
                 {
-                    /*
-                    var texMetadataList = ImageSharpWrapper.LoadImage(imgData);
-                    if (texMetadataList != null)
-                    {
-                        var spriteArr = new Sprite[texMetadataList.Length];
-                        var frameDelayArr = new float[texMetadataList.Length];
-                        for (int i = 0; i < texMetadataList.Length; i++)
-                        {
-                            while (!_shouldRender)
-                                yield return null;
-                            ImageSharpWrapper.TextureMetadata texData = texMetadataList[i];
-                            Sprite sprite = RawImageToSprite(texData.FrameData);
-                            spriteArr[i] = sprite;
-                            frameDelayArr[i] = texData.FrameDelay;
-                        }
-                        spriteData = new()
-                        {
-                            ID = spriteID ?? "",
-                            SpriteArr = spriteArr,
-                            FrameDelayArr = frameDelayArr
-                        };
-                        AddSpriteData((SpriteData)spriteData);
-                    }
-                    */
                     using (MemoryStream ms = new(imgData))
                     {
                         var gifFile = new GIFFile();
                         gifFile.Load(ms);
-                        
+
                         spriteData = new()
                         {
                             ID = spriteID ?? "",
                             Sprite = gifFile.GetFrameSprite(0),
                             GIFData = gifFile
                         };
-                        GCHandler.Register(spriteData);
                     }
                 }
                 else
@@ -218,9 +201,9 @@ namespace LevelImposter.Core
                         ID = spriteID ?? "",
                         Sprite = RawImageToSprite(imgData)
                     };
-                    GCHandler.Register(spriteData);
                     spriteData.Sprite.hideFlags = HideFlags.DontUnloadUnusedAsset;
                 }
+                GCHandler.Register(spriteData);
 
                 // Output
                 _renderCount--;
