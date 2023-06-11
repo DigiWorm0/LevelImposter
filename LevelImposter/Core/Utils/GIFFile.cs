@@ -31,6 +31,7 @@ namespace LevelImposter.Core
         private bool _hasGlobalColorTable = false; // True if there is a global color table
         private int _globalColorTableSize = 0; // Size of the global color table
         private ushort _backgroundColorIndex = 0; // Index of the background color in the global color table
+        private Color _backgroundColor = Color.clear; // Background color
 
         // Image Descriptor
         public ushort Width { get; private set; }
@@ -444,11 +445,29 @@ namespace LevelImposter.Core
 
             for (int i = 0; i <= frameIndex; i++)
             {
+                // Frame
                 var frame = Frames[i];
                 if (frame.IsRendered) // Skip rendered frames
                     continue;
                 if (frame.IndexStream == null)
                     throw new Exception($"Frame {i} index stream is null");
+                var graphicsControl = frame.GraphicsControl;
+
+                // Background Color
+                if (i == 0)
+                {
+                    _backgroundColor = _globalColorTable[_backgroundColorIndex];
+                    if (graphicsControl?.TransparentColorFlag == true && _backgroundColorIndex == graphicsControl?.TransparentColorIndex)
+                        _backgroundColor = Color.clear;
+                }
+
+                // Create pixel buffer
+                if (_pixelBuffer == null)
+                {
+                    _pixelBuffer = new Color[Width * Height];
+                    for (int o = 0; o < _pixelBuffer.Length; o++)
+                        _pixelBuffer[o] = _backgroundColor;
+                }
 
                 // Create temp pixel buffer
                 Color[]? tempBuffer = null;
@@ -459,7 +478,6 @@ namespace LevelImposter.Core
                 }
 
                 // Create frame texture
-                var graphicsControl = frame.GraphicsControl;
                 bool pixelArtMode = LIShipStatus.Instance?.CurrentMap?.properties.pixelArtMode == true;
                 var texture = new Texture2D(Width, Height, TextureFormat.RGBA32, false)
                 {
@@ -512,12 +530,6 @@ namespace LevelImposter.Core
                             _pixelBuffer = tempBuffer;
                         break;
                     case FrameDisposalMethod.RestoreToBackgroundColor:
-                        // Get background color
-                        var backgroundColor = _globalColorTable[_backgroundColorIndex];
-                        if (graphicsControl?.TransparentColorFlag == true &&
-                            graphicsControl.TransparentColorIndex == _backgroundColorIndex)
-                            backgroundColor = Color.clear;
-
                         // Fill pixel buffer with background color
                         for (int o = 0; o < w * h; o++)
                         {
@@ -527,7 +539,7 @@ namespace LevelImposter.Core
                             int pixelIndex = (Height - 1 - (y + newY)) * Width + (x + newX);
 
                             // Set pixel color
-                            _pixelBuffer[pixelIndex] = backgroundColor;
+                            _pixelBuffer[pixelIndex] = _backgroundColor;
                         }
                         break;
                     case FrameDisposalMethod.NoDisposal:
