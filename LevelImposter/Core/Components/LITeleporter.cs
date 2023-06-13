@@ -90,6 +90,8 @@ namespace LevelImposter.Core
                 return;
             if (!MapUtils.IsLocalPlayer(player.gameObject))
                 return;
+            if (collider.TryCast<CircleCollider2D>() == null) // Disable BoxCollider2D
+                return;
 
             // Offset
             Vector3 offset;
