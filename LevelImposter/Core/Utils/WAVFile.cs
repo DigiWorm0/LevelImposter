@@ -63,22 +63,10 @@ namespace LevelImposter.Core
             {
                 IsLoaded = false;
                 ReadHeader(reader);
-                ReadFormatBlock(reader);
-                ReadDataBlock(reader);
+                while (ReadBlock(reader)) { }
                 GenerateClip();
                 IsLoaded = true;
             }
-        }
-
-        /// <summary>
-        /// Gets the AudioClip from the WAV file
-        /// </summary>
-        /// <returns>The UnityEngine AudioClip</returns>
-        public AudioClip GetClip()
-        {
-            if (!IsLoaded || _clip == null)
-                throw new Exception("WAV file is not loaded");
-            return _clip;
         }
 
         /// <summary>
@@ -104,16 +92,38 @@ namespace LevelImposter.Core
         }
 
         /// <summary>
+        /// Reads a block from the WAV file
+        /// </summary>
+        /// <param name="reader">The binary reader to read from</param>
+        /// <returns><c>true</c> if the block was read, <c>false</c> if the end of the file was reached</returns>
+        private bool ReadBlock(BinaryReader reader)
+        {
+            if (reader.BaseStream.Position == reader.BaseStream.Length)
+                return false;
+
+            var blockName = new string(reader.ReadChars(4));
+            switch (blockName)
+            {
+                case "fmt ":
+                    ReadFormatBlock(reader);
+                    return true;
+                case "data":
+                    ReadDataBlock(reader);
+                    return true;
+                default:
+                    // Skip unknown block (INFO, etc.)
+                    int chunkSize = reader.ReadInt32();
+                    reader.ReadBytes(chunkSize);
+                    return true;
+            }
+        }
+
+        /// <summary>
         /// Reads the format block of the WAV file
         /// </summary>
         /// <param name="reader">The binary reader to read from</param>
         private void ReadFormatBlock(BinaryReader reader)
         {
-            // FMT header
-            bool isFormat = new string(reader.ReadChars(4)) == "fmt ";
-            if (!isFormat)
-                throw new Exception("Not a format block");
-
             // Chunk size
             int chunkSize = reader.ReadInt32();
             if (chunkSize != 16)
@@ -138,10 +148,6 @@ namespace LevelImposter.Core
         /// <param name="reader">The binary reader to read from</param>
         private void ReadDataBlock(BinaryReader reader)
         {
-            bool isData = new string(reader.ReadChars(4)) == "data";
-            if (!isData)
-                throw new Exception("Not a data block");
-
             // Chunk Size
             int chunkSize = reader.ReadInt32();
 
@@ -163,6 +169,17 @@ namespace LevelImposter.Core
             _clip.SetData(_data, 0);
 
             _data = null; // Free memory
+        }
+
+        /// <summary>
+        /// Gets the AudioClip from the WAV file
+        /// </summary>
+        /// <returns>The UnityEngine AudioClip</returns>
+        public AudioClip GetClip()
+        {
+            if (!IsLoaded || _clip == null)
+                throw new Exception("WAV file is not loaded");
+            return _clip;
         }
 
         public void Dispose()

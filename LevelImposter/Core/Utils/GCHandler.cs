@@ -23,7 +23,7 @@ namespace LevelImposter.Core
         }
 
         /// <summary>
-        /// Cleans all registered disposables
+        /// Cleans all registered disposables. Ran on map change.
         /// </summary>
         public static void Clean()
         {

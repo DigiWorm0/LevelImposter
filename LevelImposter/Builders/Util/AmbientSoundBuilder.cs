@@ -18,9 +18,7 @@ namespace LevelImposter.Builders
             // Colliders
             Collider2D[] colliders = obj.GetComponentsInChildren<Collider2D>();
             foreach (Collider2D collider in colliders)
-            {
                 collider.isTrigger = true;
-            }
 
             // AudioClip
             if (elem.properties.sounds == null)
