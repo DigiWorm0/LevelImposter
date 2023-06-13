@@ -30,13 +30,6 @@ namespace LevelImposter
             LIDeepLink.Init();
             ModCompatibility.Init();
             
-            // Bypass Hide and Seek Tutorial
-            DataManager.Player.Onboarding.ViewedHideAndSeekHowToPlay = true;
-
-            // Increase max X and Y range from -50 - 50 >>> -500 - 500
-            NetHelpers.XRange = new FloatRange(-500f, 500f);
-            NetHelpers.YRange = new FloatRange(-500f, 500f);
-            
             // IUsable Interface
             RegisterTypeOptions usableInterface = new()
             {
