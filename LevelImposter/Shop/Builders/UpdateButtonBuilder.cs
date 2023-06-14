@@ -10,30 +10,46 @@ namespace LevelImposter.Shop
 {
     public static class UpdateButtonBuilder
     {
+        private const string BUTTON_PATH = "MainMenuManager/MainUI/AspectScaler/LeftPanel/Main Buttons/BottomButtonBounds/ExitGameButton";
+
         private static Sprite? _btnSprite;
+        private static Sprite? _btnHoverSprite;
         private static GenericPopup? _popupComponent;
         private static GameObject? _btnObj;
 
         public static void Build()
         {
             // Object
-            GameObject buttonPrefab = GameObject.Find("ExitGameButton");
+            GameObject buttonPrefab = GameObject.Find(BUTTON_PATH);
             _btnObj = UnityEngine.Object.Instantiate(buttonPrefab);
             _btnObj.name = "button_LevelImposterUpdater";
             _btnObj.transform.localPosition = new Vector3(4.25f, -2.3f, -1.0f);
+            _btnObj.transform.localScale = Vector3.one;
+
+            // Active/Inactive
+            GameObject active = _btnObj.transform.Find("Highlight").gameObject;
+            GameObject inactive = _btnObj.transform.Find("Inactive").gameObject;
 
             // Sprite
             Sprite btnSprite = GetSprite();
+            Sprite btnHoverSprite = GetHoverSprite();
             float btnAspect = btnSprite.rect.height / btnSprite.rect.width;
-            SpriteRenderer btnRenderer = _btnObj.GetComponent<SpriteRenderer>();
-            btnRenderer.sprite = _btnSprite;
-            btnRenderer.size = new Vector2(
+
+            // Active
+            SpriteRenderer btnRendererActive = active.GetComponent<SpriteRenderer>();
+            btnRendererActive.sprite = btnHoverSprite;
+            btnRendererActive.size = new Vector2(
                 1.3f,
                 1.3f * btnAspect
             );
 
+            // Inactive
+            SpriteRenderer btnRendererInactive = inactive.GetComponent<SpriteRenderer>();
+            btnRendererInactive.sprite = btnSprite;
+            btnRendererInactive.size = btnRendererActive.size;
+
             // Remove Text
-            Transform textTransform = _btnObj.transform.GetChild(0);
+            Transform textTransform = _btnObj.transform.FindChild("FontPlacer");
             UnityEngine.Object.Destroy(textTransform.gameObject);
 
             // Remove Aspect
@@ -52,13 +68,9 @@ namespace LevelImposter.Shop
             btnComponent.OnClick = new();
             btnComponent.OnClick.AddListener((Action)UpdateMod);
 
-            // Button Hover
-            ButtonRolloverHandler btnRollover = _btnObj.GetComponent<ButtonRolloverHandler>();
-            btnRollover.OverColor = new Color(1, 1, 1, 0.5f);
-
             // Box Collider
             BoxCollider2D btnCollider = _btnObj.GetComponent<BoxCollider2D>();
-            btnCollider.size = btnRenderer.size;
+            btnCollider.size = btnRendererActive.size;
         }
 
         private static Sprite GetSprite()
@@ -68,6 +80,14 @@ namespace LevelImposter.Shop
             if (_btnSprite == null)
                 throw new Exception("The \"UpdateButton.png\" resource was not found in assembly");
             return _btnSprite;
+        }
+        private static Sprite GetHoverSprite()
+        {
+            if (_btnHoverSprite == null)
+                _btnHoverSprite = MapUtils.LoadSpriteResource("UpdateButtonHover.png");
+            if (_btnHoverSprite == null)
+                throw new Exception("The \"UpdateButtonHover.png\" resource was not found in assembly");
+            return _btnHoverSprite;
         }
 
         private static void UpdateMod()

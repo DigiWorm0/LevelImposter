@@ -7,15 +7,15 @@ using UnityEngine;
 namespace LevelImposter.Shop
 {
     /*
-     *      Replaces the How To Play
+     *      Replaces the Inventory
      *      menu with the Map Shop
      */
-    [HarmonyPatch(typeof(HowToPlayController), nameof(HowToPlayController.Start))]
+    [HarmonyPatch(typeof(PlayerCustomizationMenu), nameof(PlayerCustomizationMenu.Start))]
     public static class ShopPatch
     {
         public static void Postfix()
         {
-            ShopBuilder.OnLoad();
+            ShopBuilder.OnCustomizationMenu();
         }
     }
 }

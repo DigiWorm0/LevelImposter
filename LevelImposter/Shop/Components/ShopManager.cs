@@ -41,10 +41,9 @@ namespace LevelImposter.Shop
             if (isInLobby && !isMapLoaded && _shouldRegenerateFallback)
                 MapSync.RegenerateFallbackID();
 
-            if (SceneManager.GetActiveScene().name == "HowToPlay")
-                SceneManager.LoadScene("MainMenu");
-            else
-                Destroy(gameObject);
+            Destroy(gameObject, 0.5f);
+            if (!isInLobby)
+                PlayerCustomizationMenu.Instance.Close(false);
         }
 
         /// <summary>

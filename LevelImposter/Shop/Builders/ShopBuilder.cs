@@ -11,13 +11,11 @@ namespace LevelImposter.Shop
     {
         private static GameObject _mapShopPrefab = null;
 
-        public static void OnLoad()
+        public static void OnCustomizationMenu()
         {
-            // Remove Children
-            GameObject controller = GameObject.Find("HowToPlayController");
-            controller.transform.FindChild("HnS Scenes").gameObject.active = false;
-            controller.transform.FindChild("ClassicScenes").gameObject.active = false;
-            controller.transform.FindChild("Game modes").gameObject.active = false;
+            bool isInLobby = LobbyBehaviour.Instance != null;
+            if (isInLobby)
+                return;
 
             // Shop Spawner
             GameObject shopSpawner = new("Shop Spawner");
@@ -28,6 +26,8 @@ namespace LevelImposter.Shop
         {
             if (_mapShopPrefab == null)
                 _mapShopPrefab = MapUtils.LoadAssetBundle("shop");
+            if (_mapShopPrefab == null)
+                throw new System.Exception("The \"shop\" asset bundle was not found in assembly");
             return _mapShopPrefab;
         }
 
