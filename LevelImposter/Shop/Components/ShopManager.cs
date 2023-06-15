@@ -21,6 +21,7 @@ namespace LevelImposter.Shop
         public static ShopManager? Instance { get; private set; }
 
         private Tab _currentTab = Tab.None;
+        private GameObject? _overlay = null;
         private Scroller? _scroller = null;
         private SpriteRenderer? _title = null;
         private ShopTabs? _tabs = null;
@@ -224,15 +225,6 @@ namespace LevelImposter.Shop
         }
 
         /// <summary>
-        /// Toggles the disable overlay
-        /// </summary>
-        /// <param name="isEnabled"><c>true</c> if the overly should be visible</param>
-        public void SetEnabled(bool isEnabled)
-        {
-            // TODO: Disabled Overlay
-        }
-
-        /// <summary>
         /// Closes all map banner popups
         /// </summary>
         public void CloseAllPopups()
@@ -252,11 +244,21 @@ namespace LevelImposter.Shop
                 Instance._shouldRegenerateFallback = true;
         }
         
+        /// <summary>
+        /// Toggles the overlay
+        /// </summary>
+        /// <param name="isEnabled"><c>true</c> if the overlay should be visible</param>
+        public void SetOverlay(bool isEnabled)
+        {
+            _overlay?.SetActive(isEnabled);
+        }
+
         public void Awake()
         {
             ControllerManager.Instance.OpenOverlayMenu("LIShop", null);
             Instance = this;
 
+            _overlay = transform.Find("Overlay").gameObject;
             _scroller = transform.Find("Scroll/Scroller").GetComponent<Scroller>();
             _title = _scroller?.transform.Find("Inner/Title").GetComponent<SpriteRenderer>();
             _tabs = transform.Find("Header/Tabs").GetComponent<ShopTabs>();
@@ -288,6 +290,7 @@ namespace LevelImposter.Shop
         {
             if (Input.GetKeyUp(KeyCode.Escape))
                 Close();
+
         }
         public void OnDestroy()
         {

@@ -222,7 +222,7 @@ namespace LevelImposter.Core
 
             // Build Timer
             buildTimer.Stop();
-            if (buildTimer.ElapsedMilliseconds > 100)
+            if (buildTimer.ElapsedMilliseconds > LIConstants.ELEM_WARN_TIME)
                 LILogger.Warn($"Took {buildTimer.ElapsedMilliseconds}ms to build {element.name}");
         }
 

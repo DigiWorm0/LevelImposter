@@ -18,8 +18,14 @@ namespace LevelImposter.Shop
 
         private LIMetadata? _currentMap = null;
         private SpriteRenderer? _thumbnail = null;
-        private TMPro.TMP_Text? _textBox = null;
+        private TMPro.TMP_Text? _title = null;
+        private TMPro.TMP_Text? _author = null;
+        private TMPro.TMP_Text? _description = null;
         private PassiveButton? _playButton = null;
+        private PassiveButton? _trashButton = null;
+        private PassiveButton? _downloadButton = null;
+        private PassiveButton? _remixButton = null;
+        private PassiveButton? _externalButton = null;
         private bool _isInLobby
         {
             get
@@ -36,7 +42,9 @@ namespace LevelImposter.Shop
         public void SetMap(LIMetadata map)
         {
             _currentMap = map;
-            _textBox?.SetText($"<b>{map.name}</b>\n{map.authorName}\n<size=1>{map.description}");
+            _title?.SetText(map.name);
+            _author?.SetText($"by {map.authorName}");
+            _description?.SetText(map.description);
             UpdateButtons();
             GetThumbnail();
             GetRemix();
@@ -54,6 +62,10 @@ namespace LevelImposter.Shop
             bool isRemix = _currentMap?.remixOf != null;
 
             _playButton?.SetButtonEnableState(isLoaded && isDownloaded && (isOnline || !_isInLobby));
+            _trashButton?.SetButtonEnableState(isLoaded && isDownloaded);
+            _downloadButton?.SetButtonEnableState(isLoaded && !isDownloaded && isPublic);
+            _remixButton?.SetButtonEnableState(isLoaded && isRemix);
+            _externalButton?.SetButtonEnableState(isLoaded && isOnline);
         }
 
         /// <summary>
@@ -61,7 +73,7 @@ namespace LevelImposter.Shop
         /// </summary>
         public void OnDownloadClick()
         {
-            ShopManager.Instance?.SetEnabled(false);
+            ShopManager.Instance?.SetOverlay(true);
             LevelImposterAPI.Instance?.DownloadMap(new Guid(_currentMap?.id ?? ""), OnDownload, OnError);
         }
 
@@ -73,7 +85,7 @@ namespace LevelImposter.Shop
         private void OnDownload(LIMap map)
         {
             MapFileAPI.Instance?.Save(map);
-            ShopManager.Instance?.SetEnabled(true);
+            ShopManager.Instance?.SetOverlay(false);
             ShopManager.RegenerateFallbackMap();
             UpdateButtons();
         }
@@ -172,26 +184,36 @@ namespace LevelImposter.Shop
         public void Awake()
         {
             _thumbnail = transform.Find("Thumbnail")?.GetComponent<SpriteRenderer>();
-            _textBox = transform.Find("Text")?.GetComponent<TMPro.TMP_Text>();
+            _title = transform.Find("Title")?.GetComponent<TMPro.TMP_Text>();
+            _author = transform.Find("Author")?.GetComponent<TMPro.TMP_Text>();
+            _description = transform.Find("Description")?.GetComponent<TMPro.TMP_Text>();
             _playButton = transform.Find("PlayButton")?.GetComponent<PassiveButton>();
-
-            if (_thumbnail == null)
-                LILogger.Error("Thumbnail not found");
-            if (_textBox == null)
-                LILogger.Error("Text not found");
-            if (_playButton == null)
-                LILogger.Error("PlayButton not found");
+            _trashButton = transform.Find("TrashButton")?.GetComponent<PassiveButton>();
+            _downloadButton = transform.Find("DownloadButton")?.GetComponent<PassiveButton>();
+            _remixButton = transform.Find("RemixButton")?.GetComponent<PassiveButton>();
+            _externalButton = transform.Find("ExternalButton")?.GetComponent<PassiveButton>();
         }
         public void Start()
         {
             // Buttons
             _playButton?.OnClick.AddListener((Action)OnPlayClick);
+            _trashButton?.OnClick.AddListener((Action)OnDeleteClick);
+            _downloadButton?.OnClick.AddListener((Action)OnDownloadClick);
+            _externalButton?.OnClick.AddListener((Action)OnExternalClick);
 
             UpdateButtons();
         }
         public void OnDestroy()
         {
-            // TODO: Handle this
+            _thumbnail = null;
+            _title = null;
+            _author = null;
+            _description = null;
+            _playButton = null;
+            _trashButton = null;
+            _downloadButton = null;
+            _remixButton = null;
+            _externalButton = null;
         }
     }
 }

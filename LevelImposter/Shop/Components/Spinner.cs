@@ -16,15 +16,6 @@ namespace LevelImposter.Shop
 
         private float _speed = -90f;
 
-        /// <summary>
-        /// Sets the rate of rotation for the spinner
-        /// </summary>
-        /// <param name="speed">Speed measured in deg/sec</param>
-        public void SetSpeed(float speed)
-        {
-            _speed = speed;
-        }
-
         public void Update()
         {
             transform.Rotate(0, 0, _speed * Time.deltaTime);
