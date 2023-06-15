@@ -113,13 +113,13 @@ namespace LevelImposter.Shop
             string[] mapIDs = MapFileAPI.Instance?.ListIDs() ?? new string[0];
             foreach (string mapID in mapIDs)
             {
-                MapFileAPI.Instance?.GetMetadata(mapID, OnDownloadsMetadata);
+                MapFileAPI.Instance?.GetMetadata(mapID, OnDownloadsResponse);
             }
         }
         [HideFromIl2Cpp]
-        private void OnDownloadsMetadata(LIMetadata? metadata)
+        private void OnDownloadsResponse(LIMetadata? metadata)
         {
-            if (metadata != null)
+            if (metadata != null && _currentTab == Tab.Downloads)
                 AddBanner(metadata);
         }
 
@@ -128,32 +128,41 @@ namespace LevelImposter.Shop
         /// </summary>
         private void SetTopTab()
         {
-            LevelImposterAPI.Instance?.GetTop(SetBanners, OnError);
+            LevelImposterAPI.Instance?.GetTop(OnTopResponse, OnError);
         }
+        [HideFromIl2Cpp]
+        private void OnTopResponse(LIMetadata[] maps) => OnAPIRespose(maps, Tab.Top);
 
         /// <summary>
         /// Lists maps in the LevelImposter API by Recent
         /// </summary>
         private void SetRecentTab()
         {
-            LevelImposterAPI.Instance?.GetRecent(SetBanners, OnError);
+            LevelImposterAPI.Instance?.GetRecent(OnRecentResponse, OnError);
         }
+        [HideFromIl2Cpp]
+        private void OnRecentResponse(LIMetadata[] maps) => OnAPIRespose(maps, Tab.Recent);
 
         /// <summary>
-        /// Lists maps in the LevelImposter API by Recent
+        /// Lists maps in the LevelImposter API by Featured
         /// </summary>
         private void SetFeaturedTab()
         {
-            LevelImposterAPI.Instance?.GetFeatured(SetBanners, OnError);
+            LevelImposterAPI.Instance?.GetFeatured(OnFeaturedResponse, OnError);
         }
+        [HideFromIl2Cpp]
+        private void OnFeaturedResponse(LIMetadata[] maps) => OnAPIRespose(maps, Tab.Featured);
 
         /// <summary>
-        /// Sets the shop banners to the given maps
+        /// Event that is called when the API returns a response
         /// </summary>
-        /// <param name="maps">Array of map metadata</param>
+        /// <param name="maps">List of maps of response</param>
+        /// <param name="tab">Tab of response</param>
         [HideFromIl2Cpp]
-        private void SetBanners(LIMetadata[] maps)
+        private void OnAPIRespose(LIMetadata[] maps, Tab tab)
         {
+            if (_currentTab != tab)
+                return;
             Clear();
             foreach (LIMetadata map in maps)
                 AddBanner(map);
@@ -229,17 +238,6 @@ namespace LevelImposter.Shop
         {
             LILogger.Info($"Viewing map [{id}]");
             Application.OpenURL($"https://levelimposter.net/#/map/{id}");
-        }
-
-        /// <summary>
-        /// Closes all map banner popups
-        /// </summary>
-        public void CloseAllPopups()
-        {
-            if (_shopBanners == null)
-                return;
-            foreach (MapBanner banner in _shopBanners)
-                banner.CloseAllPopups();
         }
 
         /// <summary>

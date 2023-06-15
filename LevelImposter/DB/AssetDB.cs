@@ -183,7 +183,6 @@ namespace LevelImposter.DB
                 _soundDB.Load();
                 _pathDB.Load();
                 _isInit = true;
-
             }
         }
 

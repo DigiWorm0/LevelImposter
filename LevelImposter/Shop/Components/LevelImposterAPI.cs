@@ -196,6 +196,7 @@ namespace LevelImposter.Shop
                     try
                     {
                         LIMap? mapData = JsonSerializer.Deserialize<LIMap>(mapJson);
+                        mapJson = ""; // Free Memory
                         if (mapData == null)
                         {
                             onError("Map was null");
@@ -214,6 +215,7 @@ namespace LevelImposter.Shop
                         mapData.remixOf = metadata.remixOf;
 
                         callback(mapData);
+                        mapData = null;
                     }
                     catch (Exception e)
                     {

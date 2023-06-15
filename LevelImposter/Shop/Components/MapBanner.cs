@@ -21,11 +21,13 @@ namespace LevelImposter.Shop
         private TMPro.TMP_Text? _title = null;
         private TMPro.TMP_Text? _author = null;
         private TMPro.TMP_Text? _description = null;
-        private PassiveButton? _playButton = null;
-        private PassiveButton? _trashButton = null;
         private PassiveButton? _downloadButton = null;
+        private PassiveButton? _playButton = null;
+        private PassiveButton? _randomButton = null;
+        private PassiveButton? _trashButton = null;
         private PassiveButton? _remixButton = null;
         private PassiveButton? _externalButton = null;
+        private RandomOverlay? _randomOverlay = null;
         private bool _isInLobby
         {
             get
@@ -62,10 +64,11 @@ namespace LevelImposter.Shop
             bool isRemix = _currentMap?.remixOf != null;
 
             _playButton?.SetButtonEnableState(isLoaded && isDownloaded && (isOnline || !_isInLobby));
-            _trashButton?.SetButtonEnableState(isLoaded && isDownloaded);
+            _randomButton?.SetButtonEnableState(isLoaded && isDownloaded && isOnline);
+            _trashButton?.SetButtonEnableState(isLoaded && isDownloaded && isPublic);
             _downloadButton?.SetButtonEnableState(isLoaded && !isDownloaded && isPublic);
             _remixButton?.SetButtonEnableState(isLoaded && isRemix);
-            _externalButton?.SetButtonEnableState(isLoaded && isOnline);
+            _externalButton?.gameObject.SetActive(isLoaded && isOnline);
         }
 
         /// <summary>
@@ -99,6 +102,7 @@ namespace LevelImposter.Shop
         {
             LILogger.Error(error);
             ShopManager.Instance?.SetOverlay(false);
+            // TODO: Show error popup
         }
 
         /// <summary>
@@ -112,6 +116,16 @@ namespace LevelImposter.Shop
                 ShopManager.Instance?.SelectMap(_currentMap.id);
             else
                 ShopManager.Instance?.LaunchMap(_currentMap.id);
+        }
+
+        /// <summary>
+        /// Opens the random overlay
+        /// </summary>
+        public void OnRandomClick()
+        {
+            if (_currentMap == null)
+                return;
+            _randomOverlay?.Open(_currentMap.id);
         }
 
         /// <summary>
@@ -177,44 +191,45 @@ namespace LevelImposter.Shop
             }, OnError);
         }
 
-        /// <summary>
-        /// Closes all popups open
-        /// </summary>
-        public void CloseAllPopups() { }
-
         public void Awake()
         {
             _thumbnail = transform.Find("Thumbnail")?.GetComponent<SpriteRenderer>();
             _title = transform.Find("Title")?.GetComponent<TMPro.TMP_Text>();
             _author = transform.Find("Author")?.GetComponent<TMPro.TMP_Text>();
             _description = transform.Find("Description")?.GetComponent<TMPro.TMP_Text>();
-            _playButton = transform.Find("PlayButton")?.GetComponent<PassiveButton>();
-            _trashButton = transform.Find("TrashButton")?.GetComponent<PassiveButton>();
             _downloadButton = transform.Find("DownloadButton")?.GetComponent<PassiveButton>();
+            _playButton = transform.Find("PlayButton")?.GetComponent<PassiveButton>();
+            _randomButton = transform.Find("RandomButton")?.GetComponent<PassiveButton>();
+            _trashButton = transform.Find("TrashButton")?.GetComponent<PassiveButton>();
             _remixButton = transform.Find("RemixButton")?.GetComponent<PassiveButton>();
             _externalButton = transform.Find("ExternalButton")?.GetComponent<PassiveButton>();
+            _randomOverlay = transform.GetComponentInChildren<RandomOverlay>(true);
         }
         public void Start()
         {
             // Buttons
-            _playButton?.OnClick.AddListener((Action)OnPlayClick);
-            _trashButton?.OnClick.AddListener((Action)OnDeleteClick);
             _downloadButton?.OnClick.AddListener((Action)OnDownloadClick);
+            _playButton?.OnClick.AddListener((Action)OnPlayClick);
+            _randomButton?.OnClick.AddListener((Action)OnRandomClick);
+            _trashButton?.OnClick.AddListener((Action)OnDeleteClick);
             _externalButton?.OnClick.AddListener((Action)OnExternalClick);
 
             UpdateButtons();
         }
         public void OnDestroy()
         {
+            _currentMap = null;
             _thumbnail = null;
             _title = null;
             _author = null;
             _description = null;
-            _playButton = null;
-            _trashButton = null;
             _downloadButton = null;
+            _playButton = null;
+            _randomButton = null;
+            _trashButton = null;
             _remixButton = null;
             _externalButton = null;
+            _randomOverlay = null;
         }
     }
 }
