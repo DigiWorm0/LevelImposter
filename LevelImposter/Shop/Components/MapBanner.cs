@@ -98,6 +98,7 @@ namespace LevelImposter.Shop
         private void OnError(string error)
         {
             LILogger.Error(error);
+            ShopManager.Instance?.SetOverlay(false);
         }
 
         /// <summary>

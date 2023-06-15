@@ -558,6 +558,15 @@ namespace LevelImposter.Core
                 frame.IndexStream = null; // Free memory
                 frame.RenderedSprite = sprite;
             }
+
+            // If last frame, free memory
+            if (frameIndex >= Frames.Count - 1)
+            {
+                _pixelBuffer = null;
+                _codeTable = null;
+                _lastGraphicsControl = null;
+                _globalColorTable = DEFAULT_COLOR_TABLE;
+            }
         }
 
         /// <summary>

@@ -30,7 +30,7 @@ namespace LevelImposter.Core
             "util-cam"
         };
 
-        public Il2CppValueField<long> AnimatorID;
+        public Il2CppValueField<long> AnimatorID; // Unique ID maintained on instantiation
         public bool IsAnimating => _isAnimating;
 
         private bool _defaultLoopGIF = false;

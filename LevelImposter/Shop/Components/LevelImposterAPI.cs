@@ -193,25 +193,32 @@ namespace LevelImposter.Shop
                 Request(metadata.downloadURL, (string mapJson) =>
                 {
                     LILogger.Info($"Parsing map {metadata}...");
-                    LIMap? mapData = JsonSerializer.Deserialize<LIMap>(mapJson);
-                    if (mapData == null)
+                    try
                     {
-                        onError("Map was null");
-                        return;
-                    }
-                    mapData.v = metadata.v;
-                    mapData.id = metadata.id;
-                    mapData.name = metadata.name;
-                    mapData.description = metadata.description;
-                    mapData.authorID = metadata.authorID;
-                    mapData.authorName = metadata.authorName;
-                    mapData.isPublic = metadata.isPublic;
-                    mapData.isVerified = metadata.isVerified;
-                    mapData.createdAt = metadata.createdAt;
-                    mapData.thumbnailURL = metadata.thumbnailURL;
-                    mapData.remixOf = metadata.remixOf;
+                        LIMap? mapData = JsonSerializer.Deserialize<LIMap>(mapJson);
+                        if (mapData == null)
+                        {
+                            onError("Map was null");
+                            return;
+                        }
+                        mapData.v = metadata.v;
+                        mapData.id = metadata.id;
+                        mapData.name = metadata.name;
+                        mapData.description = metadata.description;
+                        mapData.authorID = metadata.authorID;
+                        mapData.authorName = metadata.authorName;
+                        mapData.isPublic = metadata.isPublic;
+                        mapData.isVerified = metadata.isVerified;
+                        mapData.createdAt = metadata.createdAt;
+                        mapData.thumbnailURL = metadata.thumbnailURL;
+                        mapData.remixOf = metadata.remixOf;
 
-                    callback(mapData);
+                        callback(mapData);
+                    }
+                    catch (Exception e)
+                    {
+                        onError(e.ToString());
+                    }
                 }, onError);
             }, onError);
         }

@@ -23,7 +23,8 @@ namespace LevelImposter.Shop
         public static GameObject Build()
         {
             GameObject mapShop = Object.Instantiate(GetShopPrefab());
-            mapShop.transform.position = new Vector3(0, 0, -301.0f);
+            mapShop.transform.SetParent(Camera.main.transform, false);
+            mapShop.transform.localPosition = new Vector3(0, 0, -990.0f);
             return mapShop;
         }
     }

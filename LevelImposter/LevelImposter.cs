@@ -64,6 +64,7 @@ namespace LevelImposter
             ClassInjector.RegisterTypeInIl2Cpp<ShopManager>();
             ClassInjector.RegisterTypeInIl2Cpp<ShopTabs>();
             ClassInjector.RegisterTypeInIl2Cpp<Spinner>();
+            ClassInjector.RegisterTypeInIl2Cpp<LobbyConsole>(usableInterface);
 
             // Patch Methods
             Harmony.PatchAll();

@@ -240,7 +240,7 @@ namespace LevelImposter.Core
         {
             _destTriggerComp = AllTriggers.Find(t => _destID == t._sourceID && _destTrigger == t._sourceTrigger);
         }
-        public void OnDestroy() // TODO: Not called if object is never started?
+        public void OnDestroy()
         {
             _allTriggers.Clear();
             _sourceElem = null;

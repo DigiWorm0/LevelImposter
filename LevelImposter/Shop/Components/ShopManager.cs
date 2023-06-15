@@ -39,6 +39,13 @@ namespace LevelImposter.Shop
         /// </summary>
         public void Close()
         {
+            ConfigAPI.Instance?.Save();
+
+            bool isInLobby = LobbyBehaviour.Instance != null;
+            bool isMapLoaded = MapLoader.CurrentMap != null && !MapLoader.IsFallback;
+            if (isInLobby && !isMapLoaded && _shouldRegenerateFallback)
+                MapSync.RegenerateFallbackID();
+
             DestroyableSingleton<TransitionFade>.Instance.DoTransitionFade(gameObject, null, (Action)OnClose);
         }
         private void OnClose()

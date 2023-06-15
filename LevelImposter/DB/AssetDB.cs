@@ -124,7 +124,7 @@ namespace LevelImposter.DB
                 var miraPrefab = shipPrefabs[(int)MapType.Mira];
                 int mapCount = (int)MapType.LevelImposter;
                 while (shipPrefabs.Count <= mapCount)
-                    shipPrefabs.Add(miraPrefab); // TODO: Map Randomization and Using Own Ship Prefab
+                    shipPrefabs.Add(miraPrefab); // Use Own Ship AssetReference
                 while (Constants.MapNames.Count <= mapCount)
                     Constants.MapNames = MapUtils.AddToArr(Constants.MapNames, Constants.MapNames.Count == mapCount ? LIConstants.MAP_NAME : "");
 

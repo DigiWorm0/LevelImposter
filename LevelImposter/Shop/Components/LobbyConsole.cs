@@ -5,39 +5,32 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 using Il2CppInterop.Runtime.Attributes;
+using LevelImposter.Shop;
 
-namespace LevelImposter.Core
+namespace LevelImposter.Shop
 {
-    public class TriggerConsole : MonoBehaviour
+    public class LobbyConsole : MonoBehaviour
     {
-        public TriggerConsole(IntPtr intPtr) : base(intPtr)
+        public LobbyConsole(IntPtr intPtr) : base(intPtr)
         {
         }
 
-        public const string TRIGGER_ID = "onUse";
-
-        private bool _isEnabled = true;
-        private float _usableDistance = 1.0f;
-        private bool _onlyFromBelow = false;
-        private bool _ghostsEnabled = false;
-        private Color _highlightColor = Color.yellow;
-        private SpriteRenderer? _spriteRenderer;
-
-        public float UsableDistance => _usableDistance;
+        private readonly Color HIGHLIGHT_COLOR = Color.white;
+        
+        // IUsable
+        public float UsableDistance => 1.0f;
         public float PercentCool => 0;
         public ImageNames UseIcon => ImageNames.UseButton;
 
+        private SpriteRenderer? _spriteRenderer = null;
+
         /// <summary>
-        /// Sets the console's metadata
+        /// Sets the sprite renderer for the console
         /// </summary>
-        /// <param name="elem">LIElement the console is attatched to</param>
-        [HideFromIl2Cpp]
-        public void Init(LIElement elem)
+        /// <param name="renderer">Sprite renderer to use</param>
+        public void SetRenderer(SpriteRenderer renderer)
         {
-            _usableDistance = elem.properties.range ?? 1.0f;
-            _onlyFromBelow = elem.properties.onlyFromBelow ?? false;
-            _ghostsEnabled = elem.properties.isGhostEnabled ?? false;
-            _highlightColor = elem.properties.highlightColor?.ToUnity() ?? Color.yellow;
+            _spriteRenderer = renderer;
         }
 
         /// <summary>
@@ -51,8 +44,8 @@ namespace LevelImposter.Core
                 return;
             
             _spriteRenderer.material.SetFloat("_Outline", isVisible ? 1 : 0);
-            _spriteRenderer.material.SetColor("_OutlineColor", _highlightColor);
-            _spriteRenderer.material.SetColor("_AddColor", isTargeted ? _highlightColor : Color.clear);
+            _spriteRenderer.material.SetColor("_OutlineColor", HIGHLIGHT_COLOR);
+            _spriteRenderer.material.SetColor("_AddColor", isTargeted ? HIGHLIGHT_COLOR : Color.clear);
         }
 
         /// <summary>
@@ -66,18 +59,14 @@ namespace LevelImposter.Core
         {
             PlayerControl playerControl = playerInfo.Object;
             Vector2 truePosition = playerControl.GetTruePosition();
-            Vector3 position = transform.position;
 
-            couldUse = (!playerInfo.IsDead || _ghostsEnabled) &&
-                    playerControl.CanMove &&
-                    (!_onlyFromBelow || truePosition.y < position.y) &&
-                    _isEnabled;
+            couldUse = playerControl.CanMove;
             canUse = couldUse;
 
             if (couldUse)
             {
                 float playerDistance = Vector2.Distance(truePosition, transform.position);
-                canUse = couldUse && (playerDistance <= _usableDistance);
+                canUse = couldUse && (playerDistance <= UsableDistance);
                 return playerDistance;
             }
             return float.MaxValue;
@@ -88,25 +77,12 @@ namespace LevelImposter.Core
         /// </summary>
         public void Use()
         {
-            CanUse(PlayerControl.LocalPlayer.Data, out bool canUse, out bool couldUse);
+            CanUse(PlayerControl.LocalPlayer.Data, out bool canUse, out _);
             if (!canUse)
                 return;
-            LITriggerable.Trigger(gameObject, TRIGGER_ID, PlayerControl.LocalPlayer);
+            ShopBuilder.Build();
         }
 
-        /// <summary>
-        /// Enables or disables the console
-        /// </summary>
-        /// <param name="isEnabled">True if the console should be enabled</param>
-        public void SetEnabled(bool isEnabled)
-        {
-            _isEnabled = isEnabled;
-        }
-
-        public void Start()
-        {
-            _spriteRenderer = GetComponent<SpriteRenderer>();
-        }
         public void OnDestroy()
         {
             _spriteRenderer = null;
