@@ -1,13 +1,10 @@
+using Il2CppInterop.Runtime.Attributes;
+using LevelImposter.Core;
+using LevelImposter.DB;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.SceneManagement;
-using LevelImposter.Core;
-using LevelImposter.DB;
-using InnerNet;
-using Il2CppInterop.Runtime.Attributes;
 
 namespace LevelImposter.Shop
 {
@@ -17,46 +14,49 @@ namespace LevelImposter.Shop
         {
         }
 
+        private const float BANNER_HEIGHT = 2.0f;
+        private const float BANNER_WIDTH = 2.4f;
+        private const int COL_COUNT = 3;
+
         public static ShopManager? Instance { get; private set; }
 
-        public MapBanner? MapBannerPrefab = null;
-        public Transform? ShopParent = null;
-        public Button? CloseButton = null;
-
-        private string _currentListID = "downloaded";
+        private Tab _currentTab = Tab.None;
+        private Scroller? _scroller = null;
+        private SpriteRenderer? _title = null;
+        private ShopTabs? _tabs = null;
+        private MapBanner? _bannerPrefab = null;
+        private Transform? _bannerParent => _bannerPrefab?.transform.parent;
+        private Stack<MapBanner>? _shopBanners = new();
         private HostLocalGameButton? _freeplayComp = null;
-        private ShopButtons? _shopButtons = null;
-        private Stack<MapBanner> _shopBanners = new();
         private bool _shouldRegenerateFallback = false;
+
+        public Tab CurrentTab => _currentTab;
+        public SpriteRenderer? Title => _title;
 
         /// <summary>
         /// Closes the Map Shop
         /// </summary>
         public void Close()
         {
-            ConfigAPI.Instance?.Save();
-
-            bool isInLobby = LobbyBehaviour.Instance != null;
-            bool isMapLoaded = MapLoader.CurrentMap != null && !MapLoader.IsFallback;
-            if (isInLobby && !isMapLoaded && _shouldRegenerateFallback)
-                MapSync.RegenerateFallbackID();
-
-            Destroy(gameObject, 0.5f);
-            if (!isInLobby)
-                PlayerCustomizationMenu.Instance.Close(false);
+            DestroyableSingleton<TransitionFade>.Instance.DoTransitionFade(gameObject, null, (Action)OnClose);
         }
+        private void OnClose()
+        {
+            Destroy(gameObject);
+        }
+
+        /// <summary>
+        /// Closes the shop Instance, if one exists
+        /// </summary>
+        public static void CloseShop() => Instance?.Close();
 
         /// <summary>
         /// Clears all visible shop banners
         /// </summary>
-        public void ClearList()
+        public void Clear()
         {
-            _currentListID = "none";
-            while (_shopBanners.Count > 0)
-            {
-                MapBanner banner = _shopBanners.Pop();
-                Destroy(banner.gameObject);
-            }
+            while (_shopBanners?.Count > 0)
+                Destroy(_shopBanners.Pop().gameObject);
         }
 
         /// <summary>
@@ -68,126 +68,117 @@ namespace LevelImposter.Shop
         }
 
         /// <summary>
+        /// Sets the current shop to the cooresponding tab
+        /// </summary>
+        /// <param name="tab">The tab to set the shop to</param>
+        public void SetTab(Tab tab)
+        {
+            // Get/Set Current Tab
+            if (_currentTab == tab)
+                return;
+            _currentTab = tab;
+            LILogger.Info($"Setting tab to {tab}");
+            _tabs?.UpdateButtons();
+
+            // Clear the shop
+            Clear();
+
+            // Switch on the tab
+            Action callback = tab switch
+            {
+                Tab.Downloads => SetDownloadsTab,
+                Tab.Featured => SetFeaturedTab,
+                Tab.Top => SetTopTab,
+                Tab.Recent => SetRecentTab,
+                Tab.None => throw new NotImplementedException(),
+                _ => throw new NotImplementedException()
+            };
+            callback.Invoke();
+        }
+
+        /// <summary>
         /// Lists all downloaded maps
         /// </summary>
-        public void ListDownloaded()
+        private void SetDownloadsTab()
         {
-            if (MapBannerPrefab == null)
-                return;
-            if (MapFileAPI.Instance == null)
-                return;
-            LILogger.Info("Listing downloaded maps");
-            ClearList();
-            _currentListID = "downloaded";
-            string[] mapIDs = MapFileAPI.Instance.ListIDs();
+            Clear();
+            string[] mapIDs = MapFileAPI.Instance?.ListIDs() ?? new string[0];
             foreach (string mapID in mapIDs)
             {
-                MapBanner banner = Instantiate(MapBannerPrefab, ShopParent);
-                banner.gameObject.SetActive(true);
-                MapFileAPI.Instance.GetMetadata(mapID, (metadata) =>
-                {
-                    if (metadata != null)
-                        banner.SetMap(metadata);
-                });
-                _shopBanners.Push(banner);
+                MapFileAPI.Instance?.GetMetadata(mapID, OnDownloadsMetadata);
             }
+        }
+        [HideFromIl2Cpp]
+        private void OnDownloadsMetadata(LIMetadata? metadata)
+        {
+            if (metadata != null)
+                AddBanner(metadata);
         }
 
         /// <summary>
         /// Lists maps in the LevelImposter API by Top
         /// </summary>
-        public void ListTop()
+        private void SetTopTab()
         {
-            LILogger.Info("Listing top maps");
-            ClearList();
-            _currentListID = "top";
-            LevelImposterAPI.Instance?.GetTop(OnTop, OnError);
-        }
-
-        /// <summary>
-        /// Callback response for the LevelImposter API
-        /// </summary>
-        /// <param name="maps">Listed map response</param>
-        [HideFromIl2Cpp]
-        private void OnTop(LIMetadata[] maps)
-        {
-            if (MapBannerPrefab == null)
-                return;
-            if (_currentListID != "top")
-                return;
-            foreach (LIMetadata map in maps)
-            {
-                MapBanner banner = Instantiate(MapBannerPrefab, ShopParent);
-                banner.gameObject.SetActive(true);
-                banner.SetMap(map);
-                _shopBanners.Push(banner);
-            }
+            LevelImposterAPI.Instance?.GetTop(SetBanners, OnError);
         }
 
         /// <summary>
         /// Lists maps in the LevelImposter API by Recent
         /// </summary>
-        public void ListRecent()
+        private void SetRecentTab()
         {
-            if (LevelImposterAPI.Instance == null)
-                return;
-            LILogger.Info("Listing recent maps");
-            ClearList();
-            _currentListID = "recent";
-            LevelImposterAPI.Instance.GetRecent(OnRecent, OnError);
+            LevelImposterAPI.Instance?.GetRecent(SetBanners, OnError);
         }
 
         /// <summary>
-        /// Callback response for the LevelImposter API
+        /// Lists maps in the LevelImposter API by Recent
         /// </summary>
-        /// <param name="maps">Listed map response</param>
+        private void SetFeaturedTab()
+        {
+            LevelImposterAPI.Instance?.GetFeatured(SetBanners, OnError);
+        }
+
+        /// <summary>
+        /// Sets the shop banners to the given maps
+        /// </summary>
+        /// <param name="maps">Array of map metadata</param>
         [HideFromIl2Cpp]
-        private void OnRecent(LIMetadata[] maps)
+        private void SetBanners(LIMetadata[] maps)
         {
-            if (MapBannerPrefab == null)
-                return;
-            if (_currentListID != "recent")
-                return;
+            Clear();
             foreach (LIMetadata map in maps)
-            {
-                MapBanner banner = Instantiate(MapBannerPrefab, ShopParent);
-                banner.gameObject.SetActive(true);
-                banner.SetMap(map);
-                _shopBanners.Push(banner);
-            }
+                AddBanner(map);
         }
 
         /// <summary>
-        /// Lists maps in the LevelImposterAPI by Featured
+        /// Adds a shop banner to the shop
         /// </summary>
-        public void ListFeatured()
-        {
-            if (LevelImposterAPI.Instance == null)
-                return;
-            LILogger.Info("Listing featured maps");
-            ClearList();
-            _currentListID = "featured";
-            LevelImposterAPI.Instance.GetFeatured(OnFeatured, OnError);
-        }
-
-        /// <summary>
-        /// Callback response for the LevelImposter API
-        /// </summary>
-        /// <param name="maps">Listed map response</param>
+        /// <param name="map">Map metadata to add</param>
         [HideFromIl2Cpp]
-        private void OnFeatured(LIMetadata[] maps)
+        private void AddBanner(LIMetadata map)
         {
-            if (MapBannerPrefab == null)
+            if (_bannerPrefab == null || _shopBanners == null)
                 return;
-            if (_currentListID != "featured")
-                return;
-            foreach (LIMetadata map in maps)
-            {
-                MapBanner banner = Instantiate(MapBannerPrefab, ShopParent);
-                banner.gameObject.SetActive(true);
-                banner.SetMap(map);
-                _shopBanners.Push(banner);
-            }
+            int bannerCount = _shopBanners.Count;
+
+            // Instantiate Banner
+            MapBanner banner = Instantiate(_bannerPrefab, _bannerParent);
+            banner.gameObject.SetActive(true);
+            banner.SetMap(map);
+            _shopBanners.Push(banner);
+
+            // Position Banner
+            banner.transform.localPosition = new Vector3(
+                (bannerCount % COL_COUNT) * BANNER_WIDTH - (COL_COUNT - 1) * (BANNER_WIDTH / 2),
+                (bannerCount / COL_COUNT) * -BANNER_HEIGHT,
+                0
+            );
+
+            // Set Scroll Height
+            if (_scroller != null)
+                _scroller.ContentYBounds.max = (bannerCount / COL_COUNT) * BANNER_HEIGHT;
+
         }
 
         /// <summary>
@@ -226,25 +217,19 @@ namespace LevelImposter.Shop
         /// Launches a map in browser
         /// </summary>
         /// <param name="id">ID of the map to view. Must be in LevelImposter API</param>
-        public void ViewMap(string id)
+        public void OnExternal(string id)
         {
             LILogger.Info($"Viewing map [{id}]");
             Application.OpenURL($"https://levelimposter.net/#/map/{id}");
         }
 
         /// <summary>
-        /// Enables or disables the shop buttons
+        /// Toggles the disable overlay
         /// </summary>
-        /// <param name="isEnabled">TRUE if enabled</param>
+        /// <param name="isEnabled"><c>true</c> if the overly should be visible</param>
         public void SetEnabled(bool isEnabled)
         {
-            _shopButtons?.SetEnabled(isEnabled);
-            foreach (MapBanner banner in _shopBanners)
-            {
-                banner.SetEnabled(isEnabled);
-            }
-            if (CloseButton != null)
-                CloseButton.interactable = isEnabled;
+            // TODO: Disabled Overlay
         }
 
         /// <summary>
@@ -252,42 +237,52 @@ namespace LevelImposter.Shop
         /// </summary>
         public void CloseAllPopups()
         {
+            if (_shopBanners == null)
+                return;
             foreach (MapBanner banner in _shopBanners)
-            {
                 banner.CloseAllPopups();
-            }
-        }
-
-        /// <summary>
-        /// Closes the shop Instance, if one exists
-        /// </summary>
-        public static void CloseShop()
-        {
-            if (Instance != null)
-                Instance.Close();
         }
 
         /// <summary>
         /// Set to true to regenerate the fallback map on close
         /// </summary>
-        /// <param name="shouldRegenerateFallback">True iff the fallback map should be reset</param>
-        public static void RegenerateFallback(bool shouldRegenerateFallback)
+        public static void RegenerateFallbackMap()
         {
             if (Instance != null)
-                Instance._shouldRegenerateFallback = shouldRegenerateFallback;
+                Instance._shouldRegenerateFallback = true;
         }
         
         public void Awake()
         {
             ControllerManager.Instance.OpenOverlayMenu("LIShop", null);
             Instance = this;
+
+            _scroller = transform.Find("Scroll/Scroller").GetComponent<Scroller>();
+            _title = _scroller?.transform.Find("Inner/Title").GetComponent<SpriteRenderer>();
+            _tabs = transform.Find("Header/Tabs").GetComponent<ShopTabs>();
+            _bannerPrefab = _scroller?.transform.Find("Inner/MapBanner").GetComponent<MapBanner>();
+            
         }
         public void Start()
         {
+            // Set Tab
+            SetTab(Tab.Downloads);
+
+            // Prefabs
+            _bannerPrefab?.gameObject.SetActive(false);
+
+            // Freeplay Component
             _freeplayComp = gameObject.AddComponent<HostLocalGameButton>();
-            _shopButtons = gameObject.GetComponent<ShopButtons>();
             _freeplayComp.NetworkMode = NetworkModes.FreePlay;
-            ListDownloaded();
+
+            // Starfield
+            var starfield = transform.FindChild("Star Field").gameObject;
+            var starGen = starfield.AddComponent<StarGen>();
+            var starRenderer = starfield.GetComponent<MeshRenderer>();
+            starGen.Length = 14;
+            starGen.Width = 14;
+            starGen.Direction = new Vector2(0, -2);
+            starRenderer.material = AssetDB.GetObject("starfield")?.GetComponent<MeshRenderer>().material;
         }
         public void Update()
         {
@@ -298,11 +293,22 @@ namespace LevelImposter.Shop
         {
             ControllerManager.Instance.CloseOverlayMenu("LIShop");
             Instance = null;
-            MapBannerPrefab = null;
-            ShopParent = null;
-            CloseButton = null;
+
+            _scroller = null;
+            _title = null;
+            _tabs = null;
+            _bannerPrefab = null;
+            _shopBanners = null;
             _freeplayComp = null;
-            _shopBanners.Clear();
+        }
+
+        public enum Tab
+        {
+            None,
+            Downloads,
+            Featured,
+            Top,
+            Recent
         }
     }
 }

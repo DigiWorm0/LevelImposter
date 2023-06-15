@@ -13,9 +13,15 @@ namespace LevelImposter.Shop
     [HarmonyPatch(typeof(PlayerCustomizationMenu), nameof(PlayerCustomizationMenu.Start))]
     public static class ShopPatch
     {
-        public static void Postfix()
+        public static bool Prefix(PlayerCustomizationMenu __instance)
         {
-            ShopBuilder.OnCustomizationMenu();
+            bool isInLobby = LobbyBehaviour.Instance != null;
+            if (isInLobby)
+                return true;
+
+            UnityEngine.Object.Destroy(__instance.gameObject);
+            ShopBuilder.Build();
+            return false;
         }
     }
 }

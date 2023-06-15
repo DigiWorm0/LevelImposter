@@ -23,7 +23,7 @@ namespace LevelImposter.Shop
             GameObject buttonPrefab = GameObject.Find(BUTTON_PATH);
             _btnObj = UnityEngine.Object.Instantiate(buttonPrefab);
             _btnObj.name = "button_LevelImposterUpdater";
-            _btnObj.transform.localPosition = new Vector3(4.25f, -2.3f, -1.0f);
+            _btnObj.transform.localPosition = new Vector3(4.25f, -1.9f, -1.0f);
             _btnObj.transform.localScale = Vector3.one;
 
             // Active/Inactive

@@ -14,8 +14,10 @@ namespace LevelImposter.Shop
         {
             // Spawnable Prefab
             GameObject shopSpawner = new GameObject("LIShopSpawner");
-            shopSpawner.AddComponent<ShopSpawner>();
+            //shopSpawner.AddComponent<ShopSpawner>();
             shopSpawner.SetActive(false);
+
+            // TODO: Fix me!
 
             // Object
             Transform lobbyTransform = LobbyBehaviour.Instance.transform;

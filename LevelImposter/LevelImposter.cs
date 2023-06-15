@@ -61,9 +61,8 @@ namespace LevelImposter
             ClassInjector.RegisterTypeInIl2Cpp<MapFileAPI>();
             ClassInjector.RegisterTypeInIl2Cpp<ConfigAPI>();
             ClassInjector.RegisterTypeInIl2Cpp<MapBanner>();
-            ClassInjector.RegisterTypeInIl2Cpp<ShopButtons>();
             ClassInjector.RegisterTypeInIl2Cpp<ShopManager>();
-            ClassInjector.RegisterTypeInIl2Cpp<ShopSpawner>();
+            ClassInjector.RegisterTypeInIl2Cpp<ShopTabs>();
             ClassInjector.RegisterTypeInIl2Cpp<Spinner>();
 
             // Patch Methods

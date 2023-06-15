@@ -31,7 +31,7 @@ namespace LevelImposter.Shop
             GameObject logoObj = new("LevelImposterVersion " + antiPiracy);
             logoObj.transform.SetParent(__instance.transform.parent);
             logoObj.transform.localScale = new Vector3(0.55f, 0.55f, 1.0f);
-            logoObj.transform.localPosition = new Vector3(4.0f, -2.75f, -1.0f);
+            logoObj.transform.position = new Vector3(4f, -2.3f, -1.0f);
             logoObj.layer = (int)Layer.UI;
 
             SpriteRenderer logoRenderer = logoObj.AddComponent<SpriteRenderer>();
@@ -39,7 +39,7 @@ namespace LevelImposter.Shop
 
             GameObject logoTextObj = new("LevelImposterText " + antiPiracy);
             logoTextObj.transform.SetParent(logoObj.transform);
-            logoTextObj.transform.localPosition = new Vector3(3.19f, 0, 0);
+            logoTextObj.transform.localPosition = new Vector3(3.55f, 0, 0);
 
             RectTransform logoTransform = logoTextObj.AddComponent<RectTransform>();
             logoTransform.sizeDelta = new Vector2(2, 0.19f);

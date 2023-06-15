@@ -1,6 +1,11 @@
 {
   "ObjectDB": [
     {
+      "ID": "starfield",
+      "Map": 0,
+      "Path": "starfield"
+    },
+    {
       "ID": "util-button1",
       "Map": 2,
       "Path": "Office/caftable/EmergencyButton"

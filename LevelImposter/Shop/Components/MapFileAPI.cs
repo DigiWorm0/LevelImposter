@@ -74,8 +74,10 @@ namespace LevelImposter.Shop
         /// </summary>
         /// <param name="mapID">Map File ID</param>
         /// <returns>True if a map file with the cooresponding ID exists</returns>
-        public bool Exists(string mapID)
+        public bool Exists(string? mapID)
         {
+            if (mapID == null)
+                return false;
             return File.Exists(GetPath(mapID));
         }
 
