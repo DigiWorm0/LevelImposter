@@ -52,9 +52,11 @@ namespace LevelImposter.Core
             _spriteRenderer = GetComponent<SpriteRenderer>();
             _gifData = gifData;
             _defaultLoopGIF = element.properties.loopGIF ?? true;
-            Play();
+
             if (AUTOPLAY_BLACKLIST.Contains(element.type))
                 Stop();
+            else
+                Play();
         }
 
         /// <summary>
@@ -62,7 +64,7 @@ namespace LevelImposter.Core
         /// </summary>
         public void Play()
         {
-            Play(_defaultLoopGIF, false); ;
+            Play(_defaultLoopGIF, false);
         }
 
         /// <summary>
@@ -89,8 +91,13 @@ namespace LevelImposter.Core
             if (_animationCoroutine != null)
                 StopCoroutine(_animationCoroutine);
             _isAnimating = false;
+
             if (_spriteRenderer != null && _gifData != null)
-                _spriteRenderer.sprite = _gifData.GetFrameSprite(reversed ? _gifData.Frames.Count - 1 : 0);
+            {
+                var sprite = _gifData.GetFrameSprite(reversed ? _gifData.Frames.Count - 1 : 0);
+                _spriteRenderer.sprite = sprite;
+                _spriteRenderer.enabled = true;
+            }
         }
 
         /// <summary>
@@ -105,6 +112,7 @@ namespace LevelImposter.Core
             if (_gifData == null || _spriteRenderer == null)
                 yield break;
             _isAnimating = true;
+            _spriteRenderer.enabled = true;
             int t = 0;
             while (_isAnimating)
             {

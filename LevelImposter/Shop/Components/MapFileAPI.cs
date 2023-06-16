@@ -23,7 +23,11 @@ namespace LevelImposter.Shop
         {
         }
 
-        public const float MIN_FRAMERATE = 20.0f;
+        private const float MIN_FRAMERATE = 20.0f;
+        private readonly JsonSerializerOptions SERIALIZE_OPTIONS = new()
+        {
+            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
+        };
 
         public static MapFileAPI? Instance = null;
 
@@ -157,13 +161,8 @@ namespace LevelImposter.Shop
         public void Save(LIMap map)
         {
             LILogger.Info($"Saving {map} to filesystem");
-            JsonSerializerOptions serializerOptions = new()
-            {
-                DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
-            };
-
             string mapPath = GetPath(map.id);
-            string mapJson = JsonSerializer.Serialize(map, serializerOptions);
+            string mapJson = JsonSerializer.Serialize(map, SERIALIZE_OPTIONS);
             if (!Directory.Exists(GetDirectory()))
                 Directory.CreateDirectory(GetDirectory());
             File.WriteAllText(mapPath, mapJson);

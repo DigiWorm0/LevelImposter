@@ -49,7 +49,6 @@ namespace LevelImposter.Shop
             _description?.SetText(map.description);
             UpdateButtons();
             GetThumbnail();
-            GetRemix();
         }
 
         /// <summary>
@@ -173,22 +172,6 @@ namespace LevelImposter.Shop
                         _thumbnail.sprite = sprite;
                 });
             }
-        }
-
-        /// <summary>
-        /// Updates the map banner's remix info
-        /// </summary>
-        [HideFromIl2Cpp]
-        private void GetRemix()
-        {
-            if (_currentMap?.remixOf == null)
-                return;
-
-            //_remixText.text = "Remix of\n<i>Unknown Map</i>";
-            LevelImposterAPI.Instance?.GetMap((Guid)_currentMap.remixOf, (map) =>
-            {
-                //remixText.text = $"Remix of\n<b>{metadata.name}</b> by {metadata.authorName}";
-            }, OnError);
         }
 
         public void Awake()

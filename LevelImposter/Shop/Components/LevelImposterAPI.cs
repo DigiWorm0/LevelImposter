@@ -66,9 +66,13 @@ namespace LevelImposter.Shop
                     callback(request.downloadHandler.text);
                 }
                 request.Dispose();
+                request = null;
                 callback = null;
                 onError = null;
+                url = null;
+                LILogger.Info("EVERYTHING DISPOSED");
             }
+            yield return null;
         }
 
         /// <summary>
@@ -107,6 +111,8 @@ namespace LevelImposter.Shop
                 }
                 request.Dispose();
                 request = null;
+                callback = null;
+                url = null;
             }
         }
 
@@ -131,6 +137,12 @@ namespace LevelImposter.Shop
                     onError(response.error);
                 else
                     callback(response.data);
+
+                response = null;
+                json = null;
+                callback = null;
+                url = null;
+                onError = null;
             }, onError);
         }
 
