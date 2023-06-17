@@ -19,6 +19,14 @@ namespace LevelImposter.Shop
 
         public static HTTPHandler? Instance = null;
 
+        /// <summary>
+        /// Coroutine to handle HTTP Requests
+        /// </summary>
+        /// <param name="url">URL to send request to</param>
+        /// <param name="onSuccessString">Callback on success as a continuous string</param>
+        /// <param name="onSuccessBytes">Callback on success as a byte stream</param>
+        /// <param name="onProgress">Callback on progress, value from 0 to 1</param>
+        /// <param name="onError">Callback on error with error info</param>
         [HideFromIl2Cpp]
         private IEnumerator CoRequest(string url, 
             Action<string>? onSuccessString,
@@ -55,7 +63,7 @@ namespace LevelImposter.Shop
                     onSuccessBytes(request.downloadHandler.data);
                 }
 
-                // Free memory (BepInEx coroutines are buggy af, GC is not called)
+                // Free memory (because BepInEx)
                 request.Dispose();
                 request = null;
                 url = "";
@@ -66,6 +74,15 @@ namespace LevelImposter.Shop
             }
         }
 
+        /// <summary>
+        /// Sends an async HTTP Request
+        /// </summary>
+        /// <param name="url">URL to send request to</param>
+        /// <param name="onSuccessString">Callback on success as a continuous string</param>
+        /// <param name="onSuccessBytes">Callback on success as a byte stream</param>
+        /// <param name="onProgress">Callback on progress, value from 0 to 1</param>
+        /// <param name="onError">Callback on error with error info</param>
+        [HideFromIl2Cpp]
         private void Request(string url,
             Action<string>? onSuccessString,
             Action<byte[]>? onSuccessBytes,
@@ -75,10 +92,11 @@ namespace LevelImposter.Shop
             StartCoroutine(CoRequest(url, onSuccessString, onSuccessBytes, onProgress, onError).WrapToIl2Cpp());
         }
 
-        public void Request(string url, Action<string>? onSuccess, Action<string>? onError) => Request(url, onSuccess, null, null, onError);
-        public void Request(string url, Action<byte[]>? onSuccess, Action<string>? onError) => Request(url, null, onSuccess, null, onError);
-        public void Download(string url, Action<float>? onProgress, Action<string>? onSuccess, Action<string>? onError) => Request(url, onSuccess, null, onProgress, onError);
-        public void Download(string url, Action<float>? onProgress, Action<byte[]>? onSuccess, Action<string>? onError) => Request(url, null, onSuccess, onProgress, onError);
+        // Shorthand overloads
+        [HideFromIl2Cpp] public void Request(string url, Action<string>? onSuccess, Action<string>? onError) => Request(url, onSuccess, null, null, onError);
+        [HideFromIl2Cpp] public void Request(string url, Action<byte[]>? onSuccess, Action<string>? onError) => Request(url, null, onSuccess, null, onError);
+        [HideFromIl2Cpp] public void Download(string url, Action<float>? onProgress, Action<string>? onSuccess, Action<string>? onError) => Request(url, onSuccess, null, onProgress, onError);
+        [HideFromIl2Cpp] public void Download(string url, Action<float>? onProgress, Action<byte[]>? onSuccess, Action<string>? onError) => Request(url, null, onSuccess, onProgress, onError);
 
         public void Awake()
         {

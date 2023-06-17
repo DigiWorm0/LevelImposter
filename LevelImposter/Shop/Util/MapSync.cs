@@ -106,14 +106,14 @@ namespace LevelImposter.Shop
                 return;
             }
             // In Local Filesystem
-            else if (MapFileAPI.Instance?.Exists(mapIDStr) == true)
+            else if (MapFileAPI.Exists(mapIDStr))
             {
                 MapLoader.LoadMap(mapIDStr, isFallback, null);
             }
             // In Local Cache
-            else if (MapCacheAPI.Instance?.Exists(mapIDStr) == true)
+            else if (MapFileCache.Exists(mapIDStr))
             {
-                MapLoader.LoadMap(MapCacheAPI.Instance?.Get(mapIDStr), isFallback);
+                MapLoader.LoadMap(MapFileCache.Get(mapIDStr), isFallback);
             }
             // Download if Unavailable
             else
@@ -124,7 +124,7 @@ namespace LevelImposter.Shop
                 DownloadManager.StartDownload();
                 LevelImposterAPI.DownloadMap(mapID, null, (LIMap map) =>
                 {
-                    MapCacheAPI.Instance?.Save(map);
+                    MapFileCache.Save(map);
                     if (_activeDownloadingID == mapID)
                     {
                         MapLoader.LoadMap(map, isFallback);
@@ -143,11 +143,8 @@ namespace LevelImposter.Shop
 
         private static string? GetRandomMapID(List<string> blacklistMaps)
         {
-            if (MapFileAPI.Instance == null)
-                throw new Exception("Missing MapFileAPI");
-
             // Get all custom maps
-            var fileIDs = new List<string>(MapFileAPI.Instance.ListIDs());
+            var fileIDs = new List<string>(MapFileAPI.ListIDs());
             var mapIDs = fileIDs.FindAll(id => !blacklistMaps.Contains(id));
             if (mapIDs.Count <= 0)
             {

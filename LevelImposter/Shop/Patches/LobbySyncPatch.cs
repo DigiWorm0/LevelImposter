@@ -15,7 +15,7 @@ namespace LevelImposter.Shop
             RandomizerSync.SyncRandomSeed();
 
             string? lastMapID = ConfigAPI.GetLastMapID();
-            bool hasLastMap = lastMapID != null && (MapFileAPI.Instance?.Exists(lastMapID) ?? false);
+            bool hasLastMap = lastMapID != null && MapFileAPI.Exists(lastMapID);
             bool isHost = AmongUsClient.Instance.AmHost;
 
             if (MapLoader.CurrentMap == null && lastMapID != null && hasLastMap && isHost)

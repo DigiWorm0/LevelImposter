@@ -1,15 +1,8 @@
 using System;
 using System.IO;
-using System.Collections;
-using System.Diagnostics;
-using System.Threading.Tasks;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.Networking;
 using LevelImposter.Core;
-using BepInEx.Unity.IL2CPP.Utils.Collections;
 using Il2CppInterop.Runtime.Attributes;
 
 namespace LevelImposter.Shop
@@ -17,34 +10,19 @@ namespace LevelImposter.Shop
     /// <summary>
     /// API to manage LIM files in the local filesystem
     /// </summary>
-    public class MapFileAPI : MonoBehaviour
+    public static class MapFileAPI
     {
-        public MapFileAPI(IntPtr intPtr) : base(intPtr)
-        {
-        }
-
-        private const float MIN_FRAMERATE = 20.0f;
-        private readonly JsonSerializerOptions SERIALIZE_OPTIONS = new()
+        private static readonly JsonSerializerOptions SERIALIZE_OPTIONS = new()
         {
             DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
         };
-
-        public static MapFileAPI? Instance = null;
-
-        private Stopwatch? _loadTimer = new();
-        private int _loadCount = 0;
-        private bool _shouldLoad
-        {
-            get { return _loadTimer?.ElapsedMilliseconds <= (1000.0f / MIN_FRAMERATE); }
-        }
-
 
         /// <summary>
         /// Gets the current directory where LevelImposter map files are stored.
         /// Usually in a LevelImposter folder beside the LevelImposter.dll.
         /// </summary>
         /// <returns>String path where LevelImposter data is stored.</returns>
-        public string GetDirectory()
+        public static string GetDirectory()
         {
             string gameDir = System.Reflection.Assembly.GetAssembly(typeof(LevelImposter))?.Location ?? "/";
             return Path.Combine(Path.GetDirectoryName(gameDir) ?? "/", "LevelImposter");
@@ -55,7 +33,7 @@ namespace LevelImposter.Shop
         /// </summary>
         /// <param name="mapID">ID of the map file</param>
         /// <returns>The path where a specific map is stored</returns>
-        public string GetPath(string mapID)
+        public static string GetPath(string mapID)
         {
             return Path.Combine(GetDirectory(), mapID + ".lim");
         }
@@ -65,7 +43,7 @@ namespace LevelImposter.Shop
         /// </summary>
         /// <returns>Array of map file IDs that are located in the LevelImpsoter folder.</returns>
         [HideFromIl2Cpp]
-        public string[] ListIDs()
+        public static string[] ListIDs()
         {
             string[] fileNames = Directory.GetFiles(GetDirectory(), "*.lim");
             for (int i = 0; i < fileNames.Length; i++)
@@ -78,7 +56,7 @@ namespace LevelImposter.Shop
         /// </summary>
         /// <param name="mapID">Map File ID</param>
         /// <returns>True if a map file with the cooresponding ID exists</returns>
-        public bool Exists(string? mapID)
+        public static bool Exists(string? mapID)
         {
             if (mapID == null)
                 return false;
@@ -92,9 +70,10 @@ namespace LevelImposter.Shop
         /// <param name="callback">Callback on success</param>
         /// <returns>Representation of the map file data in the form of a <c>LIMap</c>.</returns>
         [HideFromIl2Cpp]
-        public void Get(string mapID, Action<LIMap?> callback)
+        public static void Get(string mapID, Action<LIMap?> callback)
         {
-            StartCoroutine(CoGet(mapID, callback).WrapToIl2Cpp());
+            string path = GetPath(mapID);
+            FileHandler.Instance?.Get(path, callback, null);
         }
 
         /// <summary>
@@ -105,52 +84,11 @@ namespace LevelImposter.Shop
         /// <param name="callback">Callback on success</param>
         /// <returns>Representation of the map file data in the form of a <c>LIMetadata</c>.</returns>
         [HideFromIl2Cpp]
-        public void GetMetadata(string mapID, Action<LIMetadata?> callback)
+        public static void GetMetadata(string mapID, Action<LIMetadata?> callback)
         {
-            StartCoroutine(CoGet(mapID, callback).WrapToIl2Cpp());
-        }
-
-        /// <summary>
-        /// Coroutine to grab map data from local filesystem
-        /// </summary>
-        /// <typeparam name="T">Output type, extends <c>LIMetadata</c></typeparam>
-        /// <param name="mapID">Map ID to read and parse</param>
-        /// <param name="callback">Callback on success</param>
-        [HideFromIl2Cpp]
-        private IEnumerator CoGet<T>(string mapID, Action<T?>? callback) where T : LIMetadata
-        {
-            {
-                if (!Exists(mapID))
-                {
-                    LILogger.Error($"Could not find [{mapID}] in filesystem");
-                    yield break;
-                }
-                LILogger.Info($"Loading map [{mapID}] from filesystem");
-                _loadCount++;
-                yield return null;
-
-                // File Reader
-                while (!_shouldLoad)
-                    yield return null;
-                string mapPath = GetPath(mapID);
-                using (FileStream mapStream = File.OpenRead(mapPath))
-                {
-                    T? mapData = JsonSerializer.Deserialize<T>(mapStream);
-                    if (mapData == null)
-                    {
-                        LILogger.Warn($"Invalid map data in [{mapID}]");
-                    }
-                    else
-                    {
-                        mapData.id = mapID;
-                        if (callback != null)
-                            callback(mapData);
-                        mapData = null;
-                    }
-                    _loadCount--;
-                }
-                callback = null;
-            }
+            // TODO: Prevent parsing of unnecessary data
+            string path = GetPath(mapID);
+            FileHandler.Instance?.Get(path, callback, null);
         }
 
         /// <summary>
@@ -158,7 +96,7 @@ namespace LevelImposter.Shop
         /// </summary>
         /// <param name="map">Map data to save</param>
         [HideFromIl2Cpp]
-        public void Save(LIMap map)
+        public static void Save(LIMap map)
         {
             LILogger.Info($"Saving {map} to filesystem");
             string mapPath = GetPath(map.id);
@@ -172,34 +110,20 @@ namespace LevelImposter.Shop
         /// Deletes a map file from the filesystem.
         /// </summary>
         /// <param name="mapID">ID of the map to delete</param>
-        public void Delete(string mapID)
+        public static void Delete(string mapID)
         {
             LILogger.Info($"Deleting [{mapID}] from filesystem");
             string mapPath = GetPath(mapID);
             File.Delete(mapPath);
         }
 
-        public void Awake()
-        {
-            if (Instance == null)
-            {
-                Instance = this;
-                DontDestroyOnLoad(gameObject);
-            }
-            else
-            {
-                Destroy(gameObject);
-            }
-        }
-        public void Start()
+        /// <summary>
+        /// Initializes the LevelImposter folder in the local filesystem.
+        /// </summary>
+        public static void Init()
         {
             if (!Directory.Exists(GetDirectory()))
                 Directory.CreateDirectory(GetDirectory());
-        }
-        public void Update()
-        {
-            if (_loadCount > 0)
-                _loadTimer?.Restart();
         }
     }
 }

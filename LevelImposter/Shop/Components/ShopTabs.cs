@@ -29,9 +29,7 @@ namespace LevelImposter.Shop
         /// </summary>
         public void OpenFolder()
         {
-            var dir = MapFileAPI.Instance?.GetDirectory();
-            if (dir != null)
-                System.Diagnostics.Process.Start("explorer.exe", dir);
+            System.Diagnostics.Process.Start("explorer.exe", MapFileAPI.GetDirectory());
         }
 
         public void Awake()

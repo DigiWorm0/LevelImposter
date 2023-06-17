@@ -63,6 +63,7 @@ namespace LevelImposter.Shop
         /// </summary>
         public void Clear()
         {
+            _scroller?.ScrollToTop();
             while (_shopBanners?.Count > 0)
                 Destroy(_shopBanners.Pop().gameObject);
         }
@@ -110,10 +111,10 @@ namespace LevelImposter.Shop
         private void SetDownloadsTab()
         {
             Clear();
-            string[] mapIDs = MapFileAPI.Instance?.ListIDs() ?? new string[0];
+            string[] mapIDs = MapFileAPI.ListIDs() ?? new string[0];
             foreach (string mapID in mapIDs)
             {
-                MapFileAPI.Instance?.GetMetadata(mapID, OnDownloadsResponse);
+                MapFileAPI.GetMetadata(mapID, OnDownloadsResponse);
             }
         }
         [HideFromIl2Cpp]
@@ -126,30 +127,24 @@ namespace LevelImposter.Shop
         /// <summary>
         /// Lists maps in the LevelImposter API by Top
         /// </summary>
-        private void SetTopTab()
-        {
-            LevelImposterAPI.GetTop(OnTopResponse, OnError);
-        }
+        private void SetTopTab() => LevelImposterAPI.GetTop(OnTopResponse, OnError);
+
         [HideFromIl2Cpp]
         private void OnTopResponse(LIMetadata[] maps) => OnAPIRespose(maps, Tab.Top);
 
         /// <summary>
         /// Lists maps in the LevelImposter API by Recent
         /// </summary>
-        private void SetRecentTab()
-        {
-            LevelImposterAPI.GetRecent(OnRecentResponse, OnError);
-        }
+        private void SetRecentTab() => LevelImposterAPI.GetRecent(OnRecentResponse, OnError);
+
         [HideFromIl2Cpp]
         private void OnRecentResponse(LIMetadata[] maps) => OnAPIRespose(maps, Tab.Recent);
 
         /// <summary>
         /// Lists maps in the LevelImposter API by Featured
         /// </summary>
-        private void SetFeaturedTab()
-        {
-            LevelImposterAPI.GetFeatured(OnFeaturedResponse, OnError);
-        }
+        private void SetFeaturedTab() => LevelImposterAPI.GetFeatured(OnFeaturedResponse, OnError);
+
         [HideFromIl2Cpp]
         private void OnFeaturedResponse(LIMetadata[] maps) => OnAPIRespose(maps, Tab.Featured);
 
@@ -267,6 +262,18 @@ namespace LevelImposter.Shop
             _overlayText?.SetText(text);
         }
 
+        /// <summary>
+        /// Enum of tabs in the shop
+        /// </summary>
+        public enum Tab
+        {
+            None,
+            Downloads,
+            Featured,
+            Top,
+            Recent
+        }
+
         public void Awake()
         {
             ControllerManager.Instance.OpenOverlayMenu("LIShop", null);
@@ -319,15 +326,6 @@ namespace LevelImposter.Shop
             _tabs = null;
             _bannerPrefab = null;
             _freeplayComp = null;
-        }
-
-        public enum Tab
-        {
-            None,
-            Downloads,
-            Featured,
-            Top,
-            Recent
         }
     }
 }

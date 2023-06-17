@@ -1,27 +1,34 @@
-using System;
-using System.IO;
+using Il2CppInterop.Runtime.Attributes;
 using LevelImposter.Core;
+using System.IO;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using Il2CppInterop.Runtime.Attributes;
 
 namespace LevelImposter.Shop
 {
     /// <summary>
     /// API to manage cached map asset bundles in the local filesystem
     /// </summary>
-    public class MapCacheAPI : FileCache
+    public static class MapFileCache
     {
-        public MapCacheAPI(IntPtr intPtr) : base(intPtr)
-        {
-        }
-
-        public static MapCacheAPI? Instance = null;
-
-        private readonly JsonSerializerOptions SERIALIZE_OPTIONS = new()
+        private static readonly JsonSerializerOptions SERIALIZE_OPTIONS = new()
         {
             DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
         };
+
+        /// <summary>
+        /// Checks if a map exists in the local map cache
+        /// </summary>
+        /// <param name="mapID">ID of the map to check</param>
+        /// <returns><c>true</c> if the map exists in the cache, <c>false</c> otherwise</returns>
+        public static bool Exists(string mapID) => FileCache.Exists($"{mapID}.lim");
+
+        /// <summary>
+        /// Gets the path to a map file in the local map cache
+        /// </summary>
+        /// <param name="mapID">ID of the map to find</param>
+        /// <returns>The path to the map file</returns>
+        public static string GetPath(string mapID) => FileCache.GetPath($"{mapID}.lim");
 
         /// <summary>
         /// Reads and parses a map file into a LIMap.
@@ -29,7 +36,7 @@ namespace LevelImposter.Shop
         /// <param name="mapID">Map ID to load</param>
         /// <param name="callback">Callback on success</param>
         [HideFromIl2Cpp]
-        public new LIMap? Get(string mapID)
+        public static LIMap? Get(string mapID)
         {
             if (!Exists(mapID))
             {
@@ -59,25 +66,11 @@ namespace LevelImposter.Shop
         /// </summary>
         /// <param name="map">Map to save to cache</param>
         [HideFromIl2Cpp]
-        public void Save(LIMap map)
+        public static void Save(LIMap map)
         {
             LILogger.Info($"Saving {map} to filesystem");
             string mapJson = JsonSerializer.Serialize(map, SERIALIZE_OPTIONS);
-            Save(map.id, mapJson);
-        }
-
-        public void Awake()
-        {
-            if (Instance == null)
-            {
-                Instance = this;
-                DontDestroyOnLoad(gameObject);
-                SetFileExtension(".lim");
-            }
-            else
-            {
-                Destroy(gameObject);
-            }
+            FileCache.Save($"{map.id}.lim", mapJson);
         }
     }
 }

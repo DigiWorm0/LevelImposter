@@ -35,7 +35,7 @@ namespace LevelImposter.Shop
         /// <param name="callback">Callback on success</param>
         public static void LoadMap(string mapID, bool isFallback, Action? callback)
         {
-            MapFileAPI.Instance?.Get(mapID, (mapData) =>
+            MapFileAPI.Get(mapID, (mapData) =>
             {
                 LoadMap(mapData, isFallback);
                 if (callback != null)

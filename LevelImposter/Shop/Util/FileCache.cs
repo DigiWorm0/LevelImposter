@@ -10,21 +10,34 @@ namespace LevelImposter.Shop
     /// <summary>
     /// API to manage cached files in the local filesystem
     /// </summary>
-    public abstract class FileCache : MonoBehaviour
+    public static class FileCache
     {
-        public FileCache(IntPtr intPtr) : base(intPtr)
+        /// <summary>
+        /// Runs various initialization tasks for the FileCache
+        /// </summary>
+        public static void Init()
         {
+            // Clear cache if it's too big
+            Clear(1024 * 1024 * 50); // 50 MB
+
+            // Create cache directory if it doesn't exist
+            if (!Directory.Exists(GetDirectory()))
+                Directory.CreateDirectory(GetDirectory());
+
+            // Delete legacy directory if it exists
+            DeleteLegacyDir();
         }
 
-        private string _fileExtension = "";
 
         /// <summary>
-        /// Sets the file extension used by the file cache
+        /// Finds and deletes the old thumbnail directory
         /// </summary>
-        /// <param name="fileExtension">File extension to use (including the ".")</param>
-        protected void SetFileExtension(string fileExtension)
+        private static void DeleteLegacyDir()
         {
-            _fileExtension = fileExtension;
+            string gameDir = System.Reflection.Assembly.GetAssembly(typeof(LevelImposter))?.Location ?? "/";
+            string legacyDir = Path.Combine(Path.GetDirectoryName(gameDir) ?? "/", "LevelImposter/Thumbnails");
+            if (Directory.Exists(legacyDir))
+                Directory.Delete(legacyDir, true);
         }
 
         /// <summary>
@@ -32,7 +45,7 @@ namespace LevelImposter.Shop
         /// Usually in a sub-directory within the LevelImposter folder beside the LevelImposter.dll.
         /// </summary>
         /// <returns>String path where LevelImposter map thumbnails is stored.</returns>
-        private static string GetDirectory()
+        public static string GetDirectory()
         {
             string gameDir = System.Reflection.Assembly.GetAssembly(typeof(LevelImposter))?.Location ?? "/";
             return Path.Combine(Path.GetDirectoryName(gameDir) ?? "/", "LevelImposter/.cache");
@@ -63,33 +76,23 @@ namespace LevelImposter.Shop
         }
 
         /// <summary>
-        /// Gets the name of a file based on it's ID
-        /// </summary>
-        /// <param name="id">File or map ID</param>
-        /// <returns>Name of the file with its file extension</returns>
-        private string GetFileName(string id)
-        {
-            return id + _fileExtension;
-        }
-
-        /// <summary>
         /// Gets the path where a specific cached file is stored.
         /// </summary>
-        /// <param name="id">ID of the file</param>
+        /// <param name="fileName">Name of the file</param>
         /// <returns>The path where a specific cached file is stored</returns>
-        protected string GetPath(string id)
+        public static string GetPath(string fileName)
         {
-            return Path.Combine(GetDirectory(), GetFileName(id));
+            return Path.Combine(GetDirectory(), fileName);
         }
 
         /// <summary>
         /// Checks the existance of a cached file based on ID
         /// </summary>
-        /// <param name="id">ID of the file</param>
+        /// <param name="fileName">Name of the file</param>
         /// <returns>True if a file with the cooresponding ID exists</returns>
-        public bool Exists(string id)
+        public static bool Exists(string fileName)
         {
-            return File.Exists(GetPath(id));
+            return File.Exists(GetPath(fileName));
         }
 
         /// <summary>
@@ -98,15 +101,15 @@ namespace LevelImposter.Shop
         /// <param name="id">ID of the file</param>
         /// <returns>Byte array with cooresponding file info</returns>
         [HideFromIl2Cpp]
-        protected byte[]? Get(string id)
+        public static byte[]? Get(string fileName)
         {
-            if (!Exists(id))
+            if (!Exists(fileName))
             {
-                LILogger.Warn($"Could not find {GetFileName(id)} in file cache");
+                LILogger.Warn($"Could not find {fileName} in file cache");
                 return null;
             }
 
-            return File.ReadAllBytes(GetPath(id));
+            return File.ReadAllBytes(GetPath(fileName));
         }
 
         /// <summary>
@@ -115,12 +118,12 @@ namespace LevelImposter.Shop
         /// <param name="id">ID of the file</param>
         /// <param name="fileBytes">Raw data to write to disk</param>
         [HideFromIl2Cpp]
-        public void Save(string id, byte[] fileBytes)
+        public static void Save(string fileName, byte[] fileBytes)
         {
-            LILogger.Info($"Saving {GetFileName(id)} to file cache");
+            LILogger.Info($"Saving {fileName} to file cache");
             try
             {
-                string filePath = GetPath(id);
+                string filePath = GetPath(fileName);
                 if (!Directory.Exists(GetDirectory()))
                     Directory.CreateDirectory(GetDirectory());
                 File.WriteAllBytes(filePath, fileBytes);
@@ -137,12 +140,12 @@ namespace LevelImposter.Shop
         /// <param name="id">ID of the file</param>
         /// <param name="fileText">Raw text to write to disk</param>
         [HideFromIl2Cpp]
-        public void Save(string id, string fileText)
+        public static void Save(string fileName, string fileText)
         {
-            LILogger.Info($"Saving {GetFileName(id)} to file cache");
+            LILogger.Info($"Saving {fileName} to file cache");
             try
             {
-                string filePath = GetPath(id);
+                string filePath = GetPath(fileName);
                 if (!Directory.Exists(GetDirectory()))
                     Directory.CreateDirectory(GetDirectory());
                 File.WriteAllText(filePath, fileText);
@@ -151,13 +154,6 @@ namespace LevelImposter.Shop
             {
                 LILogger.Error(e);
             }
-        }
-
-        public void Start()
-        {
-            Clear(1024 * 1024 * 50); // 50 MB
-            if (!Directory.Exists(GetDirectory()))
-                Directory.CreateDirectory(GetDirectory());
         }
     }
 }

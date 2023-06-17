@@ -52,7 +52,7 @@ namespace LevelImposter.Shop
         private void UpdateButtons()
         {
             bool isLoaded = _currentMap != null;
-            bool isDownloaded = MapFileAPI.Instance?.Exists(_currentMap?.id) ?? false;
+            bool isDownloaded = MapFileAPI.Exists(_currentMap?.id);
             bool isOnline = !string.IsNullOrEmpty(_currentMap?.authorID) && Guid.TryParse(_currentMap.id, out _);
             bool isPublic = _currentMap?.isPublic ?? false;
             bool isRemix = _currentMap?.remixOf != null;
@@ -82,7 +82,7 @@ namespace LevelImposter.Shop
         [HideFromIl2Cpp]
         private void OnDownload(LIMap map)
         {
-            MapFileAPI.Instance?.Save(map);
+            MapFileAPI.Save(map);
             ShopManager.Instance?.SetOverlayEnabled(false);
             ShopManager.RegenerateFallbackMap();
             UpdateButtons();
@@ -140,7 +140,7 @@ namespace LevelImposter.Shop
         {
             if (_currentMap == null)
                 return;
-            MapFileAPI.Instance?.Delete(_currentMap?.id ?? "");
+            MapFileAPI.Delete(_currentMap?.id ?? "");
             UpdateButtons();
             ShopManager.RegenerateFallbackMap();
         }
@@ -162,9 +162,9 @@ namespace LevelImposter.Shop
         {
             if (string.IsNullOrEmpty(_currentMap?.thumbnailURL))
                 return;
-            if (ThumbnailCacheAPI.Instance?.Exists(_currentMap.id) ?? false)
+            if (ThumbnailCache.Exists(_currentMap.id))
             {
-                ThumbnailCacheAPI.Instance.Get(_currentMap.id, (sprite) =>
+                ThumbnailCache.Get(_currentMap.id, (sprite) =>
                 {
                     if (_thumbnail != null)
                         _thumbnail.sprite = sprite;

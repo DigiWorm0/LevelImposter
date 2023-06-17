@@ -153,7 +153,7 @@ namespace LevelImposter.Shop
             LILogger.Info($"Downloading thumbnail for map {metadata}...");
             HTTPHandler.Instance?.Request(metadata.thumbnailURL, (byte[] imgData) =>
             {
-                ThumbnailCacheAPI.Instance?.Save(metadata.id, imgData);
+                ThumbnailCache.Save(metadata.id, imgData);
                 SpriteLoader.Instance?.LoadSpriteAsync(imgData, false, (spriteData) =>
                 {
                     if (spriteData == null)

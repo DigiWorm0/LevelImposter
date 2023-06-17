@@ -25,6 +25,8 @@ namespace LevelImposter
         {
             // Init Subsystems
             LILogger.Init();
+            MapFileAPI.Init();
+            FileCache.Init();
             LIDeepLink.Init();
             ModCompatibility.Init();
             
@@ -53,9 +55,7 @@ namespace LevelImposter
             ClassInjector.RegisterTypeInIl2Cpp<AssetDB>();
 
             ClassInjector.RegisterTypeInIl2Cpp<HTTPHandler>();
-            ClassInjector.RegisterTypeInIl2Cpp<ThumbnailCacheAPI>();
-            ClassInjector.RegisterTypeInIl2Cpp<MapCacheAPI>();
-            ClassInjector.RegisterTypeInIl2Cpp<MapFileAPI>();
+            ClassInjector.RegisterTypeInIl2Cpp<FileHandler>();
             ClassInjector.RegisterTypeInIl2Cpp<RandomOverlay>();
             ClassInjector.RegisterTypeInIl2Cpp<MapBanner>();
             ClassInjector.RegisterTypeInIl2Cpp<ShopManager>();
