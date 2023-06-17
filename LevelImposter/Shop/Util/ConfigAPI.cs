@@ -16,22 +16,16 @@ namespace LevelImposter.Shop
     /// <summary>
     /// API to read and write from local config file
     /// </summary>
-    public class ConfigAPI : MonoBehaviour
+    public static class ConfigAPI
     {
-        public ConfigAPI(IntPtr intPtr) : base(intPtr)
-        {
-        }
-
-        public static ConfigAPI? Instance = null;
-
-        private LIConfig _configFile = new();
+        private static LIConfig _configFile = new();
 
         /// <summary>
         /// Gets the current directory where config file is stored.
         /// Usually in a LevelImposter folder beside the LevelImposter.dll.
         /// </summary>
         /// <returns>String path where config file is stored.</returns>
-        public string GetDirectory()
+        public static string GetDirectory()
         {
             string gameDir = System.Reflection.Assembly.GetAssembly(typeof(LevelImposter))?.Location ?? "/";
             return Path.Combine(Path.GetDirectoryName(gameDir) ?? "/", "LevelImposter/config.json");
@@ -40,7 +34,7 @@ namespace LevelImposter.Shop
         /// <summary>
         /// Reads all data from the configuration file
         /// </summary>
-        public void ReadAll()
+        public static void ReadAll()
         {
             string directory = GetDirectory();
             if (!File.Exists(directory))
@@ -53,7 +47,7 @@ namespace LevelImposter.Shop
         /// Saves all data to the configuration file.
         /// This is not done automatically!
         /// </summary>
-        public void Save()
+        public static void Save()
         {
             LILogger.Info("Saving local config file");
             string configJSON = JsonSerializer.Serialize(_configFile);
@@ -66,7 +60,7 @@ namespace LevelImposter.Shop
         /// </summary>
         /// <param name="mapID">Map ID to get weight of</param>
         /// <returns>Value from 0 to 1</returns>
-        public float GetMapWeight(string mapID)
+        public static float GetMapWeight(string mapID)
         {
             if (_configFile.RandomWeights?.ContainsKey(mapID) == true)
                 return _configFile.RandomWeights[mapID];
@@ -78,7 +72,7 @@ namespace LevelImposter.Shop
         /// </summary>
         /// <param name="mapID">Map ID to set the weight of</param>
         /// <param name="weight">Value from 0 to 1</param>
-        public void SetMapWeight(string mapID, float weight)
+        public static void SetMapWeight(string mapID, float weight)
         {
             if (_configFile.RandomWeights == null)
                 _configFile.RandomWeights = new();
@@ -92,7 +86,7 @@ namespace LevelImposter.Shop
         /// Gets the Map ID of the last opened map
         /// </summary>
         /// <returns>Map ID or null if none used</returns>
-        public string? GetLastMapID()
+        public static string? GetLastMapID()
         {
             return _configFile.LastMapJoined;
         }
@@ -101,29 +95,12 @@ namespace LevelImposter.Shop
         /// Sets the Map ID of the last opened map
         /// </summary>
         /// <param name="mapID">Map ID or null if none used</param>
-        public void SetLastMapID(string? mapID)
+        public static void SetLastMapID(string? mapID)
         {
             if (_configFile.LastMapJoined == mapID)
                 return;
             _configFile.LastMapJoined = mapID;
             Save();
-        }
-
-        public void Awake()
-        {
-            if (Instance == null)
-            {
-                Instance = this;
-                DontDestroyOnLoad(gameObject);
-            }
-            else
-            {
-                Destroy(gameObject);
-            }
-        }
-        public void Start()
-        {
-            ReadAll();
         }
     }
 }

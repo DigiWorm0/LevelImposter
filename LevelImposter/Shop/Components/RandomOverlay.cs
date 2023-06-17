@@ -35,7 +35,7 @@ namespace LevelImposter.Shop
         public void Open(string mapID)
         {
             _mapID = mapID;
-            _randomWeight = ConfigAPI.Instance?.GetMapWeight(_mapID) ?? 1.0f;
+            _randomWeight = ConfigAPI.GetMapWeight(_mapID);
             gameObject.SetActive(true);
             UpdateText();
         }
@@ -55,7 +55,7 @@ namespace LevelImposter.Shop
         private void OnPlus()
         {
             _randomWeight = Mathf.Clamp(_randomWeight + DELTA_WEIGHT, 0, 1);
-            ConfigAPI.Instance?.SetMapWeight(_mapID ?? "", _randomWeight);
+            ConfigAPI.SetMapWeight(_mapID ?? "", _randomWeight);
             ShopManager.RegenerateFallbackMap();
             UpdateText();
         }
@@ -66,7 +66,7 @@ namespace LevelImposter.Shop
         private void OnMinus()
         {
             _randomWeight = Mathf.Clamp(_randomWeight - DELTA_WEIGHT, 0, 1);
-            ConfigAPI.Instance?.SetMapWeight(_mapID ?? "", _randomWeight);
+            ConfigAPI.SetMapWeight(_mapID ?? "", _randomWeight);
             ShopManager.RegenerateFallbackMap();
             UpdateText();
         }
@@ -76,7 +76,7 @@ namespace LevelImposter.Shop
         /// </summary>
         private void OnExit()
         {
-            ConfigAPI.Instance?.Save();
+            ConfigAPI.Save();
             gameObject.SetActive(false);
         }
 

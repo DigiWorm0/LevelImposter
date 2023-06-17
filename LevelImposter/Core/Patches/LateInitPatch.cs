@@ -31,12 +31,10 @@ namespace LevelImposter.Core
 
             // Add API Components
             GameObject apiParent = new GameObject("LevelImposter");
-            apiParent.AddComponent<LevelImposterAPI>();
+            apiParent.AddComponent<HTTPHandler>();
             apiParent.AddComponent<MapFileAPI>();
-            apiParent.AddComponent<ThumbnailFileAPI>();
+            apiParent.AddComponent<ThumbnailCacheAPI>();
             apiParent.AddComponent<MapCacheAPI>();
-            apiParent.AddComponent<GitHubAPI>();
-            apiParent.AddComponent<ConfigAPI>();
             apiParent.AddComponent<SpriteLoader>();
             UnityEngine.Object.DontDestroyOnLoad(apiParent);
         }

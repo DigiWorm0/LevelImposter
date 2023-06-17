@@ -20,12 +20,11 @@ namespace LevelImposter.Shop
             return _mapShopPrefab;
         }
 
-        public static GameObject Build()
+        public static void Build()
         {
             GameObject mapShop = Object.Instantiate(GetShopPrefab());
             mapShop.transform.SetParent(Camera.main.transform, false);
             mapShop.transform.localPosition = new Vector3(0, 0, -990.0f);
-            return mapShop;
         }
     }
 }

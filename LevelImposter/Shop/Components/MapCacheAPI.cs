@@ -23,6 +23,11 @@ namespace LevelImposter.Shop
 
         public static MapCacheAPI? Instance = null;
 
+        private readonly JsonSerializerOptions SERIALIZE_OPTIONS = new()
+        {
+            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
+        };
+
         /// <summary>
         /// Reads and parses a map file into a LIMap.
         /// </summary>
@@ -62,11 +67,7 @@ namespace LevelImposter.Shop
         public void Save(LIMap map)
         {
             LILogger.Info($"Saving {map} to filesystem");
-            JsonSerializerOptions serializerOptions = new()
-            {
-                DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
-            };
-            string mapJson = JsonSerializer.Serialize(map, serializerOptions);
+            string mapJson = JsonSerializer.Serialize(map, SERIALIZE_OPTIONS);
             Save(map.id, mapJson);
         }
 

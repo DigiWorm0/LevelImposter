@@ -126,7 +126,7 @@ namespace LevelImposter.Shop
                 LILogger.Notify("<color=#1a95d8>Downloading map, please wait...</color>");
                 MapLoader.UnloadMap();
                 DownloadManager.StartDownload();
-                LevelImposterAPI.Instance?.DownloadMap(mapID, (LIMap map) =>
+                LevelImposterAPI.DownloadMap(mapID, null, (LIMap map) =>
                 {
                     MapCacheAPI.Instance?.Save(map);
                     if (_activeDownloadingID == mapID)
@@ -149,8 +149,6 @@ namespace LevelImposter.Shop
         {
             if (MapFileAPI.Instance == null)
                 throw new Exception("Missing MapFileAPI");
-            if (ConfigAPI.Instance == null)
-                throw new Exception("Missing ConfigAPI");
 
             // Get all custom maps
             var fileIDs = new List<string>(MapFileAPI.Instance.ListIDs());
@@ -166,7 +164,7 @@ namespace LevelImposter.Shop
             float mapWeightSum = 0;
             for (int i = 0; i < mapIDs.Count; i++)
             {
-                var mapWeight = ConfigAPI.Instance.GetMapWeight(mapIDs[i]);
+                var mapWeight = ConfigAPI.GetMapWeight(mapIDs[i]);
                 mapWeights[i] = mapWeightSum + mapWeight;
                 mapWeightSum += mapWeight;
             }

@@ -73,7 +73,7 @@ namespace LevelImposter.Shop
             if (__instance.Title == StringNames.GameMapName)
             {
                 RemoveElems(__instance);
-                ConfigAPI.Instance?.SetLastMapID(null);
+                ConfigAPI.SetLastMapID(null);
 
                 if (!MapLoader.IsFallback || MapLoader.CurrentMap == null)
                     MapSync.RegenerateFallbackID();

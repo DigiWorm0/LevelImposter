@@ -14,13 +14,13 @@ namespace LevelImposter.Shop
     /// <summary>
     /// API to manage thumbnail files in the local filesystem
     /// </summary>
-    public class ThumbnailFileAPI : FileCache
+    public class ThumbnailCacheAPI : FileCache
     {
-        public ThumbnailFileAPI(IntPtr intPtr) : base(intPtr)
+        public ThumbnailCacheAPI(IntPtr intPtr) : base(intPtr)
         {
         }
 
-        public static ThumbnailFileAPI? Instance = null;
+        public static ThumbnailCacheAPI? Instance = null;
 
         /// <summary>
         /// Reads and parses a thumbnail file into a Texture2D.

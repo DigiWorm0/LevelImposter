@@ -100,7 +100,7 @@ namespace LevelImposter.Shop
             _popupComponent.Show("Updating...");
             _btnObj.SetActive(false);
 
-            GitHubAPI.Instance?.UpdateMod(() =>
+            GitHubAPI.UpdateMod(() =>
             {
                 confirmButton.SetActive(true);
                 _popupComponent.Show("<color=green>Update complete!</color>\nPlease restart your game.");

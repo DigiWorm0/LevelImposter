@@ -75,8 +75,9 @@ namespace LevelImposter.Shop
         /// </summary>
         public void OnDownloadClick()
         {
-            ShopManager.Instance?.SetOverlay(true);
-            LevelImposterAPI.Instance?.DownloadMap(new Guid(_currentMap?.id ?? ""), OnDownload, OnError);
+            ShopManager.Instance?.SetOverlayEnabled(true);
+            OnDownloadProgress(0);
+            LevelImposterAPI.DownloadMap(new Guid(_currentMap?.id ?? ""), OnDownloadProgress, OnDownload, OnError);
         }
 
         /// <summary>
@@ -87,9 +88,19 @@ namespace LevelImposter.Shop
         private void OnDownload(LIMap map)
         {
             MapFileAPI.Instance?.Save(map);
-            ShopManager.Instance?.SetOverlay(false);
+            ShopManager.Instance?.SetOverlayEnabled(false);
             ShopManager.RegenerateFallbackMap();
             UpdateButtons();
+        }
+
+        /// <summary>
+        /// Callback on download progress
+        /// </summary>
+        /// <param name="progress">Value from 0 to 1</param>
+        private void OnDownloadProgress(float progress)
+        {
+            int progressPercent = (int)(progress * 100);
+            ShopManager.Instance?.SetOverlayText($"<b>Downloading {_currentMap?.name ?? "map"}...</b>\n{progressPercent}%");
         }
 
         /// <summary>
@@ -100,7 +111,7 @@ namespace LevelImposter.Shop
         private void OnError(string error)
         {
             LILogger.Error(error);
-            ShopManager.Instance?.SetOverlay(false);
+            ShopManager.Instance?.SetOverlayEnabled(false);
             // TODO: Show error popup
         }
 
@@ -156,9 +167,9 @@ namespace LevelImposter.Shop
         {
             if (string.IsNullOrEmpty(_currentMap?.thumbnailURL))
                 return;
-            if (ThumbnailFileAPI.Instance?.Exists(_currentMap.id) ?? false)
+            if (ThumbnailCacheAPI.Instance?.Exists(_currentMap.id) ?? false)
             {
-                ThumbnailFileAPI.Instance.Get(_currentMap.id, (sprite) =>
+                ThumbnailCacheAPI.Instance.Get(_currentMap.id, (sprite) =>
                 {
                     if (_thumbnail != null)
                         _thumbnail.sprite = sprite;
@@ -166,7 +177,7 @@ namespace LevelImposter.Shop
             }
             else
             {
-                LevelImposterAPI.Instance?.DownloadThumbnail(_currentMap, (sprite) =>
+                LevelImposterAPI.DownloadThumbnail(_currentMap, (sprite) =>
                 {
                     if (_thumbnail != null)
                         _thumbnail.sprite = sprite;

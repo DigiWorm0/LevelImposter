@@ -22,6 +22,7 @@ namespace LevelImposter.Shop
 
         private Tab _currentTab = Tab.None;
         private GameObject? _overlay = null;
+        private TMPro.TMP_Text? _overlayText = null;
         private Scroller? _scroller = null;
         private SpriteRenderer? _title = null;
         private ShopTabs? _tabs = null;
@@ -39,7 +40,7 @@ namespace LevelImposter.Shop
         /// </summary>
         public void Close()
         {
-            ConfigAPI.Instance?.Save();
+            ConfigAPI.Save();
 
             bool isInLobby = LobbyBehaviour.Instance != null;
             bool isMapLoaded = MapLoader.CurrentMap != null && !MapLoader.IsFallback;
@@ -128,7 +129,7 @@ namespace LevelImposter.Shop
         /// </summary>
         private void SetTopTab()
         {
-            LevelImposterAPI.Instance?.GetTop(OnTopResponse, OnError);
+            LevelImposterAPI.GetTop(OnTopResponse, OnError);
         }
         [HideFromIl2Cpp]
         private void OnTopResponse(LIMetadata[] maps) => OnAPIRespose(maps, Tab.Top);
@@ -138,7 +139,7 @@ namespace LevelImposter.Shop
         /// </summary>
         private void SetRecentTab()
         {
-            LevelImposterAPI.Instance?.GetRecent(OnRecentResponse, OnError);
+            LevelImposterAPI.GetRecent(OnRecentResponse, OnError);
         }
         [HideFromIl2Cpp]
         private void OnRecentResponse(LIMetadata[] maps) => OnAPIRespose(maps, Tab.Recent);
@@ -148,7 +149,7 @@ namespace LevelImposter.Shop
         /// </summary>
         private void SetFeaturedTab()
         {
-            LevelImposterAPI.Instance?.GetFeatured(OnFeaturedResponse, OnError);
+            LevelImposterAPI.GetFeatured(OnFeaturedResponse, OnError);
         }
         [HideFromIl2Cpp]
         private void OnFeaturedResponse(LIMetadata[] maps) => OnAPIRespose(maps, Tab.Featured);
@@ -206,7 +207,7 @@ namespace LevelImposter.Shop
         {
             LILogger.Info($"Selecting map [{id}]");
             MapLoader.LoadMap(id, false, MapSync.SyncMapID);
-            ConfigAPI.Instance?.SetLastMapID(id);
+            ConfigAPI.SetLastMapID(id);
 
             _shouldRegenerateFallback = false;
             CloseShop();
@@ -253,9 +254,18 @@ namespace LevelImposter.Shop
         /// Toggles the overlay
         /// </summary>
         /// <param name="isEnabled"><c>true</c> if the overlay should be visible</param>
-        public void SetOverlay(bool isEnabled)
+        public void SetOverlayEnabled(bool isEnabled)
         {
             _overlay?.SetActive(isEnabled);
+        }
+        
+        /// <summary>
+        /// Modifies the text of the overlay
+        /// </summary>
+        /// <param name="text">Text to set overlay to</param>
+        public void SetOverlayText(string text)
+        {
+            _overlayText?.SetText(text);
         }
 
         public void Awake()
@@ -264,6 +274,7 @@ namespace LevelImposter.Shop
             Instance = this;
 
             _overlay = transform.Find("Overlay").gameObject;
+            _overlayText = _overlay?.transform.Find("Text").GetComponent<TMPro.TMP_Text>();
             _scroller = transform.Find("Scroll/Scroller").GetComponent<Scroller>();
             _title = _scroller?.transform.Find("Inner/Title").GetComponent<SpriteRenderer>();
             _tabs = transform.Find("Header/Tabs").GetComponent<ShopTabs>();
@@ -301,12 +312,13 @@ namespace LevelImposter.Shop
         {
             ControllerManager.Instance.CloseOverlayMenu("LIShop");
             Instance = null;
-
+            
+            _overlay = null;
+            _overlayText = null;
             _scroller = null;
             _title = null;
             _tabs = null;
             _bannerPrefab = null;
-            _shopBanners = null;
             _freeplayComp = null;
         }
 
