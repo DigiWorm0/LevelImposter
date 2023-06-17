@@ -5,6 +5,9 @@ using UnityEngine.Networking;
 using LevelImposter.Core;
 using BepInEx.Unity.IL2CPP.Utils.Collections;
 using Il2CppInterop.Runtime.Attributes;
+using Il2CppInterop.Runtime.InteropTypes.Arrays;
+
+using ByteArray = Il2CppInterop.Runtime.InteropTypes.Arrays.Il2CppStructArray<byte>;
 
 namespace LevelImposter.Shop
 {
@@ -30,7 +33,7 @@ namespace LevelImposter.Shop
         [HideFromIl2Cpp]
         private IEnumerator CoRequest(string url, 
             Action<string>? onSuccessString,
-            Action<byte[]>? onSuccessBytes,
+            Action<ByteArray>? onSuccessBytes,
             Action<float>? onProgress,
             Action<string>? onError)
         {
@@ -85,7 +88,7 @@ namespace LevelImposter.Shop
         [HideFromIl2Cpp]
         private void Request(string url,
             Action<string>? onSuccessString,
-            Action<byte[]>? onSuccessBytes,
+            Action<ByteArray>? onSuccessBytes,
             Action<float>? onProgress,
             Action<string>? onError)
         {
@@ -94,9 +97,9 @@ namespace LevelImposter.Shop
 
         // Shorthand overloads
         [HideFromIl2Cpp] public void Request(string url, Action<string>? onSuccess, Action<string>? onError) => Request(url, onSuccess, null, null, onError);
-        [HideFromIl2Cpp] public void Request(string url, Action<byte[]>? onSuccess, Action<string>? onError) => Request(url, null, onSuccess, null, onError);
+        [HideFromIl2Cpp] public void Request(string url, Action<ByteArray>? onSuccess, Action<string>? onError) => Request(url, null, onSuccess, null, onError);
         [HideFromIl2Cpp] public void Download(string url, Action<float>? onProgress, Action<string>? onSuccess, Action<string>? onError) => Request(url, onSuccess, null, onProgress, onError);
-        [HideFromIl2Cpp] public void Download(string url, Action<float>? onProgress, Action<byte[]>? onSuccess, Action<string>? onError) => Request(url, null, onSuccess, onProgress, onError);
+        [HideFromIl2Cpp] public void Download(string url, Action<float>? onProgress, Action<ByteArray>? onSuccess, Action<string>? onError) => Request(url, null, onSuccess, onProgress, onError);
 
         public void Awake()
         {

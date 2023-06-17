@@ -34,9 +34,8 @@ namespace LevelImposter.Shop
         private static void GetLatestReleases(Action<GHRelease[]> onSuccess, Action<string> onError)
         {
             LILogger.Info("Getting latest release info from GitHub");
-            HTTPHandler.Instance?.Request(API_PATH, (byte[] rawData) =>
+            HTTPHandler.Instance?.Request(API_PATH, (json) =>
             {
-                string json = Encoding.UTF8.GetString(rawData);
                 GHRelease[]? response = JsonSerializer.Deserialize<GHRelease[]>(json);
                 if (response != null)
                     onSuccess(response);
@@ -118,7 +117,7 @@ namespace LevelImposter.Shop
                     return;
                 }
                 string downloadURL = release.assets[0].browser_download_url;
-                HTTPHandler.Instance?.Request(downloadURL, (byte[] dllBytes) =>
+                HTTPHandler.Instance?.Request(downloadURL, (dllBytes) =>
                 {
                     LILogger.Info($"Saving {dllBytes.Length / 1024}kb DLL to local filesystem");
                     try

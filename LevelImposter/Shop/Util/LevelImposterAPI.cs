@@ -151,7 +151,7 @@ namespace LevelImposter.Shop
         public static void DownloadThumbnail(LIMetadata metadata, Action<Sprite> callback)
         {
             LILogger.Info($"Downloading thumbnail for map {metadata}...");
-            HTTPHandler.Instance?.Request(metadata.thumbnailURL, (byte[] imgData) =>
+            HTTPHandler.Instance?.Request(metadata.thumbnailURL, (imgData) =>
             {
                 ThumbnailCache.Save(metadata.id, imgData);
                 SpriteLoader.Instance?.LoadSpriteAsync(imgData, false, (spriteData) =>
