@@ -1,11 +1,5 @@
-﻿using TMPro;
-using HarmonyLib;
+﻿using HarmonyLib;
 using LevelImposter.Core;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using UnityEngine;
-using LevelImposter.DB;
 
 namespace LevelImposter.Shop
 {

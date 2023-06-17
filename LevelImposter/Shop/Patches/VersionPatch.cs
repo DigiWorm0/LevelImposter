@@ -2,9 +2,6 @@
 using HarmonyLib;
 using LevelImposter.Core;
 using System;
-using System.IO;
-using System.Collections.Generic;
-using System.Text;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 

@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Collections;
-using System.IO;
-using System.Text;
 using UnityEngine;
 using LevelImposter.Shop;
 using LevelImposter.DB;
@@ -12,9 +10,7 @@ using Il2CppInterop.Runtime.Attributes;
 using Il2CppInterop.Runtime.InteropTypes.Arrays;
 using BepInEx.Unity.IL2CPP.Utils.Collections;
 using Reactor.Networking.Attributes;
-using Hazel;
 using LevelImposter.Builders;
-using System.Linq;
 
 namespace LevelImposter.Core
 {

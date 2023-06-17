@@ -1,6 +1,5 @@
 ﻿using HarmonyLib;
 using UnityEngine;
-using LevelImposter.Shop;
 
 namespace LevelImposter.Core
 {

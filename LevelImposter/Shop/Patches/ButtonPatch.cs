@@ -1,7 +1,4 @@
 ﻿using HarmonyLib;
-using LevelImposter.Core;
-using UnityEngine;
-using UnityEngine.SceneManagement;
 
 namespace LevelImposter.Shop
 {

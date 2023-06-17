@@ -1,12 +1,7 @@
 using System;
 using System.IO;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Networking;
 using LevelImposter.Core;
-using Newtonsoft.Json;
-using BepInEx.Unity.IL2CPP.Utils.Collections;
 using Il2CppInterop.Runtime.Attributes;
 
 namespace LevelImposter.Shop

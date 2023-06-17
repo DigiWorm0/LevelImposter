@@ -1,8 +1,4 @@
-﻿using HarmonyLib;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using UnityEngine;
+﻿using System.Collections.Generic;
 using Reactor.Networking.Attributes;
 using LevelImposter.Core;
 using System.Linq;

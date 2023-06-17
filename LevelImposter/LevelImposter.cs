@@ -1,11 +1,9 @@
 using BepInEx;
-using BepInEx.Configuration;
 using BepInEx.Unity.IL2CPP;
 using LevelImposter.Core;
 using LevelImposter.DB;
 using LevelImposter.Shop;
 using Il2CppInterop.Runtime.Injection;
-using AmongUs.Data;
 using Reactor.Networking.Attributes;
 
 namespace LevelImposter

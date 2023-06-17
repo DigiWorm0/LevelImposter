@@ -1,7 +1,4 @@
 using HarmonyLib;
-using UnityEngine;
-using LevelImposter.Shop;
-using AmongUs.GameOptions;
 
 namespace LevelImposter.Core
 {

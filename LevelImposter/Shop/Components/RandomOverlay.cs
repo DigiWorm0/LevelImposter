@@ -1,12 +1,5 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
-using UnityEngine.UI;
-using LevelImposter.Core;
-using Il2CppInterop.Runtime.Attributes;
-using Discord;
 
 namespace LevelImposter.Shop
 {

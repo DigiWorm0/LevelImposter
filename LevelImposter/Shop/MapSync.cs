@@ -1,10 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Reactor.Networking.Attributes;
-using AmongUs.GameOptions;
 using LevelImposter.Core;
 
 namespace LevelImposter.Shop

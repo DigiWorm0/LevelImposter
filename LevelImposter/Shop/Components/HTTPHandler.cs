@@ -1,19 +1,15 @@
 using System;
-using System.IO;
 using System.Collections;
-using System.Collections.Generic;
-using System.Text;
 using UnityEngine;
 using UnityEngine.Networking;
 using LevelImposter.Core;
 using BepInEx.Unity.IL2CPP.Utils.Collections;
-using System.Text.Json;
 using Il2CppInterop.Runtime.Attributes;
 
 namespace LevelImposter.Shop
 {
     /// <summary>
-    /// Handles HTTP Requests within Unity
+    /// Handles async HTTP Requests within Unity
     /// </summary>
     public class HTTPHandler : MonoBehaviour
     {
