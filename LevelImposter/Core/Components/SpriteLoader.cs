@@ -1,6 +1,7 @@
 ﻿using BepInEx.Unity.IL2CPP.Utils.Collections;
 using Il2CppInterop.Runtime.Attributes;
 using Il2CppInterop.Runtime.InteropTypes.Arrays;
+using LevelImposter.Shop;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -56,6 +57,7 @@ namespace LevelImposter.Core
                     return spriteData;
                 }
             }
+
             return null;
         }
 
@@ -77,6 +79,18 @@ namespace LevelImposter.Core
             if (_spriteCache == null || string.IsNullOrEmpty(spriteID))
                 return false;
             return _spriteCache.Any((spriteData) => spriteData.ID == spriteID);
+        }
+
+        /// <summary>
+        /// Adds sprite data to the sprite cache
+        /// </summary>
+        /// <param name="data">Sprite data to add</param>
+        [HideFromIl2Cpp]
+        private void AddSpriteToCache(SpriteData? data)
+        {
+            if (data == null || string.IsNullOrEmpty(data.ID))
+                return;
+            _spriteCache?.Push(data);
         }
 
         /// <summary>
@@ -109,7 +123,7 @@ namespace LevelImposter.Core
                 element.properties.spriteData = "";
 
                 // Load Components
-                var spriteData = (SpriteData)nullableSpriteData;
+                var spriteData = nullableSpriteData;
                 if (spriteData.IsGIF) // Animated GIF
                 {
                     GIFAnimator gifAnimator = obj.AddComponent<GIFAnimator>();
@@ -192,6 +206,7 @@ namespace LevelImposter.Core
                             Sprite = gifFile.GetFrameSprite(0),
                             GIFData = gifFile
                         };
+                        AddSpriteToCache(spriteData);
                     }
                 }
                 else
@@ -202,6 +217,7 @@ namespace LevelImposter.Core
                         Sprite = RawImageToSprite(imgData)
                     };
                     spriteData.Sprite.hideFlags = HideFlags.DontUnloadUnusedAsset;
+                    AddSpriteToCache(spriteData);
                 }
                 GCHandler.Register(spriteData);
 

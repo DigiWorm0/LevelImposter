@@ -27,7 +27,6 @@
 	
 	<ItemGroup>
 		<EmbeddedResource Include="Assets\**\*" />
-		<Reference Include="lib\**\*" />
 	</ItemGroup>
 	
 	<Target Name="Copy" AfterTargets="Build" Condition="'$(AmongUs)' != ''">

@@ -73,7 +73,14 @@ namespace LevelImposter.Shop
         public static void Get(string mapID, Action<LIMap?> callback)
         {
             string path = GetPath(mapID);
-            FileHandler.Instance?.Get(path, callback, null);
+            FileHandler.Instance?.Get(path, (LIMap? map) =>
+            {
+                if (map != null)
+                {
+                    map.id = mapID;
+                    callback(map);
+                }
+            }, null);
         }
 
         /// <summary>
@@ -88,7 +95,14 @@ namespace LevelImposter.Shop
         {
             // TODO: Prevent parsing of unnecessary data
             string path = GetPath(mapID);
-            FileHandler.Instance?.Get(path, callback, null);
+            FileHandler.Instance?.Get(path, (LIMetadata? map) =>
+            {
+                if (map != null)
+                {
+                    map.id = mapID;
+                    callback(map);
+                }
+            }, null);
         }
 
         /// <summary>
