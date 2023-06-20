@@ -1,7 +1,9 @@
+using BepInEx.Unity.IL2CPP.Utils.Collections;
 using Il2CppInterop.Runtime.Attributes;
 using LevelImposter.Core;
 using LevelImposter.DB;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -13,6 +15,7 @@ namespace LevelImposter.Shop
         {
         }
 
+        private const string SHOP_NAME = "LIShop";
         private const float BANNER_HEIGHT = 2.0f;
         private const float BANNER_WIDTH = 2.4f;
         private const int COL_COUNT = 3;
@@ -263,6 +266,22 @@ namespace LevelImposter.Shop
         }
 
         /// <summary>
+        /// Coroutine to wait for AssetDB to be initialized
+        /// </summary>
+        ///
+        [HideFromIl2Cpp]
+        private IEnumerator CoWaitForAssetDB()
+        {
+            {
+                SetOverlayEnabled(true);
+                SetOverlayText("Loading AssetDB...");
+                while (!AssetDB.IsInit)
+                    yield return null;
+                SetOverlayEnabled(false);
+            }
+        }
+
+        /// <summary>
         /// Enum of tabs in the shop
         /// </summary>
         public enum Tab
@@ -276,7 +295,7 @@ namespace LevelImposter.Shop
 
         public void Awake()
         {
-            ControllerManager.Instance.OpenOverlayMenu("LIShop", null);
+            ControllerManager.Instance.OpenOverlayMenu(SHOP_NAME, null);
             Instance = this;
 
             _overlay = transform.Find("Overlay").gameObject;
@@ -307,6 +326,10 @@ namespace LevelImposter.Shop
             starGen.Width = 14;
             starGen.Direction = new Vector2(0, -2);
             starRenderer.material = AssetDB.GetObject("starfield")?.GetComponent<MeshRenderer>().material;
+
+            // AssetDB
+            if (!AssetDB.IsInit)
+                StartCoroutine(CoWaitForAssetDB().WrapToIl2Cpp());
         }
         public void Update()
         {
@@ -316,7 +339,7 @@ namespace LevelImposter.Shop
         }
         public void OnDestroy()
         {
-            ControllerManager.Instance.CloseOverlayMenu("LIShop");
+            ControllerManager.Instance.CloseOverlayMenu(SHOP_NAME);
             Instance = null;
             
             _overlay = null;

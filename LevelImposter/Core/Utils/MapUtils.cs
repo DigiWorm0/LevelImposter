@@ -194,8 +194,10 @@ namespace LevelImposter.Core
         /// <returns>GameObject or null if not found</returns>
         public static GameObject? LoadAssetBundle(string name)
         {
+            LILogger.Info($"Loading asset bundle {name}");
             Assembly assembly = Assembly.GetExecutingAssembly();
-            Stream? assetStream = assembly.GetManifestResourceStream($"LevelImposter.Assets.{name}");
+            string? resourceName = assembly.GetManifestResourceNames().FirstOrDefault(str => str.EndsWith(name));
+            using Stream? assetStream = assembly.GetManifestResourceStream(resourceName ?? "");
             
             if (assetStream == null)
                 return null;
@@ -213,6 +215,7 @@ namespace LevelImposter.Core
         /// <returns>Sprite or null if not found</returns>
         public static Sprite? LoadSpriteResource(string name)
         {
+            LILogger.Info($"Loading sprite resource {name}");
             Il2CppStructArray<byte>? spriteData = GetResourceAsIl2Cpp(name);
             if (spriteData == null)
                 return null;
@@ -227,6 +230,7 @@ namespace LevelImposter.Core
         /// <returns>JSON object or null if not found</returns>
         public static T? LoadJsonResource<T>(string name) where T : class
         {
+            LILogger.Info($"Loading JSON resource {name}");
             byte[]? jsonData = GetResource(name);
             if (jsonData == null)
                 return null;
