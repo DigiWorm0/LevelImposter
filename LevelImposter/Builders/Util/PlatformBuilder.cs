@@ -1,11 +1,6 @@
-using HarmonyLib;
 using LevelImposter.Core;
 using LevelImposter.DB;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using UnityEngine;
-using UnityEngine.Events;
 
 namespace LevelImposter.Builders
 {
@@ -81,9 +76,7 @@ namespace LevelImposter.Builders
             // Sound
             LISound? moveSound = MapUtils.FindSound(elem.properties.sounds, MOVE_SOUND_NAME);
             if (moveSound != null)
-                WAVLoader.Instance?.LoadWAV(moveSound?.data, (AudioClip? clip) => {
-                    movingPlatform.MovingSound = clip;
-                });
+                movingPlatform.MovingSound = WAVFile.Load(moveSound?.data);
 
             // Consoles
             GameObject leftObj = new("Left Console");

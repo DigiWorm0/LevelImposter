@@ -1,13 +1,14 @@
-﻿using System;
+﻿using BepInEx.Unity.IL2CPP.Utils.Collections;
+using Il2CppInterop.Runtime.Attributes;
+using Il2CppInterop.Runtime.InteropTypes.Arrays;
+using LevelImposter.Shop;
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using UnityEngine;
-using System.Diagnostics;
-using Il2CppInterop.Runtime.Attributes;
-using BepInEx.Unity.IL2CPP.Utils.Collections;
-using Il2CppInterop.Runtime.InteropTypes.Arrays;
 
 namespace LevelImposter.Core
 {
@@ -21,11 +22,6 @@ namespace LevelImposter.Core
         }
 
         public const float MIN_FRAME_TIME = 1500.0f;
-        public readonly List<string> CONVERT_TYPES = new()
-        {
-            "data:image/webp",
-            "data:image/gif"
-        };
 
         public static SpriteLoader? Instance;
 
@@ -33,7 +29,7 @@ namespace LevelImposter.Core
         public event SpriteEventHandle? OnLoad;
         public delegate void SpriteEventHandle(LIElement elem);
 
-        private Stack<SpriteData>? _spriteList = new();
+        private Stack<SpriteData>? _spriteCache = new();
         private Stopwatch? _renderTimer = new();
         private int _renderCount = 0;
         private bool _shouldRender
@@ -44,52 +40,16 @@ namespace LevelImposter.Core
         public int RenderCount => _renderCount;
 
         /// <summary>
-        /// Marks all sprites and textures for garbage collection
-        /// </summary>
-        public void ClearAll()
-        {
-            LILogger.Info($"Destroying {_spriteList?.Count} sprites");
-            while (_spriteList?.Count > 0)
-            {
-                SpriteData spriteData = _spriteList.Pop();
-                foreach (Sprite sprite in spriteData.SpriteArr)
-                {
-                    try
-                    {
-                        Destroy(sprite?.texture);
-                        Destroy(sprite);
-                    }
-                    catch (Exception e)
-                    {
-                        LILogger.Warn(e);
-                    }
-                }
-            }
-            OnLoad = null;
-            _renderCount = 0;
-        }
-
-        /// <summary>
-        /// Adds a sprite data to managed stack to enable GC and cache
-        /// </summary>
-        /// <param name="sprite">Sprite to add to managed stack</param>
-        public void AddSpriteData(SpriteData spriteData)
-        {
-            _spriteList?.Push(spriteData);
-            foreach (Sprite sprite in spriteData.SpriteArr)
-                sprite.hideFlags = HideFlags.DontUnloadUnusedAsset;
-        }
-
-        /// <summary>
         /// Searches for a Sprite in cache by GUID
         /// </summary>
         /// <param name="spriteID">GUID of the sprite or associated object</param>
         /// <returns>Sprite from cache or NULL if none found</returns>
+        [HideFromIl2Cpp]
         private SpriteData? GetSpriteFromCache(string? spriteID)
         {
-            if (_spriteList == null || string.IsNullOrEmpty(spriteID))
+            if (_spriteCache == null || string.IsNullOrEmpty(spriteID))
                 return null;
-            foreach (SpriteData spriteData in _spriteList)
+            foreach (SpriteData spriteData in _spriteCache)
             {
                 if (spriteData.ID == spriteID)
                 {
@@ -97,7 +57,16 @@ namespace LevelImposter.Core
                     return spriteData;
                 }
             }
+
             return null;
+        }
+
+        /// <summary>
+        /// Cleans the sprite cache
+        /// </summary>
+        public void Clean()
+        {
+            _spriteCache?.Clear();
         }
 
         /// <summary>
@@ -107,9 +76,21 @@ namespace LevelImposter.Core
         /// <returns>True iff the sprite is in the sprite cache</returns>
         public bool IsSpriteInCache(string? spriteID)
         {
-            if (_spriteList == null || string.IsNullOrEmpty(spriteID))
+            if (_spriteCache == null || string.IsNullOrEmpty(spriteID))
                 return false;
-            return _spriteList.Any((spriteData) => spriteData.ID == spriteID);
+            return _spriteCache.Any((spriteData) => spriteData.ID == spriteID);
+        }
+
+        /// <summary>
+        /// Adds sprite data to the sprite cache
+        /// </summary>
+        /// <param name="data">Sprite data to add</param>
+        [HideFromIl2Cpp]
+        private void AddSpriteToCache(SpriteData? data)
+        {
+            if (data == null || string.IsNullOrEmpty(data.ID))
+                return;
+            _spriteCache?.Push(data);
         }
 
         /// <summary>
@@ -123,7 +104,7 @@ namespace LevelImposter.Core
         public void LoadSpriteAsync(LIElement element, GameObject obj)
         {
             LILogger.Info($"Loading sprite for {element}");
-            
+
             string b64 = element.properties.spriteData ?? "";
             LoadSpriteAsync(b64, (nullableSpriteData) =>
             {
@@ -140,13 +121,13 @@ namespace LevelImposter.Core
 
                 // Sprite is in cache, we can reduce memory usage
                 element.properties.spriteData = "";
-                
+
                 // Load Components
-                var spriteData = (SpriteData)nullableSpriteData;
-                if (spriteData.IsAnimated) // Animated GIF
+                var spriteData = nullableSpriteData;
+                if (spriteData.IsGIF) // Animated GIF
                 {
                     GIFAnimator gifAnimator = obj.AddComponent<GIFAnimator>();
-                    gifAnimator.Init(element, spriteData.SpriteArr, spriteData.FrameDelayArr);
+                    gifAnimator.Init(element, spriteData.GIFData);
                     LILogger.Info($"Done loading animated sprite for {element} ({RenderCount} Left)");
                 }
                 else // Still Image
@@ -171,8 +152,8 @@ namespace LevelImposter.Core
         public void LoadSpriteAsync(string b64Image, Action<SpriteData?> onLoad, string? spriteID)
         {
             var imgData = string.IsNullOrEmpty(b64Image) ? new(0) : MapUtils.ParseBase64(b64Image);
-            bool shouldConvert = CONVERT_TYPES.Find((prefix) => b64Image.StartsWith(prefix)) != null;
-            LoadSpriteAsync(imgData, shouldConvert, (spriteList) =>
+            bool isGIF = b64Image.StartsWith("data:image/gif");
+            LoadSpriteAsync(imgData, isGIF, (spriteList) =>
             {
                 onLoad(spriteList);
                 spriteList = null;
@@ -186,9 +167,9 @@ namespace LevelImposter.Core
         /// <param name="imgData">Image File Data</param>
         /// <param name="onLoad">Callback on success</param>
         [HideFromIl2Cpp]
-        public void LoadSpriteAsync(Il2CppStructArray<byte> imgData, bool useImageSharp, Action<SpriteData?> onLoad, string? spriteID)
+        public void LoadSpriteAsync(Il2CppStructArray<byte> imgData, bool isGIF, Action<SpriteData?> onLoad, string? spriteID)
         {
-            StartCoroutine(CoLoadSpriteAsync(imgData, useImageSharp, onLoad, spriteID).WrapToIl2Cpp());
+            StartCoroutine(CoLoadSpriteAsync(imgData, isGIF, onLoad, spriteID).WrapToIl2Cpp());
         }
 
         /// <summary>
@@ -197,7 +178,7 @@ namespace LevelImposter.Core
         /// <param name="imgData">Image File Data</param>
         /// <param name="onLoad">Callback on success</param>
         [HideFromIl2Cpp]
-        private IEnumerator CoLoadSpriteAsync(Il2CppStructArray<byte> imgData, bool useImageSharp, Action<SpriteData?>? onLoad, string? spriteID)
+        private IEnumerator CoLoadSpriteAsync(Il2CppStructArray<byte> imgData, bool isGIF, Action<SpriteData?>? onLoad, string? spriteID)
         {
             {
                 _renderCount++;
@@ -212,29 +193,20 @@ namespace LevelImposter.Core
                 {
                     // Using sprite data from cache
                 }
-                else if (useImageSharp && ImageSharpWrapper.IsInstalled)
+                else if (isGIF)
                 {
-                    var texMetadataList = ImageSharpWrapper.LoadImage(imgData);
-                    if (texMetadataList != null)
+                    using (MemoryStream ms = new(imgData))
                     {
-                        var spriteArr = new Sprite[texMetadataList.Length];
-                        var frameDelayArr = new float[texMetadataList.Length];
-                        for (int i = 0; i < texMetadataList.Length; i++)
-                        {
-                            while (!_shouldRender)
-                                yield return null;
-                            ImageSharpWrapper.TextureMetadata texData = texMetadataList[i];
-                            Sprite sprite = RawImageToSprite(texData.FrameData);
-                            spriteArr[i] = sprite;
-                            frameDelayArr[i] = texData.FrameDelay;
-                        }
+                        var gifFile = new GIFFile();
+                        gifFile.Load(ms);
+
                         spriteData = new()
                         {
                             ID = spriteID ?? "",
-                            SpriteArr = spriteArr,
-                            FrameDelayArr = frameDelayArr
+                            Sprite = gifFile.GetFrameSprite(0),
+                            GIFData = gifFile
                         };
-                        AddSpriteData((SpriteData)spriteData);
+                        AddSpriteToCache(spriteData);
                     }
                 }
                 else
@@ -242,14 +214,12 @@ namespace LevelImposter.Core
                     spriteData = new()
                     {
                         ID = spriteID ?? "",
-                        SpriteArr = new Sprite[]
-                        {
-                            RawImageToSprite(imgData)
-                        },
-                        FrameDelayArr = new float[1]
+                        Sprite = RawImageToSprite(imgData)
                     };
-                    AddSpriteData((SpriteData)spriteData);
+                    spriteData.Sprite.hideFlags = HideFlags.DontUnloadUnusedAsset;
+                    AddSpriteToCache(spriteData);
                 }
+                GCHandler.Register(spriteData);
 
                 // Output
                 _renderCount--;
@@ -330,25 +300,23 @@ namespace LevelImposter.Core
         /// <summary>
         /// Metadata to store and send animated texture data
         /// </summary>
-        public struct SpriteData
+        public class SpriteData : IDisposable
         {
             public SpriteData() { }
             public string ID = "";
-            public Sprite[] SpriteArr = Array.Empty<Sprite>();
-            public float[] FrameDelayArr = Array.Empty<float>();
-            public Sprite? Sprite
+            public Sprite? Sprite { get; set; }
+
+            public bool IsGIF => GIFData != null;
+            public GIFFile? GIFData { get; set; }
+
+            public void Dispose()
             {
-                get
-                {
-                    return SpriteArr.Length > 0 ? SpriteArr[0] : null;
-                }
-            }
-            public bool IsAnimated
-            {
-                get
-                {
-                    return SpriteArr.Length > 1;
-                }
+                if (GIFData != null)
+                    GIFData.Dispose();
+                if (Sprite != null)
+                    Destroy(Sprite.texture);
+                Sprite = null;
+                GIFData = null;
             }
         }
     }

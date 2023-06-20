@@ -1,12 +1,4 @@
-﻿using HarmonyLib;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using UnityEngine;
-using LevelImposter.Shop;
-using PowerTools;
-
-namespace LevelImposter.Core
+﻿namespace LevelImposter.Core
 {
     /*
      *      Uncomment to disable the Horse Mod

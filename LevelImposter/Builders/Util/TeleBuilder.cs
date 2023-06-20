@@ -1,11 +1,4 @@
-using HarmonyLib;
-using LevelImposter.Builders;
-using LevelImposter.DB;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using UnityEngine;
-using UnityEngine.Events;
 using LevelImposter.Core;
 
 namespace LevelImposter.Builders
@@ -21,7 +14,7 @@ namespace LevelImposter.Builders
             Collider2D[] colliders = obj.GetComponentsInChildren<Collider2D>();
             foreach (Collider2D collider in colliders)
                 collider.isTrigger = true;
-            if (elem.properties.isGhostEnabled ?? false)
+            if (elem.properties.isGhostEnabled ?? true)
                 obj.layer = (int)Layer.Default;
 
             // Teleporter

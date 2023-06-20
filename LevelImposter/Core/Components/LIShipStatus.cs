@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Collections;
-using System.IO;
-using System.Text;
 using UnityEngine;
 using LevelImposter.Shop;
 using LevelImposter.DB;
@@ -12,9 +10,7 @@ using Il2CppInterop.Runtime.Attributes;
 using Il2CppInterop.Runtime.InteropTypes.Arrays;
 using BepInEx.Unity.IL2CPP.Utils.Collections;
 using Reactor.Networking.Attributes;
-using Hazel;
 using LevelImposter.Builders;
-using System.Linq;
 
 namespace LevelImposter.Core
 {
@@ -68,16 +64,13 @@ namespace LevelImposter.Core
         private ShipStatus? _shipStatus = null;
         private bool _isReady = true;
 
-        [HideFromIl2Cpp]
-        public RenameHandler Renames => _renames;
-        [HideFromIl2Cpp]
-        public LIMap? CurrentMap => _currentMap;
+        [HideFromIl2Cpp] public RenameHandler Renames => _renames;
+        [HideFromIl2Cpp] public LIMap? CurrentMap => _currentMap;
         public ShipStatus? ShipStatus => _shipStatus;
         public bool IsReady
         {
             get {
                 return SpriteLoader.Instance?.RenderCount <= 0 &&
-                        WAVLoader.Instance?.LoadCount <= 0 &&
                         !MapSync.IsDownloadingMap &&
                         _isReady;
             }
@@ -225,7 +218,7 @@ namespace LevelImposter.Core
 
             // Build Timer
             buildTimer.Stop();
-            if (buildTimer.ElapsedMilliseconds > 100)
+            if (buildTimer.ElapsedMilliseconds > LIConstants.ELEM_WARN_TIME)
                 LILogger.Warn($"Took {buildTimer.ElapsedMilliseconds}ms to build {element.name}");
         }
 
@@ -391,8 +384,6 @@ namespace LevelImposter.Core
             _renames = null;
             _currentMap = null;
             Instance = null;
-
-            WAVLoader.Instance?.ClearAll();
         }
     }
 }

@@ -1,6 +1,11 @@
 {
   "ObjectDB": [
     {
+      "ID": "starfield",
+      "Map": 0,
+      "Path": "starfield"
+    },
+    {
       "ID": "util-button1",
       "Map": 2,
       "Path": "Office/caftable/EmergencyButton"
@@ -2020,26 +2025,6 @@
     {
       "ID": "task-burger_paper",
       "Paths": [ "PaperBase/burger_paper" ]
-    },
-    {
-      "ID": "task-burger_paperbuntop",
-      "Paths": [ "PaperBase/burger_paper_bunT" ]
-    },
-    {
-      "ID": "task-burger_paperlettuce",
-      "Paths": [ "PaperBase/burger_paper_lettuce" ]
-    },
-    {
-      "ID": "task-burger_paperonion",
-      "Paths": [ "PaperBase/burger_paper_onion" ]
-    },
-    {
-      "ID": "task-burger_papertomato",
-      "Paths": [ "PaperBase/burger_paper_tomato" ]
-    },
-    {
-      "ID": "task-burger_paperbunbottom",
-      "Paths": [ "PaperBase/burger_paper_bunB" ]
     },
     {
       "ID": "task-burger_lettuce1",

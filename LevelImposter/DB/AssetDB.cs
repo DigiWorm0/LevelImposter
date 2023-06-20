@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Text;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.ResourceManagement.AsyncOperations;
 using UnityEngine.AddressableAssets;
 using LevelImposter.Core;
-using System.Text.Json;
 using System.Collections;
 using BepInEx.Unity.IL2CPP.Utils.Collections;
 using Il2CppInterop.Runtime.Attributes;
@@ -124,7 +120,7 @@ namespace LevelImposter.DB
                 var miraPrefab = shipPrefabs[(int)MapType.Mira];
                 int mapCount = (int)MapType.LevelImposter;
                 while (shipPrefabs.Count <= mapCount)
-                    shipPrefabs.Add(miraPrefab); // TODO: Map Randomization and Using Own Ship Prefab
+                    shipPrefabs.Add(miraPrefab); // Use Own Ship AssetReference
                 while (Constants.MapNames.Count <= mapCount)
                     Constants.MapNames = MapUtils.AddToArr(Constants.MapNames, Constants.MapNames.Count == mapCount ? LIConstants.MAP_NAME : "");
 
@@ -183,7 +179,6 @@ namespace LevelImposter.DB
                 _soundDB.Load();
                 _pathDB.Load();
                 _isInit = true;
-
             }
         }
 

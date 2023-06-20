@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using UnityEngine;
+﻿using UnityEngine;
 using LevelImposter.DB;
 using PowerTools;
 using LevelImposter.Core;
@@ -86,15 +83,11 @@ namespace LevelImposter.Builders
             // Sound
             LISound? openSound = MapUtils.FindSound(elem.properties.sounds, OPEN_SOUND_NAME);
             if (openSound != null)
-                WAVLoader.Instance?.LoadWAV(openSound?.data, (AudioClip? clip) => {
-                    doorComponent.OpenSound = clip;
-                });
+                doorComponent.OpenSound = WAVFile.Load(openSound.data);
 
             LISound? closeSound = MapUtils.FindSound(elem.properties.sounds, CLOSE_SOUND_NAME);
             if (closeSound != null)
-                WAVLoader.Instance?.LoadWAV(closeSound?.data, (AudioClip? clip) => {
-                    doorComponent.CloseSound = clip;
-                });
+                doorComponent.CloseSound = WAVFile.Load(closeSound.data);
 
             // SpriteAnim
             if (isSpriteAnim)
@@ -104,7 +97,8 @@ namespace LevelImposter.Builders
             }
 
             // Console
-            if (isManualDoor)
+            bool isInteractable = elem.properties.isDoorInteractable ?? true;
+            if (isManualDoor && isInteractable)
             {
                 // Prefab
                 var prefab2 = AssetDB.GetObject($"sab-door-{doorType}"); // "sab-door-polus" or "sab-door-airship"

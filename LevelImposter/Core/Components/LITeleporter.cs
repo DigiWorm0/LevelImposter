@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
 using UnityEngine;
 using Reactor.Networking.Attributes;
 using Il2CppInterop.Runtime.Attributes;
@@ -89,6 +88,8 @@ namespace LevelImposter.Core
             if (_elem == null || _target == null)
                 return;
             if (!MapUtils.IsLocalPlayer(player.gameObject))
+                return;
+            if (collider.TryCast<CircleCollider2D>() == null) // Disable BoxCollider2D
                 return;
 
             // Offset

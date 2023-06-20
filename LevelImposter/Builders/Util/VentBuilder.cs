@@ -1,11 +1,8 @@
-using HarmonyLib;
 using LevelImposter.DB;
 using System;
 using System.Collections.Generic;
-using System.Text;
 using UnityEngine;
 using UnityEngine.Events;
-using PowerTools;
 using Il2CppInterop.Runtime.InteropTypes.Arrays;
 using LevelImposter.Core;
 
@@ -81,19 +78,12 @@ namespace LevelImposter.Builders
 
                 LISound? openSound = MapUtils.FindSound(elem.properties.sounds, OPEN_SOUND_NAME);
                 if (openSound != null)
-                    WAVLoader.Instance?.LoadWAV(openSound?.data, (AudioClip? clip) => {
-                        shipStatus.VentEnterSound = clip;
-                    });
+                    shipStatus.VentEnterSound = WAVFile.Load(openSound?.data);
 
                 LISound? moveSound = MapUtils.FindSound(elem.properties.sounds, MOVE_SOUND_NAME);
                 if (moveSound != null)
-                    WAVLoader.Instance?.LoadWAV(moveSound?.data, (AudioClip? clip) => {
-                        if (clip != null)
-                        {
-                            shipStatus.VentMoveSounds = new Il2CppReferenceArray<AudioClip>(new AudioClip[] {
-                                clip
-                            });
-                        }
+                    shipStatus.VentMoveSounds = new Il2CppReferenceArray<AudioClip>(new AudioClip[] {
+                        WAVFile.Load(moveSound?.data)
                     });
             }
 

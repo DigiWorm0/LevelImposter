@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using UnityEngine;
 using LevelImposter.Core;
 
@@ -12,11 +10,6 @@ namespace LevelImposter.Shop
 
         public static void Build()
         {
-            // Spawnable Prefab
-            GameObject shopSpawner = new GameObject("LIShopSpawner");
-            shopSpawner.AddComponent<ShopSpawner>();
-            shopSpawner.SetActive(false);
-
             // Object
             Transform lobbyTransform = LobbyBehaviour.Instance.transform;
             GameObject consolePrefab = lobbyTransform.FindChild("panel_Wardrobe").gameObject;
@@ -29,15 +22,13 @@ namespace LevelImposter.Shop
             liRenderer.sprite = GetSprite();
 
             // Console
-            OptionsConsole liConsole = liConsoleObj.transform.GetChild(0).GetComponent<OptionsConsole>();
-            liConsole.CustomPosition = new Vector3(0, 0, -30);
-            liConsole.CustomUseIcon = ImageNames.UseButton;
-            liConsole.HostOnly = true;
-            liConsole.MenuPrefab = shopSpawner;
-            liConsole.Outline = liRenderer;
+            GameObject consoleObj = liConsoleObj.transform.GetChild(0).gameObject;
+            UnityEngine.Object.Destroy(consoleObj.GetComponent<OptionsConsole>());
+            LobbyConsole liConsole = consoleObj.AddComponent<LobbyConsole>();
+            liConsole.SetRenderer(liRenderer);
 
             // Collider
-            var liCollider = liConsoleObj.GetComponentInChildren<BoxCollider2D>();
+            BoxCollider2D liCollider = liConsoleObj.GetComponentInChildren<BoxCollider2D>();
             liCollider.size = new Vector2(0.01f, 0.01f);
         }
 

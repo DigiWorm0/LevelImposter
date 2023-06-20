@@ -1,10 +1,5 @@
-using HarmonyLib;
 using LevelImposter.Core;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using UnityEngine;
-using UnityEngine.Events;
 
 namespace LevelImposter.Builders
 {
@@ -18,9 +13,7 @@ namespace LevelImposter.Builders
             // Colliders
             Collider2D[] colliders = obj.GetComponentsInChildren<Collider2D>();
             foreach (Collider2D collider in colliders)
-            {
                 collider.isTrigger = true;
-            }
 
             // AudioClip
             if (elem.properties.sounds == null)
@@ -47,15 +40,8 @@ namespace LevelImposter.Builders
             AmbientSoundPlayer ambientPlayer = obj.AddComponent<AmbientSoundPlayer>();
             ambientPlayer.HitAreas = colliders;
             ambientPlayer.MaxVolume = soundData.volume;
-            obj.SetActive(false);
-
-            // WAVLoader
-            WAVLoader.Instance?.LoadWAV(elem, soundData, (AudioClip audioClip) =>
-            {
-                ambientPlayer.AmbientSound = audioClip;
-                if (elem.type != "util-triggersound")
-                    obj.SetActive(true);
-            });
+            ambientPlayer.AmbientSound = WAVFile.Load(soundData?.data);
+            ambientPlayer.enabled = elem.type != "util-triggersound";
         }
 
         public void PostBuild() { }

@@ -2,9 +2,6 @@
 using HarmonyLib;
 using LevelImposter.Core;
 using System;
-using System.IO;
-using System.Collections.Generic;
-using System.Text;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -19,8 +16,11 @@ namespace LevelImposter.Shop
     public static class VersionPatch
     {
         private static Sprite? _logoSprite = null;
+        private static GameObject? _versionObject = null;
 
-        public static void Postfix(VersionShower __instance)
+        public static GameObject? VersionObject => _versionObject;
+
+        public static void Postfix()
         {
             bool isMainMenu = SceneManager.GetActiveScene().name == "MainMenu";
             if (!isMainMenu)
@@ -28,18 +28,21 @@ namespace LevelImposter.Shop
 
             string antiPiracy = Guid.NewGuid().ToString();
 
-            GameObject logoObj = new("LevelImposterVersion " + antiPiracy);
-            logoObj.transform.SetParent(__instance.transform.parent);
-            logoObj.transform.localScale = new Vector3(0.55f, 0.55f, 1.0f);
-            logoObj.transform.localPosition = new Vector3(4.0f, -2.75f, -1.0f);
-            logoObj.layer = (int)Layer.UI;
+            _versionObject = new("LevelImposterVersion " + antiPiracy);
+            _versionObject.transform.localScale = new Vector3(0.55f, 0.55f, 1.0f);
+            _versionObject.layer = (int)Layer.UI;
 
-            SpriteRenderer logoRenderer = logoObj.AddComponent<SpriteRenderer>();
+            AspectPosition logoPosition = _versionObject.AddComponent<AspectPosition>();
+            logoPosition.Alignment = AspectPosition.EdgeAlignments.Right;
+            logoPosition.DistanceFromEdge = new Vector3(1.4f, -2.3f, 0);
+            logoPosition.AdjustPosition();
+
+            SpriteRenderer logoRenderer = _versionObject.AddComponent<SpriteRenderer>();
             logoRenderer.sprite = GetLogoSprite();
 
             GameObject logoTextObj = new("LevelImposterText " + antiPiracy);
-            logoTextObj.transform.SetParent(logoObj.transform);
-            logoTextObj.transform.localPosition = new Vector3(3.19f, 0, 0);
+            logoTextObj.transform.SetParent(_versionObject.transform);
+            logoTextObj.transform.localPosition = new Vector3(3.2f, 0, 0);
 
             RectTransform logoTransform = logoTextObj.AddComponent<RectTransform>();
             logoTransform.sizeDelta = new Vector2(2, 0.19f);

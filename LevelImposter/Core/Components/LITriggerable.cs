@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Text;
 using UnityEngine;
 using BepInEx.Unity.IL2CPP.Utils.Collections;
 using Il2CppInterop.Runtime.Attributes;
 using Reactor.Networking.Attributes;
+using System.Linq;
 
 namespace LevelImposter.Core
 {
@@ -29,7 +29,8 @@ namespace LevelImposter.Core
         private string? _destTrigger = "";
         private LITriggerable? _destTriggerComp = null;
         private bool _isClientSide => _sourceElem?.properties.triggerClientSide != false;
-        private int triggerCount = 0;
+        private int _randomOffset = 0;
+        private float _randomChance = 0.5f;
 
         [HideFromIl2Cpp]
         public LIElement? SourceElem => _sourceElem;
@@ -104,6 +105,8 @@ namespace LevelImposter.Core
             _sourceTrigger = sourceTrigger;
             _destID = destID;
             _destTrigger = destTrigger;
+            if (sourceTrigger == "random")
+                _randomChance = 1.0f / (sourceElem.properties.triggerCount ?? 2);
             if (!_allTriggers.Contains(this))
                 _allTriggers.Add(this);
         }
@@ -132,7 +135,8 @@ namespace LevelImposter.Core
         /// <param name="stackSize">Size of the trigger stack</param>
         private void OnTrigger(PlayerControl? orgin, int stackSize = 0)
         {
-            LILogger.Info($"{new(' ', stackSize)}{gameObject.name} >>> {_sourceTrigger} ({orgin?.name})");
+            string whitespace = string.Concat(Enumerable.Repeat("| ", stackSize - 1)) + "+ ";
+            LILogger.Info($"{whitespace}{gameObject.name} >>> {_sourceTrigger} ({orgin?.name})");
             switch (_sourceTrigger)
             {
                 case "enable":
@@ -156,10 +160,11 @@ namespace LevelImposter.Core
                 case "random":
                     if (_sourceID == null)
                         return;
-                    float randVal = RandomizerSync.GetRandom((Guid)_sourceID, triggerCount);
-                    string triggerID = randVal < 0.5f ? "onRandom 1" : "onRandom 2";
+                    float randVal = RandomizerSync.GetRandom((Guid)_sourceID, _randomOffset);
+                    int triggerIndex = Mathf.FloorToInt(randVal / _randomChance);
+                    string triggerID = "onRandom " + (triggerIndex + 1);
                     Trigger(gameObject, triggerID, orgin, stackSize + 1);
-                    triggerCount++;
+                    _randomOffset++;
                     break;
                 case "startTimer":
                     StartCoroutine(CoTimerTrigger(orgin, stackSize).WrapToIl2Cpp());
@@ -183,7 +188,7 @@ namespace LevelImposter.Core
         {
             AmbientSoundPlayer? ambientSound = GetComponent<AmbientSoundPlayer>();
             if (ambientSound != null)
-                ambientSound.OnDestroy();
+                ambientSound.enabled = false;
             TriggerConsole triggerConsole = GetComponent<TriggerConsole>();
             if (triggerConsole != null)
                 triggerConsole.SetEnabled(false);
@@ -199,7 +204,7 @@ namespace LevelImposter.Core
         {
             AmbientSoundPlayer? ambientSound = GetComponent<AmbientSoundPlayer>();
             if (ambientSound != null)
-                ambientSound.Start();
+                ambientSound.enabled = true;
             GIFAnimator? gifAnimator = GetComponent<GIFAnimator>();
             if (gifAnimator != null)
                 gifAnimator.Play();
@@ -240,7 +245,7 @@ namespace LevelImposter.Core
         {
             _destTriggerComp = AllTriggers.Find(t => _destID == t._sourceID && _destTrigger == t._sourceTrigger);
         }
-        public void OnDestroy() // TODO: Not called if object is never started?
+        public void OnDestroy()
         {
             _allTriggers.Clear();
             _sourceElem = null;

@@ -1,11 +1,5 @@
-﻿using TMPro;
-using HarmonyLib;
+﻿using HarmonyLib;
 using LevelImposter.Core;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using UnityEngine;
-using LevelImposter.DB;
 
 namespace LevelImposter.Shop
 {
@@ -73,7 +67,7 @@ namespace LevelImposter.Shop
             if (__instance.Title == StringNames.GameMapName)
             {
                 RemoveElems(__instance);
-                ConfigAPI.Instance?.SetLastMapID(null);
+                ConfigAPI.SetLastMapID(null);
 
                 if (!MapLoader.IsFallback || MapLoader.CurrentMap == null)
                     MapSync.RegenerateFallbackID();

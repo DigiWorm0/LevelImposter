@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
 using Il2CppInterop.Runtime.Attributes;
 
@@ -61,7 +57,7 @@ namespace LevelImposter.Core
         /// <param name="playerInfo">Player to check</param>
         /// <param name="canUse">TRUE iff the player can access this console currently</param>
         /// <param name="couldUse">TRUE iff the player could access this console in the future</param>
-        /// <returns></returns>
+        /// <returns>Distance from console</returns>
         public float CanUse(GameData.PlayerInfo playerInfo, out bool canUse, out bool couldUse)
         {
             PlayerControl playerControl = playerInfo.Object;

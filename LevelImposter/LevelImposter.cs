@@ -1,11 +1,9 @@
 using BepInEx;
-using BepInEx.Configuration;
 using BepInEx.Unity.IL2CPP;
 using LevelImposter.Core;
 using LevelImposter.DB;
 using LevelImposter.Shop;
 using Il2CppInterop.Runtime.Injection;
-using AmongUs.Data;
 using Reactor.Networking.Attributes;
 
 namespace LevelImposter
@@ -27,15 +25,10 @@ namespace LevelImposter
         {
             // Init Subsystems
             LILogger.Init();
+            MapFileAPI.Init();
+            FileCache.Init();
             LIDeepLink.Init();
             ModCompatibility.Init();
-            
-            // Bypass Hide and Seek Tutorial
-            DataManager.Player.Onboarding.ViewedHideAndSeekHowToPlay = true;
-
-            // Increase max X and Y range from -50 - 50 >>> -500 - 500
-            NetHelpers.XRange = new FloatRange(-500f, 500f);
-            NetHelpers.YRange = new FloatRange(-500f, 500f);
             
             // IUsable Interface
             RegisterTypeOptions usableInterface = new()
@@ -57,22 +50,18 @@ namespace LevelImposter
             ClassInjector.RegisterTypeInIl2Cpp<MinigameSprites>();
             ClassInjector.RegisterTypeInIl2Cpp<GIFAnimator>();
             ClassInjector.RegisterTypeInIl2Cpp<SpriteLoader>();
-            ClassInjector.RegisterTypeInIl2Cpp<WAVLoader>();
             ClassInjector.RegisterTypeInIl2Cpp<TriggerConsole>(usableInterface);
 
             ClassInjector.RegisterTypeInIl2Cpp<AssetDB>();
 
-            ClassInjector.RegisterTypeInIl2Cpp<LevelImposterAPI>();
-            ClassInjector.RegisterTypeInIl2Cpp<ThumbnailFileAPI>();
-            ClassInjector.RegisterTypeInIl2Cpp<MapCacheAPI>();
-            ClassInjector.RegisterTypeInIl2Cpp<GitHubAPI>();
-            ClassInjector.RegisterTypeInIl2Cpp<MapFileAPI>();
-            ClassInjector.RegisterTypeInIl2Cpp<ConfigAPI>();
+            ClassInjector.RegisterTypeInIl2Cpp<HTTPHandler>();
+            ClassInjector.RegisterTypeInIl2Cpp<FileHandler>();
+            ClassInjector.RegisterTypeInIl2Cpp<RandomOverlay>();
             ClassInjector.RegisterTypeInIl2Cpp<MapBanner>();
-            ClassInjector.RegisterTypeInIl2Cpp<ShopButtons>();
             ClassInjector.RegisterTypeInIl2Cpp<ShopManager>();
-            ClassInjector.RegisterTypeInIl2Cpp<ShopSpawner>();
+            ClassInjector.RegisterTypeInIl2Cpp<ShopTabs>();
             ClassInjector.RegisterTypeInIl2Cpp<Spinner>();
+            ClassInjector.RegisterTypeInIl2Cpp<LobbyConsole>(usableInterface);
 
             // Patch Methods
             Harmony.PatchAll();

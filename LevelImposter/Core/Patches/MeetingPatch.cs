@@ -1,7 +1,6 @@
 using HarmonyLib;
 using UnityEngine;
 using LevelImposter.Builders;
-using InnerNet;
 
 namespace LevelImposter.Core
 {

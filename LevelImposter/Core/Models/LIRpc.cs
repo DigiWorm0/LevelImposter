@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace LevelImposter.Core
+﻿namespace LevelImposter.Core
 {
     // Among Us     0 - 32
     // TOR          60 - 73, 100 - 149

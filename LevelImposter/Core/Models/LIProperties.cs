@@ -1,7 +1,5 @@
 #nullable enable
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace LevelImposter.Core
 {
@@ -17,6 +15,7 @@ namespace LevelImposter.Core
         public float? triggerTime { get; set; }
         public bool? triggerClientSide { get; set; }
         public LIColor? highlightColor { get; set; }
+        public int? triggerCount { get; set; }
 
         // Sprite
         public string? spriteData { get; set; }
@@ -35,6 +34,7 @@ namespace LevelImposter.Core
 
         // Door
         public string? doorType { get; set; }
+        public bool? isDoorInteractable { get; set; }
 
         // Vent
         public Guid? leftVent { get; set; }

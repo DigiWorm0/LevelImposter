@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
 using LevelImposter.DB;
 using Il2CppInterop.Runtime.Attributes;
+using System.Collections.Generic;
 
 namespace LevelImposter.Core
 {
@@ -18,6 +15,16 @@ namespace LevelImposter.Core
         public MinigameSprites(IntPtr intPtr) : base(intPtr)
         {
         }
+
+        private readonly Dictionary<string, int> BURGER_PAPER_TOPPINGS = new()
+        {
+            { "task-burger_paperbuntop", 0 },
+            { "task-burger_paperbunbottom", 1 },
+            { "task-burger_paperlettuce", 2 },
+            { "task-burger_papermeat", 3 },
+            { "task-burger_paperonion", 4 },
+            { "task-burger_papertomato", 5 }
+        };
 
         private LIMinigameSprite[]? _minigameDataArr = null;
         private LIMinigameProps? _minigameProps = null;
@@ -185,11 +192,28 @@ namespace LevelImposter.Core
         /// <param name="minigame">Minigame to load sprite to</param>
         /// <param name="type">Type of LIMinigame</param>
         /// <param name="sprite">Sprite to load</param>
-        /// <returns>TRUE iff sprite load should continue</returns>
+        /// <returns><c>true</c> if sprite load should continue, <c>false</c> otherwise.</returns>
         private bool LoadMinigameFieldSprite(Minigame minigame, string type, Sprite? sprite)
         {
             switch (type)
             {
+                /* task-burger */
+                case "task-burger_paperbuntop":
+                case "task-burger_paperbunbottom":
+                case "task-burger_paperlettuce":
+                case "task-burger_papermeat":
+                case "task-burger_paperonion":
+                case "task-burger_papertomato":
+                    var toppingIndex = BURGER_PAPER_TOPPINGS[type];
+                    var burgerMinigame = minigame.Cast<BurgerMinigame>();
+                    var currentToppingSprite = burgerMinigame.PaperToppings[toppingIndex];
+                    // Find & update any symbols
+                    foreach (var paperSlot in burgerMinigame.PaperSlots)
+                        if (paperSlot.sprite == currentToppingSprite)
+                            paperSlot.sprite = sprite;
+                    burgerMinigame.PaperToppings[toppingIndex] = sprite;
+                    return false;
+
                 /* task-fans */
                 case "task-fans1_symbol_1":
                 case "task-fans1_symbol_2":

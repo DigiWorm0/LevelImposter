@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Text;
-using UnityEngine;
 
 namespace LevelImposter.Shop
 {

@@ -1,9 +1,7 @@
 ﻿using System;
-using System.IO;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using BepInEx.Unity.IL2CPP;
 using BepInEx.Unity.IL2CPP.Utils.Collections;
 using Il2CppInterop.Runtime.Attributes;
 using Il2CppInterop.Runtime.InteropTypes.Fields;
@@ -30,13 +28,12 @@ namespace LevelImposter.Core
             "util-cam"
         };
 
-        public Il2CppValueField<long> AnimatorID;
+        public Il2CppValueField<long> AnimatorID; // Unique ID maintained on instantiation
         public bool IsAnimating => _isAnimating;
 
         private bool _defaultLoopGIF = false;
         private bool _isAnimating = false;
-        private float[]? _delays;
-        private Sprite[]? _frames;
+        private GIFFile? _gifData = null;
         private SpriteRenderer? _spriteRenderer;
         private Coroutine? _animationCoroutine = null;
         private long _animatorID => AnimatorID.Get();
@@ -48,15 +45,16 @@ namespace LevelImposter.Core
         /// <param name="sprites">Array of sprites representing each frame</param>
         /// <param name="frameTimes">Array of floats representing the times each frame is visible</param>
         [HideFromIl2Cpp]
-        public void Init(LIElement element, Sprite[] sprites, float[] frameTimes)
+        public void Init(LIElement element, GIFFile gifData)
         {
             _spriteRenderer = GetComponent<SpriteRenderer>();
-            _frames = sprites;
-            _delays = frameTimes;
+            _gifData = gifData;
             _defaultLoopGIF = element.properties.loopGIF ?? true;
-            Play();
+
             if (AUTOPLAY_BLACKLIST.Contains(element.type))
                 Stop();
+            else
+                Play();
         }
 
         /// <summary>
@@ -64,7 +62,7 @@ namespace LevelImposter.Core
         /// </summary>
         public void Play()
         {
-            Play(_defaultLoopGIF, false); ;
+            Play(_defaultLoopGIF, false);
         }
 
         /// <summary>
@@ -74,8 +72,8 @@ namespace LevelImposter.Core
         /// <param name="reverse">True iff the GIF should play in reverse</param>
         public void Play(bool repeat, bool reverse)
         {
-            if (_frames == null || _delays == null)
-                LILogger.Warn($"{name} does not have a frame sprites or delays");
+            if (_gifData == null)
+                LILogger.Warn($"{name} does not have any data");
             if (_spriteRenderer == null)
                 LILogger.Warn($"{name} does not have a spriteRenderer");
             if (_animationCoroutine != null)
@@ -91,8 +89,13 @@ namespace LevelImposter.Core
             if (_animationCoroutine != null)
                 StopCoroutine(_animationCoroutine);
             _isAnimating = false;
-            if (_spriteRenderer != null && _frames != null)
-                _spriteRenderer.sprite = _frames[reversed ? _frames.Length - 1 : 0];
+
+            if (_spriteRenderer != null && _gifData != null)
+            {
+                var sprite = _gifData.GetFrameSprite(reversed ? _gifData.Frames.Count - 1 : 0);
+                _spriteRenderer.sprite = sprite;
+                _spriteRenderer.enabled = true;
+            }
         }
 
         /// <summary>
@@ -104,16 +107,17 @@ namespace LevelImposter.Core
         [HideFromIl2Cpp]
         private IEnumerator CoAnimate(bool repeat, bool reverse)
         {
-            if (_frames == null || _delays == null || _spriteRenderer == null)
+            if (_gifData == null || _spriteRenderer == null)
                 yield break;
             _isAnimating = true;
+            _spriteRenderer.enabled = true;
             int t = 0;
             while (_isAnimating)
             {
-                int frame = reverse ? _frames.Length - t - 1 : t;
-                _spriteRenderer.sprite = _frames[frame];
-                yield return new WaitForSeconds(_delays[frame]);
-                t = (t + 1) % _frames.Length;
+                int frame = reverse ? _gifData.Frames.Count - t - 1 : t;
+                _spriteRenderer.sprite = _gifData.GetFrameSprite(frame);
+                yield return new WaitForSeconds(_gifData.Frames[frame].Delay);
+                t = (t + 1) % _gifData.Frames.Count;
                 if (t == 0 && !repeat)
                     Stop(!reverse);
             }
@@ -126,8 +130,7 @@ namespace LevelImposter.Core
         private void OnClone(GIFAnimator originalAnim)
         {
             _spriteRenderer = GetComponent<SpriteRenderer>();
-            _frames = originalAnim._frames;
-            _delays = originalAnim._delays;
+            _gifData = originalAnim._gifData;
             _defaultLoopGIF = originalAnim._defaultLoopGIF;
         }
 
@@ -151,8 +154,7 @@ namespace LevelImposter.Core
         {
             _allAnimators.Remove(_animatorID);
 
-            _delays = null;
-            _frames = null;
+            _gifData = null;
             _spriteRenderer = null;
             _animationCoroutine = null;
         }

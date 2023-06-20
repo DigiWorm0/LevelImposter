@@ -1,6 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
 using LevelImposter.Core;
 
 namespace LevelImposter.Shop
@@ -21,7 +19,7 @@ namespace LevelImposter.Shop
         public static void LoadMap(LIMap? map, bool isFallback)
         {
             if (_lastMapID != map?.id)
-                CleanAssets();
+                GCHandler.Clean();
             _lastMapID = map?.id;
             _currentMap = map;
             _isFallback = isFallback;
@@ -37,7 +35,7 @@ namespace LevelImposter.Shop
         /// <param name="callback">Callback on success</param>
         public static void LoadMap(string mapID, bool isFallback, Action? callback)
         {
-            MapFileAPI.Instance?.Get(mapID, (mapData) =>
+            MapFileAPI.Get(mapID, (mapData) =>
             {
                 LoadMap(mapData, isFallback);
                 if (callback != null)
@@ -61,18 +59,6 @@ namespace LevelImposter.Shop
         public static void SetFallback(bool isFallback)
         {
             _isFallback = isFallback;
-        }
-
-        /// <summary>
-        /// Cleans all assets from cache and runs GC
-        /// </summary>
-        public static void CleanAssets()
-        {
-            LILogger.Msg("Clearing all created assets");
-            SpriteLoader.Instance?.ClearAll();
-            WAVLoader.Instance?.ClearAll();
-
-            GC.Collect();
         }
     }
 }

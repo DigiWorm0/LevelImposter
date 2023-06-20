@@ -1,8 +1,4 @@
 using HarmonyLib;
-using System.Text;
-using UnityEngine;
-using LevelImposter.Core;
-using LevelImposter.Shop;
 
 namespace LevelImposter.Core
 {

@@ -1,10 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Reactor.Networking.Attributes;
-using AmongUs.GameOptions;
 using LevelImposter.Core;
 
 namespace LevelImposter.Shop
@@ -110,14 +106,14 @@ namespace LevelImposter.Shop
                 return;
             }
             // In Local Filesystem
-            else if (MapFileAPI.Instance?.Exists(mapIDStr) == true)
+            else if (MapFileAPI.Exists(mapIDStr))
             {
                 MapLoader.LoadMap(mapIDStr, isFallback, null);
             }
             // In Local Cache
-            else if (MapCacheAPI.Instance?.Exists(mapIDStr) == true)
+            else if (MapFileCache.Exists(mapIDStr))
             {
-                MapLoader.LoadMap(MapCacheAPI.Instance?.Get(mapIDStr), isFallback);
+                MapLoader.LoadMap(MapFileCache.Get(mapIDStr), isFallback);
             }
             // Download if Unavailable
             else
@@ -126,9 +122,9 @@ namespace LevelImposter.Shop
                 LILogger.Notify("<color=#1a95d8>Downloading map, please wait...</color>");
                 MapLoader.UnloadMap();
                 DownloadManager.StartDownload();
-                LevelImposterAPI.Instance?.DownloadMap(mapID, (LIMap map) =>
+                LevelImposterAPI.DownloadMap(mapID, null, (LIMap map) =>
                 {
-                    MapCacheAPI.Instance?.Save(map);
+                    MapFileCache.Save(map);
                     if (_activeDownloadingID == mapID)
                     {
                         MapLoader.LoadMap(map, isFallback);
@@ -147,13 +143,8 @@ namespace LevelImposter.Shop
 
         private static string? GetRandomMapID(List<string> blacklistMaps)
         {
-            if (MapFileAPI.Instance == null)
-                throw new Exception("Missing MapFileAPI");
-            if (ConfigAPI.Instance == null)
-                throw new Exception("Missing ConfigAPI");
-
             // Get all custom maps
-            var fileIDs = new List<string>(MapFileAPI.Instance.ListIDs());
+            var fileIDs = new List<string>(MapFileAPI.ListIDs());
             var mapIDs = fileIDs.FindAll(id => !blacklistMaps.Contains(id));
             if (mapIDs.Count <= 0)
             {
@@ -166,7 +157,7 @@ namespace LevelImposter.Shop
             float mapWeightSum = 0;
             for (int i = 0; i < mapIDs.Count; i++)
             {
-                var mapWeight = ConfigAPI.Instance.GetMapWeight(mapIDs[i]);
+                var mapWeight = ConfigAPI.GetMapWeight(mapIDs[i]);
                 mapWeights[i] = mapWeightSum + mapWeight;
                 mapWeightSum += mapWeight;
             }

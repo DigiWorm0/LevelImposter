@@ -1,8 +1,4 @@
 ﻿using HarmonyLib;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using UnityEngine;
 using LevelImposter.Core;
 
 namespace LevelImposter.Shop
@@ -18,8 +14,8 @@ namespace LevelImposter.Shop
         {
             RandomizerSync.SyncRandomSeed();
 
-            string? lastMapID = ConfigAPI.Instance?.GetLastMapID();
-            bool hasLastMap = lastMapID != null && (MapFileAPI.Instance?.Exists(lastMapID) ?? false);
+            string? lastMapID = ConfigAPI.GetLastMapID();
+            bool hasLastMap = lastMapID != null && MapFileAPI.Exists(lastMapID);
             bool isHost = AmongUsClient.Instance.AmHost;
 
             if (MapLoader.CurrentMap == null && lastMapID != null && hasLastMap && isHost)

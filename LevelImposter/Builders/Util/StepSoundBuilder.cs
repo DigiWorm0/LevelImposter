@@ -1,10 +1,5 @@
-using HarmonyLib;
 using LevelImposter.DB;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using UnityEngine;
-using UnityEngine.Events;
 using LevelImposter.Core;
 
 namespace LevelImposter.Builders
@@ -54,10 +49,7 @@ namespace LevelImposter.Builders
                 // WAVLoader
                 else
                 {
-                    WAVLoader.Instance?.LoadWAV(elem, sound, (AudioClip audioClip) =>
-                    {
-                        soundGroup.Clips[i] = audioClip;
-                    });
+                    soundGroup.Clips[i] = WAVFile.Load(sound.data);
                 }
             }
 

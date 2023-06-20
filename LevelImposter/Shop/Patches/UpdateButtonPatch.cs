@@ -1,11 +1,5 @@
 ﻿using HarmonyLib;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using UnityEngine;
 using LevelImposter.Core;
-using PowerTools;
-using LevelImposter.Shop;
 
 namespace LevelImposter.Shop
 {
@@ -16,23 +10,14 @@ namespace LevelImposter.Shop
     [HarmonyPatch(typeof(MainMenuManager), nameof(MainMenuManager.Start))]
     public static class UpdateButtonPatch
     {
-        private static bool _isCurrent = true;
         public static void Postfix()
         {
-            if (_isCurrent)
-            {
-                GitHubAPI.Instance?.GetLatestRelease((release) => {
-                    _isCurrent = GitHubAPI.Instance.IsCurrent(release);
-                    if (!_isCurrent)
-                        UpdateButtonBuilder.Build();
-                }, (error) => {
-                    _isCurrent = true;
-                });
-            }
-            else
-            {
-                UpdateButtonBuilder.Build();
-            }
+            GitHubAPI.GetLatestRelease((release) => {
+                if (!GitHubAPI.IsCurrent(release))
+                    UpdateButtonBuilder.Build();
+            }, (error) => {
+                LILogger.Warn("Failed to check for updates: " + error);
+            });
         }
     }
 }
