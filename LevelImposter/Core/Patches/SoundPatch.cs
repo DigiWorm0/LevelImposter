@@ -15,9 +15,9 @@ namespace LevelImposter.Core
             if (LIShipStatus.Instance == null)
                 return true;
 
-            bool isActive = __instance.gameObject.active;
+            bool isEnabled = __instance.enabled;
             bool inMeeting = MeetingHud.Instance != null;
-            if (!isActive || inMeeting)
+            if (!isEnabled || inMeeting)
             {
                 source.volume = 0.0f;
                 return false;

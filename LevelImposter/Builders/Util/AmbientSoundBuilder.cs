@@ -41,7 +41,7 @@ namespace LevelImposter.Builders
             ambientPlayer.HitAreas = colliders;
             ambientPlayer.MaxVolume = soundData.volume;
             ambientPlayer.AmbientSound = WAVFile.Load(soundData?.data);
-            obj.SetActive(elem.type != "util-triggersound");
+            ambientPlayer.enabled = elem.type != "util-triggersound";
         }
 
         public void PostBuild() { }

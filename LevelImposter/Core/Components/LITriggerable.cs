@@ -188,7 +188,7 @@ namespace LevelImposter.Core
         {
             AmbientSoundPlayer? ambientSound = GetComponent<AmbientSoundPlayer>();
             if (ambientSound != null)
-                ambientSound.OnDestroy();
+                ambientSound.enabled = false;
             TriggerConsole triggerConsole = GetComponent<TriggerConsole>();
             if (triggerConsole != null)
                 triggerConsole.SetEnabled(false);
@@ -204,7 +204,7 @@ namespace LevelImposter.Core
         {
             AmbientSoundPlayer? ambientSound = GetComponent<AmbientSoundPlayer>();
             if (ambientSound != null)
-                ambientSound.Start();
+                ambientSound.enabled = true;
             GIFAnimator? gifAnimator = GetComponent<GIFAnimator>();
             if (gifAnimator != null)
                 gifAnimator.Play();
