@@ -54,7 +54,7 @@ namespace LevelImposter.Shop
             PlayerControl playerControl = playerInfo.Object;
             Vector2 truePosition = playerControl.GetTruePosition();
 
-            couldUse = playerControl.CanMove;
+            couldUse = playerControl.CanMove && AmongUsClient.Instance.AmHost;
             canUse = couldUse;
 
             if (couldUse)
