@@ -10,5 +10,6 @@ namespace LevelImposter.Core
         public string? data { get; set; }
         public float volume { get; set; }
         public bool isPreset { get; set; }
+        public string? channel { get; set; }
     }
 }

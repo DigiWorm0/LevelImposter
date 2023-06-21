@@ -435,7 +435,8 @@ namespace LevelImposter.Core
         }
 
         /// <summary>
-        /// Renders a frame of the GIF. Requires the GIF to be loaded. Will result in all previous frames being rendered as well.
+        /// Renders a frame of the GIF. Requires the GIF to be loaded.
+        /// Due to how GIFs are compressed, this will result in all previous frames being rendered as well.
         /// </summary>
         /// <param name="targetFrame">The frame to render</param>
         public void RenderFrame(int frameIndex)

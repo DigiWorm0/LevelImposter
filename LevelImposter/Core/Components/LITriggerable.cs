@@ -139,6 +139,7 @@ namespace LevelImposter.Core
             LILogger.Info($"{whitespace}{gameObject.name} >>> {_sourceTrigger} ({orgin?.name})");
             switch (_sourceTrigger)
             {
+                // Generic
                 case "enable":
                     StartComponents();
                     break;
@@ -153,10 +154,14 @@ namespace LevelImposter.Core
                     gameObject.SetActive(false);
                     StopComponents();
                     break;
+
+                // Repeat
                 case "repeat":
                     for (int i = 0; i < 8; i++)
                         Trigger(gameObject, "onRepeat " + (i + 1), orgin, stackSize + 1);
                     break;
+
+                // Random
                 case "random":
                     if (_sourceID == null)
                         return;
@@ -166,17 +171,34 @@ namespace LevelImposter.Core
                     Trigger(gameObject, triggerID, orgin, stackSize + 1);
                     _randomOffset++;
                     break;
+
+                // Timer
                 case "startTimer":
                     StartCoroutine(CoTimerTrigger(orgin, stackSize).WrapToIl2Cpp());
                     break;
+
+                // Door
                 case "open":
                     SetDoorOpen(true);
                     break;
                 case "close":
                     SetDoorOpen(false);
                     break;
+
+                // Meeting
                 case "callMeeting":
                     PlayerControl.LocalPlayer.CmdReportDeadBody(null);
+                    break;
+
+                // Playback
+                case "playonce":
+                    StartComponents(false);
+                    break;
+                case "playloop":
+                    StartComponents(true);
+                    break;
+                case "stop":
+                    StopComponents();
                     break;
             }
         }
@@ -189,18 +211,24 @@ namespace LevelImposter.Core
             AmbientSoundPlayer? ambientSound = GetComponent<AmbientSoundPlayer>();
             if (ambientSound != null)
                 ambientSound.enabled = false;
+            GIFAnimator? gifAnimator = GetComponent<GIFAnimator>();
+            if (gifAnimator != null)
+                gifAnimator.Stop();
             TriggerConsole triggerConsole = GetComponent<TriggerConsole>();
             if (triggerConsole != null)
                 triggerConsole.SetEnabled(false);
             SystemConsole sysConsole = GetComponent<SystemConsole>();
             if (sysConsole != null)
                 sysConsole.enabled = false;
+            TriggerSoundPlayer? triggerSound = GetComponent<TriggerSoundPlayer>();
+            if (triggerSound != null)
+                triggerSound.Stop();
         }
         
         /// <summary>
         /// Starts any components attatched to object
         /// </summary>
-        private void StartComponents()
+        private void StartComponents(bool loop = true)
         {
             AmbientSoundPlayer? ambientSound = GetComponent<AmbientSoundPlayer>();
             if (ambientSound != null)
@@ -208,12 +236,15 @@ namespace LevelImposter.Core
             GIFAnimator? gifAnimator = GetComponent<GIFAnimator>();
             if (gifAnimator != null)
                 gifAnimator.Play();
-            TriggerConsole triggerConsole = GetComponent<TriggerConsole>();
+            TriggerConsole? triggerConsole = GetComponent<TriggerConsole>();
             if (triggerConsole != null)
                 triggerConsole.SetEnabled(true);
-            SystemConsole sysConsole = GetComponent<SystemConsole>();
+            SystemConsole? sysConsole = GetComponent<SystemConsole>();
             if (sysConsole != null)
                 sysConsole.enabled = true;
+            TriggerSoundPlayer? triggerSound = GetComponent<TriggerSoundPlayer>();
+            if (triggerSound != null)
+                triggerSound.Play(loop);
         }
 
         /// <summary>

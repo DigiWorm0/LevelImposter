@@ -165,6 +165,7 @@ namespace LevelImposter.Core
 
             _clip = AudioClip.Create(CLIP_NAME, _data.Length, _channelCount, _sampleRate, false);
             _clip.SetData(_data, 0);
+            _clip.hideFlags = HideFlags.HideAndDontSave;
 
             _data = null; // Free memory
         }
