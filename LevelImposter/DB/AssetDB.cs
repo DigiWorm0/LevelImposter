@@ -21,7 +21,7 @@ namespace LevelImposter.DB
 
         public const string LEVELIMPOSTER_MAP_NAME = "Random LI Map";
 
-        private string _status = "Initializing AssetDB...";
+        private string _status = "Initializing";
         private bool _isInit = false;
         private Stack<MapType> _loadedShips = new();
         private SerializedAssetDB? _serializedAssetDB;
@@ -174,6 +174,7 @@ namespace LevelImposter.DB
                     }
                 }
 
+                _status = "Finalizing";
                 _objectDB.Load();
                 _taskDB.Load();
                 _soundDB.Load();
@@ -188,7 +189,7 @@ namespace LevelImposter.DB
         /// <param name="prefab">Ship prefab to load</param>
         private void LoadShip(GameObject prefab)
         {
-            _status = $"Loading \"{prefab.name}\"...";
+            _status = $"Loading \"{prefab.name}\"";
             ShipStatus shipStatus = prefab.GetComponent<ShipStatus>();
             var mapType = prefab.name switch
             {

@@ -23,13 +23,6 @@ namespace LevelImposter.Shop
         private PassiveButton? _remixButton = null;
         private PassiveButton? _externalButton = null;
         private RandomOverlay? _randomOverlay = null;
-        private bool _isInLobby
-        {
-            get
-            {
-                return LobbyBehaviour.Instance != null;
-            }
-        }
 
         /// <summary>
         /// Sets map metadata for banner to display
@@ -56,8 +49,9 @@ namespace LevelImposter.Shop
             bool isOnline = !string.IsNullOrEmpty(_currentMap?.authorID) && Guid.TryParse(_currentMap.id, out _);
             bool isPublic = _currentMap?.isPublic ?? false;
             bool isRemix = _currentMap?.remixOf != null;
+            bool isInLobby = GameState.IsInLobby;
 
-            _playButton?.SetButtonEnableState(isLoaded && isDownloaded && (isOnline || !_isInLobby));
+            _playButton?.SetButtonEnableState(isLoaded && isDownloaded && (isOnline || !isInLobby));
             _randomButton?.SetButtonEnableState(isLoaded && isDownloaded && isOnline);
             _trashButton?.SetButtonEnableState(isLoaded && isDownloaded && isPublic);
             _downloadButton?.SetButtonEnableState(isLoaded && !isDownloaded && isPublic);
@@ -117,7 +111,7 @@ namespace LevelImposter.Shop
         {
             if (_currentMap == null)
                 return;
-            if (_isInLobby)
+            if (GameState.IsInLobby)
                 ShopManager.Instance?.SelectMap(_currentMap.id);
             else
                 ShopManager.Instance?.LaunchMap(_currentMap.id);

@@ -231,7 +231,7 @@ namespace LevelImposter.Core
             yield return null;
 
             // Objects
-            bool isFreeplay = AmongUsClient.Instance.NetworkMode == NetworkModes.FreePlay;
+            bool isFreeplay = GameState.IsInFreeplay;
             SpriteRenderer fullScreen = DestroyableSingleton<HudManager>.Instance.FullScreen;
             GameObject loadingBean = DestroyableSingleton<HudManager>.Instance.GameLoadAnimation;
             Color sabColor = fullScreen.color;
@@ -384,6 +384,10 @@ namespace LevelImposter.Core
             _renames = null;
             _currentMap = null;
             Instance = null;
+            
+            // Wipe Cache (Freeplay Only)
+            if (GameState.IsInFreeplay)
+                GCHandler.Clean();
         }
     }
 }

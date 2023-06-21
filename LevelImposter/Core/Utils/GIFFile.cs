@@ -235,7 +235,7 @@ namespace LevelImposter.Core
                         byte subBlockSize = reader.ReadByte();
                         if (subBlockSize == 0)
                             break;
-                        reader.ReadBytes(subBlockSize); // Skip Over Data
+                        reader.BaseStream.Position += subBlockSize; // Skip Over Data
                     }
                     break;
                 default:
@@ -292,8 +292,7 @@ namespace LevelImposter.Core
                     break;
 
                 // Read Sub Block Data
-                byte[] subBlockData = reader.ReadBytes(subBlockSize);
-                byteStream.AddRange(subBlockData);
+                byteStream.AddRange(reader.ReadBytes(subBlockSize));
             }
 
             var indexStream = DecodeLZW(byteStream.ToArray(), minCodeSize, imageWidth * imageHeight);
@@ -320,13 +319,14 @@ namespace LevelImposter.Core
         }
 
         /// <summary>
-        /// Decodes the LZW encoded image data of a GIF
+        /// Decodes the LZW encoded image data of a GIF.
+        /// Takes an array of bytes and converts it into a list of codes and then to a list of color indices.
         /// </summary>
         /// <param name="byteBuffer">Raw bytes from the image block</param>
         /// <param name="minCodeSize">Minimum code size in bits</param>
-        /// <param name="expectedSize">Expected size of the index stream</param>
+        /// <param name="expectedSize">Expected size of the final index stream</param>
         /// <returns>List of color indices</returns>
-        private List<ushort> DecodeLZW(byte[] byteBuffer, byte minCodeSize, int expectedSize)
+        private ushort[] DecodeLZW(byte[] byteBuffer, byte minCodeSize, int expectedSize)
         {
             BitArray bitBuffer = new BitArray(byteBuffer);  // The raw data as a bit array
             int clearCode = 1 << minCodeSize; // Code used to clear the code table
@@ -423,7 +423,7 @@ namespace LevelImposter.Core
             while (indexStream.Count < expectedSize)
                 indexStream.Add(0);
 
-            return indexStream;
+            return indexStream.ToArray();
         }
 
         /// <summary>
@@ -603,7 +603,7 @@ namespace LevelImposter.Core
             public int Width { get; set; }
             public int Height { get; set; }
 
-            public List<ushort>? IndexStream { get; set; }
+            public ushort[]? IndexStream { get; set; }
             public Sprite? RenderedSprite { get; set; }
 
         }

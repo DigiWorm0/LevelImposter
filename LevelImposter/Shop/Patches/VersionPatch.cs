@@ -22,8 +22,7 @@ namespace LevelImposter.Shop
 
         public static void Postfix()
         {
-            bool isMainMenu = SceneManager.GetActiveScene().name == "MainMenu";
-            if (!isMainMenu)
+            if (!GameState.IsInMainMenu)
                 return;
 
             string antiPiracy = Guid.NewGuid().ToString();
