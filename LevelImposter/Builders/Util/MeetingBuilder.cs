@@ -7,9 +7,6 @@ namespace LevelImposter.Builders
     {
         public static GameObject? TriggerObject = null;
 
-        private static AudioClip? _defaultReportStinger = null;
-        private static AudioClip? _defaultButtonStinger = null;
-
         public const string REPORT_SOUND_NAME = "meetingReportStinger";
         public const string BUTTON_SOUND_NAME = "meetingButtonStinger";
 
@@ -36,13 +33,6 @@ namespace LevelImposter.Builders
                 return;
             }
             TriggerObject = obj;
-
-            // Backup Sounds
-            if (_defaultReportStinger == null || _defaultButtonStinger == null)
-            {
-                _defaultReportStinger = shipStatus.ReportOverlay.Stinger;
-                _defaultButtonStinger = shipStatus.EmergencyOverlay.Stinger;
-            }
             
             // Meeting Background
             if (!string.IsNullOrEmpty(elem.properties.meetingBackground))
@@ -55,26 +45,34 @@ namespace LevelImposter.Builders
                     elem.id.ToString()
                 );
             }
-            
-            // Meeting Sound
+
+            // Meeting Overlay
+            shipStatus.EmergencyOverlay.gameObject.SetActive(false);
+            MeetingCalledAnimation meetingOverlay = Object.Instantiate(shipStatus.EmergencyOverlay, shipStatus.transform);
+            meetingOverlay.gameObject.SetActive(false);
+            shipStatus.EmergencyOverlay = meetingOverlay;
+
             LISound? buttonSound = MapUtils.FindSound(elem.properties.sounds, BUTTON_SOUND_NAME);
             if (buttonSound != null)
-                LoadMeetingSound(
-                    elem,
-                    WAVFile.Load(buttonSound?.data),
-                    buttonSound?.volume ?? 1,
-                    false
-                );
+            {
+                meetingOverlay.Stinger = WAVFile.Load(buttonSound?.data) ?? meetingOverlay.Stinger;
+                meetingOverlay.StingerVolume = buttonSound?.volume ?? 1;
+            }
 
-            // Report Sound
+            // TODO: Fix Me!
+
+            // Report Overlay
+            shipStatus.ReportOverlay.gameObject.SetActive(false);
+            MeetingCalledAnimation reportOverlay = Object.Instantiate(shipStatus.ReportOverlay, shipStatus.transform);
+            reportOverlay.gameObject.SetActive(false);
+            shipStatus.ReportOverlay = reportOverlay;
+            
             LISound? reportSound = MapUtils.FindSound(elem.properties.sounds, REPORT_SOUND_NAME);
             if (reportSound != null)
-                LoadMeetingSound(
-                    elem,
-                    WAVFile.Load(reportSound?.data),
-                    reportSound?.volume ?? 1,
-                    false
-                );
+            {
+                reportOverlay.Stinger = WAVFile.Load(reportSound?.data) ?? reportOverlay.Stinger;
+                reportOverlay.StingerVolume = reportSound?.volume ?? 1;
+            }
         }
 
         private void LoadMeetingBackground(LIElement elem, SpriteLoader.SpriteData? spriteData) {
@@ -98,42 +96,6 @@ namespace LevelImposter.Builders
             shipStatus.MeetingBackground = spriteData.Sprite;
         }
 
-        private void LoadMeetingSound(LIElement elem, AudioClip? clip, float volume, bool isReport)
-        {
-            // Handle Error
-            if (clip == null)
-            {
-                LILogger.Warn($"Error loading sound for {elem}");
-                return;
-            }
-
-            // ShipStatus
-            var shipStatus = LIShipStatus.Instance?.ShipStatus;
-            if (shipStatus == null)
-                throw new MissingShipException();
-
-            // Set Stinger
-            MeetingCalledAnimation meetingOverlay = isReport ? shipStatus.ReportOverlay : shipStatus.EmergencyOverlay;
-            meetingOverlay.Stinger = clip;
-            meetingOverlay.StingerVolume = volume;
-        }
-
-        public void PostBuild()
-        {
-            // ShipStatus
-            var shipStatus = LIShipStatus.Instance?.ShipStatus;
-            if (shipStatus == null)
-                throw new MissingShipException();
-
-            // Report
-            var reportOverlay = shipStatus.ReportOverlay;
-            if (reportOverlay.Stinger == null)
-                reportOverlay.Stinger = _defaultButtonStinger;
-
-            // Emergency
-            var emergencyOverlay = shipStatus.EmergencyOverlay;
-            if (emergencyOverlay.Stinger == null)
-                emergencyOverlay.Stinger = _defaultReportStinger;
-        }
+        public void PostBuild() { }
     }
 }
