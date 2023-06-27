@@ -22,6 +22,7 @@ namespace LevelImposter.Builders
             new SpawnBuilder(),
             new VentBuilder(),
             new CamBuilder(),
+            new DisplayBuilder(),
             new TaskBuilder(),
             new DecBuilder(),
             new PhysicsObjectBuilder(),

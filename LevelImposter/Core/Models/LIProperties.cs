@@ -51,6 +51,10 @@ namespace LevelImposter.Core
         public float? camYOffset { get; set; }
         public float? camZoom { get; set; }
 
+        // Display
+        public int? displayWidth { get; set; }
+        public int? displayHeight { get; set; }
+
         // Console
         public bool? onlyFromBelow { get; set; }
         public bool? checkCollision { get; set; }

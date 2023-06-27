@@ -154,6 +154,34 @@ namespace LevelImposter.Core
         }
 
         /// <summary>
+        /// Builds a 2D mesh with the given width and height
+        /// </summary>
+        /// <param name="width">Width in units</param>
+        /// <param name="height">Height in units</param>
+        /// <returns>Resulting Mesh object</returns>
+        public static Mesh Build2DMesh(float width, float height)
+        {
+            var mesh = new Mesh();
+            mesh.vertices = new Vector3[4]
+            {
+                new Vector3(-width / 2, -height / 2, 0),
+                new Vector3(width / 2, -height / 2, 0),
+                new Vector3(-width / 2, height / 2, 0),
+                new Vector3(width / 2, height / 2, 0)
+            };
+            mesh.triangles = new int[] { 0, 2, 1, 2, 3, 1 };
+            mesh.uv = new Vector2[]
+            {
+                new Vector2(0, 0),
+                new Vector2(1, 0),
+                new Vector2(0, 1),
+                new Vector2(1, 1)
+            };
+            mesh.RecalculateNormals();
+            return mesh;
+        }
+
+        /// <summary>
         /// Grabs a resource from the assembly
         /// </summary>
         /// <param name="name">Name of the resource file</param>
