@@ -22,7 +22,7 @@ namespace LevelImposter.Builders
 
             // Prefab
             var minigamePrefab = AssetDB.GetObject("util-cams")?.GetComponent<SystemConsole>().MinigamePrefab.Cast<PlanetSurveillanceMinigame>();
-            obj.layer = (int)Layer.ShortObjects;
+            obj.layer = (int)Layer.Objects;
 
             // Options
             int width = elem.properties.displayWidth ?? DEFAULT_WIDTH;
@@ -30,18 +30,21 @@ namespace LevelImposter.Builders
 
             // Camera
             var cameraObject = new GameObject("DisplayCamera");
+            cameraObject.layer = (int)Layer.UI;
             cameraObject.transform.parent = shipStatus.transform;
             cameraObject.transform.position = new Vector3(
                 (elem.properties.camXOffset ?? 0) + obj.transform.position.x,
                 (elem.properties.camYOffset ?? 0) + obj.transform.position.y,
-                -20.0f
+                0.0f
             );
 
             var camera = cameraObject.AddComponent<Camera>();
             camera.orthographic = true;
             camera.orthographicSize = elem.properties.camZoom ?? 3;
-            camera.cullingMask = 0b1111101100010111;
-            camera.gameObject.layer = (int)Layer.UI;
+            camera.cullingMask = 0b1111001100010111;
+            camera.farClipPlane = 1000.0f;
+            camera.nearClipPlane = -1000.0f;
+
 
             // Mesh
             var meshFilter = obj.AddComponent<MeshFilter>();
@@ -51,12 +54,14 @@ namespace LevelImposter.Builders
             meshRenderer.sharedMaterial = minigamePrefab?.DefaultMaterial;
 
             // Render Texture
+            bool pixelArtMode = LIShipStatus.Instance?.CurrentMap?.properties.pixelArtMode ?? false;
             var renderTexture = RenderTexture.GetTemporary(
                 width,
                 height,
                 16,
                 RenderTextureFormat.ARGB32
             );
+            renderTexture.filterMode = pixelArtMode ? FilterMode.Point : FilterMode.Bilinear;
             camera.targetTexture = renderTexture;
             meshRenderer.material.SetTexture("_MainTex", renderTexture);
 
