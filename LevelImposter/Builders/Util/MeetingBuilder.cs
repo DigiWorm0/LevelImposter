@@ -59,8 +59,6 @@ namespace LevelImposter.Builders
                 meetingOverlay.StingerVolume = buttonSound?.volume ?? 1;
             }
 
-            // TODO: Fix Me!
-
             // Report Overlay
             shipStatus.ReportOverlay.gameObject.SetActive(false);
             MeetingCalledAnimation reportOverlay = Object.Instantiate(shipStatus.ReportOverlay, shipStatus.transform);
