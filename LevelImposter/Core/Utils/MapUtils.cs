@@ -30,15 +30,47 @@ namespace LevelImposter.Core
         /// <returns>New array with value appended</returns>
         public static Il2CppReferenceArray<T> AddToArr<T>(Il2CppReferenceArray<T> arr, T value) where T : Il2CppObjectBase
         {
-            List<T> list = new(arr);
-            list.Add(value);
+            List<T> list = new(arr)
+            {
+                value
+            };
             return list.ToArray();
         }
         public static Il2CppStringArray AddToArr(Il2CppStringArray arr, string value)
         {
-            List<string> list = new(arr);
-            list.Add(value);
+            List<string> list = new(arr)
+            {
+                value
+            };
             return list.ToArray();
+        }
+
+        /// <summary>
+        /// Replaces a prefab with a new, mutable copy
+        /// </summary>
+        /// <param name="oldPrefab">Old, immutable prefab</param>
+        /// <param name="parent">Parent (Must be destroyed on finish)</param>
+        /// <returns>New, mutable prefab</returns>
+        public static GameObject ReplacePrefab(GameObject oldPrefab, Transform parent)
+        {
+            var newPrefab = UnityEngine.Object.Instantiate(oldPrefab, parent);
+            newPrefab.SetActive(false);
+            newPrefab.name = oldPrefab.name;
+            return newPrefab;
+        }
+
+        /// <summary>
+        /// Replaces a prefab with a new, mutable copy
+        /// </summary>
+        /// <param name="oldPrefab">Old, immutable prefab</param>
+        /// <param name="parent">Parent (Must be destroyed on finish)</param>
+        /// <returns>New, mutable prefab</returns>
+        public static T ReplacePrefab<T>(T oldPrefab, Transform parent) where T : Component
+        {
+            var newPrefab = UnityEngine.Object.Instantiate(oldPrefab, parent);
+            newPrefab.gameObject.SetActive(false);
+            newPrefab.name = oldPrefab.name;
+            return newPrefab;
         }
 
         /// <summary>

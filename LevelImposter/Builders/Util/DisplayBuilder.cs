@@ -41,7 +41,7 @@ namespace LevelImposter.Builders
             var camera = cameraObject.AddComponent<Camera>();
             camera.orthographic = true;
             camera.orthographicSize = elem.properties.camZoom ?? 3;
-            camera.cullingMask = 0b1111001100010111;
+            camera.cullingMask = 0b1111001100010111; // Include Shadows: 0b10111001100010111
             camera.farClipPlane = 1000.0f;
             camera.nearClipPlane = -1000.0f;
 

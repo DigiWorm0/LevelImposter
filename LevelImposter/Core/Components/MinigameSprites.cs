@@ -339,15 +339,15 @@ namespace LevelImposter.Core
                 /* task-waterjug */
                 case "task-waterjug1_btnup":
                 case "task-waterjug2_btnup":
-                    var multistageMinigame1 = minigame.Cast<MultistageMinigame>();
-                    foreach (var stage in multistageMinigame1.Stages)
-                        stage.Cast<WaterStage>().buttonUpSprite = sprite;
-                    return true;
+                    var waterStage1 = minigame.TryCast<WaterStage>();
+                    if (waterStage1 != null)
+                        waterStage1.buttonUpSprite = sprite;
+                    return false;
                 case "task-waterjug1_btndown":
                 case "task-waterjug2_btndown":
-                    var multistageMinigame2 = minigame.Cast<MultistageMinigame>();
-                    foreach (var stage in multistageMinigame2.Stages)
-                        stage.Cast<WaterStage>().buttonDownSprite = sprite;
+                    var waterStage2 = minigame.TryCast<WaterStage>();
+                    if (waterStage2 != null)
+                        waterStage2.buttonDownSprite = sprite;
                     return false;
 
                 /* task-weapons */
@@ -389,6 +389,34 @@ namespace LevelImposter.Core
                     foreach (var obj in garbageMinigame1.Objects)
                         if (obj.sprite == currentLeafPrefab.sprite)
                             obj.sprite = sprite;
+                    return false;
+
+                /* util-computer */
+                case "util-computer_folder":
+                case "util-computer_file":
+                    var computerMinigame = minigame.Cast<TaskAdderGame>();
+
+                    // Replace Prefab
+                    Sprite? oldSprite = null;
+                    if (type == "util-computer_folder")
+                    {
+                        oldSprite = computerMinigame.RootFolderPrefab.GetComponentInChildren<SpriteRenderer>().sprite;
+                        computerMinigame.RootFolderPrefab = MapUtils.ReplacePrefab(computerMinigame.RootFolderPrefab, minigame.transform);
+                        computerMinigame.RootFolderPrefab.GetComponentInChildren<SpriteRenderer>().sprite = sprite;
+                    }
+                    else
+                    {
+                        oldSprite = computerMinigame.TaskPrefab.FileImage.sprite;
+                        computerMinigame.TaskPrefab = MapUtils.ReplacePrefab(computerMinigame.TaskPrefab, minigame.transform);
+                        computerMinigame.TaskPrefab.FileImage.sprite = sprite;
+                        // TODO: Fix Me!
+                    }
+
+                    // Replace Active Sprites
+                    var spriteRenderers = minigame.GetComponentsInChildren<SpriteRenderer>(true);
+                    foreach (var spriteRenderer in spriteRenderers)
+                        if (spriteRenderer.sprite == oldSprite)
+                            spriteRenderer.sprite = sprite;
                     return false;
 
                 default:
