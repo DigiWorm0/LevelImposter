@@ -10,5 +10,6 @@ namespace LevelImposter.Core
         public string? exileID { get; set; }
         public bool? showPingIndicator { get; set; }
         public bool? pixelArtMode { get; set; }
+        public bool? preloadAllGIFs { get; set; }
     }
 }

@@ -188,7 +188,7 @@ namespace LevelImposter.Core
                 {
                     using (MemoryStream ms = new(imgData))
                     {
-                        var gifFile = new GIFFile();
+                        var gifFile = new GIFFile(spriteID ?? "LISprite");
                         gifFile.Load(ms);
 
                         spriteData = new()

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -17,7 +17,9 @@ namespace LevelImposter.Core
             new Color(1, 1, 1, 1)
         };
 
+        // GIF File
         public bool IsLoaded { get; private set; }
+        public string Name { get; private set; }
 
         // LZW Decoder
         private ushort[][]? _codeTable = null; // Table of "code"s to color indexes
@@ -36,6 +38,12 @@ namespace LevelImposter.Core
         public ushort Width { get; private set; }
         public ushort Height { get; private set; }
         public List<GIFFrame> Frames { get; private set; }
+
+        public GIFFile(string name)
+        {
+            Name = name;
+            Frames = new();
+        }
 
         /// <summary>
         /// Loads the GIF file from a given stream.
@@ -136,7 +144,7 @@ namespace LevelImposter.Core
 
             Width = width;
             Height = height;
-            Frames = new List<GIFFrame>();
+            Frames = new();
         }
 
         /// <summary>

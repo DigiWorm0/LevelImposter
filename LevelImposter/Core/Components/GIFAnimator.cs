@@ -45,11 +45,14 @@ namespace LevelImposter.Core
         /// <param name="sprites">Array of sprites representing each frame</param>
         /// <param name="frameTimes">Array of floats representing the times each frame is visible</param>
         [HideFromIl2Cpp]
-        public void Init(LIElement element, GIFFile gifData)
+        public void Init(LIElement element, GIFFile? gifData)
         {
             _spriteRenderer = GetComponent<SpriteRenderer>();
             _gifData = gifData;
             _defaultLoopGIF = element.properties.loopGIF ?? true;
+
+            if (LIShipStatus.Instance?.CurrentMap?.properties?.preloadAllGIFs ?? false)
+                _gifData.RenderAllFrames();
 
             if (AUTOPLAY_BLACKLIST.Contains(element.type))
                 Stop();
@@ -92,8 +95,7 @@ namespace LevelImposter.Core
 
             if (_spriteRenderer != null && _gifData != null)
             {
-                var sprite = _gifData.GetFrameSprite(reversed ? _gifData.Frames.Count - 1 : 0);
-                _spriteRenderer.sprite = sprite;
+                _spriteRenderer.sprite = _gifData.GetFrameSprite(reversed ? _gifData.Frames.Count - 1 : 0);
                 _spriteRenderer.enabled = true;
             }
         }
