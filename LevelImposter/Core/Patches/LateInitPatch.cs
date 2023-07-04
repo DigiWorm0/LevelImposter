@@ -27,6 +27,7 @@ namespace LevelImposter.Core
 
             // Add Global Components
             GameObject apiParent = new GameObject("LevelImposter");
+            apiParent.AddComponent<LagLimiter>();
             apiParent.AddComponent<HTTPHandler>();
             apiParent.AddComponent<FileHandler>();
             apiParent.AddComponent<SpriteLoader>();

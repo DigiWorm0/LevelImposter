@@ -1,11 +1,9 @@
 ﻿using BepInEx.Unity.IL2CPP.Utils.Collections;
 using Il2CppInterop.Runtime.Attributes;
 using Il2CppInterop.Runtime.InteropTypes.Arrays;
-using LevelImposter.Shop;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using UnityEngine;
@@ -21,21 +19,14 @@ namespace LevelImposter.Core
         {
         }
 
-        public const float MIN_FRAME_TIME = 1500.0f;
-
-        public static SpriteLoader? Instance;
+        public static SpriteLoader? Instance { get; private set; }
 
         [HideFromIl2Cpp]
         public event SpriteEventHandle? OnLoad;
         public delegate void SpriteEventHandle(LIElement elem);
 
         private Stack<SpriteData>? _spriteCache = new();
-        private Stopwatch? _renderTimer = new();
         private int _renderCount = 0;
-        private bool _shouldRender
-        {
-            get { return _renderTimer?.ElapsedMilliseconds <= MIN_FRAME_TIME; }
-        }
 
         public int RenderCount => _renderCount;
 
@@ -184,7 +175,7 @@ namespace LevelImposter.Core
                 _renderCount++;
                 yield return null;
                 yield return null;
-                while (!_shouldRender)
+                while (!LagLimiter.ShouldContinue(1))
                     yield return null;
 
                 // Search Cache
@@ -290,11 +281,6 @@ namespace LevelImposter.Core
             {
                 Destroy(gameObject);
             }
-        }
-        public void Update()
-        {
-            if (_renderCount > 0)
-                _renderTimer?.Restart();
         }
 
         /// <summary>

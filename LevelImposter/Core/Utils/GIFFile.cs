@@ -30,7 +30,6 @@ namespace LevelImposter.Core
         private Color[] _globalColorTable = DEFAULT_COLOR_TABLE; // Table of indexes to colors
         private bool _hasGlobalColorTable = false; // True if there is a global color table
         private int _globalColorTableSize = 0; // Size of the global color table
-        private ushort _backgroundColorIndex = 0; // Index of the background color in the global color table
         private Color _backgroundColor = Color.clear; // Background color
 
         // Image Descriptor
@@ -128,13 +127,12 @@ namespace LevelImposter.Core
             //bool sortFlag = (packedField & 0b00001000) != 0;
             int globalColorTableSize = 1 << ((packedField & 0b00000111) + 1);
 
-            byte backgroundColorIndex = reader.ReadByte();
+            reader.ReadByte(); // Background Color Index
             reader.ReadByte(); // Pixel Aspect Ratio
 
             // GIFData
             _hasGlobalColorTable = hasGlobalColorTable;
             _globalColorTableSize = globalColorTableSize;
-            _backgroundColorIndex = backgroundColorIndex;
 
             Width = width;
             Height = height;

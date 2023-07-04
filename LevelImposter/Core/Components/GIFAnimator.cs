@@ -114,9 +114,18 @@ namespace LevelImposter.Core
             int t = 0;
             while (_isAnimating)
             {
+                // Wait for main thread
+                while (!LagLimiter.ShouldContinue(60))
+                    yield return null;
+
+                // Render sprite
                 int frame = reverse ? _gifData.Frames.Count - t - 1 : t;
                 _spriteRenderer.sprite = _gifData.GetFrameSprite(frame);
+
+                // Wait for next frame
                 yield return new WaitForSeconds(_gifData.Frames[frame].Delay);
+                
+                // Update time
                 t = (t + 1) % _gifData.Frames.Count;
                 if (t == 0 && !repeat)
                     Stop(!reverse);
