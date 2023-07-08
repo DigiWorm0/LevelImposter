@@ -4,6 +4,7 @@ using Il2CppInterop.Runtime.InteropTypes.Arrays;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using UnityEngine;
@@ -27,6 +28,7 @@ namespace LevelImposter.Core
 
         private Stack<SpriteData>? _spriteCache = new();
         private int _renderCount = 0;
+        private Dictionary<string, string>? _duplicateSpriteDB = new();
 
         public int RenderCount => _renderCount;
 
@@ -48,7 +50,10 @@ namespace LevelImposter.Core
                     return spriteData;
                 }
             }
-
+            if (_duplicateSpriteDB?.ContainsKey(spriteID) == true)
+            {
+                return GetSpriteFromCache(_duplicateSpriteDB[spriteID]);
+            }
             return null;
         }
 
@@ -58,6 +63,7 @@ namespace LevelImposter.Core
         public void Clean()
         {
             _spriteCache?.Clear();
+            _duplicateSpriteDB?.Clear();
         }
 
         /// <summary>
@@ -268,6 +274,40 @@ namespace LevelImposter.Core
             if (sprite == null)
                 sprite = RawImageToSprite(imgData);
             return sprite;
+        }
+
+        /// <summary>
+        /// Searches the current map for duplicate sprite entries. Optional, improves performance.
+        /// </summary>
+        public void SearchForDuplicateSprites(LIMap map)
+        {
+            var elems = map.elements;
+
+            // Debug Start
+            Stopwatch sw = Stopwatch.StartNew();
+            LILogger.Info($"Searching {elems.Length} elements for duplicate sprites");
+
+            // Iterate through map elements
+            _duplicateSpriteDB?.Clear();
+            for (int a = 0; a < elems.Length - 1; a++)
+            {
+                for (int b = a + 1; b < elems.Length; b++)
+                {
+                    var spriteA = elems[a].properties.spriteData;
+                    var spriteB = elems[b].properties.spriteData;
+
+                    if (_duplicateSpriteDB?.ContainsKey(elems[a].id.ToString()) == false
+                        && !string.IsNullOrEmpty(spriteA)
+                        && spriteA == spriteB)
+                    {
+                        _duplicateSpriteDB?.Add(elems[b].id.ToString(), elems[a].id.ToString());
+                    }
+                }
+            }
+
+            // Debug End
+            sw.Stop();
+            LILogger.Info($"Found {_duplicateSpriteDB?.Count} duplicate sprites in {sw.ElapsedMilliseconds}ms");
         }
 
         public void Awake()

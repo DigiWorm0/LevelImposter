@@ -146,6 +146,9 @@ namespace LevelImposter.Core
             if (!AssetDB.IsInit)
                 LILogger.Warn("Asset DB is not initialized yet!");
 
+            // Sprite Loader
+            SpriteLoader.Instance?.SearchForDuplicateSprites(map);
+
             // Priority First
             foreach (string type in PRIORITY_TYPES)
                 foreach (LIElement elem in map.elements)
@@ -201,8 +204,7 @@ namespace LevelImposter.Core
         [HideFromIl2Cpp]
         public void AddElement(BuildRouter buildRouter, LIElement element)
         {
-            Stopwatch buildTimer = new();
-            buildTimer.Restart();
+            Stopwatch buildTimer = Stopwatch.StartNew();
 
             LILogger.Info($"Adding {element}");
             try
