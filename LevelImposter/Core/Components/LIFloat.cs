@@ -17,6 +17,7 @@ namespace LevelImposter.Core
         private float _speed = 2.0f;
         private float _t = 0;
         private float _yOffset = 0;
+        private float _yScale = 1;
 
         [HideFromIl2Cpp]
         public void Init(LIElement elem)
@@ -24,6 +25,7 @@ namespace LevelImposter.Core
             _height = elem.properties.floatingHeight ?? _height;
             _speed = elem.properties.floatingSpeed ?? _speed;
             _yOffset = elem.y;
+            _yScale = elem.yScale;
         }
 
         public void Update()
@@ -31,7 +33,7 @@ namespace LevelImposter.Core
             _t += Time.deltaTime;
             transform.localPosition = new Vector3(
                 transform.localPosition.x,
-                (Mathf.Sin(_t * _speed) + 1) * _height / 2 + _yOffset,
+                (Mathf.Sin(_t * _speed) + 1) * _yScale * _height / 2 + _yOffset,
                 transform.localPosition.z
             );
         }
