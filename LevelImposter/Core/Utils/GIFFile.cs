@@ -22,7 +22,7 @@ namespace LevelImposter.Core
         public string Name { get; private set; }
 
         // LZW Decoder
-        private ushort[][]? _codeTable = null; // Table of "code"s to color indexes
+        private static ushort[][] _codeTable = new ushort[1 << 12][]; // Table of "code"s to color indexes
         private Color[]? _pixelBuffer = null; // Buffer of pixel colors
 
         // Graphic Control Extension
@@ -59,7 +59,6 @@ namespace LevelImposter.Core
                 ReadGlobalColorTable(reader);
                 while (ReadBlock(reader)) { }
                 _pixelBuffer = null;
-                _codeTable = null;
                 IsLoaded = true;
             }
         }
@@ -90,7 +89,6 @@ namespace LevelImposter.Core
         public void Dispose()
         {
             _pixelBuffer = null;
-            _codeTable = null;
             foreach (var frame in Frames)
             {
                 if (frame.RenderedSprite?.texture != null)
@@ -301,7 +299,7 @@ namespace LevelImposter.Core
                 byteStream.AddRange(reader.ReadBytes(subBlockSize));
             }
 
-            var indexStream = DecodeLZW(byteStream.ToArray(), minCodeSize, imageWidth * imageHeight);
+            var indexStream = DecodeLZW(byteStream, minCodeSize, imageWidth * imageHeight);
 
             // GIFFrame
             GIFFrame frame = new GIFFrame()
@@ -332,9 +330,8 @@ namespace LevelImposter.Core
         /// <param name="minCodeSize">Minimum code size in bits</param>
         /// <param name="expectedSize">Expected size of the final index stream</param>
         /// <returns>List of color indices</returns>
-        private ushort[] DecodeLZW(byte[] byteBuffer, byte minCodeSize, int expectedSize)
+        private List<ushort> DecodeLZW(List<byte> byteBuffer, byte minCodeSize, int expectedSize)
         {
-            BitArray bitBuffer = new BitArray(byteBuffer);  // The raw data as a bit array
             int clearCode = 1 << minCodeSize; // Code used to clear the code table
             int endOfInformationCode = clearCode + 1; // Code used to signal the end of the image data
 
@@ -342,22 +339,20 @@ namespace LevelImposter.Core
             int codeSize = minCodeSize + 1; // The size of the codes in bits
             int previousCode = -1; // The previous code
 
-            var indexStream = new List<ushort>(1 << 12); // The index stream
+            var indexStream = new List<ushort>(expectedSize); // The index stream
 
             // Initialize Code Table
-            if (_codeTable == null)
-                _codeTable = new ushort[1 << 12][];
             for (ushort k = 0; k < codeTableIndex; k++)
                 _codeTable[k] = k < clearCode ? new ushort[] { k } : new ushort[0];
 
             // Decode LZW
             int i = 0;
-            while (i + codeSize < bitBuffer.Length)
+            while (i + codeSize < byteBuffer.Count * 8)
             {
                 // Read Code
                 int code = 0;
                 for (int j = 0; j < codeSize; j++)
-                    code |= bitBuffer[i + j] ? 1 << j : 0;
+                    code |= GetBit(byteBuffer, i + j) ? 1 << j : 0;
                 i += codeSize;
 
                 // Special Codes
@@ -429,7 +424,20 @@ namespace LevelImposter.Core
             while (indexStream.Count < expectedSize)
                 indexStream.Add(0);
 
-            return indexStream.ToArray();
+            return indexStream;
+        }
+
+        /// <summary>
+        /// Gets a bit from a byte array.
+        /// </summary>
+        /// <param name="arr">Array of raw byte data</param>
+        /// <param name="index">Offset in bits</param>
+        /// <returns><c>true</c> if the bit is a 1, <c>false</c> otherwise</returns>
+        private bool GetBit(List<byte> arr, int index)
+        {
+            int byteIndex = index / 8;
+            int bitIndex = index % 8;
+            return (arr[byteIndex] & (1 << bitIndex)) != 0;
         }
 
         /// <summary>
@@ -519,6 +527,9 @@ namespace LevelImposter.Core
                     _pixelBuffer[pixelIndex] = color;
                 }
 
+                // Free memory
+                frame.IndexStream = null;
+
                 // Apply Texture
                 texture.SetPixels(_pixelBuffer);
                 texture.Apply();
@@ -562,7 +573,6 @@ namespace LevelImposter.Core
                 sprite.hideFlags = HideFlags.DontUnloadUnusedAsset;
 
                 // Apply to frame
-                frame.IndexStream = null; // Free memory
                 frame.RenderedSprite = sprite;
             }
 
@@ -570,7 +580,6 @@ namespace LevelImposter.Core
             if (frameIndex >= Frames.Count - 1)
             {
                 _pixelBuffer = null;
-                _codeTable = null;
                 _lastGraphicsControl = null;
                 _globalColorTable = DEFAULT_COLOR_TABLE;
             }
@@ -610,7 +619,7 @@ namespace LevelImposter.Core
             public int Width { get; set; }
             public int Height { get; set; }
 
-            public ushort[]? IndexStream { get; set; }
+            public List<ushort>? IndexStream { get; set; }
             public Sprite? RenderedSprite { get; set; }
 
         }
