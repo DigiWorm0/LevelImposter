@@ -13,7 +13,7 @@
 	
 	<PropertyGroup>
 		<AmongUs>C:\Program Files (x86)\Steam\steamapps\common\Among Us</AmongUs>
-		<GameVersion>2023.6.13</GameVersion>
+		<GameVersion>2023.7.11</GameVersion>
 	</PropertyGroup>
 
     <ItemGroup>

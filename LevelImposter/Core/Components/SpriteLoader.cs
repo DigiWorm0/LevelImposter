@@ -279,6 +279,7 @@ namespace LevelImposter.Core
 
         /// <summary>
         /// Searches the current map for duplicate sprite entries. Optional, improves performance.
+        /// TODO: Optimize me! ( O(n^2) )
         /// </summary>
         [HideFromIl2Cpp]
         public void SearchForDuplicateSprites(LIMap map)

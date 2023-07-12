@@ -11,5 +11,6 @@ namespace LevelImposter.Core
         public bool? showPingIndicator { get; set; }
         public bool? pixelArtMode { get; set; }
         public bool? preloadAllGIFs { get; set; }
+        public bool? triggerLogging { get; set; }
     }
 }
