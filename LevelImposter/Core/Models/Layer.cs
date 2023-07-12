@@ -10,7 +10,12 @@
         Players = 8,
         Ship,
         Shadow,
-        Objects, // <-- Hidden by util-display
+
+        /// <summary>
+        /// WARNING: Automatically hidden by <c>util-display</c> objects
+        /// </summary>
+        Objects,
+        
         ShortObjects,
         IlluminatedBlocking,
         Ghost,

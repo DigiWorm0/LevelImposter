@@ -38,6 +38,7 @@ namespace LevelImposter.Builders
             new PlatformBuilder(),
             new StarfieldBuilder(),
             new FloatBuilder(),
+            new ScrollBuilder(),
             new AmbientSoundBuilder(),
             new StepSoundBuilder(),
             new TeleBuilder(),

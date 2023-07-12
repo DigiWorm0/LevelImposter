@@ -24,6 +24,10 @@ namespace LevelImposter.Core
         public LIColor? color { get; set; }
         public bool? loopGIF { get; set; }
 
+        // Scroll
+        public float? scrollingXSpeed { get; set; }
+        public float? scrollingYSpeed { get; set; }
+
         // Minigame
         public LIMinigameSprite[]? minigames { get; set; }
         public LIMinigameProps? minigameProps { get; set; }

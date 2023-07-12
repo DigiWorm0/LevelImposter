@@ -62,6 +62,7 @@ namespace LevelImposter.Core
         /// </summary>
         public void Clean()
         {
+            OnLoad = null;
             _spriteCache?.Clear();
             _duplicateSpriteDB?.Clear();
         }
@@ -238,7 +239,7 @@ namespace LevelImposter.Core
         private Sprite RawImageToSprite(Il2CppStructArray<byte> imgData)
         {
             // Generate Texture
-            bool pixelArtMode = LIShipStatus.Instance?.CurrentMap?.properties.pixelArtMode == true;
+            bool pixelArtMode = LIShipStatus.Instance?.CurrentMap?.properties.pixelArtMode ?? false;
             Texture2D texture = new(1, 1, TextureFormat.RGBA32, false)
             {
                 wrapMode = TextureWrapMode.Clamp,
@@ -279,6 +280,7 @@ namespace LevelImposter.Core
         /// <summary>
         /// Searches the current map for duplicate sprite entries. Optional, improves performance.
         /// </summary>
+        [HideFromIl2Cpp]
         public void SearchForDuplicateSprites(LIMap map)
         {
             var elems = map.elements;

@@ -44,11 +44,12 @@ namespace LevelImposter.Builders
             camera.cullingMask = 0b1111001100010111; // Include Shadows: 0b10111001100010111
             camera.farClipPlane = 1000.0f;
             camera.nearClipPlane = -1000.0f;
-
+            GCHandler.Register(camera);
 
             // Mesh
             var meshFilter = obj.AddComponent<MeshFilter>();
             meshFilter.mesh = MapUtils.Build2DMesh(width / 100.0f, height / 100.0f);
+            GCHandler.Register(meshFilter.mesh);
 
             var meshRenderer = obj.AddComponent<MeshRenderer>();
             meshRenderer.sharedMaterial = minigamePrefab?.DefaultMaterial;
@@ -64,37 +65,27 @@ namespace LevelImposter.Builders
             renderTexture.filterMode = pixelArtMode ? FilterMode.Point : FilterMode.Bilinear;
             camera.targetTexture = renderTexture;
             meshRenderer.material.SetTexture("_MainTex", renderTexture);
-
-            // Disposable Display
-            GCHandler.Register(new DisposableDisplay()
-            {
-                Mesh = meshFilter.mesh,
-                RenderTexture = renderTexture,
-                Camera = camera
-            });
+            GCHandler.Register(new DisposableRenderTex(renderTexture)); 
         }
 
         public void PostBuild() { }
 
         /// <summary>
-        /// Temporary class to dispose of the RenderTexture and Mesh.
+        /// Destroy() doesn't release from memory
+        /// This replaces it with RenderTexture.ReleaseTemporary()
         /// </summary>
-        private class DisposableDisplay : IDisposable
+        public class DisposableRenderTex : IDisposable
         {
-            public RenderTexture? RenderTexture;
-            public Mesh? Mesh;
-            public Camera? Camera;
+            private RenderTexture _tex;
 
-            public DisposableDisplay() { }
+            public DisposableRenderTex(RenderTexture tex)
+            {
+                _tex = tex;
+            }
 
             public void Dispose()
             {
-                if (RenderTexture != null)
-                    RenderTexture.ReleaseTemporary(RenderTexture);
-                if (Mesh != null)
-                    UnityEngine.Object.Destroy(Mesh);
-                if (Camera != null)
-                    UnityEngine.Object.Destroy(Camera);
+                RenderTexture.ReleaseTemporary(_tex);
             }
         }
     }

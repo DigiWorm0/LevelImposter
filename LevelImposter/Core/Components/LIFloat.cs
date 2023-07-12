@@ -13,9 +13,9 @@ namespace LevelImposter.Core
         {
         }
 
+        private float _t => Time.time;
         private float _height = 0.2f;
         private float _speed = 2.0f;
-        private float _t = 0;
         private float _yOffset = 0;
         private float _yScale = 1;
 
@@ -30,7 +30,6 @@ namespace LevelImposter.Core
 
         public void Update()
         {
-            _t += Time.deltaTime;
             transform.localPosition = new Vector3(
                 transform.localPosition.x,
                 (Mathf.Sin(_t * _speed) + 1) * _yScale * _height / 2 + _yOffset,
