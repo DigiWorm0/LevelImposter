@@ -1,6 +1,7 @@
 ﻿using BepInEx.Unity.IL2CPP.Utils.Collections;
 using Il2CppInterop.Runtime.Attributes;
 using Il2CppInterop.Runtime.InteropTypes.Arrays;
+using PowerTools;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -102,6 +103,7 @@ namespace LevelImposter.Core
         public void LoadSpriteAsync(LIElement element, GameObject obj)
         {
             LILogger.Info($"Loading sprite for {element}");
+            Stopwatch stopwatch = Stopwatch.StartNew();
 
             string b64 = element.properties.spriteData ?? "";
             LoadSpriteAsync(b64, (nullableSpriteData) =>
@@ -126,14 +128,16 @@ namespace LevelImposter.Core
                 {
                     GIFAnimator gifAnimator = obj.AddComponent<GIFAnimator>();
                     gifAnimator.Init(element, spriteData.GIFData);
-                    LILogger.Info($"Done loading animated sprite for {element} ({RenderCount} Left)");
+                    stopwatch.Stop();
+                    LILogger.Info($"Done loading {spriteData.GIFData.Width}x{spriteData.GIFData.Height} sprite for {element} ({RenderCount} Left) [{stopwatch.ElapsedMilliseconds}ms]");
                 }
                 else // Still Image
                 {
                     SpriteRenderer spriteRenderer = obj.GetComponent<SpriteRenderer>();
                     spriteRenderer.sprite = spriteData.Sprite;
                     Rect spriteDim = spriteData.Sprite?.rect ?? new();
-                    LILogger.Info($"Done loading {spriteDim.width}x{spriteDim.height} sprite for {element} ({RenderCount} Left)");
+                    stopwatch.Stop();
+                    LILogger.Info($"Done loading {spriteDim.width}x{spriteDim.height} sprite for {element} ({RenderCount} Left) [{stopwatch.ElapsedMilliseconds}ms]");
                 }
 
                 if (OnLoad != null)

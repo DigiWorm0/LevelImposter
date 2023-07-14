@@ -52,12 +52,14 @@ namespace LevelImposter.Core
             _defaultLoopGIF = element.properties.loopGIF ?? true;
 
             if (LIShipStatus.Instance?.CurrentMap?.properties?.preloadAllGIFs ?? false)
-                _gifData.RenderAllFrames();
+                _gifData?.RenderAllFrames();
 
-            if (AUTOPLAY_BLACKLIST.Contains(element.type))
-                Stop();
+            if (_gifData?.Frames.Count == 1)
+                _spriteRenderer.sprite = _gifData.GetFrameSprite(0); // Still image
+            else if (AUTOPLAY_BLACKLIST.Contains(element.type))
+                Stop(); // Don't autoplay
             else
-                Play();
+                Play(); // Autoplay
         }
 
         /// <summary>
