@@ -115,6 +115,15 @@ namespace LevelImposter.Core
                 }
                 LILogger.Info("Applied Fuel Props");
             }
+
+            // Telescope Task
+            bool isTelescope = _minigameProps?.isStarfieldEnabled != null;
+            if (isTelescope)
+            {
+                var starfield = minigame.transform.Find("BlackBg/starfield");
+                if (starfield != null)
+                    starfield.gameObject.SetActive(_minigameProps?.isStarfieldEnabled ?? true);
+            }
         }
 
         /// <summary>
@@ -292,6 +301,18 @@ namespace LevelImposter.Core
                     minigame.Cast<BoardPassGame>().ScannerScanning = sprite;
                     return false;
 
+                /* task-telescope */
+                case "task-telescope_bg":
+                    var telescopeBG = minigame.transform.Find("BlackBg");
+                    if (telescopeBG != null)
+                    {
+                        var spriteRenderer = telescopeBG.GetComponent<SpriteRenderer>();
+                        spriteRenderer.color = Color.white;
+                        spriteRenderer.drawMode = SpriteDrawMode.Tiled;
+                        spriteRenderer.sprite = sprite;
+                    }
+                    return false;
+
                 /* task-toilet */
                 case "task-toilet_plungerdown":
                     minigame.Cast<ToiletMinigame>().PlungerDown = sprite;
@@ -406,10 +427,11 @@ namespace LevelImposter.Core
                     }
                     else
                     {
-                        oldSprite = computerMinigame.TaskPrefab.FileImage.sprite;
+                        oldSprite = computerMinigame.TaskPrefab.GetComponentInChildren<SpriteRenderer>().sprite;
+                        computerMinigame.RoleButton = MapUtils.ReplacePrefab(computerMinigame.RoleButton, minigame.transform);
                         computerMinigame.TaskPrefab = MapUtils.ReplacePrefab(computerMinigame.TaskPrefab, minigame.transform);
-                        computerMinigame.TaskPrefab.FileImage.sprite = sprite;
-                        // TODO: Fix Me!
+                        computerMinigame.RoleButton.GetComponentInChildren<SpriteRenderer>().sprite = sprite;
+                        computerMinigame.TaskPrefab.GetComponentInChildren<SpriteRenderer>().sprite = sprite;
                     }
 
                     // Replace Active Sprites

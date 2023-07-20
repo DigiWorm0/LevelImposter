@@ -67,8 +67,11 @@ namespace LevelImposter.Core
         /// <returns>New, mutable prefab</returns>
         public static T ReplacePrefab<T>(T oldPrefab, Transform parent) where T : Component
         {
-            var newPrefab = UnityEngine.Object.Instantiate(oldPrefab, parent);
-            newPrefab.gameObject.SetActive(false);
+            var inactiveParent = new GameObject();
+            inactiveParent.SetActive(false);
+            inactiveParent.transform.SetParent(parent);
+
+            var newPrefab = UnityEngine.Object.Instantiate(oldPrefab, inactiveParent.transform);
             newPrefab.name = oldPrefab.name;
             return newPrefab;
         }
