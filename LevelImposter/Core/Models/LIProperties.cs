@@ -24,6 +24,13 @@ namespace LevelImposter.Core
         public LIColor? color { get; set; }
         public bool? loopGIF { get; set; }
 
+        // One-Way Colliders
+        public bool? isImposterIgnored { get; set; }
+
+        // Scroll
+        public float? scrollingXSpeed { get; set; }
+        public float? scrollingYSpeed { get; set; }
+
         // Minigame
         public LIMinigameSprite[]? minigames { get; set; }
         public LIMinigameProps? minigameProps { get; set; }
@@ -50,6 +57,10 @@ namespace LevelImposter.Core
         public float? camXOffset { get; set; }
         public float? camYOffset { get; set; }
         public float? camZoom { get; set; }
+
+        // Display
+        public int? displayWidth { get; set; }
+        public int? displayHeight { get; set; }
 
         // Console
         public bool? onlyFromBelow { get; set; }

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -17,10 +17,12 @@ namespace LevelImposter.Core
             new Color(1, 1, 1, 1)
         };
 
+        // GIF File
         public bool IsLoaded { get; private set; }
+        public string Name { get; private set; }
 
         // LZW Decoder
-        private ushort[][]? _codeTable = null; // Table of "code"s to color indexes
+        private static ushort[][] _codeTable = new ushort[1 << 12][]; // Table of "code"s to color indexes
         private Color[]? _pixelBuffer = null; // Buffer of pixel colors
 
         // Graphic Control Extension
@@ -30,13 +32,18 @@ namespace LevelImposter.Core
         private Color[] _globalColorTable = DEFAULT_COLOR_TABLE; // Table of indexes to colors
         private bool _hasGlobalColorTable = false; // True if there is a global color table
         private int _globalColorTableSize = 0; // Size of the global color table
-        private ushort _backgroundColorIndex = 0; // Index of the background color in the global color table
         private Color _backgroundColor = Color.clear; // Background color
 
         // Image Descriptor
         public ushort Width { get; private set; }
         public ushort Height { get; private set; }
         public List<GIFFrame> Frames { get; private set; }
+
+        public GIFFile(string name)
+        {
+            Name = name;
+            Frames = new();
+        }
 
         /// <summary>
         /// Loads the GIF file from a given stream.
@@ -52,7 +59,6 @@ namespace LevelImposter.Core
                 ReadGlobalColorTable(reader);
                 while (ReadBlock(reader)) { }
                 _pixelBuffer = null;
-                _codeTable = null;
                 IsLoaded = true;
             }
         }
@@ -83,7 +89,6 @@ namespace LevelImposter.Core
         public void Dispose()
         {
             _pixelBuffer = null;
-            _codeTable = null;
             foreach (var frame in Frames)
             {
                 if (frame.RenderedSprite?.texture != null)
@@ -128,17 +133,16 @@ namespace LevelImposter.Core
             //bool sortFlag = (packedField & 0b00001000) != 0;
             int globalColorTableSize = 1 << ((packedField & 0b00000111) + 1);
 
-            byte backgroundColorIndex = reader.ReadByte();
+            reader.ReadByte(); // Background Color Index
             reader.ReadByte(); // Pixel Aspect Ratio
 
             // GIFData
             _hasGlobalColorTable = hasGlobalColorTable;
             _globalColorTableSize = globalColorTableSize;
-            _backgroundColorIndex = backgroundColorIndex;
 
             Width = width;
             Height = height;
-            Frames = new List<GIFFrame>();
+            Frames = new();
         }
 
         /// <summary>
@@ -235,7 +239,7 @@ namespace LevelImposter.Core
                         byte subBlockSize = reader.ReadByte();
                         if (subBlockSize == 0)
                             break;
-                        reader.ReadBytes(subBlockSize); // Skip Over Data
+                        reader.BaseStream.Position += subBlockSize; // Skip Over Data
                     }
                     break;
                 default:
@@ -292,11 +296,10 @@ namespace LevelImposter.Core
                     break;
 
                 // Read Sub Block Data
-                byte[] subBlockData = reader.ReadBytes(subBlockSize);
-                byteStream.AddRange(subBlockData);
+                byteStream.AddRange(reader.ReadBytes(subBlockSize));
             }
 
-            var indexStream = DecodeLZW(byteStream.ToArray(), minCodeSize, imageWidth * imageHeight);
+            var indexStream = DecodeLZW(byteStream, minCodeSize, imageWidth * imageHeight);
 
             // GIFFrame
             GIFFrame frame = new GIFFrame()
@@ -320,15 +323,15 @@ namespace LevelImposter.Core
         }
 
         /// <summary>
-        /// Decodes the LZW encoded image data of a GIF
+        /// Decodes the LZW encoded image data of a GIF.
+        /// Takes an array of bytes and converts it into a list of codes and then to a list of color indices.
         /// </summary>
         /// <param name="byteBuffer">Raw bytes from the image block</param>
         /// <param name="minCodeSize">Minimum code size in bits</param>
-        /// <param name="expectedSize">Expected size of the index stream</param>
+        /// <param name="expectedSize">Expected size of the final index stream</param>
         /// <returns>List of color indices</returns>
-        private List<ushort> DecodeLZW(byte[] byteBuffer, byte minCodeSize, int expectedSize)
+        private List<ushort> DecodeLZW(List<byte> byteBuffer, byte minCodeSize, int expectedSize)
         {
-            BitArray bitBuffer = new BitArray(byteBuffer);  // The raw data as a bit array
             int clearCode = 1 << minCodeSize; // Code used to clear the code table
             int endOfInformationCode = clearCode + 1; // Code used to signal the end of the image data
 
@@ -336,22 +339,20 @@ namespace LevelImposter.Core
             int codeSize = minCodeSize + 1; // The size of the codes in bits
             int previousCode = -1; // The previous code
 
-            var indexStream = new List<ushort>(1 << 12); // The index stream
+            var indexStream = new List<ushort>(expectedSize); // The index stream
 
             // Initialize Code Table
-            if (_codeTable == null)
-                _codeTable = new ushort[1 << 12][];
             for (ushort k = 0; k < codeTableIndex; k++)
                 _codeTable[k] = k < clearCode ? new ushort[] { k } : new ushort[0];
 
             // Decode LZW
             int i = 0;
-            while (i + codeSize < bitBuffer.Length)
+            while (i + codeSize < byteBuffer.Count * 8)
             {
                 // Read Code
                 int code = 0;
                 for (int j = 0; j < codeSize; j++)
-                    code |= bitBuffer[i + j] ? 1 << j : 0;
+                    code |= GetBit(byteBuffer, i + j) ? 1 << j : 0;
                 i += codeSize;
 
                 // Special Codes
@@ -427,6 +428,19 @@ namespace LevelImposter.Core
         }
 
         /// <summary>
+        /// Gets a bit from a byte array.
+        /// </summary>
+        /// <param name="arr">Array of raw byte data</param>
+        /// <param name="index">Offset in bits</param>
+        /// <returns><c>true</c> if the bit is a 1, <c>false</c> otherwise</returns>
+        private bool GetBit(List<byte> arr, int index)
+        {
+            int byteIndex = index / 8;
+            int bitIndex = index % 8;
+            return (arr[byteIndex] & (1 << bitIndex)) != 0;
+        }
+
+        /// <summary>
         /// Pre-renders all frames of the GIF. Requires the GIF to be loaded.
         /// </summary>
         public void RenderAllFrames()
@@ -435,7 +449,8 @@ namespace LevelImposter.Core
         }
 
         /// <summary>
-        /// Renders a frame of the GIF. Requires the GIF to be loaded. Will result in all previous frames being rendered as well.
+        /// Renders a frame of the GIF. Requires the GIF to be loaded.
+        /// Due to how GIFs are compressed, this will result in all previous frames being rendered as well.
         /// </summary>
         /// <param name="targetFrame">The frame to render</param>
         public void RenderFrame(int frameIndex)
@@ -512,6 +527,9 @@ namespace LevelImposter.Core
                     _pixelBuffer[pixelIndex] = color;
                 }
 
+                // Free memory
+                frame.IndexStream = null;
+
                 // Apply Texture
                 texture.SetPixels(_pixelBuffer);
                 texture.Apply();
@@ -555,7 +573,6 @@ namespace LevelImposter.Core
                 sprite.hideFlags = HideFlags.DontUnloadUnusedAsset;
 
                 // Apply to frame
-                frame.IndexStream = null; // Free memory
                 frame.RenderedSprite = sprite;
             }
 
@@ -563,7 +580,6 @@ namespace LevelImposter.Core
             if (frameIndex >= Frames.Count - 1)
             {
                 _pixelBuffer = null;
-                _codeTable = null;
                 _lastGraphicsControl = null;
                 _globalColorTable = DEFAULT_COLOR_TABLE;
             }

@@ -1,4 +1,5 @@
 using HarmonyLib;
+using UnityEngine;
 
 namespace LevelImposter.Core
 {
@@ -8,23 +9,13 @@ namespace LevelImposter.Core
     [HarmonyPatch(typeof(Minigame), nameof(Minigame.Begin))]
     public static class MinigamePatch
     {
-        public static Console? LastConsole = null;
+        public static GameObject? LastConsole = null; // Set by ConsolePatch
 
         public static void Postfix(Minigame __instance)
         {
-            var currentConsole = __instance.Console ?? LastConsole;
+            var currentConsole = __instance.Console?.gameObject ?? LastConsole;
             var minigameSprites = currentConsole?.GetComponent<MinigameSprites>();
             minigameSprites?.LoadMinigame(__instance);
-
-            LastConsole = currentConsole;
-        }
-    }
-    [HarmonyPatch(typeof(MultistageMinigame), nameof(MultistageMinigame.Begin))]
-    public static class MultistageMinigamePatch
-    {
-        public static void Postfix(MultistageMinigame __instance)
-        {
-            MinigamePatch.Postfix(__instance);
         }
     }
     [HarmonyPatch(typeof(Minigame), nameof(Minigame.Close), new System.Type[0])]

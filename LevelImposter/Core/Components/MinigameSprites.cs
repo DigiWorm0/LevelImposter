@@ -3,6 +3,7 @@ using UnityEngine;
 using LevelImposter.DB;
 using Il2CppInterop.Runtime.Attributes;
 using System.Collections.Generic;
+using PowerTools;
 
 namespace LevelImposter.Core
 {
@@ -115,6 +116,15 @@ namespace LevelImposter.Core
                 }
                 LILogger.Info("Applied Fuel Props");
             }
+
+            // Telescope Task
+            bool isTelescope = _minigameProps?.isStarfieldEnabled != null;
+            if (isTelescope)
+            {
+                var starfield = minigame.transform.Find("BlackBg/starfield");
+                if (starfield != null)
+                    starfield.gameObject.SetActive(_minigameProps?.isStarfieldEnabled ?? true);
+            }
         }
 
         /// <summary>
@@ -214,6 +224,17 @@ namespace LevelImposter.Core
                     burgerMinigame.PaperToppings[toppingIndex] = sprite;
                     return false;
 
+                /* task-drill */
+                case "task-drill_btn":
+                    var buttonPaths = AssetDB.GetPaths(type);
+                    foreach (var path in buttonPaths)
+                    {
+                        var drillButton = minigame.transform.Find(path);
+                        drillButton.GetComponent<SpriteAnim>().enabled = false;
+                        drillButton.GetComponent<Animator>().enabled = false;
+                    }
+                    return true;
+
                 /* task-fans */
                 case "task-fans1_symbol_1":
                 case "task-fans1_symbol_2":
@@ -292,6 +313,37 @@ namespace LevelImposter.Core
                     minigame.Cast<BoardPassGame>().ScannerScanning = sprite;
                     return false;
 
+                /* task-telescope */
+                case "task-telescope_bg":
+                    var telescopeBG = minigame.transform.Find("BlackBg");
+                    if (telescopeBG != null)
+                    {
+                        var spriteRenderer = telescopeBG.GetComponent<SpriteRenderer>();
+                        spriteRenderer.color = Color.white;
+                        spriteRenderer.drawMode = SpriteDrawMode.Tiled;
+                        spriteRenderer.sprite = sprite;
+                    }
+                    return false;
+
+                /* task-temp */
+                case "task-temp1_btn":
+                case "task-temp2_btn":
+                case "task-temp1_btndown":
+                case "task-temp2_btndown":
+                    var isDown = type.EndsWith("down");
+                    var paths = AssetDB.GetPaths(type);
+                    foreach (var path in paths)
+                    {
+                        var button = minigame.transform.Find(path);
+                        var rolloverComponent = button.GetComponent<ButtonDownHandler>();
+                        
+                        if (isDown)
+                            rolloverComponent.DownSprite = sprite;
+                        else
+                            rolloverComponent.UpSprite = sprite;
+                    }
+                    return !isDown;
+
                 /* task-toilet */
                 case "task-toilet_plungerdown":
                     minigame.Cast<ToiletMinigame>().PlungerDown = sprite;
@@ -339,15 +391,15 @@ namespace LevelImposter.Core
                 /* task-waterjug */
                 case "task-waterjug1_btnup":
                 case "task-waterjug2_btnup":
-                    var multistageMinigame1 = minigame.Cast<MultistageMinigame>();
-                    foreach (var stage in multistageMinigame1.Stages)
-                        stage.Cast<WaterStage>().buttonUpSprite = sprite;
-                    return true;
+                    var waterStage1 = minigame.TryCast<WaterStage>();
+                    if (waterStage1 != null)
+                        waterStage1.buttonUpSprite = sprite;
+                    return false;
                 case "task-waterjug1_btndown":
                 case "task-waterjug2_btndown":
-                    var multistageMinigame2 = minigame.Cast<MultistageMinigame>();
-                    foreach (var stage in multistageMinigame2.Stages)
-                        stage.Cast<WaterStage>().buttonDownSprite = sprite;
+                    var waterStage2 = minigame.TryCast<WaterStage>();
+                    if (waterStage2 != null)
+                        waterStage2.buttonDownSprite = sprite;
                     return false;
 
                 /* task-weapons */
@@ -389,6 +441,35 @@ namespace LevelImposter.Core
                     foreach (var obj in garbageMinigame1.Objects)
                         if (obj.sprite == currentLeafPrefab.sprite)
                             obj.sprite = sprite;
+                    return false;
+
+                /* util-computer */
+                case "util-computer_folder":
+                case "util-computer_file":
+                    var computerMinigame = minigame.Cast<TaskAdderGame>();
+
+                    // Replace Prefab
+                    Sprite? oldSprite = null;
+                    if (type == "util-computer_folder")
+                    {
+                        oldSprite = computerMinigame.RootFolderPrefab.GetComponentInChildren<SpriteRenderer>().sprite;
+                        computerMinigame.RootFolderPrefab = MapUtils.ReplacePrefab(computerMinigame.RootFolderPrefab, minigame.transform);
+                        computerMinigame.RootFolderPrefab.GetComponentInChildren<SpriteRenderer>().sprite = sprite;
+                    }
+                    else
+                    {
+                        oldSprite = computerMinigame.TaskPrefab.GetComponentInChildren<SpriteRenderer>().sprite;
+                        computerMinigame.RoleButton = MapUtils.ReplacePrefab(computerMinigame.RoleButton, minigame.transform);
+                        computerMinigame.TaskPrefab = MapUtils.ReplacePrefab(computerMinigame.TaskPrefab, minigame.transform);
+                        computerMinigame.RoleButton.GetComponentInChildren<SpriteRenderer>().sprite = sprite;
+                        computerMinigame.TaskPrefab.GetComponentInChildren<SpriteRenderer>().sprite = sprite;
+                    }
+
+                    // Replace Active Sprites
+                    var spriteRenderers = minigame.GetComponentsInChildren<SpriteRenderer>(true);
+                    foreach (var spriteRenderer in spriteRenderers)
+                        if (spriteRenderer.sprite == oldSprite)
+                            spriteRenderer.sprite = sprite;
                     return false;
 
                 default:

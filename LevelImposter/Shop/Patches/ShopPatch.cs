@@ -1,4 +1,5 @@
 ﻿using HarmonyLib;
+using LevelImposter.Core;
 
 namespace LevelImposter.Shop
 {
@@ -11,8 +12,7 @@ namespace LevelImposter.Shop
     {
         public static bool Prefix(PlayerCustomizationMenu __instance)
         {
-            bool isInLobby = LobbyBehaviour.Instance != null;
-            if (isInLobby)
+            if (GameState.IsInLobby)
                 return true;
 
             UnityEngine.Object.Destroy(__instance.gameObject);

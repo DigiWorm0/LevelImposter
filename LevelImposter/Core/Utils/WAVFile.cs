@@ -111,7 +111,7 @@ namespace LevelImposter.Core
                 default:
                     // Skip unknown block (INFO, etc.)
                     int chunkSize = reader.ReadInt32();
-                    reader.ReadBytes(chunkSize);
+                    reader.BaseStream.Position += chunkSize;
                     return true;
             }
         }
@@ -137,7 +137,7 @@ namespace LevelImposter.Core
             _sampleRate = reader.ReadInt32();
 
             // Unused bytes
-            reader.ReadBytes(chunkSize - 8);
+            reader.BaseStream.Position += chunkSize - 8;
         }
 
         /// <summary>
@@ -165,6 +165,7 @@ namespace LevelImposter.Core
 
             _clip = AudioClip.Create(CLIP_NAME, _data.Length, _channelCount, _sampleRate, false);
             _clip.SetData(_data, 0);
+            _clip.hideFlags = HideFlags.HideAndDontSave;
 
             _data = null; // Free memory
         }

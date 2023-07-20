@@ -23,9 +23,9 @@ namespace LevelImposter.Shop
             if (!__instance.gameObject.active)
                 __instance.gameObject.SetActive(true);
 
-            bool isFallback = MapLoader.IsFallback;
             bool isPublished = !string.IsNullOrEmpty(currentMap.authorID);
-            bool isInLobby = LobbyBehaviour.Instance != null;
+            bool isFallback = GameState.IsFallbackMapLoaded;
+            bool isInLobby = GameState.IsInLobby;
             bool isPingDisabled = currentMap.properties.showPingIndicator ?? false;
             if (isPingDisabled && !isFallback)
                 return;

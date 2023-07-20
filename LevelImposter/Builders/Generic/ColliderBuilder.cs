@@ -1,6 +1,7 @@
 ﻿using Il2CppSystem.Collections.Generic;
 using UnityEngine;
 using LevelImposter.Core;
+using System.Linq;
 
 namespace LevelImposter.Builders
 {
@@ -9,6 +10,11 @@ namespace LevelImposter.Builders
     /// </summary>
     public class ColliderBuilder : IElemBuilder
     {
+        private static string[] SHADOW_ONLY_TYPES = new string[]
+        {
+            "util-onewaycollider"
+        };
+
         public void Build(LIElement elem, GameObject obj)
         {
             if (elem.properties.colliders == null)
@@ -17,20 +23,6 @@ namespace LevelImposter.Builders
             // Iterate through colliders
             foreach (LICollider colliderData in elem.properties.colliders)
             {
-                // PolygonCollider2D
-                if (colliderData.isSolid)
-                {
-                    PolygonCollider2D collider = obj.AddComponent<PolygonCollider2D>();
-                    collider.pathCount = 1;
-                    collider.SetPath(0, GetPoints(colliderData));
-                }
-                // EdgeCollider2D
-                else
-                {
-                    EdgeCollider2D collider = obj.AddComponent<EdgeCollider2D>();
-                    collider.SetPoints(GetPoints(colliderData));
-                }
-
                 // Shadow Object
                 if (colliderData.blocksLight)
                 {
@@ -43,6 +35,24 @@ namespace LevelImposter.Builders
 
                     EdgeCollider2D shadowCollider = shadowObj.AddComponent<EdgeCollider2D>();
                     shadowCollider.SetPoints(GetPoints(colliderData, colliderData.isSolid));
+                }
+
+                // Shadow Only
+                if (SHADOW_ONLY_TYPES.Contains(elem.type))
+                    continue;
+
+                // PolygonCollider2D
+                if (colliderData.isSolid)
+                {
+                    PolygonCollider2D collider = obj.AddComponent<PolygonCollider2D>();
+                    collider.pathCount = 1;
+                    collider.SetPath(0, GetPoints(colliderData));
+                }
+                // EdgeCollider2D
+                else
+                {
+                    EdgeCollider2D collider = obj.AddComponent<EdgeCollider2D>();
+                    collider.SetPoints(GetPoints(colliderData));
                 }
             }
         }

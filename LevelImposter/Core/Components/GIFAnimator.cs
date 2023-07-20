@@ -45,16 +45,21 @@ namespace LevelImposter.Core
         /// <param name="sprites">Array of sprites representing each frame</param>
         /// <param name="frameTimes">Array of floats representing the times each frame is visible</param>
         [HideFromIl2Cpp]
-        public void Init(LIElement element, GIFFile gifData)
+        public void Init(LIElement element, GIFFile? gifData)
         {
             _spriteRenderer = GetComponent<SpriteRenderer>();
             _gifData = gifData;
             _defaultLoopGIF = element.properties.loopGIF ?? true;
 
-            if (AUTOPLAY_BLACKLIST.Contains(element.type))
-                Stop();
+            if (LIShipStatus.Instance?.CurrentMap?.properties?.preloadAllGIFs ?? false)
+                _gifData?.RenderAllFrames();
+
+            if (_gifData?.Frames.Count == 1)
+                _spriteRenderer.sprite = _gifData.GetFrameSprite(0); // Still image
+            else if (AUTOPLAY_BLACKLIST.Contains(element.type))
+                Stop(); // Don't autoplay
             else
-                Play();
+                Play(); // Autoplay
         }
 
         /// <summary>
@@ -92,8 +97,7 @@ namespace LevelImposter.Core
 
             if (_spriteRenderer != null && _gifData != null)
             {
-                var sprite = _gifData.GetFrameSprite(reversed ? _gifData.Frames.Count - 1 : 0);
-                _spriteRenderer.sprite = sprite;
+                _spriteRenderer.sprite = _gifData.GetFrameSprite(reversed ? _gifData.Frames.Count - 1 : 0);
                 _spriteRenderer.enabled = true;
             }
         }
@@ -114,9 +118,18 @@ namespace LevelImposter.Core
             int t = 0;
             while (_isAnimating)
             {
+                // Wait for main thread
+                while (!LagLimiter.ShouldContinue(60))
+                    yield return null;
+
+                // Render sprite
                 int frame = reverse ? _gifData.Frames.Count - t - 1 : t;
                 _spriteRenderer.sprite = _gifData.GetFrameSprite(frame);
+
+                // Wait for next frame
                 yield return new WaitForSeconds(_gifData.Frames[frame].Delay);
+                
+                // Update time
                 t = (t + 1) % _gifData.Frames.Count;
                 if (t == 0 && !repeat)
                     Stop(!reverse);

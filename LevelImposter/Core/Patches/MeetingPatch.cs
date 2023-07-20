@@ -15,10 +15,26 @@ namespace LevelImposter.Core
 
         public static void Postfix([HarmonyArgument(0)] PlayerControl reporter, [HarmonyArgument(1)] GameData.PlayerInfo target)
         {
+            if (LIShipStatus.Instance == null)
+                return;
             GameObject? triggerObj = MeetingBuilder.TriggerObject;
             string triggerID = target == null ? BUTTON_TRIGGER_ID : REPORT_TRIGGER_ID;
             if (triggerObj != null)
                 LITriggerable.Trigger(triggerObj, triggerID, reporter);
+        }
+    }
+    /*
+     *      Fixes PoolablePlayer running Awake too early
+     *      when making meeting prefabs
+     */
+    [HarmonyPatch(typeof(MeetingCalledAnimation), nameof(MeetingCalledAnimation.Initialize))]
+    public static class MeetingOverlayPatch
+    {
+        public static void Prefix(MeetingCalledAnimation __instance)
+        {
+            if (LIShipStatus.Instance == null)
+                return;
+            __instance.playerParts.InitBody();
         }
     }
 }

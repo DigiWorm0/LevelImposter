@@ -8,11 +8,13 @@ namespace LevelImposter.Builders
     public class RoomBuilder : IElemBuilder
     {
         private static Dictionary<Guid, SystemTypes> _systemDB = new();
+        private static Dictionary<SystemTypes, PlainShipRoom> _roomDB = new();
         private byte _roomId = 1;
 
         public RoomBuilder()
         {
             _systemDB.Clear();
+            _roomDB.Clear();
         }
 
         public void Build(LIElement elem, GameObject obj)
@@ -40,6 +42,7 @@ namespace LevelImposter.Builders
 
             LIShipStatus.Instance.Renames.Add(systemType, obj.name);
             _systemDB.Add(elem.id, systemType);
+            _roomDB.Add(systemType, shipRoom);
         }
 
         public void PostBuild()
@@ -71,6 +74,17 @@ namespace LevelImposter.Builders
             if (element.properties.parent != null)
                 systemType = GetSystem((Guid)element.properties.parent);
             return systemType;
+        }
+
+        /// <summary>
+        /// Gets the PlainShipRoom associated with a specific SystemTypes value.
+        /// (<c>ShipStatus.FastRooms</c> is not yet loaded at the time)
+        /// </summary>
+        /// <param name="systemType">SystemTypes of the room</param>
+        /// <returns>Associated PlainShipRoom component or <c>null</c> if none found</returns>
+        public static PlainShipRoom? GetShipRoom(SystemTypes systemType)
+        {
+            return _roomDB.GetValueOrDefault(systemType);
         }
     }
 }

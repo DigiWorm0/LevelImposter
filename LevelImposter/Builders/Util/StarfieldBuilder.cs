@@ -28,6 +28,8 @@ namespace LevelImposter.Builders
 
             // Star Prefab
             GameObject starPrefab = UnityEngine.Object.Instantiate(obj);
+            starPrefab.transform.localScale = Vector3.one;
+            starPrefab.transform.localRotation = Quaternion.identity;
             LIStar prefabComp = starPrefab.AddComponent<LIStar>();
 
             int count = elem.properties.starfieldCount ?? 20;

@@ -20,7 +20,7 @@ namespace LevelImposter.Core
 
         private const int MAX_STACK_SIZE = 128;
         private static List<LITriggerable> _allTriggers = new List<LITriggerable>();
-        public static List<LITriggerable> AllTriggers => _allTriggers;
+        private static bool _shouldLog => LIShipStatus.Instance?.CurrentMap?.properties.triggerLogging ?? true;
 
         private LIElement? _sourceElem = null;
         private Guid? _sourceID => _sourceElem?.id;
@@ -51,7 +51,7 @@ namespace LevelImposter.Core
         /// <returns>TRUE iff the trigger is successful</returns>
         public static bool Trigger(GameObject obj, string triggerID, PlayerControl? orgin, int stackSize = 0)
         {
-            LITriggerable? trigger = AllTriggers.Find(t => t.gameObject == obj && t.SourceTrigger == triggerID);
+            LITriggerable? trigger = _allTriggers.Find(t => t.gameObject == obj && t.SourceTrigger == triggerID);
             if (trigger == null)
                 return false;
 
@@ -80,14 +80,15 @@ namespace LevelImposter.Core
             }
 
             // Find Triggerable
-            LITriggerable? trigger = AllTriggers.Find(t => t.SourceID == elemID && t.SourceTrigger == triggerID);
+            LITriggerable? trigger = _allTriggers.Find(t => t.SourceID == elemID && t.SourceTrigger == triggerID);
             if (trigger == null)
             {
                 LILogger.Warn("Triggered element not found");
                 return;
             }
 
-            LILogger.Msg($"[RPC] {trigger.gameObject.name} >>> {triggerID} ({orgin.name})");
+            if (_shouldLog)
+                LILogger.Msg($"[RPC] {trigger.gameObject.name} >>> {triggerID} ({orgin.name})");
             trigger.FireTrigger(orgin);
         }
 
@@ -135,10 +136,14 @@ namespace LevelImposter.Core
         /// <param name="stackSize">Size of the trigger stack</param>
         private void OnTrigger(PlayerControl? orgin, int stackSize = 0)
         {
-            string whitespace = string.Concat(Enumerable.Repeat("| ", stackSize - 1)) + "+ ";
-            LILogger.Info($"{whitespace}{gameObject.name} >>> {_sourceTrigger} ({orgin?.name})");
+            if (_shouldLog)
+            {
+                string whitespace = string.Concat(Enumerable.Repeat("| ", stackSize - 1)) + "+ ";
+                LILogger.Info($"{whitespace}{gameObject.name} >>> {_sourceTrigger} ({orgin?.name})");
+            }
             switch (_sourceTrigger)
             {
+                // Generic
                 case "enable":
                     StartComponents();
                     break;
@@ -153,10 +158,14 @@ namespace LevelImposter.Core
                     gameObject.SetActive(false);
                     StopComponents();
                     break;
+
+                // Repeat
                 case "repeat":
                     for (int i = 0; i < 8; i++)
                         Trigger(gameObject, "onRepeat " + (i + 1), orgin, stackSize + 1);
                     break;
+
+                // Random
                 case "random":
                     if (_sourceID == null)
                         return;
@@ -166,17 +175,34 @@ namespace LevelImposter.Core
                     Trigger(gameObject, triggerID, orgin, stackSize + 1);
                     _randomOffset++;
                     break;
+
+                // Timer
                 case "startTimer":
                     StartCoroutine(CoTimerTrigger(orgin, stackSize).WrapToIl2Cpp());
                     break;
+
+                // Door
                 case "open":
                     SetDoorOpen(true);
                     break;
                 case "close":
                     SetDoorOpen(false);
                     break;
+
+                // Meeting
                 case "callMeeting":
                     PlayerControl.LocalPlayer.CmdReportDeadBody(null);
+                    break;
+
+                // Playback
+                case "playonce":
+                    StartComponents(false);
+                    break;
+                case "playloop":
+                    StartComponents(true);
+                    break;
+                case "stop":
+                    StopComponents();
                     break;
             }
         }
@@ -189,18 +215,24 @@ namespace LevelImposter.Core
             AmbientSoundPlayer? ambientSound = GetComponent<AmbientSoundPlayer>();
             if (ambientSound != null)
                 ambientSound.enabled = false;
+            GIFAnimator? gifAnimator = GetComponent<GIFAnimator>();
+            if (gifAnimator != null)
+                gifAnimator.Stop();
             TriggerConsole triggerConsole = GetComponent<TriggerConsole>();
             if (triggerConsole != null)
                 triggerConsole.SetEnabled(false);
             SystemConsole sysConsole = GetComponent<SystemConsole>();
             if (sysConsole != null)
                 sysConsole.enabled = false;
+            TriggerSoundPlayer? triggerSound = GetComponent<TriggerSoundPlayer>();
+            if (triggerSound != null)
+                triggerSound.Stop();
         }
         
         /// <summary>
         /// Starts any components attatched to object
         /// </summary>
-        private void StartComponents()
+        private void StartComponents(bool loop = true)
         {
             AmbientSoundPlayer? ambientSound = GetComponent<AmbientSoundPlayer>();
             if (ambientSound != null)
@@ -208,12 +240,15 @@ namespace LevelImposter.Core
             GIFAnimator? gifAnimator = GetComponent<GIFAnimator>();
             if (gifAnimator != null)
                 gifAnimator.Play();
-            TriggerConsole triggerConsole = GetComponent<TriggerConsole>();
+            TriggerConsole? triggerConsole = GetComponent<TriggerConsole>();
             if (triggerConsole != null)
                 triggerConsole.SetEnabled(true);
-            SystemConsole sysConsole = GetComponent<SystemConsole>();
+            SystemConsole? sysConsole = GetComponent<SystemConsole>();
             if (sysConsole != null)
                 sysConsole.enabled = true;
+            TriggerSoundPlayer? triggerSound = GetComponent<TriggerSoundPlayer>();
+            if (triggerSound != null)
+                triggerSound.Play(loop);
         }
 
         /// <summary>
@@ -243,11 +278,11 @@ namespace LevelImposter.Core
         }
         public void Start()
         {
-            _destTriggerComp = AllTriggers.Find(t => _destID == t._sourceID && _destTrigger == t._sourceTrigger);
+            _destTriggerComp = _allTriggers.Find(t => _destID == t._sourceID && _destTrigger == t._sourceTrigger);
         }
         public void OnDestroy()
         {
-            _allTriggers.Clear();
+            _allTriggers.Remove(this);
             _sourceElem = null;
             _destID = null;
             _destTriggerComp = null;

@@ -4,29 +4,6 @@ using UnityEngine;
 namespace LevelImposter.Core
 {
     /*
-     *      Makes isActive & inMeeting a dependency
-     *      for Ambient Sounds to play
-     */
-    [HarmonyPatch(typeof(AmbientSoundPlayer), nameof(AmbientSoundPlayer.Dynamics))]
-    public static class SoundDynamicsPatch
-    {
-        public static bool Prefix([HarmonyArgument(0)] AudioSource source, AmbientSoundPlayer __instance)
-        {
-            if (LIShipStatus.Instance == null)
-                return true;
-
-            bool isEnabled = __instance.enabled;
-            bool inMeeting = MeetingHud.Instance != null;
-            if (!isEnabled || inMeeting)
-            {
-                source.volume = 0.0f;
-                return false;
-            }
-            return true;
-        }
-    }
-
-    /*
      *      Makes Ambient Sounds play
      *      as "Music" instead of "SFX"
      */
@@ -37,6 +14,7 @@ namespace LevelImposter.Core
         {
             if (LIShipStatus.Instance == null)
                 return true;
+
             string soundName = __instance.name + __instance.GetInstanceID().ToString();
             SoundManager.Instance.PlayDynamicSound(
                 soundName,

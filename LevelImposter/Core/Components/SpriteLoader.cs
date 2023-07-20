@@ -1,7 +1,7 @@
 ﻿using BepInEx.Unity.IL2CPP.Utils.Collections;
 using Il2CppInterop.Runtime.Attributes;
 using Il2CppInterop.Runtime.InteropTypes.Arrays;
-using LevelImposter.Shop;
+using PowerTools;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -21,21 +21,15 @@ namespace LevelImposter.Core
         {
         }
 
-        public const float MIN_FRAME_TIME = 1500.0f;
-
-        public static SpriteLoader? Instance;
+        public static SpriteLoader? Instance { get; private set; }
 
         [HideFromIl2Cpp]
         public event SpriteEventHandle? OnLoad;
         public delegate void SpriteEventHandle(LIElement elem);
 
         private Stack<SpriteData>? _spriteCache = new();
-        private Stopwatch? _renderTimer = new();
         private int _renderCount = 0;
-        private bool _shouldRender
-        {
-            get { return _renderTimer?.ElapsedMilliseconds <= MIN_FRAME_TIME; }
-        }
+        private Dictionary<string, string>? _duplicateSpriteDB = new();
 
         public int RenderCount => _renderCount;
 
@@ -57,7 +51,10 @@ namespace LevelImposter.Core
                     return spriteData;
                 }
             }
-
+            if (_duplicateSpriteDB?.ContainsKey(spriteID) == true)
+            {
+                return GetSpriteFromCache(_duplicateSpriteDB[spriteID]);
+            }
             return null;
         }
 
@@ -66,7 +63,9 @@ namespace LevelImposter.Core
         /// </summary>
         public void Clean()
         {
+            OnLoad = null;
             _spriteCache?.Clear();
+            _duplicateSpriteDB?.Clear();
         }
 
         /// <summary>
@@ -104,6 +103,7 @@ namespace LevelImposter.Core
         public void LoadSpriteAsync(LIElement element, GameObject obj)
         {
             LILogger.Info($"Loading sprite for {element}");
+            Stopwatch stopwatch = Stopwatch.StartNew();
 
             string b64 = element.properties.spriteData ?? "";
             LoadSpriteAsync(b64, (nullableSpriteData) =>
@@ -128,14 +128,16 @@ namespace LevelImposter.Core
                 {
                     GIFAnimator gifAnimator = obj.AddComponent<GIFAnimator>();
                     gifAnimator.Init(element, spriteData.GIFData);
-                    LILogger.Info($"Done loading animated sprite for {element} ({RenderCount} Left)");
+                    stopwatch.Stop();
+                    LILogger.Info($"Done loading {spriteData.GIFData.Width}x{spriteData.GIFData.Height} sprite for {element} ({RenderCount} Left) [{stopwatch.ElapsedMilliseconds}ms]");
                 }
                 else // Still Image
                 {
                     SpriteRenderer spriteRenderer = obj.GetComponent<SpriteRenderer>();
                     spriteRenderer.sprite = spriteData.Sprite;
                     Rect spriteDim = spriteData.Sprite?.rect ?? new();
-                    LILogger.Info($"Done loading {spriteDim.width}x{spriteDim.height} sprite for {element} ({RenderCount} Left)");
+                    stopwatch.Stop();
+                    LILogger.Info($"Done loading {spriteDim.width}x{spriteDim.height} sprite for {element} ({RenderCount} Left) [{stopwatch.ElapsedMilliseconds}ms]");
                 }
 
                 if (OnLoad != null)
@@ -184,7 +186,7 @@ namespace LevelImposter.Core
                 _renderCount++;
                 yield return null;
                 yield return null;
-                while (!_shouldRender)
+                while (!LagLimiter.ShouldContinue(1))
                     yield return null;
 
                 // Search Cache
@@ -197,7 +199,7 @@ namespace LevelImposter.Core
                 {
                     using (MemoryStream ms = new(imgData))
                     {
-                        var gifFile = new GIFFile();
+                        var gifFile = new GIFFile(spriteID ?? "LISprite");
                         gifFile.Load(ms);
 
                         spriteData = new()
@@ -241,7 +243,7 @@ namespace LevelImposter.Core
         private Sprite RawImageToSprite(Il2CppStructArray<byte> imgData)
         {
             // Generate Texture
-            bool pixelArtMode = LIShipStatus.Instance?.CurrentMap?.properties.pixelArtMode == true;
+            bool pixelArtMode = LIShipStatus.Instance?.CurrentMap?.properties.pixelArtMode ?? false;
             Texture2D texture = new(1, 1, TextureFormat.RGBA32, false)
             {
                 wrapMode = TextureWrapMode.Clamp,
@@ -279,6 +281,42 @@ namespace LevelImposter.Core
             return sprite;
         }
 
+        /// <summary>
+        /// Searches the current map for duplicate sprite entries. Optional, improves performance.
+        /// TODO: Optimize me! ( O(n^2) )
+        /// </summary>
+        [HideFromIl2Cpp]
+        public void SearchForDuplicateSprites(LIMap map)
+        {
+            var elems = map.elements;
+
+            // Debug Start
+            Stopwatch sw = Stopwatch.StartNew();
+            LILogger.Info($"Searching {elems.Length} elements for duplicate sprites");
+
+            // Iterate through map elements
+            _duplicateSpriteDB?.Clear();
+            for (int a = 0; a < elems.Length - 1; a++)
+            {
+                for (int b = a + 1; b < elems.Length; b++)
+                {
+                    var spriteA = elems[a].properties.spriteData;
+                    var spriteB = elems[b].properties.spriteData;
+
+                    if (_duplicateSpriteDB?.ContainsKey(elems[a].id.ToString()) == false
+                        && !string.IsNullOrEmpty(spriteA)
+                        && spriteA == spriteB)
+                    {
+                        _duplicateSpriteDB?.Add(elems[b].id.ToString(), elems[a].id.ToString());
+                    }
+                }
+            }
+
+            // Debug End
+            sw.Stop();
+            LILogger.Info($"Found {_duplicateSpriteDB?.Count} duplicate sprites in {sw.ElapsedMilliseconds}ms");
+        }
+
         public void Awake()
         {
             if (Instance == null)
@@ -290,11 +328,6 @@ namespace LevelImposter.Core
             {
                 Destroy(gameObject);
             }
-        }
-        public void Update()
-        {
-            if (_renderCount > 0)
-                _renderTimer?.Restart();
         }
 
         /// <summary>

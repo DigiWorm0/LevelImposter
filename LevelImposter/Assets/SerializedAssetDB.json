@@ -1787,6 +1787,10 @@
       "Paths": [ "Background/Dial/DialTop" ]
     },
     {
+      "ID": "sab-comms_dialshadow",
+      "Paths": [ "Background/Dial/DialShad" ]
+    },
+    {
       "ID": "sab-comms_glasspanel",
       "Paths": [ "TopCurve/comms_panelGlass", "BottomCurve/comms_panelGlass" ]
     },
@@ -2228,6 +2232,10 @@
       "Paths": [ "panel_drill_Phone" ]
     },
     {
+      "ID": "task-drill_btn",
+      "Paths": [ "panel_drill_alert_ul", "panel_drill_alert_ur", "panel_drill_alert_ll", "panel_drill_alert_lr" ]
+    },
+    {
       "ID": "task-fans1_bg",
       "Paths": [ "fans_BG" ]
     },
@@ -2253,51 +2261,51 @@
     },
     {
       "ID": "task-fuel1_bg",
-      "Paths": [ "First/Background" ]
+      "Paths": [ "Background" ]
     },
     {
       "ID": "task-fuel1_wires",
-      "Paths": [ "First/Background/engineFuel_wires" ]
+      "Paths": [ "Background/engineFuel_wires" ]
     },
     {
       "ID": "task-fuel1_btnbg",
-      "Paths": [ "First/Background/engineFuel_buttonBase" ]
+      "Paths": [ "Background/engineFuel_buttonBase" ]
     },
     {
       "ID": "task-fuel1_btn",
-      "Paths": [ "First/Background/engineFuel_buttonBase/engineFuel_Button" ]
+      "Paths": [ "Background/engineFuel_buttonBase/engineFuel_Button" ]
     },
     {
       "ID": "task-fuel1_redlight",
-      "Paths": [ "First/Background/engineFuel_buttonBase/redLight" ]
+      "Paths": [ "Background/engineFuel_buttonBase/redLight" ]
     },
     {
       "ID": "task-fuel1_greenlight",
-      "Paths": [ "First/Background/engineFuel_buttonBase/GreenLight" ]
+      "Paths": [ "Background/engineFuel_buttonBase/GreenLight" ]
     },
     {
       "ID": "task-fuel2_bg",
-      "Paths": [ "Second/Background" ]
+      "Paths": [ "Background" ]
     },
     {
       "ID": "task-fuel2_wires",
-      "Paths": [ "Second/Background/engineFuel_wires" ]
+      "Paths": [ "Background/engineFuel_wires" ]
     },
     {
       "ID": "task-fuel2_btnbg",
-      "Paths": [ "Second/Background/engineFuel_buttonBase" ]
+      "Paths": [ "Background/engineFuel_buttonBase" ]
     },
     {
       "ID": "task-fuel2_btn",
-      "Paths": [ "Second/Background/engineFuel_buttonBase/engineFuel_Button" ]
+      "Paths": [ "Background/engineFuel_buttonBase/engineFuel_Button" ]
     },
     {
       "ID": "task-fuel2_redlight",
-      "Paths": [ "Second/Background/engineFuel_buttonBase/redLight" ]
+      "Paths": [ "Background/engineFuel_buttonBase/redLight" ]
     },
     {
       "ID": "task-fuel2_greenlight",
-      "Paths": [ "Second/Background/engineFuel_buttonBase/GreenLight" ]
+      "Paths": [ "Background/engineFuel_buttonBase/GreenLight" ]
     },
     {
       "ID": "task-garbage_bg",
@@ -2562,7 +2570,11 @@
     },
     {
       "ID": "task-records2_drawerfolder",
-      "Paths": [ "Part2-Drawer/Drawer/records_folderplaced (2)", "Part2-Drawer/Drawer/records_folderplaced (2)/records_folderplaced", "Part2-Drawer/Drawer/records_folderplaced (1)", "Part2-Drawer/Drawer/records_folderplaced" ]
+      "Paths": [ "Part2-Drawer/Drawer/records_folderplaced (2)", "Part2-Drawer/Drawer/records_folderplaced (2)/records_folderplaced", "Part2-Drawer/Drawer/records_folderplaced (1)", "Part2-Drawer/Drawer/records_folderplaced", "Part2-Drawer/Drawer/Targetfolder/targetFolder" ]
+    },
+    {
+      "ID": "task-records2_drawerside",
+      "Paths": [ "Part2-Drawer/Drawer/records_fileBG/records_fileside (1)", "Part2-Drawer/Drawer/records_fileBG/records_fileside" ]
     },
     {
       "ID": "task-records2_drawerfront",
@@ -2897,11 +2909,19 @@
       "Paths": [ "panel_temp_button", "panel_temp_buttonDown" ]
     },
     {
+      "ID": "task-temp1_btndown",
+      "Paths": [ "panel_temp_button", "panel_temp_buttonDown" ]
+    },
+    {
       "ID": "task-temp2_bg",
       "Paths": [ "panel_temp_backgroundCold" ]
     },
     {
       "ID": "task-temp2_btn",
+      "Paths": [ "panel_temp_button", "panel_temp_buttonDown" ]
+    },
+    {
+      "ID": "task-temp2_btndown",
       "Paths": [ "panel_temp_button", "panel_temp_buttonDown" ]
     },
     {
@@ -3018,59 +3038,59 @@
     },
     {
       "ID": "task-waterjug1_leftoutline",
-      "Paths": [ "First/DestGauge/Outline" ]
+      "Paths": [ "DestGauge/Outline" ]
     },
     {
       "ID": "task-waterjug1_leftbg",
-      "Paths": [ "First/DestGauge/panel_water_bg" ]
+      "Paths": [ "DestGauge/panel_water_bg" ]
     },
     {
       "ID": "task-waterjug1_rightoutline",
-      "Paths": [ "First/SrcGauge/Outline" ]
+      "Paths": [ "SrcGauge/Outline" ]
     },
     {
       "ID": "task-waterjug1_rightbg",
-      "Paths": [ "First/SrcGauge/panel_water_bg" ]
+      "Paths": [ "SrcGauge/panel_water_bg" ]
     },
     {
       "ID": "task-waterjug1_btnup",
-      "Paths": [ "First/water_buttonUp" ]
+      "Paths": [ "water_buttonUp" ]
     },
     {
       "ID": "task-waterjug1_leftwaterfill",
-      "Paths": [ "First/DestGauge/BackFillColor" ]
+      "Paths": [ "DestGauge/BackFillColor" ]
     },
     {
       "ID": "task-waterjug1_rightwaterfill",
-      "Paths": [ "First/SrcGauge/BackFillColor" ]
+      "Paths": [ "SrcGauge/BackFillColor" ]
     },
     {
       "ID": "task-waterjug2_leftoutline",
-      "Paths": [ "Second/SrcGauge/Outline" ]
+      "Paths": [ "SrcGauge/Outline" ]
     },
     {
       "ID": "task-waterjug2_leftbg",
-      "Paths": [ "Second/SrcGauge/panel_water_bg" ]
+      "Paths": [ "SrcGauge/panel_water_bg" ]
     },
     {
       "ID": "task-waterjug2_rightoutline",
-      "Paths": [ "Second/DestGauge/Outline" ]
+      "Paths": [ "DestGauge/Outline" ]
     },
     {
       "ID": "task-waterjug2_rightbg",
-      "Paths": [ "Second/DestGauge/panel_water_bg" ]
+      "Paths": [ "DestGauge/panel_water_bg" ]
     },
     {
       "ID": "task-waterjug2_btnup",
-      "Paths": [ "Second/water_buttonDown" ]
+      "Paths": [ "water_buttonDown" ]
     },
     {
       "ID": "task-waterjug2_leftwaterfill",
-      "Paths": [ "Second/SrcGauge/BackFillColor" ]
+      "Paths": [ "SrcGauge/BackFillColor" ]
     },
     {
       "ID": "task-waterjug2_rightwaterfill",
-      "Paths": [ "Second/DestGauge/BackFillColor" ]
+      "Paths": [ "DestGauge/BackFillColor" ]
     },
     {
       "ID": "task-waterwheel1_bg",
@@ -3131,6 +3151,66 @@
     {
       "ID": "task-wires_wiretip2",
       "Paths": [ "RightWires/RightWireNode (1)" ]
+    },
+    {
+      "ID": "util-computer_bg",
+      "Paths": [ "Background" ]
+    },
+    {
+      "ID": "sab-doorv_bg",
+      "Paths": [ "Background" ]
+    },
+    {
+      "ID": "sab-doorv_switch",
+      "Paths": [ "panel_door_breaker", "panel_door_breaker (1)", "panel_door_breaker (2)", "panel_door_breaker (3)", "panel_door_breaker (4)", "panel_door_breaker (5)", "panel_door_breaker (6)", "panel_door_breaker (7)" ]
+    },
+    {
+      "ID": "sab-doorv_leftslider",
+      "Paths": [ "admin_sliderTop" ]
+    },
+    {
+      "ID": "sab-doorv_rightslider",
+      "Paths": [ "admin_sliderBottom" ]
+    },
+    {
+      "ID": "sab-doorv_card",
+      "Paths": [ "admin_Card" ]
+    },
+    {
+      "ID": "sab-doorv_wallet",
+      "Paths": [ "admin_Wallet" ]
+    },
+    {
+      "ID": "sab-doorv_walletmask",
+      "Paths": [ "admin_Wallet/admin_walletFront" ]
+    },
+    {
+      "ID": "sab-doorh_bg",
+      "Paths": [ "Background" ]
+    },
+    {
+      "ID": "sab-doorh_switch",
+      "Paths": [ "panel_door_breaker", "panel_door_breaker (1)", "panel_door_breaker (2)", "panel_door_breaker (3)", "panel_door_breaker (4)", "panel_door_breaker (5)", "panel_door_breaker (6)", "panel_door_breaker (7)" ]
+    },
+    {
+      "ID": "sab-doorh_leftslider",
+      "Paths": [ "admin_sliderTop" ]
+    },
+    {
+      "ID": "sab-doorh_rightslider",
+      "Paths": [ "admin_sliderBottom" ]
+    },
+    {
+      "ID": "sab-doorh_card",
+      "Paths": [ "admin_Card" ]
+    },
+    {
+      "ID": "sab-doorh_wallet",
+      "Paths": [ "admin_Wallet" ]
+    },
+    {
+      "ID": "sab-doorh_walletmask",
+      "Paths": [ "admin_Wallet/admin_walletFront" ]
     }
   ]
 }

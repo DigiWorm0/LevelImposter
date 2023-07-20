@@ -20,8 +20,9 @@ namespace LevelImposter.DB
         public static bool IsInit => Instance?._isInit == true;
 
         public const string LEVELIMPOSTER_MAP_NAME = "Random LI Map";
+        private const string SUBMERGED_MAP_GUID = "Submerged";
 
-        private string _status = "Initializing AssetDB...";
+        private string _status = "Initializing";
         private bool _isInit = false;
         private Stack<MapType> _loadedShips = new();
         private SerializedAssetDB? _serializedAssetDB;
@@ -149,6 +150,8 @@ namespace LevelImposter.DB
                     {
                         if (shipRef.Asset != null)
                             break;
+                        if (shipRef.AssetGUID == SUBMERGED_MAP_GUID)
+                            break;
                         AsyncOperationHandle op = shipRef.LoadAssetAsync<GameObject>();
                         if (!op.IsValid())
                         {
@@ -170,10 +173,11 @@ namespace LevelImposter.DB
                     }
                     else
                     {
-                        LILogger.Warn($"Could not import [{shipRef.AssetGUID}] due to missing Assets. Ignoring...");
+                        LILogger.Warn($"Could not import [{shipRef.AssetGUID}]. Ignoring...");
                     }
                 }
 
+                _status = "Finalizing";
                 _objectDB.Load();
                 _taskDB.Load();
                 _soundDB.Load();
@@ -188,7 +192,7 @@ namespace LevelImposter.DB
         /// <param name="prefab">Ship prefab to load</param>
         private void LoadShip(GameObject prefab)
         {
-            _status = $"Loading \"{prefab.name}\"...";
+            _status = $"Loading \"{prefab.name}\"";
             ShipStatus shipStatus = prefab.GetComponent<ShipStatus>();
             var mapType = prefab.name switch
             {

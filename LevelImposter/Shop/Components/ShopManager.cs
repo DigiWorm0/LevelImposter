@@ -44,9 +44,7 @@ namespace LevelImposter.Shop
         {
             ConfigAPI.Save();
 
-            bool isInLobby = LobbyBehaviour.Instance != null;
-            bool isMapLoaded = MapLoader.CurrentMap != null && !MapLoader.IsFallback;
-            if (isInLobby && !isMapLoaded && _shouldRegenerateFallback)
+            if (GameState.IsInLobby && !GameState.IsCustomMapLoaded && _shouldRegenerateFallback)
                 MapSync.RegenerateFallbackID();
 
             DestroyableSingleton<TransitionFade>.Instance.DoTransitionFade(gameObject, null, (Action)OnClose);
@@ -273,10 +271,16 @@ namespace LevelImposter.Shop
         private IEnumerator CoWaitForAssetDB()
         {
             {
+                string? currentStatusText = null;
                 SetOverlayEnabled(true);
-                SetOverlayText("Loading AssetDB...");
                 while (!AssetDB.IsInit)
+                {
+                    if (currentStatusText != AssetDB.Instance?.Status)
+                        SetOverlayText($"<b>Loading AssetDB...</b>\n{AssetDB.Instance?.Status}");
+                    currentStatusText = AssetDB.Instance?.Status;
                     yield return null;
+
+                }
                 SetOverlayEnabled(false);
             }
         }

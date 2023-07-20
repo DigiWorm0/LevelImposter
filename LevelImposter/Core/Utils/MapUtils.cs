@@ -30,15 +30,50 @@ namespace LevelImposter.Core
         /// <returns>New array with value appended</returns>
         public static Il2CppReferenceArray<T> AddToArr<T>(Il2CppReferenceArray<T> arr, T value) where T : Il2CppObjectBase
         {
-            List<T> list = new(arr);
-            list.Add(value);
+            List<T> list = new(arr)
+            {
+                value
+            };
             return list.ToArray();
         }
         public static Il2CppStringArray AddToArr(Il2CppStringArray arr, string value)
         {
-            List<string> list = new(arr);
-            list.Add(value);
+            List<string> list = new(arr)
+            {
+                value
+            };
             return list.ToArray();
+        }
+
+        /// <summary>
+        /// Replaces a prefab with a new, mutable copy
+        /// </summary>
+        /// <param name="oldPrefab">Old, immutable prefab</param>
+        /// <param name="parent">Parent (Must be destroyed on finish)</param>
+        /// <returns>New, mutable prefab</returns>
+        public static GameObject ReplacePrefab(GameObject oldPrefab, Transform parent)
+        {
+            var newPrefab = UnityEngine.Object.Instantiate(oldPrefab, parent);
+            newPrefab.SetActive(false);
+            newPrefab.name = oldPrefab.name;
+            return newPrefab;
+        }
+
+        /// <summary>
+        /// Replaces a prefab with a new, mutable copy
+        /// </summary>
+        /// <param name="oldPrefab">Old, immutable prefab</param>
+        /// <param name="parent">Parent (Must be destroyed on finish)</param>
+        /// <returns>New, mutable prefab</returns>
+        public static T ReplacePrefab<T>(T oldPrefab, Transform parent) where T : Component
+        {
+            var inactiveParent = new GameObject();
+            inactiveParent.SetActive(false);
+            inactiveParent.transform.SetParent(parent);
+
+            var newPrefab = UnityEngine.Object.Instantiate(oldPrefab, inactiveParent.transform);
+            newPrefab.name = oldPrefab.name;
+            return newPrefab;
         }
 
         /// <summary>
@@ -151,6 +186,34 @@ namespace LevelImposter.Core
             if (PlayerControl.LocalPlayer == null)
                 return false;
             return obj == PlayerControl.LocalPlayer.gameObject;
+        }
+
+        /// <summary>
+        /// Builds a 2D mesh with the given width and height
+        /// </summary>
+        /// <param name="width">Width in units</param>
+        /// <param name="height">Height in units</param>
+        /// <returns>Resulting Mesh object</returns>
+        public static Mesh Build2DMesh(float width, float height)
+        {
+            var mesh = new Mesh();
+            mesh.vertices = new Vector3[4]
+            {
+                new Vector3(-width / 2, -height / 2, 0),
+                new Vector3(width / 2, -height / 2, 0),
+                new Vector3(-width / 2, height / 2, 0),
+                new Vector3(width / 2, height / 2, 0)
+            };
+            mesh.triangles = new int[] { 0, 2, 1, 2, 3, 1 };
+            mesh.uv = new Vector2[]
+            {
+                new Vector2(0, 0),
+                new Vector2(1, 0),
+                new Vector2(0, 1),
+                new Vector2(1, 1)
+            };
+            mesh.RecalculateNormals();
+            return mesh;
         }
 
         /// <summary>
