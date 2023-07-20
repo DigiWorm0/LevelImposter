@@ -35,6 +35,7 @@ namespace LevelImposter.Core
     /// Replaces the "CheckWalls" check from
     /// a Shadow Mask to an Object Mask
     /// </summary>
+    /*
     [HarmonyPatch(typeof(Console), nameof(Console.CanUse))]
     public static class HorsePatch
     {
@@ -58,5 +59,5 @@ namespace LevelImposter.Core
                 false
             );
         }
-    }
+    }*/
 }
