@@ -2570,7 +2570,11 @@
     },
     {
       "ID": "task-records2_drawerfolder",
-      "Paths": [ "Part2-Drawer/Drawer/records_folderplaced (2)", "Part2-Drawer/Drawer/records_folderplaced (2)/records_folderplaced", "Part2-Drawer/Drawer/records_folderplaced (1)", "Part2-Drawer/Drawer/records_folderplaced" ]
+      "Paths": [ "Part2-Drawer/Drawer/records_folderplaced (2)", "Part2-Drawer/Drawer/records_folderplaced (2)/records_folderplaced", "Part2-Drawer/Drawer/records_folderplaced (1)", "Part2-Drawer/Drawer/records_folderplaced", "Part2-Drawer/Drawer/Targetfolder/targetFolder" ]
+    },
+    {
+      "ID": "task-records2_drawerside",
+      "Paths": [ "Part2-Drawer/Drawer/records_fileBG/records_fileside (1)", "Part2-Drawer/Drawer/records_fileBG/records_fileside" ]
     },
     {
       "ID": "task-records2_drawerfront",
