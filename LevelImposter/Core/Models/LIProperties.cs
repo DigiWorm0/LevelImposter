@@ -24,6 +24,9 @@ namespace LevelImposter.Core
         public LIColor? color { get; set; }
         public bool? loopGIF { get; set; }
 
+        // One-Way Colliders
+        public bool? isImposterIgnored { get; set; }
+
         // Scroll
         public float? scrollingXSpeed { get; set; }
         public float? scrollingYSpeed { get; set; }
