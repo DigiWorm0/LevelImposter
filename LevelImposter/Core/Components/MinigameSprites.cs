@@ -3,6 +3,7 @@ using UnityEngine;
 using LevelImposter.DB;
 using Il2CppInterop.Runtime.Attributes;
 using System.Collections.Generic;
+using PowerTools;
 
 namespace LevelImposter.Core
 {
@@ -222,6 +223,17 @@ namespace LevelImposter.Core
                             paperSlot.sprite = sprite;
                     burgerMinigame.PaperToppings[toppingIndex] = sprite;
                     return false;
+
+                /* task-drill */
+                case "task-drill_btn":
+                    var buttonPaths = AssetDB.GetPaths(type);
+                    foreach (var path in buttonPaths)
+                    {
+                        var drillButton = minigame.transform.Find(path);
+                        drillButton.GetComponent<SpriteAnim>().enabled = false;
+                        drillButton.GetComponent<Animator>().enabled = false;
+                    }
+                    return true;
 
                 /* task-fans */
                 case "task-fans1_symbol_1":

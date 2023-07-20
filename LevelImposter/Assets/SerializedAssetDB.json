@@ -1787,6 +1787,10 @@
       "Paths": [ "Background/Dial/DialTop" ]
     },
     {
+      "ID": "sab-comms_dialshadow",
+      "Paths": [ "Background/Dial/DialShad" ]
+    },
+    {
       "ID": "sab-comms_glasspanel",
       "Paths": [ "TopCurve/comms_panelGlass", "BottomCurve/comms_panelGlass" ]
     },
@@ -2226,6 +2230,10 @@
     {
       "ID": "task-drill_bgoutline",
       "Paths": [ "panel_drill_Phone" ]
+    },
+    {
+      "ID": "task-drill_btn",
+      "Paths": [ "panel_drill_alert_ul", "panel_drill_alert_ur", "panel_drill_alert_ll", "panel_drill_alert_lr" ]
     },
     {
       "ID": "task-fans1_bg",
