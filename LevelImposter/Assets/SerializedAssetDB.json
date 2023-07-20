@@ -2905,11 +2905,19 @@
       "Paths": [ "panel_temp_button", "panel_temp_buttonDown" ]
     },
     {
+      "ID": "task-temp1_btndown",
+      "Paths": [ "panel_temp_button", "panel_temp_buttonDown" ]
+    },
+    {
       "ID": "task-temp2_bg",
       "Paths": [ "panel_temp_backgroundCold" ]
     },
     {
       "ID": "task-temp2_btn",
+      "Paths": [ "panel_temp_button", "panel_temp_buttonDown" ]
+    },
+    {
+      "ID": "task-temp2_btndown",
       "Paths": [ "panel_temp_button", "panel_temp_buttonDown" ]
     },
     {

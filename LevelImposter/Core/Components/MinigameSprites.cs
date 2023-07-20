@@ -325,6 +325,25 @@ namespace LevelImposter.Core
                     }
                     return false;
 
+                /* task-temp */
+                case "task-temp1_btn":
+                case "task-temp2_btn":
+                case "task-temp1_btndown":
+                case "task-temp2_btndown":
+                    var isDown = type.EndsWith("down");
+                    var paths = AssetDB.GetPaths(type);
+                    foreach (var path in paths)
+                    {
+                        var button = minigame.transform.Find(path);
+                        var rolloverComponent = button.GetComponent<ButtonDownHandler>();
+                        
+                        if (isDown)
+                            rolloverComponent.DownSprite = sprite;
+                        else
+                            rolloverComponent.UpSprite = sprite;
+                    }
+                    return !isDown;
+
                 /* task-toilet */
                 case "task-toilet_plungerdown":
                     minigame.Cast<ToiletMinigame>().PlungerDown = sprite;
