@@ -29,7 +29,7 @@ namespace LevelImposter.Core
 
         private Stack<SpriteData>? _spriteCache = new();
         private int _renderCount = 0;
-        private Dictionary<string, string>? _duplicateSpriteDB = new();
+        private Dictionary<string, string>? _duplicateSpriteDB = null;
 
         public int RenderCount => _renderCount;
 
@@ -65,7 +65,7 @@ namespace LevelImposter.Core
         {
             OnLoad = null;
             _spriteCache?.Clear();
-            _duplicateSpriteDB?.Clear();
+            _duplicateSpriteDB = null;
         }
 
         /// <summary>
@@ -209,6 +209,7 @@ namespace LevelImposter.Core
                             GIFData = gifFile
                         };
                         AddSpriteToCache(spriteData);
+                        GCHandler.Register(spriteData);
                     }
                 }
                 else
@@ -220,8 +221,8 @@ namespace LevelImposter.Core
                     };
                     spriteData.Sprite.hideFlags = HideFlags.DontUnloadUnusedAsset;
                     AddSpriteToCache(spriteData);
+                    GCHandler.Register(spriteData);
                 }
-                GCHandler.Register(spriteData);
 
                 // Output
                 _renderCount--;
@@ -288,14 +289,17 @@ namespace LevelImposter.Core
         [HideFromIl2Cpp]
         public void SearchForDuplicateSprites(LIMap map)
         {
-            var elems = map.elements;
+            // Already Loaded
+            if (_duplicateSpriteDB != null)
+                return;
 
             // Debug Start
+            var elems = map.elements;
             Stopwatch sw = Stopwatch.StartNew();
             LILogger.Info($"Searching {elems.Length} elements for duplicate sprites");
 
             // Iterate through map elements
-            _duplicateSpriteDB?.Clear();
+            _duplicateSpriteDB = new();
             for (int a = 0; a < elems.Length - 1; a++)
             {
                 for (int b = a + 1; b < elems.Length; b++)

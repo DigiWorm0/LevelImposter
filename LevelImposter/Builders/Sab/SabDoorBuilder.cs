@@ -99,7 +99,7 @@ namespace LevelImposter.Builders
                 doorComponent = obj.AddComponent<AutoOpenDoor>();
                 shipStatus.Systems[SystemTypes.Doors] = new AutoDoorsSystemType().Cast<ISystemType>();
             }
-            doorComponent.Room = RoomBuilder.GetParentOrDefault(elem);
+            doorComponent.Room = isSpecialDoor ? 0 : RoomBuilder.GetParentOrDefault(elem);
             doorComponent.Id = _doorId++;
             doorComponent.myCollider = dummyCollider;
             doorComponent.animator = spriteAnim;

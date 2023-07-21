@@ -389,7 +389,7 @@ namespace LevelImposter.Core
             Instance = null;
             
             // Wipe Cache (Freeplay Only)
-            if (GameState.IsInFreeplay)
+            if (GameState.IsInFreeplay && LIConstants.FREEPLAY_FLUSH_CACHE)
                 GCHandler.Clean();
         }
     }
