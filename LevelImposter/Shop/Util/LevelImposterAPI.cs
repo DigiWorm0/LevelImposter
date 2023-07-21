@@ -136,7 +136,7 @@ namespace LevelImposter.Shop
                     }
                     catch (Exception e)
                     {
-                        onError(e.ToString());
+                        onError(e.Message);
                     }
                 }, onError);
             }, onError);

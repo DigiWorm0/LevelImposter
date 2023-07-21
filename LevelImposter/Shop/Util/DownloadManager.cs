@@ -12,6 +12,7 @@ namespace LevelImposter.Shop
     {
         private static List<PlayerControl> _playersDownloading = new();
         private static string _downloadError = null;
+        private static int _downloadPercent = 0;
 
         public static bool CanStart
         {
@@ -76,6 +77,19 @@ namespace LevelImposter.Shop
             return false;
         }
 
+        /// <summary>
+        /// Sets the download progress
+        /// </summary>
+        /// <param name="percent">Progress between 0 and 1 (inclusive)</param>
+        public static void SetProgress(float percent)
+        {
+            _downloadPercent = (int)(percent * 100);
+        }
+
+        /// <summary>
+        /// Sets the error text
+        /// </summary>
+        /// <param name="error">Text to display on error</param>
         public static void SetError(string error)
         {
             _downloadError = error;
@@ -88,9 +102,9 @@ namespace LevelImposter.Shop
         public static string GetStartText()
         {
             if (_downloadError != null)
-                return $"<size=4><color=red>{_downloadError}</color></size>";
+                return $"<size=4><color=red>Error Downloading Map: {_downloadError}</color></size>\n<size=3><color=red>Try rejoining the lobby or downloading the map manually.</color></size>";
             else if (IsDownloading())
-                return $"<size=4><color=#1a95d8>Downloading map...</color></size>";
+                return $"<size=4><color=#1a95d8>Downloading map... </color>({_downloadPercent}%)</size>";
             else if (_playersDownloading.Count > 1)
                 return $"<size=4><color=#1a95d8>Waiting on </color>{_playersDownloading.Count}<color=#1a95d8> players to download map...</color></size>";
             else if (_playersDownloading.Count == 1)
@@ -104,6 +118,7 @@ namespace LevelImposter.Shop
         /// </summary>
         public static void StartDownload()
         {
+            _downloadPercent = 0;
             MapUtils.WaitForPlayer(() =>
             {
                 RPCDownload(PlayerControl.LocalPlayer, false);
@@ -115,6 +130,7 @@ namespace LevelImposter.Shop
         /// </summary>
         public static void StopDownload()
         {
+            _downloadPercent = 0;
             MapUtils.WaitForPlayer(() =>
             {
                 RPCDownload(PlayerControl.LocalPlayer, true);

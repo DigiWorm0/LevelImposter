@@ -122,22 +122,27 @@ namespace LevelImposter.Shop
                 LILogger.Notify("<color=#1a95d8>Downloading map, please wait...</color>");
                 MapLoader.UnloadMap();
                 DownloadManager.StartDownload();
-                LevelImposterAPI.DownloadMap(mapID, null, (LIMap map) =>
-                {
-                    MapFileCache.Save(map);
-                    if (_activeDownloadingID == mapID)
+                LevelImposterAPI.DownloadMap(
+                    mapID,
+                    DownloadManager.SetProgress,
+                    (LIMap map) =>
                     {
-                        MapLoader.LoadMap(map, isFallback);
-                        DownloadManager.StopDownload();
-                        LILogger.Notify("<color=#1a95d8>Download finished!</color>");
+                        MapFileCache.Save(map);
+                        if (_activeDownloadingID == mapID)
+                        {
+                            MapLoader.LoadMap(map, isFallback);
+                            DownloadManager.StopDownload();
+                            LILogger.Notify("<color=#1a95d8>Download finished!</color>");
+                            _activeDownloadingID = null;
+                            // TODO: Add map to local cache folder
+                        }
+                    },
+                    (string error) => {
+                        if (_activeDownloadingID == mapID)
+                            DownloadManager.SetError(error);
                         _activeDownloadingID = null;
-                        // TODO: Add map to local cache folder
                     }
-                }, (string error) => {
-                    if (_activeDownloadingID == mapID)
-                        DownloadManager.SetError(error);
-                    _activeDownloadingID = null;
-                });
+                );
             }
         }
 
