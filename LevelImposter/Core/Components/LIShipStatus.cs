@@ -125,6 +125,7 @@ namespace LevelImposter.Core
             }).Cast<ISystemType>());
 
             _renames.Clear();
+            SystemDistributor.Reset();
         }
 
         /// <summary>

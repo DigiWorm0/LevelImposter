@@ -2,6 +2,8 @@
 using LevelImposter.DB;
 using PowerTools;
 using LevelImposter.Core;
+using System.Collections.Generic;
+using System;
 
 namespace LevelImposter.Builders
 {
@@ -10,6 +12,13 @@ namespace LevelImposter.Builders
         private const string OPEN_SOUND_NAME = "doorOpen";
         private const string CLOSE_SOUND_NAME = "doorClose";
         private int _doorId = 0;
+        private List<Guid>? _specialDoorIDs = null;
+        private static Dictionary<Guid, PlainDoor> _doorDB = new();
+
+        public SabDoorBuilder()
+        {
+            _doorDB.Clear();
+        }
 
         public void Build(LIElement elem, GameObject obj)
         {
@@ -20,6 +29,24 @@ namespace LevelImposter.Builders
             var shipStatus = LIShipStatus.Instance?.ShipStatus;
             if (shipStatus == null)
                 throw new MissingShipException();
+
+            // Special Doors
+            if (_specialDoorIDs == null)
+            {
+                _specialDoorIDs = new();
+                var mapElems = LIShipStatus.Instance?.CurrentMap?.elements;
+                if (mapElems == null)
+                    throw new MissingShipException();
+
+                foreach (var mapElem in mapElems)
+                {
+                    if (mapElem.properties.doorA != null)
+                        _specialDoorIDs.Add(mapElem.properties.doorA.Value);
+                    if (mapElem.properties.doorB != null)
+                        _specialDoorIDs.Add(mapElem.properties.doorB.Value);
+                }
+            }
+            bool isSpecialDoor = _specialDoorIDs.Contains(elem.id);
 
             // Prefab
             var prefab = AssetDB.GetObject(elem.type);
@@ -62,7 +89,7 @@ namespace LevelImposter.Builders
             var doorType = elem.properties.doorType;
             bool isManualDoor = doorType == "polus" || doorType == "airship";
             PlainDoor doorComponent;
-            if (isManualDoor)
+            if (isManualDoor || isSpecialDoor)
             {
                 doorComponent = obj.AddComponent<PlainDoor>();
                 shipStatus.Systems[SystemTypes.Doors] = new DoorsSystemType().Cast<ISystemType>();
@@ -78,7 +105,10 @@ namespace LevelImposter.Builders
             doorComponent.animator = spriteAnim;
             doorComponent.OpenSound = prefabDoor.OpenSound;
             doorComponent.CloseSound = prefabDoor.CloseSound;
-            shipStatus.AllDoors = MapUtils.AddToArr(shipStatus.AllDoors, doorComponent);
+
+            _doorDB.Add(elem.id, doorComponent);
+            if (!isSpecialDoor)
+                shipStatus.AllDoors = MapUtils.AddToArr(shipStatus.AllDoors, doorComponent);
 
             // Sound
             LISound? openSound = MapUtils.FindSound(elem.properties.sounds, OPEN_SOUND_NAME);
@@ -98,7 +128,7 @@ namespace LevelImposter.Builders
 
             // Console
             bool isInteractable = elem.properties.isDoorInteractable ?? true;
-            if (isManualDoor && isInteractable)
+            if (isManualDoor && isInteractable && !isSpecialDoor)
             {
                 // Prefab
                 var prefab2 = AssetDB.GetObject($"sab-door-{doorType}"); // "sab-door-polus" or "sab-door-airship"
@@ -121,5 +151,15 @@ namespace LevelImposter.Builders
         }
 
         public void PostBuild() {}
+
+        /// <summary>
+        /// Gets a door component by its element ID.
+        /// </summary>
+        /// <param name="elementID">Element ID of the door object</param>
+        /// <returns><c>PlainDoor</c> component of the object or <c>null</c> if not found</returns>
+        public static PlainDoor? GetDoor(Guid elementID)
+        {
+            return _doorDB.GetValueOrDefault(elementID);
+        }
     }
 }

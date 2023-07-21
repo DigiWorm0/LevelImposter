@@ -28,6 +28,7 @@ namespace LevelImposter.Builders
             new PhysicsObjectBuilder(),
             new MeetingBuilder(),
             new OneWayColliderBuilder(),
+            new DecontaminationBuilder(),
 
             new SabBuilder(),
             new SabConsoleBuilder(),

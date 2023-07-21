@@ -21,17 +21,15 @@ namespace LevelImposter.Builders
         {
             if (elem.type != "util-room")
                 return;
+
+            // ShipStatus
             if (LIShipStatus.Instance == null)
                 throw new MissingShipException();
 
-            SystemTypes systemType;
-            do
-            {
-                systemType = (SystemTypes)_roomId;
-                _roomId++;
-            }
-            while (systemType == SystemTypes.LowerEngine || systemType == SystemTypes.UpperEngine);
+            // Pick a new System
+            SystemTypes systemType = SystemDistributor.GetNewSystemType();
 
+            // Plain Ship ROom
             PlainShipRoom shipRoom = obj.AddComponent<PlainShipRoom>();
             shipRoom.RoomId = systemType;
             shipRoom.roomArea = obj.GetComponentInChildren<Collider2D>();
@@ -40,7 +38,10 @@ namespace LevelImposter.Builders
             else if ((elem.properties.isRoomAdminVisible ?? true) || (elem.properties.isRoomNameVisible ?? true))
                 LILogger.Warn($"{shipRoom.name} is missing a collider");
 
+            // Rename Room Name
             LIShipStatus.Instance.Renames.Add(systemType, obj.name);
+
+            // Add to DB
             _systemDB.Add(elem.id, systemType);
             _roomDB.Add(systemType, shipRoom);
         }

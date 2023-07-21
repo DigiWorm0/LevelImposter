@@ -71,6 +71,11 @@
       "Path": "HallwayMain/ladder_electrical"
     },
     {
+      "ID": "util-decontamination",
+      "Map": 2,
+      "Path": "LowerDecon"
+    },
+    {
       "ID": "util-platform",
       "Map": 4,
       "Path": "GapRoom/Platform"

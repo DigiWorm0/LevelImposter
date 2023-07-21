@@ -27,6 +27,10 @@ namespace LevelImposter.Core
         // One-Way Colliders
         public bool? isImposterIgnored { get; set; }
 
+        // Decontamination
+        public Guid? doorA { get; set; }
+        public Guid? doorB { get; set; }
+
         // Scroll
         public float? scrollingXSpeed { get; set; }
         public float? scrollingYSpeed { get; set; }
