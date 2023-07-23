@@ -164,7 +164,7 @@ namespace LevelImposter.Shop
                     Sprite? sprite = spriteData.Sprite;
                     if (sprite != null)
                         callback(sprite);
-                }, metadata.id);
+                }, metadata.id, null);
             }, null);
         }
     }

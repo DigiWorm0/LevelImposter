@@ -42,7 +42,8 @@ namespace LevelImposter.Builders
                     (spriteData) => {
                         LoadMeetingBackground(elem, spriteData);
                     },
-                    elem.id.ToString()
+                    elem.id.ToString(),
+                    null
                 );
             }
 

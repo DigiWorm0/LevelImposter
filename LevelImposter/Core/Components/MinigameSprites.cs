@@ -26,6 +26,17 @@ namespace LevelImposter.Core
             { "task-burger_paperonion", 4 },
             { "task-burger_papertomato", 5 }
         };
+        private readonly Dictionary<string, Vector2> PIVOTS = new()
+        {
+            { "task-toilet_plungerup", new Vector2(0.5f, 0.95f) },
+            { "task-toilet_plungerdown", new Vector2(0.54f, 0.65f) },
+            { "task-vending_item_1", new Vector2(0.5f, 0) },
+            { "task-vending_item_2", new Vector2(0.5f, 0) },
+            { "task-vending_item_3", new Vector2(0.5f, 0) },
+            { "task-vending_item_4", new Vector2(0.5f, 0) },
+            { "task-vending_item_5", new Vector2(0.5f, 0) },
+            { "task-vending_item_6", new Vector2(0.5f, 0) },
+        };
 
         private LIMinigameSprite[]? _minigameDataArr = null;
         private LIMinigameProps? _minigameProps = null;
@@ -58,9 +69,15 @@ namespace LevelImposter.Core
                     return;
                 foreach (LIMinigameSprite minigameData in _minigameDataArr)
                 {
-                    SpriteLoader.Instance?.LoadSpriteAsync(minigameData.spriteData, (spriteData) => {
-                        LoadMinigameSprite(minigame, minigameData.type, spriteData?.Sprite);
-                    }, minigameData.id.ToString());
+                    Vector2? pivot = PIVOTS.ContainsKey(minigameData.type) ? PIVOTS[minigameData.type] : null;
+                    SpriteLoader.Instance?.LoadSpriteAsync(
+                        minigameData.spriteData,
+                        (spriteData) => {
+                            LoadMinigameSprite(minigame, minigameData.type, spriteData?.Sprite);
+                        },
+                        minigameData.id.ToString(),
+                        pivot
+                    );
                 }
             }
             catch (Exception e)
@@ -365,12 +382,7 @@ namespace LevelImposter.Core
                     // Find & update any slots
                     foreach (var vendingSlot in vendingMinigame1.Slots)
                         if (vendingSlot.DrinkImage.sprite == currentVendingSprite1 && sprite != null)
-                        {
-                            // Align Object with Base of Vending Slot
-                            float yOffset = (sprite.textureRect.height / 2) / sprite.pixelsPerUnit - 0.01f;
-                            vendingSlot.DrinkImage.transform.position += new Vector3(0, yOffset);
                             vendingSlot.DrinkImage.sprite = sprite;
-                        }
                     vendingMinigame1.Drinks[vendingIndex1] = sprite;
                     return false;
                 case "task-vending_drawing_1":

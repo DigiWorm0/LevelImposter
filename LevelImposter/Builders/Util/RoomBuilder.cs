@@ -9,7 +9,6 @@ namespace LevelImposter.Builders
     {
         private static Dictionary<Guid, SystemTypes> _systemDB = new();
         private static Dictionary<SystemTypes, PlainShipRoom> _roomDB = new();
-        private byte _roomId = 1;
 
         public RoomBuilder()
         {
@@ -51,7 +50,6 @@ namespace LevelImposter.Builders
             if (LIShipStatus.Instance == null)
                 throw new MissingShipException();
             LIShipStatus.Instance.Renames.Add((SystemTypes)0, "Default Room");
-            _roomId = 1;
         }
 
         /// <summary>
