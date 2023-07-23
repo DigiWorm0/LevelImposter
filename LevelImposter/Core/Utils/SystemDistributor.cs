@@ -74,6 +74,7 @@ namespace LevelImposter.Core
         public static void Reset()
         {
             _systemID = 1;
+            _deconID = 0;
         }
     }
 }

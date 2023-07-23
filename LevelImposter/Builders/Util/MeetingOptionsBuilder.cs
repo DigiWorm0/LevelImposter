@@ -3,15 +3,15 @@ using LevelImposter.Core;
 
 namespace LevelImposter.Builders
 {
-    class MeetingBuilder : IElemBuilder
+    class MeetingOptionsBuilder : IElemBuilder
     {
-        public static GameObject? TriggerObject = null;
+        public static GameObject? TriggerObject { get; private set; }
 
         public const string REPORT_SOUND_NAME = "meetingReportStinger";
         public const string BUTTON_SOUND_NAME = "meetingButtonStinger";
 
 
-        public MeetingBuilder()
+        public MeetingOptionsBuilder()
         {
             TriggerObject = null;
         }
@@ -29,7 +29,7 @@ namespace LevelImposter.Builders
             // Singleton
             if (TriggerObject != null)
             {
-                LILogger.Warn("Only 1 meeting-util object can be placed per map");
+                LILogger.Warn("Only 1 util-meeting object can be placed per map");
                 return;
             }
             TriggerObject = obj;
