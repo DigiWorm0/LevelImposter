@@ -52,6 +52,13 @@ namespace LevelImposter.Builders
         public static byte RecordsCount => _recordsCount;
         public static byte WiresCount => _wiresCount;
 
+        public static byte? TowelPickupCount { get; private set; }
+
+        public TaskConsoleBuilder()
+        {
+            TowelPickupCount = null;
+        }
+
         /// <summary>
         /// Constructs a Console component for an LIElement, GameObject, and prefab
         /// </summary>
@@ -88,6 +95,7 @@ namespace LevelImposter.Builders
                 TowelTaskConsole origSpecialConsole = prefabConsole.Cast<TowelTaskConsole>();
 
                 specialConsole.useSound = origSpecialConsole.useSound;
+                TowelPickupCount = elem.properties.towelPickupCount != null ? (byte)elem.properties.towelPickupCount : null;
             }
             else
             {

@@ -27,6 +27,9 @@ namespace LevelImposter.Core
         // One-Way Colliders
         public bool? isImposterIgnored { get; set; }
 
+        // Towels
+        public float? towelPickupCount { get; set; }
+
         // Decontamination
         public Guid? doorA { get; set; }
         public Guid? doorB { get; set; }
