@@ -13,8 +13,21 @@ namespace LevelImposter.Core
 
         public static void Postfix(Minigame __instance)
         {
+            if (LIShipStatus.Instance == null)
+                return;
+
+            // Get Component
             var currentConsole = __instance.Console?.gameObject ?? LastConsole;
             var minigameSprites = currentConsole?.GetComponent<MinigameSprites>();
+
+            // Handle Doors
+            if (minigameSprites == null)
+            {
+                var doorConsole = currentConsole?.GetComponent<DoorConsole>();
+                minigameSprites = doorConsole?.MyDoor?.GetComponent<MinigameSprites>();
+            }
+
+            // Load Minigame
             minigameSprites?.LoadMinigame(__instance);
         }
     }
