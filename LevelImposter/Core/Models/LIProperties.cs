@@ -33,6 +33,7 @@ namespace LevelImposter.Core
         // Decontamination
         public Guid? doorA { get; set; }
         public Guid? doorB { get; set; }
+        public float? deconDuration { get; set; }
 
         // Scroll
         public float? scrollingXSpeed { get; set; }

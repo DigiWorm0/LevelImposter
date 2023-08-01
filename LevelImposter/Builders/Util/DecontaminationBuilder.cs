@@ -8,6 +8,8 @@ namespace LevelImposter.Builders
 {
     class DecontaminationBuilder : IElemBuilder
     {
+        private const string DECONTAM_SOUND_NAME = "decontamSound";
+
         private Dictionary<Guid, DeconSystem> _deconSystemDB = new();
         private Dictionary<Guid, LIElement> _deconElemDB = new();
 
@@ -33,6 +35,12 @@ namespace LevelImposter.Builders
             deconSystem.RoomArea = obj.GetComponent<Collider2D>();
             deconSystem.Particles = new(0);
             deconSystem.TargetSystem = SystemDistributor.GetNewDeconSystemType();
+            deconSystem.DeconTime = elem.properties.deconDuration ?? 3.0f;
+
+            // Sound
+            var deconSound = MapUtils.FindSound(elem.properties.sounds, DECONTAM_SOUND_NAME);
+            if (deconSound != null)
+                deconSystem.SpraySound = WAVFile.Load(deconSound.data);
 
             _deconSystemDB.Add(elem.id, deconSystem);
             _deconElemDB.Add(elem.id, elem);
@@ -79,12 +87,12 @@ namespace LevelImposter.Builders
             // GameObject
             GameObject doorConsole = new GameObject("DoorConsole");
             doorConsole.transform.SetParent(door.transform);
-            var offset = new Vector3(0.2f, 0.2f, 0); // TODO: Customize offset
-            doorConsole.transform.localPosition = isInner ? offset : -offset;
+            var offset = (door.transform.position - deconSystem.transform.position).normalized * 0.2f;
+            doorConsole.transform.localPosition = isInner ? -offset : offset;
 
-            // Collider
-            var doorCollider = doorConsole.AddComponent<CircleCollider2D>();
-            doorCollider.isTrigger = true;
+            // Console Collider
+            var consoleCollider = doorConsole.AddComponent<CircleCollider2D>();
+            consoleCollider.isTrigger = true;
 
             // DeconControl
             var deconControl = doorConsole.AddComponent<DeconControl>();
@@ -95,6 +103,10 @@ namespace LevelImposter.Builders
                 deconControl.OnUse.AddListener((Action)(() => deconSystem.OpenFromInside(isUpper)));
             else
                 deconControl.OnUse.AddListener((Action)(() => deconSystem.OpenDoor(isUpper)));
+
+            // Close Door By Defualt
+            door.Open = true; // Ensure there is a "state change"
+            door.SetDoorway(false);
         }
     }
 }
