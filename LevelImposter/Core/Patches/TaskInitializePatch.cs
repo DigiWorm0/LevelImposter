@@ -32,7 +32,8 @@ namespace LevelImposter.Core
                     __instance.Data[0] = IntRange.NextByte(0, TaskConsoleBuilder.ToiletCount);
                     break;
                 case TaskTypes.PickUpTowels:
-                    __instance.Data = new byte[TaskConsoleBuilder.TowelCount / 2];
+                    var pickupCount = TaskConsoleBuilder.TowelPickupCount ?? TaskConsoleBuilder.TowelCount / 2;
+                    __instance.Data = new byte[pickupCount];
                     byte[] tempData = new byte[TaskConsoleBuilder.TowelCount];
                     for (byte i = 0; i < TaskConsoleBuilder.TowelCount; i++)
                         tempData[i] = i;

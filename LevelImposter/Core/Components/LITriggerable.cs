@@ -6,6 +6,10 @@ using BepInEx.Unity.IL2CPP.Utils.Collections;
 using Il2CppInterop.Runtime.Attributes;
 using Reactor.Networking.Attributes;
 using System.Linq;
+using UnityEngine.Rendering.VirtualTexturing;
+using Hazel;
+using Reactor.Networking.Rpc;
+using static UnityEngine.ParticleSystem.PlaybackState;
 
 namespace LevelImposter.Core
 {
@@ -19,6 +23,17 @@ namespace LevelImposter.Core
         }
 
         private const int MAX_STACK_SIZE = 128;
+        private static readonly string[] CLIENT_ONLY_TRIGGERS = new string[]
+        {
+            "startOxygen",
+            "startReactor",
+            "startComms",
+            "startLights",
+            "endOxygen",
+            "endReactor",
+            "endComms",
+            "endLights"
+        };
         private static List<LITriggerable> _allTriggers = new List<LITriggerable>();
         private static bool _shouldLog => LIShipStatus.Instance?.CurrentMap?.properties.triggerLogging ?? true;
 
@@ -46,19 +61,28 @@ namespace LevelImposter.Core
         /// </summary>
         /// <param name="obj">Object to search trigger</param>
         /// <param name="triggerID">Trigger ID to fire</param>
-        /// <param name="orgin">Orgin player or null if the trigger should only run on the client</param>
+        /// <param name="orgin">Orgin player for RPC. Set to <c>null</c> if the trigger should only run on the client</param>
         /// <param name="stackSize">Size of the trigger stack</param>
         /// <returns>TRUE iff the trigger is successful</returns>
-        public static bool Trigger(GameObject obj, string triggerID, PlayerControl? orgin, int stackSize = 0)
+        public static bool Trigger(GameObject? obj, string triggerID, PlayerControl? orgin, int stackSize = 0)
         {
+            if (obj == null)
+                return false;
+
             LITriggerable? trigger = _allTriggers.Find(t => t.gameObject == obj && t.SourceTrigger == triggerID);
             if (trigger == null)
                 return false;
 
-            if (trigger.IsClientSide != false || orgin == null)
+            if (trigger.IsClientSide != false ||
+                orgin == null ||
+                CLIENT_ONLY_TRIGGERS.Contains(triggerID))
+            {
                 trigger.FireTrigger(orgin, stackSize); // Client-Side
+            }
             else
+            {
                 RPCFireTrigger(orgin, trigger.SourceID.ToString() ?? "", triggerID); // Networked
+            }
             return true;
         }
 
@@ -136,11 +160,19 @@ namespace LevelImposter.Core
         /// <param name="stackSize">Size of the trigger stack</param>
         private void OnTrigger(PlayerControl? orgin, int stackSize = 0)
         {
+            // Logging
             if (_shouldLog)
             {
                 string whitespace = string.Concat(Enumerable.Repeat("| ", stackSize - 1)) + "+ ";
                 LILogger.Info($"{whitespace}{gameObject.name} >>> {_sourceTrigger} ({orgin?.name})");
             }
+
+            // Client Only
+            bool isOnClient = orgin == null || orgin == PlayerControl.LocalPlayer;
+            if (CLIENT_ONLY_TRIGGERS.Contains(_sourceTrigger) && !isOnClient)
+                return;
+
+            // Run Trigger
             switch (_sourceTrigger)
             {
                 // Generic
@@ -203,6 +235,37 @@ namespace LevelImposter.Core
                     break;
                 case "stop":
                     StopComponents();
+                    break;
+
+                // Sabotage
+                case "startOxygen":
+                    ShipStatus.Instance.RpcRepairSystem(SystemTypes.LifeSupp, 128);
+                    break;
+                case "startLights":
+                    byte switchBits = 4;
+                    for (int i = 0; i < 5; i++)
+                        if (BoolRange.Next(0.5f))
+                            switchBits |= (byte)(1 << i);
+                    ShipStatus.Instance.RpcRepairSystem(SystemTypes.Electrical, switchBits | 128);
+                    break;
+                case "startReactor":
+                    ShipStatus.Instance.RpcRepairSystem(SystemTypes.Reactor, 128);
+                    break;
+                case "startComms":
+                    ShipStatus.Instance.RpcRepairSystem(SystemTypes.Comms, 128);
+                    break;
+                case "endOxygen":
+                    ShipStatus.Instance.RpcRepairSystem(SystemTypes.LifeSupp, 16);
+                    break;
+                case "endLights":
+                    var lights = ShipStatus.Instance.Systems[SystemTypes.Electrical].Cast<SwitchSystem>();
+                    ShipStatus.Instance.RpcRepairSystem(SystemTypes.Electrical, (lights.ExpectedSwitches ^ lights.ActualSwitches) | 128);
+                    break;
+                case "endReactor":
+                    ShipStatus.Instance.RpcRepairSystem(SystemTypes.Reactor, 16);
+                    break;
+                case "endComms":
+                    ShipStatus.Instance.RpcRepairSystem(SystemTypes.Comms, 0);
                     break;
             }
         }

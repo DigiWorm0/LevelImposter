@@ -34,6 +34,9 @@ namespace LevelImposter.Core
         private int _globalColorTableSize = 0; // Size of the global color table
         private Color _backgroundColor = Color.clear; // Background color
 
+        // Other Data
+        private Vector2 _pivotPoint = new Vector2(0.5f, 0.5f);
+
         // Image Descriptor
         public ushort Width { get; private set; }
         public ushort Height { get; private set; }
@@ -43,6 +46,15 @@ namespace LevelImposter.Core
         {
             Name = name;
             Frames = new();
+        }
+
+        /// <summary>
+        /// Sets the pivot point for all frame sprites.
+        /// </summary>
+        /// <param name="pivot">Pivot point to set to</param>
+        public void SetPivot(Vector2? pivot)
+        {
+            _pivotPoint = pivot ?? new Vector2(0.5f, 0.5f);
         }
 
         /// <summary>
@@ -565,7 +577,7 @@ namespace LevelImposter.Core
                 Sprite sprite = Sprite.Create(
                     texture,
                     new Rect(0, 0, texture.width, texture.height),
-                    new Vector2(0.5f, 0.5f),
+                    _pivotPoint,
                     100.0f,
                     0,
                     SpriteMeshType.FullRect

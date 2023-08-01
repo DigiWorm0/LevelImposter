@@ -17,7 +17,7 @@ namespace LevelImposter.Core
         {
             if (LIShipStatus.Instance == null)
                 return;
-            GameObject? triggerObj = MeetingBuilder.TriggerObject;
+            GameObject? triggerObj = MeetingOptionsBuilder.TriggerObject;
             string triggerID = target == null ? BUTTON_TRIGGER_ID : REPORT_TRIGGER_ID;
             if (triggerObj != null)
                 LITriggerable.Trigger(triggerObj, triggerID, reporter);

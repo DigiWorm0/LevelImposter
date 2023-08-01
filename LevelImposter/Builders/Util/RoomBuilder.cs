@@ -9,7 +9,6 @@ namespace LevelImposter.Builders
     {
         private static Dictionary<Guid, SystemTypes> _systemDB = new();
         private static Dictionary<SystemTypes, PlainShipRoom> _roomDB = new();
-        private byte _roomId = 1;
 
         public RoomBuilder()
         {
@@ -21,17 +20,15 @@ namespace LevelImposter.Builders
         {
             if (elem.type != "util-room")
                 return;
+
+            // ShipStatus
             if (LIShipStatus.Instance == null)
                 throw new MissingShipException();
 
-            SystemTypes systemType;
-            do
-            {
-                systemType = (SystemTypes)_roomId;
-                _roomId++;
-            }
-            while (systemType == SystemTypes.LowerEngine || systemType == SystemTypes.UpperEngine);
+            // Pick a new System
+            SystemTypes systemType = SystemDistributor.GetNewSystemType();
 
+            // Plain Ship ROom
             PlainShipRoom shipRoom = obj.AddComponent<PlainShipRoom>();
             shipRoom.RoomId = systemType;
             shipRoom.roomArea = obj.GetComponentInChildren<Collider2D>();
@@ -40,7 +37,10 @@ namespace LevelImposter.Builders
             else if ((elem.properties.isRoomAdminVisible ?? true) || (elem.properties.isRoomNameVisible ?? true))
                 LILogger.Warn($"{shipRoom.name} is missing a collider");
 
+            // Rename Room Name
             LIShipStatus.Instance.Renames.Add(systemType, obj.name);
+
+            // Add to DB
             _systemDB.Add(elem.id, systemType);
             _roomDB.Add(systemType, shipRoom);
         }
@@ -50,7 +50,6 @@ namespace LevelImposter.Builders
             if (LIShipStatus.Instance == null)
                 throw new MissingShipException();
             LIShipStatus.Instance.Renames.Add((SystemTypes)0, "Default Room");
-            _roomId = 1;
         }
 
         /// <summary>

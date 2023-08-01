@@ -26,6 +26,19 @@ namespace LevelImposter.Core
             { "task-burger_paperonion", 4 },
             { "task-burger_papertomato", 5 }
         };
+        private readonly Dictionary<string, Vector2> PIVOTS = new()
+        {
+            { "task-toilet_plungerup", new Vector2(0.53f, 0.96f) },
+            { "task-toilet_plungerdown", new Vector2(0.54f, 0.67f) },
+            { "task-toilet_needle", new Vector2(0.57f, 0.5f) },
+            { "task-toilet_stick", new Vector2(0.5f, 0.11f) },
+            { "task-vending_item_1", new Vector2(0.5f, 0) },
+            { "task-vending_item_2", new Vector2(0.5f, 0) },
+            { "task-vending_item_3", new Vector2(0.5f, 0) },
+            { "task-vending_item_4", new Vector2(0.5f, 0) },
+            { "task-vending_item_5", new Vector2(0.5f, 0) },
+            { "task-vending_item_6", new Vector2(0.5f, 0) },
+        };
 
         private LIMinigameSprite[]? _minigameDataArr = null;
         private LIMinigameProps? _minigameProps = null;
@@ -58,9 +71,15 @@ namespace LevelImposter.Core
                     return;
                 foreach (LIMinigameSprite minigameData in _minigameDataArr)
                 {
-                    SpriteLoader.Instance?.LoadSpriteAsync(minigameData.spriteData, (spriteData) => {
-                        LoadMinigameSprite(minigame, minigameData.type, spriteData?.Sprite);
-                    }, minigameData.id.ToString());
+                    Vector2? pivot = PIVOTS.ContainsKey(minigameData.type) ? PIVOTS[minigameData.type] : null;
+                    SpriteLoader.Instance?.LoadSpriteAsync(
+                        minigameData.spriteData,
+                        (spriteData) => {
+                            LoadMinigameSprite(minigame, minigameData.type, spriteData?.Sprite);
+                        },
+                        minigameData.id.ToString(),
+                        pivot
+                    );
                 }
             }
             catch (Exception e)
@@ -100,20 +119,18 @@ namespace LevelImposter.Core
             bool isFuel = _minigameProps?.fuelColor != null || _minigameProps?.fuelBgColor != null;
             if (isFuel)
             {
-                var multistageMinigame = minigame.Cast<MultistageMinigame>();
-                foreach (var stage in multistageMinigame.Stages)
-                {
-                    var fuelRenderer1 = stage.transform.Find("DestGauge/BackFillMask/BackFillColor").GetComponent<SpriteRenderer>();
-                    fuelRenderer1.color = _minigameProps?.fuelColor?.ToUnity() ?? fuelRenderer1.color;
+                var fuelStage = minigame.Cast<RefuelStage>();
 
-                    var bgRenderer = stage.transform.Find("blank").GetComponent<SpriteRenderer>();
-                    bgRenderer.color = _minigameProps?.fuelBgColor?.ToUnity() ?? bgRenderer.color;
+                var fuelRenderer1 = fuelStage.transform.Find("DestGauge/BackFillMask/BackFillColor").GetComponent<SpriteRenderer>();
+                fuelRenderer1.color = _minigameProps?.fuelColor?.ToUnity() ?? fuelRenderer1.color;
 
-                    // Only on Stage 2
-                    var fuelRenderer2 = stage.transform.Find("SrcGauge/BackFillMask/BackFillColor")?.GetComponent<SpriteRenderer>();
-                    if (fuelRenderer2 != null)
-                        fuelRenderer2.color = _minigameProps?.fuelColor?.ToUnity() ?? fuelRenderer2.color;
-                }
+                var bgRenderer = fuelStage.transform.Find("blank").GetComponent<SpriteRenderer>();
+                bgRenderer.color = _minigameProps?.fuelBgColor?.ToUnity() ?? bgRenderer.color;
+
+                // Only on Stage 2
+                var fuelRenderer2 = fuelStage.transform.Find("SrcGauge/BackFillMask/BackFillColor")?.GetComponent<SpriteRenderer>();
+                if (fuelRenderer2 != null)
+                    fuelRenderer2.color = _minigameProps?.fuelColor?.ToUnity() ?? fuelRenderer2.color;
                 LILogger.Info("Applied Fuel Props");
             }
 
@@ -345,6 +362,10 @@ namespace LevelImposter.Core
                     return !isDown;
 
                 /* task-toilet */
+                case "task-toilet_pipe":
+                    var pipeSystem = minigame.transform.Find("toilet_pipesystem");
+                    pipeSystem.transform.position += new Vector3(0, 0, 0.5f);
+                    return true;
                 case "task-toilet_plungerdown":
                     minigame.Cast<ToiletMinigame>().PlungerDown = sprite;
                     return false;
@@ -365,12 +386,7 @@ namespace LevelImposter.Core
                     // Find & update any slots
                     foreach (var vendingSlot in vendingMinigame1.Slots)
                         if (vendingSlot.DrinkImage.sprite == currentVendingSprite1 && sprite != null)
-                        {
-                            // Align Object with Base of Vending Slot
-                            float yOffset = (sprite.textureRect.height / 2) / sprite.pixelsPerUnit - 0.01f;
-                            vendingSlot.DrinkImage.transform.position += new Vector3(0, yOffset);
                             vendingSlot.DrinkImage.sprite = sprite;
-                        }
                     vendingMinigame1.Drinks[vendingIndex1] = sprite;
                     return false;
                 case "task-vending_drawing_1":

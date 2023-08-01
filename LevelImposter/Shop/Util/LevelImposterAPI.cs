@@ -136,7 +136,7 @@ namespace LevelImposter.Shop
                     }
                     catch (Exception e)
                     {
-                        onError(e.ToString());
+                        onError(e.Message);
                     }
                 }, onError);
             }, onError);
@@ -164,7 +164,7 @@ namespace LevelImposter.Shop
                     Sprite? sprite = spriteData.Sprite;
                     if (sprite != null)
                         callback(sprite);
-                }, metadata.id);
+                }, metadata.id, null);
             }, null);
         }
     }

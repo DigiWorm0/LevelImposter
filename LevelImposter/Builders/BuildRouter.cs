@@ -26,8 +26,10 @@ namespace LevelImposter.Builders
             new TaskBuilder(),
             new DecBuilder(),
             new PhysicsObjectBuilder(),
-            new MeetingBuilder(),
+            new MeetingOptionsBuilder(),
+            new SabotageOptionsBuilder(),
             new OneWayColliderBuilder(),
+            new DecontaminationBuilder(),
 
             new SabBuilder(),
             new SabConsoleBuilder(),

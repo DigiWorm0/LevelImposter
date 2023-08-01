@@ -29,7 +29,7 @@ namespace LevelImposter.Core
 
         private Stack<SpriteData>? _spriteCache = new();
         private int _renderCount = 0;
-        private Dictionary<string, string>? _duplicateSpriteDB = new();
+        private Dictionary<string, string>? _duplicateSpriteDB = null;
 
         public int RenderCount => _renderCount;
 
@@ -65,7 +65,7 @@ namespace LevelImposter.Core
         {
             OnLoad = null;
             _spriteCache?.Clear();
-            _duplicateSpriteDB?.Clear();
+            _duplicateSpriteDB = null;
         }
 
         /// <summary>
@@ -142,7 +142,7 @@ namespace LevelImposter.Core
 
                 if (OnLoad != null)
                     OnLoad.Invoke(element);
-            }, element.id.ToString());
+            }, element.id.ToString(), null);
         }
 
         /// <summary>
@@ -151,7 +151,7 @@ namespace LevelImposter.Core
         /// <param name="b64Image">Base64 image data to read</param>
         /// <param name="onLoad">Callback on success</param>
         [HideFromIl2Cpp]
-        public void LoadSpriteAsync(string b64Image, Action<SpriteData?> onLoad, string? spriteID)
+        public void LoadSpriteAsync(string b64Image, Action<SpriteData?> onLoad, string? spriteID, Vector2? pivot)
         {
             var imgData = string.IsNullOrEmpty(b64Image) ? new(0) : MapUtils.ParseBase64(b64Image);
             bool isGIF = b64Image.StartsWith("data:image/gif");
@@ -159,7 +159,7 @@ namespace LevelImposter.Core
             {
                 onLoad(spriteList);
                 spriteList = null;
-            }, spriteID);
+            }, spriteID, pivot);
         }
 
 
@@ -169,9 +169,9 @@ namespace LevelImposter.Core
         /// <param name="imgData">Image File Data</param>
         /// <param name="onLoad">Callback on success</param>
         [HideFromIl2Cpp]
-        public void LoadSpriteAsync(Il2CppStructArray<byte> imgData, bool isGIF, Action<SpriteData?> onLoad, string? spriteID)
+        public void LoadSpriteAsync(Il2CppStructArray<byte> imgData, bool isGIF, Action<SpriteData?> onLoad, string? spriteID, Vector2? pivot)
         {
-            StartCoroutine(CoLoadSpriteAsync(imgData, isGIF, onLoad, spriteID).WrapToIl2Cpp());
+            StartCoroutine(CoLoadSpriteAsync(imgData, isGIF, onLoad, spriteID, pivot).WrapToIl2Cpp());
         }
 
         /// <summary>
@@ -180,7 +180,7 @@ namespace LevelImposter.Core
         /// <param name="imgData">Image File Data</param>
         /// <param name="onLoad">Callback on success</param>
         [HideFromIl2Cpp]
-        private IEnumerator CoLoadSpriteAsync(Il2CppStructArray<byte> imgData, bool isGIF, Action<SpriteData?>? onLoad, string? spriteID)
+        private IEnumerator CoLoadSpriteAsync(Il2CppStructArray<byte> imgData, bool isGIF, Action<SpriteData?>? onLoad, string? spriteID, Vector2? pivot)
         {
             {
                 _renderCount++;
@@ -200,6 +200,7 @@ namespace LevelImposter.Core
                     using (MemoryStream ms = new(imgData))
                     {
                         var gifFile = new GIFFile(spriteID ?? "LISprite");
+                        gifFile.SetPivot(pivot);
                         gifFile.Load(ms);
 
                         spriteData = new()
@@ -209,6 +210,7 @@ namespace LevelImposter.Core
                             GIFData = gifFile
                         };
                         AddSpriteToCache(spriteData);
+                        GCHandler.Register(spriteData);
                     }
                 }
                 else
@@ -216,12 +218,12 @@ namespace LevelImposter.Core
                     spriteData = new()
                     {
                         ID = spriteID ?? "",
-                        Sprite = RawImageToSprite(imgData)
+                        Sprite = RawImageToSprite(imgData, pivot)
                     };
                     spriteData.Sprite.hideFlags = HideFlags.DontUnloadUnusedAsset;
                     AddSpriteToCache(spriteData);
+                    GCHandler.Register(spriteData);
                 }
-                GCHandler.Register(spriteData);
 
                 // Output
                 _renderCount--;
@@ -240,7 +242,7 @@ namespace LevelImposter.Core
         /// <param name="texData">Texture Metadata to load</param>
         /// <returns>Generated sprite data</returns>
         [HideFromIl2Cpp]
-        private Sprite RawImageToSprite(Il2CppStructArray<byte> imgData)
+        private Sprite RawImageToSprite(Il2CppStructArray<byte> imgData, Vector2? pivot)
         {
             // Generate Texture
             bool pixelArtMode = LIShipStatus.Instance?.CurrentMap?.properties.pixelArtMode ?? false;
@@ -257,7 +259,7 @@ namespace LevelImposter.Core
             Sprite sprite = Sprite.Create(
                 texture,
                 new Rect(0, 0, texture.width, texture.height),
-                new Vector2(0.5f, 0.5f),
+                pivot ?? new Vector2(0.5f, 0.5f),
                 100.0f,
                 0,
                 SpriteMeshType.FullRect
@@ -277,7 +279,7 @@ namespace LevelImposter.Core
             SpriteData? spriteData = GetSpriteFromCache(spriteID);
             Sprite? sprite = spriteData?.Sprite;
             if (sprite == null)
-                sprite = RawImageToSprite(imgData);
+                sprite = RawImageToSprite(imgData, null);
             return sprite;
         }
 
@@ -288,14 +290,17 @@ namespace LevelImposter.Core
         [HideFromIl2Cpp]
         public void SearchForDuplicateSprites(LIMap map)
         {
-            var elems = map.elements;
+            // Already Loaded
+            if (_duplicateSpriteDB != null)
+                return;
 
             // Debug Start
+            var elems = map.elements;
             Stopwatch sw = Stopwatch.StartNew();
             LILogger.Info($"Searching {elems.Length} elements for duplicate sprites");
 
             // Iterate through map elements
-            _duplicateSpriteDB?.Clear();
+            _duplicateSpriteDB = new();
             for (int a = 0; a < elems.Length - 1; a++)
             {
                 for (int b = a + 1; b < elems.Length; b++)

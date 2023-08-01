@@ -33,10 +33,14 @@ namespace LevelImposter.Builders
                 Sprite sprite = Sprite.Create(
                     spriteRenderer.sprite.texture,
                     spriteRenderer.sprite.rect,
-                    new Vector2(0.5f, 0.5f)
+                    new Vector2(0.5f, 0.5f),
+                    100,
+                    0,
+                    SpriteMeshType.FullRect
                 );
                 spriteRenderer.sprite = sprite;
                 sprite.hideFlags = HideFlags.HideAndDontSave;
+                GCHandler.Register(sprite);
             }
             if (isRoom)
                 obj.layer = (int)Layer.Ship;
