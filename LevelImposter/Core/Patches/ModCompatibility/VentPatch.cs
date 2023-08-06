@@ -18,7 +18,7 @@ namespace LevelImposter.Core
         {
             if (LIShipStatus.Instance == null)
                 return;
-            if (!ModCompatibility.IsTOUEnabled && !ModCompatibility.IsTOREnabled)
+            if (!ModCompatibility.IsTOUEnabled && !ModCompatibility.IsTOREnabled && !ModCompatibility.IsReworkedEnabled)
                 return;
             if (_ventTotal == ShipStatus.Instance.AllVents.Count)
                 return;
