@@ -60,7 +60,7 @@ Custom Among Us Mapping Studio
 | [Town of Us-R](https://github.com/eDonnes124/Town-Of-Us-R) | ✅ |  |
 | [The Other Roles](https://github.com/TheOtherRolesAU/TheOtherRoles) | ✅ |  |
 | [Stellar Roles](https://github.com/Mr-Fluuff/StellarRolesAU) | ✅ |  |
-| [Submerged](https://github.com/SubmergedAmongUs/Submerged) | ⛔ | Isn\'t up-to-date w/ the latest AU |
+| [Submerged](https://github.com/SubmergedAmongUs/Submerged) | ⚠️ | Some minor visual bugs |
 
 Don\'t see a compatible mod here? Create a [Pull Request](https://github.com/DigiWorm0/LevelImposter/pulls)!
 

@@ -15,6 +15,11 @@ namespace LevelImposter.Builders
             foreach (Collider2D collider in colliders)
                 collider.isTrigger = true;
 
+            // Ghost
+            if (elem.properties.isGhostEnabled ?? false)
+                obj.layer = (int)Layer.Default;
+
+            // Trigger Area
             LITriggerArea triggerArea = obj.AddComponent<LITriggerArea>();
             triggerArea.SetClientSide(elem.properties.triggerClientSide != false);
         }
