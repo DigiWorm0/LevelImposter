@@ -58,6 +58,7 @@ Custom Among Us Mapping Studio
 |:-:|:-:|:-:|
 | [BetterCrewLink](https://github.com/OhMyGuus/BetterCrewLink) | ✅ | No wall detection |
 | [Town of Us-R](https://github.com/eDonnes124/Town-Of-Us-R) | ✅ |  |
+| [Town of Us Reworked](https://github.com/AlchlcDvl/TownOfUsReworked) | ✅ | Mod is not completely finished yet |
 | [The Other Roles](https://github.com/TheOtherRolesAU/TheOtherRoles) | ✅ |  |
 | [Stellar Roles](https://github.com/Mr-Fluuff/StellarRolesAU) | ✅ |  |
 | [Submerged](https://github.com/SubmergedAmongUs/Submerged) | ⚠️ | Some minor visual bugs |
