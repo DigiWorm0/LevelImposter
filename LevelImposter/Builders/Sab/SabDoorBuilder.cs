@@ -1,9 +1,9 @@
-﻿using UnityEngine;
+﻿using LevelImposter.Core;
 using LevelImposter.DB;
 using PowerTools;
-using LevelImposter.Core;
-using System.Collections.Generic;
 using System;
+using System.Collections.Generic;
+using UnityEngine;
 
 namespace LevelImposter.Builders
 {
@@ -59,7 +59,7 @@ namespace LevelImposter.Builders
             SpriteRenderer spriteRenderer = obj.GetComponent<SpriteRenderer>();
             Animator animator = obj.AddComponent<Animator>();
             SpriteAnim spriteAnim = obj.AddComponent<SpriteAnim>();
-            obj.layer = (int)Layer.Ship;
+            obj.layer = (int)Layer.ShortObjects; // <-- Required for Decontamination Doors
             bool isSpriteAnim = false;
             if (!spriteRenderer)
             {
@@ -150,7 +150,7 @@ namespace LevelImposter.Builders
             }
         }
 
-        public void PostBuild() {}
+        public void PostBuild() { }
 
         /// <summary>
         /// Gets a door component by its element ID.

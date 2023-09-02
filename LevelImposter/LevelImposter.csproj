@@ -1,10 +1,10 @@
 <Project Sdk="Microsoft.NET.Sdk">
-    <PropertyGroup>
-        <Title>LevelImposter</Title>
-        <Version>0.16.1</Version>
-        <Description>Custom Among Us Mapping Studio</Description>
-        <Authors>DigiWorm</Authors>
-		
+	<PropertyGroup>
+		<Title>LevelImposter</Title>
+		<Version>0.16.2</Version>
+		<Description>Custom Among Us Mapping Studio</Description>
+		<Authors>DigiWorm</Authors>
+
 		<TargetFramework>net6.0</TargetFramework>
         <LangVersion>latest</LangVersion>
 		<DebugType>embedded</DebugType>
