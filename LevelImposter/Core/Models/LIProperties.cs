@@ -30,6 +30,9 @@ namespace LevelImposter.Core
         // Towels
         public float? towelPickupCount { get; set; }
 
+        // Spores
+        public LIColor? gasColor { get; set; }
+
         // Decontamination
         public Guid? doorA { get; set; }
         public Guid? doorB { get; set; }
@@ -77,7 +80,7 @@ namespace LevelImposter.Core
 
         // Ladder
         public float? ladderHeight { get; set; }
-        
+
         // Platform
         public float? platformXOffset { get; set; }
         public float? platformYOffset { get; set; }
@@ -100,7 +103,7 @@ namespace LevelImposter.Core
         // Tasks
         public string? description { get; set; }
         public string? taskLength { get; set; }
-        public float? sabDuration { get; set; } 
+        public float? sabDuration { get; set; }
 
         // Room
         public bool? isRoomNameVisible { get; set; }

@@ -30,6 +30,7 @@ namespace LevelImposter.Builders
             new SabotageOptionsBuilder(),
             new OneWayColliderBuilder(),
             new DecontaminationBuilder(),
+            new SporeBuilder(),
 
             new SabBuilder(),
             new SabConsoleBuilder(),

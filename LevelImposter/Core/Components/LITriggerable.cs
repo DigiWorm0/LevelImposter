@@ -1,15 +1,12 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using BepInEx.Unity.IL2CPP.Utils.Collections;
+﻿using BepInEx.Unity.IL2CPP.Utils.Collections;
 using Il2CppInterop.Runtime.Attributes;
 using Reactor.Networking.Attributes;
-using System.Linq;
-using UnityEngine.Rendering.VirtualTexturing;
-using Hazel;
 using Reactor.Networking.Rpc;
-using static UnityEngine.ParticleSystem.PlaybackState;
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using UnityEngine;
 
 namespace LevelImposter.Core
 {
@@ -239,33 +236,33 @@ namespace LevelImposter.Core
 
                 // Sabotage
                 case "startOxygen":
-                    ShipStatus.Instance.RpcRepairSystem(SystemTypes.LifeSupp, 128);
+                    ShipStatus.Instance.RpcUpdateSystem(SystemTypes.LifeSupp, 128);
                     break;
                 case "startLights":
                     byte switchBits = 4;
                     for (int i = 0; i < 5; i++)
                         if (BoolRange.Next(0.5f))
                             switchBits |= (byte)(1 << i);
-                    ShipStatus.Instance.RpcRepairSystem(SystemTypes.Electrical, switchBits | 128);
+                    ShipStatus.Instance.RpcUpdateSystem(SystemTypes.Electrical, (byte)(switchBits | 128));
                     break;
                 case "startReactor":
-                    ShipStatus.Instance.RpcRepairSystem(SystemTypes.Reactor, 128);
+                    ShipStatus.Instance.RpcUpdateSystem(SystemTypes.Reactor, 128);
                     break;
                 case "startComms":
-                    ShipStatus.Instance.RpcRepairSystem(SystemTypes.Comms, 128);
+                    ShipStatus.Instance.RpcUpdateSystem(SystemTypes.Comms, 128);
                     break;
                 case "endOxygen":
-                    ShipStatus.Instance.RpcRepairSystem(SystemTypes.LifeSupp, 16);
+                    ShipStatus.Instance.RpcUpdateSystem(SystemTypes.LifeSupp, 16);
                     break;
                 case "endLights":
                     var lights = ShipStatus.Instance.Systems[SystemTypes.Electrical].Cast<SwitchSystem>();
-                    ShipStatus.Instance.RpcRepairSystem(SystemTypes.Electrical, (lights.ExpectedSwitches ^ lights.ActualSwitches) | 128);
+                    ShipStatus.Instance.RpcUpdateSystem(SystemTypes.Electrical, (byte)((lights.ExpectedSwitches ^ lights.ActualSwitches) | 128));
                     break;
                 case "endReactor":
-                    ShipStatus.Instance.RpcRepairSystem(SystemTypes.Reactor, 16);
+                    ShipStatus.Instance.RpcUpdateSystem(SystemTypes.Reactor, 16);
                     break;
                 case "endComms":
-                    ShipStatus.Instance.RpcRepairSystem(SystemTypes.Comms, 0);
+                    ShipStatus.Instance.RpcUpdateSystem(SystemTypes.Comms, 0);
                     break;
             }
         }
@@ -291,7 +288,7 @@ namespace LevelImposter.Core
             if (triggerSound != null)
                 triggerSound.Stop();
         }
-        
+
         /// <summary>
         /// Starts any components attatched to object
         /// </summary>

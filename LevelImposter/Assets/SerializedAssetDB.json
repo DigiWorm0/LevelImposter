@@ -26,6 +26,11 @@
       "Path": "Office/panel_vitals"
     },
     {
+      "ID": "util-spore",
+      "Map": 5,
+      "Path": "Outside/OutsideJungle/Mushrooms/Mushroom (1)"
+    },
+    {
       "ID": "util-computer",
       "Map": 2,
       "Path": "Office/caftable/TaskAddConsole"
@@ -39,6 +44,11 @@
       "ID": "util-vent2",
       "Map": 2,
       "Path": "Office/OfficeVent"
+    },
+    {
+      "ID": "util-vent3",
+      "Map": 5,
+      "Path": "Rooms/Kitchen/Vents/KitchenVent"
     },
     {
       "ID": "util-cam",
@@ -59,6 +69,11 @@
       "ID": "util-cams3",
       "Map": 4,
       "Path": "Security/task_cams"
+    },
+    {
+      "ID": "util-cams4",
+      "Map": 5,
+      "Path": "lookout_binoculars"
     },
     {
       "ID": "util-ladder1",

@@ -1,8 +1,8 @@
+using LevelImposter.Core;
+using LevelImposter.DB;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using LevelImposter.DB;
-using LevelImposter.Core;
 
 namespace LevelImposter.Builders
 {
@@ -189,7 +189,7 @@ namespace LevelImposter.Builders
             if (taskLength == TaskLength.Common)
                 shipStatus.CommonTasks = MapUtils.AddToArr(shipStatus.CommonTasks, task);
             if (taskLength == TaskLength.Short)
-                shipStatus.NormalTasks = MapUtils.AddToArr(shipStatus.NormalTasks, task);
+                shipStatus.ShortTasks = MapUtils.AddToArr(shipStatus.ShortTasks, task);
             if (taskLength == TaskLength.Long)
                 shipStatus.LongTasks = MapUtils.AddToArr(shipStatus.LongTasks, task);
         }

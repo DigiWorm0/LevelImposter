@@ -1,18 +1,18 @@
+using AmongUs.GameOptions;
+using Il2CppInterop.Runtime;
+using Il2CppInterop.Runtime.InteropTypes;
+using Il2CppInterop.Runtime.InteropTypes.Arrays;
+using Reactor.Utilities;
+using Reactor.Utilities.Extensions;
 using System;
+using System.Collections;
 using System.Collections.Generic;
-using System.Text;
-using System.Text.Json;
+using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Text;
+using System.Text.Json;
 using UnityEngine;
-using System.IO;
-using Il2CppInterop.Runtime.InteropTypes.Arrays;
-using Il2CppInterop.Runtime.InteropTypes;
-using Il2CppInterop.Runtime;
-using AmongUs.GameOptions;
-using Reactor.Utilities;
-using System.Collections;
-using Reactor.Utilities.Extensions;
 
 namespace LevelImposter.Core
 {
@@ -234,7 +234,7 @@ namespace LevelImposter.Core
                 return resourceData;
             }
         }
-        
+
         private static Il2CppStructArray<byte>? GetResourceAsIl2Cpp(string name)
         {
             Assembly assembly = Assembly.GetExecutingAssembly();
@@ -243,7 +243,7 @@ namespace LevelImposter.Core
                 if (resourceStream == null)
                     return null;
 
-                var length = (int) resourceStream.Length;
+                var length = (int)resourceStream.Length;
                 Il2CppStructArray<byte> resourceData = new Il2CppStructArray<byte>(length);
                 resourceStream.AsIl2Cpp().Read(resourceData, 0, length);
                 return resourceData;
@@ -261,7 +261,7 @@ namespace LevelImposter.Core
             Assembly assembly = Assembly.GetExecutingAssembly();
             string? resourceName = assembly.GetManifestResourceNames().FirstOrDefault(str => str.EndsWith(name));
             using Stream? assetStream = assembly.GetManifestResourceStream(resourceName ?? "");
-            
+
             if (assetStream == null)
                 return null;
 
@@ -369,8 +369,8 @@ namespace LevelImposter.Core
         /// <returns>obj's SpriteRenderer</returns>
         public static SpriteRenderer CloneSprite(GameObject obj, GameObject prefab, bool isSpriteAnim = false)
         {
-            var prefabRenderer = prefab.GetComponent<SpriteRenderer>();
-            var spriteRenderer = obj.GetComponent<SpriteRenderer>();
+            var prefabRenderer = prefab.GetComponentInChildren<SpriteRenderer>();
+            var spriteRenderer = obj.GetComponentInChildren<SpriteRenderer>();
             if (!spriteRenderer)
             {
                 spriteRenderer = obj.AddComponent<SpriteRenderer>();
@@ -378,7 +378,7 @@ namespace LevelImposter.Core
 
                 if (isSpriteAnim)
                 {
-                    var prefabAnim = prefab.GetComponent<PowerTools.SpriteAnim>();
+                    var prefabAnim = prefab.GetComponentInChildren<PowerTools.SpriteAnim>();
                     var spriteAnim = obj.AddComponent<PowerTools.SpriteAnim>();
                     spriteAnim.m_defaultAnim = prefabAnim.m_defaultAnim;
                     spriteAnim.m_speed = prefabAnim.m_speed;

@@ -1,8 +1,8 @@
-﻿using LevelImposter.Core;
+﻿using Il2CppInterop.Runtime.InteropTypes.Arrays;
+using LevelImposter.Core;
 using System;
 using System.Linq;
 using System.Text.Json.Serialization;
-using Il2CppInterop.Runtime.InteropTypes.Arrays;
 
 namespace LevelImposter.DB
 {
@@ -25,7 +25,7 @@ namespace LevelImposter.DB
                 {
                     TaskLength.Common => shipStatus.CommonTasks.Cast<Il2CppReferenceArray<PlayerTask>>(),
                     TaskLength.Long => shipStatus.LongTasks.Cast<Il2CppReferenceArray<PlayerTask>>(),
-                    TaskLength.Short => shipStatus.NormalTasks.Cast<Il2CppReferenceArray<PlayerTask>>(),
+                    TaskLength.Short => shipStatus.ShortTasks.Cast<Il2CppReferenceArray<PlayerTask>>(),
                     _ => shipStatus.SpecialTasks
                 };
 

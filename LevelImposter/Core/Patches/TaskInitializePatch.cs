@@ -1,6 +1,6 @@
 ﻿using HarmonyLib;
-using UnityEngine;
 using LevelImposter.Builders;
+using UnityEngine;
 
 namespace LevelImposter.Core
 {
@@ -149,7 +149,7 @@ namespace LevelImposter.Core
 
             folder.gameObject.SetActive(false);
             __instance.MyNormTask.Data[folderIndex] = IntRange.NextByte(1, TaskConsoleBuilder.RecordsCount);
-            __instance.MyNormTask.UpdateArrow();
+            __instance.MyNormTask.UpdateArrowAndLocation();
             if (Constants.ShouldPlaySfx())
                 SoundManager.Instance.PlaySound(__instance.grabDocument, false, 1f);
             __instance.StartCoroutine(__instance.CoStartClose(0.75f));

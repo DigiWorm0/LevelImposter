@@ -1,8 +1,8 @@
+using Il2CppInterop.Runtime.Attributes;
+using Reactor.Networking.Attributes;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using Reactor.Networking.Attributes;
-using Il2CppInterop.Runtime.Attributes;
 
 namespace LevelImposter.Core
 {
@@ -47,14 +47,7 @@ namespace LevelImposter.Core
         public static void RPCTeleport(PlayerControl player, float x, float y)
         {
             LILogger.Info($"Teleported {player.name} to ({x},{y})");
-            player.transform.position = new Vector3(
-                x,
-                y,
-                player.transform.position.z
-            );
-
-            player.NetTransform.targetSyncPosition = player.transform.position;
-            player.NetTransform.prevPosSent = player.transform.position;
+            player.NetTransform.SnapTo(player.transform.position);
         }
 
         public void Awake()
