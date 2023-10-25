@@ -251,6 +251,9 @@ namespace LevelImposter.Core
                 case "startComms":
                     ShipStatus.Instance.RpcUpdateSystem(SystemTypes.Comms, 128);
                     break;
+                case "startMixup":
+                    ShipStatus.Instance.RpcUpdateSystem(SystemTypes.MushroomMixupSabotage, 1);
+                    break;
                 case "endOxygen":
                     ShipStatus.Instance.RpcUpdateSystem(SystemTypes.LifeSupp, 16);
                     break;
@@ -263,6 +266,15 @@ namespace LevelImposter.Core
                     break;
                 case "endComms":
                     ShipStatus.Instance.RpcUpdateSystem(SystemTypes.Comms, 0);
+                    break;
+                case "endMixup":
+                    LILogger.Info("Mixup End");
+                    if (!ShipStatus.Instance.Systems.ContainsKey(SystemTypes.MushroomMixupSabotage))
+                        return;
+                    var mixup = ShipStatus.Instance.Systems[SystemTypes.MushroomMixupSabotage].Cast<MushroomMixupSabotageSystem>();
+                    mixup.currentSecondsUntilHeal = 0.01f;
+                    mixup.IsDirty = true;
+                    // TODO: Transmit to other clients
                     break;
             }
         }
