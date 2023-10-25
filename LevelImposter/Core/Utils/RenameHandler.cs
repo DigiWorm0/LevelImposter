@@ -9,6 +9,7 @@ namespace LevelImposter.Core
     {
         private Dictionary<SystemTypes, string> _systemRenames = new();
         private Dictionary<TaskTypes, string> _taskRenames = new();
+        private Dictionary<StringNames, string> _stringRenames = new();
 
         /// <summary>
         /// Renames a SystemType in the TranslationController
@@ -31,6 +32,16 @@ namespace LevelImposter.Core
         }
 
         /// <summary>
+        /// Renames a StringNames in the TranslationController
+        /// </summary>
+        /// <param name="task">String name to rename</param>
+        /// <param name="name">String to rename to</param>
+        public void Add(StringNames stringName, string name)
+        {
+            _stringRenames[stringName] = name;
+        }
+
+        /// <summary>
         /// Gets a SystemType to rename
         /// </summary>
         /// <param name="system">System to rename</param>
@@ -41,8 +52,16 @@ namespace LevelImposter.Core
         /// Gets a TaskType to rename
         /// </summary>
         /// <param name="task">Task to rename</param>
-        /// <returns>String top replace task with</returns>
+        /// <returns>String to replace task with</returns>
         public string Get(TaskTypes task) => _taskRenames[task];
+
+        /// <summary>
+        /// Gets a StringName to rename
+        /// </summary>
+        /// <param name="task">StringName to rename</param>
+        /// <returns>String to replace text with</returns>
+        public string Get(StringNames stringNames) => _stringRenames[stringNames];
+
 
         /// <summary>
         /// Checks if the system should be renamed
@@ -54,9 +73,16 @@ namespace LevelImposter.Core
         /// <summary>
         /// Checks if the task should be renamed
         /// </summary>
-        /// <param name="system">Task to rename</param>
+        /// <param name="task">Task to rename</param>
         /// <returns>True iff the task should be renamed</returns>
         public bool Contains(TaskTypes task) => _taskRenames.ContainsKey(task);
+
+        /// <summary>
+        /// Checks if the task should be renamed
+        /// </summary>
+        /// <param name="stringName">StringNames to rename</param>
+        /// <returns>True iff the task should be renamed</returns>
+        public bool Contains(StringNames stringName) => _stringRenames.ContainsKey(stringName);
 
         /// <summary>
         /// Clears all renamed values
@@ -65,6 +91,7 @@ namespace LevelImposter.Core
         {
             _systemRenames.Clear();
             _taskRenames.Clear();
+            _stringRenames.Clear();
         }
     }
 }

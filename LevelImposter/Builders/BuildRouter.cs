@@ -33,6 +33,7 @@ namespace LevelImposter.Builders
             new SporeBuilder(),
 
             new SabBuilder(),
+            new SabMixupBuilder(),
             new SabConsoleBuilder(),
             new SabMapBuilder(),
             new SabDoorBuilder(),

@@ -1,4 +1,5 @@
 using HarmonyLib;
+using ObjList = Il2CppInterop.Runtime.InteropTypes.Arrays.Il2CppReferenceArray<Il2CppSystem.Object>;
 
 namespace LevelImposter.Core
 {
@@ -27,6 +28,21 @@ namespace LevelImposter.Core
                 return true;
 
             __result = LIShipStatus.Instance.Renames.Get(taskType);
+            return false;
+        }
+    }
+    [HarmonyPatch(typeof(TranslationController), nameof(TranslationController.GetString), new System.Type[] { typeof(StringNames), typeof(ObjList) })]
+    public static class StringRenamePatch
+    {
+        public static bool Prefix([HarmonyArgument(0)] StringNames stringNames,
+                                  [HarmonyArgument(1)] ObjList _, // TODO: Format parameters into string
+                                  ref string __result)
+        {
+
+            if (LIShipStatus.Instance == null || !LIShipStatus.Instance.Renames.Contains(stringNames))
+                return true;
+
+            __result = LIShipStatus.Instance.Renames.Get(stringNames);
             return false;
         }
     }

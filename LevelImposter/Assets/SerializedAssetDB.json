@@ -791,6 +791,11 @@
       "Path": ""
     },
     {
+      "ID": "ss-fungle",
+      "Map": 5,
+      "Path": ""
+    },
+    {
       "ID": "dec-barrier",
       "Map": 2,
       "Path": "Electrical/barrier"
@@ -1463,6 +1468,12 @@
       "Map": 0,
       "Type": 3,
       "Name": "NoOxyTask"
+    },
+    {
+      "ID": "sab-btnmixup",
+      "Map": 5,
+      "Type": 3,
+      "Name": "MushroomMixupSabotageTask"
     }
   ],
   "SoundDB": [

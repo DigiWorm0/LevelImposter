@@ -1,8 +1,8 @@
+using LevelImposter.Core;
+using LevelImposter.DB;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using LevelImposter.DB;
-using LevelImposter.Core;
 
 namespace LevelImposter.Builders
 {
@@ -15,6 +15,7 @@ namespace LevelImposter.Builders
         private Sprite? _oxygenBtnSprite = null;
         private Sprite? _doorsBtnSprite = null;
         private Sprite? _lightsBtnSprite = null;
+        private Sprite? _mixupBtnSprite = null;
         private Material? _btnMat = null;
 
         private bool _hasSabConsoles = false;
@@ -51,7 +52,8 @@ namespace LevelImposter.Builders
                 _doorsBtnSprite == null ||
                 _oxygenBtnSprite == null ||
                 _reactorBtnSprite == null ||
-                _commsBtnSprite == null)
+                _commsBtnSprite == null ||
+                _mixupBtnSprite == null)
             {
                 LILogger.Warn("1 or more sabotage map sprites were not found");
                 return;
@@ -107,7 +109,8 @@ namespace LevelImposter.Builders
             ButtonBehavior button = sabButton.AddComponent<ButtonBehavior>();
             Action btnAction;
             Sprite btnSprite;
-            switch (elem.type) {
+            switch (elem.type)
+            {
                 case "sab-btnreactor":
                     btnSprite = _reactorBtnSprite;
                     btnAction = mapRoom.SabotageReactor;
@@ -126,6 +129,11 @@ namespace LevelImposter.Builders
                 case "sab-btnlights":
                     btnSprite = _lightsBtnSprite;
                     btnAction = mapRoom.SabotageLights;
+                    mapRoom.special = btnRenderer;
+                    break;
+                case "sab-btnmixup":
+                    btnSprite = _mixupBtnSprite;
+                    btnAction = mapRoom.SabotageMushroomMixup;
                     mapRoom.special = btnRenderer;
                     break;
                 case "sab-btndoors":
@@ -182,25 +190,38 @@ namespace LevelImposter.Builders
 
             // Polus
             var polusShip = AssetDB.GetObject("ss-polus");
-            var polusShipStatus = polusShip?.GetComponent<ShipStatus>();
-            var polusOverlay = polusShipStatus?.MapPrefab.infectedOverlay;
-            if (polusOverlay == null)
-                return;
+            {
+                var polusShipStatus = polusShip?.GetComponent<ShipStatus>();
+                var polusOverlay = polusShipStatus?.MapPrefab.infectedOverlay;
+                if (polusOverlay == null)
+                    return;
 
-            _commsBtnSprite = GetSprite(polusOverlay, "Comms", "bomb"); // um...BOMB!?
-            _reactorBtnSprite = GetSprite(polusOverlay, "Laboratory", "meltdown");
-            _doorsBtnSprite = GetSprite(polusOverlay, "Office", "Doors");
-            _lightsBtnSprite = GetSprite(polusOverlay, "Electrical", "lightsOut");
-            _btnMat = polusOverlay.transform.GetChild(0).GetChild(0).GetComponent<SpriteRenderer>().material;
+                _commsBtnSprite = GetSprite(polusOverlay, "Comms", "bomb"); // um...BOMB!?
+                _reactorBtnSprite = GetSprite(polusOverlay, "Laboratory", "meltdown");
+                _doorsBtnSprite = GetSprite(polusOverlay, "Office", "Doors");
+                _lightsBtnSprite = GetSprite(polusOverlay, "Electrical", "lightsOut");
+                _btnMat = polusOverlay.transform.GetChild(0).GetChild(0).GetComponent<SpriteRenderer>().material;
+            }
 
             // Mira
             var miraShip = AssetDB.GetObject("ss-mira");
-            var miraShipStatus = miraShip?.GetComponent<ShipStatus>();
-            var miraOverlay = miraShipStatus?.MapPrefab.infectedOverlay;
-            if (miraOverlay == null)
-                return;
+            {
+                var miraShipStatus = miraShip?.GetComponent<ShipStatus>();
+                var miraOverlay = miraShipStatus?.MapPrefab.infectedOverlay;
+                if (miraOverlay == null)
+                    return;
+                _oxygenBtnSprite = GetSprite(miraOverlay, "LifeSupp", "bomb"); // Another bomb?
+            }
 
-            _oxygenBtnSprite = GetSprite(miraOverlay, "LifeSupp", "bomb"); // Another bomb?
+            // Fungle
+            var fungleShip = AssetDB.GetObject("ss-fungle");
+            {
+                var fungleShipStatus = fungleShip?.GetComponent<ShipStatus>();
+                var fungleOverlay = fungleShipStatus?.MapPrefab.infectedOverlay;
+                if (fungleOverlay == null)
+                    return;
+                _mixupBtnSprite = GetSprite(fungleOverlay, "Jungle", "mushroomMixup");
+            }
         }
 
         /// <summary>
