@@ -1,7 +1,7 @@
-using System.Collections.Generic;
-using UnityEngine;
 using Il2CppInterop.Runtime.InteropTypes.Arrays;
 using LevelImposter.Core;
+using System.Collections.Generic;
+using UnityEngine;
 
 namespace LevelImposter.Builders
 {
@@ -18,7 +18,14 @@ namespace LevelImposter.Builders
             { "task-fans2", 1 },
             { "task-records1", 0 },
             { "task-pistols1", 1 },
-            { "task-pistols2", 1 }
+            { "task-pistols2", 1 },
+            { "task-marshmallow2", 0 },
+            { "task-vegetables1", 0 },
+            { "task-vegetables2", 2 },
+            { "task-egg1", 1 },
+            { "task-fish1", 0 },
+            { "task-fish2", 1 },
+            { "task-replaceparts1", 0 }
         };
         private static readonly Dictionary<string, int> CONSOLE_ID_INCREMENTS = new()
         {
@@ -30,7 +37,12 @@ namespace LevelImposter.Builders
             { "task-fuel2", 0 },
             { "task-align1", 0 },
             { "task-records2", 1 },
-            { "task-wires", 0 }
+            { "task-wires", 0 },
+            { "task-marshmallow1", 1 },
+            { "task-egg1", 0 },
+            { "task-samples1", 0 },
+            { "task-replaceparts2", 1 },
+            { "task-hoist", 0 }
         };
         private Dictionary<string, int> _consoleIDIncrements = new(CONSOLE_ID_INCREMENTS);
 
@@ -104,7 +116,7 @@ namespace LevelImposter.Builders
             console.Image = obj.GetComponent<SpriteRenderer>();
             console.ConsoleId = GetConsoleID(elem.type);
             console.Room = RoomBuilder.GetParentOrDefault(elem);
-            console.TaskTypes =  prefabConsole.TaskTypes;
+            console.TaskTypes = prefabConsole.TaskTypes;
             console.ValidTasks = GetConsoleTasks(elem.type, console.ConsoleId) ?? prefabConsole.ValidTasks;
             console.AllowImpostor = false;
             console.checkWalls = elem.properties.checkCollision ?? false;
@@ -123,7 +135,7 @@ namespace LevelImposter.Builders
         private int GetConsoleID(string type)
         {
             bool isTowels = type.StartsWith("task-towels");
-               
+
             if (CONSOLE_ID_PAIRS.ContainsKey(type))
             {
                 return CONSOLE_ID_PAIRS[type];
@@ -153,6 +165,7 @@ namespace LevelImposter.Builders
             bool isWaterJug = type == "task-waterjug2";
             bool isFuel = type == "task-fuel1";
             bool isFuelOutput = type == "task-fuel2";
+            bool isHoist = type == "task-hoist";
 
             if (isWaterJug)
             {
@@ -183,6 +196,15 @@ namespace LevelImposter.Builders
                 {
                     taskType = TaskTypes.FuelEngines,
                     taskStep = new(consoleID * 2 + 1, consoleID * 2 + 1)
+                };
+                return new(new TaskSet[] { taskSet });
+            }
+            else if (isHoist)
+            {
+                TaskSet taskSet = new()
+                {
+                    taskType = TaskTypes.HoistSupplies,
+                    taskStep = new(consoleID, consoleID)
                 };
                 return new(new TaskSet[] { taskSet });
             }

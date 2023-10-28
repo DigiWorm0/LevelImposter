@@ -1,5 +1,6 @@
-﻿using HarmonyLib;
+using HarmonyLib;
 using LevelImposter.Builders;
+using System.Linq;
 using UnityEngine;
 
 namespace LevelImposter.Core
@@ -154,6 +155,63 @@ namespace LevelImposter.Core
                 SoundManager.Instance.PlaySound(__instance.grabDocument, false, 1f);
             __instance.StartCoroutine(__instance.CoStartClose(0.75f));
 
+            return false;
+        }
+    }
+
+    /*
+     *      Fix hard-coded "Replace Parts" Updater
+     */
+    [HarmonyPatch(typeof(NormalPlayerTask), nameof(NormalPlayerTask.UpdateArrowAndLocation))]
+    public static class PartsPatch
+    {
+        public static bool Prefix(NormalPlayerTask __instance)
+        {
+            if (LIShipStatus.Instance == null)
+                return true;
+            if (__instance.TaskType != TaskTypes.ReplaceParts)
+                return true;
+            if (!__instance.Arrow || !__instance.Owner.AmOwner || __instance.IsComplete)
+                return true;
+
+            // Pick Next Console
+            var list = NormalPlayerTask.PickRandomConsoles(__instance.taskStep, TaskTypes.ReplaceParts);
+            if (list.Count <= 0)
+            {
+                LILogger.Warn("No consoles found of task-replaceparts2");
+                return false;
+            }
+
+            // Update Arrow
+            __instance.Arrow.target = list[0].transform.position;
+            __instance.StartAt = list[0].Room;
+            __instance.Data[0] = (byte)list[0].ConsoleId;
+            __instance.LocationDirty = true;
+            return false;
+        }
+    }
+
+
+    /*
+     *      Fix a bug with the "Catch Fish" Console
+     */
+    [HarmonyPatch(typeof(NormalPlayerTask), nameof(NormalPlayerTask.ValidConsole))]
+    public static class FishPatch
+    {
+        public static bool Prefix(
+            [HarmonyArgument(0)] Console console,
+            NormalPlayerTask __instance,
+            ref bool __result)
+        {
+            if (LIShipStatus.Instance == null)
+                return true;
+            if (__instance.TaskType != TaskTypes.CatchFish)
+                return true;
+
+            // Replace Result
+            __result = console.Room == __instance.StartAt &&
+                       console.ValidTasks.Any((TaskSet set) => set.taskType == __instance.TaskType && set.taskStep.Contains(__instance.taskStep)) &&
+                       console.TaskTypes.Contains(__instance.TaskType);
             return false;
         }
     }

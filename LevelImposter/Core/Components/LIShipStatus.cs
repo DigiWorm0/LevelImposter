@@ -36,7 +36,8 @@ namespace LevelImposter.Core
             { "Skeld", "ss-skeld" },
             { "MiraHQ", "ss-mira" },
             { "Polus", "ss-polus" },
-            { "Airship", "ss-airship" }
+            { "Airship", "ss-airship" },
+            { "Fungle", "ss-fungle" }
         };
         public static readonly KeyCode[] RESPAWN_SEQ = new KeyCode[] {
             KeyCode.R,

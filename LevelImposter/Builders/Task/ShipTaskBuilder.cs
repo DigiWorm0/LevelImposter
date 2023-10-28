@@ -15,11 +15,6 @@ namespace LevelImposter.Builders
             { "Common", TaskLength.Common }
         };
 
-        private readonly List<string> WHITELIST_TYPES = new()
-        {
-            "task-node"
-        };
-
         private List<string> _builtTypes = new();
         private GameObject _taskParent = null;
         private NormalPlayerTask? _wiresTask = null;

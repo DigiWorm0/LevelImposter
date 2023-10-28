@@ -268,7 +268,6 @@ namespace LevelImposter.Core
                     ShipStatus.Instance.RpcUpdateSystem(SystemTypes.Comms, 0);
                     break;
                 case "endMixup":
-                    LILogger.Info("Mixup End");
                     if (!ShipStatus.Instance.Systems.ContainsKey(SystemTypes.MushroomMixupSabotage))
                         return;
                     var mixup = ShipStatus.Instance.Systems[SystemTypes.MushroomMixupSabotage].Cast<MushroomMixupSabotageSystem>();

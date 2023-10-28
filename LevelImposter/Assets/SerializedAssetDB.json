@@ -771,6 +771,106 @@
       "Path": "Electrical/task_calibrate"
     },
     {
+      "ID": "task-marshmallow1",
+      "Map": 5,
+      "Path": "Outside/OutsideBeach/TaskConsoles/RoastMarshmallow Stick (1)/RoastMarshmallowStickConsole"
+    },
+    {
+      "ID": "task-marshmallow2",
+      "Map": 5,
+      "Path": "Outside/OutsideBeach/TaskConsoles/RoastMarshmallow Fire/RoastMarshmallowFireConsole"
+    },
+    {
+      "ID": "task-sandcastle",
+      "Map": 5,
+      "Path": "Rooms/RecRoom/TaskConsoles/BuildSandcastle/BuildSandcastleConsole"
+    },
+    {
+      "ID": "task-weights",
+      "Map": 5,
+      "Path": "Rooms/RecRoom/TaskConsoles/LiftWeights/LiftWeightsConsole"
+    },
+    {
+      "ID": "task-frisbee",
+      "Map": 5,
+      "Path": "Rooms/RecRoom/TaskConsoles/TestFrisbee/TestFrisbeeConsole"
+    },
+    {
+      "ID": "task-generator",
+      "Map": 5,
+      "Path": "Rooms/Kitchen/TaskConsoles/CrankGenerator (1a)/CrankGeneratorConsole"
+    },
+    {
+      "ID": "task-fish1",
+      "Map": 5,
+      "Path": "Rooms/Dock/TaskConsoles/CatchFish (1)/CatchFishConsole"
+    },
+    {
+      "ID": "task-fish2",
+      "Map": 5,
+      "Path": "Rooms/Kitchen/TaskConsoles/CatchFish (2)/CatchFishConsole"
+    },
+    {
+      "ID": "task-seashells",
+      "Map": 5,
+      "Path": "Outside/OutsideBeach/TaskConsoles/CollectShells (1)/CollectShellsConsole"
+    },
+    {
+      "ID": "task-egg1",
+      "Map": 5,
+      "Path": "Outside/OutsideJungle/TaskConsoles/HelpCritter (1b)/HelpCritterConsole"
+    },
+    {
+      "ID": "task-egg2",
+      "Map": 5,
+      "Path": "Rooms/Laboratory/TaskConsoles/HelpCritter (2)/HelpCritterConsole"
+    },
+    {
+      "ID": "task-samples1",
+      "Map": 5,
+      "Path": "Outside/OutsideJungle/TaskConsoles/CollectSamples (1a)/CollectSamplesConsole"
+    },
+    {
+      "ID": "task-samples2",
+      "Map": 5,
+      "Path": "Rooms/Laboratory/TaskConsoles/CollectSamples (2)/CollectSamplesConsole"
+    },
+    {
+      "ID": "task-vegetables1",
+      "Map": 5,
+      "Path": "Rooms/Greenhouse/TaskConsoles/CollectVegetables (1)/CollectVegetablesConsole"
+    },
+    {
+      "ID": "task-vegetables2",
+      "Map": 5,
+      "Path": "Rooms/Kitchen/TaskConsoles/CollectVegetables (2)/CollectVegetablesConsole"
+    },
+    {
+      "ID": "task-radio",
+      "Map": 5,
+      "Path": "Rooms/Communications/TaskConsoles/TuneRadio/TuneRadioConsole"
+    },
+    {
+      "ID": "task-mineores",
+      "Map": 5,
+      "Path": "Rooms/MiningPit/TaskConsoles/MineOres/MineOresConsole"
+    },
+    {
+      "ID": "task-replaceparts1",
+      "Map": 5,
+      "Path": "Rooms/UpperEngine/TaskConsoles/ReplaceParts (1b)/ReplacePartsConsole"
+    },
+    {
+      "ID": "task-replaceparts2",
+      "Map": 5,
+      "Path": "Rooms/DropshipRuins/TaskConsoles/ReplaceParts (2b)/ReplacePartsConsole"
+    },
+    {
+      "ID": "task-hoist",
+      "Map": 5,
+      "Path": "Outside/OutsideJungle/TaskConsoles/HoistSupplies (1)/HoistSuppliesConsole"
+    },
+    {
       "ID": "ss-skeld",
       "Map": 0,
       "Path": ""
@@ -1432,6 +1532,90 @@
       "Map": 4,
       "Type": 2,
       "Name": "CalibrateDistributorTask"
+    },
+    {
+      "ID": "task-marshmallow1",
+      "Map": 5,
+      "Type": 0,
+      "Name": "RoastMarshmallowTask"
+    },
+    {
+      "ID": "task-sandcastle",
+      "Map": 5,
+      "Type": 1,
+      "Name": "BuildSandcastleTask"
+    },
+    {
+      "ID": "task-weights",
+      "Map": 5,
+      "Type": 1,
+      "Name": "LiftWeightsTask"
+    },
+    {
+      "ID": "task-frisbee",
+      "Map": 5,
+      "Type": 1,
+      "Name": "TestFrisbeeTask"
+    },
+    {
+      "ID": "task-generator",
+      "Map": 5,
+      "Type": 1,
+      "Name": "CrankGeneratorTask"
+    },
+    {
+      "ID": "task-fish1",
+      "Map": 5,
+      "Type": 2,
+      "Name": "CatchFishTask"
+    },
+    {
+      "ID": "task-seashells",
+      "Map": 5,
+      "Type": 1,
+      "Name": "CollectShellsTask"
+    },
+    {
+      "ID": "task-egg1",
+      "Map": 5,
+      "Type": 2,
+      "Name": "HelpCritterTask"
+    },
+    {
+      "ID": "task-samples1",
+      "Map": 5,
+      "Type": 0,
+      "Name": "CollectSamplesTask"
+    },
+    {
+      "ID": "task-vegetables1",
+      "Map": 5,
+      "Type": 2,
+      "Name": "CollectVegetablesTask"
+    },
+    {
+      "ID": "task-radio",
+      "Map": 5,
+      "Type": 1,
+      "Name": "TuneRadioTask"
+    },
+    {
+      "ID": "task-mineores",
+      "Map": 5,
+      "Type": 2,
+      "Name": "MineOresTask"
+    },
+    {
+      "ID": "task-replaceparts1",
+      "Map": 5,
+      "Type": 0,
+      "Name": "ReplacePartsTask"
+    },
+    {
+      "ID": "task-hoist",
+      "Map": 5,
+      "Type": 2,
+      "Name": "HoistSuppliesTask"
     },
     {
       "ID": "sab-electric",
