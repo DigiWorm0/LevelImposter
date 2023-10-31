@@ -177,6 +177,40 @@ namespace LevelImposter.Core
         }
 
         /// <summary>
+        /// Parses a base64 encoded file chunk into a byte array
+        /// </summary>
+        /// <param name="chunk">Base64 File Chunk</param>
+        /// <param name="isGIF">True if the file chunk is a GIF. False otherwise</param>
+        /// <returns>A byte array of the base64 data</returns>
+        public static Il2CppStructArray<byte> ParseBase64(FileChunk? chunk, out bool isGIF)
+        {
+            if (chunk == null)
+            {
+                isGIF = false;
+                return new Il2CppStructArray<byte>(0);
+            }
+
+            using (var stream = chunk.OpenStream())
+            using (var reader = new StreamReader(stream))
+            {
+                // Read buffer to comma
+                string buffer = "";
+                while (reader.Peek() != -1)
+                {
+                    char c = (char)reader.Read();
+                    if (c == ',')
+                        break;
+                    buffer += c;
+                }
+                isGIF = buffer.ToLower() == "data:image/gif;base64";
+
+                // Read rest of stream
+                string sub64 = reader.ReadToEnd();
+                return Convert.FromBase64String(sub64);
+            }
+        }
+
+        /// <summary>
         /// Checks if a GameObject is the local player
         /// </summary>
         /// <param name="obj">Game Object to check</param>
@@ -337,6 +371,25 @@ namespace LevelImposter.Core
                     timer += Time.deltaTime;
                     yield return null;
                 }
+                onFinish.Invoke();
+                onFinish = null;
+            }
+        }
+
+        /// <summary>
+        /// Waits for a specific amount of frames, then calls Action
+        /// </summary>
+        /// <param name="frames">Amount of frames to wait</param>
+        /// <param name="onFinish">Action to perform on completion</param>
+        public static void WaitForFrames(int frames, Action onFinish)
+        {
+            Coroutines.Start(CoWaitForFrames(frames, onFinish));
+        }
+        private static IEnumerator CoWaitForFrames(int frames, Action onFinish)
+        {
+            {
+                for (int i = 0; i < frames; i++)
+                    yield return null;
                 onFinish.Invoke();
                 onFinish = null;
             }

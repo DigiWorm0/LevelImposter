@@ -1,11 +1,13 @@
-using System;
-using System.IO;
-using System.Collections;
-using UnityEngine;
 using BepInEx.Unity.IL2CPP.Utils.Collections;
-using System.Text.Json;
-using System.Diagnostics;
 using Il2CppInterop.Runtime.Attributes;
+using LevelImposter.Core;
+using System;
+using System.Collections;
+using System.Diagnostics;
+using System.IO;
+using System.Text.Json;
+using System.Text.Json.Nodes;
+using UnityEngine;
 
 namespace LevelImposter.Shop
 {
@@ -21,6 +23,7 @@ namespace LevelImposter.Shop
         public static FileHandler? Instance = null;
 
         private const float MIN_FRAMERATE = 30.0f;
+        private JsonSerializerOptions _jsonOptions = new();
         private Stopwatch _loadTimer = new();
         private bool _shouldLoad
         {
@@ -35,7 +38,7 @@ namespace LevelImposter.Shop
         /// <param name="onError">Callback on error with error info</param>
         /// <returns></returns>
         [HideFromIl2Cpp]
-        private IEnumerator CoGet<T>(string filePath, Action<T?>? onSuccess, Action<string>? onError)
+        private IEnumerator CoGet<T>(string filePath, Action<T?>? onSuccess, Action<string>? onError) where T : LIMetadata, new()
         {
             {
                 // Wait for timing
@@ -50,9 +53,33 @@ namespace LevelImposter.Shop
                 }
                 else
                 {
-                    // Read/Deserialize file
-                    using FileStream mapStream = File.OpenRead(filePath);
-                    T? mapData = JsonSerializer.Deserialize<T>(mapStream);
+                    // Open File Stream
+                    JsonObject mapJsonObj = new();
+                    FileChunkConverter.FilePath = filePath;
+                    using (FileStream fileStream = File.OpenRead(filePath))
+                    {
+                        // Iterate through each element
+                        using JsonDocument jsonDoc = JsonDocument.Parse(fileStream);
+                        JsonElement jsonRoot = jsonDoc.RootElement;
+                        bool isMetadata = typeof(T) == typeof(LIMetadata);
+                        foreach (JsonProperty element in jsonRoot.EnumerateObject())
+                        {
+                            // Async Delay
+                            yield return null;
+
+                            // Skip fields labeled as "elements" or "properties"
+                            if (isMetadata && (element.Name == "elements" || element.Name == "properties"))
+                                continue;
+
+                            // Deserialize
+                            mapJsonObj[element.Name] = JsonSerializer.Deserialize<JsonNode>(element.Value.GetRawText());
+                        }
+                    }
+
+                    // Deserialize Json Object
+                    T? mapData = JsonSerializer.Deserialize<T>(mapJsonObj.ToString());
+
+                    // Check if deserialization failed
                     if (mapData == null)
                     {
                         if (onError != null)
@@ -80,7 +107,7 @@ namespace LevelImposter.Shop
         /// <param name="onSuccess">Callback on success</param>
         /// <param name="onError">Callback on error</param>
         [HideFromIl2Cpp]
-        public void Get<T>(string filePath, Action<T?>? onSuccess, Action<string>? onError)
+        public void Get<T>(string filePath, Action<T?>? onSuccess, Action<string>? onError) where T : LIMetadata, new()
         {
             StartCoroutine(CoGet(filePath, onSuccess, onError).WrapToIl2Cpp());
         }
@@ -91,6 +118,7 @@ namespace LevelImposter.Shop
             {
                 Instance = this;
                 DontDestroyOnLoad(gameObject);
+                _jsonOptions.Converters.Add(new FileChunkConverter());
             }
             else
             {
