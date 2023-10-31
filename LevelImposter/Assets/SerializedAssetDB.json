@@ -2563,6 +2563,14 @@
       "Paths": [ "admin_sliderBottom/admin_Wallet/admin_walletFront" ]
     },
     {
+      "ID": "task-id_greenlight",
+      "Paths": [ "admin_sliderTop/admin_lightGreen" ]
+    },
+    {
+      "ID": "task-id_redlight",
+      "Paths": [ "admin_sliderTop/admin_lightRed" ]
+    },
+    {
       "ID": "task-keys_keychain",
       "Paths": [ "panel_key_keychain" ]
     },
@@ -2702,6 +2710,22 @@
     {
       "ID": "task-pass_scanner",
       "Paths": [ "Panel_scanner" ]
+    },
+    {
+      "ID": "task-pass_pull",
+      "Paths": [ "Panel_boardingpull" ]
+    },
+    {
+      "ID": "task-pass_flip",
+      "Paths": [ "panel_boardingFront/panel_boardingFlip" ]
+    },
+    {
+      "ID": "task-pass_idwindow",
+      "Paths": [ "panel_boardingFront/panel_boardingpicBG/panel_boardingpicwindow" ]
+    },
+    {
+      "ID": "task-pass_idfront",
+      "Paths": [ "panel_boardingFront" ]
     },
     {
       "ID": "task-photos_bg",
