@@ -1,7 +1,6 @@
 ﻿using BepInEx.Unity.IL2CPP.Utils.Collections;
 using Il2CppInterop.Runtime.Attributes;
 using Il2CppInterop.Runtime.InteropTypes.Arrays;
-using PowerTools;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -105,7 +104,10 @@ namespace LevelImposter.Core
             LILogger.Info($"Loading sprite for {element}");
             Stopwatch stopwatch = Stopwatch.StartNew();
 
-            string b64 = element.properties.spriteData ?? "";
+            var spriteDB = LIShipStatus.Instance?.CurrentMap?.spriteDB;
+            Guid? spriteID = element.properties.spriteID;
+            string? b64 = spriteDB?.Get(spriteID)?.ToString() ?? "";
+            LILogger.Warn(spriteID + " : " + (b64?.Length ?? 0));
             LoadSpriteAsync(b64, (nullableSpriteData) =>
             {
                 // Abort on Exit

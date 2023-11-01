@@ -1,9 +1,9 @@
+using Il2CppInterop.Runtime.Attributes;
+using LevelImposter.Core;
 using System;
 using System.IO;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using LevelImposter.Core;
-using Il2CppInterop.Runtime.Attributes;
 
 namespace LevelImposter.Shop
 {
@@ -29,13 +29,13 @@ namespace LevelImposter.Shop
         }
 
         /// <summary>
-        /// Gets the path where a specific map LIM file is stored.
+        /// Gets the path where a specific map LIM2 file is stored.
         /// </summary>
         /// <param name="mapID">ID of the map file</param>
         /// <returns>The path where a specific map is stored</returns>
         public static string GetPath(string mapID)
         {
-            return Path.Combine(GetDirectory(), mapID + ".lim");
+            return Path.Combine(GetDirectory(), mapID + ".lim2");
         }
 
         /// <summary>
@@ -45,7 +45,7 @@ namespace LevelImposter.Shop
         [HideFromIl2Cpp]
         public static string[] ListIDs()
         {
-            string[] fileNames = Directory.GetFiles(GetDirectory(), "*.lim");
+            string[] fileNames = Directory.GetFiles(GetDirectory(), "*.lim2");
             for (int i = 0; i < fileNames.Length; i++)
                 fileNames[i] = Path.GetFileNameWithoutExtension(fileNames[i]);
             return fileNames;
@@ -72,15 +72,18 @@ namespace LevelImposter.Shop
         [HideFromIl2Cpp]
         public static void Get(string mapID, Action<LIMap?> callback)
         {
+            // TODO: Merge Get() and GetMetadata() into one function
+            // TODO: Remove callbacks and make synchronous
             string path = GetPath(mapID);
-            FileHandler.Instance?.Get(path, (LIMap? map) =>
+            using (var stream = File.OpenRead(path))
             {
-                if (map != null)
+                var mapData = LIDeserializer.DeserializeMap(stream);
+                if (mapData != null)
                 {
-                    map.id = mapID;
-                    callback(map);
+                    mapData.id = mapID;
+                    callback(mapData);
                 }
-            }, null);
+            }
         }
 
         /// <summary>
@@ -93,16 +96,17 @@ namespace LevelImposter.Shop
         [HideFromIl2Cpp]
         public static void GetMetadata(string mapID, Action<LIMetadata?> callback)
         {
-            // TODO: Prevent parsing of unnecessary data
+            // TODO: Remove callbacks and make synchronous
             string path = GetPath(mapID);
-            FileHandler.Instance?.Get(path, (LIMetadata? map) =>
+            using (var stream = File.OpenRead(path))
             {
-                if (map != null)
+                var mapData = LIDeserializer.DeserializeMap(stream, false);
+                if (mapData != null)
                 {
-                    map.id = mapID;
-                    callback(map);
+                    mapData.id = mapID;
+                    callback(mapData);
                 }
-            }, null);
+            }
         }
 
         /// <summary>
@@ -114,10 +118,11 @@ namespace LevelImposter.Shop
         {
             LILogger.Info($"Saving {map} to filesystem");
             string mapPath = GetPath(map.id);
-            string mapJson = JsonSerializer.Serialize(map, SERIALIZE_OPTIONS);
+            // TODO: Make a map serializer
+            string fileData = LISerializer.SerializeMap(map);
             if (!Directory.Exists(GetDirectory()))
                 Directory.CreateDirectory(GetDirectory());
-            File.WriteAllText(mapPath, mapJson);
+            File.WriteAllText(mapPath, fileData);
         }
 
         /// <summary>

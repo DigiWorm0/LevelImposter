@@ -19,6 +19,9 @@ namespace LevelImposter.Core
 
         // Sprite
         public string? spriteData { get; set; }
+        public Guid? spriteID { get; set; }
+
+        // Sprite Data
         public bool? noShadows { get; set; }
         public bool? noShadowsBehaviour { get; set; }
         public LIColor? color { get; set; }

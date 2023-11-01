@@ -1,9 +1,8 @@
-﻿using TMPro;
-using HarmonyLib;
+﻿using HarmonyLib;
 using LevelImposter.Core;
 using System;
+using TMPro;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 namespace LevelImposter.Shop
 {
@@ -33,7 +32,7 @@ namespace LevelImposter.Shop
 
             AspectPosition logoPosition = _versionObject.AddComponent<AspectPosition>();
             logoPosition.Alignment = AspectPosition.EdgeAlignments.Right;
-            logoPosition.DistanceFromEdge = new Vector3(1.4f, -2.3f, 0);
+            logoPosition.DistanceFromEdge = new Vector3(1.8f, -2.3f, 0);
             logoPosition.AdjustPosition();
 
             SpriteRenderer logoRenderer = _versionObject.AddComponent<SpriteRenderer>();
