@@ -43,7 +43,6 @@ namespace LevelImposter.Core
                     throw new Exception("No data to convert to stream");
             }
 
-            // TEMPORARY FUNCTION
             public byte[] ToBytes()
             {
                 if (rawData != null)

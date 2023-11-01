@@ -101,18 +101,14 @@ namespace LevelImposter.Core
             // Get Sprite Data
             var spriteDB = LIShipStatus.Instance?.CurrentMap?.mapAssetDB;
             Guid? spriteID = element.properties.spriteID;
-            var spriteData = spriteDB?.Get(spriteID)?.ToBytes();
-            if (spriteData == null)
+            var spriteStream = spriteDB?.Get(spriteID)?.OpenStream();
+            if (spriteStream == null)
             {
                 LILogger.Warn($"Could not find sprite for {element}");
                 return;
             }
 
-            // Check GIF
-            // TODO: Move this logic to the GIF Parser
-            bool isGIF = spriteData[0] == 'G' && spriteData[1] == 'I' && spriteData[2] == 'F';
-
-            LoadSpriteAsync(spriteData, isGIF, (nullableSpriteData) =>
+            LoadSpriteAsync(spriteStream, (nullableSpriteData) =>
             {
                 // Abort on Exit
                 if (obj == null)
@@ -145,7 +141,7 @@ namespace LevelImposter.Core
 
                 if (OnLoad != null)
                     OnLoad.Invoke(element);
-            }, element.id.ToString(), null);
+            }, spriteID.ToString(), null);
         }
 
         /// <summary>
@@ -157,8 +153,8 @@ namespace LevelImposter.Core
         public void LoadSpriteAsync(string b64Image, Action<SpriteData?> onLoad, string? spriteID, Vector2? pivot)
         {
             var imgData = string.IsNullOrEmpty(b64Image) ? new(0) : MapUtils.ParseBase64(b64Image);
-            bool isGIF = b64Image.StartsWith("data:image/gif");
-            LoadSpriteAsync(imgData, isGIF, (spriteList) =>
+            var imgStream = new MemoryStream(imgData);
+            LoadSpriteAsync(imgStream, (spriteList) =>
             {
                 onLoad(spriteList);
                 spriteList = null;
@@ -172,9 +168,9 @@ namespace LevelImposter.Core
         /// <param name="imgData">Image File Data</param>
         /// <param name="onLoad">Callback on success</param>
         [HideFromIl2Cpp]
-        public void LoadSpriteAsync(Il2CppStructArray<byte> imgData, bool isGIF, Action<SpriteData?> onLoad, string? spriteID, Vector2? pivot)
+        public void LoadSpriteAsync(Stream? imgStream, Action<SpriteData?> onLoad, string? spriteID, Vector2? pivot)
         {
-            StartCoroutine(CoLoadSpriteAsync(imgData, isGIF, onLoad, spriteID, pivot).WrapToIl2Cpp());
+            StartCoroutine(CoLoadSpriteAsync(imgStream, onLoad, spriteID, pivot).WrapToIl2Cpp());
         }
 
         /// <summary>
@@ -183,7 +179,7 @@ namespace LevelImposter.Core
         /// <param name="imgData">Image File Data</param>
         /// <param name="onLoad">Callback on success</param>
         [HideFromIl2Cpp]
-        private IEnumerator CoLoadSpriteAsync(Il2CppStructArray<byte> imgData, bool isGIF, Action<SpriteData?>? onLoad, string? spriteID, Vector2? pivot)
+        private IEnumerator CoLoadSpriteAsync(Stream? imgStream, Action<SpriteData?>? onLoad, string? spriteID, Vector2? pivot)
         {
             {
                 _renderCount++;
@@ -198,30 +194,39 @@ namespace LevelImposter.Core
                 {
                     // Using sprite data from cache
                 }
-                else if (isGIF)
+                else if (imgStream == null)
                 {
-                    using (MemoryStream ms = new(imgData))
-                    {
-                        var gifFile = new GIFFile(spriteID ?? "LISprite");
-                        gifFile.SetPivot(pivot);
-                        gifFile.Load(ms);
-
-                        spriteData = new()
-                        {
-                            ID = spriteID ?? "",
-                            Sprite = gifFile.GetFrameSprite(0),
-                            GIFData = gifFile
-                        };
-                        AddSpriteToCache(spriteData);
-                        GCHandler.Register(spriteData);
-                    }
+                    LILogger.Warn($"Could not load sprite {spriteID} from null stream");
+                    spriteData = null;
                 }
-                else
+                else if (GIFFile.IsGIF(imgStream))
                 {
+                    // Generate GIF Data
+                    var gifFile = new GIFFile(spriteID ?? "LISprite");
+                    gifFile.SetPivot(pivot);
+                    gifFile.Load(imgStream);
+
+                    // Create Texture
                     spriteData = new()
                     {
                         ID = spriteID ?? "",
-                        Sprite = RawImageToSprite(imgData, pivot)
+                        Sprite = gifFile.GetFrameSprite(0),
+                        GIFData = gifFile
+                    };
+                    AddSpriteToCache(spriteData);
+                    GCHandler.Register(spriteData);
+                }
+                else
+                {
+                    // Get All Data
+                    byte[] imageDataBuffer = new byte[imgStream.Length];
+                    imgStream.Read(imageDataBuffer, 0, imageDataBuffer.Length);
+
+                    // Create Texture
+                    spriteData = new()
+                    {
+                        ID = spriteID ?? "",
+                        Sprite = RawImageToSprite(imageDataBuffer, pivot)
                     };
                     spriteData.Sprite.hideFlags = HideFlags.DontUnloadUnusedAsset;
                     AddSpriteToCache(spriteData);
@@ -234,7 +239,8 @@ namespace LevelImposter.Core
                     onLoad.Invoke(spriteData);
 
                 onLoad = null;
-                imgData = null;
+                imgStream?.Dispose();
+                imgStream = null;
             }
         }
 
@@ -316,7 +322,10 @@ namespace LevelImposter.Core
                 if (GIFData != null)
                     GIFData.Dispose();
                 if (Sprite != null)
+                {
                     Destroy(Sprite.texture);
+                    Destroy(Sprite);
+                }
                 Sprite = null;
                 GIFData = null;
             }

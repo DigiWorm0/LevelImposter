@@ -1,8 +1,9 @@
-using System;
-using UnityEngine;
-using LevelImposter.Core;
-using System.Text.Json;
 using Il2CppInterop.Runtime.Attributes;
+using LevelImposter.Core;
+using System;
+using System.IO;
+using System.Text.Json;
+using UnityEngine;
 
 namespace LevelImposter.Shop
 {
@@ -154,7 +155,8 @@ namespace LevelImposter.Shop
             HTTPHandler.Instance?.Request(metadata.thumbnailURL, (imgData) =>
             {
                 ThumbnailCache.Save(metadata.id, imgData);
-                SpriteLoader.Instance?.LoadSpriteAsync(imgData, false, (spriteData) =>
+                var imgStream = new MemoryStream(imgData);
+                SpriteLoader.Instance?.LoadSpriteAsync(imgStream, (spriteData) =>
                 {
                     if (spriteData == null)
                     {

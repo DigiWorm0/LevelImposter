@@ -84,12 +84,10 @@ namespace LevelImposter.Core
                     // Load Sprite
                     if (mapAsset != null)
                     {
-                        var bytes = mapAsset.ToBytes();
                         SpriteLoader.Instance?.LoadSpriteAsync(
-                            bytes,
-                            false,
+                            mapAsset.OpenStream(),
                             (spriteData) => LoadMinigameSprite(minigame, minigameData.type, spriteData?.Sprite),
-                            minigameData.id.ToString(),
+                            minigameData.spriteID?.ToString(),
                             pivot
                         );
                     }

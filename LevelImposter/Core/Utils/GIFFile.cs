@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
@@ -46,6 +45,38 @@ namespace LevelImposter.Core
         {
             Name = name;
             Frames = new();
+        }
+
+        /// <summary>
+        /// Checks if the given stream is a GIF file. Keeps the stream open.
+        /// </summary>
+        /// <param name="dataStream">Stream of raw image data</param>
+        /// <returns>True if the Stream is a GIF file. False otherwise</returns>
+        public static bool IsGIF(Stream dataStream)
+        {
+            using (var reader = new BinaryReader(dataStream, System.Text.Encoding.ASCII, true))
+            {
+                try
+                {
+                    // Read Header
+                    var header = reader.ReadBytes(6);
+                    if (header.Length != 6)
+                        return false;
+                    reader.BaseStream.Position = 0;
+
+                    // Check Header
+                    return header[0] == 'G' &&
+                            header[1] == 'I' &&
+                            header[2] == 'F' &&
+                            header[3] == '8' &&
+                            (header[4] == '7' || header[4] == '9') &&
+                            header[5] == 'a';
+                }
+                catch
+                {
+                    return false;
+                }
+            }
         }
 
         /// <summary>
