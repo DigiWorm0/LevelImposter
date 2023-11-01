@@ -43,7 +43,7 @@ namespace LevelImposter.Core
                     throw new Exception("No data to convert to stream");
             }
 
-            public byte[] ToBytes()
+            public Il2CppStructArray<byte> ToBytes()
             {
                 if (rawData != null)
                     return rawData;

@@ -467,6 +467,10 @@ namespace LevelImposter.Core
             while (indexStream.Count < expectedSize)
                 indexStream.Add(0);
 
+            // Free Memory
+            for (int k = endOfInformationCode + 1; k < _codeTable.Length; k++)
+                _codeTable[k] = null;
+
             return indexStream;
         }
 

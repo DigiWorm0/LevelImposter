@@ -219,7 +219,7 @@ namespace LevelImposter.Core
                 else
                 {
                     // Get All Data
-                    byte[] imageDataBuffer = new byte[imgStream.Length];
+                    Il2CppStructArray<byte>? imageDataBuffer = new Il2CppStructArray<byte>(imgStream.Length);
                     imgStream.Read(imageDataBuffer, 0, imageDataBuffer.Length);
 
                     // Create Texture
@@ -230,6 +230,9 @@ namespace LevelImposter.Core
                     };
                     spriteData.Sprite.hideFlags = HideFlags.DontUnloadUnusedAsset;
                     AddSpriteToCache(spriteData);
+
+                    // Cleanuo
+                    imageDataBuffer = null;
                     GCHandler.Register(spriteData);
                 }
 
