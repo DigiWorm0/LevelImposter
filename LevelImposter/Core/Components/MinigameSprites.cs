@@ -73,16 +73,27 @@ namespace LevelImposter.Core
                     return;
                 foreach (LIMinigameSprite minigameData in _minigameDataArr)
                 {
+                    // Get Pivot
                     Vector2? pivot = PIVOTS.ContainsKey(minigameData.type) ? PIVOTS[minigameData.type] : null;
-                    SpriteLoader.Instance?.LoadSpriteAsync(
-                        minigameData.spriteData,
-                        (spriteData) =>
-                        {
-                            LoadMinigameSprite(minigame, minigameData.type, spriteData?.Sprite);
-                        },
-                        minigameData.id.ToString(),
-                        pivot
-                    );
+
+                    // Get Sprite Stream
+                    var mapAssetDB = LIShipStatus.Instance?.CurrentMap?.mapAssetDB;
+                    Guid? guid = minigameData.spriteID;
+                    var mapAsset = mapAssetDB?.Get(guid);
+
+                    // Load Sprite
+                    if (mapAsset != null)
+                    {
+                        var bytes = mapAsset.ToBytes();
+                        SpriteLoader.Instance?.LoadSpriteAsync(
+                            bytes,
+                            false,
+                            (spriteData) => LoadMinigameSprite(minigame, minigameData.type, spriteData?.Sprite),
+                            minigameData.id.ToString(),
+                            pivot
+                        );
+                    }
+
                 }
             }
             catch (Exception e)

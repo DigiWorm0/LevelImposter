@@ -8,6 +8,8 @@ namespace LevelImposter.Shop
 {
     public static class LISerializer
     {
+        private static JsonSerializerOptions? _options = null;
+
         /// <summary>
         /// Serializes a map into a string
         /// </summary>
@@ -15,27 +17,31 @@ namespace LevelImposter.Shop
         /// <returns>Raw LIM2 file data</returns>
         public static MemoryStream SerializeMap(LIMap mapData)
         {
+            // Create Options
+            if (_options == null)
+            {
+                _options = new();
+                _options.DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull;
+            }
+
+            // Create Stream
             MemoryStream stream = new();
 
             // Map Data
-            byte[] mapJsonBytes = JsonSerializer.SerializeToUtf8Bytes(mapData);
+            byte[] mapJsonBytes = JsonSerializer.SerializeToUtf8Bytes(mapData, _options);
             stream.Write(BitConverter.GetBytes(mapJsonBytes.Length));
             stream.Write(mapJsonBytes);
 
             // SpriteDB
-            if (mapData.spriteDB != null)
+            if (mapData.mapAssetDB != null)
             {
-                foreach (KeyValuePair<Guid, SpriteDB.DBElement> sprite in mapData.spriteDB.DB)
+                foreach (KeyValuePair<Guid, MapAssetDB.DBElement> sprite in mapData.mapAssetDB.DB)
                 {
                     var data = sprite.Value.ToBytes();
 
-                    // Write ID
+                    // Write Element
                     stream.Write(sprite.Key.ToByteArray());
-
-                    // Write Length
                     stream.Write(BitConverter.GetBytes(data.Length));
-
-                    // Write Value
                     stream.Write(data);
                 }
             }

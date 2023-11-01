@@ -31,13 +31,18 @@ namespace LevelImposter.Shop
             return hasConverted;
         }
 
+#pragma warning disable CS0618 // Handles legacy properties
+        /// <summary>
+        /// Updates legacy map data to a LIM2 data
+        /// </summary>
+        /// <param name="map">Legacy Map Data</param>
         public static void UpdateMap(LIMap map)
         {
             if (!map.isLegacy)
                 return;
 
             // Make SpriteDB
-            map.spriteDB = new();
+            map.mapAssetDB = new();
             foreach (LIElement element in map.elements)
             {
                 // Add Sprite Data
@@ -45,14 +50,54 @@ namespace LevelImposter.Shop
                 {
                     Guid spriteID = Guid.NewGuid();
                     var spriteData = MapUtils.ParseBase64(element.properties.spriteData);
-                    map.spriteDB.Add(spriteID, spriteData);
+                    map.mapAssetDB.Add(spriteID, spriteData);
                     element.properties.spriteID = spriteID;
                     element.properties.spriteData = null;
                 }
 
-                // TODO: Add Other Lengthy Data
+                // Add Minigame Data
+                if (element.properties.minigames != null)
+                {
+                    foreach (var minigame in element.properties.minigames)
+                    {
+                        var spriteData = MapUtils.ParseBase64(minigame.spriteData ?? "");
+                        if (spriteData != null)
+                        {
+                            Guid spriteID = Guid.NewGuid();
+                            map.mapAssetDB.Add(spriteID, spriteData);
+                            minigame.spriteID = spriteID;
+                        }
+                        minigame.spriteData = null;
+                    }
+                }
+
+                // Add Sound Data
+                if (element.properties.sounds != null)
+                {
+                    foreach (var sound in element.properties.sounds)
+                    {
+                        if (sound.isPreset)
+                        {
+                            sound.presetID = sound.data;
+                        }
+                        else
+                        {
+                            var soundData = MapUtils.ParseBase64(sound.data ?? "");
+                            if (soundData != null)
+                            {
+                                Guid soundID = Guid.NewGuid();
+                                map.mapAssetDB.Add(soundID, soundData);
+                                sound.dataID = soundID;
+                            }
+                        }
+                        sound.data = null;
+                    }
+                }
+
+                // TODO: Search for duplicate entries
             }
         }
+#pragma warning restore CS0618
 
         public static void ConvertFile(string mapID)
         {

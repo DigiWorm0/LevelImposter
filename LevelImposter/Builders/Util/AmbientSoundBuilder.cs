@@ -34,7 +34,7 @@ namespace LevelImposter.Builders
 
             // Sound Data
             LISound soundData = elem.properties.sounds[0];
-            if (soundData.data == null)
+            if (soundData == null)
             {
                 LILogger.Warn($"{elem.name} missing audio data");
                 return;
@@ -46,7 +46,7 @@ namespace LevelImposter.Builders
                 AmbientSoundPlayer ambientPlayer = obj.AddComponent<AmbientSoundPlayer>();
                 ambientPlayer.HitAreas = colliders;
                 ambientPlayer.MaxVolume = soundData.volume;
-                ambientPlayer.AmbientSound = WAVFile.Load(soundData?.data);
+                ambientPlayer.AmbientSound = WAVFile.LoadSound(soundData);
             }
             else if (isTrigger)
             {

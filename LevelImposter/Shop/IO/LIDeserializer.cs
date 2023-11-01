@@ -30,7 +30,7 @@ namespace LevelImposter.Shop
                 return mapData;
 
             // Read SpriteDB
-            mapData.spriteDB = new();
+            mapData.mapAssetDB = new();
             while (dataStream.Position < dataStream.Length)
             {
                 // Read ID
@@ -43,26 +43,12 @@ namespace LevelImposter.Shop
                 dataStream.Read(lengthBytes, 0, 4);
                 int dataLength = BitConverter.ToInt32(lengthBytes, 0);
 
-                // Read Value to Memory
-                if (CurrentFilePath == null)
+                // Save Chunk
+                mapData.mapAssetDB.DB[spriteID] = new MapAssetDB.DBElement()
                 {
-                    byte[] dataValue = new byte[dataLength];
-                    dataStream.Read(dataValue, 0, dataLength);
-                    mapData.spriteDB.DB[spriteID] = new SpriteDB.DBElement()
-                    {
-                        rawData = dataValue
-                    };
-
-                }
-                // Store File Offset to Memory
-                else
-                {
-                    mapData.spriteDB.DB[spriteID] = new SpriteDB.DBElement()
-                    {
-                        fileChunk = new FileChunk(CurrentFilePath, dataStream.Position, dataLength)
-                    };
-                    dataStream.Position += dataLength;
-                }
+                    fileChunk = new FileChunk(CurrentFilePath ?? "", dataStream.Position, dataLength)
+                };
+                dataStream.Position += dataLength;
             }
 
             // Return

@@ -5,7 +5,7 @@ using System.IO;
 
 namespace LevelImposter.Core
 {
-    public class SpriteDB
+    public class MapAssetDB
     {
         private Dictionary<Guid, DBElement> _db = new();
         public Dictionary<Guid, DBElement> DB => _db;

@@ -13,6 +13,6 @@ namespace LevelImposter.Core
         [JsonIgnore]
         public bool isLegacy => v <= 1;
         [JsonIgnore]
-        public SpriteDB? spriteDB { get; set; }
+        public MapAssetDB? mapAssetDB { get; set; }
     }
 }

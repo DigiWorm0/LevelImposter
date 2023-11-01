@@ -113,6 +113,7 @@ namespace LevelImposter.Shop
         {
             StartCoroutine(CoSetDownloadsTab().WrapToIl2Cpp());
         }
+        [HideFromIl2Cpp]
         private IEnumerator CoSetDownloadsTab()
         {
             {

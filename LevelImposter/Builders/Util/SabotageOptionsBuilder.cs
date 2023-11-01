@@ -1,5 +1,5 @@
-using UnityEngine;
 using LevelImposter.Core;
+using UnityEngine;
 
 namespace LevelImposter.Builders
 {
@@ -32,11 +32,11 @@ namespace LevelImposter.Builders
                 return;
             }
             TriggerObject = obj;
-            
+
             // Sabotage Sound
             LISound? sabotageSound = MapUtils.FindSound(elem.properties.sounds, SABOTAGE_SOUND_NAME);
             if (sabotageSound != null)
-                shipStatus.SabotageSound = WAVFile.Load(sabotageSound?.data) ?? shipStatus.SabotageSound;
+                shipStatus.SabotageSound = WAVFile.LoadSound(sabotageSound) ?? shipStatus.SabotageSound;
         }
 
         public void PostBuild() { }

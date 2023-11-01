@@ -7,6 +7,10 @@ namespace LevelImposter.Core
     {
         public Guid id { get; set; }
         public string type { get; set; }
-        public string spriteData { get; set; }
+        public Guid? spriteID { get; set; }
+
+        // Legacy
+        [Obsolete("Use spriteID instead")]
+        public string? spriteData { get; set; }
     }
 }
