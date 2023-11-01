@@ -104,11 +104,21 @@ namespace LevelImposter.Core
             LILogger.Info($"Loading sprite for {element}");
             Stopwatch stopwatch = Stopwatch.StartNew();
 
+            // Get Sprite Data
             var spriteDB = LIShipStatus.Instance?.CurrentMap?.spriteDB;
             Guid? spriteID = element.properties.spriteID;
-            string? b64 = spriteDB?.Get(spriteID)?.ToString() ?? "";
-            LILogger.Warn(spriteID + " : " + (b64?.Length ?? 0));
-            LoadSpriteAsync(b64, (nullableSpriteData) =>
+            var spriteData = spriteDB?.Get(spriteID)?.ToBytes();
+            if (spriteData == null)
+            {
+                LILogger.Warn($"Could not find sprite for {element}");
+                return;
+            }
+
+            // Check GIF
+            // TODO: Move this logic to the GIF Parser
+            bool isGIF = spriteData[0] == 'G' && spriteData[1] == 'I' && spriteData[2] == 'F';
+
+            LoadSpriteAsync(spriteData, isGIF, (nullableSpriteData) =>
             {
                 // Abort on Exit
                 if (obj == null)

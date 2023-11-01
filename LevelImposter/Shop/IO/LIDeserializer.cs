@@ -7,14 +7,19 @@ namespace LevelImposter.Shop
 {
     public static class LIDeserializer
     {
+        public static string? CurrentFilePath = null;
+
         public static LIMap DeserializeMap(Stream dataStream, bool spriteDB = true)
         {
-            // Open Reader
-            using StreamReader reader = new(dataStream);
+            // Map Data Length
+            byte[] mapLengthBytes = new byte[4];
+            dataStream.Read(mapLengthBytes, 0, 4);
+            int mapLength = BitConverter.ToInt32(mapLengthBytes, 0);
 
             // Read Map Data
-            string? mapJson = reader.ReadLine();
-            LIMap? mapData = JsonSerializer.Deserialize<LIMap>(mapJson ?? "");
+            byte[] mapDataBytes = new byte[mapLength];
+            dataStream.Read(mapDataBytes, 0, mapLength);
+            LIMap? mapData = JsonSerializer.Deserialize<LIMap>(mapDataBytes);
 
             // Check Map Data
             if (mapData == null)
@@ -26,26 +31,38 @@ namespace LevelImposter.Shop
 
             // Read SpriteDB
             mapData.spriteDB = new();
-            while (!reader.EndOfStream)
+            while (dataStream.Position < dataStream.Length)
             {
-                string? line = reader.ReadLine();
-                if (line == null)
-                    continue;
+                // Read ID
+                byte[] idBytes = new byte[16];
+                dataStream.Read(idBytes, 0, 16);
+                Guid spriteID = new(idBytes);
 
-                int splitIndex = line.IndexOf('=');
-                if (splitIndex == -1)
-                    continue;
+                // Read Length
+                byte[] lengthBytes = new byte[4];
+                dataStream.Read(lengthBytes, 0, 4);
+                int dataLength = BitConverter.ToInt32(lengthBytes, 0);
 
-                // Read Key/Value
-                string key = line.Substring(0, splitIndex);
-                string value = line.Substring(splitIndex + 1);
-
-                // Parse
-                Guid.TryParse(key, out Guid spriteID);
-                mapData.spriteDB.DB[spriteID] = new SpriteDB.DBElement()
+                // Read Value to Memory
+                if (CurrentFilePath == null)
                 {
-                    rawData = value // TODO: Use FileChunk instead of rawData
-                };
+                    byte[] dataValue = new byte[dataLength];
+                    dataStream.Read(dataValue, 0, dataLength);
+                    mapData.spriteDB.DB[spriteID] = new SpriteDB.DBElement()
+                    {
+                        rawData = dataValue
+                    };
+
+                }
+                // Store File Offset to Memory
+                else
+                {
+                    mapData.spriteDB.DB[spriteID] = new SpriteDB.DBElement()
+                    {
+                        fileChunk = new FileChunk(CurrentFilePath, dataStream.Position, dataLength)
+                    };
+                    dataStream.Position += dataLength;
+                }
             }
 
             // Return

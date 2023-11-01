@@ -44,7 +44,8 @@ namespace LevelImposter.Shop
                 if (element.properties.spriteData != null)
                 {
                     Guid spriteID = Guid.NewGuid();
-                    map.spriteDB.Add(spriteID, element.properties.spriteData);
+                    var spriteData = MapUtils.ParseBase64(element.properties.spriteData);
+                    map.spriteDB.Add(spriteID, spriteData);
                     element.properties.spriteID = spriteID;
                     element.properties.spriteData = null;
                 }
@@ -80,12 +81,11 @@ namespace LevelImposter.Shop
             UpdateMap(mapFile);
 
             // Serialize
-            string newFileData = LISerializer.SerializeMap(mapFile);
+            var dataStream = LISerializer.SerializeMap(mapFile);
 
-            // Write new file
-            using (FileStream newFileStream = File.OpenWrite(newPath))
-            using (StreamWriter newFileWriter = new(newFileStream))
-                newFileWriter.Write(newFileData);
+            // Write to new file
+            using (FileStream outputFileStream = File.OpenWrite(newPath))
+                dataStream.CopyTo(outputFileStream);
 
             // Delete legacy file
             //File.Delete(legacyPath); // <-- We'll probably want to keep legacy files in case of failure

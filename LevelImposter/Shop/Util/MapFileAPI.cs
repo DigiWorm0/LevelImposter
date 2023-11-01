@@ -1,6 +1,5 @@
 using Il2CppInterop.Runtime.Attributes;
 using LevelImposter.Core;
-using System;
 using System.IO;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -70,19 +69,15 @@ namespace LevelImposter.Shop
         /// <param name="callback">Callback on success</param>
         /// <returns>Representation of the map file data in the form of a <c>LIMap</c>.</returns>
         [HideFromIl2Cpp]
-        public static void Get(string mapID, Action<LIMap?> callback)
+        public static LIMap? Get(string mapID, bool spriteDB = true)
         {
-            // TODO: Merge Get() and GetMetadata() into one function
-            // TODO: Remove callbacks and make synchronous
             string path = GetPath(mapID);
             using (var stream = File.OpenRead(path))
             {
-                var mapData = LIDeserializer.DeserializeMap(stream);
+                var mapData = LIDeserializer.DeserializeMap(stream, spriteDB);
                 if (mapData != null)
-                {
                     mapData.id = mapID;
-                    callback(mapData);
-                }
+                return mapData;
             }
         }
 
@@ -94,19 +89,9 @@ namespace LevelImposter.Shop
         /// <param name="callback">Callback on success</param>
         /// <returns>Representation of the map file data in the form of a <c>LIMetadata</c>.</returns>
         [HideFromIl2Cpp]
-        public static void GetMetadata(string mapID, Action<LIMetadata?> callback)
+        public static LIMetadata? GetMetadata(string mapID)
         {
-            // TODO: Remove callbacks and make synchronous
-            string path = GetPath(mapID);
-            using (var stream = File.OpenRead(path))
-            {
-                var mapData = LIDeserializer.DeserializeMap(stream, false);
-                if (mapData != null)
-                {
-                    mapData.id = mapID;
-                    callback(mapData);
-                }
-            }
+            return Get(mapID, false);
         }
 
         /// <summary>
@@ -118,11 +103,13 @@ namespace LevelImposter.Shop
         {
             LILogger.Info($"Saving {map} to filesystem");
             string mapPath = GetPath(map.id);
-            // TODO: Make a map serializer
-            string fileData = LISerializer.SerializeMap(map);
+            // Create Directory
             if (!Directory.Exists(GetDirectory()))
                 Directory.CreateDirectory(GetDirectory());
-            File.WriteAllText(mapPath, fileData);
+            // Write to File
+            using (var dataStream = LISerializer.SerializeMap(map))
+            using (var outputFileStream = File.OpenWrite(mapPath))
+                dataStream.CopyTo(outputFileStream);
         }
 
         /// <summary>

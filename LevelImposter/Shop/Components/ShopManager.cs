@@ -111,19 +111,23 @@ namespace LevelImposter.Shop
         /// </summary>
         private void SetDownloadsTab()
         {
-            LegacyConverter.ConvertAllFiles();
-            Clear();
-            string[] mapIDs = MapFileAPI.ListIDs() ?? new string[0];
-            foreach (string mapID in mapIDs)
-            {
-                MapFileAPI.GetMetadata(mapID, OnDownloadsResponse);
-            }
+            StartCoroutine(CoSetDownloadsTab().WrapToIl2Cpp());
         }
-        [HideFromIl2Cpp]
-        private void OnDownloadsResponse(LIMetadata? metadata)
+        private IEnumerator CoSetDownloadsTab()
         {
-            if (metadata != null && _currentTab == Tab.Downloads)
-                AddBanner(metadata);
+            {
+                LegacyConverter.ConvertAllFiles();
+                yield return null;
+                Clear();
+                string[] mapIDs = MapFileAPI.ListIDs() ?? new string[0];
+                foreach (string mapID in mapIDs)
+                {
+                    var metadata = MapFileAPI.GetMetadata(mapID);
+                    if (metadata != null)
+                        AddBanner(metadata);
+                    yield return null;
+                }
+            }
         }
 
         /// <summary>

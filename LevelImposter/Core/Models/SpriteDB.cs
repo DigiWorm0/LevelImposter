@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Il2CppInterop.Runtime.InteropTypes.Arrays;
+using System;
 using System.Collections.Generic;
 using System.IO;
 
@@ -9,7 +10,7 @@ namespace LevelImposter.Core
         private Dictionary<Guid, DBElement> _db = new();
         public Dictionary<Guid, DBElement> DB => _db;
 
-        public void Add(Guid id, string rawData)
+        public void Add(Guid id, byte[] rawData)
         {
             _db.Add(id, new DBElement { rawData = rawData });
         }
@@ -29,27 +30,33 @@ namespace LevelImposter.Core
 
         public class DBElement
         {
-            public string? rawData { get; set; }
+            public Il2CppStructArray<byte>? rawData { get; set; }
             public FileChunk? fileChunk { get; set; }
 
             public Stream OpenStream()
             {
                 if (rawData != null)
-                    return new MemoryStream(Convert.FromBase64String(rawData));
+                    return new MemoryStream(rawData);
                 else if (fileChunk != null)
                     return fileChunk.OpenStream();
                 else
                     throw new Exception("No data to convert to stream");
             }
 
-            public override string ToString()
+            // TEMPORARY FUNCTION
+            public byte[] ToBytes()
             {
                 if (rawData != null)
                     return rawData;
                 else if (fileChunk != null)
-                    return fileChunk.ToString();
+                    using (var stream = fileChunk.OpenStream())
+                    {
+                        byte[] buffer = new byte[stream.Length];
+                        stream.Read(buffer, 0, buffer.Length);
+                        return buffer;
+                    }
                 else
-                    throw new Exception("No data to convert to string");
+                    throw new Exception("No data to convert to bytes");
             }
         }
     }
