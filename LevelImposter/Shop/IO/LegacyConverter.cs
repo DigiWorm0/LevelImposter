@@ -1,5 +1,7 @@
-﻿using LevelImposter.Core;
+﻿using Il2CppInterop.Runtime.Attributes;
+using LevelImposter.Core;
 using System;
+using System.Collections;
 using System.IO;
 using System.Text.Json;
 
@@ -15,20 +17,28 @@ namespace LevelImposter.Shop
             return Path.Combine(MapFileAPI.GetDirectory(), $"{mapID}.lim");
         }
 
-        public static bool ConvertAllFiles()
+        /// <summary>
+        /// Auto-Updates all downloaded maps
+        /// </summary>
+        /// <returns></returns>
+        [HideFromIl2Cpp]
+        public static IEnumerator ConvertAllMaps()
         {
-            bool hasConverted = false;
-            string[] legacyMapIDs = Directory.GetFiles(MapFileAPI.GetDirectory(), "*.lim");
-            foreach (string legacyMapID in legacyMapIDs)
             {
-                string mapID = Path.GetFileNameWithoutExtension(legacyMapID);
-                if (!MapFileAPI.Exists(mapID))
+                string[] legacyMapIDs = Directory.GetFiles(MapFileAPI.GetDirectory(), "*.lim");
+                foreach (string legacyMapID in legacyMapIDs)
                 {
-                    ConvertFile(mapID);
-                    hasConverted = true;
+                    string mapID = Path.GetFileNameWithoutExtension(legacyMapID);
+                    if (!MapFileAPI.Exists(mapID))
+                    {
+                        ShopManager.Instance?.SetOverlayEnabled(true);
+                        ShopManager.Instance?.SetOverlayText($"Converting legacy maps...\n<size=2>{mapID}");
+                        yield return null;
+                        ConvertFile(mapID);
+                    }
                 }
+                ShopManager.Instance?.SetOverlayEnabled(false);
             }
-            return hasConverted;
         }
 
 #pragma warning disable CS0618 // Handles legacy properties
@@ -41,8 +51,13 @@ namespace LevelImposter.Shop
             if (!map.isLegacy)
                 return;
 
-            // Make SpriteDB
+            LILogger.Info($"Converting legacy map data [{map.id}]");
+
+            // Update Properties
+            map.isLegacy = false;
             map.mapAssetDB = new();
+
+            // SpriteDB
             foreach (LIElement element in map.elements)
             {
                 // Add Sprite Data
@@ -125,15 +140,13 @@ namespace LevelImposter.Shop
             // Update map
             UpdateMap(mapFile);
 
-            // Serialize
-            var dataStream = LISerializer.SerializeMap(mapFile);
-
-            // Write to new file
+            // Serialize & Write to new file
+            using (var dataStream = LISerializer.SerializeMap(mapFile))
             using (FileStream outputFileStream = File.OpenWrite(newPath))
                 dataStream.CopyTo(outputFileStream);
 
             // Delete legacy file
-            //File.Delete(legacyPath); // <-- We'll probably want to keep legacy files in case of failure
+            File.Move(legacyPath, $"{legacyPath}.bak");
         }
     }
 }

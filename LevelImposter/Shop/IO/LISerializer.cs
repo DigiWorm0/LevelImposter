@@ -24,8 +24,12 @@ namespace LevelImposter.Shop
                 _options.DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull;
             }
 
-            // Create Stream
+            // Open Stream
             MemoryStream stream = new();
+
+            // Update Legacy Format
+            if (mapData.isLegacy)
+                LegacyConverter.UpdateMap(mapData);
 
             // Map Data
             byte[] mapJsonBytes = JsonSerializer.SerializeToUtf8Bytes(mapData, _options);

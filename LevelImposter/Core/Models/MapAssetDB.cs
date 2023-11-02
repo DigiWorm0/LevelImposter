@@ -25,6 +25,8 @@ namespace LevelImposter.Core
             if (id == null)
                 return null;
             _db.TryGetValue((Guid)id, out DBElement? result);
+            if (result == null)
+                LILogger.Warn($"No such map asset with id {id}");
             return result;
         }
 
@@ -43,7 +45,7 @@ namespace LevelImposter.Core
                     throw new Exception("No data to convert to stream");
             }
 
-            public Il2CppStructArray<byte> ToBytes()
+            public byte[] ToBytes()
             {
                 if (rawData != null)
                     return rawData;

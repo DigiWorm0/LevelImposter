@@ -117,7 +117,7 @@ namespace LevelImposter.Shop
         private IEnumerator CoSetDownloadsTab()
         {
             {
-                LegacyConverter.ConvertAllFiles();
+                yield return LegacyConverter.ConvertAllMaps().WrapToIl2Cpp();
                 yield return null;
                 Clear();
                 string[] mapIDs = MapFileAPI.ListIDs() ?? new string[0];

@@ -1,4 +1,5 @@
 using Il2CppInterop.Runtime.Attributes;
+using Il2CppInterop.Runtime.InteropTypes.Arrays;
 using LevelImposter.Core;
 using System;
 using System.IO;
@@ -108,32 +109,42 @@ namespace LevelImposter.Shop
             LILogger.Info($"Downloading map [{id}]...");
             GetMap(id, (LIMetadata metadata) =>
             {
-                HTTPHandler.Instance?.Download(metadata.downloadURL, onProgress, (string mapJson) =>
+                HTTPHandler.Instance?.Download(metadata.downloadURL, onProgress, (Il2CppStructArray<byte> fileData) =>
                 {
                     LILogger.Info($"Parsing map {metadata}...");
                     try
                     {
-                        LIMap? mapData = JsonSerializer.Deserialize<LIMap>(mapJson);
-                        mapJson = ""; // Free Memory
-                        if (mapData == null)
+                        using (var memoryStream = new MemoryStream(fileData))
                         {
-                            onError("Map was null");
-                            return;
-                        }
-                        mapData.v = metadata.v;
-                        mapData.id = metadata.id;
-                        mapData.name = metadata.name;
-                        mapData.description = metadata.description;
-                        mapData.authorID = metadata.authorID;
-                        mapData.authorName = metadata.authorName;
-                        mapData.isPublic = metadata.isPublic;
-                        mapData.isVerified = metadata.isVerified;
-                        mapData.createdAt = metadata.createdAt;
-                        mapData.thumbnailURL = metadata.thumbnailURL;
-                        mapData.remixOf = metadata.remixOf;
+                            // Deserialize the map
+                            var mapData = LIDeserializer.DeserializeMap(memoryStream);
 
-                        callback(mapData);
-                        mapData = null;
+                            // Free Memory
+                            fileData = null;
+
+                            // Check Download
+                            if (mapData == null)
+                            {
+                                onError("Map was null");
+                                return;
+                            }
+
+                            // Set Metadata
+                            mapData.id = metadata.id;
+                            mapData.name = metadata.name;
+                            mapData.description = metadata.description;
+                            mapData.authorID = metadata.authorID;
+                            mapData.authorName = metadata.authorName;
+                            mapData.isPublic = metadata.isPublic;
+                            mapData.isVerified = metadata.isVerified;
+                            mapData.createdAt = metadata.createdAt;
+                            mapData.thumbnailURL = metadata.thumbnailURL;
+                            mapData.remixOf = metadata.remixOf;
+
+                            // Callback
+                            callback(mapData);
+                            mapData = null;
+                        }
                     }
                     catch (Exception e)
                     {

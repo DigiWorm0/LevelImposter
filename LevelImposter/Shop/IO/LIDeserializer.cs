@@ -11,6 +11,19 @@ namespace LevelImposter.Shop
 
         public static LIMap DeserializeMap(Stream dataStream, bool spriteDB = true)
         {
+            // Parse Legacy
+            byte firstByte = (byte)dataStream.ReadByte();
+            dataStream.Position = 0;
+            if (firstByte == '{')
+            {
+                dataStream.Position = 0;
+                var legacyMap = JsonSerializer.Deserialize<LIMap>(dataStream);
+                if (legacyMap == null)
+                    LILogger.Error("Failed to deserialize legacy map data");
+                LegacyConverter.UpdateMap(legacyMap);
+                return legacyMap;
+            }
+
             // Map Data Length
             byte[] mapLengthBytes = new byte[4];
             dataStream.Read(mapLengthBytes, 0, 4);

@@ -11,7 +11,13 @@ namespace LevelImposter.Core
 
         // LIM2
         [JsonIgnore]
-        public bool isLegacy => v <= 1;
+        public const int LIM_VERSION = 2;
+        [JsonIgnore]
+        public bool isLegacy
+        {
+            get => v < LIM_VERSION;
+            set => v = value ? 1 : LIM_VERSION;
+        }
         [JsonIgnore]
         public MapAssetDB? mapAssetDB { get; set; }
     }
