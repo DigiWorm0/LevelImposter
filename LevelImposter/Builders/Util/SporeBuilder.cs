@@ -23,24 +23,27 @@ namespace LevelImposter.Builders
 
             // Sprite
             var spriteRenderer = MapUtils.CloneSprite(obj, prefab, true);
+            obj.layer = (int)Layer.Ship;
 
             // Screen Mask
+            var sporeRange = (elem.properties.sporeRange ?? 3.7f) * 0.65f;
             var screenMaskPrefab = prefab.transform.FindChild("SporeScreenMask").gameObject;
             var screenMaskObj = new GameObject("ScreenMask");
             screenMaskObj.transform.parent = obj.transform;
             screenMaskObj.transform.localPosition = new Vector3(0, 0, 4.3f);
+            screenMaskObj.transform.localScale = new Vector3(sporeRange, sporeRange, 1.2f);
             var screenMaskRenderer = MapUtils.CloneSprite(screenMaskObj, screenMaskPrefab, true);
 
             // Screen Graphic
             var screenGraphicPrefab = prefab.transform.FindChild("SporeScreenGraphic").gameObject;
             var screenGraphicObj = new GameObject("ScreenGraphic");
             screenGraphicObj.transform.parent = obj.transform;
-            screenGraphicObj.transform.localPosition = new Vector3(0, 0, -10.0f);
+            screenGraphicObj.transform.localPosition = new Vector3(0, 0, -100.0f);
+            screenGraphicObj.transform.localScale = new Vector3(sporeRange, sporeRange, 1.2f);
             var sceenGraphicRenderer = MapUtils.CloneSprite(screenGraphicObj, screenGraphicPrefab, true);
 
             // Set Color
-            if (elem.properties.gasColor != null)
-                sceenGraphicRenderer.color = elem.properties.gasColor.ToUnity();
+            sceenGraphicRenderer.color = elem.properties.gasColor?.ToUnity() ?? screenGraphicPrefab.GetComponent<SpriteRenderer>().color;
 
             // Collider
             CircleCollider2D collider = obj.AddComponent<CircleCollider2D>();
