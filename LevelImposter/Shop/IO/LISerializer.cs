@@ -42,9 +42,10 @@ namespace LevelImposter.Shop
                 foreach (KeyValuePair<Guid, MapAssetDB.DBElement> sprite in mapData.mapAssetDB.DB)
                 {
                     var data = sprite.Value.ToBytes();
+                    var idBytes = System.Text.Encoding.UTF8.GetBytes(sprite.Key.ToString());
 
                     // Write Element
-                    stream.Write(sprite.Key.ToByteArray());
+                    stream.Write(idBytes);
                     stream.Write(BitConverter.GetBytes(data.Length));
                     stream.Write(data);
                 }
