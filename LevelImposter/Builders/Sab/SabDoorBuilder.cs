@@ -113,11 +113,11 @@ namespace LevelImposter.Builders
             // Sound
             LISound? openSound = MapUtils.FindSound(elem.properties.sounds, OPEN_SOUND_NAME);
             if (openSound != null)
-                doorComponent.OpenSound = WAVFile.Load(openSound.data);
+                doorComponent.OpenSound = WAVFile.LoadSound(openSound);
 
             LISound? closeSound = MapUtils.FindSound(elem.properties.sounds, CLOSE_SOUND_NAME);
             if (closeSound != null)
-                doorComponent.CloseSound = WAVFile.Load(closeSound.data);
+                doorComponent.CloseSound = WAVFile.LoadSound(closeSound);
 
             // SpriteAnim
             if (isSpriteAnim)

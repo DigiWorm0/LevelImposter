@@ -77,12 +77,12 @@ namespace LevelImposter.Builders
 
                 LISound? openSound = MapUtils.FindSound(elem.properties.sounds, OPEN_SOUND_NAME);
                 if (openSound != null)
-                    shipStatus.VentEnterSound = WAVFile.Load(openSound?.data);
+                    shipStatus.VentEnterSound = WAVFile.LoadSound(openSound);
 
                 LISound? moveSound = MapUtils.FindSound(elem.properties.sounds, MOVE_SOUND_NAME);
                 if (moveSound != null)
                     shipStatus.VentMoveSounds = new Il2CppReferenceArray<AudioClip>(new AudioClip[] {
-                        WAVFile.Load(moveSound?.data)
+                        WAVFile.LoadSound(moveSound)
                     });
             }
 

@@ -40,7 +40,7 @@ namespace LevelImposter.Builders
             // Sound
             var deconSound = MapUtils.FindSound(elem.properties.sounds, DECONTAM_SOUND_NAME);
             if (deconSound != null)
-                deconSystem.SpraySound = WAVFile.Load(deconSound.data);
+                deconSystem.SpraySound = WAVFile.LoadSound(deconSound);
 
             _deconSystemDB.Add(elem.id, deconSystem);
             _deconElemDB.Add(elem.id, elem);

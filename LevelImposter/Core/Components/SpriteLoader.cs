@@ -1,7 +1,6 @@
 ﻿using BepInEx.Unity.IL2CPP.Utils.Collections;
 using Il2CppInterop.Runtime.Attributes;
 using Il2CppInterop.Runtime.InteropTypes.Arrays;
-using PowerTools;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -29,7 +28,6 @@ namespace LevelImposter.Core
 
         private Stack<SpriteData>? _spriteCache = new();
         private int _renderCount = 0;
-        private Dictionary<string, string>? _duplicateSpriteDB = null;
 
         public int RenderCount => _renderCount;
 
@@ -51,10 +49,6 @@ namespace LevelImposter.Core
                     return spriteData;
                 }
             }
-            if (_duplicateSpriteDB?.ContainsKey(spriteID) == true)
-            {
-                return GetSpriteFromCache(_duplicateSpriteDB[spriteID]);
-            }
             return null;
         }
 
@@ -65,7 +59,6 @@ namespace LevelImposter.Core
         {
             OnLoad = null;
             _spriteCache?.Clear();
-            _duplicateSpriteDB = null;
         }
 
         /// <summary>
@@ -105,8 +98,17 @@ namespace LevelImposter.Core
             LILogger.Info($"Loading sprite for {element}");
             Stopwatch stopwatch = Stopwatch.StartNew();
 
-            string b64 = element.properties.spriteData ?? "";
-            LoadSpriteAsync(b64, (nullableSpriteData) =>
+            // Get Sprite Data
+            var spriteDB = LIShipStatus.Instance?.CurrentMap?.mapAssetDB;
+            Guid? spriteID = element.properties.spriteID;
+            var spriteStream = spriteDB?.Get(spriteID)?.OpenStream();
+            if (spriteStream == null)
+            {
+                LILogger.Warn($"Could not find sprite for {element}");
+                return;
+            }
+
+            LoadSpriteAsync(spriteStream, (nullableSpriteData) =>
             {
                 // Abort on Exit
                 if (obj == null)
@@ -119,9 +121,6 @@ namespace LevelImposter.Core
                     return;
                 }
 
-                // Sprite is in cache, we can reduce memory usage
-                element.properties.spriteData = "";
-
                 // Load Components
                 var spriteData = nullableSpriteData;
                 if (spriteData.IsGIF) // Animated GIF
@@ -129,7 +128,7 @@ namespace LevelImposter.Core
                     GIFAnimator gifAnimator = obj.AddComponent<GIFAnimator>();
                     gifAnimator.Init(element, spriteData.GIFData);
                     stopwatch.Stop();
-                    LILogger.Info($"Done loading {spriteData.GIFData.Width}x{spriteData.GIFData.Height} sprite for {element} ({RenderCount} Left) [{stopwatch.ElapsedMilliseconds}ms]");
+                    LILogger.Info($"Done loading {spriteData.GIFData?.Width}x{spriteData.GIFData?.Height} sprite for {element} ({RenderCount} Left) [{stopwatch.ElapsedMilliseconds}ms]");
                 }
                 else // Still Image
                 {
@@ -142,7 +141,7 @@ namespace LevelImposter.Core
 
                 if (OnLoad != null)
                     OnLoad.Invoke(element);
-            }, element.id.ToString(), null);
+            }, spriteID.ToString(), null);
         }
 
         /// <summary>
@@ -154,8 +153,8 @@ namespace LevelImposter.Core
         public void LoadSpriteAsync(string b64Image, Action<SpriteData?> onLoad, string? spriteID, Vector2? pivot)
         {
             var imgData = string.IsNullOrEmpty(b64Image) ? new(0) : MapUtils.ParseBase64(b64Image);
-            bool isGIF = b64Image.StartsWith("data:image/gif");
-            LoadSpriteAsync(imgData, isGIF, (spriteList) =>
+            var imgStream = new MemoryStream(imgData);
+            LoadSpriteAsync(imgStream, (spriteList) =>
             {
                 onLoad(spriteList);
                 spriteList = null;
@@ -169,9 +168,9 @@ namespace LevelImposter.Core
         /// <param name="imgData">Image File Data</param>
         /// <param name="onLoad">Callback on success</param>
         [HideFromIl2Cpp]
-        public void LoadSpriteAsync(Il2CppStructArray<byte> imgData, bool isGIF, Action<SpriteData?> onLoad, string? spriteID, Vector2? pivot)
+        public void LoadSpriteAsync(Stream? imgStream, Action<SpriteData?> onLoad, string? spriteID, Vector2? pivot)
         {
-            StartCoroutine(CoLoadSpriteAsync(imgData, isGIF, onLoad, spriteID, pivot).WrapToIl2Cpp());
+            StartCoroutine(CoLoadSpriteAsync(imgStream, onLoad, spriteID, pivot).WrapToIl2Cpp());
         }
 
         /// <summary>
@@ -180,7 +179,7 @@ namespace LevelImposter.Core
         /// <param name="imgData">Image File Data</param>
         /// <param name="onLoad">Callback on success</param>
         [HideFromIl2Cpp]
-        private IEnumerator CoLoadSpriteAsync(Il2CppStructArray<byte> imgData, bool isGIF, Action<SpriteData?>? onLoad, string? spriteID, Vector2? pivot)
+        private IEnumerator CoLoadSpriteAsync(Stream? imgStream, Action<SpriteData?>? onLoad, string? spriteID, Vector2? pivot)
         {
             {
                 _renderCount++;
@@ -195,33 +194,45 @@ namespace LevelImposter.Core
                 {
                     // Using sprite data from cache
                 }
-                else if (isGIF)
+                else if (imgStream == null)
                 {
-                    using (MemoryStream ms = new(imgData))
-                    {
-                        var gifFile = new GIFFile(spriteID ?? "LISprite");
-                        gifFile.SetPivot(pivot);
-                        gifFile.Load(ms);
-
-                        spriteData = new()
-                        {
-                            ID = spriteID ?? "",
-                            Sprite = gifFile.GetFrameSprite(0),
-                            GIFData = gifFile
-                        };
-                        AddSpriteToCache(spriteData);
-                        GCHandler.Register(spriteData);
-                    }
+                    LILogger.Warn($"Could not load sprite {spriteID} from null stream");
+                    spriteData = null;
                 }
-                else
+                else if (GIFFile.IsGIF(imgStream))
                 {
+                    // Generate GIF Data
+                    var gifFile = new GIFFile(spriteID ?? "LISprite");
+                    gifFile.SetPivot(pivot);
+                    gifFile.Load(imgStream);
+
+                    // Create Texture
                     spriteData = new()
                     {
                         ID = spriteID ?? "",
-                        Sprite = RawImageToSprite(imgData, pivot)
+                        Sprite = gifFile.GetFrameSprite(0),
+                        GIFData = gifFile
+                    };
+                    AddSpriteToCache(spriteData);
+                    GCHandler.Register(spriteData);
+                }
+                else
+                {
+                    // Get All Data
+                    byte[] imageDataBuffer = new byte[imgStream.Length];
+                    imgStream.Read(imageDataBuffer, 0, imageDataBuffer.Length);
+
+                    // Create Texture
+                    spriteData = new()
+                    {
+                        ID = spriteID ?? "",
+                        Sprite = RawImageToSprite(imageDataBuffer, pivot)
                     };
                     spriteData.Sprite.hideFlags = HideFlags.DontUnloadUnusedAsset;
                     AddSpriteToCache(spriteData);
+
+                    // Cleanup
+                    imageDataBuffer = null;
                     GCHandler.Register(spriteData);
                 }
 
@@ -231,7 +242,8 @@ namespace LevelImposter.Core
                     onLoad.Invoke(spriteData);
 
                 onLoad = null;
-                imgData = null;
+                imgStream?.Dispose();
+                imgStream = null;
             }
         }
 
@@ -283,45 +295,6 @@ namespace LevelImposter.Core
             return sprite;
         }
 
-        /// <summary>
-        /// Searches the current map for duplicate sprite entries. Optional, improves performance.
-        /// TODO: Optimize me! ( O(n^2) )
-        /// </summary>
-        [HideFromIl2Cpp]
-        public void SearchForDuplicateSprites(LIMap map)
-        {
-            // Already Loaded
-            if (_duplicateSpriteDB != null)
-                return;
-
-            // Debug Start
-            var elems = map.elements;
-            Stopwatch sw = Stopwatch.StartNew();
-            LILogger.Info($"Searching {elems.Length} elements for duplicate sprites");
-
-            // Iterate through map elements
-            _duplicateSpriteDB = new();
-            for (int a = 0; a < elems.Length - 1; a++)
-            {
-                for (int b = a + 1; b < elems.Length; b++)
-                {
-                    var spriteA = elems[a].properties.spriteData;
-                    var spriteB = elems[b].properties.spriteData;
-
-                    if (_duplicateSpriteDB?.ContainsKey(elems[a].id.ToString()) == false
-                        && !string.IsNullOrEmpty(spriteA)
-                        && spriteA == spriteB)
-                    {
-                        _duplicateSpriteDB?.Add(elems[b].id.ToString(), elems[a].id.ToString());
-                    }
-                }
-            }
-
-            // Debug End
-            sw.Stop();
-            LILogger.Info($"Found {_duplicateSpriteDB?.Count} duplicate sprites in {sw.ElapsedMilliseconds}ms");
-        }
-
         public void Awake()
         {
             if (Instance == null)
@@ -352,7 +325,10 @@ namespace LevelImposter.Core
                 if (GIFData != null)
                     GIFData.Dispose();
                 if (Sprite != null)
+                {
                     Destroy(Sprite.texture);
+                    Destroy(Sprite);
+                }
                 Sprite = null;
                 GIFData = null;
             }

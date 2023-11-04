@@ -149,9 +149,6 @@ namespace LevelImposter.Core
             if (!AssetDB.IsInit)
                 LILogger.Warn("Asset DB is not initialized yet!");
 
-            // Sprite Loader
-            SpriteLoader.Instance?.SearchForDuplicateSprites(map);
-
             // Priority First
             foreach (string type in PRIORITY_TYPES)
                 foreach (LIElement elem in map.elements)

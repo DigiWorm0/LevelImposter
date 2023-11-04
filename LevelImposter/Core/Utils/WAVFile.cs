@@ -18,25 +18,39 @@ namespace LevelImposter.Core
         private float[]? _data = null;
         private AudioClip? _clip = null;
 
+        public static AudioClip? LoadSound(LISound? soundData)
+        {
+            // Get Sound Data
+            if (soundData == null)
+                return null;
+
+            // Get Asset DB
+            var mapAssetDB = LIShipStatus.Instance?.CurrentMap?.mapAssetDB;
+            if (mapAssetDB == null)
+                return null;
+
+            // Get Sound Stream
+            var soundDBElem = mapAssetDB.Get(soundData.dataID);
+            if (soundDBElem == null)
+                return null;
+
+            // Get Sound Data
+            using (var stream = soundDBElem.OpenStream())
+                return LoadStream(stream);
+        }
+
         /// <summary>
         /// Loads a WAV file from the given base64 string and adds to map's GC list
         /// </summary>
         /// <param name="base64">Base64 string to load from</param>
         /// <returns>A Unity AudioClip</returns>
-        public static AudioClip? Load(string? base64)
+        public static AudioClip? LoadStream(Stream dataStream)
         {
             try
             {
-                if (base64 == null)
-                    throw new ArgumentNullException("Wave file base64 string cannot be null");
-                if (!base64.StartsWith("data:audio/wav;base64,"))
-                    throw new ArgumentException("Base64 string is not a WAV file");
-
                 // Load File
                 var wavFile = new WAVFile();
-                var data = Convert.FromBase64String(base64.Substring(22));
-                using (var stream = new MemoryStream(data))
-                    wavFile.Load(stream);
+                wavFile.Load(dataStream);
 
                 // Add to GC list
                 GCHandler.Register(wavFile);

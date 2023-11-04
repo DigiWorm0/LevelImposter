@@ -1,9 +1,8 @@
-﻿using System;
-using UnityEngine;
-using Il2CppInterop.Runtime.Attributes;
+﻿using Il2CppInterop.Runtime.Attributes;
+using System;
 using System.Linq;
+using UnityEngine;
 using UnityEngine.Audio;
-using Il2CppInterop.Runtime.InteropTypes.Fields;
 
 namespace LevelImposter.Core
 {
@@ -31,7 +30,7 @@ namespace LevelImposter.Core
         [HideFromIl2Cpp]
         public void Init(LISound soundData, Collider2D[] colliders)
         {
-            _clip = WAVFile.Load(soundData?.data);
+            _clip = WAVFile.LoadSound(soundData);
             _volume = soundData?.volume ?? 1.0f;
             _colliders = colliders;
             _channel = soundData?.channel switch

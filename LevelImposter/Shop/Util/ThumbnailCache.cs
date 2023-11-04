@@ -1,8 +1,8 @@
+using Il2CppInterop.Runtime.Attributes;
+using LevelImposter.Core;
 using System;
 using System.IO;
 using UnityEngine;
-using LevelImposter.Core;
-using Il2CppInterop.Runtime.Attributes;
 
 namespace LevelImposter.Shop
 {
@@ -42,12 +42,12 @@ namespace LevelImposter.Shop
             // Read thumbnail from filesystem
             LILogger.Info($"Loading thumbnail [{mapID}] from filesystem");
             bool isInSpriteCache = SpriteLoader.Instance?.IsSpriteInCache(mapID) ?? false;
-            byte[] thumbnailBytes = new byte[0];
+            Stream? thumbnailStream = null;
             if (!isInSpriteCache)
-                thumbnailBytes = FileCache.Get($"{mapID}.png") ?? thumbnailBytes; // Not in memory, try to read from file cache
+                thumbnailStream = File.OpenRead(FileCache.GetPath($"{mapID}.png"));
 
             // Load thumbnail into sprite
-            SpriteLoader.Instance?.LoadSpriteAsync(thumbnailBytes, false, (spriteData) =>
+            SpriteLoader.Instance?.LoadSpriteAsync(thumbnailStream, (spriteData) =>
             {
                 Sprite? sprite = spriteData?.Sprite;
                 if (sprite == null)
