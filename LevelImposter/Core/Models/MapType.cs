@@ -7,6 +7,7 @@
         Polus,
         Dleks,
         Airship,
+        Fungle,
         Submerged, // TODO: Add Submerged Support
         LevelImposter
     }

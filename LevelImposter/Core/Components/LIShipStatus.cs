@@ -1,16 +1,16 @@
-using System;
-using System.Collections.Generic;
-using System.Collections;
-using UnityEngine;
-using LevelImposter.Shop;
-using LevelImposter.DB;
-using System.Diagnostics;
-using System.Runtime.InteropServices;
+using BepInEx.Unity.IL2CPP.Utils.Collections;
 using Il2CppInterop.Runtime.Attributes;
 using Il2CppInterop.Runtime.InteropTypes.Arrays;
-using BepInEx.Unity.IL2CPP.Utils.Collections;
-using Reactor.Networking.Attributes;
 using LevelImposter.Builders;
+using LevelImposter.DB;
+using LevelImposter.Shop;
+using Reactor.Networking.Attributes;
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Runtime.InteropServices;
+using UnityEngine;
 
 namespace LevelImposter.Core
 {
@@ -36,7 +36,8 @@ namespace LevelImposter.Core
             { "Skeld", "ss-skeld" },
             { "MiraHQ", "ss-mira" },
             { "Polus", "ss-polus" },
-            { "Airship", "ss-airship" }
+            { "Airship", "ss-airship" },
+            { "Fungle", "ss-fungle" }
         };
         public static readonly KeyCode[] RESPAWN_SEQ = new KeyCode[] {
             KeyCode.R,
@@ -69,13 +70,14 @@ namespace LevelImposter.Core
         public ShipStatus? ShipStatus => _shipStatus;
         public bool IsReady
         {
-            get {
+            get
+            {
                 return SpriteLoader.Instance?.RenderCount <= 0 &&
                         !MapSync.IsDownloadingMap &&
                         _isReady;
             }
         }
-        
+
         /// <summary>
         /// Resets the map to a blank slate. Ran before any map elements are applied.
         /// </summary>
@@ -92,12 +94,12 @@ namespace LevelImposter.Core
             camera.shakeAmount = 0;
             camera.shakePeriod = 0;
 
-            ShipStatus.AllDoors = new Il2CppReferenceArray<PlainDoor>(0);
+            ShipStatus.AllDoors = new Il2CppReferenceArray<OpenableDoor>(0);
             ShipStatus.DummyLocations = new Il2CppReferenceArray<Transform>(0);
             ShipStatus.SpecialTasks = new Il2CppReferenceArray<PlayerTask>(0);
             ShipStatus.CommonTasks = new Il2CppReferenceArray<NormalPlayerTask>(0);
             ShipStatus.LongTasks = new Il2CppReferenceArray<NormalPlayerTask>(0);
-            ShipStatus.NormalTasks = new Il2CppReferenceArray<NormalPlayerTask>(0);
+            ShipStatus.ShortTasks = new Il2CppReferenceArray<NormalPlayerTask>(0);
             ShipStatus.SystemNames = new Il2CppStructArray<StringNames>(0);
             ShipStatus.Systems = new Il2CppSystem.Collections.Generic.Dictionary<SystemTypes, ISystemType>();
             ShipStatus.MedScanner = null;
@@ -146,9 +148,6 @@ namespace LevelImposter.Core
             // Asset DB
             if (!AssetDB.IsInit)
                 LILogger.Warn("Asset DB is not initialized yet!");
-
-            // Sprite Loader
-            SpriteLoader.Instance?.SearchForDuplicateSprites(map);
 
             // Priority First
             foreach (string type in PRIORITY_TYPES)
@@ -367,17 +366,20 @@ namespace LevelImposter.Core
                 DestroyableSingleton<HudManager>.Instance.ShadowQuad.material.SetInt("_Mask", 7);
 
                 // Respawn the player on key combo
-                StartCoroutine(CoHandleKeyCombo(RESPAWN_SEQ, () =>{
+                StartCoroutine(CoHandleKeyCombo(RESPAWN_SEQ, () =>
+                {
                     RespawnPlayer(PlayerControl.LocalPlayer);
                 }).WrapToIl2Cpp());
 
                 // Set CPU affinity on key combo
-                StartCoroutine(CoHandleKeyCombo(CPU_SEQ, () => {
+                StartCoroutine(CoHandleKeyCombo(CPU_SEQ, () =>
+                {
                     SetCPUAffinity();
                 }).WrapToIl2Cpp());
 
                 // Run Debug Tests
-                StartCoroutine(CoHandleKeyCombo(DEBUG_SEQ, () => {
+                StartCoroutine(CoHandleKeyCombo(DEBUG_SEQ, () =>
+                {
                     RunDebugTests();
                 }).WrapToIl2Cpp());
             }
@@ -387,7 +389,7 @@ namespace LevelImposter.Core
             _renames = null;
             _currentMap = null;
             Instance = null;
-            
+
             // Wipe Cache (Freeplay Only)
             if (GameState.IsInFreeplay && LIConstants.FREEPLAY_FLUSH_CACHE)
                 GCHandler.Clean();

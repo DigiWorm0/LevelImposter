@@ -1,6 +1,6 @@
 ﻿using HarmonyLib;
-using UnityEngine;
 using LevelImposter.Shop;
+using UnityEngine;
 
 namespace LevelImposter.Core
 {
@@ -29,7 +29,6 @@ namespace LevelImposter.Core
             GameObject apiParent = new GameObject("LevelImposter");
             apiParent.AddComponent<LagLimiter>();
             apiParent.AddComponent<HTTPHandler>();
-            apiParent.AddComponent<FileHandler>();
             apiParent.AddComponent<SpriteLoader>();
             UnityEngine.Object.DontDestroyOnLoad(apiParent);
         }

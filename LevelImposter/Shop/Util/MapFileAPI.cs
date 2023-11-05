@@ -1,9 +1,8 @@
-using System;
+using Il2CppInterop.Runtime.Attributes;
+using LevelImposter.Core;
 using System.IO;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using LevelImposter.Core;
-using Il2CppInterop.Runtime.Attributes;
 
 namespace LevelImposter.Shop
 {
@@ -29,13 +28,13 @@ namespace LevelImposter.Shop
         }
 
         /// <summary>
-        /// Gets the path where a specific map LIM file is stored.
+        /// Gets the path where a specific map LIM2 file is stored.
         /// </summary>
         /// <param name="mapID">ID of the map file</param>
         /// <returns>The path where a specific map is stored</returns>
         public static string GetPath(string mapID)
         {
-            return Path.Combine(GetDirectory(), mapID + ".lim");
+            return Path.Combine(GetDirectory(), mapID + ".lim2");
         }
 
         /// <summary>
@@ -45,7 +44,7 @@ namespace LevelImposter.Shop
         [HideFromIl2Cpp]
         public static string[] ListIDs()
         {
-            string[] fileNames = Directory.GetFiles(GetDirectory(), "*.lim");
+            string[] fileNames = Directory.GetFiles(GetDirectory(), "*.lim2");
             for (int i = 0; i < fileNames.Length; i++)
                 fileNames[i] = Path.GetFileNameWithoutExtension(fileNames[i]);
             return fileNames;
@@ -70,17 +69,17 @@ namespace LevelImposter.Shop
         /// <param name="callback">Callback on success</param>
         /// <returns>Representation of the map file data in the form of a <c>LIMap</c>.</returns>
         [HideFromIl2Cpp]
-        public static void Get(string mapID, Action<LIMap?> callback)
+        public static LIMap? Get(string mapID, bool spriteDB = true)
         {
             string path = GetPath(mapID);
-            FileHandler.Instance?.Get(path, (LIMap? map) =>
+            using (var stream = File.OpenRead(path))
             {
-                if (map != null)
-                {
-                    map.id = mapID;
-                    callback(map);
-                }
-            }, null);
+                LIDeserializer.CurrentFilePath = path;
+                var mapData = LIDeserializer.DeserializeMap(stream, spriteDB);
+                if (mapData != null)
+                    mapData.id = mapID;
+                return mapData;
+            }
         }
 
         /// <summary>
@@ -91,18 +90,9 @@ namespace LevelImposter.Shop
         /// <param name="callback">Callback on success</param>
         /// <returns>Representation of the map file data in the form of a <c>LIMetadata</c>.</returns>
         [HideFromIl2Cpp]
-        public static void GetMetadata(string mapID, Action<LIMetadata?> callback)
+        public static LIMetadata? GetMetadata(string mapID)
         {
-            // TODO: Prevent parsing of unnecessary data
-            string path = GetPath(mapID);
-            FileHandler.Instance?.Get(path, (LIMetadata? map) =>
-            {
-                if (map != null)
-                {
-                    map.id = mapID;
-                    callback(map);
-                }
-            }, null);
+            return Get(mapID, false);
         }
 
         /// <summary>
@@ -114,10 +104,13 @@ namespace LevelImposter.Shop
         {
             LILogger.Info($"Saving {map} to filesystem");
             string mapPath = GetPath(map.id);
-            string mapJson = JsonSerializer.Serialize(map, SERIALIZE_OPTIONS);
+            // Create Directory
             if (!Directory.Exists(GetDirectory()))
                 Directory.CreateDirectory(GetDirectory());
-            File.WriteAllText(mapPath, mapJson);
+            // Write to File
+            using (var dataStream = LISerializer.SerializeMap(map))
+            using (var outputFileStream = File.OpenWrite(mapPath))
+                dataStream.CopyTo(outputFileStream);
         }
 
         /// <summary>

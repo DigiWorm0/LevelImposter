@@ -1,9 +1,9 @@
 using BepInEx;
 using BepInEx.Unity.IL2CPP;
+using Il2CppInterop.Runtime.Injection;
 using LevelImposter.Core;
 using LevelImposter.DB;
 using LevelImposter.Shop;
-using Il2CppInterop.Runtime.Injection;
 using Reactor.Networking.Attributes;
 
 namespace LevelImposter
@@ -13,6 +13,7 @@ namespace LevelImposter
     [BepInDependency(ModCompatibility.SUBMERGED_GUID, BepInDependency.DependencyFlags.SoftDependency)]
     [BepInDependency(ModCompatibility.TOU_GUID, BepInDependency.DependencyFlags.SoftDependency)]
     [BepInDependency(ModCompatibility.TOR_GUID, BepInDependency.DependencyFlags.SoftDependency)]
+    [BepInDependency(ModCompatibility.REW_GUID, BepInDependency.DependencyFlags.SoftDependency)]
     [ReactorModFlags(Reactor.Networking.ModFlags.RequireOnAllClients)]
     [BepInProcess("Among Us.exe")]
     public partial class LevelImposter : BasePlugin
@@ -29,7 +30,7 @@ namespace LevelImposter
             FileCache.Init();
             LIDeepLink.Init();
             ModCompatibility.Init();
-            
+
             // IUsable Interface
             RegisterTypeOptions usableInterface = new()
             {
@@ -58,7 +59,6 @@ namespace LevelImposter
             ClassInjector.RegisterTypeInIl2Cpp<AssetDB>();
 
             ClassInjector.RegisterTypeInIl2Cpp<HTTPHandler>();
-            ClassInjector.RegisterTypeInIl2Cpp<FileHandler>();
             ClassInjector.RegisterTypeInIl2Cpp<RandomOverlay>();
             ClassInjector.RegisterTypeInIl2Cpp<MapBanner>();
             ClassInjector.RegisterTypeInIl2Cpp<ShopManager>();

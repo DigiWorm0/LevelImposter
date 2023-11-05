@@ -1,6 +1,6 @@
+using LevelImposter.Core;
 using LevelImposter.DB;
 using UnityEngine;
-using LevelImposter.Core;
 
 namespace LevelImposter.Builders
 {
@@ -35,7 +35,7 @@ namespace LevelImposter.Builders
             {
                 // Sound Data
                 LISound sound = elem.properties.sounds[i];
-                if (sound.data == null)
+                if (sound == null)
                 {
                     LILogger.Warn($"{elem.name} missing audio data");
                     continue;
@@ -44,12 +44,12 @@ namespace LevelImposter.Builders
                 // Preset
                 if (sound.isPreset)
                 {
-                    soundGroup.Clips[i] = AssetDB.GetSound(sound.data);
+                    soundGroup.Clips[i] = AssetDB.GetSound(sound.presetID ?? "");
                 }
                 // WAVLoader
                 else
                 {
-                    soundGroup.Clips[i] = WAVFile.Load(sound.data);
+                    soundGroup.Clips[i] = WAVFile.LoadSound(sound);
                 }
             }
 

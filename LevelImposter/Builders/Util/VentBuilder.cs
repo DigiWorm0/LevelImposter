@@ -1,10 +1,10 @@
+using Il2CppInterop.Runtime.InteropTypes.Arrays;
+using LevelImposter.Core;
 using LevelImposter.DB;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
-using Il2CppInterop.Runtime.InteropTypes.Arrays;
-using LevelImposter.Core;
 
 namespace LevelImposter.Builders
 {
@@ -36,22 +36,21 @@ namespace LevelImposter.Builders
             var prefabVent = prefab.GetComponent<Vent>();
             var prefabArrow = prefab.transform.FindChild("Arrow").gameObject;
 
-            // Skeld ShipStatus
-            var skeldShip = AssetDB.GetObject("ss-skeld");
-            var skeldShipStatus = skeldShip?.GetComponent<ShipStatus>();
-
             // Default Sprite
-            bool isAnim = elem.type == "util-vent1";
+            bool isAnim = elem.type == "util-vent1" || elem.type == "util-vent3";
             SpriteRenderer spriteRenderer = MapUtils.CloneSprite(obj, prefab, isAnim);
 
             // Console
-            VentCleaningConsole console = obj.AddComponent<VentCleaningConsole>();
-            console.Image = spriteRenderer;
-            console.ImpostorDiscoveredSound = prefabConsole.ImpostorDiscoveredSound;
-            console.TaskTypes = prefabConsole.TaskTypes;
-            console.ValidTasks = prefabConsole.ValidTasks;
-            if (elem.properties.range != null)
-                console.usableDistance = (float)elem.properties.range;
+            if (prefabConsole != null)
+            {
+                VentCleaningConsole console = obj.AddComponent<VentCleaningConsole>();
+                console.Image = spriteRenderer;
+                console.ImpostorDiscoveredSound = prefabConsole.ImpostorDiscoveredSound;
+                console.TaskTypes = prefabConsole.TaskTypes;
+                console.ValidTasks = prefabConsole.ValidTasks;
+                if (elem.properties.range != null)
+                    console.usableDistance = (float)elem.properties.range;
+            }
 
             // Vent
             Vent vent = obj.AddComponent<Vent>();
@@ -78,12 +77,12 @@ namespace LevelImposter.Builders
 
                 LISound? openSound = MapUtils.FindSound(elem.properties.sounds, OPEN_SOUND_NAME);
                 if (openSound != null)
-                    shipStatus.VentEnterSound = WAVFile.Load(openSound?.data);
+                    shipStatus.VentEnterSound = WAVFile.LoadSound(openSound);
 
                 LISound? moveSound = MapUtils.FindSound(elem.properties.sounds, MOVE_SOUND_NAME);
                 if (moveSound != null)
                     shipStatus.VentMoveSounds = new Il2CppReferenceArray<AudioClip>(new AudioClip[] {
-                        WAVFile.Load(moveSound?.data)
+                        WAVFile.LoadSound(moveSound)
                     });
             }
 

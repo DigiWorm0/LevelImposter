@@ -1,5 +1,5 @@
-using UnityEngine;
 using LevelImposter.Core;
+using UnityEngine;
 
 namespace LevelImposter.Builders
 {
@@ -33,13 +33,14 @@ namespace LevelImposter.Builders
                 return;
             }
             TriggerObject = obj;
-            
+
             // Meeting Background
             if (!string.IsNullOrEmpty(elem.properties.meetingBackground))
             {
                 SpriteLoader.Instance?.LoadSpriteAsync(
                     elem.properties.meetingBackground,
-                    (spriteData) => {
+                    (spriteData) =>
+                    {
                         LoadMeetingBackground(elem, spriteData);
                     },
                     elem.id.ToString(),
@@ -56,7 +57,7 @@ namespace LevelImposter.Builders
             LISound? buttonSound = MapUtils.FindSound(elem.properties.sounds, BUTTON_SOUND_NAME);
             if (buttonSound != null)
             {
-                meetingOverlay.Stinger = WAVFile.Load(buttonSound?.data) ?? meetingOverlay.Stinger;
+                meetingOverlay.Stinger = WAVFile.LoadSound(buttonSound) ?? meetingOverlay.Stinger;
                 meetingOverlay.StingerVolume = buttonSound?.volume ?? 1;
             }
 
@@ -65,16 +66,17 @@ namespace LevelImposter.Builders
             MeetingCalledAnimation reportOverlay = Object.Instantiate(shipStatus.ReportOverlay, shipStatus.transform);
             reportOverlay.gameObject.SetActive(false);
             shipStatus.ReportOverlay = reportOverlay;
-            
+
             LISound? reportSound = MapUtils.FindSound(elem.properties.sounds, REPORT_SOUND_NAME);
             if (reportSound != null)
             {
-                reportOverlay.Stinger = WAVFile.Load(reportSound?.data) ?? reportOverlay.Stinger;
+                reportOverlay.Stinger = WAVFile.LoadSound(reportSound) ?? reportOverlay.Stinger;
                 reportOverlay.StingerVolume = reportSound?.volume ?? 1;
             }
         }
 
-        private void LoadMeetingBackground(LIElement elem, SpriteLoader.SpriteData? spriteData) {
+        private void LoadMeetingBackground(LIElement elem, SpriteLoader.SpriteData? spriteData)
+        {
 
             // Handle Error
             if (spriteData == null)

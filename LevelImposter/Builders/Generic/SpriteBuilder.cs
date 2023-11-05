@@ -11,7 +11,7 @@ namespace LevelImposter.Builders
     {
         public void Build(LIElement elem, GameObject obj)
         {
-            if (elem.properties.spriteData == null)
+            if (elem.properties.spriteID == null)
                 return;
             if (SpriteLoader.Instance == null)
                 throw new Exception("SpriteLoader has not initialized");

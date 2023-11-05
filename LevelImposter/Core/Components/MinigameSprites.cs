@@ -1,9 +1,11 @@
-﻿using System;
-using UnityEngine;
+﻿using Il2CppInterop.Runtime.Attributes;
 using LevelImposter.DB;
-using Il2CppInterop.Runtime.Attributes;
-using System.Collections.Generic;
 using PowerTools;
+using QRCoder;
+using QRCoder.Unity;
+using System;
+using System.Collections.Generic;
+using UnityEngine;
 
 namespace LevelImposter.Core
 {
@@ -71,15 +73,25 @@ namespace LevelImposter.Core
                     return;
                 foreach (LIMinigameSprite minigameData in _minigameDataArr)
                 {
+                    // Get Pivot
                     Vector2? pivot = PIVOTS.ContainsKey(minigameData.type) ? PIVOTS[minigameData.type] : null;
-                    SpriteLoader.Instance?.LoadSpriteAsync(
-                        minigameData.spriteData,
-                        (spriteData) => {
-                            LoadMinigameSprite(minigame, minigameData.type, spriteData?.Sprite);
-                        },
-                        minigameData.id.ToString(),
-                        pivot
-                    );
+
+                    // Get Sprite Stream
+                    var mapAssetDB = LIShipStatus.Instance?.CurrentMap?.mapAssetDB;
+                    Guid? guid = minigameData.spriteID;
+                    var mapAsset = mapAssetDB?.Get(guid);
+
+                    // Load Sprite
+                    if (mapAsset != null)
+                    {
+                        SpriteLoader.Instance?.LoadSpriteAsync(
+                            mapAsset.OpenStream(),
+                            (spriteData) => LoadMinigameSprite(minigame, minigameData.type, spriteData?.Sprite),
+                            minigameData.spriteID?.ToString(),
+                            pivot
+                        );
+                    }
+
                 }
             }
             catch (Exception e)
@@ -141,6 +153,54 @@ namespace LevelImposter.Core
                 var starfield = minigame.transform.Find("BlackBg/starfield");
                 if (starfield != null)
                     starfield.gameObject.SetActive(_minigameProps?.isStarfieldEnabled ?? true);
+                LILogger.Info("Applied Telescope Props");
+            }
+
+            // Weapons Task
+            bool isWeapons = _minigameProps?.weaponsColor != null;
+            if (isWeapons)
+            {
+                var weaponsLine = minigame.transform.Find("TargetLines").GetComponent<LineRenderer>();
+                var weaponsColor = _minigameProps?.weaponsColor?.ToUnity();
+                weaponsLine.startColor = weaponsColor ?? weaponsLine.startColor;
+                weaponsLine.endColor = weaponsColor ?? weaponsLine.endColor;
+                weaponsLine.sharedMaterial?.SetColor("_Color", weaponsColor ?? weaponsLine.startColor);
+                LILogger.Info("Applied Weapon Props");
+            }
+
+            // Boarding Pass
+            bool isBoardingPass = !string.IsNullOrEmpty(_minigameProps?.qrCodeText);
+            if (isBoardingPass)
+            {
+                // Wait for 2 frames for Start() to finish
+                MapUtils.WaitForFrames(2, () =>
+                {
+                    // Generate a QR Code
+                    var qrCodeGenerator = new QRCodeGenerator();
+                    var qrCode = qrCodeGenerator.CreateQrCode(
+                        _minigameProps?.qrCodeText ?? "",
+                        QRCodeGenerator.ECCLevel.M,
+                        false,
+                        false,
+                        QRCodeGenerator.EciMode.Default,
+                        -1
+                    );
+                    // Create Texture
+                    var texture = new UnityQRCode(qrCode).GetGraphic(1);
+                    GCHandler.Register(texture);
+
+                    // Create Sprite
+                    var sprite = Sprite.Create(
+                        texture,
+                        new Rect(0f, 0f, texture.width, texture.height),
+                        new Vector2(0.5f, 0.5f)
+                    );
+                    GCHandler.Register(sprite);
+
+                    // Apply Sprite
+                    minigame.Cast<BoardPassGame>().renderer.sprite = sprite;
+                    LILogger.Info("Applied Boarding Pass Props: " + _minigameProps?.qrCodeText);
+                });
             }
         }
 
@@ -329,6 +389,9 @@ namespace LevelImposter.Core
                 case "task-pass_scanningb":
                     minigame.Cast<BoardPassGame>().ScannerScanning = sprite;
                     return false;
+                case "task-pass_idface":
+                    minigame.Cast<BoardPassGame>().Image.sprite = sprite;
+                    return false;
 
                 /* task-telescope */
                 case "task-telescope_bg":
@@ -353,7 +416,7 @@ namespace LevelImposter.Core
                     {
                         var button = minigame.transform.Find(path);
                         var rolloverComponent = button.GetComponent<ButtonDownHandler>();
-                        
+
                         if (isDown)
                             rolloverComponent.DownSprite = sprite;
                         else

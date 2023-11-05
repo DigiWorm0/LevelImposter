@@ -15,11 +15,14 @@
         /// WARNING: Automatically hidden by <c>util-display</c> objects
         /// </summary>
         Objects,
-        
+
         ShortObjects,
         IlluminatedBlocking,
         Ghost,
         UICollider,
-        DrawShadows
+        DrawShadows,
+        KeyMapper,
+        MusicTriggers,
+        Notifications
     }
 }

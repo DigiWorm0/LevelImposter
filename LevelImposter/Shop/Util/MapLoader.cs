@@ -1,5 +1,5 @@
-using System;
 using LevelImposter.Core;
+using System;
 
 namespace LevelImposter.Shop
 {
@@ -35,12 +35,9 @@ namespace LevelImposter.Shop
         /// <param name="callback">Callback on success</param>
         public static void LoadMap(string mapID, bool isFallback, Action? callback)
         {
-            MapFileAPI.Get(mapID, (mapData) =>
-            {
-                LoadMap(mapData, isFallback);
-                if (callback != null)
-                    callback();
-            });
+            var mapData = MapFileAPI.Get(mapID);
+            LoadMap(mapData, isFallback);
+            callback?.Invoke(); // TODO: Make synchronous
         }
 
         /// <summary>

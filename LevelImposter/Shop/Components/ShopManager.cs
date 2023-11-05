@@ -111,18 +111,24 @@ namespace LevelImposter.Shop
         /// </summary>
         private void SetDownloadsTab()
         {
-            Clear();
-            string[] mapIDs = MapFileAPI.ListIDs() ?? new string[0];
-            foreach (string mapID in mapIDs)
-            {
-                MapFileAPI.GetMetadata(mapID, OnDownloadsResponse);
-            }
+            StartCoroutine(CoSetDownloadsTab().WrapToIl2Cpp());
         }
         [HideFromIl2Cpp]
-        private void OnDownloadsResponse(LIMetadata? metadata)
+        private IEnumerator CoSetDownloadsTab()
         {
-            if (metadata != null && _currentTab == Tab.Downloads)
-                AddBanner(metadata);
+            {
+                yield return LegacyConverter.ConvertAllMaps().WrapToIl2Cpp();
+                yield return null;
+                Clear();
+                string[] mapIDs = MapFileAPI.ListIDs() ?? new string[0];
+                foreach (string mapID in mapIDs)
+                {
+                    var metadata = MapFileAPI.GetMetadata(mapID);
+                    if (metadata != null)
+                        AddBanner(metadata);
+                    yield return null;
+                }
+            }
         }
 
         /// <summary>
@@ -245,7 +251,7 @@ namespace LevelImposter.Shop
             if (Instance != null)
                 Instance._shouldRegenerateFallback = true;
         }
-        
+
         /// <summary>
         /// Toggles the overlay
         /// </summary>
@@ -254,7 +260,7 @@ namespace LevelImposter.Shop
         {
             _overlay?.SetActive(isEnabled);
         }
-        
+
         /// <summary>
         /// Modifies the text of the overlay
         /// </summary>
@@ -309,7 +315,7 @@ namespace LevelImposter.Shop
             _title = _scroller?.transform.Find("Inner/Title").GetComponent<SpriteRenderer>();
             _tabs = transform.Find("Header/Tabs").GetComponent<ShopTabs>();
             _bannerPrefab = _scroller?.transform.Find("Inner/MapBanner").GetComponent<MapBanner>();
-            
+
         }
         public void Start()
         {
@@ -346,7 +352,7 @@ namespace LevelImposter.Shop
         {
             ControllerManager.Instance.CloseOverlayMenu(SHOP_NAME);
             Instance = null;
-            
+
             _overlay = null;
             _overlayText = null;
             _scroller = null;

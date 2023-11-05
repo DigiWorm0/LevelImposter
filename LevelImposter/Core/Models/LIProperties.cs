@@ -18,17 +18,24 @@ namespace LevelImposter.Core
         public int? triggerCount { get; set; }
 
         // Sprite
-        public string? spriteData { get; set; }
+        public Guid? spriteID { get; set; }
         public bool? noShadows { get; set; }
         public bool? noShadowsBehaviour { get; set; }
         public LIColor? color { get; set; }
         public bool? loopGIF { get; set; }
+
+        // Legacy
+        [Obsolete("Use spriteID instead")]
+        public string? spriteData { get; set; }
 
         // One-Way Colliders
         public bool? isImposterIgnored { get; set; }
 
         // Towels
         public float? towelPickupCount { get; set; }
+
+        // Spores
+        public LIColor? gasColor { get; set; }
 
         // Decontamination
         public Guid? doorA { get; set; }
@@ -74,10 +81,11 @@ namespace LevelImposter.Core
         public bool? onlyFromBelow { get; set; }
         public bool? checkCollision { get; set; }
         public float? range { get; set; }
+        public float? sporeRange { get; set; }
 
         // Ladder
         public float? ladderHeight { get; set; }
-        
+
         // Platform
         public float? platformXOffset { get; set; }
         public float? platformYOffset { get; set; }
@@ -100,7 +108,7 @@ namespace LevelImposter.Core
         // Tasks
         public string? description { get; set; }
         public string? taskLength { get; set; }
-        public float? sabDuration { get; set; } 
+        public float? sabDuration { get; set; }
 
         // Room
         public bool? isRoomNameVisible { get; set; }

@@ -1,6 +1,6 @@
 ﻿using HarmonyLib;
-using System.Collections.Generic;
 using LevelImposter.Builders;
+using System.Collections.Generic;
 
 namespace LevelImposter.Core
 {
@@ -18,13 +18,15 @@ namespace LevelImposter.Core
             { SystemTypes.Reactor, TaskTypes.ResetReactor },
             { SystemTypes.LifeSupp, TaskTypes.RestoreOxy },
             { SystemTypes.Comms, TaskTypes.FixComms },
+            { SystemTypes.MushroomMixupSabotage, TaskTypes.MushroomMixupSabotage }
         };
         private static Dictionary<SystemTypes, string> _systemTriggerPairs = new()
         {
             { SystemTypes.Electrical, "onLightsStart" },
             { SystemTypes.Reactor, "onReactorStart" },
             { SystemTypes.LifeSupp, "onOxygenStart" },
-            { SystemTypes.Comms, "onCommsStart" }
+            { SystemTypes.Comms, "onCommsStart" },
+            { SystemTypes.MushroomMixupSabotage, "onMixupStart" }
         };
 
         public static bool Prefix([HarmonyArgument(0)] SystemTypes systemType)
@@ -66,7 +68,8 @@ namespace LevelImposter.Core
             { TaskTypes.FixLights, "onLightsEnd" },
             { TaskTypes.ResetReactor, "onReactorEnd" },
             { TaskTypes.RestoreOxy, "onOxygenEnd" },
-            { TaskTypes.FixComms, "onCommsEnd" }
+            { TaskTypes.FixComms, "onCommsEnd" },
+            { TaskTypes.MushroomMixupSabotage, "onMixupEnd" }
         };
 
         public static void Postfix([HarmonyArgument(0)] PlayerTask task)
@@ -75,7 +78,7 @@ namespace LevelImposter.Core
                 return;
             if (!_taskTriggerPairs.ContainsKey(task.TaskType))
                 return;
-            
+
             // Fire Trigger
             string triggerName = _taskTriggerPairs[task.TaskType];
             LITriggerable.Trigger(SabotageOptionsBuilder.TriggerObject, triggerName, null);

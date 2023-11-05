@@ -1,9 +1,8 @@
+using Il2CppInterop.Runtime.Attributes;
+using LevelImposter.Core;
 using System;
 using System.IO;
-using System.Text;
-using LevelImposter.Core;
 using System.Text.Json;
-using Il2CppInterop.Runtime.Attributes;
 
 namespace LevelImposter.Shop
 {
@@ -14,6 +13,7 @@ namespace LevelImposter.Shop
     {
         public const string API_PATH = "https://api.github.com/repos/DigiWorm0/LevelImposter/releases?per_page=5";
         public const string UPDATE_FORBIDDEN_FLAG = "[NoAutoUpdate]";
+        public const string DEV_VERSION_FLAG = "dev";
 
         /// <summary>
         /// Gets the current path where the LevelImposter DLL is stored.
@@ -86,7 +86,7 @@ namespace LevelImposter.Shop
         public static bool IsCurrent(GHRelease release)
         {
             string versionString = release.name.Split(" ")[1];
-            return versionString == LevelImposter.Version;
+            return versionString == LevelImposter.Version || LevelImposter.Version.Contains(DEV_VERSION_FLAG);
         }
 
         /// <summary>

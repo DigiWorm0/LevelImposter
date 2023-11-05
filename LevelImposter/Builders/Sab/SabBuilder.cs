@@ -1,7 +1,7 @@
+using LevelImposter.Core;
+using LevelImposter.DB;
 using System.Collections.Generic;
 using UnityEngine;
-using LevelImposter.DB;
-using LevelImposter.Core;
 
 namespace LevelImposter.Builders
 {
@@ -27,7 +27,9 @@ namespace LevelImposter.Builders
 
         public void Build(LIElement elem, GameObject obj)
         {
-            if (!elem.type.StartsWith("sab-") || elem.type.StartsWith("sab-btn") || elem.type.StartsWith("sab-door"))
+            if (!elem.type.StartsWith("sab-") ||
+                elem.type.StartsWith("sab-btn") ||
+                elem.type.StartsWith("sab-door"))
                 return;
 
             // ShipStatus
@@ -42,7 +44,7 @@ namespace LevelImposter.Builders
                 _sabContainer.transform.SetParent(shipStatus.transform);
                 _sabContainer.SetActive(false);
             }
-            
+
             // Prefab
             var prefabTask = AssetDB.GetTask<SabotageTask>(elem.type);
             if (prefabTask == null)
@@ -82,7 +84,7 @@ namespace LevelImposter.Builders
                 bool hasSabSystem = SAB_SYSTEMS.TryGetValue(elem.type, out SystemTypes sabSystemType);
                 if (!hasSabSystem)
                     return;
-                
+
                 // Remove Old System
                 var oldSystem = shipStatus.Systems[sabSystemType].Cast<IActivatable>();
                 var sabSystem = shipStatus.Systems[SystemTypes.Sabotage].Cast<SabotageSystemType>();

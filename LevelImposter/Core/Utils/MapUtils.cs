@@ -1,18 +1,18 @@
+using AmongUs.GameOptions;
+using Il2CppInterop.Runtime;
+using Il2CppInterop.Runtime.InteropTypes;
+using Il2CppInterop.Runtime.InteropTypes.Arrays;
+using Reactor.Utilities;
+using Reactor.Utilities.Extensions;
 using System;
+using System.Collections;
 using System.Collections.Generic;
-using System.Text;
-using System.Text.Json;
+using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Text;
+using System.Text.Json;
 using UnityEngine;
-using System.IO;
-using Il2CppInterop.Runtime.InteropTypes.Arrays;
-using Il2CppInterop.Runtime.InteropTypes;
-using Il2CppInterop.Runtime;
-using AmongUs.GameOptions;
-using Reactor.Utilities;
-using System.Collections;
-using Reactor.Utilities.Extensions;
 
 namespace LevelImposter.Core
 {
@@ -177,6 +177,40 @@ namespace LevelImposter.Core
         }
 
         /// <summary>
+        /// Parses a base64 encoded file chunk into a byte array
+        /// </summary>
+        /// <param name="chunk">Base64 File Chunk</param>
+        /// <param name="isGIF">True if the file chunk is a GIF. False otherwise</param>
+        /// <returns>A byte array of the base64 data</returns>
+        public static Il2CppStructArray<byte> ParseBase64(FileChunk? chunk, out bool isGIF)
+        {
+            if (chunk == null)
+            {
+                isGIF = false;
+                return new Il2CppStructArray<byte>(0);
+            }
+
+            using (var stream = chunk.OpenStream())
+            using (var reader = new StreamReader(stream))
+            {
+                // Read buffer to comma
+                string buffer = "";
+                while (reader.Peek() != -1)
+                {
+                    char c = (char)reader.Read();
+                    if (c == ',')
+                        break;
+                    buffer += c;
+                }
+                isGIF = buffer.ToLower() == "data:image/gif;base64";
+
+                // Read rest of stream
+                string sub64 = reader.ReadToEnd();
+                return Convert.FromBase64String(sub64);
+            }
+        }
+
+        /// <summary>
         /// Checks if a GameObject is the local player
         /// </summary>
         /// <param name="obj">Game Object to check</param>
@@ -234,7 +268,7 @@ namespace LevelImposter.Core
                 return resourceData;
             }
         }
-        
+
         private static Il2CppStructArray<byte>? GetResourceAsIl2Cpp(string name)
         {
             Assembly assembly = Assembly.GetExecutingAssembly();
@@ -243,7 +277,7 @@ namespace LevelImposter.Core
                 if (resourceStream == null)
                     return null;
 
-                var length = (int) resourceStream.Length;
+                var length = (int)resourceStream.Length;
                 Il2CppStructArray<byte> resourceData = new Il2CppStructArray<byte>(length);
                 resourceStream.AsIl2Cpp().Read(resourceData, 0, length);
                 return resourceData;
@@ -261,7 +295,7 @@ namespace LevelImposter.Core
             Assembly assembly = Assembly.GetExecutingAssembly();
             string? resourceName = assembly.GetManifestResourceNames().FirstOrDefault(str => str.EndsWith(name));
             using Stream? assetStream = assembly.GetManifestResourceStream(resourceName ?? "");
-            
+
             if (assetStream == null)
                 return null;
 
@@ -343,6 +377,25 @@ namespace LevelImposter.Core
         }
 
         /// <summary>
+        /// Waits for a specific amount of frames, then calls Action
+        /// </summary>
+        /// <param name="frames">Amount of frames to wait</param>
+        /// <param name="onFinish">Action to perform on completion</param>
+        public static void WaitForFrames(int frames, Action onFinish)
+        {
+            Coroutines.Start(CoWaitForFrames(frames, onFinish));
+        }
+        private static IEnumerator CoWaitForFrames(int frames, Action onFinish)
+        {
+            {
+                for (int i = 0; i < frames; i++)
+                    yield return null;
+                onFinish.Invoke();
+                onFinish = null;
+            }
+        }
+
+        /// <summary>
         /// Searches an array of LISounds
         /// for a specific sound by type
         /// </summary>
@@ -369,8 +422,8 @@ namespace LevelImposter.Core
         /// <returns>obj's SpriteRenderer</returns>
         public static SpriteRenderer CloneSprite(GameObject obj, GameObject prefab, bool isSpriteAnim = false)
         {
-            var prefabRenderer = prefab.GetComponent<SpriteRenderer>();
-            var spriteRenderer = obj.GetComponent<SpriteRenderer>();
+            var prefabRenderer = prefab.GetComponentInChildren<SpriteRenderer>();
+            var spriteRenderer = obj.GetComponentInChildren<SpriteRenderer>();
             if (!spriteRenderer)
             {
                 spriteRenderer = obj.AddComponent<SpriteRenderer>();
@@ -378,7 +431,7 @@ namespace LevelImposter.Core
 
                 if (isSpriteAnim)
                 {
-                    var prefabAnim = prefab.GetComponent<PowerTools.SpriteAnim>();
+                    var prefabAnim = prefab.GetComponentInChildren<PowerTools.SpriteAnim>();
                     var spriteAnim = obj.AddComponent<PowerTools.SpriteAnim>();
                     spriteAnim.m_defaultAnim = prefabAnim.m_defaultAnim;
                     spriteAnim.m_speed = prefabAnim.m_speed;

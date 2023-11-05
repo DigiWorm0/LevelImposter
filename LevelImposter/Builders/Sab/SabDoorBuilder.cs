@@ -1,9 +1,9 @@
-﻿using UnityEngine;
+﻿using LevelImposter.Core;
 using LevelImposter.DB;
 using PowerTools;
-using LevelImposter.Core;
-using System.Collections.Generic;
 using System;
+using System.Collections.Generic;
+using UnityEngine;
 
 namespace LevelImposter.Builders
 {
@@ -59,7 +59,7 @@ namespace LevelImposter.Builders
             SpriteRenderer spriteRenderer = obj.GetComponent<SpriteRenderer>();
             Animator animator = obj.AddComponent<Animator>();
             SpriteAnim spriteAnim = obj.AddComponent<SpriteAnim>();
-            obj.layer = (int)Layer.Ship;
+            obj.layer = (int)Layer.ShortObjects; // <-- Required for Decontamination Doors
             bool isSpriteAnim = false;
             if (!spriteRenderer)
             {
@@ -113,11 +113,11 @@ namespace LevelImposter.Builders
             // Sound
             LISound? openSound = MapUtils.FindSound(elem.properties.sounds, OPEN_SOUND_NAME);
             if (openSound != null)
-                doorComponent.OpenSound = WAVFile.Load(openSound.data);
+                doorComponent.OpenSound = WAVFile.LoadSound(openSound);
 
             LISound? closeSound = MapUtils.FindSound(elem.properties.sounds, CLOSE_SOUND_NAME);
             if (closeSound != null)
-                doorComponent.CloseSound = WAVFile.Load(closeSound.data);
+                doorComponent.CloseSound = WAVFile.LoadSound(closeSound);
 
             // SpriteAnim
             if (isSpriteAnim)
@@ -150,7 +150,7 @@ namespace LevelImposter.Builders
             }
         }
 
-        public void PostBuild() {}
+        public void PostBuild() { }
 
         /// <summary>
         /// Gets a door component by its element ID.

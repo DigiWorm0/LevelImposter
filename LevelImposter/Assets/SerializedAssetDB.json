@@ -26,6 +26,11 @@
       "Path": "Office/panel_vitals"
     },
     {
+      "ID": "util-spore",
+      "Map": 5,
+      "Path": "Outside/OutsideJungle/Mushrooms/Mushroom (1)"
+    },
+    {
       "ID": "util-computer",
       "Map": 2,
       "Path": "Office/caftable/TaskAddConsole"
@@ -39,6 +44,11 @@
       "ID": "util-vent2",
       "Map": 2,
       "Path": "Office/OfficeVent"
+    },
+    {
+      "ID": "util-vent3",
+      "Map": 5,
+      "Path": "Rooms/Kitchen/Vents/KitchenVent"
     },
     {
       "ID": "util-cam",
@@ -59,6 +69,11 @@
       "ID": "util-cams3",
       "Map": 4,
       "Path": "Security/task_cams"
+    },
+    {
+      "ID": "util-cams4",
+      "Map": 5,
+      "Path": "lookout_binoculars"
     },
     {
       "ID": "util-ladder1",
@@ -756,6 +771,106 @@
       "Path": "Electrical/task_calibrate"
     },
     {
+      "ID": "task-marshmallow1",
+      "Map": 5,
+      "Path": "Outside/OutsideBeach/TaskConsoles/RoastMarshmallow Stick (1)/RoastMarshmallowStickConsole"
+    },
+    {
+      "ID": "task-marshmallow2",
+      "Map": 5,
+      "Path": "Outside/OutsideBeach/TaskConsoles/RoastMarshmallow Fire/RoastMarshmallowFireConsole"
+    },
+    {
+      "ID": "task-sandcastle",
+      "Map": 5,
+      "Path": "Rooms/RecRoom/TaskConsoles/BuildSandcastle/BuildSandcastleConsole"
+    },
+    {
+      "ID": "task-weights",
+      "Map": 5,
+      "Path": "Rooms/RecRoom/TaskConsoles/LiftWeights/LiftWeightsConsole"
+    },
+    {
+      "ID": "task-frisbee",
+      "Map": 5,
+      "Path": "Rooms/RecRoom/TaskConsoles/TestFrisbee/TestFrisbeeConsole"
+    },
+    {
+      "ID": "task-generator",
+      "Map": 5,
+      "Path": "Rooms/Kitchen/TaskConsoles/CrankGenerator (1a)/CrankGeneratorConsole"
+    },
+    {
+      "ID": "task-fish1",
+      "Map": 5,
+      "Path": "Rooms/Dock/TaskConsoles/CatchFish (1)/CatchFishConsole"
+    },
+    {
+      "ID": "task-fish2",
+      "Map": 5,
+      "Path": "Rooms/Kitchen/TaskConsoles/CatchFish (2)/CatchFishConsole"
+    },
+    {
+      "ID": "task-seashells",
+      "Map": 5,
+      "Path": "Outside/OutsideBeach/TaskConsoles/CollectShells (1)/CollectShellsConsole"
+    },
+    {
+      "ID": "task-egg1",
+      "Map": 5,
+      "Path": "Outside/OutsideJungle/TaskConsoles/HelpCritter (1b)/HelpCritterConsole"
+    },
+    {
+      "ID": "task-egg2",
+      "Map": 5,
+      "Path": "Rooms/Laboratory/TaskConsoles/HelpCritter (2)/HelpCritterConsole"
+    },
+    {
+      "ID": "task-samples1",
+      "Map": 5,
+      "Path": "Outside/OutsideJungle/TaskConsoles/CollectSamples (1a)/CollectSamplesConsole"
+    },
+    {
+      "ID": "task-samples2",
+      "Map": 5,
+      "Path": "Rooms/Laboratory/TaskConsoles/CollectSamples (2)/CollectSamplesConsole"
+    },
+    {
+      "ID": "task-vegetables1",
+      "Map": 5,
+      "Path": "Rooms/Greenhouse/TaskConsoles/CollectVegetables (1)/CollectVegetablesConsole"
+    },
+    {
+      "ID": "task-vegetables2",
+      "Map": 5,
+      "Path": "Rooms/Kitchen/TaskConsoles/CollectVegetables (2)/CollectVegetablesConsole"
+    },
+    {
+      "ID": "task-radio",
+      "Map": 5,
+      "Path": "Rooms/Communications/TaskConsoles/TuneRadio/TuneRadioConsole"
+    },
+    {
+      "ID": "task-mineores",
+      "Map": 5,
+      "Path": "Rooms/MiningPit/TaskConsoles/MineOres/MineOresConsole"
+    },
+    {
+      "ID": "task-replaceparts1",
+      "Map": 5,
+      "Path": "Rooms/UpperEngine/TaskConsoles/ReplaceParts (1b)/ReplacePartsConsole"
+    },
+    {
+      "ID": "task-replaceparts2",
+      "Map": 5,
+      "Path": "Rooms/DropshipRuins/TaskConsoles/ReplaceParts (2b)/ReplacePartsConsole"
+    },
+    {
+      "ID": "task-hoist",
+      "Map": 5,
+      "Path": "Outside/OutsideJungle/TaskConsoles/HoistSupplies (1)/HoistSuppliesConsole"
+    },
+    {
       "ID": "ss-skeld",
       "Map": 0,
       "Path": ""
@@ -773,6 +888,11 @@
     {
       "ID": "ss-airship",
       "Map": 4,
+      "Path": ""
+    },
+    {
+      "ID": "ss-fungle",
+      "Map": 5,
       "Path": ""
     },
     {
@@ -1414,6 +1534,90 @@
       "Name": "CalibrateDistributorTask"
     },
     {
+      "ID": "task-marshmallow1",
+      "Map": 5,
+      "Type": 0,
+      "Name": "RoastMarshmallowTask"
+    },
+    {
+      "ID": "task-sandcastle",
+      "Map": 5,
+      "Type": 1,
+      "Name": "BuildSandcastleTask"
+    },
+    {
+      "ID": "task-weights",
+      "Map": 5,
+      "Type": 1,
+      "Name": "LiftWeightsTask"
+    },
+    {
+      "ID": "task-frisbee",
+      "Map": 5,
+      "Type": 1,
+      "Name": "TestFrisbeeTask"
+    },
+    {
+      "ID": "task-generator",
+      "Map": 5,
+      "Type": 1,
+      "Name": "CrankGeneratorTask"
+    },
+    {
+      "ID": "task-fish1",
+      "Map": 5,
+      "Type": 2,
+      "Name": "CatchFishTask"
+    },
+    {
+      "ID": "task-seashells",
+      "Map": 5,
+      "Type": 1,
+      "Name": "CollectShellsTask"
+    },
+    {
+      "ID": "task-egg1",
+      "Map": 5,
+      "Type": 2,
+      "Name": "HelpCritterTask"
+    },
+    {
+      "ID": "task-samples1",
+      "Map": 5,
+      "Type": 0,
+      "Name": "CollectSamplesTask"
+    },
+    {
+      "ID": "task-vegetables1",
+      "Map": 5,
+      "Type": 2,
+      "Name": "CollectVegetablesTask"
+    },
+    {
+      "ID": "task-radio",
+      "Map": 5,
+      "Type": 1,
+      "Name": "TuneRadioTask"
+    },
+    {
+      "ID": "task-mineores",
+      "Map": 5,
+      "Type": 2,
+      "Name": "MineOresTask"
+    },
+    {
+      "ID": "task-replaceparts1",
+      "Map": 5,
+      "Type": 0,
+      "Name": "ReplacePartsTask"
+    },
+    {
+      "ID": "task-hoist",
+      "Map": 5,
+      "Type": 2,
+      "Name": "HoistSuppliesTask"
+    },
+    {
       "ID": "sab-electric",
       "Map": 2,
       "Type": 3,
@@ -1448,6 +1652,12 @@
       "Map": 0,
       "Type": 3,
       "Name": "NoOxyTask"
+    },
+    {
+      "ID": "sab-btnmixup",
+      "Map": 5,
+      "Type": 3,
+      "Name": "MushroomMixupSabotageTask"
     }
   ],
   "SoundDB": [
@@ -2353,6 +2563,14 @@
       "Paths": [ "admin_sliderBottom/admin_Wallet/admin_walletFront" ]
     },
     {
+      "ID": "task-id_greenlight",
+      "Paths": [ "admin_sliderTop/admin_lightGreen" ]
+    },
+    {
+      "ID": "task-id_redlight",
+      "Paths": [ "admin_sliderTop/admin_lightRed" ]
+    },
+    {
       "ID": "task-keys_keychain",
       "Paths": [ "panel_key_keychain" ]
     },
@@ -2492,6 +2710,22 @@
     {
       "ID": "task-pass_scanner",
       "Paths": [ "Panel_scanner" ]
+    },
+    {
+      "ID": "task-pass_pull",
+      "Paths": [ "Panel_boardingpull" ]
+    },
+    {
+      "ID": "task-pass_flip",
+      "Paths": [ "panel_boardingFront/panel_boardingFlip" ]
+    },
+    {
+      "ID": "task-pass_idwindow",
+      "Paths": [ "panel_boardingFront/panel_boardingpicBG/panel_boardingpicwindow" ]
+    },
+    {
+      "ID": "task-pass_idfront",
+      "Paths": [ "panel_boardingFront" ]
     },
     {
       "ID": "task-photos_bg",

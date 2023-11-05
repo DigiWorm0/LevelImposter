@@ -11,6 +11,8 @@ namespace LevelImposter.Core
         public LIColor? lightsColorOff { get; set; }
         public LIColor? fuelColor { get; set; }
         public LIColor? fuelBgColor { get; set; }
+        public LIColor? weaponsColor { get; set; }
+        public string? qrCodeText { get; set; }
         public bool? isStarfieldEnabled { get; set; }
     }
 }

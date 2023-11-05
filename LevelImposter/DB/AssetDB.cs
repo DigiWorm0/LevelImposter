@@ -1,11 +1,11 @@
-﻿using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.ResourceManagement.AsyncOperations;
-using UnityEngine.AddressableAssets;
+﻿using BepInEx.Unity.IL2CPP.Utils.Collections;
+using Il2CppInterop.Runtime.Attributes;
 using LevelImposter.Core;
 using System.Collections;
-using BepInEx.Unity.IL2CPP.Utils.Collections;
-using Il2CppInterop.Runtime.Attributes;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.AddressableAssets;
+using UnityEngine.ResourceManagement.AsyncOperations;
 
 namespace LevelImposter.DB
 {
@@ -121,7 +121,7 @@ namespace LevelImposter.DB
                 var miraPrefab = shipPrefabs[(int)MapType.Mira];
                 int mapCount = (int)MapType.LevelImposter;
                 while (shipPrefabs.Count <= mapCount)
-                    shipPrefabs.Add(miraPrefab); // Use Own Ship AssetReference
+                    shipPrefabs.Add(miraPrefab); // TODO: Use Own Ship AssetReference
                 while (Constants.MapNames.Count <= mapCount)
                     Constants.MapNames = MapUtils.AddToArr(Constants.MapNames, Constants.MapNames.Count == mapCount ? LIConstants.MAP_NAME : "");
 
@@ -200,6 +200,7 @@ namespace LevelImposter.DB
                 "MiraShip" => MapType.Mira,
                 "PolusShip" => MapType.Polus,
                 "Airship" => MapType.Airship,
+                "FungleShip" => MapType.Fungle,
                 _ => MapType.LevelImposter
             };
             if (mapType == MapType.LevelImposter)
@@ -215,7 +216,7 @@ namespace LevelImposter.DB
 
             LILogger.Info($"...{prefab.name} Loaded");
         }
-        
+
         public void Awake()
         {
             if (Instance != null)
