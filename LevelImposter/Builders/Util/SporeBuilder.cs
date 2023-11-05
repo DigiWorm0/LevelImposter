@@ -38,7 +38,7 @@ namespace LevelImposter.Builders
             var screenGraphicPrefab = prefab.transform.FindChild("SporeScreenGraphic").gameObject;
             var screenGraphicObj = new GameObject("ScreenGraphic");
             screenGraphicObj.transform.parent = obj.transform;
-            screenGraphicObj.transform.localPosition = new Vector3(0, 0, -100.0f);
+            screenGraphicObj.transform.localPosition = new Vector3(0, 0, -10.0f);
             screenGraphicObj.transform.localScale = new Vector3(sporeRange, sporeRange, 1.2f);
             var sceenGraphicRenderer = MapUtils.CloneSprite(screenGraphicObj, screenGraphicPrefab, true);
 
