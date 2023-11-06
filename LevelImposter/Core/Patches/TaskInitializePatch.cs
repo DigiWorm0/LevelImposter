@@ -114,13 +114,17 @@ namespace LevelImposter.Core
                         break;
                     }
                 }
-                ControllerManager.Instance.OpenOverlayMenu(
-                    __instance.name,
-                    __instance.BackButton,
-                    defaultSelection,
-                    __instance.ControllerSelectable,
-                    false
-                );
+                if (!__instance.stage.SkipMultistageOverlayMenuSetup)
+                {
+                    __instance.hasOverlayMenu = true;
+                    ControllerManager.Instance.OpenOverlayMenu(
+                        __instance.name,
+                        __instance.BackButton,
+                        defaultSelection,
+                        __instance.ControllerSelectable,
+                        false
+                    );
+                }
                 return false;
             }
             return true;
