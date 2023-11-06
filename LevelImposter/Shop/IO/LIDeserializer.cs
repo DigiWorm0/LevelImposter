@@ -7,9 +7,7 @@ namespace LevelImposter.Shop
 {
     public static class LIDeserializer
     {
-        public static string? CurrentFilePath = null;
-
-        public static LIMap DeserializeMap(Stream dataStream, bool spriteDB = true)
+        public static LIMap DeserializeMap(Stream dataStream, bool spriteDB = true, string? filePath = null)
         {
             // Parse Legacy
             byte firstByte = (byte)dataStream.ReadByte();
@@ -70,12 +68,21 @@ namespace LevelImposter.Shop
                     continue;
                 }
 
-                // Save Chunk
-                mapData.mapAssetDB.DB[spriteID] = new MapAssetDB.DBElement()
+                // Read Data
+                if (filePath != null)
                 {
-                    fileChunk = new FileChunk(CurrentFilePath ?? "", dataStream.Position, dataLength)
-                };
-                dataStream.Position += dataLength;
+                    // Reading from a file, just save the File Stream offset
+                    var fileChunk = new FileChunk(filePath, dataStream.Position, dataLength);
+                    mapData.mapAssetDB.Add(spriteID, fileChunk);
+                    dataStream.Position += dataLength;
+                }
+                else
+                {
+                    // Reading from a stream, save the raw data to memory
+                    var buffer = new byte[dataLength];
+                    dataStream.Read(buffer, 0, dataLength);
+                    mapData.mapAssetDB.Add(spriteID, buffer);
+                }
             }
 
             // Return
