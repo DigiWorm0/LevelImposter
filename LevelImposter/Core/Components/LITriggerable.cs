@@ -275,6 +275,11 @@ namespace LevelImposter.Core
                     mixup.IsDirty = true;
                     // TODO: Transmit to other clients
                     break;
+
+                // Teleport
+                case "teleportonce":
+                    GetComponent<LITeleporter>()?.TeleportOnce();
+                    break;
             }
         }
 
@@ -301,6 +306,9 @@ namespace LevelImposter.Core
             MapConsole? mapConsole = GetComponent<MapConsole>();
             if (mapConsole != null)
                 mapConsole.enabled = false;
+            LITeleporter? teleporter = GetComponent<LITeleporter>();
+            if (teleporter != null)
+                teleporter.enabled = false;
         }
 
         /// <summary>
@@ -326,6 +334,9 @@ namespace LevelImposter.Core
             MapConsole? mapConsole = GetComponent<MapConsole>();
             if (mapConsole != null)
                 mapConsole.enabled = true;
+            LITeleporter? teleporter = GetComponent<LITeleporter>();
+            if (teleporter != null)
+                teleporter.enabled = true;
         }
 
         /// <summary>
