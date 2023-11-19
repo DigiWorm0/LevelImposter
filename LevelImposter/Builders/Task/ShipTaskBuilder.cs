@@ -48,6 +48,7 @@ namespace LevelImposter.Builders
             bool hasTask = AssetDB.HasTask(elem.type);
             bool isDivert = elem.type == "task-divert1";
             bool isNode = elem.type == "task-node";
+            bool isNodeSwitch = elem.type == "task-nodeswitch";
             bool isWires = elem.type == "task-wires";
 
             // Prefab
@@ -58,7 +59,22 @@ namespace LevelImposter.Builders
 
             // Rename
             if (prefabTask != null && !string.IsNullOrEmpty(elem.properties.description))
+            {
                 LIShipStatus.Instance?.Renames.Add(prefabTask.TaskType, elem.properties.description);
+
+                // Rename Node Description
+                if (isNode || isNodeSwitch)
+                    LIShipStatus.Instance?.Renames.Add(StringNames.FixWeatherNode, elem.properties.description);
+            }
+
+            // Rename Node Room
+            if (isNode)
+            {
+                var controlType = WeatherSwitchGame.ControlNames[console.ConsoleId];
+                var roomName = LIShipStatus.Instance?.Renames.Get(systemType);
+                if (roomName != null)
+                    LIShipStatus.Instance?.Renames.Add(controlType, roomName);
+            }
 
             // Built List
             bool isBuilt = _builtTypes.Contains(elem.type);
