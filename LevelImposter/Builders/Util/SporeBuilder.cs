@@ -30,7 +30,12 @@ namespace LevelImposter.Builders
             var screenMaskPrefab = prefab.transform.FindChild("SporeScreenMask").gameObject;
             var screenMaskObj = new GameObject("ScreenMask");
             screenMaskObj.transform.parent = obj.transform;
-            screenMaskObj.transform.localPosition = new Vector3(0, 0, 4.3f);
+            screenMaskObj.transform.localPosition = Vector3.zero;
+            screenMaskObj.transform.position = new Vector3(
+                screenMaskObj.transform.position.x,
+                screenMaskObj.transform.position.y,
+                10.0f
+            );
             screenMaskObj.transform.localScale = new Vector3(sporeRange, sporeRange, 1.2f);
             var screenMaskRenderer = MapUtils.CloneSprite(screenMaskObj, screenMaskPrefab, true);
 
@@ -38,7 +43,12 @@ namespace LevelImposter.Builders
             var screenGraphicPrefab = prefab.transform.FindChild("SporeScreenGraphic").gameObject;
             var screenGraphicObj = new GameObject("ScreenGraphic");
             screenGraphicObj.transform.parent = obj.transform;
-            screenGraphicObj.transform.localPosition = new Vector3(0, 0, -10.0f);
+            screenGraphicObj.transform.localPosition = Vector3.zero;
+            screenGraphicObj.transform.position = new Vector3(
+                screenGraphicObj.transform.position.x,
+                screenGraphicObj.transform.position.y,
+                -10.0f
+            );
             screenGraphicObj.transform.localScale = new Vector3(sporeRange, sporeRange, 1.2f);
             var sceenGraphicRenderer = MapUtils.CloneSprite(screenGraphicObj, screenGraphicPrefab, true);
 
