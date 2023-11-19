@@ -298,6 +298,9 @@ namespace LevelImposter.Core
             TriggerSoundPlayer? triggerSound = GetComponent<TriggerSoundPlayer>();
             if (triggerSound != null)
                 triggerSound.Stop();
+            MapConsole? mapConsole = GetComponent<MapConsole>();
+            if (mapConsole != null)
+                mapConsole.enabled = false;
         }
 
         /// <summary>
@@ -320,6 +323,9 @@ namespace LevelImposter.Core
             TriggerSoundPlayer? triggerSound = GetComponent<TriggerSoundPlayer>();
             if (triggerSound != null)
                 triggerSound.Play(loop);
+            MapConsole? mapConsole = GetComponent<MapConsole>();
+            if (mapConsole != null)
+                mapConsole.enabled = true;
         }
 
         /// <summary>
