@@ -16,6 +16,7 @@ namespace LevelImposter.Core
         {
             if (LIShipStatus.Instance == null)
                 return;
+
             canUse &= __instance.isActiveAndEnabled;
             couldUse &= __instance.isActiveAndEnabled;
         }

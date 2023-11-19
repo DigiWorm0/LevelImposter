@@ -11,5 +11,7 @@
         public const int MAX_LOAD_TIME = 12;                    // Maximum time to build map before aborting
         public const int ELEM_WARN_TIME = 200;                  // Time to warn the user (in ms) when an element is taking too long to load
         public const bool FREEPLAY_FLUSH_CACHE = true;          // Whether to flush the cache when entering freeplay maps
+        public const bool OVERRIDE_HORSE_MODE = false;           // Whether to override the horse mode setting
+        public const bool ENABLE_HORSE_MODE = false;            // Whether to enable horse mode (requires OVERRIDE_HORSE_MODE=true)
     }
 }

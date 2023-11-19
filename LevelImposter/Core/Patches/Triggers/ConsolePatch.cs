@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
-using HarmonyLib;
-using UnityEngine;
+﻿using HarmonyLib;
+using System.Collections.Generic;
 using System.Reflection;
+using UnityEngine;
 
 namespace LevelImposter.Core
 {
@@ -26,38 +26,9 @@ namespace LevelImposter.Core
 
             // Update Last Console
             MinigamePatch.LastConsole = __instance.gameObject;
+
             // Trigger "onUse" event
             return !LITriggerable.Trigger(__instance.gameObject, "onUse", PlayerControl.LocalPlayer);
         }
     }
-
-    /// <summary>
-    /// Replaces the "CheckWalls" check from
-    /// a Shadow Mask to an Object Mask
-    /// </summary>
-    /*
-    [HarmonyPatch(typeof(Console), nameof(Console.CanUse))]
-    public static class HorsePatch
-    {
-        public static void Postfix(
-            Console __instance,
-            [HarmonyArgument(0)]GameData.PlayerInfo pc,
-            [HarmonyArgument(1)] ref bool canUse)
-        {
-            if (LIShipStatus.Instance == null)
-                return;
-            if (!__instance.checkWalls)
-                return;
-
-            // Check Wall Collision
-            Vector2 truePosition = pc.Object.GetTruePosition();
-            Vector3 position = __instance.transform.position;
-            canUse &= !PhysicsHelpers.AnythingBetween(
-                truePosition,
-                position,
-                Constants.ShipAndAllObjectsMask,
-                false
-            );
-        }
-    }*/
 }

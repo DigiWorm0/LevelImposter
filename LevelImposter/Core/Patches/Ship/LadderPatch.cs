@@ -4,12 +4,12 @@ using LevelImposter.Builders;
 
 namespace LevelImposter.Core
 {
-    /*
-     *      Normally, ladders are handled by
-     *      AirshipStatus. This bypasses that
-     *      requirement by supplying it's own
-     *      ladder listings.
-     */
+    /// <summary>
+    /// Normally, ladders are handled by
+    /// AirshipStatus. This bypasses that
+    /// dependency by supplying it's own
+    /// ladder listings.
+    /// </summary>
     [HarmonyPatch(typeof(PlayerPhysics), nameof(PlayerPhysics.HandleRpc))]
     public static class LadderPatch
     {

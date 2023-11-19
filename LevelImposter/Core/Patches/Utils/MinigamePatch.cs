@@ -3,13 +3,14 @@ using UnityEngine;
 
 namespace LevelImposter.Core
 {
-    /*
-     *      Loads custom minigame sprites
-     */
+    /// <summary>
+    /// Loads all minigame sprites when a minigame is started.
+    /// </summary>
     [HarmonyPatch(typeof(Minigame), nameof(Minigame.Begin))]
     public static class MinigamePatch
     {
-        public static GameObject? LastConsole = null; // Set by ConsolePatch
+        // Set by LevelImposter.ConsolePatch
+        public static GameObject? LastConsole = null;
 
         public static void Postfix(Minigame __instance)
         {
@@ -31,6 +32,10 @@ namespace LevelImposter.Core
             minigameSprites?.LoadMinigame(__instance);
         }
     }
+
+    /// <summary>
+    /// When a minigame is closed, clear the last console.
+    /// </summary>
     [HarmonyPatch(typeof(Minigame), nameof(Minigame.Close), new System.Type[0])]
     public static class MinigameClosePatch
     {

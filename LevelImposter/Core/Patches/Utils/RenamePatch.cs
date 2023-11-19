@@ -3,10 +3,9 @@ using ObjList = Il2CppInterop.Runtime.InteropTypes.Arrays.Il2CppReferenceArray<I
 
 namespace LevelImposter.Core
 {
-    /*
-     *      Renames systems based on a
-     *      LI map's renamed value's
-     */
+    /// <summary>
+    /// Renames task names and other strings stored as <c>SystemTypes</c>.
+    /// </summary>
     [HarmonyPatch(typeof(TranslationController), nameof(TranslationController.GetString), new System.Type[] { typeof(SystemTypes) })]
     public static class SystemRenamePatch
     {
@@ -19,6 +18,9 @@ namespace LevelImposter.Core
             return false;
         }
     }
+    /// <summary>
+    /// Renames task names and other strings stored as <c>TaskTypes</c>.
+    /// </summary>
     [HarmonyPatch(typeof(TranslationController), nameof(TranslationController.GetString), new System.Type[] { typeof(TaskTypes) })]
     public static class TaskRenamePatch
     {
@@ -31,6 +33,9 @@ namespace LevelImposter.Core
             return false;
         }
     }
+    /// <summary>
+    /// Renames task names and other strings stored as <c>StringNames</c>.
+    /// </summary>
     [HarmonyPatch(typeof(TranslationController), nameof(TranslationController.GetString), new System.Type[] { typeof(StringNames), typeof(ObjList) })]
     public static class StringRenamePatch
     {
@@ -38,7 +43,6 @@ namespace LevelImposter.Core
                                   [HarmonyArgument(1)] ObjList _, // TODO: Format parameters into string
                                   ref string __result)
         {
-
             if (LIShipStatus.Instance == null || !LIShipStatus.Instance.Renames.Contains(stringNames))
                 return true;
 

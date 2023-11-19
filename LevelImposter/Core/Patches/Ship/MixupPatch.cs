@@ -3,11 +3,11 @@ using LevelImposter.Builders;
 
 namespace LevelImposter.Core
 {
-    /*
-     *      Normally, mushroom mixup is handled
-     *      by FungleShipStatus. This bypasses that
-     *      requirement by supplying it's own system.
-     */
+    /// <summary>
+    /// Normally, mushroom mixup is handled by
+    /// FungleShipStatus. This bypasses that
+    /// dependency by supplying it's own system.
+    /// </summary>
     [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.IsMushroomMixupActive))]
     public static class MixupPatch
     {

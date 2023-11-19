@@ -4,11 +4,12 @@ using System.Collections.Generic;
 
 namespace LevelImposter.Core
 {
-    /*
-     *      By default, sabotages have hard-coded
-     *      indices in ShipStatus. This patch will
-     *      allow for more flexibility
-     */
+    /// <summary>
+    /// Normally, sabotages have hard-coded indices in ShipStatus.
+    /// This patch will allow for more flexibility.
+    /// 
+    /// In addition, calls the sabotage start trigger.
+    /// </summary>
     [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.AddSystemTask))]
     public static class SabStartPatch
     {
@@ -34,6 +35,7 @@ namespace LevelImposter.Core
             if (LIShipStatus.Instance == null)
                 return true;
 
+            // Get TaskType and TriggerName
             TaskTypes taskType = _systemTaskPairs[systemType];
             string triggerName = _systemTriggerPairs[systemType];
 
@@ -42,6 +44,7 @@ namespace LevelImposter.Core
             {
                 if (task.TaskType == taskType)
                 {
+                    // Create Task
                     PlayerControl localPlayer = PlayerControl.LocalPlayer;
                     PlayerTask taskClone = UnityEngine.Object.Instantiate(task, localPlayer.transform);
                     taskClone.Id = 255U;
@@ -60,28 +63,5 @@ namespace LevelImposter.Core
             return true;
         }
     }
-    [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.RemoveTask))]
-    public static class SabEndPatch
-    {
-        private static Dictionary<TaskTypes, string> _taskTriggerPairs = new()
-        {
-            { TaskTypes.FixLights, "onLightsEnd" },
-            { TaskTypes.ResetReactor, "onReactorEnd" },
-            { TaskTypes.RestoreOxy, "onOxygenEnd" },
-            { TaskTypes.FixComms, "onCommsEnd" },
-            { TaskTypes.MushroomMixupSabotage, "onMixupEnd" }
-        };
 
-        public static void Postfix([HarmonyArgument(0)] PlayerTask task)
-        {
-            if (LIShipStatus.Instance == null)
-                return;
-            if (!_taskTriggerPairs.ContainsKey(task.TaskType))
-                return;
-
-            // Fire Trigger
-            string triggerName = _taskTriggerPairs[task.TaskType];
-            LITriggerable.Trigger(SabotageOptionsBuilder.TriggerObject, triggerName, null);
-        }
-    }
 }
