@@ -1,6 +1,6 @@
+using LevelImposter.Core;
 using LevelImposter.DB;
 using UnityEngine;
-using LevelImposter.Core;
 
 namespace LevelImposter.Builders
 {
@@ -60,6 +60,16 @@ namespace LevelImposter.Builders
                 }
                 liStars = null;
             };
+
+            // Disable SpriteRenderers
+            SpriteRenderer[] spriteRenderers = obj.GetComponents<SpriteRenderer>();
+            foreach (SpriteRenderer renderer in spriteRenderers)
+                renderer.enabled = false;
+
+            // Disable Colliders
+            Collider2D[] colliders = obj.GetComponents<Collider2D>();
+            foreach (Collider2D collider in colliders)
+                collider.enabled = false;
         }
 
         public void PostBuild() { }
