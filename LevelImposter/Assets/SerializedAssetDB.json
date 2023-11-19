@@ -73,7 +73,7 @@
     {
       "ID": "util-cams4",
       "Map": 5,
-      "Path": "lookout_binoculars"
+      "Path": "Rooms/Lookout/SystemConsoles/BinocularsSecurityConsole"
     },
     {
       "ID": "util-ladder1",

@@ -11,6 +11,7 @@ namespace LevelImposter.Builders
             new SpriteBuilder(),
             new ColliderBuilder(),
             new MinigameSpriteBuilder(),
+            new LayerBuilder(),
 
             new RoomBuilder(),
             new AdminMapBuilder(),
@@ -31,6 +32,7 @@ namespace LevelImposter.Builders
             new OneWayColliderBuilder(),
             new DecontaminationBuilder(),
             new SporeBuilder(),
+            new BinocularsBuilder(),
 
             new SabBuilder(),
             new SabMixupBuilder(),

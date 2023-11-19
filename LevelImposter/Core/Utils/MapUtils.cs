@@ -46,6 +46,20 @@ namespace LevelImposter.Core
         }
 
         /// <summary>
+        /// Removes an element from an Il2CppReferenceArray
+        /// </summary>
+        /// <typeparam name="T">Array Type</typeparam>
+        /// <param name="arr">Array to add to</param>
+        /// <param name="index">Index of the element to remove</param>
+        /// <returns>New array with the value removed</returns>
+        public static Il2CppReferenceArray<T> RemoveFromArr<T>(Il2CppReferenceArray<T> arr, int index) where T : Il2CppObjectBase
+        {
+            List<T> list = new(arr);
+            list.RemoveAt(index);
+            return list.ToArray();
+        }
+
+        /// <summary>
         /// Replaces a prefab with a new, mutable copy
         /// </summary>
         /// <param name="oldPrefab">Old, immutable prefab</param>

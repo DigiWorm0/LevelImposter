@@ -1,8 +1,8 @@
+using LevelImposter.Core;
 using LevelImposter.DB;
 using System;
 using UnityEngine;
 using UnityEngine.Events;
-using LevelImposter.Core;
 
 namespace LevelImposter.Builders
 {
@@ -17,7 +17,6 @@ namespace LevelImposter.Builders
                 elem.type == "util-admin" ||
                 elem.type == "util-vitals" ||
                 elem.type.StartsWith("util-button") ||
-                elem.type.StartsWith("util-cams") ||
                 elem.type == "util-computer"))
                 return;
 
@@ -50,7 +49,7 @@ namespace LevelImposter.Builders
                 // Always set minigame to polus cams
                 if (elem.type == "util-cams2")
                     console.MinigamePrefab = AssetDB.GetObject("util-cams")?.GetComponent<SystemConsole>().MinigamePrefab;
-                
+
                 // Set object name for TOR Security Guard to find panel type
                 if (elem.type.StartsWith("util-cams"))
                     obj.name = CAM_PANEL_NAME;

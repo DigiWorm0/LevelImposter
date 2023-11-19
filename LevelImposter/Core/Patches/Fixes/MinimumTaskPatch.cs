@@ -14,7 +14,7 @@ namespace LevelImposter.Core
             if (LIShipStatus.Instance == null)
                 return;
 
-            // Get Countes
+            // Get Counts
             var shortTaskCount = __instance.ShortTasks.Count;
             var longTaskCount = __instance.LongTasks.Count;
             var commonTaskCount = __instance.CommonTasks.Count;
