@@ -7,21 +7,17 @@ namespace LevelImposter.Core
     {
         // Systems
         private static int _systemID = 1;
-        public static readonly SystemTypes DEFAULT_SYSTEM = 0; 
+        public static readonly SystemTypes DEFAULT_SYSTEM = 0;
         private static readonly SystemTypes[] SYSTEM_BLACKLIST = new SystemTypes[]
         {
+            // Breaks task-fuel
             SystemTypes.LowerEngine,
             SystemTypes.UpperEngine
         };
 
         // Decontamination
-        private static int _deconID = 0;
-        private static readonly SystemTypes[] DECON_SYSTEMS = new SystemTypes[]
-        {
-            SystemTypes.Decontamination,
-            SystemTypes.Decontamination2,
-            SystemTypes.Decontamination3
-        };
+        private static int _minDeconID => Enum.GetValues(typeof(SystemTypes)).Length;
+        private static int _deconID = _minDeconID;
 
         /// <summary>
         /// Generates a dedicated SystemTypes for a system. 
@@ -58,14 +54,16 @@ namespace LevelImposter.Core
         public static SystemTypes GetNewDeconSystemType()
         {
             // Check Out of Bounds
-            if (_deconID >= DECON_SYSTEMS.Length)
+            if (_deconID > byte.MaxValue)
             {
-                LILogger.Error($"Map is out of decontamination IDs! (Max {DECON_SYSTEMS.Length})");
-                return DECON_SYSTEMS[0];
+                LILogger.Error($"Map is out of decontamination IDs! (Max {byte.MaxValue - _minDeconID})");
+                return (SystemTypes)_minDeconID;
             }
 
             // Assign System
-            return DECON_SYSTEMS[_deconID++];
+            _deconID++;
+            LILogger.Warn($"Assigned {_deconID} ({(SystemTypes)_deconID})");
+            return (SystemTypes)_deconID;
         }
 
         /// <summary>
@@ -74,7 +72,7 @@ namespace LevelImposter.Core
         public static void Reset()
         {
             _systemID = 1;
-            _deconID = 0;
+            _deconID = _minDeconID;
         }
     }
 }
