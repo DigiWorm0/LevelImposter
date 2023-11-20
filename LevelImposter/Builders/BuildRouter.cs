@@ -33,6 +33,7 @@ namespace LevelImposter.Builders
             new DecontaminationBuilder(),
             new SporeBuilder(),
             new BinocularsBuilder(),
+            new FilterBuilder(),
 
             new SabBuilder(),
             new SabMixupBuilder(),

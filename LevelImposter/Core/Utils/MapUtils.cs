@@ -524,5 +524,45 @@ namespace LevelImposter.Core
             var mapID = isFreeplay ? AmongUsClient.Instance.TutorialMapId : GameOptionsManager.Instance.CurrentGameOptions.MapId;
             return (MapType)mapID;
         }
+
+
+        private static Sprite? _defaultSquare = null;
+
+        /// <summary>
+        /// Gets the default 100x100 white square sprite
+        /// </summary>
+        /// <returns>A 100x100 default white square</returns>
+        public static Sprite GetDefaultSquare()
+        {
+            if (_defaultSquare != null)
+                return _defaultSquare;
+
+            // Create Texture
+            var texture = new Texture2D(100, 100, TextureFormat.RGBA32, false)
+            {
+                wrapMode = TextureWrapMode.Clamp,
+                filterMode = FilterMode.Point,
+                hideFlags = HideFlags.HideAndDontSave,
+                requestedMipmapLevel = 0
+            };
+
+            // Fill Texture
+            for (int x = 0; x < 100; x++)
+                for (int y = 0; y < 100; y++)
+                    texture.SetPixel(x, y, Color.white);
+            texture.Apply();
+
+            // Generate Sprite
+            _defaultSquare = Sprite.Create(
+                texture,
+                new Rect(0, 0, texture.width, texture.height),
+                new Vector2(0.5f, 0.5f),
+                100.0f,
+                0,
+                SpriteMeshType.FullRect
+            );
+
+            return _defaultSquare;
+        }
     }
 }
