@@ -20,6 +20,7 @@ namespace LevelImposter.Core
         private LIElement? _elem = null;
         private LITeleporter? _target = null;
         private bool _preserveOffset = true;
+        private bool _enabled = true;
 
         [HideFromIl2Cpp]
         public LIElement? CurrentElem => _elem;
@@ -35,6 +36,7 @@ namespace LevelImposter.Core
         {
             _elem = elem;
             _preserveOffset = elem.properties.preserveOffset ?? true;
+            _enabled = elem.properties.isEnabled ?? true;
         }
 
         /// <summary>
@@ -78,7 +80,7 @@ namespace LevelImposter.Core
             PlayerControl player = collider.GetComponent<PlayerControl>();
             if (player == null)
                 return;
-            if (_elem == null || _target == null)
+            if (_elem == null || _target == null || !_enabled)
                 return;
             if (!MapUtils.IsLocalPlayer(player.gameObject))
                 return;
@@ -114,6 +116,16 @@ namespace LevelImposter.Core
                 player.transform.position.x,
                 player.transform.position.y
             );
+        }
+
+        public void SetEnabled(bool enabled)
+        {
+            _enabled = enabled;
+        }
+
+        public bool isEnabled()
+        {
+            return _enabled;
         }
     }
 }

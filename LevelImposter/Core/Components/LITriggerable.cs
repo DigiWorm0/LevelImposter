@@ -187,6 +187,9 @@ namespace LevelImposter.Core
                     gameObject.SetActive(false);
                     StopComponents();
                     break;
+                case "toggle":
+                    ToggleComponents();
+                    break;
 
                 // Repeat
                 case "repeat":
@@ -298,6 +301,10 @@ namespace LevelImposter.Core
             TriggerSoundPlayer? triggerSound = GetComponent<TriggerSoundPlayer>();
             if (triggerSound != null)
                 triggerSound.Stop();
+            LITeleporter? teleporter = GetComponent<LITeleporter>();
+            if (teleporter != null)
+                teleporter.SetEnabled(false);
+
         }
 
         /// <summary>
@@ -320,6 +327,19 @@ namespace LevelImposter.Core
             TriggerSoundPlayer? triggerSound = GetComponent<TriggerSoundPlayer>();
             if (triggerSound != null)
                 triggerSound.Play(loop);
+            LITeleporter? teleporter = GetComponent<LITeleporter>();
+            if (teleporter != null)
+                teleporter.SetEnabled(true);
+        }
+
+        /// <summary>
+        /// Toggles the state of any component attached, i.e enables the component if it is currently disabled, and vice versa
+        /// </summary>
+        private void ToggleComponents(bool loop = true)
+        {
+            LITeleporter? teleporter = GetComponent<LITeleporter>();
+            if (teleporter != null)
+                teleporter.SetEnabled(!teleporter.isEnabled());
         }
 
         /// <summary>
