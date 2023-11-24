@@ -225,13 +225,13 @@ namespace LevelImposter.Core
 
                 // Playback
                 case "playonce":
-                    StartComponents(false);
+                    SetComponentsEnabled(true, false);
                     break;
                 case "playloop":
-                    StartComponents(true);
+                    SetComponentsEnabled(true, true);
                     break;
                 case "stop":
-                    StopComponents();
+                    SetComponentsEnabled(false);
                     break;
 
                 // Sabotage
@@ -284,59 +284,56 @@ namespace LevelImposter.Core
         }
 
         /// <summary>
-        /// Stops any components attatched to object
+        /// Enables or disables specific components on the object
         /// </summary>
-        private void StopComponents()
+        /// <param name="isEnabled"><c>true</c> if the components should be enabled. <c>false</c> otherwise</param>
+        /// <param name="isLooped"><c>true</c> if GIF animations or sounds should loop. <c>false</c> otherwise</param>
+        private void SetComponentsEnabled(bool isEnabled, bool isLooped = false)
         {
+            // Ambient Sounds
             AmbientSoundPlayer? ambientSound = GetComponent<AmbientSoundPlayer>();
             if (ambientSound != null)
-                ambientSound.enabled = false;
+                ambientSound.enabled = isEnabled;
+
+            // Trigger Sounds
+            TriggerSoundPlayer? triggerSound = GetComponent<TriggerSoundPlayer>();
+            if (triggerSound != null)
+            {
+                if (isEnabled)
+                    triggerSound.Play(isLooped);
+                else
+                    triggerSound.Stop();
+            }
+
+            // Animation
             GIFAnimator? gifAnimator = GetComponent<GIFAnimator>();
             if (gifAnimator != null)
-                gifAnimator.Stop();
+            {
+                if (isEnabled)
+                    gifAnimator.Play();
+                else
+                    gifAnimator.Stop();
+            }
+
+            // Trigger Console
             TriggerConsole triggerConsole = GetComponent<TriggerConsole>();
             if (triggerConsole != null)
-                triggerConsole.SetEnabled(false);
+                triggerConsole.SetEnabled(isEnabled);
+
+            // System Console
             SystemConsole sysConsole = GetComponent<SystemConsole>();
             if (sysConsole != null)
-                sysConsole.enabled = false;
-            TriggerSoundPlayer? triggerSound = GetComponent<TriggerSoundPlayer>();
-            if (triggerSound != null)
-                triggerSound.Stop();
-            MapConsole? mapConsole = GetComponent<MapConsole>();
-            if (mapConsole != null)
-                mapConsole.enabled = false;
-            LITeleporter? teleporter = GetComponent<LITeleporter>();
-            if (teleporter != null)
-                teleporter.enabled = false;
-        }
+                sysConsole.enabled = isEnabled;
 
-        /// <summary>
-        /// Starts any components attatched to object
-        /// </summary>
-        private void StartComponents(bool loop = true)
-        {
-            AmbientSoundPlayer? ambientSound = GetComponent<AmbientSoundPlayer>();
-            if (ambientSound != null)
-                ambientSound.enabled = true;
-            GIFAnimator? gifAnimator = GetComponent<GIFAnimator>();
-            if (gifAnimator != null)
-                gifAnimator.Play();
-            TriggerConsole? triggerConsole = GetComponent<TriggerConsole>();
-            if (triggerConsole != null)
-                triggerConsole.SetEnabled(true);
-            SystemConsole? sysConsole = GetComponent<SystemConsole>();
-            if (sysConsole != null)
-                sysConsole.enabled = true;
-            TriggerSoundPlayer? triggerSound = GetComponent<TriggerSoundPlayer>();
-            if (triggerSound != null)
-                triggerSound.Play(loop);
+            // Map Console
             MapConsole? mapConsole = GetComponent<MapConsole>();
             if (mapConsole != null)
-                mapConsole.enabled = true;
+                mapConsole.enabled = isEnabled;
+
+            // Teleporter
             LITeleporter? teleporter = GetComponent<LITeleporter>();
             if (teleporter != null)
-                teleporter.enabled = true;
+                teleporter.enabled = isEnabled;
         }
 
         /// <summary>

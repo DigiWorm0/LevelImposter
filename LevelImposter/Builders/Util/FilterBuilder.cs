@@ -56,9 +56,6 @@ namespace LevelImposter.Builders
             // Set Layer
             obj.layer = (int)Layer.Ship;
             maskObj.layer = (int)Layer.Ship;
-
-
-            spriteRenderer.enabled = true;
         }
 
         public void PostBuild() { }

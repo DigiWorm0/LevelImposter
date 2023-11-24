@@ -19,10 +19,11 @@ namespace LevelImposter.Builders
             { "task-records1", 0 },
             { "task-pistols1", 1 },
             { "task-pistols2", 1 },
-            { "task-marshmallow2", 0 },
             { "task-vegetables1", 0 },
             { "task-vegetables2", 2 },
-            { "task-egg1", 1 },
+            { "task-egg2", 0 },
+            { "task-marshmallow2", 0 },
+            { "task-samples2", 0 },
             { "task-fish1", 0 },
             { "task-fish2", 1 },
             { "task-replaceparts1", 0 }
@@ -39,8 +40,8 @@ namespace LevelImposter.Builders
             { "task-records2", 1 },
             { "task-wires", 0 },
             { "task-marshmallow1", 1 },
-            { "task-egg1", 0 },
-            { "task-samples1", 0 },
+            { "task-egg1", 1 },
+            { "task-samples1", 1 },
             { "task-replaceparts2", 1 },
             { "task-hoist", 0 }
         };
