@@ -65,6 +65,7 @@ namespace LevelImposter.Core
 
         // Teleporter
         public Guid? teleporter { get; set; }
+        public bool? isEnabled { get; set; }
         public bool? preserveOffset { get; set; }
         public bool? isGhostEnabled { get; set; }
 
