@@ -12,7 +12,6 @@ namespace LevelImposter.Core
 
         public const string TRIGGER_ID = "onUse";
 
-        private bool _isEnabled = true;
         private float _usableDistance = 1.0f;
         private bool _onlyFromBelow = false;
         private bool _ghostsEnabled = false;
@@ -67,7 +66,7 @@ namespace LevelImposter.Core
             couldUse = (!playerInfo.IsDead || _ghostsEnabled) &&
                     playerControl.CanMove &&
                     (!_onlyFromBelow || truePosition.y < position.y) &&
-                    _isEnabled;
+                    enabled;
             canUse = couldUse;
 
             if (couldUse)
@@ -88,15 +87,6 @@ namespace LevelImposter.Core
             if (!canUse)
                 return;
             LITriggerable.Trigger(gameObject, TRIGGER_ID, PlayerControl.LocalPlayer);
-        }
-
-        /// <summary>
-        /// Enables or disables the console
-        /// </summary>
-        /// <param name="isEnabled">True if the console should be enabled</param>
-        public void SetEnabled(bool isEnabled)
-        {
-            _isEnabled = isEnabled;
         }
 
         public void Start()

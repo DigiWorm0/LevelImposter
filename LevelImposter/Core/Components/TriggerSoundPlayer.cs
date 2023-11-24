@@ -21,6 +21,7 @@ namespace LevelImposter.Core
         private AudioMixerGroup? _channel = null;
 
         public string SoundName => name + GetInstanceID();
+        public bool IsPlaying => _clip ? SoundManager.Instance.SoundIsPlaying(_clip) : false;
 
         /// <summary>
         /// Initializes the trigger sound
