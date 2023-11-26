@@ -62,7 +62,6 @@ namespace LevelImposter.Core
 
             // Assign System
             _deconID++;
-            LILogger.Warn($"Assigned {_deconID} ({(SystemTypes)_deconID})");
             return (SystemTypes)_deconID;
         }
 
