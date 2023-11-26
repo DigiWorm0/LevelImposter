@@ -1,9 +1,8 @@
+using Il2CppInterop.Runtime.Attributes;
+using LevelImposter.Core;
 using System;
 using System.IO;
-using UnityEngine;
-using LevelImposter.Core;
 using System.Linq;
-using Il2CppInterop.Runtime.Attributes;
 
 namespace LevelImposter.Shop
 {
@@ -115,7 +114,7 @@ namespace LevelImposter.Shop
         /// <summary>
         /// Saves a cached file to the local filesystem.
         /// </summary>
-        /// <param name="id">ID of the file</param>
+        /// <param name="fileName">Name of the file</param>
         /// <param name="fileBytes">Raw data to write to disk</param>
         [HideFromIl2Cpp]
         public static void Save(string fileName, byte[] fileBytes)
@@ -135,9 +134,35 @@ namespace LevelImposter.Shop
         }
 
         /// <summary>
+        /// Sabes a cached file to the local filesystem.
+        /// </summary>
+        /// <param name="fileName">Name of the file</param>
+        /// <param name="dataStream">Data stream to write to disk</param>
+        [HideFromIl2Cpp]
+        public static void Save(string fileName, Stream dataStream)
+        {
+            LILogger.Info($"Saving {fileName} to file cache");
+            try
+            {
+                string filePath = GetPath(fileName);
+                if (!Directory.Exists(GetDirectory()))
+                    Directory.CreateDirectory(GetDirectory());
+                using (FileStream fileStream = File.Create(filePath))
+                {
+                    dataStream.Seek(0, SeekOrigin.Begin);
+                    dataStream.CopyTo(fileStream);
+                }
+            }
+            catch (Exception e)
+            {
+                LILogger.Error(e);
+            }
+        }
+
+        /// <summary>
         /// Saves a cached file to the local filesystem.
         /// </summary>
-        /// <param name="id">ID of the file</param>
+        /// <param name="fileName">Name of the file</param>
         /// <param name="fileText">Raw text to write to disk</param>
         [HideFromIl2Cpp]
         public static void Save(string fileName, string fileText)
