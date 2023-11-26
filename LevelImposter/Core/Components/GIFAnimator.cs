@@ -1,10 +1,10 @@
-﻿using System;
+﻿using BepInEx.Unity.IL2CPP.Utils.Collections;
+using Il2CppInterop.Runtime.Attributes;
+using Il2CppInterop.Runtime.InteropTypes.Fields;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using BepInEx.Unity.IL2CPP.Utils.Collections;
-using Il2CppInterop.Runtime.Attributes;
-using Il2CppInterop.Runtime.InteropTypes.Fields;
 
 namespace LevelImposter.Core
 {
@@ -51,7 +51,9 @@ namespace LevelImposter.Core
             _gifData = gifData;
             _defaultLoopGIF = element.properties.loopGIF ?? true;
 
-            if (LIShipStatus.Instance?.CurrentMap?.properties?.preloadAllGIFs ?? false)
+            bool shouldPreload = LIShipStatus.Instance?.CurrentMap?.properties?.preloadAllGIFs ?? false;
+            bool isLowMemory = GCHandler.IsLowMemory();
+            if (shouldPreload || isLowMemory)
                 _gifData?.RenderAllFrames();
 
             if (_gifData?.Frames.Count == 1)
@@ -128,7 +130,7 @@ namespace LevelImposter.Core
 
                 // Wait for next frame
                 yield return new WaitForSeconds(_gifData.Frames[frame].Delay);
-                
+
                 // Update time
                 t = (t + 1) % _gifData.Frames.Count;
                 if (t == 0 && !repeat)

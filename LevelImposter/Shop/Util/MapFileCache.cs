@@ -1,8 +1,6 @@
 using Il2CppInterop.Runtime.Attributes;
 using LevelImposter.Core;
 using System.IO;
-using System.Text.Json;
-using System.Text.Json.Serialization;
 
 namespace LevelImposter.Shop
 {
@@ -11,11 +9,6 @@ namespace LevelImposter.Shop
     /// </summary>
     public static class MapFileCache
     {
-        private static readonly JsonSerializerOptions SERIALIZE_OPTIONS = new()
-        {
-            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
-        };
-
         /// <summary>
         /// Checks if a map exists in the local map cache
         /// </summary>
@@ -47,9 +40,9 @@ namespace LevelImposter.Shop
             LILogger.Info($"Loading map [{mapID}] from cache");
 
             string mapPath = GetPath(mapID);
-            using (FileStream mapStream = File.OpenRead(mapPath))
+            using (FileStream fileStream = File.OpenRead(mapPath))
             {
-                LIMap? mapData = JsonSerializer.Deserialize<LIMap?>(mapStream);
+                LIMap? mapData = LIDeserializer.DeserializeMap(fileStream);
                 if (mapData != null)
                 {
                     mapData.id = mapID;
@@ -69,8 +62,8 @@ namespace LevelImposter.Shop
         public static void Save(LIMap map)
         {
             LILogger.Info($"Saving {map} to filesystem");
-            string mapJson = JsonSerializer.Serialize(map, SERIALIZE_OPTIONS);
-            FileCache.Save($"{map.id}.lim", mapJson);
+            using (var memoryStream = LISerializer.SerializeMap(map))
+                FileCache.Save($"{map.id}.lim", memoryStream);
         }
     }
 }

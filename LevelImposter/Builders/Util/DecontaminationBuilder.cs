@@ -104,7 +104,7 @@ namespace LevelImposter.Builders
             else
                 deconControl.OnUse.AddListener((Action)(() => deconSystem.OpenDoor(isUpper)));
 
-            // Close Door By Defualt
+            // Close Door By Default
             door.Open = true; // Ensure there is a "state change"
             door.SetDoorway(false);
         }

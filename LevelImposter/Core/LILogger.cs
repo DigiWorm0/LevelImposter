@@ -4,6 +4,8 @@ using UnityEngine;
 
 namespace LevelImposter.Core
 {
+#pragma warning disable CS0162 // Uses constants, so ignore unreachable code warning
+
     /// <summary>
     /// Logs and displays data throughout the mod.
     /// </summary>
@@ -25,7 +27,7 @@ namespace LevelImposter.Core
             {
                 Application.add_logMessageReceived(
                     new Action<string, string, LogType>(OnUnityLog)
-                );   
+                );
             }
         }
 
@@ -103,4 +105,6 @@ namespace LevelImposter.Core
                 notifier.AddItem(data);
         }
     }
+
+#pragma warning restore CS0162
 }

@@ -3,11 +3,10 @@ using PowerTools;
 
 namespace LevelImposter.Core
 {
-    /*
-     *      This enables the use of
-     *      LevelImposter.Core.GIFAnimator
-     *      instead of PowerTools.SpriteAnim
-     */
+    //// <summary>
+    /// Toggles a GIF animation alongside the
+    /// regular animation components on vents.
+    /// </summary>
     [HarmonyPatch(typeof(Vent), nameof(Vent.EnterVent))]
     public static class EnterVentPatch
     {
@@ -48,7 +47,6 @@ namespace LevelImposter.Core
             return false;
         }
     }
-
     [HarmonyPatch(typeof(Vent), nameof(Vent.ExitVent))]
     public static class ExitVentPatch
     {

@@ -1,4 +1,5 @@
 ﻿using Il2CppInterop.Runtime.Attributes;
+using Il2CppInterop.Runtime.InteropTypes.Arrays;
 using LevelImposter.Core;
 using System;
 using System.Collections;
@@ -12,6 +13,11 @@ namespace LevelImposter.Shop
     /// </summary>
     public static class LegacyConverter
     {
+        /// <summary>
+        /// Gets the legacy path for a map
+        /// </summary>
+        /// <param name="mapID">ID of the map to get</param>
+        /// <returns>The path of the legacy map file</returns>
         public static string GetLegacyPath(string mapID)
         {
             return Path.Combine(MapFileAPI.GetDirectory(), $"{mapID}.lim");
@@ -41,6 +47,43 @@ namespace LevelImposter.Shop
             }
         }
 
+        /// <summary>
+        /// Compares two byte arrays (Il2CppStructArray<byte>)
+        /// </summary>
+        /// <param name="data1">The first byte array</param>
+        /// <param name="data2">The second byte array</param>
+        /// <returns>True if the byte arrays match, false otherwise.</returns>
+        private static bool CompareData(Il2CppStructArray<byte>? data1, Il2CppStructArray<byte>? data2)
+        {
+            if (data1 == null || data2 == null)
+                return false;
+            if (data1.Length != data2.Length)
+                return false;
+            for (int i = 0; i < data1.Length; i++)
+                if (data1[i] != data2[i])
+                    return false;
+            return true;
+        }
+
+        /// <summary>
+        /// Finds asset data in the assetDB or adds it if it doesn't exist
+        /// </summary>
+        /// <param name="assetDB">AssetDB to search or add</param>
+        /// <param name="data">Data to search for or add</param>
+        /// <returns>The resulting asset ID</returns>
+        private static Guid FindOrAddAsset(MapAssetDB assetDB, Il2CppStructArray<byte> data)
+        {
+            // Find Asset
+            foreach (var asset in assetDB.DB)
+                if (CompareData(asset.Value.rawData, data))
+                    return asset.Key;
+
+            // Create Asset
+            Guid assetID = Guid.NewGuid();
+            assetDB.Add(assetID, data);
+            return assetID;
+        }
+
 #pragma warning disable CS0618 // Handles legacy properties
         /// <summary>
         /// Updates legacy map data to a LIM2 data
@@ -63,10 +106,8 @@ namespace LevelImposter.Shop
                 // Add Sprite Data
                 if (element.properties.spriteData != null)
                 {
-                    Guid spriteID = Guid.NewGuid();
                     var spriteData = MapUtils.ParseBase64(element.properties.spriteData);
-                    map.mapAssetDB.Add(spriteID, spriteData);
-                    element.properties.spriteID = spriteID;
+                    element.properties.spriteID = FindOrAddAsset(map.mapAssetDB, spriteData);
                     element.properties.spriteData = null;
                 }
 
@@ -77,11 +118,7 @@ namespace LevelImposter.Shop
                     {
                         var spriteData = MapUtils.ParseBase64(minigame.spriteData ?? "");
                         if (spriteData != null)
-                        {
-                            Guid spriteID = Guid.NewGuid();
-                            map.mapAssetDB.Add(spriteID, spriteData);
-                            minigame.spriteID = spriteID;
-                        }
+                            minigame.spriteID = FindOrAddAsset(map.mapAssetDB, spriteData);
                         minigame.spriteData = null;
                     }
                 }
@@ -99,11 +136,7 @@ namespace LevelImposter.Shop
                         {
                             var soundData = MapUtils.ParseBase64(sound.data ?? "");
                             if (soundData != null)
-                            {
-                                Guid soundID = Guid.NewGuid();
-                                map.mapAssetDB.Add(soundID, soundData);
-                                sound.dataID = soundID;
-                            }
+                                sound.dataID = FindOrAddAsset(map.mapAssetDB, soundData);
                         }
                         sound.data = null;
                     }
@@ -114,6 +147,12 @@ namespace LevelImposter.Shop
         }
 #pragma warning restore CS0618
 
+        /// <summary>
+        /// Converts a legacy map file to a LIM2 file
+        /// </summary>
+        /// <param name="mapID">ID of the map to convert</param>
+        /// <exception cref="FileNotFoundException">If the map file wasn't found</exception>
+        /// <exception cref="FileLoadException">If the new map already exists</exception>
         public static void ConvertFile(string mapID)
         {
             LILogger.Info($"Converting legacy map file [{mapID}]");

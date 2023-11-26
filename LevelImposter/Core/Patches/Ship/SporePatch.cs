@@ -4,12 +4,12 @@ using LevelImposter.Builders;
 
 namespace LevelImposter.Core
 {
-    /*
-     *      Normally, spore are handled
-     *      by FungleShipStatus. This bypasses that
-     *      requirement by supplying it's own
-     *      spore listings.
-     */
+    /// <summary>
+    /// Normally, spores are handled by
+    /// FungleShipStatus. This bypasses that
+    /// dependency by supplying it's own
+    /// spore listings.
+    /// </summary>
     [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.HandleRpc))]
     public static class SporePatchHandle
     {

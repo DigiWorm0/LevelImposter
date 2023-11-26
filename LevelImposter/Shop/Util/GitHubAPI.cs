@@ -130,9 +130,7 @@ namespace LevelImposter.Shop
                         File.Move(dllPath, dllOldPath);
 
                         using (FileStream fileStream = File.Create(dllPath))
-                        {
                             fileStream.Write(dllBytes, 0, dllBytes.Length);
-                        }
 
                         FileCache.Clear();
 

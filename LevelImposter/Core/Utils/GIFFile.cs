@@ -330,19 +330,33 @@ namespace LevelImposter.Core
             // Image Data
             byte minCodeSize = reader.ReadByte();
 
-            // Read Blocks
-            List<byte> byteStream = new List<byte>();
+            // Get Block Length
+            long byteLength = 0;
+            long bytePosition = reader.BaseStream.Position;
             while (true)
             {
                 byte subBlockSize = reader.ReadByte(); // Read Sub Block
                 if (subBlockSize == 0) // End of Image Data
                     break;
-
-                // Read Sub Block Data
-                byteStream.AddRange(reader.ReadBytes(subBlockSize));
+                byteLength += subBlockSize;
+                reader.BaseStream.Position += subBlockSize;
             }
 
-            var indexStream = DecodeLZW(byteStream, minCodeSize, imageWidth * imageHeight);
+            // Get Block Data
+            byte[] byteData = new byte[byteLength];
+            reader.BaseStream.Position = bytePosition;
+            bytePosition = 0;
+            while (true)
+            {
+                byte subBlockSize = reader.ReadByte(); // Read Sub Block
+                if (subBlockSize == 0) // End of Image Data
+                    break;
+                reader.Read(byteData, (int)bytePosition, subBlockSize);
+                bytePosition += subBlockSize;
+            }
+
+            // Decode LZW
+            var indexStream = DecodeLZW(byteData, minCodeSize, imageWidth * imageHeight);
 
             // GIFFrame
             GIFFrame frame = new GIFFrame()
@@ -373,7 +387,7 @@ namespace LevelImposter.Core
         /// <param name="minCodeSize">Minimum code size in bits</param>
         /// <param name="expectedSize">Expected size of the final index stream</param>
         /// <returns>List of color indices</returns>
-        private List<ushort> DecodeLZW(List<byte> byteBuffer, byte minCodeSize, int expectedSize)
+        private List<ushort> DecodeLZW(byte[] byteBuffer, byte minCodeSize, int expectedSize)
         {
             int clearCode = 1 << minCodeSize; // Code used to clear the code table
             int endOfInformationCode = clearCode + 1; // Code used to signal the end of the image data
@@ -390,7 +404,7 @@ namespace LevelImposter.Core
 
             // Decode LZW
             int i = 0;
-            while (i + codeSize < byteBuffer.Count * 8)
+            while (i + codeSize < byteBuffer.Length * 8)
             {
                 // Read Code
                 int code = 0;
@@ -480,7 +494,7 @@ namespace LevelImposter.Core
         /// <param name="arr">Array of raw byte data</param>
         /// <param name="index">Offset in bits</param>
         /// <returns><c>true</c> if the bit is a 1, <c>false</c> otherwise</returns>
-        private bool GetBit(List<byte> arr, int index)
+        private bool GetBit(byte[] arr, int index)
         {
             int byteIndex = index / 8;
             int bitIndex = index % 8;
@@ -579,7 +593,7 @@ namespace LevelImposter.Core
 
                 // Apply Texture
                 texture.SetPixels(_pixelBuffer);
-                texture.Apply();
+                texture.Apply(false);
 
                 // Handle frame disposal
                 switch (frame.DisposalMethod)

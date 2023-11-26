@@ -3,10 +3,9 @@ using UnityEngine;
 
 namespace LevelImposter.Core
 {
-    /*
-     *      Makes Ambient Sounds play
-     *      as "Music" instead of "SFX"
-     */
+    /// <summary>
+    /// Makes ambient sounds play under the "Music" channel instead of "SFX" channel.
+    /// </summary>
     [HarmonyPatch(typeof(AmbientSoundPlayer), nameof(AmbientSoundPlayer.Start))]
     public static class SoundStartPatch
     {
@@ -20,7 +19,7 @@ namespace LevelImposter.Core
                 soundName,
                 __instance.AmbientSound,
                 true,
-                new System.Action<AudioSource, float>(__instance.Dynamics), 
+                new System.Action<AudioSource, float>(__instance.Dynamics),
                 SoundManager.Instance.MusicChannel
             );
             return false;

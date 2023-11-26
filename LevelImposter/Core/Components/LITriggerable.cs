@@ -1,4 +1,4 @@
-﻿using BepInEx.Unity.IL2CPP.Utils.Collections;
+using BepInEx.Unity.IL2CPP.Utils.Collections;
 using Il2CppInterop.Runtime.Attributes;
 using Reactor.Networking.Attributes;
 using Reactor.Networking.Rpc;
@@ -31,6 +31,15 @@ namespace LevelImposter.Core
             "endComms",
             "endLights"
         };
+        private static readonly string[] COMPONENT_TYPES = new string[]
+        {
+            nameof(AmbientSoundPlayer),
+            nameof(TriggerConsole),
+            nameof(SystemConsole),
+            nameof(MapConsole),
+            nameof(LITeleporter)
+        };
+
         private static List<LITriggerable> _allTriggers = new List<LITriggerable>();
         private static bool _shouldLog => LIShipStatus.Instance?.CurrentMap?.properties.triggerLogging ?? true;
 
@@ -41,8 +50,13 @@ namespace LevelImposter.Core
         private string? _destTrigger = "";
         private LITriggerable? _destTriggerComp = null;
         private bool _isClientSide => _sourceElem?.properties.triggerClientSide != false;
+
+        // Randomizer
         private int _randomOffset = 0;
-        private float _randomChance = 0.5f;
+        private float _randomChance => 1.0f / (_sourceElem?.properties.triggerCount ?? 2);
+
+        // Timer
+        private Coroutine? _timerCoroutine = null;
 
         [HideFromIl2Cpp]
         public LIElement? SourceElem => _sourceElem;
@@ -127,8 +141,7 @@ namespace LevelImposter.Core
             _sourceTrigger = sourceTrigger;
             _destID = destID;
             _destTrigger = destTrigger;
-            if (sourceTrigger == "random")
-                _randomChance = 1.0f / (sourceElem.properties.triggerCount ?? 2);
+
             if (!_allTriggers.Contains(this))
                 _allTriggers.Add(this);
         }
@@ -174,18 +187,21 @@ namespace LevelImposter.Core
             {
                 // Generic
                 case "enable":
-                    StartComponents();
+                    SetComponentsEnabled(true);
                     break;
                 case "disable":
-                    StopComponents();
+                    SetComponentsEnabled(false);
+                    break;
+                case "toggle":
+                    SetComponentsEnabled();
                     break;
                 case "show":
                     gameObject.SetActive(true);
-                    StartComponents();
+                    SetComponentsEnabled(true);
                     break;
                 case "hide":
                     gameObject.SetActive(false);
-                    StopComponents();
+                    SetComponentsEnabled(false);
                     break;
 
                 // Repeat
@@ -207,7 +223,15 @@ namespace LevelImposter.Core
 
                 // Timer
                 case "startTimer":
-                    StartCoroutine(CoTimerTrigger(orgin, stackSize).WrapToIl2Cpp());
+                    if (_timerCoroutine != null)
+                        StopCoroutine(_timerCoroutine);
+                    _timerCoroutine = StartCoroutine(CoTimerTrigger(orgin, stackSize + 1).WrapToIl2Cpp());
+                    break;
+                case "stopTimer":
+                    LITriggerable[] triggers = GetComponents<LITriggerable>();
+                    foreach (LITriggerable trigger in triggers)
+                        if (trigger.SourceTrigger == "startTimer")
+                            trigger.StopTimer();
                     break;
 
                 // Door
@@ -225,13 +249,13 @@ namespace LevelImposter.Core
 
                 // Playback
                 case "playonce":
-                    StartComponents(false);
+                    SetComponentsEnabled(true, false);
                     break;
                 case "playloop":
-                    StartComponents(true);
+                    SetComponentsEnabled(true, true);
                     break;
                 case "stop":
-                    StopComponents();
+                    SetComponentsEnabled(false);
                     break;
 
                 // Sabotage
@@ -275,51 +299,65 @@ namespace LevelImposter.Core
                     mixup.IsDirty = true;
                     // TODO: Transmit to other clients
                     break;
+
+                // Teleport
+                case "teleportonce":
+                    GetComponent<LITeleporter>()?.TeleportOnce();
+                    break;
             }
         }
 
         /// <summary>
-        /// Stops any components attatched to object
+        /// Enables or disables specific components on the object
         /// </summary>
-        private void StopComponents()
+        /// <param name="isEnabled"><c>true</c> if the components should be enabled. <c>false</c> otherwise</param>
+        /// <param name="isLooped"><c>true</c> if GIF animations or sounds should loop. <c>false</c> otherwise</param>
+        private void SetComponentsEnabled(bool? isEnabled = null, bool? isLooped = null)
         {
-            AmbientSoundPlayer? ambientSound = GetComponent<AmbientSoundPlayer>();
-            if (ambientSound != null)
-                ambientSound.enabled = false;
+            // Trigger Sounds
+            TriggerSoundPlayer? triggerSound = GetComponent<TriggerSoundPlayer>();
+            if (triggerSound != null)
+            {
+                if (isEnabled ?? !triggerSound.IsPlaying)
+                    triggerSound.Play(isLooped ?? false);
+                else
+                    triggerSound.Stop();
+            }
+
+            // Animation
             GIFAnimator? gifAnimator = GetComponent<GIFAnimator>();
             if (gifAnimator != null)
-                gifAnimator.Stop();
+            {
+                if (isEnabled ?? !gifAnimator.IsAnimating)
+                    gifAnimator.Play();
+                else
+                    gifAnimator.Stop();
+            }
+
+            // Ambient Sounds
+            AmbientSoundPlayer? ambientSound = GetComponent<AmbientSoundPlayer>();
+            if (ambientSound != null)
+                ambientSound.enabled = isEnabled ?? !ambientSound.enabled;
+
+            // Trigger Console
             TriggerConsole triggerConsole = GetComponent<TriggerConsole>();
             if (triggerConsole != null)
-                triggerConsole.SetEnabled(false);
+                triggerConsole.enabled = isEnabled ?? !triggerConsole.enabled;
+
+            // System Console
             SystemConsole sysConsole = GetComponent<SystemConsole>();
             if (sysConsole != null)
-                sysConsole.enabled = false;
-            TriggerSoundPlayer? triggerSound = GetComponent<TriggerSoundPlayer>();
-            if (triggerSound != null)
-                triggerSound.Stop();
-        }
+                sysConsole.enabled = isEnabled ?? !sysConsole.enabled;
 
-        /// <summary>
-        /// Starts any components attatched to object
-        /// </summary>
-        private void StartComponents(bool loop = true)
-        {
-            AmbientSoundPlayer? ambientSound = GetComponent<AmbientSoundPlayer>();
-            if (ambientSound != null)
-                ambientSound.enabled = true;
-            GIFAnimator? gifAnimator = GetComponent<GIFAnimator>();
-            if (gifAnimator != null)
-                gifAnimator.Play();
-            TriggerConsole? triggerConsole = GetComponent<TriggerConsole>();
-            if (triggerConsole != null)
-                triggerConsole.SetEnabled(true);
-            SystemConsole? sysConsole = GetComponent<SystemConsole>();
-            if (sysConsole != null)
-                sysConsole.enabled = true;
-            TriggerSoundPlayer? triggerSound = GetComponent<TriggerSoundPlayer>();
-            if (triggerSound != null)
-                triggerSound.Play(loop);
+            // Map Console
+            MapConsole? mapConsole = GetComponent<MapConsole>();
+            if (mapConsole != null)
+                mapConsole.enabled = isEnabled ?? !mapConsole.enabled;
+
+            // Teleporter
+            LITeleporter? teleporter = GetComponent<LITeleporter>();
+            if (teleporter != null)
+                teleporter.enabled = isEnabled ?? !teleporter.enabled;
         }
 
         /// <summary>
@@ -330,10 +368,27 @@ namespace LevelImposter.Core
         [HideFromIl2Cpp]
         private IEnumerator CoTimerTrigger(PlayerControl? orgin, int stackSize = 1)
         {
-            Trigger(gameObject, "onStart", orgin, stackSize);
-            float duration = _sourceElem?.properties.triggerTime ?? 1;
-            yield return new WaitForSeconds(duration);
-            Trigger(gameObject, "onFinish", orgin, stackSize);
+            do
+            {
+                Trigger(gameObject, "onStart", orgin, stackSize);
+                float duration = _sourceElem?.properties.triggerTime ?? 1;
+                yield return new WaitForSeconds(duration);
+                Trigger(gameObject, "onFinish", orgin, stackSize);
+            }
+            while (_sourceElem?.properties.triggerLoop ?? false);
+            _timerCoroutine = null;
+        }
+
+        /// <summary>
+        /// Stops the timer coroutine if it is running
+        /// </summary>
+        public void StopTimer()
+        {
+            if (_timerCoroutine != null)
+            {
+                StopCoroutine(_timerCoroutine);
+                _timerCoroutine = null;
+            }
         }
 
         /// <summary>

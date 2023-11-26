@@ -5,11 +5,11 @@ using UnityEngine;
 
 namespace LevelImposter.Core
 {
-    /*
-     *      By default, various tasks have hard-coded
-     *      counts and limits. In order to allow for
-     *      flexibility, this has been patched here.
-     */
+    /// <summary>
+    /// Normally, tasks have hard-coded counts and limits.
+    /// In order to allow for flexibility, this has been
+    /// patched here.
+    /// </summary>
     [HarmonyPatch(typeof(NormalPlayerTask), nameof(NormalPlayerTask.Initialize))]
     public static class TaskInitializePatch
     {
@@ -55,10 +55,9 @@ namespace LevelImposter.Core
         }
     }
 
-    /*
-     *      Of course, WaterWayTask has to
-     *      override NormalPlayerTask for no reason...
-     */
+    /// <summary>
+    /// <c>WaterWayTask</c> overrides <c>NormalPlayerTask</c> for some reason?
+    /// </summary>
     [HarmonyPatch(typeof(WaterWayTask), nameof(WaterWayTask.Initialize))]
     public static class WaterWheelInitializePatch
     {
@@ -72,9 +71,9 @@ namespace LevelImposter.Core
         }
     }
 
-    /*
-     *      Fix Divert Power Sliders
-     */
+    /// <summary>
+    /// Fix the slider count for Divert Power tasks.
+    /// </summary>
     [HarmonyPatch(typeof(DivertPowerMinigame), nameof(DivertPowerMinigame.Begin))]
     public static class DivertBeginPatch
     {
@@ -87,9 +86,9 @@ namespace LevelImposter.Core
         }
     }
 
-    /*
-     *      Fix Fuel Stages
-     */
+    /// <summary>
+    /// Fix the fuel count for Fuel Engines tasks.
+    /// </summary>
     [HarmonyPatch(typeof(MultistageMinigame), nameof(MultistageMinigame.Begin))]
     public static class MinigameBeginPatch
     {
@@ -114,22 +113,26 @@ namespace LevelImposter.Core
                         break;
                     }
                 }
-                ControllerManager.Instance.OpenOverlayMenu(
-                    __instance.name,
-                    __instance.BackButton,
-                    defaultSelection,
-                    __instance.ControllerSelectable,
-                    false
-                );
+                if (!__instance.stage.SkipMultistageOverlayMenuSetup)
+                {
+                    __instance.hasOverlayMenu = true;
+                    ControllerManager.Instance.OpenOverlayMenu(
+                        __instance.name,
+                        __instance.BackButton,
+                        defaultSelection,
+                        __instance.ControllerSelectable,
+                        false
+                    );
+                }
                 return false;
             }
             return true;
         }
     }
 
-    /*
-     *      Fix Records Stages
-     */
+    /// <summary>
+    /// Fix the records count for Records tasks.
+    /// </summary>
     [HarmonyPatch(typeof(RecordsMinigame), nameof(RecordsMinigame.GrabFolder))]
     public static class RecordsPatch
     {
@@ -159,9 +162,9 @@ namespace LevelImposter.Core
         }
     }
 
-    /*
-     *      Fix hard-coded "Replace Parts" Updater
-     */
+    /// <summary>
+    /// Fix the hard-coded <c>UpdateArrowAndLocation</c> for Replace Parts tasks.
+    /// </summary>
     [HarmonyPatch(typeof(NormalPlayerTask), nameof(NormalPlayerTask.UpdateArrowAndLocation))]
     public static class PartsPatch
     {
@@ -191,10 +194,9 @@ namespace LevelImposter.Core
         }
     }
 
-
-    /*
-     *      Fix a bug with the "Catch Fish" Console
-     */
+    /// <summary>
+    /// Fixes a bug with <c>NormalPlayerTask.ValidConsole</c> on the fishing task
+    /// </summary>
     [HarmonyPatch(typeof(NormalPlayerTask), nameof(NormalPlayerTask.ValidConsole))]
     public static class FishPatch
     {

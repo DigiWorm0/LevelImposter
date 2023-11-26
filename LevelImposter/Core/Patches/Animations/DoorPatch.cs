@@ -1,14 +1,13 @@
 ﻿using HarmonyLib;
-using UnityEngine;
 using PowerTools;
+using UnityEngine;
 
 namespace LevelImposter.Core
 {
-    /*
-     *      This enables the use of
-     *      LevelImposter.Core.GIFAnimator
-     *      instead of PowerTools.SpriteAnim
-     */
+    //// <summary>
+    /// Toggles a GIF animation alongside the
+    /// regular animation components on doors.
+    /// </summary>
     [HarmonyPatch(typeof(PlainDoor), nameof(PlainDoor.SetDoorway))]
     public static class DoorPatch
     {
@@ -38,7 +37,7 @@ namespace LevelImposter.Core
             SpriteAnim spriteAnim = __instance.GetComponent<SpriteAnim>();
             GIFAnimator gifAnim = __instance.GetComponent<GIFAnimator>();
             SpriteRenderer spriteRenderer = __instance.GetComponent<SpriteRenderer>();
-            if (spriteAnim != null && animClip != null) 
+            if (spriteAnim != null && animClip != null)
             {
                 // SpriteAnim
             }

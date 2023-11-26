@@ -1,12 +1,12 @@
 using HarmonyLib;
-using UnityEngine;
 using LevelImposter.Builders;
+using UnityEngine;
 
 namespace LevelImposter.Core
 {
-    /*
-     *      Calls meeting triggers
-     */
+    /// <summary>
+    /// Calls "onButton" and "onReport" triggers when a meeting is called.
+    /// </summary>
     [HarmonyPatch(typeof(ShipStatus), nameof(ShipStatus.StartMeeting))]
     public static class MeetingPatch
     {
@@ -17,24 +17,14 @@ namespace LevelImposter.Core
         {
             if (LIShipStatus.Instance == null)
                 return;
+
+            // Get trigger object
             GameObject? triggerObj = MeetingOptionsBuilder.TriggerObject;
             string triggerID = target == null ? BUTTON_TRIGGER_ID : REPORT_TRIGGER_ID;
+
+            // Call trigger
             if (triggerObj != null)
                 LITriggerable.Trigger(triggerObj, triggerID, reporter);
-        }
-    }
-    /*
-     *      Fixes PoolablePlayer running Awake too early
-     *      when making meeting prefabs
-     */
-    [HarmonyPatch(typeof(MeetingCalledAnimation), nameof(MeetingCalledAnimation.Initialize))]
-    public static class MeetingOverlayPatch
-    {
-        public static void Prefix(MeetingCalledAnimation __instance)
-        {
-            if (LIShipStatus.Instance == null)
-                return;
-            __instance.playerParts.InitBody();
         }
     }
 }

@@ -20,6 +20,7 @@ namespace LevelImposter.Core
         private LIElement? _elem = null;
         private LITeleporter? _target = null;
         private bool _preserveOffset = true;
+        private List<Collider2D> _colliderBuffer = new();
 
         [HideFromIl2Cpp]
         public LIElement? CurrentElem => _elem;
@@ -50,40 +51,34 @@ namespace LevelImposter.Core
             player.NetTransform.SnapTo(player.transform.position);
         }
 
-        public void Awake()
+        /// <summary>
+        /// Checks if the local player is in the teleporter and teleports them
+        /// </summary>
+        public void TeleportOnce()
         {
-            _teleList.Add(this);
+            foreach (Collider2D collider in _colliderBuffer)
+                if (TryTeleport(collider))
+                    return;
         }
-        public void Start()
+
+        /// <summary>
+        /// Teleports the collider to the target teleporter if its the local player
+        /// </summary>
+        /// <param name="collider">Collider to teleport</param>
+        /// <returns>True if the collider was teleported</returns>
+        private bool TryTeleport(Collider2D? collider)
         {
-            if (_elem == null)
-                return;
-            foreach (var teleporter in _teleList)
-            {
-                Guid? targetID = _elem.properties.teleporter;
-                if (targetID != null)
-                {
-                    _target = _teleList.Find((tele) => tele.CurrentElem?.id == targetID);
-                }
-            }
-        }
-        public void OnDestroy()
-        {
-            _teleList.Clear();
-            _elem = null;
-            _target = null;
-        }
-        public void OnTriggerEnter2D(Collider2D collider)
-        {
+            if (_elem == null || _target == null || collider == null)
+                return false;
+
+            // Check Player
             PlayerControl player = collider.GetComponent<PlayerControl>();
             if (player == null)
-                return;
-            if (_elem == null || _target == null)
-                return;
+                return false;
             if (!MapUtils.IsLocalPlayer(player.gameObject))
-                return;
+                return false;
             if (collider.TryCast<CircleCollider2D>() == null) // Disable BoxCollider2D
-                return;
+                return false;
 
             // Offset
             Vector3 offset;
@@ -114,6 +109,39 @@ namespace LevelImposter.Core
                 player.transform.position.x,
                 player.transform.position.y
             );
+            return true;
+        }
+
+        public void Awake()
+        {
+            _teleList.Add(this);
+        }
+        public void Start()
+        {
+            if (_elem == null)
+                return;
+            foreach (var teleporter in _teleList)
+            {
+                Guid? targetID = _elem.properties.teleporter;
+                if (targetID != null)
+                    _target = _teleList.Find((tele) => tele.CurrentElem?.id == targetID);
+            }
+        }
+        public void OnDestroy()
+        {
+            _teleList.Clear();
+            _elem = null;
+            _target = null;
+        }
+        public void OnTriggerEnter2D(Collider2D collider)
+        {
+            _colliderBuffer.Add(collider);
+            if (enabled)
+                TryTeleport(collider);
+        }
+        public void OnTriggerExit2D(Collider2D collider)
+        {
+            _colliderBuffer.RemoveAll((col) => col == collider);
         }
     }
 }

@@ -74,8 +74,7 @@ namespace LevelImposter.Shop
             string path = GetPath(mapID);
             using (var stream = File.OpenRead(path))
             {
-                LIDeserializer.CurrentFilePath = path;
-                var mapData = LIDeserializer.DeserializeMap(stream, spriteDB);
+                var mapData = LIDeserializer.DeserializeMap(stream, spriteDB, path);
                 if (mapData != null)
                     mapData.id = mapID;
                 return mapData;

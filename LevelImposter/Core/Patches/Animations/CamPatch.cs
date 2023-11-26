@@ -1,14 +1,13 @@
 ﻿using HarmonyLib;
-using UnityEngine;
 using PowerTools;
+using UnityEngine;
 
 namespace LevelImposter.Core
 {
-    /*
-     *      This enables the use of
-     *      LevelImposter.Core.GIFAnimator
-     *      instead of PowerTools.SpriteAnim
-     */
+    /// <summary>
+    /// Toggles a GIF animation alongside the
+    /// regular animation components on surveillance cameras.
+    /// </summary>
     [HarmonyPatch(typeof(SurvCamera), nameof(SurvCamera.SetAnimation))]
     public static class CamAnimationPatch
     {
