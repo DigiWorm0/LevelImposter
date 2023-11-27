@@ -56,21 +56,26 @@ namespace LevelImposter.Shop
         /// <param name="maxDirectorySize">Only clears cache if the directory size is greater than this many bytes</param>
         public static void Clear(long maxDirectorySize = 0)
         {
+            // Get Directory
             DirectoryInfo directory = new DirectoryInfo(GetDirectory());
             if (!directory.Exists)
                 return;
+
+            // Check Directory Size
             long directorySize = directory.EnumerateFiles("*.*", SearchOption.AllDirectories).Sum(fi => fi.Length);
             if (directorySize < maxDirectorySize)
                 return;
 
-            LILogger.Info("Clearing file cache");
+            // Clear Directory
             try
             {
+                LILogger.Info("Clearing file cache");
                 directory.Delete(true);
             }
             catch (Exception e)
             {
-                LILogger.Error(e);
+                LILogger.Error("Failed to clear file cache");
+                LILogger.Info(e);
             }
         }
 
@@ -123,13 +128,22 @@ namespace LevelImposter.Shop
             try
             {
                 string filePath = GetPath(fileName);
+
+                // Create Directory
                 if (!Directory.Exists(GetDirectory()))
                     Directory.CreateDirectory(GetDirectory());
+
+                // Delete File
+                if (File.Exists(filePath))
+                    File.Delete(filePath);
+
+                // Write File
                 File.WriteAllBytes(filePath, fileBytes);
             }
             catch (Exception e)
             {
-                LILogger.Error(e);
+                LILogger.Error($"Failed to save {fileName} to cache");
+                LILogger.Info(e);
             }
         }
 
@@ -145,17 +159,23 @@ namespace LevelImposter.Shop
             try
             {
                 string filePath = GetPath(fileName);
+
+                // Create Directory
                 if (!Directory.Exists(GetDirectory()))
                     Directory.CreateDirectory(GetDirectory());
+
+                // Delete File
+                if (File.Exists(filePath))
+                    File.Delete(filePath);
+
+                // Write File
                 using (FileStream fileStream = File.Create(filePath))
-                {
-                    dataStream.Seek(0, SeekOrigin.Begin);
                     dataStream.CopyTo(fileStream);
-                }
             }
             catch (Exception e)
             {
-                LILogger.Error(e);
+                LILogger.Error($"Failed to save {fileName} to cache");
+                LILogger.Info(e);
             }
         }
 
@@ -171,13 +191,22 @@ namespace LevelImposter.Shop
             try
             {
                 string filePath = GetPath(fileName);
+
+                // Create Directory
                 if (!Directory.Exists(GetDirectory()))
                     Directory.CreateDirectory(GetDirectory());
+
+                // Delete File
+                if (File.Exists(filePath))
+                    File.Delete(filePath);
+
+                // Write File
                 File.WriteAllText(filePath, fileText);
             }
             catch (Exception e)
             {
-                LILogger.Error(e);
+                LILogger.Error($"Failed to save {fileName} to cache");
+                LILogger.Info(e);
             }
         }
     }
