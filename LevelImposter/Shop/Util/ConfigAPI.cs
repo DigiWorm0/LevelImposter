@@ -1,6 +1,6 @@
+using LevelImposter.Core;
 using System.IO;
 using System.Text.Json;
-using LevelImposter.Core;
 
 namespace LevelImposter.Shop
 {
@@ -40,10 +40,25 @@ namespace LevelImposter.Shop
         /// </summary>
         public static void Save()
         {
-            LILogger.Info("Saving local config file");
-            string configJSON = JsonSerializer.Serialize(_configFile);
-            string directory = GetDirectory();
-            File.WriteAllText(directory, configJSON);
+            try
+            {
+                LILogger.Info("Saving local config file");
+                string path = GetDirectory();
+                string directory = Path.GetDirectoryName(path) ?? path;
+
+                // Create Directory
+                if (!Directory.Exists(directory))
+                    Directory.CreateDirectory(directory);
+
+                // Write File
+                string configJSON = JsonSerializer.Serialize(_configFile);
+                File.WriteAllText(path, configJSON);
+            }
+            catch (System.Exception e)
+            {
+                LILogger.Error("Failed to save local config file");
+                LILogger.Info(e);
+            }
         }
 
         /// <summary>

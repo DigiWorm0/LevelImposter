@@ -101,15 +101,25 @@ namespace LevelImposter.Shop
         [HideFromIl2Cpp]
         public static void Save(LIMap map)
         {
-            LILogger.Info($"Saving {map} to filesystem");
-            string mapPath = GetPath(map.id);
-            // Create Directory
-            if (!Directory.Exists(GetDirectory()))
-                Directory.CreateDirectory(GetDirectory());
-            // Write to File
-            using (var dataStream = LISerializer.SerializeMap(map))
-            using (var outputFileStream = File.OpenWrite(mapPath))
-                dataStream.CopyTo(outputFileStream);
+            try
+            {
+                LILogger.Info($"Saving {map} to filesystem");
+                string mapPath = GetPath(map.id);
+
+                // Create Directory
+                if (!Directory.Exists(GetDirectory()))
+                    Directory.CreateDirectory(GetDirectory());
+
+                // Write to File
+                using (var dataStream = LISerializer.SerializeMap(map))
+                using (var outputFileStream = File.OpenWrite(mapPath))
+                    dataStream.CopyTo(outputFileStream);
+            }
+            catch (System.Exception e)
+            {
+                LILogger.Error($"Failed to save {map} to filesystem");
+                LILogger.Info(e);
+            }
         }
 
         /// <summary>
