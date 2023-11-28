@@ -74,7 +74,7 @@ namespace LevelImposter.Shop
             }
             catch (Exception e)
             {
-                LILogger.Error("Failed to clear file cache");
+                LILogger.Warn("Failed to clear file cache");
                 LILogger.Info(e);
             }
         }
@@ -142,7 +142,7 @@ namespace LevelImposter.Shop
             }
             catch (Exception e)
             {
-                LILogger.Error($"Failed to save {fileName} to cache");
+                LILogger.Warn($"Failed to save {fileName} to cache");
                 LILogger.Info(e);
             }
         }
@@ -174,7 +174,7 @@ namespace LevelImposter.Shop
             }
             catch (Exception e)
             {
-                LILogger.Error($"Failed to save {fileName} to cache");
+                LILogger.Warn($"Failed to save {fileName} to cache");
                 LILogger.Info(e);
             }
         }
@@ -205,7 +205,7 @@ namespace LevelImposter.Shop
             }
             catch (Exception e)
             {
-                LILogger.Error($"Failed to save {fileName} to cache");
+                LILogger.Warn($"Failed to save {fileName} to cache");
                 LILogger.Info(e);
             }
         }
