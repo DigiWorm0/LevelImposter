@@ -119,7 +119,9 @@ namespace LevelImposter.Core
         public bool? spawnDummies { get; set; }
 
         // Meeting
+        [Obsolete("Use meetingBackgroundID instead")]
         public string? meetingBackground { get; set; }
+        public Guid? meetingBackgroundID { get; set; }
 
         // Minimap
         public float? minimapScale { get; set; }

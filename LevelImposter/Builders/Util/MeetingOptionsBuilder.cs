@@ -35,22 +35,26 @@ namespace LevelImposter.Builders
             TriggerObject = obj;
 
             // Meeting Background
-            if (!string.IsNullOrEmpty(elem.properties.meetingBackground))
+            if (elem.properties.meetingBackgroundID != null)
             {
+                var mapAssetDB = LIShipStatus.Instance?.CurrentMap?.mapAssetDB;
+                var mapAsset = mapAssetDB?.Get(elem.properties.meetingBackgroundID);
+
+                // Load Sprite
                 SpriteLoader.Instance?.LoadSpriteAsync(
-                    elem.properties.meetingBackground,
+                    mapAsset?.OpenStream(),
                     (spriteData) =>
                     {
                         LoadMeetingBackground(elem, spriteData);
                     },
-                    elem.id.ToString(),
+                    elem.properties.meetingBackgroundID?.ToString(),
                     null
                 );
             }
 
             // Meeting Overlay
             shipStatus.EmergencyOverlay.gameObject.SetActive(false);
-            MeetingCalledAnimation meetingOverlay = Object.Instantiate(shipStatus.EmergencyOverlay, shipStatus.transform);
+            MeetingCalledAnimation meetingOverlay = UnityEngine.Object.Instantiate(shipStatus.EmergencyOverlay, shipStatus.transform);
             meetingOverlay.gameObject.SetActive(false);
             shipStatus.EmergencyOverlay = meetingOverlay;
 
@@ -63,7 +67,7 @@ namespace LevelImposter.Builders
 
             // Report Overlay
             shipStatus.ReportOverlay.gameObject.SetActive(false);
-            MeetingCalledAnimation reportOverlay = Object.Instantiate(shipStatus.ReportOverlay, shipStatus.transform);
+            MeetingCalledAnimation reportOverlay = UnityEngine.Object.Instantiate(shipStatus.ReportOverlay, shipStatus.transform);
             reportOverlay.gameObject.SetActive(false);
             shipStatus.ReportOverlay = reportOverlay;
 
@@ -77,16 +81,12 @@ namespace LevelImposter.Builders
 
         private void LoadMeetingBackground(LIElement elem, SpriteLoader.SpriteData? spriteData)
         {
-
             // Handle Error
             if (spriteData == null)
             {
                 LILogger.Warn($"Error loading sprite for {elem}");
                 return;
             }
-
-            // Sprite is in cache, we can reduce memory usage
-            elem.properties.meetingBackground = "";
 
             // ShipStatus
             var shipStatus = LIShipStatus.Instance?.ShipStatus;

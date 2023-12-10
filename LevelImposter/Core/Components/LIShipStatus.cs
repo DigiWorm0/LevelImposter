@@ -215,7 +215,7 @@ namespace LevelImposter.Core
             }
             catch (Exception e)
             {
-                LILogger.Error($"Error while building {element.name}:\n{e}");
+                LILogger.Error($"Error while building {element.name}:\n<size=2.5>{e}</size>");
             }
 
             // Build Timer

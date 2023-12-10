@@ -1,5 +1,4 @@
 ﻿using BepInEx.Unity.IL2CPP;
-using BepInEx;
 
 namespace LevelImposter.Core
 {
@@ -10,7 +9,6 @@ namespace LevelImposter.Core
         public const string TOU_GUID = "com.slushiegoose.townofus";
         public const string REW_GUID = "me.alchlcdvl.reworked";
         public const string SUBMERGED_GUID = "Submerged";
-        public const ShipStatus.MapType SUBMERGED_MAP_TYPE = (ShipStatus.MapType)5;
 
         private static bool _isTOREnabled = false;
         private static bool _isTOUEnabled = false;

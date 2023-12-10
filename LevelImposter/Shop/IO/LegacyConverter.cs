@@ -111,6 +111,14 @@ namespace LevelImposter.Shop
                     element.properties.spriteData = null;
                 }
 
+                // Add Meeting Background
+                if (element.properties.meetingBackground != null)
+                {
+                    var spriteData = MapUtils.ParseBase64(element.properties.meetingBackground);
+                    element.properties.meetingBackgroundID = FindOrAddAsset(map.mapAssetDB, spriteData);
+                    element.properties.spriteData = null;
+                }
+
                 // Add Minigame Data
                 if (element.properties.minigames != null)
                 {
