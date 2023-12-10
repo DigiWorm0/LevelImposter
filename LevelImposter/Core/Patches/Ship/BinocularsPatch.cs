@@ -25,6 +25,9 @@ namespace LevelImposter.Core
 
         public static void Postfix(FungleSurveillanceMinigame __instance)
         {
+            if (LIShipStatus.Instance == null)
+                return;
+
             // Remove the temporary room
             var arr = ShipStatus.Instance.AllRooms;
             ShipStatus.Instance.AllRooms = MapUtils.RemoveFromArr(arr, arr.Count - 1);
