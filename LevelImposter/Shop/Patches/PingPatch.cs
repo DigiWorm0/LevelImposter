@@ -1,6 +1,6 @@
 using HarmonyLib;
-using System.Text;
 using LevelImposter.Core;
+using System.Text;
 
 namespace LevelImposter.Shop
 {
@@ -17,8 +17,7 @@ namespace LevelImposter.Shop
             LIMap? currentMap = MapLoader.CurrentMap;
             MapType mapType = MapUtils.GetCurrentMapType();
 
-            if (mapType != MapType.LevelImposter || 
-                currentMap == null)
+            if (mapType != MapType.LevelImposter || currentMap == null)
                 return;
             if (!__instance.gameObject.active)
                 __instance.gameObject.SetActive(true);
@@ -27,6 +26,7 @@ namespace LevelImposter.Shop
             bool isFallback = GameState.IsFallbackMapLoaded;
             bool isInLobby = GameState.IsInLobby;
             bool isPingDisabled = currentMap.properties.showPingIndicator ?? false;
+            string mapName = GameState.MapName;
             if (isPingDisabled && !isFallback)
                 return;
 
@@ -45,10 +45,7 @@ namespace LevelImposter.Shop
                 pingBuilder.Append("\n");
 
             // Map Name
-            if (isFallback && isInLobby)
-                pingBuilder.Append($"<color=#1a95d8>{LIConstants.MAP_NAME}\n");
-            else
-                pingBuilder.Append($"<color=#1a95d8>{currentMap.name}\n");
+            pingBuilder.Append($"<color=#1a95d8>{mapName}\n");
 
             // Map Author
             if (isFallback && isInLobby)

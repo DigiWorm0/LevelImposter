@@ -5,6 +5,7 @@
     /// </summary>
     public static class LIConstants
     {
+        public const StringNames MAP_STRING_NAME = (StringNames)392001; // StringName that placeholdes the map names
         public const string MAP_NAME = "Random Custom Map";     // Name to populate Constants.MapNames
         public const float PLAYER_POS = -5.0f;                  // Z value of the player
         public const int CONNECTION_TIMEOUT = 20;               // Maximum time for host to wait (AmongUsClient.MAX_CLIENT_WAIT_TIME)
