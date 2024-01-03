@@ -2657,34 +2657,34 @@
     {
       "ID": "task-nodeswitch_switch",
       "Paths": [
-        "Node_CA/panel_weather2_switch",
-        "Node_TB/panel_weather2_switch",
-        "Node_IRO/panel_weather2_switch",
-        "Node_PD/panel_weather2_switch",
-        "Node_GI/panel_weather2_switch",
-        "Node_MLG/panel_weather2_switch"
+        "Node0/panel_weather2_switch",
+        "Node1/panel_weather2_switch",
+        "Node2/panel_weather2_switch",
+        "Node3/panel_weather2_switch",
+        "Node4/panel_weather2_switch",
+        "Node5/panel_weather2_switch"
       ]
     },
     {
       "ID": "task-nodeswitch_lightoff",
       "Paths": [
-        "Node_CA/panel_weather2_lampOff",
-        "Node_TB/panel_weather2_lampOff",
-        "Node_IRO/panel_weather2_lampOff",
-        "Node_PD/panel_weather2_lampOff",
-        "Node_GI/panel_weather2_lampOff",
-        "Node_MLG/panel_weather2_lampOff"
+        "Node0/panel_weather2_lampOff",
+        "Node1/panel_weather2_lampOff",
+        "Node2/panel_weather2_lampOff",
+        "Node3/panel_weather2_lampOff",
+        "Node4/panel_weather2_lampOff",
+        "Node5/panel_weather2_lampOff"
       ]
     },
     {
       "ID": "task-nodeswitch_screenlight",
       "Paths": [
-        "Node_CA",
-        "Node_TB",
-        "Node_IRO",
-        "Node_PD",
-        "Node_GI",
-        "Node_MLG"
+        "Node0",
+        "Node1",
+        "Node2",
+        "Node3",
+        "Node4",
+        "Node5"
       ]
     },
     {

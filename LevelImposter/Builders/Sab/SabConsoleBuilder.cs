@@ -1,9 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using UnityEngine.Events;
-using UnityEngine;
+﻿using LevelImposter.Core;
 using LevelImposter.DB;
-using LevelImposter.Core;
+using System;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.Events;
 
 namespace LevelImposter.Builders
 {
@@ -33,7 +33,7 @@ namespace LevelImposter.Builders
             if (prefab == null)
                 return;
             var prefabConsole = prefab.GetComponent<Console>();
-            
+
             // Default Sprite
             SpriteRenderer spriteRenderer = MapUtils.CloneSprite(obj, prefab);
 
@@ -95,7 +95,6 @@ namespace LevelImposter.Builders
         /// <returns>ArrowBehaviour to append to SabotageTask</returns>
         private ArrowBehaviour? MakeArrow(Transform parent, string name)
         {
-
             // Prefab
             var prefab = AssetDB.GetTask<PlayerTask>("sab-comms");
             if (prefab == null)
