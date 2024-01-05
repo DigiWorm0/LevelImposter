@@ -236,13 +236,23 @@ namespace LevelImposter.Core
                     // Iterate through objects located at path
                     foreach (var spriteObj in spriteObjs)
                     {
+                        // Sprite Renderer
                         var spriteRenderer = spriteObj?.GetComponent<SpriteRenderer>();
-                        if (spriteRenderer == null)
+                        if (spriteRenderer != null)
                         {
-                            LILogger.Warn($"{type} SpriteRenderer is null at '{path}'");
+                            spriteRenderer.sprite = sprite;
                             continue;
                         }
-                        spriteRenderer.sprite = sprite;
+
+                        // Sprite Mask
+                        var spriteMask = spriteObj?.GetComponent<SpriteMask>();
+                        if (spriteMask != null)
+                        {
+                            spriteMask.sprite = sprite;
+                            continue;
+                        }
+
+                        LILogger.Warn($"{type} is missing sprite at '{path}'");
                     }
                 }
 
@@ -353,6 +363,32 @@ namespace LevelImposter.Core
                     foreach (var keySlot in keySlotsC)
                         keySlot.Finished = sprite;
                     return true;
+
+                /* task-leaves */
+                case "task-leaves_leaf_1":
+                case "task-leaves_leaf_2":
+                case "task-leaves_leaf_3":
+                case "task-leaves_leaf_4":
+                case "task-leaves_leaf_5":
+                case "task-leaves_leaf_6":
+                case "task-leaves_leaf_7":
+                    var leafMinigame1 = minigame.Cast<LeafMinigame>();
+                    var leafIndex = GetIndex(type);
+
+                    // Find & update all leaves
+                    var currentLeafImage = leafMinigame1.LeafPrefab.Images[leafIndex];
+                    foreach (var leaf in leafMinigame1.Leaves)
+                    {
+                        var leafRenderer = leaf.GetComponent<SpriteRenderer>();
+                        if (leafRenderer.sprite == currentLeafImage)
+                            leafRenderer.sprite = sprite;
+                    }
+
+                    // Update the prefab
+                    if (leafMinigame1.LeafPrefab.Parent != leafMinigame1.transform)
+                        leafMinigame1.LeafPrefab = MapUtils.ReplacePrefab(leafMinigame1.LeafPrefab, leafMinigame1.transform);
+                    leafMinigame1.LeafPrefab.Images[leafIndex] = sprite;
+                    return false;
 
                 /* task-nodeswitch */
                 case "task-nodeswitch_lighton":
@@ -515,8 +551,8 @@ namespace LevelImposter.Core
                 case "task-garbage_leaf_6":
                 case "task-garbage_leaf_7":
                     var garbageMinigame1 = minigame.Cast<EmptyGarbageMinigame>();
-                    var leafIndex = GetIndex(type);
-                    var currentLeafPrefab = garbageMinigame1.LeafPrefabs[leafIndex];
+                    var leafIndex2 = GetIndex(type);
+                    var currentLeafPrefab = garbageMinigame1.LeafPrefabs[leafIndex2];
                     foreach (var obj in garbageMinigame1.Objects)
                         if (obj.sprite == currentLeafPrefab.sprite)
                             obj.sprite = sprite;

@@ -442,8 +442,18 @@
     },
     {
       "ID": "task-download",
-      "Map": 2,
-      "Path": "Electrical/panel_data"
+      "Map": 0,
+      "Path": "Comms/Ground/comms_wallstuff/UploadDataConsole"
+    },
+    {
+      "ID": "task-upload",
+      "Map": 0,
+      "Path": "Admin/Ground/admin_walls/UploadDataConsole"
+    },
+    {
+      "ID": "task-leaves",
+      "Map": 0,
+      "Path": "LifeSupport/Ground/CleanFilterConsole"
     },
     {
       "ID": "task-simonsays",
@@ -1421,9 +1431,15 @@
     },
     {
       "ID": "task-download",
-      "Map": 2,
-      "Type": 2,
-      "Name": "UploadWeaponsPb"
+      "Map": 0,
+      "Type": 1,
+      "Name": "UploadComms"
+    },
+    {
+      "ID": "task-leaves",
+      "Map": 0,
+      "Type": 1,
+      "Name": "CleanO2Filter"
     },
     {
       "ID": "task-simonsays",
@@ -2427,14 +2443,6 @@
       "Paths": [ "electricity_Receive_switch" ]
     },
     {
-      "ID": "task-download_bg",
-      "Paths": [ "Background" ]
-    },
-    {
-      "ID": "task-download_file",
-      "Paths": [ "Runner/Letter", "LeftFront/dataTransfer_fileFill" ]
-    },
-    {
       "ID": "task-drill_bg",
       "Paths": [ "Background" ]
     },
@@ -3390,6 +3398,86 @@
     {
       "ID": "task-wires_wiretip2",
       "Paths": [ "RightWires/RightWireNode (1)" ]
+    },
+    {
+      "ID": "task-download_bg",
+      "Paths": [ "Background" ]
+    },
+    {
+      "ID": "task-download_glass",
+      "Paths": [ "Background/dateTransfer_glassTop" ]
+    },
+    {
+      "ID": "task-download_file",
+      "Paths": [ "Runner/Letter", "LeftFront/dataTransfer_fileFill" ]
+    },
+    {
+      "ID": "task-download_antenna",
+      "Paths": [ "RightFront/Tower" ]
+    },
+    {
+      "ID": "task-download_antennatop",
+      "Paths": [ "RightFront/Tower/Circle" ]
+    },
+    {
+      "ID": "task-download_radiowave1",
+      "Paths": [ "RightFront/Tower/Circle/Middle", "RightFront/Tower/Circle/Middle (1)" ]
+    },
+    {
+      "ID": "task-download_radiowave2",
+      "Paths": [ "RightFront/Tower/Circle/OuterMost", "RightFront/Tower/Circle/OuterMost (1)" ]
+    },
+    {
+      "ID": "task-download_progressbar",
+      "Paths": [
+        "Status/dataTransfer_progressBar",
+        "Status/dataTransfer_progressBar/dataTransfer_progressBar",
+        "Status/dataTransfer_progressBar/Mask"
+      ]
+    },
+    {
+      "ID": "task-upload_bg",
+      "Paths": [ "Background" ]
+    },
+    {
+      "ID": "task-upload_glass",
+      "Paths": [ "Background/dateTransfer_glassTop" ]
+    },
+    {
+      "ID": "task-upload_file",
+      "Paths": [ "Runner/Letter", "LeftFront/dataTransfer_fileFill" ]
+    },
+    {
+      "ID": "task-upload_antenna",
+      "Paths": [ "RightFront/Tower" ]
+    },
+    {
+      "ID": "task-upload_antennatop",
+      "Paths": [ "RightFront/Tower/Circle" ]
+    },
+    {
+      "ID": "task-upload_radiowave1",
+      "Paths": [ "RightFront/Tower/Circle/Middle", "RightFront/Tower/Circle/Middle (1)" ]
+    },
+    {
+      "ID": "task-upload_radiowave2",
+      "Paths": [ "RightFront/Tower/Circle/OuterMost", "RightFront/Tower/Circle/OuterMost (1)" ]
+    },
+    {
+      "ID": "task-upload_progressbar",
+      "Paths": [
+        "Status/dataTransfer_progressBar",
+        "Status/dataTransfer_progressBar/dataTransfer_progressBar",
+        "Status/dataTransfer_progressBar/Mask"
+      ]
+    },
+    {
+      "ID": "task-leaves_bg",
+      "Paths": [ "Background" ]
+    },
+    {
+      "ID": "task-leaves_bgtop",
+      "Paths": [ "Background/o2_bgTop" ]
     },
     {
       "ID": "util-computer_bg",
