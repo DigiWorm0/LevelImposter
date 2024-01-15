@@ -7,6 +7,7 @@ namespace LevelImposter.Core
     {
         public int v { get; set; }
         public string id { get; set; }
+        public int? idVersion { get; set; }
         public string name { get; set; }
         public string description { get; set; }
         public string authorID { get; set; }
