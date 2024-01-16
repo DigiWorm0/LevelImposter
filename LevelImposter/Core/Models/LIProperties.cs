@@ -114,6 +114,7 @@ namespace LevelImposter.Core
         // Room
         public bool? isRoomNameVisible { get; set; }
         public bool? isRoomAdminVisible { get; set; }
+        public bool? isRoomUIVisible { get; set; }
 
         // Spawn
         public bool? spawnDummies { get; set; }

@@ -1,18 +1,18 @@
 ﻿using LevelImposter.Core;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace LevelImposter.Builders
 {
     public class RoomBuilder : IElemBuilder
     {
-        private static Dictionary<Guid, SystemTypes> _systemDB = new();
-        private static Dictionary<SystemTypes, PlainShipRoom> _roomDB = new();
+        private static List<RoomData> _roomDB = new();
+        public static List<RoomData> RoomDB => _roomDB;
 
         public RoomBuilder()
         {
-            _systemDB.Clear();
             _roomDB.Clear();
         }
 
@@ -28,27 +28,40 @@ namespace LevelImposter.Builders
             // Pick a new System
             SystemTypes systemType = SystemDistributor.GetNewSystemType();
 
-            // Plain Ship ROom
+            // Options
+            bool isAdminVisible = elem.properties.isRoomAdminVisible ?? true;
+            bool isUIVisible = elem.properties.isRoomUIVisible ?? true;
+
+            // Create ShipRoom
             PlainShipRoom shipRoom = obj.AddComponent<PlainShipRoom>();
             shipRoom.RoomId = systemType;
             shipRoom.roomArea = obj.GetComponentInChildren<Collider2D>();
+
+            // Fix Collider
             if (shipRoom.roomArea != null)
                 shipRoom.roomArea.isTrigger = true;
-            else if ((elem.properties.isRoomAdminVisible ?? true) || (elem.properties.isRoomNameVisible ?? true))
+            else if (isAdminVisible || isUIVisible)
                 LILogger.Warn($"{shipRoom.name} is missing a collider");
 
             // Rename Room Name
             LIShipStatus.Instance.Renames.Add(systemType, obj.name);
 
             // Add to DB
-            _systemDB.Add(elem.id, systemType);
-            _roomDB.Add(systemType, shipRoom);
+            _roomDB.Add(new()
+            {
+                elementID = elem.id,
+                isUIVisible = isUIVisible,
+                shipRoom = shipRoom,
+                collider = shipRoom.roomArea,
+            });
         }
 
         public void PostBuild()
         {
             if (LIShipStatus.Instance == null)
                 throw new MissingShipException();
+
+            // Add Default Room Name
             LIShipStatus.Instance.Renames.Add((SystemTypes)0, "Default Room");
         }
 
@@ -59,7 +72,7 @@ namespace LevelImposter.Builders
         /// <returns>Associated SystemTypes value</returns>
         public static SystemTypes GetSystem(Guid id)
         {
-            return _systemDB.GetValueOrDefault(id);
+            return _roomDB.FirstOrDefault(x => x.elementID == id).systemType ?? 0;
         }
 
         /// <summary>
@@ -83,7 +96,26 @@ namespace LevelImposter.Builders
         /// <returns>Associated PlainShipRoom component or <c>null</c> if none found</returns>
         public static PlainShipRoom? GetShipRoom(SystemTypes systemType)
         {
-            return _roomDB.GetValueOrDefault(systemType);
+            return _roomDB.FirstOrDefault(x => x.systemType == systemType).shipRoom;
+        }
+
+        /// <summary>
+        /// Gets whether the UI is visible for a specific SystemTypes value.
+        /// </summary>
+        /// <param name="systemType">Room ID to check</param>
+        /// <returns>True if the UI is visible, false otherwise</returns>
+        public static bool GetUIVisible(SystemTypes systemType)
+        {
+            return _roomDB.FirstOrDefault(x => x.systemType == systemType).isUIVisible;
+        }
+
+        public struct RoomData
+        {
+            public Guid elementID { get; set; }
+            public bool isUIVisible { get; set; }
+            public PlainShipRoom? shipRoom { get; set; }
+            public Collider2D? collider { get; set; }
+            public SystemTypes? systemType => shipRoom?.RoomId;
         }
     }
 }
