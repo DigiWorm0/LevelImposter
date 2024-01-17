@@ -1,6 +1,7 @@
 using LevelImposter.Core;
 using LevelImposter.DB;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace LevelImposter.Builders
@@ -71,6 +72,10 @@ namespace LevelImposter.Builders
                 // Rename Task
                 if (!string.IsNullOrEmpty(elem.properties.description))
                     LIShipStatus.Instance?.Renames.Add(task.TaskType, elem.properties.description);
+
+                // Add To Quick Chat
+                StringNames taskName = TranslationController.Instance.GetTaskName(task.TaskType);
+                shipStatus.SystemNames = HarmonyLib.CollectionExtensions.AddItem(shipStatus.SystemNames, taskName).ToArray();
 
                 // Add Task
                 shipStatus.SpecialTasks = MapUtils.AddToArr(shipStatus.SpecialTasks, task);

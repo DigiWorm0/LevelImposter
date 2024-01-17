@@ -26,6 +26,13 @@ namespace LevelImposter.Core
             NetHelpers.XRange = new FloatRange(-500f, 500f);
             NetHelpers.YRange = new FloatRange(-500f, 500f);
 
+            // Increase SystemTypes range to fix
+            // ShipStatus.Deteriorate and ShipStatus.Serialize
+            SystemTypes[] allTypes = new SystemTypes[byte.MaxValue];
+            for (int i = 0; i < byte.MaxValue; i++)
+                allTypes[i] = (SystemTypes)i;
+            SystemTypeHelpers.AllTypes = allTypes;
+
             // Add Global Components that utilize
             // the Unity runtime in some way
             GameObject apiParent = new GameObject("LevelImposter");

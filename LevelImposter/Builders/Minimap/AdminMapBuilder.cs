@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using LevelImposter.Core;
+using System.Collections.Generic;
 using UnityEngine;
-using LevelImposter.Core;
 
 namespace LevelImposter.Builders
 {
@@ -13,7 +13,12 @@ namespace LevelImposter.Builders
 
         public void Build(LIElement elem, GameObject obj)
         {
-            if (elem.type != "util-room" || elem.properties.isRoomAdminVisible == false)
+            if (elem.type != "util-room")
+                return;
+
+            // Check Admin
+            bool isAdminVisible = elem.properties.isRoomAdminVisible ?? true;
+            if (!isAdminVisible)
                 return;
 
             // ShipStatus
@@ -57,7 +62,7 @@ namespace LevelImposter.Builders
             MapCountOverlay mapCountOverlay = mapBehaviour.countOverlay;
 
             while (mapCountOverlay.transform.childCount > _counterAreaDB.Count)
-                UnityEngine.Object.DestroyImmediate(mapCountOverlay.transform.GetChild(0).gameObject); 
+                UnityEngine.Object.DestroyImmediate(mapCountOverlay.transform.GetChild(0).gameObject);
         }
     }
 }

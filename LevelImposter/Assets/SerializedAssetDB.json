@@ -442,8 +442,18 @@
     },
     {
       "ID": "task-download",
-      "Map": 2,
-      "Path": "Electrical/panel_data"
+      "Map": 0,
+      "Path": "Comms/Ground/comms_wallstuff/UploadDataConsole"
+    },
+    {
+      "ID": "task-upload",
+      "Map": 0,
+      "Path": "Admin/Ground/admin_walls/UploadDataConsole"
+    },
+    {
+      "ID": "task-leaves",
+      "Map": 0,
+      "Path": "LifeSupport/Ground/CleanFilterConsole"
     },
     {
       "ID": "task-simonsays",
@@ -1421,9 +1431,15 @@
     },
     {
       "ID": "task-download",
-      "Map": 2,
-      "Type": 2,
-      "Name": "UploadWeaponsPb"
+      "Map": 0,
+      "Type": 1,
+      "Name": "UploadComms"
+    },
+    {
+      "ID": "task-leaves",
+      "Map": 0,
+      "Type": 1,
+      "Name": "CleanO2Filter"
     },
     {
       "ID": "task-simonsays",
@@ -2427,14 +2443,6 @@
       "Paths": [ "electricity_Receive_switch" ]
     },
     {
-      "ID": "task-download_bg",
-      "Paths": [ "Background" ]
-    },
-    {
-      "ID": "task-download_file",
-      "Paths": [ "Runner/Letter", "LeftFront/dataTransfer_fileFill" ]
-    },
-    {
       "ID": "task-drill_bg",
       "Paths": [ "Background" ]
     },
@@ -2657,34 +2665,34 @@
     {
       "ID": "task-nodeswitch_switch",
       "Paths": [
-        "Node_CA/panel_weather2_switch",
-        "Node_TB/panel_weather2_switch",
-        "Node_IRO/panel_weather2_switch",
-        "Node_PD/panel_weather2_switch",
-        "Node_GI/panel_weather2_switch",
-        "Node_MLG/panel_weather2_switch"
+        "Node0/panel_weather2_switch",
+        "Node1/panel_weather2_switch",
+        "Node2/panel_weather2_switch",
+        "Node3/panel_weather2_switch",
+        "Node4/panel_weather2_switch",
+        "Node5/panel_weather2_switch"
       ]
     },
     {
       "ID": "task-nodeswitch_lightoff",
       "Paths": [
-        "Node_CA/panel_weather2_lampOff",
-        "Node_TB/panel_weather2_lampOff",
-        "Node_IRO/panel_weather2_lampOff",
-        "Node_PD/panel_weather2_lampOff",
-        "Node_GI/panel_weather2_lampOff",
-        "Node_MLG/panel_weather2_lampOff"
+        "Node0/panel_weather2_lampOff",
+        "Node1/panel_weather2_lampOff",
+        "Node2/panel_weather2_lampOff",
+        "Node3/panel_weather2_lampOff",
+        "Node4/panel_weather2_lampOff",
+        "Node5/panel_weather2_lampOff"
       ]
     },
     {
       "ID": "task-nodeswitch_screenlight",
       "Paths": [
-        "Node_CA",
-        "Node_TB",
-        "Node_IRO",
-        "Node_PD",
-        "Node_GI",
-        "Node_MLG"
+        "Node0",
+        "Node1",
+        "Node2",
+        "Node3",
+        "Node4",
+        "Node5"
       ]
     },
     {
@@ -3390,6 +3398,86 @@
     {
       "ID": "task-wires_wiretip2",
       "Paths": [ "RightWires/RightWireNode (1)" ]
+    },
+    {
+      "ID": "task-download_bg",
+      "Paths": [ "Background" ]
+    },
+    {
+      "ID": "task-download_glass",
+      "Paths": [ "Background/dateTransfer_glassTop" ]
+    },
+    {
+      "ID": "task-download_file",
+      "Paths": [ "Runner/Letter", "LeftFront/dataTransfer_fileFill" ]
+    },
+    {
+      "ID": "task-download_antenna",
+      "Paths": [ "RightFront/Tower" ]
+    },
+    {
+      "ID": "task-download_antennatop",
+      "Paths": [ "RightFront/Tower/Circle" ]
+    },
+    {
+      "ID": "task-download_radiowave1",
+      "Paths": [ "RightFront/Tower/Circle/Middle", "RightFront/Tower/Circle/Middle (1)" ]
+    },
+    {
+      "ID": "task-download_radiowave2",
+      "Paths": [ "RightFront/Tower/Circle/OuterMost", "RightFront/Tower/Circle/OuterMost (1)" ]
+    },
+    {
+      "ID": "task-download_progressbar",
+      "Paths": [
+        "Status/dataTransfer_progressBar",
+        "Status/dataTransfer_progressBar/dataTransfer_progressBar",
+        "Status/dataTransfer_progressBar/Mask"
+      ]
+    },
+    {
+      "ID": "task-upload_bg",
+      "Paths": [ "Background" ]
+    },
+    {
+      "ID": "task-upload_glass",
+      "Paths": [ "Background/dateTransfer_glassTop" ]
+    },
+    {
+      "ID": "task-upload_file",
+      "Paths": [ "Runner/Letter", "LeftFront/dataTransfer_fileFill" ]
+    },
+    {
+      "ID": "task-upload_antenna",
+      "Paths": [ "RightFront/Tower" ]
+    },
+    {
+      "ID": "task-upload_antennatop",
+      "Paths": [ "RightFront/Tower/Circle" ]
+    },
+    {
+      "ID": "task-upload_radiowave1",
+      "Paths": [ "RightFront/Tower/Circle/Middle", "RightFront/Tower/Circle/Middle (1)" ]
+    },
+    {
+      "ID": "task-upload_radiowave2",
+      "Paths": [ "RightFront/Tower/Circle/OuterMost", "RightFront/Tower/Circle/OuterMost (1)" ]
+    },
+    {
+      "ID": "task-upload_progressbar",
+      "Paths": [
+        "Status/dataTransfer_progressBar",
+        "Status/dataTransfer_progressBar/dataTransfer_progressBar",
+        "Status/dataTransfer_progressBar/Mask"
+      ]
+    },
+    {
+      "ID": "task-leaves_bg",
+      "Paths": [ "Background" ]
+    },
+    {
+      "ID": "task-leaves_bgtop",
+      "Paths": [ "Background/o2_bgTop" ]
     },
     {
       "ID": "util-computer_bg",

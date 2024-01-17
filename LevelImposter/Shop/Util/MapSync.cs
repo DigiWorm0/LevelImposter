@@ -1,7 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using LevelImposter.Core;
 using Reactor.Networking.Attributes;
-using LevelImposter.Core;
+using System;
+using System.Collections.Generic;
 
 namespace LevelImposter.Shop
 {
@@ -137,7 +137,8 @@ namespace LevelImposter.Shop
                             // TODO: Add map to local cache folder
                         }
                     },
-                    (string error) => {
+                    (string error) =>
+                    {
                         if (_activeDownloadingID == mapID)
                             DownloadManager.SetError(error);
                         _activeDownloadingID = null;

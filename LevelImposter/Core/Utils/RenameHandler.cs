@@ -19,6 +19,10 @@ namespace LevelImposter.Core
         public void Add(SystemTypes system, string name)
         {
             _systemRenames[system] = name;
+
+            // Also rename the string name
+            var stringName = TranslationController.Instance.GetSystemName(system);
+            _stringRenames[stringName] = name;
         }
 
         /// <summary>
@@ -29,6 +33,10 @@ namespace LevelImposter.Core
         public void Add(TaskTypes task, string name)
         {
             _taskRenames[task] = name;
+
+            // Also rename the string name
+            var stringName = TranslationController.Instance.GetTaskName(task);
+            _stringRenames[stringName] = name;
         }
 
         /// <summary>

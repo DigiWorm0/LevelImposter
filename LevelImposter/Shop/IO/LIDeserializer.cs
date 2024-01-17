@@ -17,7 +17,6 @@ namespace LevelImposter.Shop
                 byte lastByte = (byte)dataStream.ReadByte();
                 dataStream.Position = 0;
                 string fileExtension = Path.GetExtension(filePath ?? "");
-                LILogger.Info($"File Extension: {fileExtension}");
 
                 bool isLegacy = firstByte == '{' && lastByte == '}' && fileExtension != "lim2";
                 if (isLegacy)

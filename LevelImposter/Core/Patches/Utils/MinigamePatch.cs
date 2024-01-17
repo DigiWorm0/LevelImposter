@@ -39,7 +39,7 @@ namespace LevelImposter.Core
     [HarmonyPatch(typeof(Minigame), nameof(Minigame.Close), new System.Type[0])]
     public static class MinigameClosePatch
     {
-        public static void Postfix(MultistageMinigame __instance)
+        public static void Postfix()
         {
             MinigamePatch.LastConsole = null;
         }

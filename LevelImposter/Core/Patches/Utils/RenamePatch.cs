@@ -43,6 +43,14 @@ namespace LevelImposter.Core
                                   [HarmonyArgument(1)] ObjList _, // TODO: Format parameters into string
                                   ref string __result)
         {
+            // Handle Special Cases
+            if (stringNames == LIConstants.MAP_STRING_NAME)
+            {
+                __result = GameState.MapName;
+                return false;
+            }
+
+            // Handle Normal Cases
             if (LIShipStatus.Instance == null || !LIShipStatus.Instance.Renames.Contains(stringNames))
                 return true;
 

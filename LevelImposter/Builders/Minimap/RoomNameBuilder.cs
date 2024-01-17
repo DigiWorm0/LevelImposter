@@ -1,6 +1,6 @@
-﻿using UnityEngine;
+﻿using LevelImposter.Core;
 using TMPro;
-using LevelImposter.Core;
+using UnityEngine;
 
 namespace LevelImposter.Builders
 {
@@ -10,7 +10,12 @@ namespace LevelImposter.Builders
 
         public void Build(LIElement elem, GameObject obj)
         {
-            if (elem.type != "util-room" || elem.properties.isRoomNameVisible == false)
+            if (elem.type != "util-room")
+                return;
+
+            // Check Visibility
+            bool isMinimapVisible = elem.properties.isRoomNameVisible ?? true;
+            if (!isMinimapVisible)
                 return;
 
             // ShipStatus
