@@ -7,6 +7,7 @@ namespace LevelImposter.Core
     /// <summary>
     /// Disables the april-fools horse mode due to incompatibility with lots of mods.
     /// </summary>
+    /*
     [HarmonyPatch(typeof(Constants), nameof(Constants.ShouldHorseAround))]
     public static class HorsePatch
     {
@@ -19,6 +20,7 @@ namespace LevelImposter.Core
             return false;
         }
     }
+    */
 
 #pragma warning restore CS0162
 }

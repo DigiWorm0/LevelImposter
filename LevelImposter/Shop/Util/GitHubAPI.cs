@@ -86,7 +86,7 @@ namespace LevelImposter.Shop
         public static bool IsCurrent(GHRelease release)
         {
             string versionString = release.name.Split(" ")[1];
-            return versionString == LevelImposter.Version || LevelImposter.Version.Contains(DEV_VERSION_FLAG);
+            return versionString == LevelImposter.DisplayVersion || LevelImposter.DisplayVersion.Contains(DEV_VERSION_FLAG);
         }
 
         /// <summary>

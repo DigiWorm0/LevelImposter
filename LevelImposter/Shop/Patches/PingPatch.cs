@@ -37,7 +37,7 @@ namespace LevelImposter.Shop
 
             // LevelImposter "Logo"
             if (isInLobby)
-                pingBuilder.Append($"<color=#1a95d8>Level</color><color=#cb2828>Imposter</color> v{LevelImposter.Version}\n");
+                pingBuilder.Append($"<color=#1a95d8>Level</color><color=#cb2828>Imposter</color> v{LevelImposter.DisplayVersion}\n");
 
             // Existing Ping/Mods
             pingBuilder.Append(__instance.text.text);

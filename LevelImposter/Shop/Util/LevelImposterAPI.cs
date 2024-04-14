@@ -33,7 +33,7 @@ namespace LevelImposter.Shop
                 if (response == null)
                     onError("Invalid API Response");
                 else if (response.v != API_VERSION)
-                    onError($"You are running on an older version of LevelImposter {LevelImposter.Version}. Update to get access to the API.");
+                    onError($"You are running on an older version of LevelImposter {LevelImposter.DisplayVersion}. Update to get access to the API.");
                 else if (!string.IsNullOrEmpty(response.error))
                     onError(response.error);
                 else

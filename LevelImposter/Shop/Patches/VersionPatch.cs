@@ -49,7 +49,7 @@ namespace LevelImposter.Shop
             logoText.fontSize = 1.5f;
             logoText.alignment = TextAlignmentOptions.BottomLeft;
             logoText.raycastTarget = false;
-            logoText.SetText("v" + LevelImposter.Version);
+            logoText.SetText("v" + LevelImposter.DisplayVersion);
         }
 
         private static Sprite GetLogoSprite()

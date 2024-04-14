@@ -5,6 +5,7 @@ using LevelImposter.Core;
 using LevelImposter.DB;
 using LevelImposter.Shop;
 using Reactor.Networking.Attributes;
+using System.Reflection;
 
 namespace LevelImposter
 {
@@ -21,6 +22,7 @@ namespace LevelImposter
         public const string ID = "com.DigiWorm.LevelImposter";
 
         public HarmonyLib.Harmony Harmony { get; } = new HarmonyLib.Harmony(ID);
+        public static string DisplayVersion { get; } = Version.Contains('+') ? Version.Substring(0, Version.IndexOf('+')) : Version;
 
         public override void Load()
         {
