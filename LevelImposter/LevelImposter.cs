@@ -5,7 +5,6 @@ using LevelImposter.Core;
 using LevelImposter.DB;
 using LevelImposter.Shop;
 using Reactor.Networking.Attributes;
-using System.Reflection;
 
 namespace LevelImposter
 {
@@ -66,6 +65,7 @@ namespace LevelImposter
             ClassInjector.RegisterTypeInIl2Cpp<ShopManager>();
             ClassInjector.RegisterTypeInIl2Cpp<ShopTabs>();
             ClassInjector.RegisterTypeInIl2Cpp<Spinner>();
+            ClassInjector.RegisterTypeInIl2Cpp<LoadingBar>();
             ClassInjector.RegisterTypeInIl2Cpp<LobbyConsole>(usableInterface);
 
             // Patch Methods

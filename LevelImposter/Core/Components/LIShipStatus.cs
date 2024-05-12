@@ -238,20 +238,46 @@ namespace LevelImposter.Core
             GameObject loadingBean = DestroyableSingleton<HudManager>.Instance.GameLoadAnimation;
             Color sabColor = fullScreen.color;
 
-            // Loading
+            // Create LoadingBar
+            if (LoadingBar.Instance == null)
+                Instantiate(MapUtils.LoadAssetBundle("loadingbar"), DestroyableSingleton<HudManager>.Instance.transform);
+            if (LoadingBar.Instance == null)
+                LILogger.Warn("Missing LoadingBar asset bundle!");
+
+            // Show Loading Screen
             LILogger.Info($"Showing loading screen (Freeplay={isFreeplay})");
             if (isFreeplay)
             {
                 fullScreen.color = new Color(0, 0, 0, 0.9f);
                 fullScreen.gameObject.SetActive(true);
             }
+            LoadingBar.Instance?.SetMapName(CurrentMap?.name ?? "Loading...");
+            LoadingBar.Instance?.SetVisible(true);
             while (!IsReady)
             {
                 loadingBean.SetActive(true);
+
+                // Approximate Progress
+                if (SpriteLoader.Instance?.RenderCount > 0)
+                {
+                    double renderTotal = SpriteLoader.Instance?.RenderTotal ?? 1;
+                    if (renderTotal == 0)
+                        renderTotal = 1;
+                    double renderCount = renderTotal - (SpriteLoader.Instance?.RenderCount ?? 0);
+                    float progress = (float)(renderCount / renderTotal);
+                    LoadingBar.Instance?.SetProgress(progress);
+                    LoadingBar.Instance?.SetStatus($"{Math.Round(progress * 100)}% <size=1.2>({renderCount}/{renderTotal})</size>");
+                }
+                else
+                {
+                    LoadingBar.Instance?.SetProgress(1);
+                    LoadingBar.Instance?.SetStatus("waiting for host");
+                }
+
                 yield return null;
             }
 
-            // Sabotage
+            // Revert Loading Screen
             LILogger.Info($"Hiding loading screen (Freeplay={isFreeplay})");
             if (isFreeplay)
             {
@@ -259,6 +285,7 @@ namespace LevelImposter.Core
                 fullScreen.gameObject.SetActive(false);
             }
             loadingBean.SetActive(false);
+            LoadingBar.Instance?.SetVisible(false);
         }
 
         /// <summary>
