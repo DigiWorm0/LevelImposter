@@ -24,6 +24,7 @@ namespace LevelImposter.Shop
 
         private Tab _currentTab = Tab.None;
         private GameObject? _overlay = null;
+        private SpriteRenderer? _overlayBackground = null;
         private TMPro.TMP_Text? _overlayText = null;
         private Scroller? _scroller = null;
         private SpriteRenderer? _title = null;
@@ -93,6 +94,10 @@ namespace LevelImposter.Shop
             // Clear the shop
             Clear();
 
+            // Show Loading Spinner
+            SetOverlayText("Retrieving Maps...");
+            SetOverlayEnabled(true, false);
+
             // Switch on the tab
             Action callback = tab switch
             {
@@ -128,6 +133,9 @@ namespace LevelImposter.Shop
                         AddBanner(metadata);
                     yield return null;
                 }
+
+                // Hide Loading Spinner
+                SetOverlayEnabled(false);
             }
         }
 
@@ -168,6 +176,9 @@ namespace LevelImposter.Shop
             Clear();
             foreach (LIMetadata map in maps)
                 AddBanner(map);
+
+            // Hide Loading Spinner
+            SetOverlayEnabled(false);
         }
 
         /// <summary>
@@ -256,9 +267,12 @@ namespace LevelImposter.Shop
         /// Toggles the overlay
         /// </summary>
         /// <param name="isEnabled"><c>true</c> if the overlay should be visible</param>
-        public void SetOverlayEnabled(bool isEnabled)
+        /// <param name="isBackgroundEnabled"><c>true</c> if the overlay background should be visible</param>
+        public void SetOverlayEnabled(bool isEnabled, bool isBackgroundEnabled = true)
         {
             _overlay?.SetActive(isEnabled);
+            if (_overlayBackground != null)
+                _overlayBackground.enabled = isBackgroundEnabled;
         }
 
         /// <summary>
@@ -310,6 +324,7 @@ namespace LevelImposter.Shop
             Instance = this;
 
             _overlay = transform.Find("Overlay").gameObject;
+            _overlayBackground = _overlay?.GetComponent<SpriteRenderer>();
             _overlayText = _overlay?.transform.Find("Text").GetComponent<TMPro.TMP_Text>();
             _scroller = transform.Find("Scroll/Scroller").GetComponent<Scroller>();
             _title = _scroller?.transform.Find("Inner/Title").GetComponent<SpriteRenderer>();
