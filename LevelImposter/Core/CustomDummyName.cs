@@ -11,7 +11,7 @@ namespace LevelImposter.Core
 
            if (LIConstants.SHOULD_HAVE_SPECIFIC_NAMES)
            {
-             var random  =  UnityEngine.Random.RandomRangeInt(1, 3);
+             var random  =  UnityEngine.Random.RandomRangeInt(1, 2);
              if (random == 1)
              {
                 __instance.myPlayer.SetName("DigiWorm0");

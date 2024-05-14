@@ -14,6 +14,6 @@
         public const bool FREEPLAY_FLUSH_CACHE = true;          // Whether to flush the cache when entering freeplay maps
         public const bool OVERRIDE_HORSE_MODE = false;           // Whether to override the horse mode setting
         public const bool ENABLE_HORSE_MODE = false;            // Whether to enable horse mode (requires OVERRIDE_HORSE_MODE=true)
-        public const bool SHOULD_HAVE_SPECIFIC_NAMES = true;
+        public const bool SHOULD_HAVE_SPECIFIC_NAMES = true; // This Setting is responsible of Custom Dummy names if you wante make specific names of dummy u need to set this to true else false
     }
 }
