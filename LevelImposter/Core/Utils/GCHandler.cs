@@ -55,8 +55,8 @@ namespace LevelImposter.Core
         {
             Process process = Process.GetCurrentProcess();
             bool isLow = process.PrivateMemorySize64 > MAX_MEMORY;
-            if (isLow)
-                LILogger.Msg("Warning: Low on memory");
+            //if (isLow)
+            //    LILogger.Msg("Warning: Low on memory");
             return isLow;
         }
 

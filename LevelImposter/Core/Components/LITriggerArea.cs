@@ -39,7 +39,7 @@ namespace LevelImposter.Core
             if (triggerClientSided || triggerServerSided)
                 LITriggerable.Trigger(transform.gameObject, ENTER_TRIGGGER_ID, null);
 
-            if (_currentPlayersIDs?.Contains(player.PlayerId) ?? false)
+            if (!_currentPlayersIDs?.Contains(player.PlayerId) ?? false)
                 _currentPlayersIDs?.Add(player.PlayerId);
         }
         public void OnTriggerExit2D(Collider2D collider)
