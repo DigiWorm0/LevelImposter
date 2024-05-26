@@ -11,6 +11,8 @@ namespace LevelImposter.Core
     {
         public static void Prefix(ShipStatus __instance)
         {
+            //UnityToMapGenerator.GenerateMap(__instance);
+
             if (MapUtils.GetCurrentMapType() == MapType.LevelImposter)
                 __instance.gameObject.AddComponent<LIShipStatus>();
             else if (!MapLoader.IsFallback)

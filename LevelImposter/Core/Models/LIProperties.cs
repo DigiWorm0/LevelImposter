@@ -1,5 +1,6 @@
 #nullable enable
 using System;
+using System.Collections.Generic;
 
 namespace LevelImposter.Core
 {
@@ -46,6 +47,9 @@ namespace LevelImposter.Core
         // Scroll
         public float? scrollingXSpeed { get; set; }
         public float? scrollingYSpeed { get; set; }
+
+        // Custom Text
+        public Dictionary<string, string>? customText { get; set; }
 
         // Minigame
         public LIMinigameSprite[]? minigames { get; set; }
