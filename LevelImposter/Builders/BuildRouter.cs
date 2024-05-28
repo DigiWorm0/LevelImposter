@@ -54,6 +54,7 @@ namespace LevelImposter.Builders
             new TriggerConsoleBuilder(),
             new TriggerStartBuilder(),
             new TriggerDeathBuilder(),
+            new TriggerShakeBuilder(),
 
             new TriggerBuilder(),
             new CustomTextBuilder(),

@@ -27,6 +27,10 @@ namespace LevelImposter.Core
         public LIColor? color { get; set; }
         public bool? loopGIF { get; set; }
 
+        // Shake
+        public float? shakeAmount { get; set; }
+        public float? shakePeriod { get; set; }
+
         // Legacy
         [Obsolete("Use spriteID instead")]
         public string? spriteData { get; set; }

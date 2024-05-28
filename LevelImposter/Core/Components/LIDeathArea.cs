@@ -25,16 +25,21 @@ namespace LevelImposter.Core
         {
             if (CurrentPlayersIDs == null)
                 return;
+
+            // Only the host can handle kill triggers?
             if (!AmongUsClient.Instance.AmHost)
                 return;
 
+            // Iterate over all players in the area
             byte[] playerIDs = CurrentPlayersIDs.ToArray(); // <-- Copy to avoid mutation during iteration
             foreach (byte playerID in playerIDs)
             {
+                // Get Player by ID
                 PlayerControl? player = GetPlayer(playerID);
                 if (player == null)
                     continue;
 
+                // Fire RPC to kill player
                 RPCTriggerDeath(player, _createDeadBody);
             }
         }
@@ -45,11 +50,15 @@ namespace LevelImposter.Core
             if (player == null || player.Data.IsDead)
                 return;
             LILogger.Info($"[RPC] Trigger killing {player.name}");
+
+            // Kill Player
             player.Die(DeathReason.Kill, false);
 
+            // Play Kill Sound (if I'm the Player)
             if (player.AmOwner)
                 PlayKillSound();
 
+            // Create Dead Body
             if (createDeadBody)
                 CreateDeadBody(player);
         }
