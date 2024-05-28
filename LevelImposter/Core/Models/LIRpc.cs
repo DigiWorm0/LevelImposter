@@ -12,10 +12,11 @@
     public enum LIRpc
     {
         FireTrigger = 94,   // Fires a global trigger on an object
-        TeleportPlayer,     // Uses a util-tele object
+        TeleportPlayer,     // Used by util-tele object
         SyncMapID,          // Syncs the map ID in the lobby
         SyncRandomSeed,     // Syncs a random seed for util-triggerrand
         ResetPlayer,        // Resets the player on Ctrl-R E S
-        DownloadCheck       // Warns the host that the client is still downloading the map
+        DownloadCheck,      // Warns the host that the client is still downloading the map
+        KillPlayer,         // Used by util-triggerdeath object
     }
 }

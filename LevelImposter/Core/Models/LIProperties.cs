@@ -18,6 +18,7 @@ namespace LevelImposter.Core
         public LIColor? highlightColor { get; set; }
         public int? triggerCount { get; set; }
         public bool? triggerLoop { get; set; }
+        public bool? createDeadBody { get; set; }
 
         // Sprite
         public Guid? spriteID { get; set; }
