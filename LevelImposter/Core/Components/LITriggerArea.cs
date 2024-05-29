@@ -27,8 +27,8 @@ namespace LevelImposter.Core
 
         protected override void OnPlayerEnter(PlayerControl player)
         {
-            bool triggerServerSided = CurrentPlayersIDs?.Count <= 0 && !_isClientSide;
-            bool triggerClientSided = MapUtils.IsLocalPlayer(player.gameObject) && _isClientSide;
+            bool triggerServerSided = CurrentPlayersIDs?.Count <= 1 && !_isClientSide;
+            bool triggerClientSided = player.AmOwner && _isClientSide;
             if (triggerClientSided || triggerServerSided)
                 LITriggerable.Trigger(transform.gameObject, ENTER_TRIGGGER_ID, null);
         }
@@ -36,7 +36,7 @@ namespace LevelImposter.Core
         protected override void OnPlayerExit(PlayerControl player)
         {
             bool triggerServerSided = CurrentPlayersIDs?.Count <= 0 && !_isClientSide;
-            bool triggerClientSided = MapUtils.IsLocalPlayer(player.gameObject) && _isClientSide;
+            bool triggerClientSided = player.AmOwner && _isClientSide;
             if (triggerClientSided || triggerServerSided)
                 LITriggerable.Trigger(transform.gameObject, EXIT_TRIGGER_ID, null);
         }

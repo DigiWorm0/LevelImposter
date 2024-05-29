@@ -21,30 +21,33 @@ namespace LevelImposter.Core
             _shakePeriod = shakePeriod;
         }
 
+        public void SetEnabled(bool enabled)
+        {
+            this.enabled = enabled;
+            SetShakeEnabled(enabled && IsLocalPlayerInside);
+        }
+
+        private void SetShakeEnabled(bool enabled)
+        {
+            FollowerCamera camera = Camera.main.GetComponent<FollowerCamera>();
+            if (camera != null)
+            {
+                camera.shakeAmount = enabled ? _shakeAmount : 0.0f;
+                camera.shakePeriod = enabled ? _shakePeriod : 0.0f;
+            }
+        }
+
         protected override void OnPlayerEnter(PlayerControl player)
         {
+            LILogger.Info("Player Entered");
             if (player.AmOwner)
-            {
-                FollowerCamera camera = Camera.main.GetComponent<FollowerCamera>();
-                if (camera != null)
-                {
-                    camera.shakeAmount = _shakeAmount;
-                    camera.shakePeriod = _shakePeriod;
-                }
-            }
+                SetShakeEnabled(true);
         }
 
         protected override void OnPlayerExit(PlayerControl player)
         {
             if (player.AmOwner)
-            {
-                FollowerCamera camera = Camera.main.GetComponent<FollowerCamera>();
-                if (camera != null)
-                {
-                    camera.shakeAmount = 0.0f;
-                    camera.shakePeriod = 0.0f;
-                }
-            }
+                SetShakeEnabled(false);
         }
     }
 }

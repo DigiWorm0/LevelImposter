@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Il2CppInterop.Runtime.Attributes;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -14,7 +15,11 @@ namespace LevelImposter.Core
         }
 
         private List<byte>? _currentPlayersIDs = new();
+        private bool _isLocalPlayerInside = false;
+
+        [HideFromIl2Cpp]
         protected List<byte>? CurrentPlayersIDs => _currentPlayersIDs;
+        protected bool IsLocalPlayerInside => _isLocalPlayerInside;
 
         /// <summary>
         /// Gets a player by it's ID
@@ -52,7 +57,11 @@ namespace LevelImposter.Core
                 return;
 
             _currentPlayersIDs?.Add(player.PlayerId);
-            OnPlayerEnter(player);
+            if (player.AmOwner)
+                _isLocalPlayerInside = true;
+
+            if (enabled)
+                OnPlayerEnter(player);
         }
 
         public void OnTriggerExit2D(Collider2D collider)
@@ -62,7 +71,11 @@ namespace LevelImposter.Core
                 return;
 
             _currentPlayersIDs?.RemoveAll(id => id == player.PlayerId);
-            OnPlayerExit(player);
+            if (player.AmOwner)
+                _isLocalPlayerInside = false;
+
+            if (enabled)
+                OnPlayerExit(player);
         }
         public void OnDestroy()
         {

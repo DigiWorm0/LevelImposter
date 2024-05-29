@@ -368,6 +368,11 @@ namespace LevelImposter.Core
             LIDeathArea? deathArea = GetComponent<LIDeathArea>();
             if (deathArea != null)
                 deathArea.KillAllPlayers();
+
+            // Trigger Shake
+            LIShakeArea? triggerShake = GetComponent<LIShakeArea>();
+            if (triggerShake != null)
+                triggerShake.SetEnabled(isEnabled ?? !triggerShake.enabled);
         }
 
         /// <summary>
