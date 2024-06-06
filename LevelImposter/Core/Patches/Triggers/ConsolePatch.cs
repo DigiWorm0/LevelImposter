@@ -24,6 +24,16 @@ namespace LevelImposter.Core
             if (LIShipStatus.Instance == null)
                 return true;
 
+            // Get IUsable
+            var usable = __instance.TryCast<IUsable>();
+            if (usable == null)
+                return true;
+
+            // Check if the player can use the console
+            usable.CanUse(PlayerControl.LocalPlayer.Data, out bool canUse, out _);
+            if (!canUse)
+                return true;
+
             // Update Last Console
             MinigamePatch.LastConsole = __instance.gameObject;
 
