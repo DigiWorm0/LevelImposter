@@ -33,6 +33,7 @@ namespace LevelImposter.Core
 
         private bool _defaultLoopGIF = false;
         private bool _isAnimating = false;
+        private int _frame = 0;
         private GIFFile? _gifData = null;
         private SpriteRenderer? _spriteRenderer;
         private Coroutine? _animationCoroutine = null;
@@ -99,7 +100,8 @@ namespace LevelImposter.Core
 
             if (_spriteRenderer != null && _gifData != null)
             {
-                _spriteRenderer.sprite = _gifData.GetFrameSprite(reversed ? _gifData.Frames.Count - 1 : 0);
+                _frame = reversed ? _gifData.Frames.Count - 1 : 0;
+                _spriteRenderer.sprite = _gifData.GetFrameSprite(_frame);
                 _spriteRenderer.enabled = true;
             }
         }
@@ -117,7 +119,6 @@ namespace LevelImposter.Core
                 yield break;
             _isAnimating = true;
             _spriteRenderer.enabled = true;
-            int t = 0;
             while (_isAnimating)
             {
                 // Wait for main thread
@@ -125,15 +126,20 @@ namespace LevelImposter.Core
                     yield return null;
 
                 // Render sprite
-                int frame = reverse ? _gifData.Frames.Count - t - 1 : t;
-                _spriteRenderer.sprite = _gifData.GetFrameSprite(frame);
+                _spriteRenderer.sprite = _gifData.GetFrameSprite(_frame);
 
                 // Wait for next frame
-                yield return new WaitForSeconds(_gifData.Frames[frame].Delay);
+                yield return new WaitForSeconds(_gifData.Frames[_frame].Delay);
 
-                // Update time
-                t = (t + 1) % _gifData.Frames.Count;
-                if (t == 0 && !repeat)
+                // Update frame index
+                _frame = reverse ? _frame - 1 : _frame + 1;
+
+                // Keep frame in bounds
+                bool isOutOfBounds = _frame < 0 || _frame >= _gifData.Frames.Count;
+                _frame = (_frame + _gifData.Frames.Count) % _gifData.Frames.Count;
+
+                // Stop if out of bounds
+                if (isOutOfBounds && !repeat)
                     Stop(!reverse);
             }
         }

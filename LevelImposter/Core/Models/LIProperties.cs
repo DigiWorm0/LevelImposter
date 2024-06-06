@@ -1,5 +1,6 @@
 #nullable enable
 using System;
+using System.Collections.Generic;
 
 namespace LevelImposter.Core
 {
@@ -17,6 +18,7 @@ namespace LevelImposter.Core
         public LIColor? highlightColor { get; set; }
         public int? triggerCount { get; set; }
         public bool? triggerLoop { get; set; }
+        public bool? createDeadBody { get; set; }
 
         // Sprite
         public Guid? spriteID { get; set; }
@@ -24,6 +26,10 @@ namespace LevelImposter.Core
         public bool? noShadowsBehaviour { get; set; }
         public LIColor? color { get; set; }
         public bool? loopGIF { get; set; }
+
+        // Shake
+        public float? shakeAmount { get; set; }
+        public float? shakePeriod { get; set; }
 
         // Legacy
         [Obsolete("Use spriteID instead")]
@@ -46,6 +52,9 @@ namespace LevelImposter.Core
         // Scroll
         public float? scrollingXSpeed { get; set; }
         public float? scrollingYSpeed { get; set; }
+
+        // Custom Text
+        public Dictionary<string, string>? customText { get; set; }
 
         // Minigame
         public LIMinigameSprite[]? minigames { get; set; }

@@ -21,6 +21,7 @@ namespace LevelImposter
         public const string ID = "com.DigiWorm.LevelImposter";
 
         public HarmonyLib.Harmony Harmony { get; } = new HarmonyLib.Harmony(ID);
+        public static string DisplayVersion { get; } = Version.Contains('+') ? Version.Substring(0, Version.IndexOf('+')) : Version;
 
         public override void Load()
         {
@@ -48,6 +49,8 @@ namespace LevelImposter
             ClassInjector.RegisterTypeInIl2Cpp<LITeleporter>();
             ClassInjector.RegisterTypeInIl2Cpp<LITriggerable>();
             ClassInjector.RegisterTypeInIl2Cpp<LITriggerArea>();
+            ClassInjector.RegisterTypeInIl2Cpp<LIDeathArea>();
+            ClassInjector.RegisterTypeInIl2Cpp<LIShakeArea>();
             ClassInjector.RegisterTypeInIl2Cpp<LITriggerSpawnable>();
             ClassInjector.RegisterTypeInIl2Cpp<MinigameSprites>();
             ClassInjector.RegisterTypeInIl2Cpp<LagLimiter>();
@@ -64,6 +67,7 @@ namespace LevelImposter
             ClassInjector.RegisterTypeInIl2Cpp<ShopManager>();
             ClassInjector.RegisterTypeInIl2Cpp<ShopTabs>();
             ClassInjector.RegisterTypeInIl2Cpp<Spinner>();
+            ClassInjector.RegisterTypeInIl2Cpp<LoadingBar>();
             ClassInjector.RegisterTypeInIl2Cpp<LobbyConsole>(usableInterface);
 
             // Patch Methods

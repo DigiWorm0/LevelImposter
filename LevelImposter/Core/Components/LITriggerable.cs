@@ -234,6 +234,11 @@ namespace LevelImposter.Core
                             trigger.StopTimer();
                     break;
 
+                // Death
+                case "killArea":
+                    SetComponentsEnabled(true);
+                    break;
+
                 // Door
                 case "open":
                     SetDoorOpen(true);
@@ -358,6 +363,16 @@ namespace LevelImposter.Core
             LITeleporter? teleporter = GetComponent<LITeleporter>();
             if (teleporter != null)
                 teleporter.enabled = isEnabled ?? !teleporter.enabled;
+
+            // Kill Area
+            LIDeathArea? deathArea = GetComponent<LIDeathArea>();
+            if (deathArea != null)
+                deathArea.KillAllPlayers();
+
+            // Trigger Shake
+            LIShakeArea? triggerShake = GetComponent<LIShakeArea>();
+            if (triggerShake != null)
+                triggerShake.SetEnabled(isEnabled ?? !triggerShake.enabled);
         }
 
         /// <summary>

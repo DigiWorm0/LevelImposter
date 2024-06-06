@@ -13,7 +13,7 @@ namespace LevelImposter.Shop
         {
             get
             {
-                return tag.Equals(LevelImposter.Version);
+                return tag.Equals(LevelImposter.DisplayVersion);
             }
         }
     }

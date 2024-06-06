@@ -53,10 +53,19 @@ namespace LevelImposter.Builders
             new TriggerAreaBuilder(),
             new TriggerConsoleBuilder(),
             new TriggerStartBuilder(),
+            new TriggerDeathBuilder(),
+            new TriggerShakeBuilder(),
 
             new TriggerBuilder(),
+            new CustomTextBuilder(),
             new ColorBuilder()
         };
+
+        /// <summary>
+        /// Patch me to add your own custom builders.
+        /// Builders should implement <c>IElemBuilder</c>.
+        /// </summary>
+        public BuildRouter() { }
 
         /// <summary>
         /// Passes <c>LIElement</c> data through the build 

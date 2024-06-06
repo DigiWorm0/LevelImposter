@@ -20,7 +20,7 @@ namespace LevelImposter.Core
         {
             if (LIShipStatus.Instance == null)
                 return true;
-            if (callId != (byte)RpcCalls.TriggerSpores || callId != (byte)RpcCalls.CheckSpore)
+            if (callId != (byte)RpcCalls.TriggerSpores && callId != (byte)RpcCalls.CheckSpore)
                 return true;
 
             // Find spores

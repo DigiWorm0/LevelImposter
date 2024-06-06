@@ -28,8 +28,10 @@ namespace LevelImposter.Core
 
         private Stack<SpriteData>? _spriteCache = new();
         private int _renderCount = 0;
+        private int _renderTotal = 0;
 
         public int RenderCount => _renderCount;
+        public int RenderTotal => _renderTotal;
 
         /// <summary>
         /// Searches for a Sprite in cache by GUID
@@ -59,6 +61,7 @@ namespace LevelImposter.Core
         {
             OnLoad = null;
             _spriteCache?.Clear();
+            _renderTotal = 0;
         }
 
         /// <summary>
@@ -183,9 +186,10 @@ namespace LevelImposter.Core
         {
             {
                 _renderCount++;
+                _renderTotal = Math.Max(_renderTotal, _renderCount);
                 yield return null;
                 yield return null;
-                while (!LagLimiter.ShouldContinue(1))
+                while (!LagLimiter.ShouldContinue(20))
                     yield return null;
 
                 // Search Cache
