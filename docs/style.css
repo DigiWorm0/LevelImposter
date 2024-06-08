@@ -1,0 +1,92 @@
+/* some basic boilerplate css I often use */
+@font-face {
+    font-family: 'Jetbrains Mono';
+    src: url('https://fonts.googleapis.com/css?family=JetBrains Mono');
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "JetBrains Mono", sans-serif;
+  user-select: none;
+  transition: var(--transitionTime);
+  box-shadow: none;
+  appearance: none;
+  border: 0;
+  outline: 0;
+  box-sizing: border-box;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  color: #eeeeee;
+  background-color: #333333;
+  overflow: hidden;
+}
+*:focus {
+  outline: none;
+}
+
+/* the sideholder title and buttons */
+
+.sideholder {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 20vw;
+  height: 100vh;
+  border-right: solid 0.5vw #eeeeee;
+  padding-top: 5vh;
+  overflow-y: scroll;
+}
+
+.sidetitle {
+  font-size: 3vh;
+  font-weight: bold;
+}
+
+.sidebutton {
+  padding-left: 1vw;
+  padding-top: 2vh;
+  font-size: 3vh;
+}
+
+/* the elements for the pages themselves */
+.pageholder {
+  position: absolute;
+  top: 0;
+  left: 25vw;
+  width: 80vw;
+  height: 100vh;
+  overflow-y: scroll;
+}
+
+.page {
+  display: none;
+}
+
+.pagetitle {
+  font-size: 8vh;
+  padding-top: 5vh;
+  width: 70vw;
+}
+
+.pagetext {
+  font-size: 3vh;
+  width: 70vw;
+}
+
+.pagedivider {
+  position: relative;
+  width: 70vw;
+  border-top: 1vh solid #eeeeee;
+  padding-bottom: 5vh;
+}
+
+.pageimg {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  max-width: 70vw;
+  padding-top: 2vh;
+  padding-bottom: 2vh;
+}
