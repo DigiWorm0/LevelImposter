@@ -1,4 +1,4 @@
-﻿using BepInEx.Unity.IL2CPP.Utils.Collections;
+using BepInEx.Unity.IL2CPP.Utils.Collections;
 using Il2CppInterop.Runtime.Attributes;
 using LevelImposter.Core;
 using System.Collections;

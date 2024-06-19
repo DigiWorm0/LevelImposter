@@ -26,6 +26,10 @@ namespace LevelImposter.Shop
 
             if (map != null && LIShipStatus.Instance != null)
                 LIShipStatus.Instance.LoadMap(map);
+
+            // Lobby Message
+            if (LobbyBehaviour.Instance != null)
+                DestroyableSingleton<HudManager>.Instance.Notifier.AddSettingsChangeMessage(StringNames.GameMapName, map?.name, false);
         }
 
         /// <summary>

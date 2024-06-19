@@ -10,7 +10,7 @@ namespace LevelImposter.Shop
         }
 
         private readonly Color HIGHLIGHT_COLOR = Color.white;
-        
+
         // IUsable
         public float UsableDistance => 1.0f;
         public float PercentCool => 0;
@@ -36,7 +36,7 @@ namespace LevelImposter.Shop
         {
             if (_spriteRenderer == null)
                 return;
-            
+
             _spriteRenderer.material.SetFloat("_Outline", isVisible ? 1 : 0);
             _spriteRenderer.material.SetColor("_OutlineColor", HIGHLIGHT_COLOR);
             _spriteRenderer.material.SetColor("_AddColor", isTargeted ? HIGHLIGHT_COLOR : Color.clear);
@@ -49,7 +49,7 @@ namespace LevelImposter.Shop
         /// <param name="canUse">TRUE iff the player can access this console currently</param>
         /// <param name="couldUse">TRUE iff the player could access this console in the future</param>
         /// <returns>Distance from console</returns>
-        public float CanUse(GameData.PlayerInfo playerInfo, out bool canUse, out bool couldUse)
+        public float CanUse(NetworkedPlayerInfo playerInfo, out bool canUse, out bool couldUse)
         {
             PlayerControl playerControl = playerInfo.Object;
             Vector2 truePosition = playerControl.GetTruePosition();

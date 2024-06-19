@@ -13,7 +13,9 @@ namespace LevelImposter.Core
         public const string BUTTON_TRIGGER_ID = "onButton";
         public const string REPORT_TRIGGER_ID = "onReport";
 
-        public static void Postfix([HarmonyArgument(0)] PlayerControl reporter, [HarmonyArgument(1)] GameData.PlayerInfo target)
+        public static void Postfix(
+            [HarmonyArgument(0)] PlayerControl reporter,
+            [HarmonyArgument(1)] NetworkedPlayerInfo target)
         {
             if (LIShipStatus.Instance == null)
                 return;

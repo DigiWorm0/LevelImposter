@@ -32,7 +32,8 @@ namespace LevelImposter.Core
     {
         public static void Postfix(AmongUsClient __instance)
         {
-            __instance.MAX_CLIENT_WAIT_TIME = LIConstants.MAX_HOST_TIMEOUT;
+            // TODO: Fix me
+            //AmongUsClient.MAX_CLIENT_WAIT_SECONDS = LIConstants.MAX_HOST_TIMEOUT; // TODO: Fix Max Client Timeout Adjust
         }
     }
 }

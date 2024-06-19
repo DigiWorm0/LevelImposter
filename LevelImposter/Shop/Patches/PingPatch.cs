@@ -1,7 +1,3 @@
-using HarmonyLib;
-using LevelImposter.Core;
-using System.Text;
-
 namespace LevelImposter.Shop
 {
     /*
@@ -9,6 +5,7 @@ namespace LevelImposter.Shop
      *      through the Ping Tracker in
      *      the top right corner.
      */
+    /*
     [HarmonyPatch(typeof(PingTracker), nameof(PingTracker.Update))]
     public static class PingPatch
     {
@@ -56,4 +53,6 @@ namespace LevelImposter.Shop
             __instance.text.text = pingBuilder.ToString();
         }
     }
+    */
+    // TODO: Implement new map credit system
 }

@@ -102,7 +102,7 @@ namespace LevelImposter.Core
                 return;
             NotificationPopper notifier = DestroyableSingleton<HudManager>.Instance.Notifier;
             if (notifier != null)
-                notifier.AddItem(data);
+                notifier.AddDisconnectMessage(data);
         }
     }
 

@@ -1,8 +1,8 @@
-﻿using System;
-using UnityEngine;
-using Twitch;
+﻿using LevelImposter.Core;
+using System;
 using TMPro;
-using LevelImposter.Core;
+using Twitch;
+using UnityEngine;
 
 namespace LevelImposter.Shop
 {

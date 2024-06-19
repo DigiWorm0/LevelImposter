@@ -11,7 +11,7 @@ namespace LevelImposter.DB
     [HarmonyPatch(typeof(AmongUsClient), nameof(AmongUsClient.Awake))]
     public static class DBPatch
     {
-        public static void Postfix(AmongUsClient __instance)
+        public static void Postfix()
         {
             GameObject dbObj = new GameObject("AssetDB");
             UnityEngine.Object.DontDestroyOnLoad(dbObj);

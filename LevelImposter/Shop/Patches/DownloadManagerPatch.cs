@@ -9,7 +9,7 @@ namespace LevelImposter.Shop
     [HarmonyPatch(typeof(AmongUsClient), nameof(AmongUsClient.OnPlayerLeft))]
     public static class DisconnectPatch
     {
-        public static void Postfix([HarmonyArgument(0)]InnerNet.ClientData data)
+        public static void Postfix([HarmonyArgument(0)] InnerNet.ClientData data)
         {
             if (data.Character != null)
                 DownloadManager.RemovePlayer(data.Character);
@@ -20,29 +20,29 @@ namespace LevelImposter.Shop
     *      Updates the lobby menu
     *      text w/ DownloadManager
     */
+    /*
     [HarmonyPatch(typeof(GameStartManager), nameof(GameStartManager.Update))]
     public static class LobbyTextPatch
     {
         private static bool _isDownloadTextDisplayed = false;
         public static void Postfix(GameStartManager __instance)
         {
+            // TODO: Fix this
             if (!DownloadManager.CanStart)
             {
-                __instance.StartButton.color = Palette.DisabledClear;
-                __instance.startLabelText.color = Palette.DisabledClear;
+                __instance.StartButton.SetButtonEnableState(false);
                 __instance.GameStartText.text = DownloadManager.GetStartText();
                 _isDownloadTextDisplayed = true;
             }
             else if (_isDownloadTextDisplayed)
             {
-                __instance.LastPlayerCount = -1;
-                __instance.StartButton.color = Palette.EnabledColor;
-                __instance.startLabelText.color = Palette.EnabledColor;
+                __instance.LastPlayerCount = -1; // Forces GameStartManager.Update to update the button state
                 __instance.GameStartText.text = string.Empty;
                 _isDownloadTextDisplayed = false;
             }
         }
     }
+    */
 
     /*
     *      Disables the Start Button

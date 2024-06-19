@@ -7,6 +7,7 @@ namespace LevelImposter.Shop
      *      Replace Map Name in Options Console.
      *      Also skips Submerged, if it isn't present.
      */
+    /*
     [HarmonyPatch(typeof(KeyValueOption))]
     public static class MapNameValuePatch
     {
@@ -76,6 +77,9 @@ namespace LevelImposter.Shop
             }
         }
     }
+    */
+
+    // TODO: Fix Lobby Map Selection
 
     /*
      *      Initializes a new Map Console in the Lobby
@@ -97,7 +101,7 @@ namespace LevelImposter.Shop
     {
         public static void Postfix(ref string __result)
         {
-            if (MapLoader.CurrentMap == null || MapLoader.IsFallback) 
+            if (MapLoader.CurrentMap == null || MapLoader.IsFallback)
                 return;
 
             __result = __result.Replace(LIConstants.MAP_NAME, MapLoader.CurrentMap.name);

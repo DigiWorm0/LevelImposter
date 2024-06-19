@@ -11,7 +11,7 @@ namespace LevelImposter.Core
     {
         public static void Postfix(
             DeconControl __instance,
-            [HarmonyArgument(0)] GameData.PlayerInfo playerInfo,
+            [HarmonyArgument(0)] NetworkedPlayerInfo playerInfo,
             [HarmonyArgument(1)] ref bool canUse,
             [HarmonyArgument(2)] ref bool couldUse,
             ref float __result)

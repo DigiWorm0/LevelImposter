@@ -57,7 +57,7 @@ namespace LevelImposter.Core
         /// <param name="canUse">TRUE iff the player can access this console currently</param>
         /// <param name="couldUse">TRUE iff the player could access this console in the future</param>
         /// <returns>Distance from console</returns>
-        public float CanUse(GameData.PlayerInfo playerInfo, out bool canUse, out bool couldUse)
+        public float CanUse(NetworkedPlayerInfo playerInfo, out bool canUse, out bool couldUse)
         {
             PlayerControl playerControl = playerInfo.Object;
             Vector2 truePosition = playerControl.GetTruePosition();
