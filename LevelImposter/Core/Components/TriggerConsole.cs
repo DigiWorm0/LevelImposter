@@ -1,4 +1,5 @@
 ﻿using Il2CppInterop.Runtime.Attributes;
+using LevelImposter.Trigger;
 using System;
 using UnityEngine;
 
@@ -13,6 +14,7 @@ namespace LevelImposter.Core
         public const string TRIGGER_ID = "onUse";
 
         private float _usableDistance = 1.0f;
+        private bool _isClientSide = false;
         private bool _onlyFromBelow = false;
         private bool _ghostsEnabled = false;
         private Color _highlightColor = Color.yellow;
@@ -30,6 +32,7 @@ namespace LevelImposter.Core
         public void Init(LIElement elem)
         {
             _usableDistance = elem.properties.range ?? 1.0f;
+            _isClientSide = elem.properties.triggerClientSide ?? true;
             _onlyFromBelow = elem.properties.onlyFromBelow ?? false;
             _ghostsEnabled = elem.properties.isGhostEnabled ?? false;
             _highlightColor = elem.properties.highlightColor?.ToUnity() ?? Color.yellow;
@@ -86,7 +89,7 @@ namespace LevelImposter.Core
             CanUse(PlayerControl.LocalPlayer.Data, out bool canUse, out bool couldUse);
             if (!canUse)
                 return;
-            LITriggerable.Trigger(gameObject, TRIGGER_ID, PlayerControl.LocalPlayer);
+            TriggerSystem.Trigger(gameObject, TRIGGER_ID, _isClientSide ? null : PlayerControl.LocalPlayer);
         }
 
         public void Start()

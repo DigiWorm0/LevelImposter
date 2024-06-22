@@ -77,7 +77,8 @@ namespace LevelImposter.Core
         public static void Error(object data)
         {
             Log(LogLevel.Error, data);
-            Notify(data.ToString() ?? "null");
+            if (AmongUsClient.Instance.NetworkMode == NetworkModes.FreePlay)
+                Notify(data.ToString() ?? "null");
         }
 
         /// <summary>

@@ -7,6 +7,8 @@ namespace LevelImposter.Builders
     public class BuildRouter
     {
         private List<IElemBuilder> _buildStack = new() {
+            new MapObjectDataBuilder(),
+
             new TransformBuilder(),
             new SpriteBuilder(),
             new ColliderBuilder(),
@@ -56,16 +58,20 @@ namespace LevelImposter.Builders
             new TriggerDeathBuilder(),
             new TriggerShakeBuilder(),
 
-            new TriggerBuilder(),
             new CustomTextBuilder(),
             new ColorBuilder()
         };
+
+        public BuildRouter() => OnCreate();
 
         /// <summary>
         /// Patch me to add your own custom builders.
         /// Builders should implement <c>IElemBuilder</c>.
         /// </summary>
-        public BuildRouter() { }
+        public void OnCreate()
+        {
+            // ...
+        }
 
         /// <summary>
         /// Passes <c>LIElement</c> data through the build 

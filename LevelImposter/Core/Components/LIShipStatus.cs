@@ -4,6 +4,7 @@ using Il2CppInterop.Runtime.InteropTypes.Arrays;
 using LevelImposter.Builders;
 using LevelImposter.DB;
 using LevelImposter.Shop;
+using LevelImposter.Trigger;
 using Reactor.Networking.Attributes;
 using System;
 using System.Collections;
@@ -64,11 +65,15 @@ namespace LevelImposter.Core
             KeyCode.G
         };
 
+        private MapObjectDB _mapObjectDB = new();
+        private TriggerSystem _triggerSystem = new();
         private RenameHandler _renames = new();
         private LIMap? _currentMap = null;
         private ShipStatus? _shipStatus = null;
         private bool _isReady = true;
 
+        [HideFromIl2Cpp] public MapObjectDB MapObjectDB => _mapObjectDB;
+        [HideFromIl2Cpp] public TriggerSystem TriggerSystem => _triggerSystem;
         [HideFromIl2Cpp] public RenameHandler Renames => _renames;
         [HideFromIl2Cpp] public LIMap? CurrentMap => _currentMap;
         public ShipStatus? ShipStatus => _shipStatus;
@@ -417,6 +422,8 @@ namespace LevelImposter.Core
         }
         public void OnDestroy()
         {
+            _mapObjectDB = null;
+            _triggerSystem = null;
             _renames = null;
             _currentMap = null;
             Instance = null;

@@ -1,5 +1,6 @@
 ﻿using HarmonyLib;
 using LevelImposter.Builders;
+using LevelImposter.Trigger;
 using System.Collections.Generic;
 
 namespace LevelImposter.Core
@@ -53,7 +54,8 @@ namespace LevelImposter.Core
                     localPlayer.myTasks.Add(taskClone);
 
                     // Fire Trigger
-                    LITriggerable.Trigger(SabotageOptionsBuilder.TriggerObject, triggerName, null);
+                    if (SabotageOptionsBuilder.TriggerObject != null)
+                        TriggerSystem.Trigger(SabotageOptionsBuilder.TriggerObject, triggerName, null);
                     return false;
                 }
             }

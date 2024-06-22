@@ -47,7 +47,6 @@ namespace LevelImposter
             ClassInjector.RegisterTypeInIl2Cpp<LIFloat>();
             ClassInjector.RegisterTypeInIl2Cpp<LIScroll>();
             ClassInjector.RegisterTypeInIl2Cpp<LITeleporter>();
-            ClassInjector.RegisterTypeInIl2Cpp<LITriggerable>();
             ClassInjector.RegisterTypeInIl2Cpp<LITriggerArea>();
             ClassInjector.RegisterTypeInIl2Cpp<LIDeathArea>();
             ClassInjector.RegisterTypeInIl2Cpp<LIShakeArea>();
@@ -58,6 +57,7 @@ namespace LevelImposter
             ClassInjector.RegisterTypeInIl2Cpp<SpriteLoader>();
             ClassInjector.RegisterTypeInIl2Cpp<TriggerSoundPlayer>();
             ClassInjector.RegisterTypeInIl2Cpp<TriggerConsole>(usableInterface);
+            ClassInjector.RegisterTypeInIl2Cpp<MapObjectData>();
 
             ClassInjector.RegisterTypeInIl2Cpp<AssetDB>();
 

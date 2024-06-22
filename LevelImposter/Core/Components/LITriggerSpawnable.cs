@@ -1,8 +1,9 @@
+using BepInEx.Unity.IL2CPP.Utils.Collections;
+using Il2CppInterop.Runtime.Attributes;
+using LevelImposter.Trigger;
 using System;
 using System.Collections;
 using UnityEngine;
-using BepInEx.Unity.IL2CPP.Utils.Collections;
-using Il2CppInterop.Runtime.Attributes;
 
 namespace LevelImposter.Core
 {
@@ -41,8 +42,9 @@ namespace LevelImposter.Core
                 || (!GameManager.Instance.GameHasStarted && GameManager.Instance.ShouldCheckForGameEnd)
                 || !LagLimiter.ShouldContinue(30))
                 yield return null;
+
             if (_triggerTarget != null)
-                LITriggerable.Trigger(_triggerTarget, _triggerID, PlayerControl.LocalPlayer);
+                TriggerSystem.Trigger(_triggerTarget, _triggerID, null);
         }
 
         public void Start()

@@ -1,4 +1,5 @@
 ﻿using HarmonyLib;
+using LevelImposter.Trigger;
 using PowerTools;
 using UnityEngine;
 
@@ -58,7 +59,7 @@ namespace LevelImposter.Core
             if (_hasStateChanged)
             {
                 string triggerID = open ? "onOpen" : "onClose";
-                LITriggerable.Trigger(__instance.gameObject, triggerID, PlayerControl.LocalPlayer);
+                TriggerSystem.Trigger(__instance.gameObject, triggerID, null);
             }
 
             return;

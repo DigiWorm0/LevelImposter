@@ -376,7 +376,7 @@ namespace LevelImposter.Core
         {
             Coroutines.Start(CoWaitForShip(timeout, onFinish));
         }
-        private static IEnumerator CoWaitForShip(float timeout, Action onFinish)
+        private static IEnumerator CoWaitForShip(float timeout, Action? onFinish)
         {
             {
                 float timer = 0;
@@ -385,7 +385,7 @@ namespace LevelImposter.Core
                     timer += Time.deltaTime;
                     yield return null;
                 }
-                onFinish.Invoke();
+                onFinish?.Invoke();
                 onFinish = null;
             }
         }

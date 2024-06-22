@@ -1,4 +1,5 @@
 ﻿using System;
+using LevelImposter.Trigger;
 
 namespace LevelImposter.Core
 {
@@ -30,7 +31,7 @@ namespace LevelImposter.Core
             bool triggerServerSided = CurrentPlayersIDs?.Count <= 1 && !_isClientSide;
             bool triggerClientSided = player.AmOwner && _isClientSide;
             if (triggerClientSided || triggerServerSided)
-                LITriggerable.Trigger(transform.gameObject, ENTER_TRIGGGER_ID, null);
+                TriggerSystem.Trigger(transform.gameObject, ENTER_TRIGGGER_ID, null);
         }
 
         protected override void OnPlayerExit(PlayerControl player)
@@ -38,7 +39,7 @@ namespace LevelImposter.Core
             bool triggerServerSided = CurrentPlayersIDs?.Count <= 0 && !_isClientSide;
             bool triggerClientSided = player.AmOwner && _isClientSide;
             if (triggerClientSided || triggerServerSided)
-                LITriggerable.Trigger(transform.gameObject, EXIT_TRIGGER_ID, null);
+                TriggerSystem.Trigger(transform.gameObject, EXIT_TRIGGER_ID, null);
         }
     }
 }

@@ -21,12 +21,6 @@ namespace LevelImposter.Core
             _shakePeriod = shakePeriod;
         }
 
-        public void SetEnabled(bool enabled)
-        {
-            this.enabled = enabled;
-            SetShakeEnabled(enabled && IsLocalPlayerInside);
-        }
-
         private void SetShakeEnabled(bool enabled)
         {
             FollowerCamera camera = Camera.main.GetComponent<FollowerCamera>();
@@ -48,6 +42,15 @@ namespace LevelImposter.Core
         {
             if (player.AmOwner)
                 SetShakeEnabled(false);
+        }
+
+        public void OnEnable()
+        {
+            SetShakeEnabled(IsLocalPlayerInside);
+        }
+        public void OnDisable()
+        {
+            SetShakeEnabled(false);
         }
     }
 }

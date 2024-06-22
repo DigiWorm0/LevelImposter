@@ -1,5 +1,5 @@
-﻿using System;
-using Reactor.Networking.Attributes;
+﻿using Reactor.Networking.Attributes;
+using System;
 
 namespace LevelImposter.Core
 {
@@ -21,9 +21,17 @@ namespace LevelImposter.Core
         /// <returns>A random float between 0.0 and 1.0 (inclusive)</returns>
         public static float GetRandom(Guid id, int weight = 0)
         {
+            // Generate a new seed based on the GUID and weight
             int trueSeed = id.GetHashCode() + _randomSeed + weight;
             UnityEngine.Random.InitState(trueSeed);
-            return UnityEngine.Random.value;
+
+            // Generate a random value
+            float randomValue = UnityEngine.Random.value;
+
+            // Reset the seed to a pseudo-random value to avoid predictability
+            UnityEngine.Random.InitState((int)DateTime.Now.Ticks);
+
+            return randomValue;
         }
 
         /// <summary>

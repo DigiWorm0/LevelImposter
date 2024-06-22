@@ -1,5 +1,6 @@
 using HarmonyLib;
 using LevelImposter.Builders;
+using LevelImposter.Trigger;
 using UnityEngine;
 
 namespace LevelImposter.Core
@@ -26,7 +27,7 @@ namespace LevelImposter.Core
 
             // Call trigger
             if (triggerObj != null)
-                LITriggerable.Trigger(triggerObj, triggerID, reporter);
+                TriggerSystem.Trigger(triggerObj, triggerID, null);
         }
     }
 }

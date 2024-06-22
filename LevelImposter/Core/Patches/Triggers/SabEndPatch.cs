@@ -1,5 +1,6 @@
 ﻿using HarmonyLib;
 using LevelImposter.Builders;
+using LevelImposter.Trigger;
 using System.Collections.Generic;
 
 namespace LevelImposter.Core
@@ -28,7 +29,8 @@ namespace LevelImposter.Core
 
             // Fire Trigger
             string triggerName = _taskTriggerPairs[task.TaskType];
-            LITriggerable.Trigger(SabotageOptionsBuilder.TriggerObject, triggerName, null);
+            if (SabotageOptionsBuilder.TriggerObject != null)
+                TriggerSystem.Trigger(SabotageOptionsBuilder.TriggerObject, triggerName, null);
         }
     }
 }

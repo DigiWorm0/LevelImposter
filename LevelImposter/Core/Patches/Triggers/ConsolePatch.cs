@@ -1,4 +1,5 @@
 ﻿using HarmonyLib;
+using LevelImposter.Trigger;
 using System.Collections.Generic;
 using System.Reflection;
 using UnityEngine;
@@ -37,8 +38,17 @@ namespace LevelImposter.Core
             // Update Last Console
             MinigamePatch.LastConsole = __instance.gameObject;
 
-            // Trigger "onUse" event
-            return !LITriggerable.Trigger(__instance.gameObject, "onUse", PlayerControl.LocalPlayer);
+            // Get Object Data
+            var objectData = __instance.gameObject.GetComponent<MapObjectData>();
+            if (objectData == null)
+                return true;
+
+            // Trigger onUse
+            bool isClientSide = objectData.Properties.triggerClientSide ?? true;
+            TriggerSystem.Trigger(__instance.gameObject, "onUse", isClientSide ? null : PlayerControl.LocalPlayer);
+
+            // TODO: Check if should continue?
+            return true;
         }
     }
 }
