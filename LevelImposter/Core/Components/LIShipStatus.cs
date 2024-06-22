@@ -40,9 +40,13 @@ namespace LevelImposter.Core
             { "Fungle", "ss-fungle" }
         };
         public static readonly KeyCode[] RESPAWN_SEQ = new KeyCode[] {
-            KeyCode.R,
-            KeyCode.E,
-            KeyCode.S
+            KeyCode.I,
+            KeyCode.M,
+            KeyCode.S,
+            KeyCode.T,
+            KeyCode.U,
+            KeyCode.C,
+            KeyCode.K
         };
         public static readonly KeyCode[] CPU_SEQ = new KeyCode[] {
             KeyCode.C,

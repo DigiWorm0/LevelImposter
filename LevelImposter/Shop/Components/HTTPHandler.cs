@@ -1,11 +1,10 @@
+using BepInEx.Unity.IL2CPP.Utils.Collections;
+using Il2CppInterop.Runtime.Attributes;
+using LevelImposter.Core;
 using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.Networking;
-using LevelImposter.Core;
-using BepInEx.Unity.IL2CPP.Utils.Collections;
-using Il2CppInterop.Runtime.Attributes;
-
 using ByteArray = Il2CppInterop.Runtime.InteropTypes.Arrays.Il2CppStructArray<byte>;
 
 namespace LevelImposter.Shop
@@ -30,7 +29,7 @@ namespace LevelImposter.Shop
         /// <param name="onProgress">Callback on progress, value from 0 to 1</param>
         /// <param name="onError">Callback on error with error info</param>
         [HideFromIl2Cpp]
-        private IEnumerator CoRequest(string url, 
+        private IEnumerator CoRequest(string url,
             Action<string>? onSuccessString,
             Action<ByteArray>? onSuccessBytes,
             Action<float>? onProgress,
@@ -40,6 +39,8 @@ namespace LevelImposter.Shop
                 // Handle Request
                 LILogger.Info($"GET: {url}");
                 UnityWebRequest? request = UnityWebRequest.Get(url); // Doesn't extend IDisposable
+
+                // Allow 404/500 errors
                 request.SendWebRequest();
                 while (!request.isDone)
                 {

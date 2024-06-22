@@ -116,7 +116,7 @@ namespace LevelImposter.Core
 
             // Find Triggerable
             LITriggerable? trigger = _allTriggers.Find(t => t.SourceID == elemID && t.SourceTrigger == triggerID);
-            if (trigger == null)
+            if (trigger == null || trigger.gameObject == null)
             {
                 LILogger.Warn("Triggered element not found");
                 return;

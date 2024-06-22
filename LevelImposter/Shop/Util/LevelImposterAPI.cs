@@ -13,7 +13,7 @@ namespace LevelImposter.Shop
     /// </summary>
     public static class LevelImposterAPI
     {
-        public const string API_PATH = "https://us-central1-levelimposter-347807.cloudfunctions.net/api/";
+        public const string API_PATH = "https://api.levelimposter.net/";
         public const int API_VERSION = 1;
 
         /// <summary>
@@ -30,6 +30,7 @@ namespace LevelImposter.Shop
             HTTPHandler.Instance?.Request(url, (string json) =>
             {
                 LICallback<T>? response = JsonSerializer.Deserialize<LICallback<T>>(json);
+
                 if (response == null)
                     onError("Invalid API Response");
                 else if (response.v != API_VERSION)
@@ -92,7 +93,7 @@ namespace LevelImposter.Shop
         [HideFromIl2Cpp]
         public static void GetMap(Guid id, Action<LIMetadata> callback, Action<string> onError)
         {
-            LILogger.Info($"Getting map {id}...");
+            LILogger.Info($"Getting map [{id}]...");
             Request(API_PATH + "map/" + id, callback, onError);
         }
 
@@ -107,50 +108,42 @@ namespace LevelImposter.Shop
         public static void DownloadMap(Guid id, Action<float>? onProgress, Action<LIMap> callback, Action<string> onError)
         {
             LILogger.Info($"Downloading map [{id}]...");
+
             GetMap(id, (LIMetadata metadata) =>
             {
                 HTTPHandler.Instance?.Download(metadata.downloadURL, onProgress, (Il2CppStructArray<byte> fileData) =>
-                {
-                    LILogger.Info($"Parsing map {metadata}...");
-                    try
                     {
-                        using (var memoryStream = new MemoryStream(fileData))
+                        LILogger.Info($"Parsing map {id}...");
+                        try
                         {
-                            // Deserialize the map
-                            var mapData = LIDeserializer.DeserializeMap(memoryStream);
-
-                            // Free Memory
-                            fileData = null;
-
-                            // Check Download
-                            if (mapData == null)
+                            using (var memoryStream = new MemoryStream(fileData))
                             {
-                                onError("Map was null");
-                                return;
+                                // Deserialize the map
+                                var mapData = LIDeserializer.DeserializeMap(memoryStream);
+
+                                // Free Memory
+                                fileData = null;
+
+                                // Check Download
+                                if (mapData == null)
+                                {
+                                    onError("Map was null");
+                                    return;
+                                }
+
+                                // Make Sure the ID Matches
+                                mapData.id = id.ToString();
+
+                                // Callback
+                                callback(mapData);
+                                mapData = null;
                             }
-
-                            // Set Metadata
-                            mapData.id = metadata.id;
-                            mapData.name = metadata.name;
-                            mapData.description = metadata.description;
-                            mapData.authorID = metadata.authorID;
-                            mapData.authorName = metadata.authorName;
-                            mapData.isPublic = metadata.isPublic;
-                            mapData.isVerified = metadata.isVerified;
-                            mapData.createdAt = metadata.createdAt;
-                            mapData.thumbnailURL = metadata.thumbnailURL;
-                            mapData.remixOf = metadata.remixOf;
-
-                            // Callback
-                            callback(mapData);
-                            mapData = null;
                         }
-                    }
-                    catch (Exception e)
-                    {
-                        onError(e.Message);
-                    }
-                }, onError);
+                        catch (Exception e)
+                        {
+                            onError(e.Message);
+                        }
+                    }, onError);
             }, onError);
         }
 
@@ -163,7 +156,7 @@ namespace LevelImposter.Shop
         public static void DownloadThumbnail(LIMetadata metadata, Action<Sprite> callback)
         {
             LILogger.Info($"Downloading thumbnail for map {metadata}...");
-            HTTPHandler.Instance?.Request(metadata.thumbnailURL, (imgData) =>
+            HTTPHandler.Instance?.Request(API_PATH + $"map/{metadata.id}/thumbnail", (imgData) =>
             {
                 ThumbnailCache.Save(metadata.id, imgData);
                 var imgStream = new MemoryStream(imgData);
