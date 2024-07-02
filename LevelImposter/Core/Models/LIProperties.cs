@@ -20,6 +20,10 @@ namespace LevelImposter.Core
         public bool? triggerLoop { get; set; }
         public bool? createDeadBody { get; set; }
 
+        // Anim
+        public Guid? animTargetID { get; set; }
+        public LIAnimKeyframe[]? animKeyframes { get; set; }
+
         // Sprite
         public Guid? spriteID { get; set; }
         public bool? noShadows { get; set; }

@@ -28,6 +28,7 @@ namespace LevelImposter.Trigger
             new SoundTriggerHandle(),
             new TeleportTriggerHandle(),
             new TimerTriggerHandle(),
+            new AnimTriggerHandle(),
 
             // Propogates triggers to target elements
             new TriggerPropogationHandle()
