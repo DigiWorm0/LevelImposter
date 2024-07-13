@@ -1,20 +1,21 @@
 ﻿using LevelImposter.Core;
+using System;
 using UnityEngine;
 
 namespace LevelImposter.Trigger
 {
     public class TeleportTriggerHandle : ITriggerHandle
     {
-        public void OnTrigger(GameObject gameObject, string triggerID)
+        public void OnTrigger(TriggerSignal signal)
         {
-            if (triggerID != "teleportonce")
+            if (signal.TriggerID != "teleportonce")
                 return;
 
-            // Teleport
-            var teleporter = gameObject.GetComponent<LITeleporter>();
-            if (teleporter == null)
-                LILogger.Warn($"{gameObject} is not a teleporter");
-            teleporter?.TeleportOnce();
+            // Get Teleporter
+            var teleporter = signal.TargetObject.GetComponentOrThrow<LITeleporter>();
+
+            // Teleport players in area
+            teleporter.TeleportOnce();
         }
     }
 }

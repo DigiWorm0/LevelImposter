@@ -19,6 +19,7 @@ namespace LevelImposter.Core
         public int? triggerCount { get; set; }
         public bool? triggerLoop { get; set; }
         public bool? createDeadBody { get; set; }
+        public float? triggerFadeTime { get; set; }
 
         // Anim
         public Guid? animTargetID { get; set; }

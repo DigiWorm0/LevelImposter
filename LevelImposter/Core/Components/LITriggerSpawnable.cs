@@ -44,7 +44,10 @@ namespace LevelImposter.Core
                 yield return null;
 
             if (_triggerTarget != null)
-                TriggerSystem.Trigger(_triggerTarget, _triggerID, null);
+            {
+                TriggerSignal signal = new(_triggerTarget, _triggerID, PlayerControl.LocalPlayer);
+                TriggerSystem.GetInstance().FireTrigger(signal);
+            }
         }
 
         public void Start()

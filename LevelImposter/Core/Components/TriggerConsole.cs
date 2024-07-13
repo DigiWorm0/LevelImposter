@@ -89,7 +89,12 @@ namespace LevelImposter.Core
             CanUse(PlayerControl.LocalPlayer.Data, out bool canUse, out bool couldUse);
             if (!canUse)
                 return;
-            TriggerSystem.Trigger(gameObject, TRIGGER_ID, _isClientSide ? null : PlayerControl.LocalPlayer);
+
+            TriggerSignal signal = new(gameObject, TRIGGER_ID, PlayerControl.LocalPlayer);
+            if (_isClientSide)
+                TriggerSystem.GetInstance().FireTrigger(signal);
+            else
+                TriggerSystem.GetInstance().FireTriggerRPC(signal);
         }
 
         public void Start()

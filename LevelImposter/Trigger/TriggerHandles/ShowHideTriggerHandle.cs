@@ -1,25 +1,97 @@
 ﻿using LevelImposter.Core;
+using Reactor.Utilities;
+using System;
+using System.Collections;
 using UnityEngine;
 
 namespace LevelImposter.Trigger
 {
     public class ShowHideTriggerHandle : ITriggerHandle
     {
-        public void OnTrigger(GameObject gameObject, string triggerID)
+        private GameObjectCoroutineManager _fadeManager = new();
+
+        public void OnTrigger(TriggerSignal signal)
         {
+            var triggerID = signal.TriggerID;
+
             // Show/Hide the object
             if (triggerID == "show")
-                gameObject.SetActive(true);
+                _fadeManager.Start(signal.TargetObject, FadeInObject(signal));
             else if (triggerID == "hide")
-                gameObject.SetActive(false);
+                _fadeManager.Start(signal.TargetObject, FadeOutObject(signal));
 
             // Enable/Disable the components
             if (triggerID == "enable" || triggerID == "show")
-                SetTriggerState(gameObject, true);
+                SetTriggerState(signal.TargetObject, true);
             else if (triggerID == "disable" || triggerID == "hide")
-                SetTriggerState(gameObject, false);
+                SetTriggerState(signal.TargetObject, false);
             else if (triggerID == "toggle")
-                SetTriggerState(gameObject);
+                SetTriggerState(signal.TargetObject);
+        }
+
+        private static IEnumerator FadeInObject(TriggerSignal signal) => FadeObject(signal, true);
+        private static IEnumerator FadeOutObject(TriggerSignal signal) => FadeObject(signal, false);
+
+        /// <summary>
+        /// Coroutine to fade effect on a GameObject
+        /// </summary>
+        /// <param name="signal">Source trigger signal to read from</param>
+        /// <param name="fadeIn">True to fade in, false to fade out</param>
+        private static IEnumerator FadeObject(TriggerSignal signal, bool fadeIn)
+        {
+            // Get signal info
+            var fadeObject = signal.TargetObject;
+            var sourceObject = signal.SourceTrigger?.TargetObject;
+
+            // Always show object during the animation
+            fadeObject.SetActive(true);
+
+            // Get the sprite renderer
+            var spriteRenderer = fadeObject.GetComponent<SpriteRenderer>();
+            if (spriteRenderer == null)
+            {
+                fadeObject.SetActive(fadeIn);
+                yield break;
+            }
+
+            // Get the object data
+            var objectData = sourceObject?.GetLIData();
+            float triggerFadeTime = objectData?.Properties.triggerFadeTime ?? 0;
+
+            // Get colors
+            var spriteColor = spriteRenderer.color;
+            var visibleAlpha = objectData?.Properties.color?.a ?? 1.0f; // Use original sprite color, if applicable
+
+            var fromAlpha = spriteColor.a;
+            var toAlpha = fadeIn ? visibleAlpha : 0.0f;
+
+            LILogger.Info($"t={triggerFadeTime} {fromAlpha}-{toAlpha} {objectData?.Element.name ?? "null"}");
+
+            // Run Fade
+            float t = 0;
+            while (t < triggerFadeTime)
+            {
+                yield return null;
+                t += Time.deltaTime * 1000.0f; // s >> ms
+
+                float newAlpha = Mathf.Lerp(fromAlpha, toAlpha, t / triggerFadeTime);
+                LILogger.Info($"{fromAlpha}-{newAlpha}-{toAlpha} ({t / triggerFadeTime})");
+                spriteRenderer.color = new Color(
+                    spriteColor.r,
+                    spriteColor.g,
+                    spriteColor.b,
+                    newAlpha
+                );
+            }
+
+            // Set GameObject Active
+            spriteRenderer.color = new Color(
+                spriteColor.r,
+                spriteColor.g,
+                spriteColor.b,
+                toAlpha
+            );
+            fadeObject.SetActive(fadeIn);
         }
 
         /// <summary>
@@ -50,15 +122,14 @@ namespace LevelImposter.Trigger
             }
 
             // Get Togglable Components
-            MonoBehaviour[] toggleComponents = new MonoBehaviour[]
-            {
+            MonoBehaviour[] toggleComponents = [
                 gameObject.GetComponent<AmbientSoundPlayer>(),
                 gameObject.GetComponent<TriggerConsole>(),
                 gameObject.GetComponent<SystemConsole>(),
                 gameObject.GetComponent<MapConsole>(),
                 gameObject.GetComponent<LITeleporter>(),
                 gameObject.GetComponent<LIShakeArea>()
-            };
+            ];
 
             // Toggle the components
             foreach (MonoBehaviour component in toggleComponents)

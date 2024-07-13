@@ -12,7 +12,7 @@ namespace LevelImposter.Core
         {
         }
 
-        private const string ENTER_TRIGGGER_ID = "onEnter";
+        private const string ENTER_TRIGGER_ID = "onEnter";
         private const string EXIT_TRIGGER_ID = "onExit";
 
         private bool _isClientSide = false;
@@ -31,7 +31,10 @@ namespace LevelImposter.Core
             bool triggerServerSided = CurrentPlayersIDs?.Count <= 1 && !_isClientSide;
             bool triggerClientSided = player.AmOwner && _isClientSide;
             if (triggerClientSided || triggerServerSided)
-                TriggerSystem.Trigger(transform.gameObject, ENTER_TRIGGGER_ID, null);
+            {
+                TriggerSignal signal = new(gameObject, ENTER_TRIGGER_ID, player);
+                TriggerSystem.GetInstance().FireTrigger(signal);
+            }
         }
 
         protected override void OnPlayerExit(PlayerControl player)
@@ -39,7 +42,10 @@ namespace LevelImposter.Core
             bool triggerServerSided = CurrentPlayersIDs?.Count <= 0 && !_isClientSide;
             bool triggerClientSided = player.AmOwner && _isClientSide;
             if (triggerClientSided || triggerServerSided)
-                TriggerSystem.Trigger(transform.gameObject, EXIT_TRIGGER_ID, null);
+            {
+                TriggerSignal signal = new(gameObject, EXIT_TRIGGER_ID, player);
+                TriggerSystem.GetInstance().FireTrigger(signal);
+            }
         }
     }
 }

@@ -8,22 +8,17 @@ namespace LevelImposter.Trigger
 {
     public class AnimTriggerHandle : ITriggerHandle
     {
-        private Dictionary<Guid, IEnumerator> _animCoroutines = new();
+        private GameObjectCoroutineManager _animManager = new();
 
-        public void OnTrigger(GameObject gameObject, string triggerID, PlayerControl? orgin, int stackSize = 0)
+        public void OnTrigger(TriggerSignal signal)
         {
-            if (triggerID != "playAnim" &&
-                triggerID != "stopAnim" &&
-                triggerID != "pauseAnim")
+            if (signal.TriggerID != "playAnim" &&
+                signal.TriggerID != "stopAnim" &&
+                signal.TriggerID != "pauseAnim")
                 return;
 
             // Get the object data
-            var objectData = gameObject.GetComponent<MapObjectData>();
-            if (objectData == null)
-            {
-                LILogger.Warn($"{gameObject} is missing LI data");
-                return;
-            }
+            var objectData = signal.TargetObject.GetLIData();
 
             // TODO: Implement Me!
         }

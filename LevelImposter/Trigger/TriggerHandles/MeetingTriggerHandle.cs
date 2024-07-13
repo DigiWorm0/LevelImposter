@@ -4,9 +4,9 @@ namespace LevelImposter.Trigger
 {
     public class MeetingTriggerHandle : ITriggerHandle
     {
-        public void OnTrigger(GameObject gameObject, string triggerID)
+        public void OnTrigger(TriggerSignal signal)
         {
-            if (triggerID != "callMeeting")
+            if (signal.TriggerID != "callMeeting")
                 return;
 
             PlayerControl.LocalPlayer.CmdReportDeadBody(null);

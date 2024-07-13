@@ -7,18 +7,13 @@ namespace LevelImposter.Trigger
     {
         private int _randomOffset = 0;
 
-        public void OnTrigger(GameObject gameObject, string triggerID, PlayerControl? orgin = null, int stackSize = 0)
+        public void OnTrigger(TriggerSignal signal)
         {
-            if (triggerID != "random")
+            if (signal.TriggerID != "random")
                 return;
 
             // Get source element
-            var objectData = gameObject.GetComponent<MapObjectData>();
-            if (objectData == null)
-            {
-                LILogger.Warn($"{gameObject} is missing LI data");
-                return;
-            }
+            var objectData = signal.TargetObject.GetLIData();
 
             // Get a random value
             // Seed is synced across all clients, so the same value is generated on all clients
@@ -33,8 +28,13 @@ namespace LevelImposter.Trigger
             // Get the trigger ID
             string targetID = "onRandom " + (triggerIndex + 1);
 
-            // Fire Trigger
-            TriggerSystem.Trigger(gameObject, targetID, null, stackSize);
+            // Create & Fire Trigger
+            TriggerSignal newSignal = new(
+                signal.TargetObject,
+                targetID,
+                signal
+            );
+            TriggerSystem.GetInstance().FireTrigger(newSignal);
         }
 
     }

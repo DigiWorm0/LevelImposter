@@ -10,33 +10,26 @@ namespace LevelImposter.Trigger
 {
     public class TimerTriggerHandle : ITriggerHandle
     {
-        private Dictionary<Guid, IEnumerator> _timerCoroutines = new();
+        private GameObjectCoroutineManager _timerManager = new();
 
-        public void OnTrigger(GameObject gameObject, string triggerID, PlayerControl? orgin, int stackSize = 0)
+        public void OnTrigger(TriggerSignal signal)
         {
-            if (triggerID != "startTimer" && triggerID != "stopTimer")
+            if (signal.TriggerID != "startTimer" &&
+                signal.TriggerID != "stopTimer")
                 return;
 
-            // Get the object data
-            var objectData = gameObject.GetComponent<MapObjectData>();
-            if (objectData == null)
-            {
-                LILogger.Warn($"{gameObject} is missing LI data");
-                return;
-            }
+            // Get the object ID
+            int objectID = signal.TargetObject.GetInstanceID();
 
             // Start timer
-            if (triggerID == "startTimer")
+            if (signal.TriggerID == "startTimer")
             {
-                Coroutines.Stop(_timerCoroutines.GetValueOrDefault(objectData.ID));
-                var timerCoroutine = Coroutines.Start(CoTimerTrigger(gameObject, objectData, orgin, stackSize));
-                _timerCoroutines[objectData.ID] = timerCoroutine;
+                _timerManager.Start(signal.TargetObject, CoTimerTrigger(signal));
             }
             // Stop timer
-            else if (triggerID == "stopTimer")
+            else if (signal.TriggerID == "stopTimer")
             {
-                Coroutines.Stop(_timerCoroutines.GetValueOrDefault(objectData.ID));
-                _timerCoroutines.Remove(objectData.ID);
+                _timerManager.Stop(signal.TargetObject);
             }
         }
 
@@ -46,23 +39,27 @@ namespace LevelImposter.Trigger
         /// </summary>
         /// <param name="duration">Duration of the timer in seconds</param>
         [HideFromIl2Cpp]
-        private IEnumerator CoTimerTrigger(GameObject gameObject, MapObjectData objectData, PlayerControl? orgin, int stackSize = 0)
+        private IEnumerator CoTimerTrigger(TriggerSignal signal)
         {
+            // Get the object data
+            var objectData = signal.TargetObject.GetLIData();
+
             // Get timer properties
             float duration = objectData.Properties.triggerTime ?? 1;
             bool isLoop = objectData.Properties.triggerLoop ?? false;
 
+            // Create Triggers
+            var startTrigger = new TriggerSignal(signal.TargetObject, "onStart", signal);
+            var endTrigger = new TriggerSignal(signal.TargetObject, "onFinish", signal);
+
             // Loop Timer
             do
             {
-                TriggerSystem.Trigger(gameObject, "onStart", null, stackSize);
+                TriggerSystem.GetInstance().FireTrigger(startTrigger);
                 yield return new WaitForSeconds(duration);
-                TriggerSystem.Trigger(gameObject, "onFinish", null, stackSize);
+                TriggerSystem.GetInstance().FireTrigger(endTrigger);
             }
             while (isLoop);
-
-            // Remove timer from list
-            _timerCoroutines.Remove(objectData.ID);
         }
 
     }

@@ -2,6 +2,7 @@
 using LevelImposter.Builders;
 using LevelImposter.Trigger;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace LevelImposter.Core
 {
@@ -55,7 +56,10 @@ namespace LevelImposter.Core
 
                     // Fire Trigger
                     if (SabotageOptionsBuilder.TriggerObject != null)
-                        TriggerSystem.Trigger(SabotageOptionsBuilder.TriggerObject, triggerName, null);
+                    {
+                        TriggerSignal signal = new(SabotageOptionsBuilder.TriggerObject, triggerName, PlayerControl.LocalPlayer);
+                        TriggerSystem.GetInstance().FireTrigger(signal);
+                    }
                     return false;
                 }
             }

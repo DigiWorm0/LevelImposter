@@ -2,6 +2,7 @@
 using LevelImposter.Builders;
 using LevelImposter.Trigger;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace LevelImposter.Core
 {
@@ -22,7 +23,7 @@ namespace LevelImposter.Core
 
         public static void Postfix([HarmonyArgument(0)] PlayerTask task)
         {
-            if (LIShipStatus.Instance == null)
+            if (!LIShipStatus.IsInstance())
                 return;
             if (!_taskTriggerPairs.ContainsKey(task.TaskType))
                 return;
@@ -30,7 +31,10 @@ namespace LevelImposter.Core
             // Fire Trigger
             string triggerName = _taskTriggerPairs[task.TaskType];
             if (SabotageOptionsBuilder.TriggerObject != null)
-                TriggerSystem.Trigger(SabotageOptionsBuilder.TriggerObject, triggerName, null);
+            {
+                TriggerSignal signal = new(SabotageOptionsBuilder.TriggerObject, triggerName, PlayerControl.LocalPlayer);
+                TriggerSystem.GetInstance().FireTrigger(signal);
+            }
         }
     }
 }

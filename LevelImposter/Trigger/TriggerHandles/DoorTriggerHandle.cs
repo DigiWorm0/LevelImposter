@@ -1,16 +1,17 @@
 ﻿using LevelImposter.Core;
+using System;
 using UnityEngine;
 
 namespace LevelImposter.Trigger
 {
     public class DoorTriggerHandle : ITriggerHandle
     {
-        public void OnTrigger(GameObject gameObject, string triggerID)
+        public void OnTrigger(TriggerSignal signal)
         {
-            if (triggerID == "open")
-                SetDoorOpen(gameObject, true);
-            else if (triggerID == "close")
-                SetDoorOpen(gameObject, false);
+            if (signal.TriggerID == "open")
+                SetDoorOpen(signal.TargetObject, true);
+            else if (signal.TriggerID == "close")
+                SetDoorOpen(signal.TargetObject, false);
         }
 
         private void SetDoorOpen(GameObject gameObject, bool isOpen)
@@ -20,10 +21,10 @@ namespace LevelImposter.Trigger
 
             // Check if the object has a PlainDoor component
             if (doorComponent == null)
-                LILogger.Warn($"{gameObject} does not have a PlainDoor component");
+                throw new Exception($"{gameObject} does not have a PlainDoor component");
 
             // Set the door state
-            doorComponent?.SetDoorway(isOpen);
+            doorComponent.SetDoorway(isOpen);
         }
 
     }

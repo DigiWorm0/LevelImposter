@@ -18,7 +18,7 @@ namespace LevelImposter.Core
             [HarmonyArgument(0)] PlayerControl reporter,
             [HarmonyArgument(1)] NetworkedPlayerInfo target)
         {
-            if (LIShipStatus.Instance == null)
+            if (!LIShipStatus.IsInstance())
                 return;
 
             // Get trigger object
@@ -27,7 +27,10 @@ namespace LevelImposter.Core
 
             // Call trigger
             if (triggerObj != null)
-                TriggerSystem.Trigger(triggerObj, triggerID, null);
+            {
+                TriggerSignal signal = new(triggerObj, triggerID, reporter);
+                TriggerSystem.GetInstance().FireTrigger(signal);
+            }
         }
     }
 }

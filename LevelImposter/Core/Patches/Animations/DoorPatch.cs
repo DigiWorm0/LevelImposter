@@ -59,7 +59,8 @@ namespace LevelImposter.Core
             if (_hasStateChanged)
             {
                 string triggerID = open ? "onOpen" : "onClose";
-                TriggerSystem.Trigger(__instance.gameObject, triggerID, null);
+                TriggerSignal signal = new(__instance.gameObject, triggerID, PlayerControl.LocalPlayer);
+                TriggerSystem.GetInstance().FireTrigger(signal);
             }
 
             return;

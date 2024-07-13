@@ -43,9 +43,15 @@ namespace LevelImposter.Core
             if (objectData == null)
                 return true;
 
-            // Trigger onUse
+            // Create Trigger
             bool isClientSide = objectData.Properties.triggerClientSide ?? true;
-            TriggerSystem.Trigger(__instance.gameObject, "onUse", isClientSide ? null : PlayerControl.LocalPlayer);
+            TriggerSignal signal = new(__instance.gameObject, "onUse", PlayerControl.LocalPlayer);
+
+            // Fire Trigger
+            if (isClientSide)
+                TriggerSystem.GetInstance().FireTrigger(signal);
+            else
+                TriggerSystem.GetInstance().FireTriggerRPC(signal);
 
             // TODO: Check if should continue?
             return true;

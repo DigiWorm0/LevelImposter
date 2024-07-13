@@ -1,22 +1,34 @@
 ﻿using LevelImposter.Core;
+using System;
 using UnityEngine;
 
 namespace LevelImposter.Trigger
 {
     public class SoundTriggerHandle : ITriggerHandle
     {
-        public void OnTrigger(GameObject gameObject, string triggerID)
+        public void OnTrigger(TriggerSignal signal)
         {
-            TriggerSoundPlayer? triggerSound = gameObject.GetComponent<TriggerSoundPlayer>();
-            if (triggerSound == null)
+            if (signal.TriggerID != "playonce" &&
+                signal.TriggerID != "playloop" &&
+                signal.TriggerID != "stop")
                 return;
 
-            if (triggerID == "playonce")
-                triggerSound.Play(false);
-            else if (triggerID == "playloop")
-                triggerSound.Play(true);
-            else if (triggerID == "stop")
-                triggerSound.Stop();
+            // Get Component
+            var triggerSound = signal.TargetObject.GetComponentOrThrow<TriggerSoundPlayer>();
+
+            // Run Sounds
+            switch (signal.TriggerID)
+            {
+                case "playonce":
+                    triggerSound.Play(false);
+                    break;
+                case "playloop":
+                    triggerSound.Play(true);
+                    break;
+                case "stop":
+                    triggerSound.Stop();
+                    break;
+            }
         }
 
     }

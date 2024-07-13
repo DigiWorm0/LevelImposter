@@ -4,15 +4,16 @@ namespace LevelImposter.Trigger
 {
     public class SabTriggerHandle : ITriggerHandle
     {
-        public void OnTrigger(GameObject gameObject, string triggerID, PlayerControl? origin = null, int stackSize = 0)
+        public void OnTrigger(TriggerSignal signal)
         {
             // Only handle triggers on the client that triggered them
+            var origin = signal.SourcePlayer;
             bool isClient = origin == null || origin == PlayerControl.LocalPlayer;
             if (!isClient)
                 return;
 
             // Handle sabotage triggers
-            switch (triggerID)
+            switch (signal.TriggerID)
             {
                 case "startOxygen":
                     ShipStatus.Instance.RpcUpdateSystem(SystemTypes.LifeSupp, 128);

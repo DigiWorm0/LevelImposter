@@ -34,7 +34,7 @@ namespace LevelImposter.Trigger
             new TriggerPropogationHandle()
         };
 
-        private static bool _shouldLog => LIShipStatus.Instance?.CurrentMap?.properties.triggerLogging ?? true;
+        private static bool _shouldLog => LIShipStatus.GetInstanceOrNull()?.CurrentMap?.properties.triggerLogging ?? true;
 
         public TriggerSystem() => OnCreate();
 
@@ -48,91 +48,52 @@ namespace LevelImposter.Trigger
         }
 
         /// <summary>
-        /// Finds and fires a trigger on an element ID statically
+        /// Gets the global instance of the trigger system
         /// </summary>
-        /// <param name="elementID">Element ID to run trigger on</param>
-        /// <param name="triggerID">Trigger ID to fire</param>
-        /// <param name="orgin">Orgin player for RPC. Set to <c>null</c> if the trigger should only run on the client</param>
-        /// <param name="stackSize">Size of the trigger stack</param>
-        /// <returns>TRUE iff the trigger is successful</returns>
-        public static void Trigger(Guid elementID, string triggerID, PlayerControl? orgin = null, int stackSize = 0)
+        /// <returns>The global instance of the trigger system</returns>
+        /// <exception cref="MissingShipException">If LIShipStatus is missing</exception>
+        public static TriggerSystem GetInstance() => LIShipStatus.GetInstance().TriggerSystem;
+
+        /// <summary>
+        /// Finds an object by its ID
+        /// </summary>
+        /// <param name="objectID">ID of the object</param>
+        /// <returns>The cooresponding GameObject</returns>
+        /// <exception cref="Exception"></exception>
+        public static GameObject FindObject(Guid? objectID)
         {
-            // Get Ship Status
-            var shipStatus = LIShipStatus.Instance;
-            if (shipStatus == null)
-            {
-                LILogger.Warn("Ship Status is missing");
-                return;
-            }
+            if (objectID == null)
+                throw new Exception($"Can't find object with null ID");
 
             // Get Object
-            var gameObject = shipStatus.MapObjectDB.GetObject(elementID);
+            var gameObject = LIShipStatus.GetInstance().MapObjectDB.GetObject((Guid)objectID);
             if (gameObject == null)
-            {
-                LILogger.Warn($"Object with ID {elementID} is missing");
-                return;
-            }
+                throw new Exception($"GameObject with ID {objectID} is missing");
 
-            // Fire Trigger
-            shipStatus.TriggerSystem.FireTrigger(gameObject, triggerID, orgin, stackSize);
+            return gameObject;
         }
 
         /// <summary>
-        /// Finds and fires a trigger on a GameObject statically
+        /// Fires a trigger over RPC
         /// </summary>
-        /// <param name="gameObject">Object to run trigger on</param>
-        /// <param name="triggerID">Trigger ID to fire</param>
-        /// <param name="orgin">Orgin player for RPC. Set to <c>null</c> if the trigger should only run on the client</param>
-        /// <param name="stackSize">Size of the trigger stack</param>
-        /// <returns>TRUE iff the trigger is successful</returns>
-        public static void Trigger(GameObject gameObject, string triggerID, PlayerControl? orgin = null, int stackSize = 0)
+        /// <param name="signal"></param>
+        public void FireTriggerRPC(TriggerSignal signal)
         {
-            // Get Ship Status
-            var shipStatus = LIShipStatus.Instance;
-            if (shipStatus == null)
-            {
-                LILogger.Warn("Ship Status is missing");
-                return;
-            }
+            // Check Player
+            if (signal.SourcePlayer == null)
+                throw new Exception("Missing PlayerControl on TriggerSignal");
 
-            // Fire Trigger
-            shipStatus.TriggerSystem.FireTrigger(gameObject, triggerID, orgin, stackSize);
-        }
+            // Get Object Data
+            var objectData = signal.TargetObject.GetComponent<MapObjectData>();
+            if (objectData == null)
+                throw new Exception($"{signal.TargetObject} is missing LI data");
 
-        /// <summary>
-        /// Finds and fires a trigger on a GameObject
-        /// </summary>
-        /// <param name="gameObject">Object to run trigger on</param>
-        /// <param name="triggerID">Trigger ID to fire</param>
-        /// <param name="orgin">Orgin player for RPC. Set to <c>null</c> if the trigger should only run on the client</param>
-        /// <param name="stackSize">Size of the trigger stack</param>
-        /// <returns>TRUE iff the trigger is successful</returns>
-        private void FireTrigger(GameObject gameObject, string triggerID, PlayerControl? orgin = null, int stackSize = 0)
-        {
-            // Check if the object was destroyed
-            if (gameObject == null)
-                return;
-
-            // Run RPC if needed
-            if (orgin != null)
-            {
-                // Get Object Data
-                var objectData = gameObject.GetComponent<MapObjectData>();
-                if (objectData == null)
-                {
-                    LILogger.Warn($"{gameObject} is missing LI data");
-                    return;
-                }
-
-                // Fire RPC
-                RPCFireTrigger(orgin, objectData.ID.ToString(), triggerID);
-
-                // Don't run the trigger locally since it will be handled by the RPC
-                return;
-            }
-
-            // Handle the trigger
-            OnTrigger(gameObject, triggerID, orgin, stackSize + 1);
+            // Fire Trigger over RPC
+            RPCFireTrigger(
+                signal.SourcePlayer,
+                objectData.ID.ToString(),
+                signal.TriggerID
+            );
         }
 
         /// <summary>
@@ -149,12 +110,7 @@ namespace LevelImposter.Trigger
                 LILogger.Msg($"[RPC] {elemIDString} >>> {triggerID} ({orgin.name})");
 
             // Get Ship Status
-            var shipStatus = LIShipStatus.Instance;
-            if (shipStatus == null)
-            {
-                LILogger.Warn("LIShipStatus is missing");
-                return;
-            }
+            var shipStatus = LIShipStatus.GetInstance();
 
             // Parse ID
             Guid elemID;
@@ -172,23 +128,21 @@ namespace LevelImposter.Trigger
                 return;
             }
 
-            // Trigger
-            shipStatus.TriggerSystem.OnTrigger(gameObject, triggerID, orgin, 1);
+            // Create & Fire Trigger
+            TriggerSignal signal = new(gameObject, triggerID, orgin);
+            shipStatus.TriggerSystem.FireTrigger(signal);
         }
 
         /// <summary>
         /// Handles a trigger event on the local client
         /// </summary>
-        /// <param name="gameObject">GameObject to trigger</param>
-        /// <param name="triggerID">Trigger ID to fire</param>
-        /// <param name="orgin">Player of orgin</param>
-        /// <param name="stackSize">Size of the trigger stack</param>
-        private void OnTrigger(GameObject gameObject, string triggerID, PlayerControl? orgin, int stackSize = 0)
+        /// <param name="signal">Signal data object</param>
+        public void FireTrigger(TriggerSignal signal)
         {
             // Infinite Loop
-            if (stackSize > MAX_STACK_SIZE)
+            if (signal.StackSize > MAX_STACK_SIZE)
             {
-                LILogger.Warn($"{gameObject.name} >>> {triggerID} detected an infinite trigger loop and aborted");
+                LILogger.Warn($"{signal.TargetObject.name} >>> {signal.TriggerID} detected an infinite trigger loop and aborted");
                 LILogger.Info("If you need an infinite loop, enable the loop option on a trigger timer");
                 return;
             }
@@ -196,19 +150,19 @@ namespace LevelImposter.Trigger
             // Logging
             if (_shouldLog)
             {
-                string whitespace = string.Concat(Enumerable.Repeat("| ", stackSize - 1)) + "+ ";
-                LILogger.Info($"{whitespace}{gameObject.name} >>> {triggerID} ({orgin?.name})");
+                string whitespace = string.Concat(Enumerable.Repeat("| ", signal.StackSize - 1)) + "+ ";
+                LILogger.Info($"{whitespace}{signal.TargetObject.name} >>> {signal.TriggerID} ({signal.SourcePlayer?.name})");
             }
 
             // Handle trigger event
             try
             {
                 foreach (ITriggerHandle handle in _triggerHandles)
-                    handle.OnTrigger(gameObject, triggerID, orgin, stackSize);
+                    handle.OnTrigger(signal);
             }
             catch (Exception e)
             {
-                LILogger.Error($"Error while handling trigger {gameObject.name} >>> {triggerID}");
+                LILogger.Error($"Error while handling trigger {signal.TargetObject.name} >>> {signal.TriggerID}");
                 LILogger.Error(e);
             }
         }

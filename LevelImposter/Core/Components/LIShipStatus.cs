@@ -25,8 +25,6 @@ namespace LevelImposter.Core
         {
         }
 
-        public static LIShipStatus? Instance { get; private set; }
-
         public static readonly List<string> PRIORITY_TYPES = new()
         {
             "util-minimap",
@@ -65,6 +63,10 @@ namespace LevelImposter.Core
             KeyCode.G
         };
 
+        [Obsolete("Use LIShipStatus.IsInstance() or LIShipStatus.GetInstance() instead")]
+        public static LIShipStatus? Instance => _instance;
+
+        private static LIShipStatus? _instance;
         private MapObjectDB _mapObjectDB = new();
         private TriggerSystem _triggerSystem = new();
         private RenameHandler _renames = new();
@@ -86,6 +88,30 @@ namespace LevelImposter.Core
                         _isReady;
             }
         }
+
+        /// <summary>
+        /// Gets the current LevelImposter instance or throws MissingShip if not found
+        /// </summary>
+        /// <returns>The current LevelImposter instance</returns>
+        /// <exception cref="MissingShipException">If the instance is null or missing</exception>
+        public static LIShipStatus GetInstance()
+        {
+            if (_instance == null)
+                throw new MissingShipException();
+            return _instance;
+        }
+
+        /// <summary>
+        /// Gets the current LevelImposter instance or null if not found
+        /// </summary>
+        /// <returns>The current LevelImposter instance or null</returns>
+        public static LIShipStatus? GetInstanceOrNull() => _instance;
+
+        /// <summary>
+        /// Checks if the player is currently in a LevelImposter map.
+        /// </summary>
+        /// <returns>True if the player is in a LevelImposter map, false otherwise</returns>
+        public static bool IsInstance() => _instance != null;
 
         /// <summary>
         /// Resets the map to a blank slate. Ran before any map elements are applied.
@@ -341,7 +367,7 @@ namespace LevelImposter.Core
         [MethodRpc((uint)LIRpc.ResetPlayer)]
         private static void RespawnPlayer(PlayerControl playerControl)
         {
-            ShipStatus? shipStatus = Instance?.ShipStatus;
+            ShipStatus? shipStatus = _instance?.ShipStatus;
             if (playerControl == null || shipStatus == null)
                 return;
             LILogger.Info($"Resetting {playerControl.name} to spawn");
@@ -388,7 +414,7 @@ namespace LevelImposter.Core
         public void Awake()
         {
             _shipStatus = GetComponent<ShipStatus>();
-            Instance = this;
+            _instance = this;
 
             if (MapLoader.CurrentMap != null)
                 LoadMap(MapLoader.CurrentMap);
@@ -426,7 +452,7 @@ namespace LevelImposter.Core
             _triggerSystem = null;
             _renames = null;
             _currentMap = null;
-            Instance = null;
+            _instance = null;
 
             // Wipe Cache (Freeplay Only)
             if (GameState.IsInFreeplay && LIConstants.FREEPLAY_FLUSH_CACHE)
