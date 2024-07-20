@@ -35,6 +35,6 @@
 	
 	<Target Name="Copy" AfterTargets="Build" Condition="'$(AmongUs)' != ''">
         <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(AmongUs)/BepInEx/plugins/" UseSymboliclinksIfPossible="true" />
-		<Exec Command="&quot;$(AmongUs)/Among Us.exe&quot;" /> <!--Uncomment to Launch Among Us On Build-->
+		<!--<Exec Command="&quot;$(AmongUs)/Among Us.exe&quot;" />--> <!--Uncomment to Launch Among Us On Build-->
     </Target>
 </Project>
