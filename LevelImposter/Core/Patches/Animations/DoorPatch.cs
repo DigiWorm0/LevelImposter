@@ -21,7 +21,7 @@ namespace LevelImposter.Core
 
         public static void Postfix([HarmonyArgument(0)] bool open, PlainDoor __instance)
         {
-            if (LIShipStatus.Instance == null)
+            if (!LIShipStatus.IsInstance())
                 return;
 
             // Colliders
@@ -34,6 +34,7 @@ namespace LevelImposter.Core
             dummyCollider.enabled = false;
 
             // Sprite Renderer
+            // TODO: Handle door GIF animation during loading sequence
             AnimationClip animClip = open ? __instance.OpenDoorAnim : __instance.CloseDoorAnim;
             SpriteAnim spriteAnim = __instance.GetComponent<SpriteAnim>();
             GIFAnimator gifAnim = __instance.GetComponent<GIFAnimator>();

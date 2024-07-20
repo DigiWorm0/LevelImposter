@@ -11,10 +11,10 @@ namespace LevelImposter.Core
     {
         public static bool Prefix([HarmonyArgument(0)] SystemTypes systemType, ref string __result)
         {
-            if (LIShipStatus.Instance == null || !LIShipStatus.Instance.Renames.Contains(systemType))
+            if (!LIShipStatus.IsInstance() || !LIShipStatus.GetInstance().Renames.Contains(systemType))
                 return true;
 
-            __result = LIShipStatus.Instance.Renames.Get(systemType);
+            __result = LIShipStatus.GetInstance().Renames.Get(systemType);
             return false;
         }
     }
@@ -26,10 +26,10 @@ namespace LevelImposter.Core
     {
         public static bool Prefix([HarmonyArgument(0)] TaskTypes taskType, ref string __result)
         {
-            if (LIShipStatus.Instance == null || !LIShipStatus.Instance.Renames.Contains(taskType))
+            if (!LIShipStatus.IsInstance() || !LIShipStatus.GetInstance().Renames.Contains(taskType))
                 return true;
 
-            __result = LIShipStatus.Instance.Renames.Get(taskType);
+            __result = LIShipStatus.GetInstance().Renames.Get(taskType);
             return false;
         }
     }
@@ -51,10 +51,10 @@ namespace LevelImposter.Core
             }
 
             // Handle Normal Cases
-            if (LIShipStatus.Instance == null || !LIShipStatus.Instance.Renames.Contains(stringNames))
+            if (!LIShipStatus.IsInstance() || !LIShipStatus.GetInstance().Renames.Contains(stringNames))
                 return true;
 
-            __result = LIShipStatus.Instance.Renames.Get(stringNames);
+            __result = LIShipStatus.GetInstance().Renames.Get(stringNames);
             return false;
         }
     }

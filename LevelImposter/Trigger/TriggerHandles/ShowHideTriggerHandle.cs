@@ -122,14 +122,14 @@ namespace LevelImposter.Trigger
             }
 
             // Get Togglable Components
-            MonoBehaviour[] toggleComponents = [
+            MonoBehaviour[] toggleComponents = {
                 gameObject.GetComponent<AmbientSoundPlayer>(),
                 gameObject.GetComponent<TriggerConsole>(),
                 gameObject.GetComponent<SystemConsole>(),
                 gameObject.GetComponent<MapConsole>(),
                 gameObject.GetComponent<LITeleporter>(),
                 gameObject.GetComponent<LIShakeArea>()
-            ];
+            };
 
             // Toggle the components
             foreach (MonoBehaviour component in toggleComponents)

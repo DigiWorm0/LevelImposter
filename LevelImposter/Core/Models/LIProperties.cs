@@ -72,6 +72,7 @@ namespace LevelImposter.Core
         // Door
         public string? doorType { get; set; }
         public bool? isDoorInteractable { get; set; }
+        public bool? isDoorClosed { get; set; }
 
         // Vent
         public Guid? leftVent { get; set; }

@@ -50,6 +50,7 @@ namespace LevelImposter.Builders
             bool isNode = elem.type == "task-node";
             bool isNodeSwitch = elem.type == "task-nodeswitch";
             bool isWires = elem.type == "task-wires";
+            bool isDownload = elem.type == "task-download";
 
             // Prefab
             var prefabTask = hasTask ? AssetDB.GetTask<NormalPlayerTask>(elem.type) : null;
@@ -87,12 +88,7 @@ namespace LevelImposter.Builders
             // TODO: Clean this spaghetti mess
             if (isDivert && !isBuilt)
             {
-                List<LIElement> divertTargets = new();
-                if (LIShipStatus.Instance?.CurrentMap == null)
-                    throw new Exception("Current map is unavailable");
-                foreach (LIElement mapElem in LIShipStatus.Instance.CurrentMap.elements)
-                    if (mapElem.type == "task-divert2")
-                        divertTargets.Add(mapElem);
+                List<LIElement> divertTargets = FindElementsOfType("task-divert2");
 
                 _divertSystems = new SystemTypes[divertTargets.Count];
                 for (int i = 0; i < divertTargets.Count; i++)
@@ -146,6 +142,11 @@ namespace LevelImposter.Builders
                 task.TaskType = prefabTask.TaskType;
                 task.MinigamePrefab = prefabTask.MinigamePrefab;
 
+                task.useMultipleText = prefabTask.useMultipleText;
+                task.maxNumStepsStage1 = prefabTask.maxNumStepsStage1;
+                task.textStage1 = prefabTask.textStage1;
+                task.textStage2 = prefabTask.textStage2;
+
                 if (prefabArrow != null)
                 {
                     GameObject arrow = UnityEngine.Object.Instantiate(prefabArrow);
@@ -161,11 +162,35 @@ namespace LevelImposter.Builders
                     nodeTask.Stage2Prefab = prefabTask.Cast<WeatherNodeTask>().Stage2Prefab;
                 }
 
+                if (isDownload)
+                {
+                    UploadDataTask downloadTask = task.Cast<UploadDataTask>();
+                    List<LIElement> uploadTargets = FindElementsOfType("task-upload");
+                    if (uploadTargets.Count > 0)
+                        downloadTask.EndAt = RoomBuilder.GetParentOrDefault(uploadTargets[0]);
+                }
+
                 if (isWires)
                     _wiresTask = task;
 
                 AddTaskToShip(elem, prefabLength, task);
             }
+        }
+
+        public List<LIElement> FindElementsOfType(string type)
+        {
+            // Check Map
+            var instance = LIShipStatus.GetInstance();
+            if (instance.CurrentMap == null)
+                throw new Exception("Current map is unavailable");
+
+            // Find Elements
+            List<LIElement> elements = new();
+            foreach (LIElement mapElem in instance.CurrentMap.elements)
+                if (mapElem.type == type)
+                    elements.Add(mapElem);
+
+            return elements;
         }
 
         /// <summary>

@@ -26,15 +26,14 @@ namespace LevelImposter.Builders
                 return;
 
             // ShipStatus
-            var shipStatus = LIShipStatus.Instance?.ShipStatus;
-            if (shipStatus == null)
-                throw new MissingShipException();
+            var liShipStatus = LIShipStatus.GetInstance();
+            var shipStatus = liShipStatus.ShipStatus;
 
             // Special Doors
             if (_specialDoorIDs == null)
             {
                 _specialDoorIDs = new();
-                var mapElems = LIShipStatus.Instance?.CurrentMap?.elements;
+                var mapElems = liShipStatus.CurrentMap?.elements;
                 if (mapElems == null)
                     throw new MissingShipException();
 
@@ -106,6 +105,7 @@ namespace LevelImposter.Builders
             doorComponent.OpenSound = prefabDoor.OpenSound;
             doorComponent.CloseSound = prefabDoor.CloseSound;
 
+            // Add to DB
             _doorDB.Add(elem.id, doorComponent);
             if (!isSpecialDoor)
                 shipStatus.AllDoors = MapUtils.AddToArr(shipStatus.AllDoors, doorComponent);
@@ -148,6 +148,12 @@ namespace LevelImposter.Builders
                 // Colliders
                 MapUtils.CreateDefaultColliders(doorConsole, obj);
             }
+
+            // Set Default State
+            bool isDoorClosed = elem.properties.isDoorClosed ?? false;
+
+            doorComponent.Start(); // <-- Run initialization tasks
+            doorComponent.SetDoorway(!isDoorClosed);
         }
 
         public void PostBuild() { }
