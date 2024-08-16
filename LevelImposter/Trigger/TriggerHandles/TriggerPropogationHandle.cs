@@ -26,9 +26,14 @@ namespace LevelImposter.Trigger
                 if (trigger.elemID == null || trigger.triggerID == null)
                     continue;
 
+                // Get Object
+                var targetObject = TriggerSystem.FindObject(trigger.elemID);
+                if (targetObject == null)
+                    continue;
+
                 // Create & Run Trigger
                 TriggerSignal newSignal = new(
-                    TriggerSystem.FindObject(trigger.elemID),
+                    targetObject,
                     trigger.triggerID,
                     signal
                 );

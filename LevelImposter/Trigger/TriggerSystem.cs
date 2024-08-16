@@ -60,17 +60,13 @@ namespace LevelImposter.Trigger
         /// <param name="objectID">ID of the object</param>
         /// <returns>The cooresponding GameObject</returns>
         /// <exception cref="Exception"></exception>
-        public static GameObject FindObject(Guid? objectID)
+        public static GameObject? FindObject(Guid? objectID)
         {
             if (objectID == null)
-                throw new Exception($"Can't find object with null ID");
+                return null;
 
             // Get Object
-            var gameObject = LIShipStatus.GetInstance().MapObjectDB.GetObject((Guid)objectID);
-            if (gameObject == null)
-                throw new Exception($"GameObject with ID {objectID} is missing");
-
-            return gameObject;
+            return LIShipStatus.GetInstance().MapObjectDB.GetObject((Guid)objectID);
         }
 
         /// <summary>

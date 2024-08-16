@@ -33,7 +33,7 @@ namespace LevelImposter.Builders
         public void Build(LIElement elem, Console console)
         {
             // ShipStatus
-            var shipStatus = LIShipStatus.Instance?.ShipStatus;
+            var shipStatus = LIShipStatus.GetInstance().ShipStatus;
             if (shipStatus == null)
                 throw new MissingShipException();
 
@@ -59,22 +59,23 @@ namespace LevelImposter.Builders
             SystemTypes systemType = RoomBuilder.GetParentOrDefault(elem);
 
             // Rename
+            var renameHandler = LIShipStatus.GetInstance().Renames;
             if (prefabTask != null && !string.IsNullOrEmpty(elem.properties.description))
             {
-                LIShipStatus.Instance?.Renames.Add(prefabTask.TaskType, elem.properties.description);
+                renameHandler.Add(prefabTask.TaskType, elem.properties.description);
 
                 // Rename Node Description
                 if (isNode || isNodeSwitch)
-                    LIShipStatus.Instance?.Renames.Add(StringNames.FixWeatherNode, elem.properties.description);
+                    renameHandler.Add(StringNames.FixWeatherNode, elem.properties.description);
             }
 
             // Rename Node Room
             if (isNode)
             {
                 var controlType = WeatherSwitchGame.ControlNames[console.ConsoleId];
-                var roomName = LIShipStatus.Instance?.Renames.Get(systemType);
+                var roomName = renameHandler.Get(systemType);
                 if (roomName != null)
-                    LIShipStatus.Instance?.Renames.Add(controlType, roomName);
+                    renameHandler.Add(controlType, roomName);
             }
 
             // Built List
@@ -177,6 +178,12 @@ namespace LevelImposter.Builders
             }
         }
 
+        /// <summary>
+        /// Finds a list of elements of the specified type
+        /// </summary>
+        /// <param name="type">Type to search for</param>
+        /// <returns>List of all elements in the map of the cooresponding type</returns>
+        /// <exception cref="Exception">If there is no LIMap loaded/loading</exception>
         public List<LIElement> FindElementsOfType(string type)
         {
             // Check Map
@@ -215,7 +222,7 @@ namespace LevelImposter.Builders
             NormalPlayerTask task)
         {
             // ShipStatus
-            var shipStatus = LIShipStatus.Instance?.ShipStatus;
+            var shipStatus = LIShipStatus.GetInstance().ShipStatus;
             if (shipStatus == null)
                 throw new MissingShipException();
 

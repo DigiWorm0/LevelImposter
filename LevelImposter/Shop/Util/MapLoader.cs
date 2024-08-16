@@ -24,12 +24,13 @@ namespace LevelImposter.Shop
             _currentMap = map;
             _isFallback = isFallback;
 
-            if (map != null && LIShipStatus.Instance != null)
-                LIShipStatus.Instance.LoadMap(map);
+            if (map != null && LIShipStatus.IsInstance())
+                LIShipStatus.GetInstance().LoadMap(map);
 
             // Lobby Message
-            if (LobbyBehaviour.Instance != null)
-                DestroyableSingleton<HudManager>.Instance.Notifier.AddSettingsChangeMessage(StringNames.GameMapName, map?.name, false);
+            // TODO: Fix me
+            //if (DestroyableSingleton<LobbyBehaviour>.InstanceExists)
+            //    DestroyableSingleton<HudManager>.Instance.Notifier.AddSettingsChangeMessage(StringNames.GameMapName, map?.name, false);
         }
 
         /// <summary>
