@@ -35,7 +35,7 @@ namespace LevelImposter.Core
                 throw new Exception("No LIElement data found on object");
 
             // Get Animation Data
-            _animTargets = elementData.Properties.animTargets ?? [];
+            _animTargets = elementData.Properties.animTargets ?? Array.Empty<LIAnimTarget>();
             _loop = elementData.Properties.triggerLoop ?? false;
 
             // Sort All Keyframes by Time
