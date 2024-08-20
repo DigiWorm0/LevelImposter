@@ -22,8 +22,7 @@ namespace LevelImposter.Core
         public float? triggerFadeTime { get; set; }
 
         // Anim
-        public Guid? animTargetID { get; set; }
-        public LIAnimKeyframe[]? animKeyframes { get; set; }
+        public LIAnimTarget[]? animTargets { get; set; }
 
         // Sprite
         public Guid? spriteID { get; set; }

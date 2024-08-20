@@ -23,8 +23,8 @@ namespace LevelImposter.DB
         private const string SUBMERGED_MAP_GUID = "Submerged";
 
         private string _status = "Initializing";
-        private bool _isInit = false;
-        private Stack<MapType> _loadedShips = new();
+        private bool _isInit;
+        private readonly Stack<MapType> _loadedShips = new();
         private SerializedAssetDB? _serializedAssetDB;
         private ObjectDB? _objectDB;
         private TaskDB? _taskDB;
@@ -37,7 +37,7 @@ namespace LevelImposter.DB
         /// Gets a GameObject from the ObjectDB
         /// </summary>
         /// <param name="id">ID to lookup</param>
-        /// <returns>GameObject or null if couldn't be found</returns>
+        /// <returns>GameObject or null if object couldn't be found</returns>
         public static GameObject? GetObject(string id)
         {
             var prefab = Instance?._objectDB?.Get(id);
@@ -51,7 +51,7 @@ namespace LevelImposter.DB
         /// </summary>
         /// <typeparam name="T">Type to cast abstract PlayerTask to</typeparam>
         /// <param name="id">ID to lookup</param>
-        /// <returns>PlayerCast or null if couldn't be found</returns>
+        /// <returns>PlayerTask or null if task couldn't be found</returns>
         public static T? GetTask<T>(string id) where T : PlayerTask
         {
             var taskPrefab = Instance?._taskDB?.Get(id);
@@ -65,17 +65,17 @@ namespace LevelImposter.DB
         /// within a transform from the PathDB
         /// </summary>
         /// <param name="id">ID to lookup</param>
-        /// <returns>String or null if couldn't be found</returns>
+        /// <returns>String or null if object id couldn't be found</returns>
         public static string[]? GetPaths(string id)
         {
             var path = Instance?._pathDB?.Get(id);
-            if (path == null || path.Length <= 0)
+            if (path is not { Length: > 0 })
                 LILogger.Warn($"Could not find path of type {id}");
             return path;
         }
 
         /// <summary>
-        /// Gets whether or not an element ID contains a task behaviour 
+        /// Checks if an element ID contains a task behaviour 
         /// </summary>
         /// <param name="id">ID of the task</param>
         /// <returns>TRUE if the task exists</returns>
@@ -89,7 +89,7 @@ namespace LevelImposter.DB
         /// Gets the length of a task from the TaskDB
         /// </summary>
         /// <param name="id">ID to lookup</param>
-        /// <returns>TaskLength or TaskLength.Short if couldn't be found</returns>
+        /// <returns>TaskLength or TaskLength.Short if task couldn't be found</returns>
         public static TaskLength GetTaskLength(string id)
         {
             var serializedTask = Instance?._serializedAssetDB?.TaskDB.Find((elem) => elem.ID == id);
@@ -104,7 +104,7 @@ namespace LevelImposter.DB
         public static AudioClip? GetSound(string id)
         {
             var audioClip = Instance?._soundDB?.Get(id);
-            if (audioClip == null)
+            if (!audioClip)
                 LILogger.Warn($"Could not find audio of type {id}");
             return audioClip;
         }

@@ -20,6 +20,10 @@ namespace LevelImposter.Shop
 
         public static void Postfix(GameStartManager __instance)
         {
+            // Null Check
+            if (__instance.MapImage == null)
+                return;
+
             // Get the current lobby UI state
             var currentMap = MapLoader.CurrentMap;
             bool isCustomMap = GameManager.Instance.LogicOptions.MapId == (byte)MapType.LevelImposter;
@@ -38,7 +42,7 @@ namespace LevelImposter.Shop
                 __instance.MapImage.transform.localPosition = _mapImagePos;
             }
 
-            // Check null variable
+            // Null Check
             if (MapIcon == null || currentMap == null)
                 return;
 

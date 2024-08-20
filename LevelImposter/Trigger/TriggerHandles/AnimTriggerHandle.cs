@@ -17,17 +17,17 @@ namespace LevelImposter.Trigger
                 signal.TriggerID != "pauseAnim")
                 return;
 
-            // Get the object data
-            var objectData = signal.TargetObject.GetLIData();
+            // Get Component
+            if (!signal.TargetObject.TryGetComponent(out TriggerAnim animator))
+                return;
 
-            // TODO: Implement Me!
-        }
-
-        public IEnumerator CoAnimateElement()
-        {
-            yield return null;
-
-            // TODO: Implement Me!
+            // Handle
+            if (signal.TriggerID == "playAnim")
+                animator.Play();
+            else if (signal.TriggerID == "stopAnim")
+                animator.Stop();
+            else if (signal.TriggerID == "pauseAnim")
+                animator.Pause();
         }
     }
 }

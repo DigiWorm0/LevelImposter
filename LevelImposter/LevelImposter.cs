@@ -48,6 +48,7 @@ namespace LevelImposter
             ClassInjector.RegisterTypeInIl2Cpp<LIScroll>();
             ClassInjector.RegisterTypeInIl2Cpp<LITeleporter>();
             ClassInjector.RegisterTypeInIl2Cpp<LITriggerArea>();
+            ClassInjector.RegisterTypeInIl2Cpp<TriggerAnim>();
             ClassInjector.RegisterTypeInIl2Cpp<LIDeathArea>();
             ClassInjector.RegisterTypeInIl2Cpp<LIShakeArea>();
             ClassInjector.RegisterTypeInIl2Cpp<LITriggerSpawnable>();
