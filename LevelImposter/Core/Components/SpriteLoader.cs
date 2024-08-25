@@ -271,6 +271,9 @@ namespace LevelImposter.Core
             };
             ImageConversion.LoadImage(texture, imgData);
 
+            // Remove from CPU Memory
+            texture.Apply(false, true);
+
             // Generate Sprite
             Sprite sprite = Sprite.Create(
                 texture,

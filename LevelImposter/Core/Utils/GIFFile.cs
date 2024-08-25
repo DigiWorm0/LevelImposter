@@ -549,7 +549,7 @@ namespace LevelImposter.Core
                 }
 
                 // Create frame texture
-                bool pixelArtMode = LIShipStatus.Instance?.CurrentMap?.properties.pixelArtMode == true;
+                bool pixelArtMode = LIShipStatus.GetInstanceOrNull()?.CurrentMap?.properties.pixelArtMode == true;
                 var texture = new Texture2D(Width, Height, TextureFormat.RGBA32, false)
                 {
                     wrapMode = TextureWrapMode.Clamp,
@@ -593,7 +593,7 @@ namespace LevelImposter.Core
 
                 // Apply Texture
                 texture.SetPixels(_pixelBuffer);
-                texture.Apply(false);
+                texture.Apply(false, true); // Remove from CPU memory
 
                 // Handle frame disposal
                 switch (frame.DisposalMethod)
