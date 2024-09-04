@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using BepInEx.Unity.IL2CPP.Utils.Collections;
 using Il2CppInterop.Runtime.Attributes;
+using LevelImposter.Trigger;
 using LibCpp2IL;
 using UnityEngine;
 
@@ -16,8 +17,8 @@ public class TriggerAnim(IntPtr intPtr) : MonoBehaviour(intPtr)
     private float _duration;
     private bool _loop;
     private Dictionary<Guid, GameObject> _objectDB = new();
+    private TriggerSignal? _sourceSignal;
     private float _t;
-
 
     public void Awake()
     {
@@ -60,8 +61,11 @@ public class TriggerAnim(IntPtr intPtr) : MonoBehaviour(intPtr)
         }
     }
 
-    public void Play()
+    public void Play(TriggerSignal? sourceSignal)
     {
+        // Set Source Signal
+        _sourceSignal = sourceSignal;
+
         // Do nothing if already playing
         if (_currentAnimation != null)
             return;
@@ -201,15 +205,19 @@ public class TriggerAnim(IntPtr intPtr) : MonoBehaviour(intPtr)
     [HideFromIl2Cpp]
     private IEnumerator CoAnimate()
     {
-        // TODO: Trigger OnStart/OnEnd Events
-
         // Get the start timestamp
         var startTimestamp = Time.time;
 
         // Get the start T
         var startT = _t;
-        if (startT >= _duration)
+
+        // Check animation reset
+        if (startT >= _duration || startT <= 0)
+        {
             startT = 0;
+            TriggerSignal signal = new(gameObject, "onStart", _sourceSignal);
+            TriggerSystem.GetInstance().FireTrigger(signal);
+        }
 
         // Loop Animation
         while (true)
@@ -218,21 +226,30 @@ public class TriggerAnim(IntPtr intPtr) : MonoBehaviour(intPtr)
             var elapsed = Time.time - startTimestamp;
             _t = startT + elapsed;
 
-            // Break if done
-            if (_t >= _duration && !_loop)
+            // Check for End
+            if (_t >= _duration)
             {
-                _t = _duration;
-                _currentAnimation = null;
-                yield break;
-            }
+                // Signal End
+                TriggerSignal loopSignal = new(gameObject, "onFinish", _sourceSignal);
+                TriggerSystem.GetInstance().FireTrigger(loopSignal);
 
-            // Loop T
-            _t = _t % _duration;
+                // Break if not looping
+                if (!_loop)
+                {
+                    _t = _duration;
+                    _currentAnimation = null;
+                    yield break;
+                }
+
+                // Wrap T
+                _t %= _duration;
+            }
 
             // Update Targets
             foreach (var target in _animTargets)
                 UpdateTarget(target);
 
+            // Wait for next frame
             yield return null;
         }
     }
