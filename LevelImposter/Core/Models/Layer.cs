@@ -1,28 +1,27 @@
-﻿namespace LevelImposter.Core
+﻿namespace LevelImposter.Core;
+
+internal enum Layer
 {
-    enum Layer
-    {
-        Default,
-        TransparentFX,
-        IgnoreRaycast,
-        Water = 4,
-        UI,
-        Players = 8,
-        Ship,
-        Shadow,
+    Default,
+    TransparentFX,
+    IgnoreRaycast,
+    Water = 4,
+    UI,
+    Players = 8,
+    Ship,
+    Shadow,
 
-        /// <summary>
-        /// WARNING: Automatically hidden by <c>util-display</c> objects
-        /// </summary>
-        Objects,
+    /// <summary>
+    ///     WARNING: Automatically hidden by <c>util-display</c> objects
+    /// </summary>
+    Objects,
 
-        ShortObjects,
-        IlluminatedBlocking,
-        Ghost,
-        UICollider,
-        DrawShadows,
-        KeyMapper,
-        MusicTriggers,
-        Notifications
-    }
+    ShortObjects,
+    IlluminatedBlocking,
+    Ghost,
+    UICollider,
+    DrawShadows,
+    KeyMapper,
+    MusicTriggers,
+    Notifications
 }

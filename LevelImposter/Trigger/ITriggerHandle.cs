@@ -1,7 +1,6 @@
-﻿namespace LevelImposter.Trigger
+﻿namespace LevelImposter.Trigger;
+
+public interface ITriggerHandle
 {
-    public interface ITriggerHandle
-    {
-        public void OnTrigger(TriggerSignal signal);
-    }
+    public void OnTrigger(TriggerSignal signal);
 }

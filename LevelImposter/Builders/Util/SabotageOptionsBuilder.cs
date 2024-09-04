@@ -1,44 +1,46 @@
 using LevelImposter.Core;
 using UnityEngine;
 
-namespace LevelImposter.Builders
+namespace LevelImposter.Builders;
+
+internal class SabotageOptionsBuilder : IElemBuilder
 {
-    class SabotageOptionsBuilder : IElemBuilder
+    public const string SABOTAGE_SOUND_NAME = "sabotageSound";
+
+
+    public SabotageOptionsBuilder()
     {
-        public static GameObject? TriggerObject { get; private set; }
+        TriggerObject = null;
+    }
 
-        public const string SABOTAGE_SOUND_NAME = "sabotageSound";
+    public static GameObject? TriggerObject { get; private set; }
 
+    public void Build(LIElement elem, GameObject obj)
+    {
+        if (elem.type != "util-sabotages")
+            return;
 
-        public SabotageOptionsBuilder()
+        // ShipStatus
+        var shipStatus = LIShipStatus.GetInstanceOrNull()?.ShipStatus;
+        if (shipStatus == null)
+            throw new MissingShipException();
+
+        // Singleton
+        if (TriggerObject != null)
         {
-            TriggerObject = null;
+            LILogger.Warn("Only 1 util-sabotages object can be placed per map");
+            return;
         }
 
-        public void Build(LIElement elem, GameObject obj)
-        {
-            if (elem.type != "util-sabotages")
-                return;
+        TriggerObject = obj;
 
-            // ShipStatus
-            var shipStatus = LIShipStatus.Instance?.ShipStatus;
-            if (shipStatus == null)
-                throw new MissingShipException();
+        // Sabotage Sound
+        var sabotageSound = MapUtils.FindSound(elem.properties.sounds, SABOTAGE_SOUND_NAME);
+        if (sabotageSound != null)
+            shipStatus.SabotageSound = WAVFile.LoadSound(sabotageSound) ?? shipStatus.SabotageSound;
+    }
 
-            // Singleton
-            if (TriggerObject != null)
-            {
-                LILogger.Warn("Only 1 util-sabotages object can be placed per map");
-                return;
-            }
-            TriggerObject = obj;
-
-            // Sabotage Sound
-            LISound? sabotageSound = MapUtils.FindSound(elem.properties.sounds, SABOTAGE_SOUND_NAME);
-            if (sabotageSound != null)
-                shipStatus.SabotageSound = WAVFile.LoadSound(sabotageSound) ?? shipStatus.SabotageSound;
-        }
-
-        public void PostBuild() { }
+    public void PostBuild()
+    {
     }
 }

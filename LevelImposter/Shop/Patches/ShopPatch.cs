@@ -1,23 +1,23 @@
 ﻿using HarmonyLib;
 using LevelImposter.Core;
+using UnityEngine;
 
-namespace LevelImposter.Shop
+namespace LevelImposter.Shop;
+
+/*
+ *      Replaces the Inventory
+ *      menu with the Map Shop
+ */
+[HarmonyPatch(typeof(PlayerCustomizationMenu), nameof(PlayerCustomizationMenu.Start))]
+public static class ShopPatch
 {
-    /*
-     *      Replaces the Inventory
-     *      menu with the Map Shop
-     */
-    [HarmonyPatch(typeof(PlayerCustomizationMenu), nameof(PlayerCustomizationMenu.Start))]
-    public static class ShopPatch
+    public static bool Prefix(PlayerCustomizationMenu __instance)
     {
-        public static bool Prefix(PlayerCustomizationMenu __instance)
-        {
-            if (GameState.IsInLobby)
-                return true;
+        if (GameState.IsInLobby)
+            return true;
 
-            UnityEngine.Object.Destroy(__instance.gameObject);
-            ShopBuilder.Build();
-            return false;
-        }
+        Object.Destroy(__instance.gameObject);
+        ShopBuilder.Build();
+        return false;
     }
 }

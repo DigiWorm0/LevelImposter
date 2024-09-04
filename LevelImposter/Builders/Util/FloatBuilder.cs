@@ -1,19 +1,20 @@
 using LevelImposter.Core;
 using UnityEngine;
 
-namespace LevelImposter.Builders
+namespace LevelImposter.Builders;
+
+internal class FloatBuilder : IElemBuilder
 {
-    class FloatBuilder : IElemBuilder
+    public void Build(LIElement elem, GameObject obj)
     {
-        public void Build(LIElement elem, GameObject obj)
-        {
-            if (elem.type != "util-blankfloat")
-                return;
+        if (elem.type != "util-blankfloat")
+            return;
 
-            LIFloat objFloat = obj.AddComponent<LIFloat>();
-            objFloat.Init(elem);
-        }
+        var objFloat = obj.AddComponent<LIFloat>();
+        objFloat.Init(elem);
+    }
 
-        public void PostBuild() { }
+    public void PostBuild()
+    {
     }
 }

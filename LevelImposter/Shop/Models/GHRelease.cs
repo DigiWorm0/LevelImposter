@@ -1,18 +1,18 @@
 using System;
+using System.Text.Json.Serialization;
 
-namespace LevelImposter.Shop
+namespace LevelImposter.Shop;
+
+[Serializable]
+public class GHRelease
 {
-    [Serializable]
-    public class GHRelease
-    {
-        public string tag_name { get; set; }
-        public string name { get; set; }
-        public string body { get; set; }
-        public GHAsset[] assets { get; set; }
+    [JsonPropertyName("tag_name")] public string? TagName { get; set; }
+    [JsonPropertyName("name")] public string? Name { get; set; }
+    [JsonPropertyName("body")] public string? Body { get; set; }
+    [JsonPropertyName("assets")] public GHAsset[]? Assets { get; set; }
 
-        public override string ToString()
-        {
-            return name;
-        }
+    public override string ToString()
+    {
+        return Name ?? base.ToString() ?? "GHRelease";
     }
 }

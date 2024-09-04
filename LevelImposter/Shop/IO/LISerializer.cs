@@ -1,67 +1,66 @@
-﻿using LevelImposter.Core;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.IO;
+using System.Text;
 using System.Text.Json;
+using System.Text.Json.Serialization;
+using LevelImposter.Core;
 
-namespace LevelImposter.Shop
+namespace LevelImposter.Shop;
+
+public static class LISerializer
 {
-    public static class LISerializer
+    private static JsonSerializerOptions? _options;
+
+    /// <summary>
+    ///     Serializes a map into a string
+    /// </summary>
+    /// <param name="mapData">Map Data to serialize</param>
+    /// <returns>Raw LIM2 file data</returns>
+    public static MemoryStream SerializeMap(LIMap mapData)
     {
-        private static JsonSerializerOptions? _options = null;
-
-        /// <summary>
-        /// Serializes a map into a string
-        /// </summary>
-        /// <param name="mapData">Map Data to serialize</param>
-        /// <returns>Raw LIM2 file data</returns>
-        public static MemoryStream SerializeMap(LIMap mapData)
+        try
         {
-            try
+            // Create Options
+            if (_options == null)
             {
-                // Create Options
-                if (_options == null)
+                _options = new JsonSerializerOptions();
+                _options.DefaultIgnoreCondition =
+                    JsonIgnoreCondition.WhenWritingNull;
+            }
+
+            // Open Stream
+            MemoryStream stream = new();
+
+            // Update Legacy Format
+            if (mapData.isLegacy)
+                LegacyConverter.UpdateMap(mapData);
+
+            // Map Data
+            var mapJsonBytes = JsonSerializer.SerializeToUtf8Bytes(mapData, _options);
+            stream.Write(BitConverter.GetBytes(mapJsonBytes.Length));
+            stream.Write(mapJsonBytes);
+
+            // SpriteDB
+            if (mapData.mapAssetDB != null)
+                foreach (var sprite in mapData.mapAssetDB.DB)
                 {
-                    _options = new();
-                    _options.DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull;
+                    var data = sprite.Value.ToBytes();
+                    var idBytes = Encoding.UTF8.GetBytes(sprite.Key.ToString());
+
+                    // Write Element
+                    stream.Write(idBytes);
+                    stream.Write(BitConverter.GetBytes(data.Length));
+                    stream.Write(data);
                 }
 
-                // Open Stream
-                MemoryStream stream = new();
-
-                // Update Legacy Format
-                if (mapData.isLegacy)
-                    LegacyConverter.UpdateMap(mapData);
-
-                // Map Data
-                byte[] mapJsonBytes = JsonSerializer.SerializeToUtf8Bytes(mapData, _options);
-                stream.Write(BitConverter.GetBytes(mapJsonBytes.Length));
-                stream.Write(mapJsonBytes);
-
-                // SpriteDB
-                if (mapData.mapAssetDB != null)
-                {
-                    foreach (KeyValuePair<Guid, MapAssetDB.DBElement> sprite in mapData.mapAssetDB.DB)
-                    {
-                        var data = sprite.Value.ToBytes();
-                        var idBytes = System.Text.Encoding.UTF8.GetBytes(sprite.Key.ToString());
-
-                        // Write Element
-                        stream.Write(idBytes);
-                        stream.Write(BitConverter.GetBytes(data.Length));
-                        stream.Write(data);
-                    }
-                }
-
-                // Return
-                stream.Position = 0;
-                return stream;
-            }
-            catch (Exception ex)
-            {
-                LILogger.Error(ex);
-                return new();
-            }
+            // Return
+            stream.Position = 0;
+            return stream;
+        }
+        catch (Exception ex)
+        {
+            LILogger.Error(ex);
+            return new MemoryStream();
         }
     }
 }

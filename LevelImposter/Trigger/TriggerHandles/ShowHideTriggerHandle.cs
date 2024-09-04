@@ -1,143 +1,148 @@
-﻿using LevelImposter.Core;
-using Reactor.Utilities;
-using System;
-using System.Collections;
+﻿using System.Collections;
+using LevelImposter.Core;
 using UnityEngine;
 
-namespace LevelImposter.Trigger
+namespace LevelImposter.Trigger;
+
+public class ShowHideTriggerHandle : ITriggerHandle
 {
-    public class ShowHideTriggerHandle : ITriggerHandle
+    private readonly GameObjectCoroutineManager _fadeManager = new();
+
+    public void OnTrigger(TriggerSignal signal)
     {
-        private GameObjectCoroutineManager _fadeManager = new();
+        var triggerID = signal.TriggerID;
 
-        public void OnTrigger(TriggerSignal signal)
+        // Show/Hide the object
+        if (triggerID == "show")
+            _fadeManager.Start(signal.TargetObject, FadeInObject(signal));
+        else if (triggerID == "hide")
+            _fadeManager.Start(signal.TargetObject, FadeOutObject(signal));
+
+        // Enable/Disable the components
+        if (triggerID == "enable" || triggerID == "show")
+            SetTriggerState(signal.TargetObject, true);
+        else if (triggerID == "disable" || triggerID == "hide")
+            SetTriggerState(signal.TargetObject, false);
+        else if (triggerID == "toggle")
+            SetTriggerState(signal.TargetObject);
+    }
+
+    private static IEnumerator FadeInObject(TriggerSignal signal)
+    {
+        return FadeObject(signal, true);
+    }
+
+    private static IEnumerator FadeOutObject(TriggerSignal signal)
+    {
+        return FadeObject(signal, false);
+    }
+
+    /// <summary>
+    ///     Coroutine to fade effect on a GameObject
+    /// </summary>
+    /// <param name="signal">Source trigger signal to read from</param>
+    /// <param name="fadeIn">True to fade in, false to fade out</param>
+    private static IEnumerator FadeObject(TriggerSignal signal, bool fadeIn)
+    {
+        // Get signal info
+        var fadeObject = signal.TargetObject;
+        var sourceObject = signal.SourceTrigger?.TargetObject;
+
+        // Always show object during the animation
+        fadeObject.SetActive(true);
+
+        // Get the sprite renderer
+        var spriteRenderer = fadeObject.GetComponent<SpriteRenderer>();
+        if (spriteRenderer == null)
         {
-            var triggerID = signal.TriggerID;
-
-            // Show/Hide the object
-            if (triggerID == "show")
-                _fadeManager.Start(signal.TargetObject, FadeInObject(signal));
-            else if (triggerID == "hide")
-                _fadeManager.Start(signal.TargetObject, FadeOutObject(signal));
-
-            // Enable/Disable the components
-            if (triggerID == "enable" || triggerID == "show")
-                SetTriggerState(signal.TargetObject, true);
-            else if (triggerID == "disable" || triggerID == "hide")
-                SetTriggerState(signal.TargetObject, false);
-            else if (triggerID == "toggle")
-                SetTriggerState(signal.TargetObject);
+            fadeObject.SetActive(fadeIn);
+            yield break;
         }
 
-        private static IEnumerator FadeInObject(TriggerSignal signal) => FadeObject(signal, true);
-        private static IEnumerator FadeOutObject(TriggerSignal signal) => FadeObject(signal, false);
+        // Get the object data
+        var objectData = sourceObject?.GetLIData();
+        var triggerFadeTime = objectData?.Properties.triggerFadeTime ?? 0;
 
-        /// <summary>
-        /// Coroutine to fade effect on a GameObject
-        /// </summary>
-        /// <param name="signal">Source trigger signal to read from</param>
-        /// <param name="fadeIn">True to fade in, false to fade out</param>
-        private static IEnumerator FadeObject(TriggerSignal signal, bool fadeIn)
+        // Get colors
+        var spriteColor = spriteRenderer.color;
+        var visibleAlpha = objectData?.Properties.color?.a ?? 1.0f; // Use original sprite color, if applicable
+
+        var fromAlpha = spriteColor.a;
+        var toAlpha = fadeIn ? visibleAlpha : 0.0f;
+
+        LILogger.Info($"t={triggerFadeTime} {fromAlpha}-{toAlpha} {objectData?.Element.name ?? "null"}");
+
+        // Run Fade
+        float t = 0;
+        while (t < triggerFadeTime)
         {
-            // Get signal info
-            var fadeObject = signal.TargetObject;
-            var sourceObject = signal.SourceTrigger?.TargetObject;
+            yield return null;
+            t += Time.deltaTime * 1000.0f; // s >> ms
 
-            // Always show object during the animation
-            fadeObject.SetActive(true);
-
-            // Get the sprite renderer
-            var spriteRenderer = fadeObject.GetComponent<SpriteRenderer>();
-            if (spriteRenderer == null)
-            {
-                fadeObject.SetActive(fadeIn);
-                yield break;
-            }
-
-            // Get the object data
-            var objectData = sourceObject?.GetLIData();
-            float triggerFadeTime = objectData?.Properties.triggerFadeTime ?? 0;
-
-            // Get colors
-            var spriteColor = spriteRenderer.color;
-            var visibleAlpha = objectData?.Properties.color?.a ?? 1.0f; // Use original sprite color, if applicable
-
-            var fromAlpha = spriteColor.a;
-            var toAlpha = fadeIn ? visibleAlpha : 0.0f;
-
-            LILogger.Info($"t={triggerFadeTime} {fromAlpha}-{toAlpha} {objectData?.Element.name ?? "null"}");
-
-            // Run Fade
-            float t = 0;
-            while (t < triggerFadeTime)
-            {
-                yield return null;
-                t += Time.deltaTime * 1000.0f; // s >> ms
-
-                float newAlpha = Mathf.Lerp(fromAlpha, toAlpha, t / triggerFadeTime);
-                LILogger.Info($"{fromAlpha}-{newAlpha}-{toAlpha} ({t / triggerFadeTime})");
-                spriteRenderer.color = new Color(
-                    spriteColor.r,
-                    spriteColor.g,
-                    spriteColor.b,
-                    newAlpha
-                );
-            }
-
-            // Set GameObject Active
+            var newAlpha = Mathf.Lerp(fromAlpha, toAlpha, t / triggerFadeTime);
+            LILogger.Info($"{fromAlpha}-{newAlpha}-{toAlpha} ({t / triggerFadeTime})");
             spriteRenderer.color = new Color(
                 spriteColor.r,
                 spriteColor.g,
                 spriteColor.b,
-                toAlpha
+                newAlpha
             );
-            fadeObject.SetActive(fadeIn);
         }
 
-        /// <summary>
-        /// Sets the state of the trigger components
-        /// </summary>
-        /// <param name="gameObject">GameObject to modify</param>
-        /// <param name="isEnabled">null to toggle, true to enable, false to disable</param>
-        private static void SetTriggerState(GameObject gameObject, bool? isEnabled = null)
+        // Set GameObject Active
+        spriteRenderer.color = new Color(
+            spriteColor.r,
+            spriteColor.g,
+            spriteColor.b,
+            toAlpha
+        );
+        fadeObject.SetActive(fadeIn);
+    }
+
+    /// <summary>
+    ///     Sets the state of the trigger components
+    /// </summary>
+    /// <param name="gameObject">GameObject to modify</param>
+    /// <param name="isEnabled">null to toggle, true to enable, false to disable</param>
+    private static void SetTriggerState(GameObject gameObject, bool? isEnabled = null)
+    {
+        // Trigger Sounds
+        var triggerSound = gameObject.GetComponent<TriggerSoundPlayer>();
+        if (triggerSound != null)
         {
-            // Trigger Sounds
-            TriggerSoundPlayer? triggerSound = gameObject.GetComponent<TriggerSoundPlayer>();
-            if (triggerSound != null)
-            {
-                if (isEnabled ?? !triggerSound.IsPlaying)
-                    triggerSound.Play(true);
-                else
-                    triggerSound.Stop();
-            }
+            if (isEnabled ?? !triggerSound.IsPlaying)
+                triggerSound.Play(true);
+            else
+                triggerSound.Stop();
+        }
 
-            // Animation
-            GIFAnimator? gifAnimator = gameObject.GetComponent<GIFAnimator>();
-            if (gifAnimator != null)
-            {
-                if (isEnabled ?? !gifAnimator.IsAnimating)
-                    gifAnimator.Play();
-                else
-                    gifAnimator.Stop();
-            }
+        // Animation
+        var gifAnimator = gameObject.GetComponent<GIFAnimator>();
+        if (gifAnimator != null)
+        {
+            if (isEnabled ?? !gifAnimator.IsAnimating)
+                gifAnimator.Play();
+            else
+                gifAnimator.Stop();
+        }
 
-            // Get Togglable Components
-            MonoBehaviour[] toggleComponents = {
-                gameObject.GetComponent<AmbientSoundPlayer>(),
-                gameObject.GetComponent<TriggerConsole>(),
-                gameObject.GetComponent<SystemConsole>(),
-                gameObject.GetComponent<MapConsole>(),
-                gameObject.GetComponent<LITeleporter>(),
-                gameObject.GetComponent<LIShakeArea>()
-            };
+        // Get Togglable Components
+        MonoBehaviour[] toggleComponents =
+        {
+            gameObject.GetComponent<AmbientSoundPlayer>(),
+            gameObject.GetComponent<TriggerConsole>(),
+            gameObject.GetComponent<SystemConsole>(),
+            gameObject.GetComponent<MapConsole>(),
+            gameObject.GetComponent<LITeleporter>(),
+            gameObject.GetComponent<LIShakeArea>()
+        };
 
-            // Toggle the components
-            foreach (MonoBehaviour component in toggleComponents)
-            {
-                if (component == null)
-                    continue;
-                component.enabled = isEnabled ?? !component.enabled;
-            }
+        // Toggle the components
+        foreach (var component in toggleComponents)
+        {
+            if (component == null)
+                continue;
+            component.enabled = isEnabled ?? !component.enabled;
         }
     }
 }

@@ -1,40 +1,42 @@
-﻿using UnityEngine;
+﻿using LevelImposter.Core;
 using LevelImposter.DB;
-using LevelImposter.Core;
+using UnityEngine;
 
-namespace LevelImposter.Builders
+namespace LevelImposter.Builders;
+
+public class TriggerConsoleBuilder : IElemBuilder
 {
-    public class TriggerConsoleBuilder : IElemBuilder
+    public void Build(LIElement elem, GameObject obj)
     {
-        public void Build(LIElement elem, GameObject obj)
+        if (elem.type != "util-triggerconsole")
+            return;
+
+        // Prefab
+        var prefab = AssetDB.GetObject("util-computer");
+        if (prefab == null)
+            return;
+        var prefabRenderer = prefab.GetComponent<SpriteRenderer>();
+
+        // Sprite
+        var rend = obj.GetComponent<SpriteRenderer>();
+        obj.layer = (int)Layer.ShortObjects;
+        if (rend == null)
         {
-            if (elem.type != "util-triggerconsole")
-                return;
-
-            // Prefab
-            var prefab = AssetDB.GetObject("util-computer");
-            if (prefab == null)
-                return;
-            var prefabRenderer = prefab.GetComponent<SpriteRenderer>();
-
-            // Sprite
-            SpriteRenderer rend = obj.GetComponent<SpriteRenderer>();
-            obj.layer = (int)Layer.ShortObjects;
-            if (rend == null)
-            {
-                LILogger.Warn($"{elem.name} is missing a sprite.");
-                return;
-            }
-            rend.material = prefabRenderer.material;
-
-            // Console
-            TriggerConsole console = obj.AddComponent<TriggerConsole>();
-            console.Init(elem);
-
-            // Colliders
-            MapUtils.CreateDefaultColliders(obj, prefab);
+            LILogger.Warn($"{elem.name} is missing a sprite.");
+            return;
         }
 
-        public void PostBuild() { }
+        rend.material = prefabRenderer.material;
+
+        // Console
+        var console = obj.AddComponent<TriggerConsole>();
+        console.Init(elem);
+
+        // Colliders
+        MapUtils.CreateDefaultColliders(obj, prefab);
+    }
+
+    public void PostBuild()
+    {
     }
 }

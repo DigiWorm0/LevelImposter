@@ -1,12 +1,11 @@
 using System;
 
-namespace LevelImposter.Core
+namespace LevelImposter.Core;
+
+[Serializable]
+public class LITrigger
 {
-    [Serializable]
-    public class LITrigger
-    {
-        public string id { get; set; }
-        public Guid? elemID { get; set; }
-        public string? triggerID { get; set; }
-    }
+    public string id { get; set; }
+    public Guid? elemID { get; set; }
+    public string? triggerID { get; set; }
 }

@@ -1,30 +1,19 @@
-﻿using Il2CppInterop.Runtime.Attributes;
-using System;
+﻿using System;
+using Il2CppInterop.Runtime.Attributes;
 using UnityEngine;
 
-namespace LevelImposter.Core
+namespace LevelImposter.Core;
+
+public class MapObjectData(IntPtr intPtr) : MonoBehaviour(intPtr)
 {
-    public class MapObjectData : MonoBehaviour
+    [HideFromIl2Cpp] public LIElement Element { get; private set; } = new();
+
+    [HideFromIl2Cpp] public Guid ID => Element.id;
+    [HideFromIl2Cpp] public LIProperties Properties => Element.properties;
+
+    [HideFromIl2Cpp]
+    public void SetSourceElement(LIElement sourceElement)
     {
-        public MapObjectData(IntPtr intPtr) : base(intPtr)
-        {
-        }
-
-        private LIElement _sourceElement = new();
-
-        [HideFromIl2Cpp] public LIElement Element => _sourceElement;
-        [HideFromIl2Cpp] public Guid ID => _sourceElement.id;
-        [HideFromIl2Cpp] public LIProperties Properties => _sourceElement.properties;
-
-        [HideFromIl2Cpp]
-        public void SetSourceElement(LIElement sourceElement)
-        {
-            _sourceElement = sourceElement;
-        }
-
-        public void OnDestory()
-        {
-            _sourceElement = null;
-        }
+        Element = sourceElement;
     }
 }

@@ -1,64 +1,61 @@
-﻿using Il2CppInterop.Runtime.InteropTypes.Arrays;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using Il2CppInterop.Runtime.InteropTypes.Arrays;
 
-namespace LevelImposter.Core
+namespace LevelImposter.Core;
+
+public class MapAssetDB
 {
-    public class MapAssetDB
+    public Dictionary<Guid, DBElement> DB { get; } = new();
+
+    public void Add(Guid id, byte[] rawData)
     {
-        private Dictionary<Guid, DBElement> _db = new();
-        public Dictionary<Guid, DBElement> DB => _db;
+        DB.Add(id, new DBElement { rawData = rawData });
+    }
 
-        public void Add(Guid id, byte[] rawData)
+    public void Add(Guid id, FileChunk fileChunk)
+    {
+        DB.Add(id, new DBElement { fileChunk = fileChunk });
+    }
+
+    public DBElement? Get(Guid? id)
+    {
+        if (id == null)
+            return null;
+        DB.TryGetValue((Guid)id, out var result);
+        if (result == null)
+            LILogger.Warn($"No such map asset with id {id}");
+        return result;
+    }
+
+    public class DBElement
+    {
+        public Il2CppStructArray<byte>? rawData { get; set; }
+        public FileChunk? fileChunk { get; set; }
+
+        public Stream OpenStream()
         {
-            _db.Add(id, new DBElement { rawData = rawData });
+            if (rawData != null)
+                return new MemoryStream(rawData);
+            if (fileChunk != null)
+                return fileChunk.OpenStream();
+            throw new Exception("No data to convert to stream");
         }
 
-        public void Add(Guid id, FileChunk fileChunk)
+        public byte[] ToBytes()
         {
-            _db.Add(id, new DBElement { fileChunk = fileChunk });
-        }
+            if (rawData != null)
+                return rawData;
+            if (fileChunk != null)
+                using (var stream = fileChunk.OpenStream())
+                {
+                    var buffer = new byte[stream.Length];
+                    stream.Read(buffer, 0, buffer.Length);
+                    return buffer;
+                }
 
-        public DBElement? Get(Guid? id)
-        {
-            if (id == null)
-                return null;
-            _db.TryGetValue((Guid)id, out DBElement? result);
-            if (result == null)
-                LILogger.Warn($"No such map asset with id {id}");
-            return result;
-        }
-
-        public class DBElement
-        {
-            public Il2CppStructArray<byte>? rawData { get; set; }
-            public FileChunk? fileChunk { get; set; }
-
-            public Stream OpenStream()
-            {
-                if (rawData != null)
-                    return new MemoryStream(rawData);
-                else if (fileChunk != null)
-                    return fileChunk.OpenStream();
-                else
-                    throw new Exception("No data to convert to stream");
-            }
-
-            public byte[] ToBytes()
-            {
-                if (rawData != null)
-                    return rawData;
-                else if (fileChunk != null)
-                    using (var stream = fileChunk.OpenStream())
-                    {
-                        byte[] buffer = new byte[stream.Length];
-                        stream.Read(buffer, 0, buffer.Length);
-                        return buffer;
-                    }
-                else
-                    throw new Exception("No data to convert to bytes");
-            }
+            throw new Exception("No data to convert to bytes");
         }
     }
 }

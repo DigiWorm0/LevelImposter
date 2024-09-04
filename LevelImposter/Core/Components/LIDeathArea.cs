@@ -1,94 +1,88 @@
-﻿using Reactor.Networking.Attributes;
-using System;
+﻿using System;
 using System.Linq;
-using UnityEngine;
+using Reactor.Networking.Attributes;
 
-namespace LevelImposter.Core
+namespace LevelImposter.Core;
+
+/// <summary>
+///     Object that kills all players that enter it's range
+/// </summary>
+public class LIDeathArea(IntPtr intPtr) : PlayerArea(intPtr)
 {
-    /// <summary>
-    /// Object that kills all players that enter it's range
-    /// </summary>
-    public class LIDeathArea : PlayerArea
+    private bool _createDeadBody = true;
+
+    public void SetCreateDeadBody(bool value)
     {
-        public LIDeathArea(IntPtr intPtr) : base(intPtr)
+        _createDeadBody = value;
+    }
+
+    public void KillAllPlayers()
+    {
+        if (CurrentPlayersIDs == null)
+            return;
+
+        // Only the host can handle kill triggers?
+        if (!AmongUsClient.Instance.AmHost)
+            return;
+
+        // Iterate over all players in the area
+        var playerIDs = CurrentPlayersIDs.ToArray(); // <-- Copy to avoid mutation during iteration
+        foreach (var playerID in playerIDs)
         {
+            // Get Player by ID
+            var player = GetPlayer(playerID);
+            if (player == null)
+                continue;
+
+            // Fire RPC to kill player
+            RPCTriggerDeath(player, _createDeadBody);
         }
+    }
 
-        private bool _createDeadBody = true;
+    [MethodRpc((uint)LIRpc.KillPlayer)]
+    public static void RPCTriggerDeath(PlayerControl player, bool createDeadBody)
+    {
+        if (player == null || player.Data.IsDead)
+            return;
+        LILogger.Info($"[RPC] Trigger killing {player.name}");
 
-        public void SetCreateDeadBody(bool value)
-        {
-            _createDeadBody = value;
-        }
+        // Kill Player
+        player.Die(DeathReason.Kill, false);
 
-        public void KillAllPlayers()
-        {
-            if (CurrentPlayersIDs == null)
-                return;
+        // Play Kill Sound (if I'm the Player)
+        if (player.AmOwner)
+            PlayKillSound();
 
-            // Only the host can handle kill triggers?
-            if (!AmongUsClient.Instance.AmHost)
-                return;
+        // Create Dead Body
+        if (createDeadBody)
+            CreateDeadBody(player);
+    }
 
-            // Iterate over all players in the area
-            byte[] playerIDs = CurrentPlayersIDs.ToArray(); // <-- Copy to avoid mutation during iteration
-            foreach (byte playerID in playerIDs)
-            {
-                // Get Player by ID
-                PlayerControl? player = GetPlayer(playerID);
-                if (player == null)
-                    continue;
+    private static void CreateDeadBody(PlayerControl player)
+    {
+        // Create/Disable Dead Body
+        var deadBody = Instantiate(GameManager.Instance.DeadBodyPrefab);
+        deadBody.enabled = false;
+        deadBody.ParentId = player.PlayerId;
 
-                // Fire RPC to kill player
-                RPCTriggerDeath(player, _createDeadBody);
-            }
-        }
+        // Set Colors
+        foreach (var renderer in deadBody.bodyRenderers)
+            player.SetPlayerMaterialColors(renderer);
+        player.SetPlayerMaterialColors(deadBody.bloodSplatter);
 
-        [MethodRpc((uint)LIRpc.KillPlayer)]
-        public static void RPCTriggerDeath(PlayerControl player, bool createDeadBody)
-        {
-            if (player == null || player.Data.IsDead)
-                return;
-            LILogger.Info($"[RPC] Trigger killing {player.name}");
+        // Set Offset
+        var bodyOffset = player.KillAnimations.First().BodyOffset;
+        var bodyPosition = player.transform.position + bodyOffset;
+        bodyPosition.z = bodyPosition.y / 1000f;
+        deadBody.transform.position = bodyPosition;
 
-            // Kill Player
-            player.Die(DeathReason.Kill, false);
+        // Enable Dead Body
+        deadBody.enabled = true;
+    }
 
-            // Play Kill Sound (if I'm the Player)
-            if (player.AmOwner)
-                PlayKillSound();
-
-            // Create Dead Body
-            if (createDeadBody)
-                CreateDeadBody(player);
-        }
-
-        private static void CreateDeadBody(PlayerControl player)
-        {
-            // Create/Disable Dead Body
-            DeadBody deadBody = Instantiate(GameManager.Instance.DeadBodyPrefab);
-            deadBody.enabled = false;
-            deadBody.ParentId = player.PlayerId;
-
-            // Set Colors
-            foreach (SpriteRenderer renderer in deadBody.bodyRenderers)
-                player.SetPlayerMaterialColors(renderer);
-            player.SetPlayerMaterialColors(deadBody.bloodSplatter);
-
-            // Set Offset
-            Vector3 bodyOffset = player.KillAnimations.First().BodyOffset;
-            Vector3 bodyPosition = player.transform.position + bodyOffset;
-            bodyPosition.z = bodyPosition.y / 1000f;
-            deadBody.transform.position = bodyPosition;
-
-            // Enable Dead Body
-            deadBody.enabled = true;
-        }
-
-        private static void PlayKillSound()
-        {
-            AudioClip killSFX = PlayerControl.LocalPlayer.KillSfx;
-            SoundManager.Instance.PlaySound(killSFX, false, 0.8f);
-        }
+    private static void PlayKillSound()
+    {
+        var killSFX = PlayerControl.LocalPlayer.KillSfx;
+        SoundManager.Instance.PlaySound(killSFX, false, 0.8f);
     }
 }

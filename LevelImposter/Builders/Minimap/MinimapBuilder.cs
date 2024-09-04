@@ -1,115 +1,117 @@
-﻿using UnityEngine;
-using LevelImposter.Core;
+﻿using LevelImposter.Core;
+using UnityEngine;
 
-namespace LevelImposter.Builders
+namespace LevelImposter.Builders;
+
+public class MinimapBuilder : IElemBuilder
 {
-    public class MinimapBuilder : IElemBuilder
+    public const float DEFAULT_SCALE = 4.975f;
+
+    private bool _isBuilt;
+
+    public void Build(LIElement elem, GameObject obj)
     {
-        public const float DEFAULT_SCALE = 4.975f;
+        if (elem.type != "util-minimap")
+            return;
 
-        private bool _isBuilt = false;
+        // ShipStatus
+        var shipStatus = LIShipStatus.GetInstanceOrNull()?.ShipStatus;
+        if (shipStatus == null)
+            throw new MissingShipException();
 
-        public void Build(LIElement elem, GameObject obj)
+        // Check Singleton
+        if (_isBuilt)
         {
-            if (elem.type != "util-minimap")
-                return;
-
-            // ShipStatus
-            var shipStatus = LIShipStatus.Instance?.ShipStatus;
-            if (shipStatus == null)
-                throw new MissingShipException();
-
-            // Check Singleton
-            if (_isBuilt)
-            {
-                LILogger.Warn("Only 1 minimap object should be used per map");
-                return;
-            }
-
-            // Minimap
-            MapBehaviour mapBehaviour = GetMinimap();
-
-            // Map Scale
-            float mapScaleVal = elem.properties.minimapScale == null ? 1 : (float)elem.properties.minimapScale;
-            float mapScale = mapScaleVal * DEFAULT_SCALE;
-            shipStatus.MapScale = mapScale;
-            Vector3 mapOffset = -(obj.transform.localPosition / mapScale);
-
-            // Sprite Renderer
-            SpriteRenderer spriteRenderer = obj.GetComponent<SpriteRenderer>();
-            if (spriteRenderer == null)
-            {
-                LILogger.Warn("Minimap object has no sprite attached");
-                return;
-            }
-
-            // Background
-            GameObject background = mapBehaviour.ColorControl.gameObject;
-            SpriteRenderer bgRenderer = background.GetComponent<SpriteRenderer>();
-            background.transform.localPosition = background.transform.localPosition;
-            background.transform.localScale = obj.transform.localScale / mapScale;
-            background.transform.localRotation = obj.transform.localRotation;
-
-            // On Load
-            if (SpriteLoader.Instance == null)
-            {
-                LILogger.Warn("Spite Loader is not instantiated");
-                return;
-            }
-            SpriteLoader.Instance.OnLoad += (LIElement loadedElem) =>
-            {
-                if (loadedElem.id != elem.id || bgRenderer == null)
-                    return;
-                bgRenderer.sprite = spriteRenderer.sprite;
-                bgRenderer.color = spriteRenderer.color;
-                UnityEngine.Object.Destroy(obj);
-            };
-
-            // Offsets
-            Transform roomNames = mapBehaviour.transform.GetChild(mapBehaviour.transform.childCount - 1);
-            roomNames.localPosition = mapOffset;
-            Transform hereIndicatorParent = mapBehaviour.transform.FindChild("HereIndicatorParent");
-            hereIndicatorParent.localPosition = mapOffset + new Vector3(0, 0, -0.1f);
-            mapBehaviour.countOverlay.transform.localPosition = mapOffset;
-            mapBehaviour.infectedOverlay.transform.localPosition = mapOffset;
-
-            _isBuilt = true;
+            LILogger.Warn("Only 1 minimap object should be used per map");
+            return;
         }
 
-        public void PostBuild()
+        // Minimap
+        var mapBehaviour = GetMinimap();
+
+        // Map Scale
+        var mapScaleVal = elem.properties.minimapScale == null ? 1 : (float)elem.properties.minimapScale;
+        var mapScale = mapScaleVal * DEFAULT_SCALE;
+        shipStatus.MapScale = mapScale;
+        var mapOffset = -(obj.transform.localPosition / mapScale);
+
+        // Sprite Renderer
+        var spriteRenderer = obj.GetComponent<SpriteRenderer>();
+        if (spriteRenderer == null)
         {
-            if (!_isBuilt)
-            {
-                MapBehaviour mapBehaviour = GetMinimap();
-                mapBehaviour.ColorControl.gameObject.SetActive(false);
-                mapBehaviour.transform.FindChild("HereIndicatorParent").gameObject.SetActive(false);
-                mapBehaviour.transform.FindChild("RoomNames").gameObject.SetActive(false);
-            }
-            _isBuilt = false;
+            LILogger.Warn("Minimap object has no sprite attached");
+            return;
         }
 
-        /// <summary>
-        /// Get the current Minimap Behaviour
-        /// </summary>
-        /// <returns>The current Minimap Behaviour</returns>
-        public static MapBehaviour GetMinimap()
-        {
-            // ShipStatus
-            var shipStatus = LIShipStatus.Instance?.ShipStatus;
-            if (shipStatus == null)
-                throw new MissingShipException();
+        // Background
+        var background = mapBehaviour.ColorControl.gameObject;
+        var bgRenderer = background.GetComponent<SpriteRenderer>();
+        background.transform.localPosition = background.transform.localPosition;
+        background.transform.localScale = obj.transform.localScale / mapScale;
+        background.transform.localRotation = obj.transform.localRotation;
 
-            // Minimap Prefab
-            MapBehaviour? mapBehaviour = MapBehaviour.Instance;
-            if (mapBehaviour == null)
-            {
-                mapBehaviour = UnityEngine.Object.Instantiate(
-                    shipStatus.MapPrefab,
-                    DestroyableSingleton<HudManager>.Instance.transform
-                );
-                mapBehaviour.gameObject.SetActive(false);
-            }
-            return mapBehaviour;
+        // On Load
+        if (SpriteLoader.Instance == null)
+        {
+            LILogger.Warn("Spite Loader is not instantiated");
+            return;
         }
+
+        SpriteLoader.Instance.OnLoad += loadedElem =>
+        {
+            if (loadedElem.id != elem.id || bgRenderer == null)
+                return;
+            bgRenderer.sprite = spriteRenderer.sprite;
+            bgRenderer.color = spriteRenderer.color;
+            Object.Destroy(obj);
+        };
+
+        // Offsets
+        var roomNames = mapBehaviour.transform.GetChild(mapBehaviour.transform.childCount - 1);
+        roomNames.localPosition = mapOffset;
+        var hereIndicatorParent = mapBehaviour.transform.FindChild("HereIndicatorParent");
+        hereIndicatorParent.localPosition = mapOffset + new Vector3(0, 0, -0.1f);
+        mapBehaviour.countOverlay.transform.localPosition = mapOffset;
+        mapBehaviour.infectedOverlay.transform.localPosition = mapOffset;
+
+        _isBuilt = true;
+    }
+
+    public void PostBuild()
+    {
+        if (!_isBuilt)
+        {
+            var mapBehaviour = GetMinimap();
+            mapBehaviour.ColorControl.gameObject.SetActive(false);
+            mapBehaviour.transform.FindChild("HereIndicatorParent").gameObject.SetActive(false);
+            mapBehaviour.transform.FindChild("RoomNames").gameObject.SetActive(false);
+        }
+
+        _isBuilt = false;
+    }
+
+    /// <summary>
+    ///     Get the current Minimap Behaviour
+    /// </summary>
+    /// <returns>The current Minimap Behaviour</returns>
+    public static MapBehaviour GetMinimap()
+    {
+        // ShipStatus
+        var shipStatus = LIShipStatus.GetInstanceOrNull()?.ShipStatus;
+        if (shipStatus == null)
+            throw new MissingShipException();
+
+        // Minimap Prefab
+        var mapBehaviour = MapBehaviour.Instance;
+        if (mapBehaviour == null)
+        {
+            mapBehaviour = Object.Instantiate(
+                shipStatus.MapPrefab,
+                DestroyableSingleton<HudManager>.Instance.transform
+            );
+            mapBehaviour.gameObject.SetActive(false);
+        }
+
+        return mapBehaviour;
     }
 }

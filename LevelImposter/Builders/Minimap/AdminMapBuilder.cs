@@ -1,68 +1,67 @@
-﻿using LevelImposter.Core;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using LevelImposter.Core;
 using UnityEngine;
 
-namespace LevelImposter.Builders
+namespace LevelImposter.Builders;
+
+public class AdminMapBuilder : IElemBuilder
 {
-    public class AdminMapBuilder : IElemBuilder
+    public const float ICON_OFFSET = -0.25f;
+
+    private readonly List<CounterArea> _counterAreaDB = new();
+    private PoolableBehavior? _poolPrefab;
+
+    public void Build(LIElement elem, GameObject obj)
     {
-        public const float ICON_OFFSET = -0.25f;
+        if (elem.type != "util-room")
+            return;
 
-        private List<CounterArea> _counterAreaDB = new();
-        private PoolableBehavior? _poolPrefab = null;
+        // Check Admin
+        var isAdminVisible = elem.properties.isRoomAdminVisible ?? true;
+        if (!isAdminVisible)
+            return;
 
-        public void Build(LIElement elem, GameObject obj)
-        {
-            if (elem.type != "util-room")
-                return;
+        // ShipStatus
+        var shipStatus = LIShipStatus.GetInstanceOrNull()?.ShipStatus;
+        if (shipStatus == null)
+            throw new MissingShipException();
 
-            // Check Admin
-            bool isAdminVisible = elem.properties.isRoomAdminVisible ?? true;
-            if (!isAdminVisible)
-                return;
+        var mapBehaviour = MinimapBuilder.GetMinimap();
+        var mapCountOverlay = mapBehaviour.countOverlay;
 
-            // ShipStatus
-            var shipStatus = LIShipStatus.Instance?.ShipStatus;
-            if (shipStatus == null)
-                throw new MissingShipException();
+        // Prefab
+        if (_poolPrefab == null)
+            _poolPrefab = mapCountOverlay.CountAreas[0].pool.Prefab;
 
-            MapBehaviour mapBehaviour = MinimapBuilder.GetMinimap();
-            MapCountOverlay mapCountOverlay = mapBehaviour.countOverlay;
+        // System
+        var systemType = RoomBuilder.GetSystem(elem.id);
 
-            // Prefab
-            if (_poolPrefab == null)
-                _poolPrefab = mapCountOverlay.CountAreas[0].pool.Prefab;
+        // Map Room
+        var overlayScale = mapCountOverlay.transform.localScale.x * shipStatus.MapScale;
+        GameObject roomObj = new(elem.name);
+        roomObj.transform.SetParent(mapCountOverlay.transform);
+        roomObj.transform.localPosition = new Vector3(
+            elem.x * (1 / overlayScale),
+            elem.y * (1 / overlayScale) + ICON_OFFSET,
+            -25.0f
+        );
 
-            // System
-            SystemTypes systemType = RoomBuilder.GetSystem(elem.id);
+        var counterArea = roomObj.AddComponent<CounterArea>();
+        counterArea.RoomType = systemType;
+        counterArea.pool = roomObj.AddComponent<ObjectPoolBehavior>();
+        counterArea.pool.Prefab = _poolPrefab;
 
-            // Map Room
-            float overlayScale = mapCountOverlay.transform.localScale.x * shipStatus.MapScale;
-            GameObject roomObj = new(elem.name);
-            roomObj.transform.SetParent(mapCountOverlay.transform);
-            roomObj.transform.localPosition = new Vector3(
-                elem.x * (1 / overlayScale),
-                elem.y * (1 / overlayScale) + ICON_OFFSET,
-                -25.0f
-            );
+        _counterAreaDB.Add(counterArea);
 
-            CounterArea counterArea = roomObj.AddComponent<CounterArea>();
-            counterArea.RoomType = systemType;
-            counterArea.pool = roomObj.AddComponent<ObjectPoolBehavior>();
-            counterArea.pool.Prefab = _poolPrefab;
+        mapCountOverlay.CountAreas = _counterAreaDB.ToArray();
+    }
 
-            _counterAreaDB.Add(counterArea);
+    public void PostBuild()
+    {
+        var mapBehaviour = MinimapBuilder.GetMinimap();
+        var mapCountOverlay = mapBehaviour.countOverlay;
 
-            mapCountOverlay.CountAreas = _counterAreaDB.ToArray();
-        }
-
-        public void PostBuild()
-        {
-            MapBehaviour mapBehaviour = MinimapBuilder.GetMinimap();
-            MapCountOverlay mapCountOverlay = mapBehaviour.countOverlay;
-
-            while (mapCountOverlay.transform.childCount > _counterAreaDB.Count)
-                UnityEngine.Object.DestroyImmediate(mapCountOverlay.transform.GetChild(0).gameObject);
-        }
+        while (mapCountOverlay.transform.childCount > _counterAreaDB.Count)
+            Object.DestroyImmediate(mapCountOverlay.transform.GetChild(0).gameObject);
     }
 }

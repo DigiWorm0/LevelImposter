@@ -1,14 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace LevelImposter.Core
+namespace LevelImposter.Core;
+
+[Serializable]
+public class LIAnimProperty
 {
-    [Serializable]
-    public class LIAnimProperty
-    {
-        public LIAnimKeyframe[] keyframes { get; set; }
-    }
+    public LIAnimKeyframe[] keyframes { get; set; }
 }

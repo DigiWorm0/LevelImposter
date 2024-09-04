@@ -1,15 +1,12 @@
-﻿using UnityEngine;
+﻿namespace LevelImposter.Trigger;
 
-namespace LevelImposter.Trigger
+public class MeetingTriggerHandle : ITriggerHandle
 {
-    public class MeetingTriggerHandle : ITriggerHandle
+    public void OnTrigger(TriggerSignal signal)
     {
-        public void OnTrigger(TriggerSignal signal)
-        {
-            if (signal.TriggerID != "callMeeting")
-                return;
+        if (signal.TriggerID != "callMeeting")
+            return;
 
-            PlayerControl.LocalPlayer.CmdReportDeadBody(null);
-        }
+        PlayerControl.LocalPlayer.CmdReportDeadBody(null);
     }
 }
