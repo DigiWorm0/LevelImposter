@@ -23,9 +23,7 @@ public class SabMixupBuilder : IElemBuilder
         }
 
         // ShipStatus
-        var shipStatus = LIShipStatus.GetInstanceOrNull()?.ShipStatus;
-        if (shipStatus == null)
-            throw new MissingShipException();
+        var shipStatus = LIShipStatus.GetInstance()?.ShipStatus;
 
         // ShipStatus Prefab
         var fungleShipStatus = AssetDB.GetObject("ss-fungle")?.GetComponent<FungleShipStatus>();

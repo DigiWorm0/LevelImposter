@@ -13,7 +13,7 @@ public static class PlatformPatchHandle
 {
     public static bool Prefix([HarmonyArgument(0)] byte callId, PlayerControl __instance)
     {
-        if (LIShipStatus.IsInstance())
+        if (!LIShipStatus.IsInstance())
             return true;
         if (!AmongUsClient.Instance.AmHost)
             return true;
@@ -40,7 +40,7 @@ public static class PlatformPatchRPC
 {
     public static bool Prefix(PlayerControl __instance)
     {
-        if (LIShipStatus.IsInstance())
+        if (!LIShipStatus.IsInstance())
             return true;
 
         // No platform
@@ -69,7 +69,7 @@ public static class PlatformResetPatch
 {
     public static void Postfix()
     {
-        if (LIShipStatus.IsInstance())
+        if (!LIShipStatus.IsInstance())
             return;
 
         LILogger.Info("Meeting Called!");

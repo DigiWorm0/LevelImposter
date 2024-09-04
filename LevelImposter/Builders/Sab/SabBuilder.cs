@@ -36,9 +36,7 @@ public class SabBuilder : IElemBuilder
             return;
 
         // ShipStatus
-        var shipStatus = LIShipStatus.GetInstanceOrNull()?.ShipStatus;
-        if (shipStatus == null)
-            throw new MissingShipException();
+        var shipStatus = LIShipStatus.GetInstance().ShipStatus;
 
         // Container
         if (_sabContainer == null)

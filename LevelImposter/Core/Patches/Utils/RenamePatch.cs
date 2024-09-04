@@ -14,7 +14,7 @@ public static class SystemRenamePatch
         if (!LIShipStatus.IsInstance() || !LIShipStatus.GetInstance().Renames.Contains(systemType))
             return true;
 
-        __result = LIShipStatus.GetInstance().Renames.Get(systemType);
+        __result = LIShipStatus.GetInstance().Renames.Get(systemType) ?? __result;
         return false;
     }
 }

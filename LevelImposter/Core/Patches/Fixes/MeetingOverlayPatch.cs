@@ -11,7 +11,7 @@ public static class MeetingOverlayPatch
 {
     public static void Prefix(MeetingCalledAnimation __instance)
     {
-        if (LIShipStatus.IsInstance())
+        if (!LIShipStatus.IsInstance())
             return;
 
         // Re-initialize player parts

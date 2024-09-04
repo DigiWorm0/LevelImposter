@@ -18,7 +18,7 @@ public static class LadderPatch
         [HarmonyArgument(1)] MessageReader reader,
         PlayerPhysics __instance)
     {
-        if (LIShipStatus.IsInstance())
+        if (!LIShipStatus.IsInstance())
             return true;
         if (callId != (byte)RpcCalls.ClimbLadder)
             return true;

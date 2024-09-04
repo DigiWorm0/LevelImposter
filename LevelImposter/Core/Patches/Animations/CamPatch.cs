@@ -14,7 +14,7 @@ public static class CamAnimationPatch
 
     public static bool Prefix([HarmonyArgument(0)] bool on, SurvCamera __instance)
     {
-        if (LIShipStatus.IsInstance())
+        if (!LIShipStatus.IsInstance())
             return true;
 
         // Animation

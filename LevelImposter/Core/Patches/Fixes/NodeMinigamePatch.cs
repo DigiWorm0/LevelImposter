@@ -11,7 +11,7 @@ public class NodeMinigamePatch
 {
     public static void Postfix(WeatherSwitchGame __instance)
     {
-        if (LIShipStatus.IsInstance())
+        if (!LIShipStatus.IsInstance())
             return;
 
         // Rename all of the nodes to generic names.

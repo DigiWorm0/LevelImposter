@@ -34,7 +34,7 @@ public static class SabStartPatch
 
     public static bool Prefix([HarmonyArgument(0)] SystemTypes systemType)
     {
-        if (LIShipStatus.IsInstance())
+        if (!LIShipStatus.IsInstance())
             return true;
 
         // Get TaskType and TriggerName

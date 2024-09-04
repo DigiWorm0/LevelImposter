@@ -15,7 +15,7 @@ public static class MinigamePatch
 
     public static void Postfix(Minigame __instance)
     {
-        if (LIShipStatus.IsInstance())
+        if (!LIShipStatus.IsInstance())
             return;
 
         // Get Component

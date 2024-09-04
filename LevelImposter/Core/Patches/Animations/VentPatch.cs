@@ -12,7 +12,7 @@ public static class EnterVentPatch
 {
     public static bool Prefix([HarmonyArgument(0)] PlayerControl pc, Vent __instance)
     {
-        if (LIShipStatus.IsInstance())
+        if (!LIShipStatus.IsInstance())
             return true;
 
         // Player
@@ -49,7 +49,7 @@ public static class ExitVentPatch
 {
     public static bool Prefix([HarmonyArgument(0)] PlayerControl pc, Vent __instance)
     {
-        if (LIShipStatus.IsInstance())
+        if (!LIShipStatus.IsInstance())
             return true;
 
         // Player

@@ -14,7 +14,7 @@ public static class BinocularsPatch
 {
     public static void Prefix(FungleSurveillanceMinigame __instance)
     {
-        if (LIShipStatus.IsInstance())
+        if (!LIShipStatus.IsInstance())
             return;
 
         // Create a temporary room to prevent System.InvalidOperationException
@@ -25,7 +25,7 @@ public static class BinocularsPatch
 
     public static void Postfix(FungleSurveillanceMinigame __instance)
     {
-        if (LIShipStatus.IsInstance())
+        if (!LIShipStatus.IsInstance())
             return;
 
         // Remove the temporary room
@@ -53,7 +53,7 @@ public static class BinocularsClosePatch
 {
     public static void Postfix(FungleSurveillanceMinigame __instance)
     {
-        if (LIShipStatus.IsInstance())
+        if (!LIShipStatus.IsInstance())
             return;
 
         // Set Last Camera Position

@@ -22,7 +22,7 @@ public class ConsolePatch
 
     public static bool Prefix(MonoBehaviour __instance)
     {
-        if (LIShipStatus.IsInstance())
+        if (!LIShipStatus.IsInstance())
             return true;
 
         // Get IUsable

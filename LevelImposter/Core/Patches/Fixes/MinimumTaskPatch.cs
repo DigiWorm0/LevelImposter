@@ -11,7 +11,7 @@ public class MinimumTaskPatch
 {
     public static void Prefix(ShipStatus __instance)
     {
-        if (LIShipStatus.IsInstance())
+        if (!LIShipStatus.IsInstance())
             return;
 
         // Get Counts

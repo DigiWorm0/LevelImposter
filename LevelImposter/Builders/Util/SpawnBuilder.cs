@@ -19,9 +19,7 @@ public class SpawnBuilder : IElemBuilder
             return;
 
         // ShipStatus
-        var shipStatus = LIShipStatus.GetInstanceOrNull()?.ShipStatus;
-        if (shipStatus == null)
-            throw new MissingShipException();
+        var shipStatus = LIShipStatus.GetInstance().ShipStatus;
 
         // Set Spawn Radius
         shipStatus.SpawnRadius = elem.properties.range ?? DEFAULT_SPAWN_RADIUS;
@@ -68,9 +66,7 @@ public class SpawnBuilder : IElemBuilder
     public void PostBuild()
     {
         // ShipStatus
-        var shipStatus = LIShipStatus.GetInstanceOrNull()?.ShipStatus;
-        if (shipStatus == null)
-            throw new MissingShipException();
+        var shipStatus = LIShipStatus.GetInstance().ShipStatus;
 
         if (!_hasMeetingSpawn)
         {

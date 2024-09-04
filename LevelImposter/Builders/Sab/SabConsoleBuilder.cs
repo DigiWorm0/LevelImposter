@@ -23,11 +23,6 @@ public class SabConsoleBuilder : IElemBuilder
         if (!elem.type.StartsWith("sab-") || elem.type.StartsWith("sab-btn") || elem.type.StartsWith("sab-door"))
             return;
 
-        // ShipStatus
-        var shipStatus = LIShipStatus.GetInstanceOrNull()?.ShipStatus;
-        if (shipStatus == null)
-            throw new MissingShipException();
-
         // Prefab
         var prefab = AssetDB.GetObject(elem.type);
         if (prefab == null)

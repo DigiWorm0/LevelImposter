@@ -18,9 +18,7 @@ public class MinimapSpriteBuilder : IElemBuilder
             return;
 
         // ShipStatus
-        var shipStatus = LIShipStatus.GetInstanceOrNull()?.ShipStatus;
-        if (shipStatus == null)
-            throw new MissingShipException();
+        var shipStatus = LIShipStatus.GetInstance().ShipStatus;
 
         // Minimap
         var mapBehaviour = MinimapBuilder.GetMinimap();

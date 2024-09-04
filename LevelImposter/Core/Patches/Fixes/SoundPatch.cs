@@ -12,7 +12,7 @@ public static class SoundStartPatch
 {
     public static bool Prefix(AmbientSoundPlayer __instance)
     {
-        if (LIShipStatus.IsInstance())
+        if (!LIShipStatus.IsInstance())
             return true;
 
         var soundName = __instance.name + __instance.GetInstanceID();

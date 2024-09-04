@@ -21,9 +21,7 @@ internal class SabotageOptionsBuilder : IElemBuilder
             return;
 
         // ShipStatus
-        var shipStatus = LIShipStatus.GetInstanceOrNull()?.ShipStatus;
-        if (shipStatus == null)
-            throw new MissingShipException();
+        var shipStatus = LIShipStatus.GetInstance().ShipStatus;
 
         // Singleton
         if (TriggerObject != null)

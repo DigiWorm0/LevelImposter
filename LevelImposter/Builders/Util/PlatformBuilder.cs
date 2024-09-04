@@ -29,9 +29,7 @@ internal class PlatformBuilder : IElemBuilder
         }
 
         // ShipStatus
-        var shipStatus = LIShipStatus.GetInstanceOrNull()?.ShipStatus;
-        if (shipStatus == null)
-            throw new MissingShipException();
+        var shipStatus = LIShipStatus.GetInstance().ShipStatus;
 
         // Prefab
         var prefab = AssetDB.GetObject(elem.type);

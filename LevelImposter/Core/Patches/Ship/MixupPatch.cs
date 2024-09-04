@@ -13,7 +13,7 @@ public static class MixupPatch
 {
     public static bool Prefix(PlayerControl __instance, ref bool __result)
     {
-        if (LIShipStatus.IsInstance())
+        if (!LIShipStatus.IsInstance())
             return true;
 
         __result = (SabMixupBuilder.SabotageSystem?.IsActive ?? false) ||

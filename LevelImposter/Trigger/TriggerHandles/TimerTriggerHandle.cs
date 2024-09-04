@@ -15,12 +15,10 @@ public class TimerTriggerHandle : ITriggerHandle
             signal.TriggerID != "stopTimer")
             return;
 
-        // Get the object ID
-        var objectID = signal.TargetObject.GetInstanceID();
-
         // Start timer
         if (signal.TriggerID == "startTimer")
             _timerManager.Start(signal.TargetObject, CoTimerTrigger(signal));
+
         // Stop timer
         else if (signal.TriggerID == "stopTimer") _timerManager.Stop(signal.TargetObject);
     }

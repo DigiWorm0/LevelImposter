@@ -45,9 +45,7 @@ public class TaskBuilder : IElemBuilder
         if (isMedscan)
         {
             // ShipStatus
-            var shipStatus = LIShipStatus.GetInstanceOrNull()?.ShipStatus;
-            if (shipStatus == null)
-                throw new MissingShipException();
+            var shipStatus = LIShipStatus.GetInstance().ShipStatus;
 
             // MedScanner
             if (shipStatus.MedScanner != null)

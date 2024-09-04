@@ -13,7 +13,7 @@ public static class RoomUIPatch
 {
     public static void Prefix()
     {
-        if (LIShipStatus.IsInstance())
+        if (!LIShipStatus.IsInstance())
             return;
 
         // Remove room colliders
@@ -24,7 +24,7 @@ public static class RoomUIPatch
 
     public static void Postfix()
     {
-        if (LIShipStatus.IsInstance())
+        if (!LIShipStatus.IsInstance())
             return;
 
         // Add room colliders

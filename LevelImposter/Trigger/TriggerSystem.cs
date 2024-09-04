@@ -141,11 +141,14 @@ public class TriggerSystem
     /// <param name="signal">Signal data object</param>
     public void FireTrigger(TriggerSignal signal)
     {
+        // Object Name (For Logging)
+        var objectName = signal.TargetObject == null ? "[null]" : signal.TargetObject.name;
+
         // Infinite Loop
         if (signal.StackSize > MAX_STACK_SIZE)
         {
             LILogger.Warn(
-                $"{signal.TargetObject.name} >>> {signal.TriggerID} detected an infinite trigger loop and aborted");
+                $"{objectName} >>> {signal.TriggerID} detected an infinite trigger loop and aborted");
             LILogger.Info("If you need an infinite loop, enable the loop option on a trigger timer");
             return;
         }
@@ -155,8 +158,12 @@ public class TriggerSystem
         {
             var whitespace = string.Concat(Enumerable.Repeat("| ", signal.StackSize - 1)) + "+ ";
             LILogger.Info(
-                $"{whitespace}{signal.TargetObject.name} >>> {signal.TriggerID} ({signal.SourcePlayer?.name})");
+                $"{whitespace}{objectName} >>> {signal.TriggerID} ({signal.SourcePlayer?.name})");
         }
+
+        // Check Validity
+        if (signal.TargetObject == null)
+            return;
 
         // Handle trigger event
         try
@@ -166,7 +173,7 @@ public class TriggerSystem
         }
         catch (Exception e)
         {
-            LILogger.Error($"Error while handling trigger {signal.TargetObject.name} >>> {signal.TriggerID}");
+            LILogger.Error($"Error while handling trigger {objectName} >>> {signal.TriggerID}");
             LILogger.Error(e);
         }
     }

@@ -26,7 +26,6 @@ public class GameObjectCoroutineManager
     public void Start(GameObject gameObject, IEnumerator coroutine)
     {
         Stop(gameObject);
-
         var objectID = GetObjectID(gameObject);
         var newCoroutine = Coroutines.Start(CoRunCoroutine(objectID, coroutine));
         _activeCoroutines[objectID] = newCoroutine;

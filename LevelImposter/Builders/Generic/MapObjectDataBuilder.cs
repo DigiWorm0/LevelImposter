@@ -8,9 +8,7 @@ public class MapObjectDataBuilder : IElemBuilder
     public void Build(LIElement element, GameObject obj)
     {
         // Get Ship Status
-        var shipStatus = LIShipStatus.GetInstanceOrNull();
-        if (shipStatus == null)
-            throw new MissingShipException();
+        var shipStatus = LIShipStatus.GetInstance();
 
         // All map objects will have a MapObjectData component
         var mapObjectData = obj.AddComponent<MapObjectData>();

@@ -11,7 +11,7 @@ public static class PolusCamPatch
 {
     public static void Postfix(PlanetSurveillanceMinigame __instance)
     {
-        if (LIShipStatus.IsInstance())
+        if (!LIShipStatus.IsInstance())
             return;
 
         // Get the Camera

@@ -37,9 +37,7 @@ public class CustomTextBuilder : IElemBuilder
             return;
 
         // ShipStatus
-        var shipStatus = LIShipStatus.GetInstanceOrNull();
-        if (shipStatus == null)
-            throw new MissingShipException();
+        var shipStatus = LIShipStatus.GetInstance();
 
         // Replace Custom Text
         foreach (var (textID, text) in customText)

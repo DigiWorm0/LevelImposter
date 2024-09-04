@@ -15,7 +15,7 @@ public static class TaskInitializePatch
 {
     public static void Postfix(NormalPlayerTask __instance)
     {
-        if (LIShipStatus.IsInstance())
+        if (!LIShipStatus.IsInstance())
             return;
 
         var taskType = __instance.TaskType;
@@ -63,7 +63,7 @@ public static class WaterWheelInitializePatch
 {
     public static void Postfix(NormalPlayerTask __instance)
     {
-        if (LIShipStatus.IsInstance())
+        if (!LIShipStatus.IsInstance())
             return;
 
         __instance.Data = new byte[TaskConsoleBuilder.WaterWheelCount];
@@ -79,7 +79,7 @@ public static class DivertBeginPatch
 {
     public static void Prefix([HarmonyArgument(0)] PlayerTask task, DivertPowerMinigame __instance)
     {
-        if (LIShipStatus.IsInstance())
+        if (!LIShipStatus.IsInstance())
             return;
 
         __instance.SliderOrder = ShipTaskBuilder.DivertSystems;
@@ -94,7 +94,7 @@ public static class MinigameBeginPatch
 {
     public static bool Prefix([HarmonyArgument(0)] PlayerTask task, MultistageMinigame __instance)
     {
-        if (LIShipStatus.IsInstance())
+        if (!LIShipStatus.IsInstance())
             return true;
 
         var normalPlayerTask = task.Cast<NormalPlayerTask>();
@@ -136,7 +136,7 @@ public static class RecordsPatch
 {
     public static bool Prefix([HarmonyArgument(0)] SpriteRenderer folder, RecordsMinigame __instance)
     {
-        if (LIShipStatus.IsInstance())
+        if (!LIShipStatus.IsInstance())
             return true;
 
         if (__instance.amClosing != Minigame.CloseState.None)
@@ -166,7 +166,7 @@ public static class PartsPatch
 {
     public static bool Prefix(NormalPlayerTask __instance)
     {
-        if (LIShipStatus.IsInstance())
+        if (!LIShipStatus.IsInstance())
             return true;
         if (__instance.TaskType != TaskTypes.ReplaceParts)
             return true;
@@ -201,7 +201,7 @@ public static class FishPatch
         NormalPlayerTask __instance,
         ref bool __result)
     {
-        if (LIShipStatus.IsInstance())
+        if (!LIShipStatus.IsInstance())
             return true;
         if (__instance.TaskType != TaskTypes.CatchFish)
             return true;

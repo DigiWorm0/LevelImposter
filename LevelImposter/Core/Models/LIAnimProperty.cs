@@ -5,5 +5,5 @@ namespace LevelImposter.Core;
 [Serializable]
 public class LIAnimProperty
 {
-    public LIAnimKeyframe[] keyframes { get; set; }
+    public LIAnimKeyframe[]? keyframes { get; set; }
 }

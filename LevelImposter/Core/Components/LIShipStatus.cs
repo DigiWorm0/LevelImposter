@@ -147,6 +147,19 @@ public class LIShipStatus(IntPtr intPtr) : MonoBehaviour(intPtr)
     }
 
     /// <summary>
+    ///     Gets ShipStatus or throws MissingShip if not found
+    /// </summary>
+    /// <returns>The local ShipStatus</returns>
+    /// <exception cref="MissingShipException">ShipStatus or LIShipStatus is null</exception>
+    public static ShipStatus GetShip()
+    {
+        var instance = GetInstance().ShipStatus;
+        if (instance == null)
+            throw new MissingShipException();
+        return instance;
+    }
+
+    /// <summary>
     ///     Checks if the player is currently in a LevelImposter map.
     /// </summary>
     /// <returns>True if the player is in a LevelImposter map, false otherwise</returns>

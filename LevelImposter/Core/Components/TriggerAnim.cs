@@ -61,7 +61,8 @@ public class TriggerAnim(IntPtr intPtr) : MonoBehaviour(intPtr)
         }
     }
 
-    public void Play(TriggerSignal? sourceSignal)
+    [HideFromIl2Cpp]
+    public void Play(TriggerSignal? sourceSignal = null)
     {
         // Set Source Signal
         _sourceSignal = sourceSignal;
@@ -205,16 +206,10 @@ public class TriggerAnim(IntPtr intPtr) : MonoBehaviour(intPtr)
     [HideFromIl2Cpp]
     private IEnumerator CoAnimate()
     {
-        // Get the start timestamp
-        var startTimestamp = Time.time;
-
-        // Get the start T
-        var startT = _t;
-
         // Check animation reset
-        if (startT >= _duration || startT <= 0)
+        if (_t >= _duration || _t <= 0)
         {
-            startT = 0;
+            _t = 0;
             TriggerSignal signal = new(gameObject, "onStart", _sourceSignal);
             TriggerSystem.GetInstance().FireTrigger(signal);
         }
@@ -223,8 +218,7 @@ public class TriggerAnim(IntPtr intPtr) : MonoBehaviour(intPtr)
         while (true)
         {
             // Update T
-            var elapsed = Time.time - startTimestamp;
-            _t = startT + elapsed;
+            _t += Time.deltaTime;
 
             // Check for End
             if (_t >= _duration)

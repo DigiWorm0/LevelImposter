@@ -16,7 +16,7 @@ public static class VentPatch
 
     public static void Postfix()
     {
-        if (LIShipStatus.IsInstance())
+        if (!LIShipStatus.IsInstance())
             return;
         if (!ModCompatibility.IsTOUEnabled && !ModCompatibility.IsTOREnabled && !ModCompatibility.IsReworkedEnabled)
             return;

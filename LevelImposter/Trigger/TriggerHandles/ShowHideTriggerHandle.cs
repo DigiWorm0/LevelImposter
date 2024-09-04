@@ -70,8 +70,6 @@ public class ShowHideTriggerHandle : ITriggerHandle
         var fromAlpha = spriteColor.a;
         var toAlpha = fadeIn ? visibleAlpha : 0.0f;
 
-        LILogger.Info($"t={triggerFadeTime} {fromAlpha}-{toAlpha} {objectData?.Element.name ?? "null"}");
-
         // Run Fade
         float t = 0;
         while (t < triggerFadeTime)
@@ -80,7 +78,6 @@ public class ShowHideTriggerHandle : ITriggerHandle
             t += Time.deltaTime * 1000.0f; // s >> ms
 
             var newAlpha = Mathf.Lerp(fromAlpha, toAlpha, t / triggerFadeTime);
-            LILogger.Info($"{fromAlpha}-{newAlpha}-{toAlpha} ({t / triggerFadeTime})");
             spriteRenderer.color = new Color(
                 spriteColor.r,
                 spriteColor.g,

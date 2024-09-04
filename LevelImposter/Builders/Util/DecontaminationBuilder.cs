@@ -20,11 +20,6 @@ internal class DecontaminationBuilder : IElemBuilder
         if (elem.type != "util-decontamination")
             return;
 
-        // ShipStatus
-        var shipStatus = LIShipStatus.GetInstanceOrNull()?.ShipStatus;
-        if (shipStatus == null)
-            throw new MissingShipException();
-
         // Prefab
         var prefab = AssetDB.GetObject(elem.type);
         if (prefab == null)

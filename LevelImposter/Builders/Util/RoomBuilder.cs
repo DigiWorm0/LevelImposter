@@ -21,7 +21,7 @@ public class RoomBuilder : IElemBuilder
             return;
 
         // ShipStatus
-        if (LIShipStatus.IsInstance())
+        if (!LIShipStatus.IsInstance())
             throw new MissingShipException();
 
         // Pick a new System
@@ -57,11 +57,11 @@ public class RoomBuilder : IElemBuilder
 
     public void PostBuild()
     {
-        if (LIShipStatus.IsInstance())
+        if (!LIShipStatus.IsInstance())
             throw new MissingShipException();
 
         // Add Default Room Name
-        LIShipStatus.GetInstanceOrNull().Renames.Add((SystemTypes)0, "Default Room");
+        LIShipStatus.GetInstanceOrNull()?.Renames.Add((SystemTypes)0, "Default Room");
     }
 
     /// <summary>

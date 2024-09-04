@@ -10,7 +10,7 @@ public static class LoadingCameraPatch
 {
     public static bool Prefix(FollowerCamera __instance)
     {
-        if (SpriteLoader.Instance == null || LIShipStatus.GetInstanceOrNull() == null)
+        if (SpriteLoader.Instance == null || !LIShipStatus.IsInstance())
             return true;
 
         if (SpriteLoader.Instance.RenderCount > 0)

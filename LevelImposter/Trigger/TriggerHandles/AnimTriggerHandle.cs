@@ -19,7 +19,7 @@ public class AnimTriggerHandle : ITriggerHandle
 
         // Handle
         if (signal.TriggerID == "playAnim")
-            animator.Play();
+            animator.Play(signal);
         else if (signal.TriggerID == "stopAnim")
             animator.Stop();
         else if (signal.TriggerID == "pauseAnim")

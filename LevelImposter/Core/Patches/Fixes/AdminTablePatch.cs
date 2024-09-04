@@ -14,7 +14,7 @@ public class AdminTablePatch
         [HarmonyArgument(1)] ref bool canUse,
         [HarmonyArgument(2)] ref bool couldUse)
     {
-        if (LIShipStatus.IsInstance())
+        if (!LIShipStatus.IsInstance())
             return;
 
         canUse &= __instance.isActiveAndEnabled;

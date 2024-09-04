@@ -18,7 +18,7 @@ public static class SporePatchHandle
         [HarmonyArgument(1)] MessageReader reader,
         PlayerControl __instance)
     {
-        if (LIShipStatus.IsInstance())
+        if (!LIShipStatus.IsInstance())
             return true;
         if (callId != (byte)RpcCalls.TriggerSpores && callId != (byte)RpcCalls.CheckSpore)
             return true;

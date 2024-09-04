@@ -12,10 +12,10 @@ internal class VentBuilder : IElemBuilder
 {
     private const string OPEN_SOUND_NAME = "ventOpen";
     private const string MOVE_SOUND_NAME = "ventMove";
-    private bool _hasVentSound;
     private readonly Dictionary<Guid, Vent> _ventComponentDb = new();
 
     private readonly Dictionary<int, LIElement> _ventElementDb = new();
+    private bool _hasVentSound;
     private int _ventID;
 
     public void Build(LIElement elem, GameObject obj)
@@ -24,9 +24,7 @@ internal class VentBuilder : IElemBuilder
             return;
 
         // ShipStatus
-        var shipStatus = LIShipStatus.GetInstanceOrNull()?.ShipStatus;
-        if (shipStatus == null)
-            throw new MissingShipException();
+        var shipStatus = LIShipStatus.GetInstance().ShipStatus;
 
         // Prefab
         var prefab = AssetDB.GetObject(elem.type);

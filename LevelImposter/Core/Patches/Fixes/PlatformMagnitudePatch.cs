@@ -10,7 +10,7 @@ public static class PlatformMagnitudePatch
 {
     public static bool Prefix([HarmonyArgument(0)] PlayerControl player, MovingPlatformBehaviour __instance)
     {
-        if (LIShipStatus.IsInstance())
+        if (!LIShipStatus.IsInstance())
             return true;
         if (player.Data.IsDead || player.Data.Disconnected || __instance.Target)
             return true;

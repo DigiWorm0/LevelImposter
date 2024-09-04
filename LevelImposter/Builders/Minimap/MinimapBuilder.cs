@@ -15,9 +15,7 @@ public class MinimapBuilder : IElemBuilder
             return;
 
         // ShipStatus
-        var shipStatus = LIShipStatus.GetInstanceOrNull()?.ShipStatus;
-        if (shipStatus == null)
-            throw new MissingShipException();
+        var shipStatus = LIShipStatus.GetInstance().ShipStatus;
 
         // Check Singleton
         if (_isBuilt)
@@ -97,7 +95,7 @@ public class MinimapBuilder : IElemBuilder
     public static MapBehaviour GetMinimap()
     {
         // ShipStatus
-        var shipStatus = LIShipStatus.GetInstanceOrNull()?.ShipStatus;
+        var shipStatus = LIShipStatus.GetInstance().ShipStatus;
         if (shipStatus == null)
             throw new MissingShipException();
 

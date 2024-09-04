@@ -17,7 +17,7 @@ public class DeconControlPatch
         ref float __result)
     {
         // Custom Maps Only
-        if (LIShipStatus.IsInstance())
+        if (!LIShipStatus.IsInstance())
             return;
         // Ignore if the system is not idle
         if (__instance.System.CurState != DeconSystem.States.Idle)

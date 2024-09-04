@@ -526,7 +526,7 @@ public class GIFFile(string name) : IDisposable
     ///     Renders a frame of the GIF. Requires the GIF to be loaded.
     ///     Due to how GIFs are compressed, this will result in all previous frames being rendered as well.
     /// </summary>
-    /// <param name="targetFrame">The frame to render</param>
+    /// <param name="frameIndex">Index of the frame to render to a Sprite</param>
     public void RenderFrame(int frameIndex)
     {
         if (!IsLoaded)
@@ -572,7 +572,7 @@ public class GIFFile(string name) : IDisposable
             };
 
             // Get frame data
-            var colorTable = frame.LocalColorTable ?? _globalColorTable;
+            var colorTable = frame.HasLocalColorTable ? frame.LocalColorTable : _globalColorTable;
             var x = frame.LeftPosition;
             var y = frame.TopPosition;
             var w = frame.Width;

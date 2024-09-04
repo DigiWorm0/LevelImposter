@@ -13,7 +13,7 @@ public static class DoorIDPatch
 {
     public static bool Prefix(DoorsSystemType __instance, [HarmonyArgument(1)] MessageReader msgReader)
     {
-        if (LIShipStatus.IsInstance())
+        if (!LIShipStatus.IsInstance())
             return true;
 
         var b = msgReader.ReadByte();
