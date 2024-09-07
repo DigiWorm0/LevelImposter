@@ -2,17 +2,28 @@
 
 internal enum Layer
 {
+    /// <summary>
+    ///     Only visible in light
+    /// </summary>
     Default,
     TransparentFX,
     IgnoreRaycast,
     Water = 4,
+
+    /// <summary>
+    ///     Full-brightness and always visible
+    /// </summary>
     UI,
     Players = 8,
     Ship,
+
+    /// <summary>
+    ///     Only visible in shadow, blocks light
+    /// </summary>
     Shadow,
 
     /// <summary>
-    ///     WARNING: Automatically hidden by <c>util-display</c> objects
+    ///     Automatically hidden by <c>util-display</c> objects
     /// </summary>
     Objects,
 

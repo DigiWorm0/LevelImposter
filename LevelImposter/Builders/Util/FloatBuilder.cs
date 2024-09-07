@@ -10,8 +10,8 @@ internal class FloatBuilder : IElemBuilder
         if (elem.type != "util-blankfloat")
             return;
 
-        var objFloat = obj.AddComponent<LIFloat>();
-        objFloat.Init(elem);
+        // Build Floating Parent
+        obj.AddComponent<LIFloat>();
     }
 
     public void PostBuild()

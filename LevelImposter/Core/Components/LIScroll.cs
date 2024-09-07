@@ -1,5 +1,4 @@
 ﻿using System;
-using Il2CppInterop.Runtime.Attributes;
 using UnityEngine;
 
 namespace LevelImposter.Core;
@@ -9,47 +8,51 @@ namespace LevelImposter.Core;
 /// </summary>
 public class LIScroll(IntPtr intPtr) : MonoBehaviour(intPtr)
 {
+    private static readonly int MainTex = Shader.PropertyToID("_MainTex");
+
     private Material? _mat;
     private float _xSpeed = 1.0f;
     private float _ySpeed;
 
-    private float _t => Time.time;
+    public void Awake()
+    {
+        // Get Object Data
+        var objData = gameObject.GetLIData();
+        if (objData == null)
+            throw new Exception("Missing MapObjectData");
+
+        // Get Scrolling Speeds
+        _xSpeed = objData.Element.properties.scrollingXSpeed ?? _xSpeed;
+        _ySpeed = objData.Element.properties.scrollingYSpeed ?? _ySpeed;
+
+        // Set Layer
+        //gameObject.layer = (int)Layer.Ship;
+
+
+        // Replace SpriteRenderer with MeshRenderer because
+        // Unity doesn't support scrolling textures on sprites
+        if (SpriteLoader.Instance == null)
+            throw new Exception("Sprite Loader is not instantiated");
+        SpriteLoader.Instance.OnLoad += loadedElem =>
+        {
+            if (loadedElem.id != objData.ID)
+                return;
+            ReplaceRenderer();
+        };
+    }
 
     public void Update()
     {
-        if (_mat == null)
-            return;
-
-        _mat.SetTextureOffset("_MainTex", new Vector2(
-            _t * _xSpeed,
-            _t * -_ySpeed
+        var t = Time.time;
+        _mat?.SetTextureOffset(MainTex, new Vector2(
+            t * _xSpeed,
+            t * -_ySpeed
         ));
     }
 
     public void OnDestroy()
     {
         _mat = null;
-    }
-
-    [HideFromIl2Cpp]
-    public void Init(LIElement elem)
-    {
-        _xSpeed = elem.properties.scrollingXSpeed ?? _xSpeed;
-        _ySpeed = elem.properties.scrollingYSpeed ?? _ySpeed;
-
-        gameObject.layer = (int)Layer.Default;
-
-        if (SpriteLoader.Instance == null)
-            throw new Exception("Sprite Loader is not instantiated");
-
-        // Replace SpriteRenderer with MeshRenderer because
-        // Unity doesn't support scrolling textures on sprites
-        SpriteLoader.Instance.OnLoad += loadedElem =>
-        {
-            if (loadedElem.id != elem.id)
-                return;
-            ReplaceRenderer();
-        };
     }
 
     /// <summary>
@@ -59,14 +62,13 @@ public class LIScroll(IntPtr intPtr) : MonoBehaviour(intPtr)
     private void ReplaceRenderer()
     {
         // Delete Sprite Renderer
-        var renderer = GetComponent<SpriteRenderer>();
-        var tex = renderer.sprite.texture;
-        var spriteRect = renderer.sprite.rect;
-        DestroyImmediate(renderer);
+        var spriteRenderer = GetComponent<SpriteRenderer>();
+        var tex = spriteRenderer.sprite.texture;
+
+        _mat = spriteRenderer.material;
 
         // Texture Wrapping
         tex.wrapMode = TextureWrapMode.Repeat;
-        tex.Apply();
 
         // Create Material
         _mat = new Material(Shader.Find("Unlit/Transparent"))
@@ -75,18 +77,7 @@ public class LIScroll(IntPtr intPtr) : MonoBehaviour(intPtr)
             mainTexture = tex,
             hideFlags = HideFlags.HideAndDontSave
         };
+        spriteRenderer.material = _mat;
         GCHandler.Register(_mat);
-
-        // Mesh Filter
-        var meshFilter = gameObject.AddComponent<MeshFilter>();
-        meshFilter.mesh = MapUtils.Build2DMesh(
-            spriteRect.width / 100.0f,
-            spriteRect.height / 100.0f
-        );
-        GCHandler.Register(meshFilter.mesh);
-
-        // Mesh Renderer
-        var meshRenderer = gameObject.AddComponent<MeshRenderer>();
-        meshRenderer.material = _mat;
     }
 }

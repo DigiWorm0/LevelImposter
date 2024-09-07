@@ -72,7 +72,7 @@ public class SpriteLoader(IntPtr intPtr) : MonoBehaviour(intPtr)
     }
 
     /// <summary>
-    ///     Gets whether or not a sprite is in the sprite cache
+    ///     Gets whether a sprite is in the sprite cache
     /// </summary>
     /// <param name="spriteID">GUID of the sprite or associated object</param>
     /// <returns>True iff the sprite is in the sprite cache</returns>

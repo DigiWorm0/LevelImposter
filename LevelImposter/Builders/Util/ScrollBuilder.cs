@@ -10,8 +10,7 @@ internal class ScrollBuilder : IElemBuilder
         if (elem.type != "util-blankscroll")
             return;
 
-        var objScroll = obj.AddComponent<LIScroll>();
-        objScroll.Init(elem);
+        obj.AddComponent<LIScroll>();
     }
 
     public void PostBuild()
