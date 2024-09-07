@@ -74,8 +74,7 @@ public class GIFAnimator(IntPtr intPtr) : MonoBehaviour(intPtr)
         _defaultLoopGIF = element.properties.loopGIF ?? true;
 
         var shouldPreload = LIShipStatus.GetInstanceOrNull()?.CurrentMap?.properties?.preloadAllGIFs ?? false;
-        var isLowMemory = GCHandler.IsLowMemory();
-        if (shouldPreload || isLowMemory)
+        if (shouldPreload)
             _gifData?.RenderAllFrames();
 
         if (_gifData?.Frames.Count == 1)

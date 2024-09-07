@@ -143,6 +143,7 @@ public class TriggerSystem
     {
         // Object Name (For Logging)
         var objectName = signal.TargetObject == null ? "[null]" : signal.TargetObject.name;
+        var playerName = signal.SourcePlayer == null ? "null" : signal.SourcePlayer.name;
 
         // Infinite Loop
         if (signal.StackSize > MAX_STACK_SIZE)
@@ -158,7 +159,7 @@ public class TriggerSystem
         {
             var whitespace = string.Concat(Enumerable.Repeat("| ", signal.StackSize - 1)) + "+ ";
             LILogger.Info(
-                $"{whitespace}{objectName} >>> {signal.TriggerID} ({signal.SourcePlayer?.name})");
+                $"{whitespace}{objectName} >>> {signal.TriggerID} ({playerName})");
         }
 
         // Check Validity

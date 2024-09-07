@@ -52,8 +52,8 @@ public class ShowHideTriggerHandle : ITriggerHandle
         fadeObject.SetActive(true);
 
         // Get the sprite renderer
-        var spriteRenderer = fadeObject.GetComponent<SpriteRenderer>();
-        if (spriteRenderer == null)
+        var spriteRenderers = fadeObject.GetComponentsInChildren<SpriteRenderer>();
+        if (spriteRenderers.Length == 0)
         {
             fadeObject.SetActive(fadeIn);
             yield break;
@@ -64,7 +64,7 @@ public class ShowHideTriggerHandle : ITriggerHandle
         var triggerFadeTime = objectData?.Properties.triggerFadeTime ?? 0;
 
         // Get colors
-        var spriteColor = spriteRenderer.color;
+        var spriteColor = spriteRenderers[0].color;
         var visibleAlpha = objectData?.Properties.color?.a ?? 1.0f; // Use original sprite color, if applicable
 
         var fromAlpha = spriteColor.a;
@@ -77,22 +77,31 @@ public class ShowHideTriggerHandle : ITriggerHandle
             yield return null;
             t += Time.deltaTime * 1000.0f; // s >> ms
 
+            // Get New Color
             var newAlpha = Mathf.Lerp(fromAlpha, toAlpha, t / triggerFadeTime);
-            spriteRenderer.color = new Color(
+            var currentColor = new Color(
                 spriteColor.r,
                 spriteColor.g,
                 spriteColor.b,
                 newAlpha
             );
+
+            // Set All Sprite Renderers
+            foreach (var spriteRenderer in spriteRenderers)
+                spriteRenderer.color = currentColor;
         }
 
-        // Set GameObject Active
-        spriteRenderer.color = new Color(
+        // Set GameObject Color
+        var targetColor = new Color(
             spriteColor.r,
             spriteColor.g,
             spriteColor.b,
             toAlpha
         );
+        foreach (var spriteRenderer in spriteRenderers)
+            spriteRenderer.color = targetColor;
+
+        // Set GameObject Active
         fadeObject.SetActive(fadeIn);
     }
 

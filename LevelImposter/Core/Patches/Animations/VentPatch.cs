@@ -3,9 +3,9 @@ using PowerTools;
 
 namespace LevelImposter.Core;
 
-//// <summary>
-/// Toggles a GIF animation alongside the
-/// regular animation components on vents.
+/// <summary>
+///     Toggles a GIF animation alongside the
+///     regular animation components on vents.
 /// </summary>
 [HarmonyPatch(typeof(Vent), nameof(Vent.EnterVent))]
 public static class EnterVentPatch
@@ -22,13 +22,19 @@ public static class EnterVentPatch
             ConsoleJoystick.SetMode_Vent();
         }
 
-        // Animation
+        // Check for components
         var spriteAnim = __instance.GetComponent<SpriteAnim>();
         var gifAnim = __instance.GetComponent<GIFAnimator>();
+
+        // Sprite animation
         if (spriteAnim != null && __instance.EnterVentAnim != null)
             spriteAnim.Play(__instance.EnterVentAnim);
+
+        // GIF animation
         else if (gifAnim != null)
             gifAnim.Play(false, false);
+
+        // Still image
         else
             return false;
 
@@ -55,13 +61,19 @@ public static class ExitVentPatch
         // Player
         if (pc.AmOwner) Vent.currentVent = null;
 
-        // Animation
+        // Check for components
         var spriteAnim = __instance.GetComponent<SpriteAnim>();
         var gifAnim = __instance.GetComponent<GIFAnimator>();
+
+        // Sprite animation
         if (spriteAnim != null && __instance.ExitVentAnim != null)
             spriteAnim.Play(__instance.ExitVentAnim);
+
+        // GIF animation
         else if (gifAnim != null)
-            gifAnim.Play(false, false);
+            gifAnim.Play(false, true);
+
+        // Still image
         else
             return false;
 
@@ -69,8 +81,8 @@ public static class ExitVentPatch
         if (pc.AmOwner && Constants.ShouldPlaySfx())
         {
             SoundManager.Instance.StopSound(ShipStatus.Instance.VentEnterSound);
-            SoundManager.Instance.PlaySound(ShipStatus.Instance.VentEnterSound, false).pitch =
-                FloatRange.Next(0.8f, 1.2f);
+            var audioSource = SoundManager.Instance.PlaySound(ShipStatus.Instance.VentEnterSound, false);
+            audioSource.pitch = FloatRange.Next(0.8f, 1.2f); // Randomize pitch
         }
 
         return false;
