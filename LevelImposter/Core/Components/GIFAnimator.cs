@@ -137,8 +137,17 @@ public class GIFAnimator(IntPtr intPtr) : MonoBehaviour(intPtr)
     {
         if (_gifData == null || _spriteRenderer == null)
             yield break;
+        // Flag Start
         IsAnimating = true;
         _spriteRenderer.enabled = true;
+        
+        // Reset frame
+        if (reverse && _frame == 0)
+            _frame = _gifData.Frames.Count - 1;
+        else if (!reverse && _frame == _gifData.Frames.Count - 1)
+            _frame = 0;
+        
+        // Loop
         while (IsAnimating)
         {
             // Wait for main thread
