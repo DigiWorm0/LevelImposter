@@ -14,7 +14,7 @@ public static class DownloadManager
     private static string? _downloadError;
     private static int _downloadPercent;
 
-    public static bool CanStart => _playersDownloading.Count <= 0 && !string.IsNullOrEmpty(_downloadError);
+    public static bool CanStart => _playersDownloading.Count <= 0 && string.IsNullOrEmpty(_downloadError);
 
     /// <summary>
     ///     RPC to sync download state across clients
