@@ -9,7 +9,7 @@ internal class BinocularsBuilder : IElemBuilder
     public static Vector2 LastBinocularsPos = Vector2.zero;
     public static Vector3 CameraOffset = Vector2.zero;
 
-    public void Build(LIElement elem, GameObject obj)
+    public void OnBuild(LIElement elem, GameObject obj)
     {
         if (!(elem.type == "util-cams4"))
             return;
@@ -22,9 +22,5 @@ internal class BinocularsBuilder : IElemBuilder
             elem.properties.camYOffset ?? 0,
             0
         );
-    }
-
-    public void PostBuild()
-    {
     }
 }

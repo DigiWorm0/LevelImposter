@@ -28,7 +28,7 @@ public class SabBuilder : IElemBuilder
         _sabDB.Clear();
     }
 
-    public void Build(LIElement elem, GameObject obj)
+    public void OnBuild(LIElement elem, GameObject obj)
     {
         if (!elem.type.StartsWith("sab-") ||
             elem.type.StartsWith("sab-btn") ||
@@ -103,10 +103,6 @@ public class SabBuilder : IElemBuilder
                 shipStatus.Systems[sabSystemType] = new LifeSuppSystemType((float)sabDuration).Cast<ISystemType>();
             sabSystem.specials.Add(shipStatus.Systems[sabSystemType].Cast<IActivatable>());
         }
-    }
-
-    public void PostBuild()
-    {
     }
 
     /// <summary>

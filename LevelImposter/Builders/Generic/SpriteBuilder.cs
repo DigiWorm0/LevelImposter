@@ -9,7 +9,7 @@ namespace LevelImposter.Builders;
 /// </summary>
 public class SpriteBuilder : IElemBuilder
 {
-    public void Build(LIElement elem, GameObject obj)
+    public void OnBuild(LIElement elem, GameObject obj)
     {
         if (elem.properties.spriteID == null)
             return;
@@ -17,9 +17,5 @@ public class SpriteBuilder : IElemBuilder
             throw new Exception("SpriteLoader has not initialized");
         obj.AddComponent<SpriteRenderer>();
         SpriteLoader.Instance.LoadSpriteAsync(elem, obj);
-    }
-
-    public void PostBuild()
-    {
     }
 }

@@ -5,7 +5,7 @@ namespace LevelImposter.Builders;
 
 public class DummyBuilder : IElemBuilder
 {
-    public void Build(LIElement elem, GameObject obj)
+    public void OnBuild(LIElement elem, GameObject obj)
     {
         if (elem.type != "util-dummy")
             return;
@@ -17,9 +17,5 @@ public class DummyBuilder : IElemBuilder
         shipStatus.DummyLocations = MapUtils.AddToArr(shipStatus.DummyLocations, obj.transform);
 
         // TODO: Customize each dummy location with name/outfit
-    }
-
-    public void PostBuild()
-    {
     }
 }

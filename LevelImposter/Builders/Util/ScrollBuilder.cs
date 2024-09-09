@@ -5,15 +5,11 @@ namespace LevelImposter.Builders;
 
 internal class ScrollBuilder : IElemBuilder
 {
-    public void Build(LIElement elem, GameObject obj)
+    public void OnBuild(LIElement elem, GameObject obj)
     {
         if (elem.type != "util-blankscroll")
             return;
 
         obj.AddComponent<LIScroll>();
-    }
-
-    public void PostBuild()
-    {
     }
 }

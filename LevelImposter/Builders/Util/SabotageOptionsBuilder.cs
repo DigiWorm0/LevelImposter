@@ -15,7 +15,7 @@ internal class SabotageOptionsBuilder : IElemBuilder
 
     public static GameObject? TriggerObject { get; private set; }
 
-    public void Build(LIElement elem, GameObject obj)
+    public void OnBuild(LIElement elem, GameObject obj)
     {
         if (elem.type != "util-sabotages")
             return;
@@ -36,9 +36,5 @@ internal class SabotageOptionsBuilder : IElemBuilder
         var sabotageSound = MapUtils.FindSound(elem.properties.sounds, SABOTAGE_SOUND_NAME);
         if (sabotageSound != null)
             shipStatus.SabotageSound = WAVFile.LoadSound(sabotageSound) ?? shipStatus.SabotageSound;
-    }
-
-    public void PostBuild()
-    {
     }
 }

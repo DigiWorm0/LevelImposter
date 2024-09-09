@@ -6,7 +6,7 @@ namespace LevelImposter.Builders;
 
 internal class StarfieldBuilder : IElemBuilder
 {
-    public void Build(LIElement elem, GameObject obj)
+    public void OnBuild(LIElement elem, GameObject obj)
     {
         if (elem.type != "util-starfield")
             return;
@@ -73,9 +73,5 @@ internal class StarfieldBuilder : IElemBuilder
         Collider2D[] colliders = obj.GetComponents<Collider2D>();
         foreach (var collider in colliders)
             collider.enabled = false;
-    }
-
-    public void PostBuild()
-    {
     }
 }

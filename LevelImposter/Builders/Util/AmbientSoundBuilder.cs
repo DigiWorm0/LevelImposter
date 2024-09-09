@@ -8,7 +8,7 @@ internal class AmbientSoundBuilder : IElemBuilder
     private const string AMBIENT_SOUND_TYPE = "util-sound1";
     private const string TRIGGER_SOUND_TYPE = "util-triggersound";
 
-    public void Build(LIElement elem, GameObject obj)
+    public void OnBuild(LIElement elem, GameObject obj)
     {
         var isAmbient = elem.type == AMBIENT_SOUND_TYPE;
         var isTrigger = elem.type == TRIGGER_SOUND_TYPE;
@@ -54,9 +54,5 @@ internal class AmbientSoundBuilder : IElemBuilder
             var triggerPlayer = obj.AddComponent<TriggerSoundPlayer>();
             triggerPlayer.Init(soundData, colliders);
         }
-    }
-
-    public void PostBuild()
-    {
     }
 }

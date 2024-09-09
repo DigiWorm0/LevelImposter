@@ -12,15 +12,11 @@ internal class LayerBuilder : IElemBuilder
         { "util-binocularscollider", Layer.UICollider }
     };
 
-    public void Build(LIElement elem, GameObject obj)
+    public void OnBuild(LIElement elem, GameObject obj)
     {
         if (!_typeLayers.ContainsKey(elem.type))
             return;
 
         obj.layer = (int)_typeLayers[elem.type];
-    }
-
-    public void PostBuild()
-    {
     }
 }

@@ -8,14 +8,10 @@ namespace LevelImposter.Builders;
 /// </summary>
 public class ColorBuilder : IElemBuilder
 {
-    public void Build(LIElement elem, GameObject obj)
+    public void OnBuild(LIElement elem, GameObject obj)
     {
         var spriteRenderer = obj.GetComponent<SpriteRenderer>();
         if (spriteRenderer)
             spriteRenderer.color = elem.properties.color?.ToUnity() ?? Color.white;
-    }
-
-    public void PostBuild()
-    {
     }
 }

@@ -6,7 +6,7 @@ namespace LevelImposter.Builders;
 
 internal class FilterBuilder : IElemBuilder
 {
-    public void Build(LIElement elem, GameObject obj)
+    public void OnBuild(LIElement elem, GameObject obj)
     {
         if (elem.type != "util-filter")
             return;
@@ -57,9 +57,5 @@ internal class FilterBuilder : IElemBuilder
         // Set Layer
         obj.layer = (int)Layer.Ship;
         maskObj.layer = (int)Layer.Ship;
-    }
-
-    public void PostBuild()
-    {
     }
 }

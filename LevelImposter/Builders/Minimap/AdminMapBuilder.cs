@@ -11,7 +11,7 @@ public class AdminMapBuilder : IElemBuilder
     private readonly List<CounterArea> _counterAreaDB = new();
     private PoolableBehavior? _poolPrefab;
 
-    public void Build(LIElement elem, GameObject obj)
+    public void OnBuild(LIElement elem, GameObject obj)
     {
         if (elem.type != "util-room")
             return;
@@ -54,7 +54,7 @@ public class AdminMapBuilder : IElemBuilder
         mapCountOverlay.CountAreas = _counterAreaDB.ToArray();
     }
 
-    public void PostBuild()
+    public void OnCleanup()
     {
         var mapBehaviour = MinimapBuilder.GetMinimap();
         var mapCountOverlay = mapBehaviour.countOverlay;

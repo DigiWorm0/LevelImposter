@@ -10,7 +10,7 @@ internal class DisplayBuilder : IElemBuilder
     private const int DEFAULT_WIDTH = 330;
     private const int DEFAULT_HEIGHT = 220;
 
-    public void Build(LIElement elem, GameObject obj)
+    public void OnBuild(LIElement elem, GameObject obj)
     {
         if (elem.type != "util-display")
             return;
@@ -65,10 +65,6 @@ internal class DisplayBuilder : IElemBuilder
         camera.targetTexture = renderTexture;
         meshRenderer.material.SetTexture("_MainTex", renderTexture);
         GCHandler.Register(new DisposableRenderTex(renderTexture));
-    }
-
-    public void PostBuild()
-    {
     }
 
     /// <summary>

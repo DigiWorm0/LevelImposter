@@ -5,7 +5,7 @@ namespace LevelImposter.Builders;
 
 internal class OneWayColliderBuilder : IElemBuilder
 {
-    public void Build(LIElement elem, GameObject obj)
+    public void OnBuild(LIElement elem, GameObject obj)
     {
         if (elem.type != "util-onewaycollider")
             return;
@@ -33,9 +33,5 @@ internal class OneWayColliderBuilder : IElemBuilder
                 shadowComponent.IgnoreImpostor = elem.properties.isImposterIgnored ?? false;
             }
         }
-    }
-
-    public void PostBuild()
-    {
     }
 }

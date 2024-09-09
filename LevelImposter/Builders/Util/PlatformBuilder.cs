@@ -16,7 +16,7 @@ internal class PlatformBuilder : IElemBuilder
         Platform = null;
     }
 
-    public void Build(LIElement elem, GameObject obj)
+    public void OnBuild(LIElement elem, GameObject obj)
     {
         if (elem.type != "util-platform")
             return;
@@ -92,9 +92,5 @@ internal class PlatformBuilder : IElemBuilder
         var rightConsole = rightObj.AddComponent<PlatformConsole>();
         rightConsole.Image = spriteRenderer;
         rightConsole.Platform = movingPlatform;
-    }
-
-    public void PostBuild()
-    {
     }
 }

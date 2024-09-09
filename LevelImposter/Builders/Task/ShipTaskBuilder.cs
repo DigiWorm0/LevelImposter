@@ -8,7 +8,7 @@ using Object = UnityEngine.Object;
 
 namespace LevelImposter.Builders;
 
-public class ShipTaskBuilder
+public class ShipTaskBuilder : IElemBuilder
 {
     private static readonly Dictionary<string, TaskLength> TASK_LENGTHS = new()
     {
@@ -22,6 +22,16 @@ public class ShipTaskBuilder
     private NormalPlayerTask? _wiresTask;
 
     public static SystemTypes[] DivertSystems { get; private set; } = Array.Empty<SystemTypes>();
+
+    /// <summary>
+    ///     Performs final clean-up
+    /// </summary>
+    public void OnCleanup()
+    {
+        if (_wiresTask != null)
+            _wiresTask.MaxStep = Math.Min(TaskConsoleBuilder.WiresCount, (byte)3);
+        _wiresTask = null;
+    }
 
     /// <summary>
     ///     Builds a NormalPlayerTask from a LIElement
@@ -197,16 +207,6 @@ public class ShipTaskBuilder
 
         // Find Elements
         return instance.CurrentMap.elements.Where(mapElem => mapElem.type == type).ToList();
-    }
-
-    /// <summary>
-    ///     Performs final clean-up
-    /// </summary>
-    public void PostBuild()
-    {
-        if (_wiresTask != null)
-            _wiresTask.MaxStep = Math.Min(TaskConsoleBuilder.WiresCount, (byte)3);
-        _wiresTask = null;
     }
 
     /// <summary>

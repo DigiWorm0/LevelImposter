@@ -10,7 +10,7 @@ public class SabMixupBuilder : IElemBuilder
 
     public static MushroomMixupSabotageSystem? SabotageSystem { get; private set; }
 
-    public void Build(LIElement elem, GameObject obj)
+    public void OnBuild(LIElement elem, GameObject obj)
     {
         if (elem.type != "sab-btnmixup")
             return;
@@ -111,9 +111,5 @@ public class SabMixupBuilder : IElemBuilder
         var sabSystem = shipStatus.Systems[SystemTypes.Sabotage].Cast<SabotageSystemType>();
         shipStatus.Systems.Add(MIXUP_TYPE, SabotageSystem.Cast<ISystemType>());
         sabSystem.specials.Add(SabotageSystem.Cast<IActivatable>());
-    }
-
-    public void PostBuild()
-    {
     }
 }

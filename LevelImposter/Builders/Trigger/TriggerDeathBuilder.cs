@@ -5,7 +5,7 @@ namespace LevelImposter.Builders;
 
 public class TriggerDeathBuilder : IElemBuilder
 {
-    public void Build(LIElement elem, GameObject obj)
+    public void OnBuild(LIElement elem, GameObject obj)
     {
         if (elem.type != "util-triggerdeath")
             return;
@@ -18,9 +18,5 @@ public class TriggerDeathBuilder : IElemBuilder
         // Trigger Area
         var deathArea = obj.AddComponent<LIDeathArea>();
         deathArea.SetCreateDeadBody(elem.properties.createDeadBody ?? true);
-    }
-
-    public void PostBuild()
-    {
     }
 }

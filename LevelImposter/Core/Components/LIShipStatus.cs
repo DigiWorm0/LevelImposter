@@ -21,12 +21,6 @@ namespace LevelImposter.Core;
 /// </summary>
 public class LIShipStatus(IntPtr intPtr) : MonoBehaviour(intPtr)
 {
-    public static readonly List<string> PRIORITY_TYPES = new()
-    {
-        "util-minimap",
-        "util-room"
-    };
-
     public static readonly Dictionary<string, string> EXILE_IDS = new()
     {
         { "Skeld", "ss-skeld" },
@@ -229,7 +223,7 @@ public class LIShipStatus(IntPtr intPtr) : MonoBehaviour(intPtr)
     [HideFromIl2Cpp]
     public void LoadMap(LIMap map)
     {
-        LILogger.Info($"Loading {map}");
+        LILogger.Msg($"Loading {map}");
         _isReady = false;
         StartCoroutine(CoLoadingScreen().WrapToIl2Cpp());
         CurrentMap = map;
@@ -241,19 +235,61 @@ public class LIShipStatus(IntPtr intPtr) : MonoBehaviour(intPtr)
         if (!AssetDB.IsInit)
             LILogger.Warn("Asset DB is not initialized yet!");
 
-        // Priority First
-        foreach (var type in PRIORITY_TYPES)
+        // Create GameObjects
         foreach (var elem in map.elements)
-            if (elem.type == type)
-                AddElement(buildRouter, elem);
-        // Everything Else
-        foreach (var elem in map.elements)
-            if (!PRIORITY_TYPES.Contains(elem.type))
-                AddElement(buildRouter, elem);
+        {
+            // Create GameObject
+            var objName = elem.name.Replace("\\n", " ");
+            var elemObject = new GameObject(objName);
+            elemObject.transform.SetParent(transform);
 
-        buildRouter.PostBuild();
+            // Append MapObjectData component
+            var mapObjectData = elemObject.AddComponent<MapObjectData>();
+            mapObjectData.SetSourceElement(elem);
+
+            // Add to DB
+            MapObjectDB.AddObject(elem.id, elemObject);
+        }
+
+        // Set Parenting
+        foreach (var elem in map.elements)
+        {
+            var elemObject = MapObjectDB.GetObject(elem.id);
+            if (elemObject == null)
+                continue;
+
+            var parent = elem.parentID;
+            if (parent == null)
+                continue;
+
+            var parentObject = MapObjectDB.GetObject((Guid)parent);
+            if (parentObject == null)
+                continue;
+
+            elemObject.transform.SetParent(parentObject.transform);
+        }
+
+        // Prebuild
+        LILogger.Msg("Running Pre-Build");
+        foreach (var elem in map.elements)
+            buildRouter.RunBuildStep(BuildRouter.BuildStep.PreBuild, elem);
+
+        // Build
+        LILogger.Msg("Running Build");
+        foreach (var elem in map.elements)
+            buildRouter.RunBuildStep(BuildRouter.BuildStep.Build, elem);
+
+        // Postbuild
+        LILogger.Msg("Running Post-Build");
+        foreach (var elem in map.elements)
+            buildRouter.RunBuildStep(BuildRouter.BuildStep.PostBuild, elem);
+
+        // Cleanup
+        LILogger.Msg("Running Cleanup");
+        buildRouter.Cleanup();
+
         _isReady = true;
-        LILogger.Info("Map load completed");
+        LILogger.Msg("Done");
     }
 
     /// <summary>
@@ -286,33 +322,6 @@ public class LIShipStatus(IntPtr intPtr) : MonoBehaviour(intPtr)
                 return;
             ShipStatus.ExileCutscenePrefab = prefabShipStatus.ExileCutscenePrefab;
         }
-    }
-
-    /// <summary>
-    ///     Adds a single <c>LIElement</c> object into the map.
-    /// </summary>
-    /// <param name="element"></param>
-    [HideFromIl2Cpp]
-    public void AddElement(BuildRouter buildRouter, LIElement element)
-    {
-        var buildTimer = Stopwatch.StartNew();
-
-        LILogger.Info($"Adding {element}");
-        try
-        {
-            var gameObject = buildRouter.Build(element);
-            gameObject.transform.SetParent(transform);
-            gameObject.transform.localPosition = MapUtils.ScaleZPositionByY(gameObject.transform.localPosition);
-        }
-        catch (Exception e)
-        {
-            LILogger.Error($"Error while building {element.name}:\n<size=2.5>{e}</size>");
-        }
-
-        // Build Timer
-        buildTimer.Stop();
-        if (buildTimer.ElapsedMilliseconds > LIConstants.ELEM_WARN_TIME)
-            LILogger.Warn($"Took {buildTimer.ElapsedMilliseconds}ms to build {element.name}");
     }
 
     /// <summary>

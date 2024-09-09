@@ -27,7 +27,7 @@ public class SabMapBuilder : IElemBuilder
         _mapRoomDB.Clear();
     }
 
-    public void Build(LIElement elem, GameObject obj)
+    public void OnBuild(LIElement elem, GameObject obj)
     {
         if (!elem.type.StartsWith("sab-") || elem.type.StartsWith("sab-door"))
             return;
@@ -168,8 +168,7 @@ public class SabMapBuilder : IElemBuilder
         };
     }
 
-
-    public void PostBuild()
+    public void OnCleanup()
     {
         if (_hasSabConsoles && !_hasSabButtons)
             LILogger.Warn("Map does not include sabotage buttons");

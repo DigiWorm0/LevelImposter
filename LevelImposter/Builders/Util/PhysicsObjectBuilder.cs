@@ -5,7 +5,7 @@ namespace LevelImposter.Builders;
 
 internal class PhysicsObjectBuilder : IElemBuilder
 {
-    public void Build(LIElement elem, GameObject obj)
+    public void OnBuild(LIElement elem, GameObject obj)
     {
         /*
         if (elem.type != "util-physics")
@@ -20,9 +20,5 @@ internal class PhysicsObjectBuilder : IElemBuilder
         obj.layer = (int)Layer.Default;
         */
         // TODO: Sync physics objects over network
-    }
-
-    public void PostBuild()
-    {
     }
 }

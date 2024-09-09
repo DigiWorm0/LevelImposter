@@ -29,7 +29,7 @@ public class CustomTextBuilder : IElemBuilder
         { "ReactorWaiting", StringNames.ReactorWaiting }
     };
 
-    public void Build(LIElement elem, GameObject obj)
+    public void OnBuild(LIElement elem, GameObject obj)
     {
         // Get Custom Text
         var customText = elem.properties.customText;
@@ -58,9 +58,5 @@ public class CustomTextBuilder : IElemBuilder
             shipStatus.Renames.Add(stringName, text);
             LILogger.Info($"Custom Text '{stringName}' >>> '{text}'");
         }
-    }
-
-    public void PostBuild()
-    {
     }
 }

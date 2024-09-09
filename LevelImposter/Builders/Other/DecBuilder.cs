@@ -12,7 +12,7 @@ public class DecBuilder : IElemBuilder
         "room-dropship"
     };
 
-    public void Build(LIElement elem, GameObject obj)
+    public void OnBuild(LIElement elem, GameObject obj)
     {
         var isDecoration = elem.type.StartsWith("dec-");
         var isRoom = elem.type.StartsWith("room-");
@@ -45,9 +45,5 @@ public class DecBuilder : IElemBuilder
 
         if (isRoom)
             obj.layer = (int)Layer.Ship;
-    }
-
-    public void PostBuild()
-    {
     }
 }

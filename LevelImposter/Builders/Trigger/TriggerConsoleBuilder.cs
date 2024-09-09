@@ -6,7 +6,7 @@ namespace LevelImposter.Builders;
 
 public class TriggerConsoleBuilder : IElemBuilder
 {
-    public void Build(LIElement elem, GameObject obj)
+    public void OnBuild(LIElement elem, GameObject obj)
     {
         if (elem.type != "util-triggerconsole")
             return;
@@ -34,9 +34,5 @@ public class TriggerConsoleBuilder : IElemBuilder
 
         // Colliders
         MapUtils.CreateDefaultColliders(obj, prefab);
-    }
-
-    public void PostBuild()
-    {
     }
 }

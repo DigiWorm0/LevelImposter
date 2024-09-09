@@ -15,7 +15,7 @@ public class ColliderBuilder : IElemBuilder
         "util-onewaycollider"
     };
 
-    public void Build(LIElement elem, GameObject obj)
+    public void OnPreBuild(LIElement elem, GameObject obj)
     {
         if (elem.properties.colliders == null)
             return;
@@ -55,10 +55,6 @@ public class ColliderBuilder : IElemBuilder
                 collider.SetPoints(GetPoints(colliderData));
             }
         }
-    }
-
-    public void PostBuild()
-    {
     }
 
     private List<Vector2> GetPoints(LICollider collider, bool wrap = false)

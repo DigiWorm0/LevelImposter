@@ -10,7 +10,7 @@ internal class UtilBuilder : IElemBuilder
 {
     private const string CAM_PANEL_NAME = "Surv_Panel";
 
-    public void Build(LIElement elem, GameObject obj)
+    public void OnBuild(LIElement elem, GameObject obj)
     {
         if (!(elem.type.StartsWith("util-button") ||
               elem.type.StartsWith("util-cams") ||
@@ -77,9 +77,5 @@ internal class UtilBuilder : IElemBuilder
 
         // Colliders
         MapUtils.CreateDefaultColliders(obj, prefab);
-    }
-
-    public void PostBuild()
-    {
     }
 }

@@ -5,7 +5,7 @@ namespace LevelImposter.Builders;
 
 public class TriggerAreaBuilder : IElemBuilder
 {
-    public void Build(LIElement elem, GameObject obj)
+    public void OnBuild(LIElement elem, GameObject obj)
     {
         if (elem.type != "util-triggerarea")
             return;
@@ -22,9 +22,5 @@ public class TriggerAreaBuilder : IElemBuilder
         // Trigger Area
         var triggerArea = obj.AddComponent<LITriggerArea>();
         triggerArea.SetClientSide(elem.properties.triggerClientSide != false);
-    }
-
-    public void PostBuild()
-    {
     }
 }

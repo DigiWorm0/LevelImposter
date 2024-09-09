@@ -15,7 +15,7 @@ public class RoomBuilder : IElemBuilder
 
     public static List<RoomData> RoomDB { get; } = new();
 
-    public void Build(LIElement elem, GameObject obj)
+    public void OnPreBuild(LIElement elem, GameObject obj)
     {
         if (elem.type != "util-room")
             return;
@@ -55,7 +55,7 @@ public class RoomBuilder : IElemBuilder
         });
     }
 
-    public void PostBuild()
+    public void OnCleanup()
     {
         if (!LIShipStatus.IsInstance())
             throw new MissingShipException();

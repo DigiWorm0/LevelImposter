@@ -10,7 +10,7 @@ public class TaskBuilder : IElemBuilder
     private readonly TaskConsoleBuilder _consoleBuilder = new();
     private readonly ShipTaskBuilder _shipBuilder = new();
 
-    public void Build(LIElement elem, GameObject obj)
+    public void OnBuild(LIElement elem, GameObject obj)
     {
         if (!elem.type.StartsWith("task-"))
             return;
@@ -21,7 +21,7 @@ public class TaskBuilder : IElemBuilder
             return;
 
         // Sprite
-        var spriteRenderer = MapUtils.CloneSprite(obj, prefab);
+        MapUtils.CloneSprite(obj, prefab);
 
         // Console
         var console = _consoleBuilder.Build(elem, obj, prefab);
@@ -55,9 +55,9 @@ public class TaskBuilder : IElemBuilder
         }
     }
 
-    public void PostBuild()
+    public void OnCleanup()
     {
-        _consoleBuilder.PostBuild();
-        _shipBuilder.PostBuild();
+        _consoleBuilder.OnCleanup();
+        _shipBuilder.OnCleanup();
     }
 }

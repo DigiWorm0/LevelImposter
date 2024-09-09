@@ -10,7 +10,7 @@ public class SporeBuilder : IElemBuilder
 {
     public static List<Mushroom> Mushrooms { get; } = new();
 
-    public void Build(LIElement elem, GameObject obj)
+    public void OnBuild(LIElement elem, GameObject obj)
     {
         if (elem.type != "util-spore")
             return;
@@ -83,9 +83,5 @@ public class SporeBuilder : IElemBuilder
         mushroom.ResetState();
         mushroom.enabled = true;
         Mushrooms.Add(mushroom);
-    }
-
-    public void PostBuild()
-    {
     }
 }

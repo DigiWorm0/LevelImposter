@@ -18,7 +18,7 @@ internal class VentBuilder : IElemBuilder
     private bool _hasVentSound;
     private int _ventID;
 
-    public void Build(LIElement elem, GameObject obj)
+    public void OnBuild(LIElement elem, GameObject obj)
     {
         if (!elem.type.StartsWith("util-vent"))
             return;
@@ -94,8 +94,9 @@ internal class VentBuilder : IElemBuilder
         _ventID++;
     }
 
-    public void PostBuild()
+    public void OnCleanup()
     {
+        // TODO: Move this to OnPostBuild
         _ventID = 0;
         _hasVentSound = false;
 

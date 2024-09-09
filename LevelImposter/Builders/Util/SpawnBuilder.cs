@@ -13,7 +13,7 @@ public class SpawnBuilder : IElemBuilder
     private bool _hasInitialSpawn;
     private bool _hasMeetingSpawn;
 
-    public void Build(LIElement elem, GameObject obj)
+    public void OnBuild(LIElement elem, GameObject obj)
     {
         if (!elem.type.StartsWith("util-spawn"))
             return;
@@ -63,7 +63,7 @@ public class SpawnBuilder : IElemBuilder
         }
     }
 
-    public void PostBuild()
+    public void OnCleanup()
     {
         // ShipStatus
         var shipStatus = LIShipStatus.GetInstance().ShipStatus;

@@ -6,7 +6,7 @@ namespace LevelImposter.Builders;
 
 public class CamBuilder : IElemBuilder
 {
-    public void Build(LIElement elem, GameObject obj)
+    public void OnBuild(LIElement elem, GameObject obj)
     {
         if (elem.type != "util-cam")
             return;
@@ -30,9 +30,5 @@ public class CamBuilder : IElemBuilder
         survCam.CamSize = elem.properties.camZoom ?? 3;
         survCam.OnAnim = prefabCam.OnAnim;
         survCam.OffAnim = prefabCam.OffAnim;
-    }
-
-    public void PostBuild()
-    {
     }
 }

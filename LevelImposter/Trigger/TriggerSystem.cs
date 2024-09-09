@@ -115,8 +115,7 @@ public class TriggerSystem
         var shipStatus = LIShipStatus.GetInstance();
 
         // Parse ID
-        Guid elemID;
-        if (!Guid.TryParse(elemIDString, out elemID))
+        if (!Guid.TryParse(elemIDString, out var elemID))
         {
             LILogger.Warn("RPC triggered element ID is invalid.");
             return;

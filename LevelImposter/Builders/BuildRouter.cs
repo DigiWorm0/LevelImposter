@@ -1,15 +1,21 @@
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using LevelImposter.Core;
-using UnityEngine;
 
 namespace LevelImposter.Builders;
 
 public class BuildRouter
 {
+    public enum BuildStep
+    {
+        PreBuild,
+        Build,
+        PostBuild
+    }
+
     private readonly List<IElemBuilder> _buildStack = new()
     {
-        new MapObjectDataBuilder(),
-
         new TransformBuilder(),
         new SpriteBuilder(),
         new ColliderBuilder(),
@@ -64,42 +70,52 @@ public class BuildRouter
         new ColorBuilder()
     };
 
-    public BuildRouter()
+    private readonly Stopwatch _sw = new();
+
+    public void RunBuildStep(BuildStep buildStep, LIElement elem)
     {
-        OnCreate();
+        try
+        {
+            // Start Build Timer
+            _sw.Restart();
+
+            // Get Element
+            var obj = LIShipStatus.GetInstance().MapObjectDB.GetObject(elem.id);
+            if (obj == null)
+                throw new Exception($"Could not find {elem} in map object db");
+
+            // Run Builders
+            foreach (var builder in _buildStack)
+                switch (buildStep)
+                {
+                    case BuildStep.PreBuild:
+                        builder.OnPreBuild(elem, obj);
+                        break;
+                    case BuildStep.Build:
+                        builder.OnBuild(elem, obj);
+                        break;
+                    case BuildStep.PostBuild:
+                        builder.OnPostBuild(elem, obj);
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException(nameof(buildStep), buildStep, null);
+                }
+
+            // Stop Build Timer
+            _sw.Stop();
+            if (_sw.ElapsedMilliseconds > LIConstants.ELEM_WARN_TIME)
+                LILogger.Warn($"{elem} took {_sw.ElapsedMilliseconds}ms to {buildStep}");
+        }
+        catch (Exception ex)
+        {
+            // Log Error
+            LILogger.Error($"Error building {elem} during {buildStep}: {ex}");
+        }
     }
 
-    /// <summary>
-    ///     Patch me to add your own custom builders.
-    ///     Builders should implement <c>IElemBuilder</c>.
-    /// </summary>
-    public void OnCreate()
-    {
-        // ...
-    }
-
-    /// <summary>
-    ///     Passes <c>LIElement</c> data through the build
-    ///     stack to construct a GameObject.
-    ///     Should be run from <c>LIShipStatus.AddElement</c>.
-    /// </summary>
-    /// <param name="element">Element data to build</param>
-    /// <returns></returns>
-    public GameObject Build(LIElement element)
-    {
-        var objName = element.name.Replace("\\n", " ");
-        var gameObject = new GameObject(objName);
-        foreach (var builder in _buildStack) builder.Build(element, gameObject);
-
-        return gameObject;
-    }
-
-    /// <summary>
-    ///     Runs the post-build process on every <c>IElemBuilder</c>.
-    /// </summary>
-    public void PostBuild()
+    public void Cleanup()
     {
         foreach (var builder in _buildStack)
-            builder.PostBuild();
+            builder.OnCleanup();
     }
 }

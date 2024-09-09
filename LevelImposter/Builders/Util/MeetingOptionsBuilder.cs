@@ -16,7 +16,7 @@ internal class MeetingOptionsBuilder : IElemBuilder
 
     public static GameObject? TriggerObject { get; private set; }
 
-    public void Build(LIElement elem, GameObject obj)
+    public void OnBuild(LIElement elem, GameObject obj)
     {
         if (elem.type != "util-meeting")
             return;
@@ -73,10 +73,6 @@ internal class MeetingOptionsBuilder : IElemBuilder
             reportOverlay.Stinger = WAVFile.LoadSound(reportSound) ?? reportOverlay.Stinger;
             reportOverlay.StingerVolume = reportSound?.volume ?? 1;
         }
-    }
-
-    public void PostBuild()
-    {
     }
 
     private void LoadMeetingBackground(LIElement elem, SpriteLoader.SpriteData? spriteData)

@@ -16,6 +16,7 @@ public class LIElement
     public float rotation { get; set; }
 
     public LIProperties properties { get; set; }
+    public Guid? parentID { get; set; }
 
     public override string ToString()
     {

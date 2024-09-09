@@ -5,7 +5,7 @@ namespace LevelImposter.Builders;
 
 public class TriggerShakeBuilder : IElemBuilder
 {
-    public void Build(LIElement elem, GameObject obj)
+    public void OnBuild(LIElement elem, GameObject obj)
     {
         if (elem.type != "util-triggershake")
             return;
@@ -21,9 +21,5 @@ public class TriggerShakeBuilder : IElemBuilder
             elem.properties.shakeAmount ?? 0.03f,
             elem.properties.shakePeriod ?? 400.0f
         );
-    }
-
-    public void PostBuild()
-    {
     }
 }

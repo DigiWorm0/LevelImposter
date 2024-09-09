@@ -12,7 +12,7 @@ public class MinimapSpriteBuilder : IElemBuilder
 
     public static int SabCount { get; private set; }
 
-    public void Build(LIElement elem, GameObject obj)
+    public void OnBuild(LIElement elem, GameObject obj)
     {
         if (elem.type != "util-minimapsprite")
             return;
@@ -66,9 +66,5 @@ public class MinimapSpriteBuilder : IElemBuilder
             bgRenderer.color = spriteRenderer.color;
             Object.Destroy(obj);
         };
-    }
-
-    public void PostBuild()
-    {
     }
 }

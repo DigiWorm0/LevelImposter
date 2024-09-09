@@ -18,7 +18,7 @@ public class SabConsoleBuilder : IElemBuilder
         { "sab-comms", 0 }
     };
 
-    public void Build(LIElement elem, GameObject obj)
+    public void OnBuild(LIElement elem, GameObject obj)
     {
         if (!elem.type.StartsWith("sab-") || elem.type.StartsWith("sab-btn") || elem.type.StartsWith("sab-door"))
             return;
@@ -79,10 +79,6 @@ public class SabConsoleBuilder : IElemBuilder
         var arrow = MakeArrow(sabotageTask.transform, $"{elem.name} Arrow");
         if (arrow != null)
             sabotageTask.Arrows = MapUtils.AddToArr(sabotageTask.Arrows, arrow);
-    }
-
-    public void PostBuild()
-    {
     }
 
     /// <summary>

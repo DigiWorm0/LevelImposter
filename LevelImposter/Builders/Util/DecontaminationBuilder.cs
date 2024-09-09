@@ -15,7 +15,7 @@ internal class DecontaminationBuilder : IElemBuilder
 
     private readonly Dictionary<Guid, DeconSystem> _deconSystemDB = new();
 
-    public void Build(LIElement elem, GameObject obj)
+    public void OnBuild(LIElement elem, GameObject obj)
     {
         if (elem.type != "util-decontamination")
             return;
@@ -47,8 +47,9 @@ internal class DecontaminationBuilder : IElemBuilder
             deconSystem.RoomArea.isTrigger = true;
     }
 
-    public void PostBuild()
+    public void OnCleanup()
     {
+        // TODO: Move this to OnPostBuild
         // Assign Doors
         foreach (var deconInfo in _deconSystemDB)
         {

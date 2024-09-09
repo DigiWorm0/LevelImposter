@@ -6,7 +6,7 @@ namespace LevelImposter.Builders;
 
 internal class StepSoundBuilder : IElemBuilder
 {
-    public void Build(LIElement elem, GameObject obj)
+    public void OnBuild(LIElement elem, GameObject obj)
     {
         if (elem.type != "util-sound2")
             return;
@@ -54,9 +54,5 @@ internal class StepSoundBuilder : IElemBuilder
         stepPlayer.Area = colliders[0];
         stepPlayer.Sounds = soundGroup;
         stepPlayer.priority = elem.properties.soundPriority ?? 0;
-    }
-
-    public void PostBuild()
-    {
     }
 }

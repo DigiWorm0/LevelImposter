@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace LevelImposter.Builders;
 
-public class TaskConsoleBuilder
+public class TaskConsoleBuilder : IElemBuilder
 {
     private static readonly Dictionary<string, int> CONSOLE_ID_PAIRS = new()
     {
@@ -45,9 +45,9 @@ public class TaskConsoleBuilder
         { "task-hoist", 0 }
     };
 
-    private int _consoleID;
-
     private readonly Dictionary<string, int> _consoleIDIncrements = new(CONSOLE_ID_INCREMENTS);
+
+    private int _consoleID;
 
     public TaskConsoleBuilder()
     {
@@ -71,6 +71,38 @@ public class TaskConsoleBuilder
     public static byte WiresCount { get; private set; }
 
     public static byte? TowelPickupCount { get; private set; }
+
+    /// <summary>
+    ///     Performs final clean-up
+    /// </summary>
+    public void OnCleanup()
+    {
+        // TODO: Move this to OnPostBuild
+        var keys = new string[_consoleIDIncrements.Keys.Count];
+        _consoleIDIncrements.Keys.CopyTo(keys, 0);
+
+        foreach (var key in keys)
+        {
+            var count = (byte)_consoleIDIncrements[key];
+            if (key == "task-breakers")
+                BreakerCount = count;
+            if (key == "task-toilet")
+                ToiletCount = count;
+            if (key == "task-towels")
+                TowelCount = count;
+            if (key == "task-fuel2")
+                FuelCount = count;
+            if (key == "task-waterwheel1")
+                WaterWheelCount = count;
+            if (key == "task-align1")
+                AlignEngineCount = count;
+            if (key == "task-records2")
+                RecordsCount = count;
+            if (key == "task-wires")
+                WiresCount = count;
+            _consoleIDIncrements[key] = 0;
+        }
+    }
 
     /// <summary>
     ///     Constructs a Console component for an LIElement, GameObject, and prefab
@@ -209,36 +241,5 @@ public class TaskConsoleBuilder
         }
 
         return null;
-    }
-
-    /// <summary>
-    ///     Performs final clean-up
-    /// </summary>
-    public void PostBuild()
-    {
-        var keys = new string[_consoleIDIncrements.Keys.Count];
-        _consoleIDIncrements.Keys.CopyTo(keys, 0);
-
-        foreach (var key in keys)
-        {
-            var count = (byte)_consoleIDIncrements[key];
-            if (key == "task-breakers")
-                BreakerCount = count;
-            if (key == "task-toilet")
-                ToiletCount = count;
-            if (key == "task-towels")
-                TowelCount = count;
-            if (key == "task-fuel2")
-                FuelCount = count;
-            if (key == "task-waterwheel1")
-                WaterWheelCount = count;
-            if (key == "task-align1")
-                AlignEngineCount = count;
-            if (key == "task-records2")
-                RecordsCount = count;
-            if (key == "task-wires")
-                WiresCount = count;
-            _consoleIDIncrements[key] = 0;
-        }
     }
 }

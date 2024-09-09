@@ -24,7 +24,7 @@ internal class LadderBuilder : IElemBuilder
         _allLadders.Clear();
     }
 
-    public void Build(LIElement elem, GameObject obj)
+    public void OnBuild(LIElement elem, GameObject obj)
     {
         if (!elem.type.StartsWith("util-ladder"))
             return;
@@ -68,7 +68,7 @@ internal class LadderBuilder : IElemBuilder
         _allLadders.Add(bottomConsole);
     }
 
-    public void PostBuild()
+    public void OnCleanup()
     {
         _allLadders.RemoveAll(ladder => ladder == null);
     }

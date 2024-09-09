@@ -20,7 +20,7 @@ public class SabDoorBuilder : IElemBuilder
         _doorDB.Clear();
     }
 
-    public void Build(LIElement elem, GameObject obj)
+    public void OnBuild(LIElement elem, GameObject obj)
     {
         if (!elem.type.StartsWith("sab-door"))
             return;
@@ -159,10 +159,6 @@ public class SabDoorBuilder : IElemBuilder
 
         doorComponent.Start(); // <-- Run initialization tasks
         doorComponent.SetDoorway(!isDoorClosed);
-    }
-
-    public void PostBuild()
-    {
     }
 
     /// <summary>

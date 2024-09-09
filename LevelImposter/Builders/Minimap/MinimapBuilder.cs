@@ -9,7 +9,7 @@ public class MinimapBuilder : IElemBuilder
 
     private bool _isBuilt;
 
-    public void Build(LIElement elem, GameObject obj)
+    public void OnBuild(LIElement elem, GameObject obj)
     {
         if (elem.type != "util-minimap")
             return;
@@ -75,7 +75,7 @@ public class MinimapBuilder : IElemBuilder
         _isBuilt = true;
     }
 
-    public void PostBuild()
+    public void OnCleanup()
     {
         if (!_isBuilt)
         {

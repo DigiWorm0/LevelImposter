@@ -8,7 +8,7 @@ public class RoomNameBuilder : IElemBuilder
 {
     private int _nameCount;
 
-    public void Build(LIElement elem, GameObject obj)
+    public void OnBuild(LIElement elem, GameObject obj)
     {
         if (elem.type != "util-room")
             return;
@@ -54,7 +54,7 @@ public class RoomNameBuilder : IElemBuilder
         rectTransform.sizeDelta = new Vector2(10, 0);
     }
 
-    public void PostBuild()
+    public void OnCleanup()
     {
         var mapBehaviour = MinimapBuilder.GetMinimap();
         var roomNames = mapBehaviour.transform.GetChild(mapBehaviour.transform.childCount - 1);
