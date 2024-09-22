@@ -94,7 +94,11 @@ public class LIProperties
     public bool? onlyFromBelow { get; set; }
     public bool? checkCollision { get; set; }
     public float? range { get; set; }
+
+    // Spore
     public float? sporeRange { get; set; }
+    public float? sporeCooldown { get; set; }
+    public float? sporeDuration { get; set; }
 
     // Ladder
     public float? ladderHeight { get; set; }

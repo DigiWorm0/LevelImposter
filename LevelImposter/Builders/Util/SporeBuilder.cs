@@ -50,11 +50,35 @@ public class SporeBuilder : IElemBuilder
             -10.0f
         );
         screenGraphicObj.transform.localScale = new Vector3(sporeRange, sporeRange, 1.2f);
-        var sceenGraphicRenderer = MapUtils.CloneSprite(screenGraphicObj, screenGraphicPrefab, true);
+        var screenGraphicRenderer = MapUtils.CloneSprite(screenGraphicObj, screenGraphicPrefab, true);
+
+        // Sprite Anim
+        var spriteAnim = obj.GetComponent<SpriteAnim>();
+        if (spriteAnim == null)
+        {
+            // Using a custom sprite
+            // Create a dummy animator to prevent null reference exceptions
+            var dummyAnimObj = new GameObject("DummyAnim");
+            dummyAnimObj.transform.parent = obj.transform;
+            dummyAnimObj.transform.localPosition = Vector3.zero;
+            dummyAnimObj.transform.localScale = Vector3.one;
+            dummyAnimObj.transform.rotation = Quaternion.identity;
+
+            // Clone animation
+            var dummySpriteRenderer = MapUtils.CloneSprite(dummyAnimObj, prefab, true);
+            spriteAnim = dummyAnimObj.GetComponent<SpriteAnim>();
+
+            // Hide renderer
+            dummySpriteRenderer.enabled = false;
+
+            // Move mask/graphics to dummy
+            screenMaskRenderer.transform.parent = dummyAnimObj.transform;
+            screenGraphicRenderer.transform.parent = dummyAnimObj.transform;
+        }
 
         // Set Color
-        sceenGraphicRenderer.color = elem.properties.gasColor?.ToUnity() ??
-                                     screenGraphicPrefab.GetComponent<SpriteRenderer>().color;
+        screenGraphicRenderer.color = elem.properties.gasColor?.ToUnity() ??
+                                      screenGraphicPrefab.GetComponent<SpriteRenderer>().color;
 
         // Collider
         var collider = obj.AddComponent<CircleCollider2D>();
@@ -66,10 +90,10 @@ public class SporeBuilder : IElemBuilder
         mushroom.id = Mushrooms.Count;
         mushroom.mushroomCollider = collider;
         mushroom.mushroom = spriteRenderer;
-        mushroom.mushroomAnimator = spriteRenderer.GetComponent<SpriteAnim>();
+        mushroom.mushroomAnimator = spriteAnim;
         mushroom.sporeMask = screenMaskObj;
         mushroom.sporeCloudMaskAnimator = screenMaskRenderer.GetComponent<SpriteAnim>();
-        mushroom.spores = screenMaskRenderer;
+        mushroom.spores = screenGraphicRenderer;
         mushroom.sporeCloudAnimator = screenGraphicObj.GetComponent<SpriteAnim>();
         mushroom.mushroomIdle = prefabSpore.mushroomIdle;
         mushroom.mushroomAppear = prefabSpore.mushroomAppear;
@@ -79,8 +103,11 @@ public class SporeBuilder : IElemBuilder
         mushroom.sporeCloudDisappear = prefabSpore.sporeCloudDisappear;
         mushroom.spawnSound = prefabSpore.spawnSound;
         mushroom.activateSporeSound = prefabSpore.activateSporeSound;
+        mushroom.secondsBetweenSporeReleases = elem.properties.sporeCooldown ?? 17.0f;
+        mushroom.secondsSporeIsActive = elem.properties.sporeDuration ?? 5.0f;
 
-        mushroom.ResetState();
+
+        mushroom.Awake(); // Fire again to fix animation states
         mushroom.enabled = true;
         Mushrooms.Add(mushroom);
     }

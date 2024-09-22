@@ -1,6 +1,7 @@
 using HarmonyLib;
 using Hazel;
 using LevelImposter.Builders;
+using LevelImposter.Trigger;
 
 namespace LevelImposter.Core;
 
@@ -38,5 +39,18 @@ public static class SporePatchHandle
             __instance.CheckSporeTrigger(SporeBuilder.Mushrooms[mushroomId]);
 
         return false;
+    }
+}
+
+[HarmonyPatch(typeof(Mushroom), nameof(Mushroom.TriggerSpores))]
+public static class SporeTriggerHandle
+{
+    public static void Postfix(Mushroom __instance)
+    {
+        if (!LIShipStatus.IsInstance())
+            return;
+
+        TriggerSignal signal = new(__instance.gameObject, "onActivate", PlayerControl.LocalPlayer);
+        TriggerSystem.GetInstance().FireTrigger(signal);
     }
 }

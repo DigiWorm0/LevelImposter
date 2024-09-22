@@ -74,7 +74,7 @@ public static class LILogger
     public static void Error(object data)
     {
         Log(LogLevel.Error, data);
-        if (AmongUsClient.Instance.NetworkMode == NetworkModes.FreePlay)
+        if (GameState.IsInFreeplay)
             Notify(data.ToString() ?? "null");
     }
 
@@ -86,7 +86,7 @@ public static class LILogger
     public static void Warn(object data)
     {
         Log(LogLevel.Warning, data);
-        if (AmongUsClient.Instance.NetworkMode == NetworkModes.FreePlay)
+        if (GameState.IsInFreeplay)
             Notify("<color=yellow>" + data + "</color>");
     }
 
@@ -96,16 +96,21 @@ public static class LILogger
     /// <param name="data">String message to log</param>
     public static void Notify(string data, bool isError = true)
     {
+        // Check HudManager exists
         if (!DestroyableSingleton<HudManager>.InstanceExists)
             return;
+
+        // Get notifier
         var notifier = DestroyableSingleton<HudManager>.Instance.Notifier;
         if (notifier == null)
             return;
 
+        // Error
         if (isError)
         {
             notifier.AddDisconnectMessage(data);
         }
+        // Non-error
         else
         {
             var notifyText = "<font=\"Barlow-Black SDF\" material=\"Barlow-Black Outline\">" + data + "</font>";
