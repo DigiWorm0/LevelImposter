@@ -63,6 +63,7 @@ public partial class LevelImposter : BasePlugin
         ClassInjector.RegisterTypeInIl2Cpp<TriggerSoundPlayer>();
         ClassInjector.RegisterTypeInIl2Cpp<TriggerConsole>(usableInterface);
         ClassInjector.RegisterTypeInIl2Cpp<MapObjectData>();
+        ClassInjector.RegisterTypeInIl2Cpp<EditableLadderConsole>();
 
         ClassInjector.RegisterTypeInIl2Cpp<AssetDB>();
 

@@ -51,13 +51,14 @@ internal class LadderBuilder : IElemBuilder
         bottomObj.transform.localPosition = new Vector3(0, -ladderHeight + LADDER_Y_OFFSET, 0);
         bottomObj.AddComponent<BoxCollider2D>().isTrigger = true;
 
-        var topConsole = topObj.AddComponent<Ladder>();
-        var bottomConsole = bottomObj.AddComponent<Ladder>();
+        var topConsole = topObj.AddComponent<EditableLadderConsole>();
+        var bottomConsole = bottomObj.AddComponent<EditableLadderConsole>();
         topConsole.Id = _ladderID++;
         topConsole.IsTop = true;
         topConsole.Destination = bottomConsole;
         topConsole.UseSound = topPrefab.UseSound;
         topConsole.Image = spriteRenderer;
+        topConsole.SetCooldownDuration(elem.properties.ladderCooldown ?? 5.0f);
         _allLadders.Add(topConsole);
 
         bottomConsole.Id = _ladderID++;
@@ -65,6 +66,7 @@ internal class LadderBuilder : IElemBuilder
         bottomConsole.Destination = topConsole;
         bottomConsole.UseSound = bottomPrefab.UseSound;
         bottomConsole.Image = spriteRenderer;
+        bottomConsole.SetCooldownDuration(elem.properties.ladderCooldown ?? 5.0f);
         _allLadders.Add(bottomConsole);
     }
 

@@ -102,6 +102,7 @@ public class LIProperties
 
     // Ladder
     public float? ladderHeight { get; set; }
+    public float? ladderCooldown { get; set; }
 
     // Platform
     public float? platformXOffset { get; set; }
