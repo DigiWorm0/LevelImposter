@@ -40,7 +40,7 @@ public class TaskConsoleBuilder : IElemBuilder
         { "task-wires", 0 },
         { "task-marshmallow1", 1 },
         { "task-egg1", 1 },
-        { "task-samples1", 1 },
+        { "task-samples1", 0 },
         { "task-replaceparts2", 1 },
         { "task-hoist", 0 }
     };
