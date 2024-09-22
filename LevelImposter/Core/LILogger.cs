@@ -94,13 +94,23 @@ public static class LILogger
     ///     Sends a message to notifications (if exists)
     /// </summary>
     /// <param name="data">String message to log</param>
-    public static void Notify(string data)
+    public static void Notify(string data, bool isError = true)
     {
         if (!DestroyableSingleton<HudManager>.InstanceExists)
             return;
         var notifier = DestroyableSingleton<HudManager>.Instance.Notifier;
-        if (notifier != null)
+        if (notifier == null)
+            return;
+
+        if (isError)
+        {
             notifier.AddDisconnectMessage(data);
+        }
+        else
+        {
+            var notifyText = "<font=\"Barlow-Black SDF\" material=\"Barlow-Black Outline\">" + data + "</font>";
+            notifier.SettingsChangeMessageLogic(StringNames.None, notifyText, false);
+        }
     }
 }
 

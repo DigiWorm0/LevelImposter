@@ -8,6 +8,8 @@ namespace LevelImposter.Shop;
 
 public static class LIDeserializer
 {
+    private const float JS_MAX_SAFE_INTEGER = 9007199254740991;
+
     public static LIMap? DeserializeMap(Stream dataStream, bool spriteDB = true, string? filePath = null)
     {
         try
@@ -93,6 +95,9 @@ public static class LIDeserializer
                 }
             }
 
+            // Repair
+            RepairMap(mapData);
+
             // Return
             return mapData;
         }
@@ -101,5 +106,13 @@ public static class LIDeserializer
             LILogger.Error(e.Message);
             return null;
         }
+    }
+
+    private static void RepairMap(LIMap map)
+    {
+        foreach (var element in map.elements)
+            // Fix layers defaulted to z=Number.MAX_SAFE_INTEGER
+            if (element.type == "util-layer" && element.z >= JS_MAX_SAFE_INTEGER)
+                element.z = 0;
     }
 }

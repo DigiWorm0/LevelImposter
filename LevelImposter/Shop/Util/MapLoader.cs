@@ -27,13 +27,18 @@ public static class MapLoader
             LIShipStatus.GetInstance().LoadMap(map);
 
         // Lobby Message
-        // TODO: Fix me
-        //if (DestroyableSingleton<LobbyBehaviour>.InstanceExists)
-        //    DestroyableSingleton<HudManager>.Instance.Notifier.AddSettingsChangeMessage(StringNames.GameMapName, map?.name, false);
+        LobbyVersionTag.UpdateText();
+
+        if (GameState.IsInLobby)
+            DestroyableSingleton<HudManager>.Instance.Notifier.AddSettingsChangeMessage(
+                StringNames.GameMapName,
+                map?.name,
+                false
+            );
     }
 
     /// <summary>
-    ///     Loads a map based on ID from filesystem
+    ///     Ldsoads a map based on ID from filesystem
     /// </summary>
     /// <param name="mapID">Map file name or ID without extension</param>
     /// <param name="callback">Callback on success</param>
@@ -60,5 +65,8 @@ public static class MapLoader
     public static void SetFallback(bool isFallback)
     {
         IsFallback = isFallback;
+
+        // Lobby Message
+        LobbyVersionTag.UpdateText();
     }
 }

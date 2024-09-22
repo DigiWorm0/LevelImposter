@@ -96,17 +96,16 @@ public static class DownloadManager
     public static string GetStartText()
     {
         if (_downloadError != null)
-            return
-                $"<size=4><color=red>Error Downloading Map: {_downloadError}</color></size>\n<size=3><color=red>Try rejoining the lobby or downloading the map manually.</color></size>";
+            return $"ERROR: {_downloadError}";
         if (IsDownloading())
-            return $"<size=4><color=#1a95d8>Downloading map... </color>({_downloadPercent}%)</size>";
+            return $"DOWNLOADING MAP ({_downloadPercent}%)";
 
         return _playersDownloading.Count switch
         {
             > 1 =>
-                $"<size=4><color=#1a95d8>Waiting on </color>{_playersDownloading.Count}<color=#1a95d8> players to download map...</color></size>",
+                $"WAITING ON <color=#1a95d8>{_playersDownloading.Count} players</color> TO DOWNLOAD MAP",
             1 =>
-                $"<size=4><color=#1a95d8>Waiting on </color>{_playersDownloading[0].name}<color=#1a95d8> to download map...</color></size>",
+                $"WAITING ON <color=#1a95d8>{_playersDownloading[0].name}</color> TO DOWNLOAD MAP",
             _ => string.Empty
         };
     }

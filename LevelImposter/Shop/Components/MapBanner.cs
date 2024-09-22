@@ -143,7 +143,9 @@ public class MapBanner(IntPtr intPtr) : MonoBehaviour(intPtr)
     {
         LILogger.Error(error);
         ShopManager.Instance?.SetOverlayEnabled(false);
-        // TODO: Show error popup
+
+        if (GameState.IsInLobby)
+            DestroyableSingleton<HudManager>.Instance.Notifier.AddDisconnectMessage(error);
     }
 
     /// <summary>

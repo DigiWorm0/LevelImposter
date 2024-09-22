@@ -86,7 +86,7 @@ public static class MapSync
         var currentMapID = MapLoader.CurrentMap?.id ?? "";
         if (_activeDownloadingID != null && _activeDownloadingID != mapID)
         {
-            LILogger.Notify("Download stopped.");
+            LILogger.Notify("Download stopped.", false);
             _activeDownloadingID = null;
         }
 
@@ -119,7 +119,7 @@ public static class MapSync
         else
         {
             _activeDownloadingID = mapID;
-            LILogger.Notify("<color=#1a95d8>Downloading map, please wait...</color>");
+            LILogger.Notify("Downloading map, please wait...", false);
             MapLoader.UnloadMap();
             DownloadManager.StartDownload();
             LevelImposterAPI.DownloadMap(
@@ -132,9 +132,8 @@ public static class MapSync
                     {
                         MapLoader.LoadMap(map, isFallback);
                         DownloadManager.StopDownload();
-                        LILogger.Notify("<color=#1a95d8>Download finished!</color>");
+                        LILogger.Notify("Download finished", false);
                         _activeDownloadingID = null;
-                        // TODO: Add map to local cache folder
                     }
                 },
                 error =>

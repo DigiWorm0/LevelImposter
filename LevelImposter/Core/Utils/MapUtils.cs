@@ -471,7 +471,7 @@ public static class MapUtils
     }
 
     /// <summary>
-    ///     Adjusts a Vector3 position's Z value by it's Y value
+    ///     Adjusts a Vector3 position's Z value by its Y value
     ///     such that the player is always on Z=-5
     /// </summary>
     /// <param name="vector">Vector to scale</param>

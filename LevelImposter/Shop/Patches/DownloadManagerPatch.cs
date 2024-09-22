@@ -21,29 +21,41 @@ public static class DisconnectPatch
  *      Updates the lobby menu
  *      text w/ DownloadManager
  */
-/*
 [HarmonyPatch(typeof(GameStartManager), nameof(GameStartManager.Update))]
 public static class LobbyTextPatch
 {
-    private static bool _isDownloadTextDisplayed = false;
+    private static bool _isDownloadTextDisplayed;
+
     public static void Postfix(GameStartManager __instance)
     {
-        // TODO: Fix this
         if (!DownloadManager.CanStart)
         {
+            // Disable Button
             __instance.StartButton.SetButtonEnableState(false);
-            __instance.GameStartText.text = DownloadManager.GetStartText();
+
+            // Set Text
+            var buttonText = DownloadManager.GetStartText();
+            __instance.GameStartTextClient.text = buttonText; // Client
+            __instance.StartButton.ChangeButtonText(buttonText); // Host
+
+            // Set flag
             _isDownloadTextDisplayed = true;
         }
+
+        // Check flag to prevent unnecessary updates
         else if (_isDownloadTextDisplayed)
         {
-            __instance.LastPlayerCount = -1; // Forces GameStartManager.Update to update the button state
-            __instance.GameStartText.text = string.Empty;
+            // Force GameStartManager.Update to update the button state
+            __instance.LastPlayerCount = -1;
+
+            // Clear Text
+            __instance.GameStartTextClient.text = string.Empty;
+
+            // Clear flag
             _isDownloadTextDisplayed = false;
         }
     }
 }
-*/
 
 /*
  *      Disables the Start Button

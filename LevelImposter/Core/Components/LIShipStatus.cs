@@ -1,8 +1,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Runtime.InteropServices;
 using BepInEx.Unity.IL2CPP.Utils.Collections;
 using Il2CppInterop.Runtime.Attributes;
 using Il2CppInterop.Runtime.InteropTypes.Arrays;
@@ -101,12 +99,6 @@ public class LIShipStatus(IntPtr intPtr) : MonoBehaviour(intPtr)
             // Respawn the player on key combo
             StartCoroutine(CoHandleKeyCombo(RESPAWN_SEQ, () => { RespawnPlayer(PlayerControl.LocalPlayer); })
                 .WrapToIl2Cpp());
-
-            // Set CPU affinity on key combo
-            StartCoroutine(CoHandleKeyCombo(CPU_SEQ, () => { SetCPUAffinity(); }).WrapToIl2Cpp());
-
-            // Run Debug Tests
-            StartCoroutine(CoHandleKeyCombo(DEBUG_SEQ, () => { RunDebugTests(); }).WrapToIl2Cpp());
         }
     }
 
@@ -439,38 +431,7 @@ public class LIShipStatus(IntPtr intPtr) : MonoBehaviour(intPtr)
         if (playerPhysics.AmOwner)
         {
             playerPhysics.ExitAllVents();
-            LILogger.Notify("<color=green>You've been reset to spawn</color>");
+            LILogger.Notify("You've been reset to spawn", false);
         }
-    }
-
-    /// <summary>
-    ///     Sets the CPU Affinity of Among Us to CPUs 1 and 2 as per
-    ///     https://github.com/eDonnes124/Town-Of-Us-R/issues/81
-    /// </summary>
-    private static void SetCPUAffinity()
-    {
-        var isWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
-        var isLinux = RuntimeInformation.IsOSPlatform(OSPlatform.Linux);
-        var process = Process.GetCurrentProcess();
-
-        if (!isWindows && !isLinux)
-        {
-            LILogger.Notify("<color=red>System Incompatible</color>");
-        }
-        else if (process.ProcessorAffinity.ToInt32() == 6)
-        {
-            process.ProcessorAffinity = (IntPtr)(Math.Pow(2, Environment.ProcessorCount) - 1);
-            LILogger.Notify("<color=red>Reset CPU affinity</color>");
-        }
-        else
-        {
-            process.ProcessorAffinity = (IntPtr)6;
-            LILogger.Notify("<color=green>Set CPU affinity to 1 & 2</color>");
-        }
-    }
-
-    private static void RunDebugTests()
-    {
-        // ============= Insert Debug Tests Here =============
     }
 }

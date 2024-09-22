@@ -8,6 +8,6 @@ public enum MapType
     Dleks,
     Airship,
     Fungle,
-    Submerged, // TODO: Add Submerged Support
+    Submerged,
     LevelImposter
 }
