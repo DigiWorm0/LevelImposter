@@ -24,14 +24,11 @@ public class LobbyVersionTag(IntPtr intPtr) : MonoBehaviour(intPtr)
         _text = gameObject.AddComponent<TextMeshPro>();
         _text.fontSize = 1.6f;
 
-        // Position Textbox
-        var position = new Vector3
-        {
-            x = 4.9f,
-            y = -5.05f,
-            z = -30
-        };
-        transform.localPosition = position;
+        // Create Aspect Position
+        var aspect = gameObject.AddComponent<AspectPosition>();
+        aspect.Alignment = AspectPosition.EdgeAlignments.LeftBottom;
+        aspect.DistanceFromEdge = new Vector3(10.4f, -2.0f, -30.0f);
+        aspect.AdjustPosition();
 
         // Update Text
         UpdateText();
