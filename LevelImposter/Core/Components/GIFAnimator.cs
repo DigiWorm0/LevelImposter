@@ -73,16 +73,21 @@ public class GIFAnimator(IntPtr intPtr) : MonoBehaviour(intPtr)
         _gifData = gifData;
         _defaultLoopGIF = element.properties.loopGIF ?? true;
 
+        // Preload GIFs
         var shouldPreload = LIShipStatus.GetInstanceOrNull()?.CurrentMap?.properties?.preloadAllGIFs ?? false;
         if (shouldPreload)
             _gifData?.RenderAllFrames();
 
-        if (_gifData?.Frames.Count == 1)
-            _spriteRenderer.sprite = _gifData.GetFrameSprite(0); // Still image
-        else if (AUTOPLAY_BLACKLIST.Contains(element.type))
-            Stop(); // Don't autoplay
-        else
-            Play(); // Autoplay
+        // Check for Door Component
+        var door = GetComponent<PlainDoor>();
+
+        // Check for AutoPlay
+        if (_gifData?.Frames.Count == 1) // Still image
+            _spriteRenderer.sprite = _gifData.GetFrameSprite(0);
+        else if (AUTOPLAY_BLACKLIST.Contains(element.type)) // Don't autoplay
+            Stop(door && !door.IsOpen); // Jump to end if door is closed
+        else // Autoplay
+            Play();
     }
 
     /// <summary>
@@ -140,13 +145,13 @@ public class GIFAnimator(IntPtr intPtr) : MonoBehaviour(intPtr)
         // Flag Start
         IsAnimating = true;
         _spriteRenderer.enabled = true;
-        
+
         // Reset frame
         if (reverse && _frame == 0)
             _frame = _gifData.Frames.Count - 1;
         else if (!reverse && _frame == _gifData.Frames.Count - 1)
             _frame = 0;
-        
+
         // Loop
         while (IsAnimating)
         {

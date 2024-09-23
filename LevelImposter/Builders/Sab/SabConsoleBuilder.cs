@@ -48,7 +48,7 @@ public class SabConsoleBuilder : IElemBuilder
         var console = obj.AddComponent<Console>();
         console.ConsoleId = 0;
         console.Image = spriteRenderer;
-        console.onlyFromBelow = elem.properties.onlyFromBelow ?? true;
+        console.onlyFromBelow = elem.properties.onlyFromBelow ?? false;
         console.usableDistance = elem.properties.range ?? 1.0f;
         console.Room = systemType;
         console.TaskTypes = prefabConsole.TaskTypes;
