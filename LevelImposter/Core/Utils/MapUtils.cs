@@ -312,7 +312,7 @@ public static class MapUtils
     /// </summary>
     /// <param name="name">Name of the AssetBundle file</param>
     /// <returns>GameObject or null if not found</returns>
-    public static GameObject? LoadAssetBundle(string name)
+    public static T? LoadAssetBundle<T>(string name) where T : Object
     {
         LILogger.Info($"Loading asset bundle {name}");
         var assembly = Assembly.GetExecutingAssembly();
@@ -323,7 +323,7 @@ public static class MapUtils
             return null;
 
         var assetBundle = AssetBundle.LoadFromStream(assetStream.AsIl2Cpp());
-        var asset = assetBundle.LoadAsset(name, Il2CppType.Of<GameObject>()).Cast<GameObject>();
+        var asset = assetBundle.LoadAsset(name, Il2CppType.Of<T>()).Cast<T>();
         assetBundle.Unload(false);
         return asset;
     }

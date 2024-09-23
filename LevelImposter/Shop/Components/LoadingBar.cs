@@ -45,7 +45,7 @@ public class LoadingBar(IntPtr intPtr) : MonoBehaviour(intPtr)
     /// <param name="mapName">Name of the map</param>
     public void SetMapName(string mapName)
     {
-        _mapText?.SetText(mapName);
+        _mapText?.SetText($"<font=\"Barlow-Black SDF\" material=\"Barlow-Black Outline\">{mapName}</font>");
     }
 
     /// <summary>
@@ -54,7 +54,7 @@ public class LoadingBar(IntPtr intPtr) : MonoBehaviour(intPtr)
     /// <param name="status">Text to display</param>
     public void SetStatus(string status)
     {
-        _statusText?.SetText(status);
+        _statusText?.SetText($"<font=\"VCR SDF\">{status}</font>");
     }
 
     /// <summary>

@@ -332,9 +332,10 @@ public class LIShipStatus(IntPtr intPtr) : MonoBehaviour(intPtr)
 
         // Create LoadingBar
         if (LoadingBar.Instance == null)
-            Instantiate(MapUtils.LoadAssetBundle("loadingbar"), DestroyableSingleton<HudManager>.Instance.transform);
+            Instantiate(MapUtils.LoadAssetBundle<GameObject>("loadingbar"),
+                DestroyableSingleton<HudManager>.Instance.transform);
         if (LoadingBar.Instance == null)
-            LILogger.Warn("Missing LoadingBar asset bundle!");
+            LILogger.Warn("Failed to load LoadingBar asset bundle!");
 
         // Show Loading Screen
         LILogger.Info($"Showing loading screen (Freeplay={isFreeplay})");
@@ -344,7 +345,12 @@ public class LIShipStatus(IntPtr intPtr) : MonoBehaviour(intPtr)
             fullScreen.gameObject.SetActive(true);
         }
 
-        LoadingBar.Instance?.SetMapName(CurrentMap?.name ?? "Loading...");
+        // Map name
+        var mapName = "Loading...";
+        if (CurrentMap != null)
+            mapName = $"<color=#1a95d8>{CurrentMap.name}</color> by {CurrentMap.authorName}";
+
+        LoadingBar.Instance?.SetMapName(mapName);
         LoadingBar.Instance?.SetVisible(true);
         while (!IsReady)
         {
@@ -360,7 +366,8 @@ public class LIShipStatus(IntPtr intPtr) : MonoBehaviour(intPtr)
                 var progress = (float)(renderCount / renderTotal);
                 LoadingBar.Instance?.SetProgress(progress);
                 LoadingBar.Instance?.SetStatus(
-                    $"{Math.Round(progress * 100)}% <size=1.2>({renderCount}/{renderTotal})</size>");
+                    $"{Math.Round(progress * 100)}% <size=1.2>({renderCount}/{renderTotal})</size>"
+                );
             }
             else
             {

@@ -11,6 +11,7 @@ public class CustomTextBuilder : IElemBuilder
 {
     private readonly Dictionary<string, StringNames> _customTextDB = new()
     {
+        { "AstDestroyed", StringNames.AstDestroyed },
         { "MedHello", StringNames.MedHello },
         { "SamplesPress", StringNames.SamplesPress },
         { "SamplesSelect", StringNames.SamplesSelect },

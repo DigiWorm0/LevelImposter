@@ -104,12 +104,12 @@ public class BuildRouter
             // Stop Build Timer
             _sw.Stop();
             if (_sw.ElapsedMilliseconds > LIConstants.ELEM_WARN_TIME)
-                LILogger.Warn($"{elem} took {_sw.ElapsedMilliseconds}ms to {buildStep}");
+                LILogger.Warn($"{elem.name} took {_sw.ElapsedMilliseconds}ms to {buildStep}");
         }
         catch (Exception ex)
         {
             // Log Error
-            LILogger.Error($"Error building {elem} during {buildStep}: {ex}");
+            LILogger.Error($"Error building {elem.name} during {buildStep}: {ex}");
         }
     }
 

@@ -1,4 +1,5 @@
-﻿using HarmonyLib;
+﻿using System;
+using HarmonyLib;
 using LevelImposter.Core;
 using UnityEngine;
 
@@ -15,6 +16,7 @@ public static class LobbyMapImagePatch
 
     private static string? _currentMapID;
     private static GameObject? _settingsHeader;
+    private static Sprite? _defaultThumbnail;
 
     public static MapIconByName? MapIcon;
 
@@ -51,7 +53,16 @@ public static class LobbyMapImagePatch
             return;
         _currentMapID = mapID;
 
-        // TODO Set default map icon
+        // Get default map icon
+        if (_defaultThumbnail == null)
+            _defaultThumbnail = MapUtils.LoadAssetBundle<Sprite>("defaultthumbnail");
+        if (_defaultThumbnail == null)
+            throw new Exception("Error loading default thumbnail from asset bundle");
+
+        // Set the default map icon
+        MapIcon.MapIcon = _defaultThumbnail;
+        MapIcon.MapImage = _defaultThumbnail;
+        MapIcon.NameImage = _defaultThumbnail;
 
         // Toggle Settings Header
         if (_settingsHeader == null)

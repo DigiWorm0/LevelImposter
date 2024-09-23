@@ -12,7 +12,7 @@ public static class ShopBuilder
     private static GameObject GetShopPrefab()
     {
         if (_mapShopPrefab == null)
-            _mapShopPrefab = MapUtils.LoadAssetBundle("shop");
+            _mapShopPrefab = MapUtils.LoadAssetBundle<GameObject>("shop");
         if (_mapShopPrefab == null)
             throw new Exception("The \"shop\" asset bundle was not found in assembly");
         return _mapShopPrefab;
