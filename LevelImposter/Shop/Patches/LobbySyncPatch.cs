@@ -12,18 +12,30 @@ public static class TestJoinPatch2
 {
     public static void Postfix(PlayerControl __instance)
     {
-        // TODO: Remember last map ID
-        var isHost = AmongUsClient.Instance.AmHost;
-        var wasFallback = MapLoader.IsFallback;
-        var isNoMap = MapLoader.CurrentMap == null;
+        if (!AmongUsClient.Instance.AmHost)
+            return;
 
-        if (isHost && (wasFallback || isNoMap))
-            MapSync.RegenerateFallbackID(); // Choose a random map ID
-        else
-            MapSync.SyncMapID(); // Sync the current map ID
-
-        // Always sync a new random seed
+        // Sync Random Seed
         RandomizerSync.SyncRandomSeed();
+
+        // This is a new Lobby
+        if (__instance.AmOwner)
+        {
+            var wasFallback = MapLoader.IsFallback;
+            var isNoMap = MapLoader.CurrentMap == null;
+
+            // If the map was a fallback or no map is currently loaded
+            if (wasFallback || isNoMap)
+            {
+                // Choose a new random map
+                MapSync.RegenerateFallbackID();
+                return;
+            }
+        }
+
+        // Sync the current map ID
+        // TODO: Remember last map ID
+        MapSync.SyncMapID();
     }
 }
 
