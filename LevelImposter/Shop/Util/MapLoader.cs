@@ -39,11 +39,12 @@ public static class MapLoader
         LoadingBar.Run();
 
         // Send map change message
-        DestroyableSingleton<HudManager>.Instance.Notifier.AddSettingsChangeMessage(
-            StringNames.GameMapName,
-            map?.name,
-            false
-        );
+        if (!isFallback)
+            DestroyableSingleton<HudManager>.Instance.Notifier.AddSettingsChangeMessage(
+                StringNames.GameMapName,
+                map?.name,
+                false
+            );
     }
 
     /// <summary>

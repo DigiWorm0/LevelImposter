@@ -78,13 +78,14 @@ public class LoadingBar(IntPtr intPtr) : MonoBehaviour(intPtr)
         // Objects
         var isFreeplay = GameState.IsInFreeplay;
         var currentMap = MapLoader.CurrentMap;
+        var isFallback = MapLoader.IsFallback;
 
         // Show Loading Screen
         LILogger.Info($"Showing loading screen (Freeplay={isFreeplay})");
 
         // Set Map Name
         var mapName = "Loading...";
-        if (currentMap != null)
+        if (currentMap != null && !isFallback)
             mapName = $"<color=#1a95d8>{currentMap.name}</color> by {currentMap.authorName}";
         Instance?.SetMapName(mapName);
 
@@ -102,6 +103,7 @@ public class LoadingBar(IntPtr intPtr) : MonoBehaviour(intPtr)
                     renderTotal = 1;
                 var renderCount = renderTotal - (SpriteLoader.Instance?.RenderCount ?? 0);
                 var progress = (float)(renderCount / renderTotal);
+
                 Instance?.SetProgress(progress);
                 Instance?.SetStatus(
                     $"{Math.Round(progress * 100)}% <size=1.2>({renderCount}/{renderTotal})</size>"

@@ -14,10 +14,10 @@ public static class LobbyMapImagePatch
     private static readonly Vector3 _mapImagePos = new(-1.9224f, -2.5392f, -2.0f);
     private static readonly Vector3 _mapImageScale = new(1.6074f, 1.6074f, 1.6074f);
 
-    private static string? _currentMapID;
     private static GameObject? _settingsHeader;
     private static Sprite? _defaultThumbnail;
 
+    public static string? CurrentMapID;
     public static MapIconByName? MapIcon;
 
     public static void Postfix(GameStartManager __instance)
@@ -28,9 +28,9 @@ public static class LobbyMapImagePatch
 
         // Get the current lobby UI state
         var currentMap = MapLoader.CurrentMap;
-        var isCustomMap = GameManager.Instance.LogicOptions.MapId == (byte)MapType.LevelImposter;
+        var isCustomMap = GameManager.Instance?.LogicOptions.MapId == (byte)MapType.LevelImposter;
         var mapID = isCustomMap ? currentMap?.id : null;
-        var isMapChanged = _currentMapID != mapID;
+        var isMapChanged = CurrentMapID != mapID;
 
         // Update the scale
         if (isCustomMap)
@@ -51,7 +51,7 @@ public static class LobbyMapImagePatch
         // Check if the map has changed
         if (!isMapChanged)
             return;
-        _currentMapID = mapID;
+        CurrentMapID = mapID;
 
         // Get default map icon
         if (_defaultThumbnail == null)
@@ -97,6 +97,7 @@ public static class LobbyTestPatch
 {
     public static void Postfix(GameStartManager __instance)
     {
+        LobbyMapImagePatch.CurrentMapID = null;
         LobbyMapImagePatch.MapIcon = new MapIconByName
         {
             Name = (MapNames)MapType.LevelImposter,
