@@ -1,6 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using Reactor.Utilities;
+using BepInEx.Unity.IL2CPP.Utils.Collections;
 using UnityEngine;
 
 namespace LevelImposter.Core;
@@ -10,7 +10,7 @@ namespace LevelImposter.Core;
 /// </summary>
 public class GameObjectCoroutineManager
 {
-    private readonly Dictionary<int, IEnumerator> _activeCoroutines = new();
+    private readonly Dictionary<int, Coroutine> _activeCoroutines = new();
 
     private int GetObjectID(GameObject gameObject)
     {
@@ -27,7 +27,9 @@ public class GameObjectCoroutineManager
     {
         Stop(gameObject);
         var objectID = GetObjectID(gameObject);
-        var newCoroutine = Coroutines.Start(CoRunCoroutine(objectID, coroutine));
+        var newCoroutine = LIShipStatus.GetInstance().StartCoroutine(
+            CoRunCoroutine(objectID, coroutine).WrapToIl2Cpp()
+        );
         _activeCoroutines[objectID] = newCoroutine;
     }
 
@@ -40,7 +42,7 @@ public class GameObjectCoroutineManager
         var objectID = GetObjectID(gameObject);
         if (_activeCoroutines.ContainsKey(objectID))
         {
-            Coroutines.Stop(_activeCoroutines[objectID]);
+            LIShipStatus.GetInstance().StopCoroutine(_activeCoroutines[objectID]);
             _activeCoroutines.Remove(objectID);
         }
     }

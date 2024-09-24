@@ -64,7 +64,7 @@ public class LobbyVersionTag(IntPtr intPtr) : MonoBehaviour(intPtr)
         versionTagBuilder.Append("<font=\"Barlow-Black SDF\" material=\"Barlow-Black Outline\">");
         if (isFallback || currentMap == null)
         {
-            versionTagBuilder.Append("Random Custom Map\n");
+            versionTagBuilder.Append("Random Custom Map");
         }
         else
         {

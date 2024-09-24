@@ -63,7 +63,6 @@ public class HTTPHandler(IntPtr intPtr) : MonoBehaviour(intPtr)
             if (request.result == UnityWebRequest.Result.ConnectionError ||
                 request.result == UnityWebRequest.Result.ProtocolError)
             {
-                LILogger.Error(request.error);
                 if (onError != null)
                     onError(request.error);
             }

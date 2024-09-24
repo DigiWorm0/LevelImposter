@@ -539,12 +539,14 @@ public static class MapUtils
     ///     Sets the current map type
     /// </summary>
     /// <param name="mapType">Current MapType enum</param>
-    public static void SetLobbyMapType(MapType mapType)
+    /// <param name="transmit">Whether to transmit the change over RPC</param>
+    public static void SetLobbyMapType(MapType mapType, bool transmit = false)
     {
         var currentGameOptions = GameOptionsManager.Instance.CurrentGameOptions;
         currentGameOptions.SetByte(ByteOptionNames.MapId, (byte)mapType);
         GameOptionsManager.Instance.GameHostOptions = GameOptionsManager.Instance.CurrentGameOptions;
-        GameManager.Instance.LogicOptions.SyncOptions();
+        if (transmit)
+            GameManager.Instance.LogicOptions.SyncOptions();
     }
 
     /// <summary>

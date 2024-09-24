@@ -62,7 +62,7 @@ public static class MapSync
         if (!isEmpty && !MapLoader.IsFallback)
             MapUtils.SetLobbyMapType(MapType.LevelImposter);
         else if (isEmpty && GameOptionsManager.Instance.CurrentGameOptions.MapId == (byte)MapType.LevelImposter)
-            MapUtils.SetLobbyMapType(MapType.Skeld);
+            MapUtils.SetLobbyMapType(MapType.Skeld, true);
     }
 
     [MethodRpc((uint)LIRpc.SyncMapID)]
@@ -94,9 +94,15 @@ public static class MapSync
         if (mapID.Equals(Guid.Empty))
         {
             MapLoader.UnloadMap();
+            return;
         }
+
+        // Set Map Type
+        if (!isFallback)
+            MapUtils.SetLobbyMapType(MapType.LevelImposter);
+
         // Currently Downloading
-        else if (_activeDownloadingID == mapID)
+        if (_activeDownloadingID == mapID)
         {
             DownloadManager.StartDownload();
         }

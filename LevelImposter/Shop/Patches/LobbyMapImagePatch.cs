@@ -28,9 +28,15 @@ public static class LobbyMapImagePatch
 
         // Get the current lobby UI state
         var currentMap = MapLoader.CurrentMap;
+        var isFallbackMap = MapLoader.IsFallback;
         var isCustomMap = GameManager.Instance?.LogicOptions.MapId == (byte)MapType.LevelImposter;
-        var mapID = isCustomMap ? currentMap?.id : null;
-        var isMapChanged = CurrentMapID != mapID;
+
+        // Get Map ID
+        var mapID = currentMap?.id;
+        if (isFallbackMap)
+            mapID = "Fallback";
+        if (!isCustomMap)
+            mapID = null;
 
         // Update the scale
         if (isCustomMap)
@@ -49,7 +55,7 @@ public static class LobbyMapImagePatch
             return;
 
         // Check if the map has changed
-        if (!isMapChanged)
+        if (CurrentMapID == mapID)
             return;
         CurrentMapID = mapID;
 
@@ -70,25 +76,25 @@ public static class LobbyMapImagePatch
         _settingsHeader.SetActive(!isCustomMap);
 
         // Load Thumbnail
-        if (isCustomMap)
-        {
-            // Check if in cache
-            if (ThumbnailCache.Exists(currentMap.id))
-                ThumbnailCache.Get(currentMap.id, sprite =>
-                {
-                    MapIcon.MapIcon = sprite;
-                    MapIcon.MapImage = sprite;
-                    MapIcon.NameImage = sprite;
-                });
-            // Download the thumbnail
-            else if (!string.IsNullOrEmpty(currentMap?.thumbnailURL))
-                LevelImposterAPI.DownloadThumbnail(currentMap, sprite =>
-                {
-                    MapIcon.MapIcon = sprite;
-                    MapIcon.MapImage = sprite;
-                    MapIcon.NameImage = sprite;
-                });
-        }
+        if (!isCustomMap || isFallbackMap)
+            return;
+
+        // Check if in cache
+        if (ThumbnailCache.Exists(currentMap.id))
+            ThumbnailCache.Get(currentMap.id, sprite =>
+            {
+                MapIcon.MapIcon = sprite;
+                MapIcon.MapImage = sprite;
+                MapIcon.NameImage = sprite;
+            });
+        // Download the thumbnail
+        else if (!string.IsNullOrEmpty(currentMap?.thumbnailURL))
+            LevelImposterAPI.DownloadThumbnail(currentMap, sprite =>
+            {
+                MapIcon.MapIcon = sprite;
+                MapIcon.MapImage = sprite;
+                MapIcon.NameImage = sprite;
+            });
     }
 }
 
