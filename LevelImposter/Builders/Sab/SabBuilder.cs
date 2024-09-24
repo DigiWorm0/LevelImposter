@@ -58,7 +58,7 @@ public class SabBuilder : IElemBuilder
         if (!_sabDB.ContainsKey(roomSystem))
         {
             // Sabotage Task
-            LILogger.Info($" + Adding sabotage for {elem}...");
+            LILogger.Debug($" + Adding sabotage for {elem}...");
             var sabContainer = new GameObject(elem.name);
             sabContainer.transform.SetParent(_sabContainer.transform);
 

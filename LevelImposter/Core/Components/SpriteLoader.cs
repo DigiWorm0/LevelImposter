@@ -13,7 +13,7 @@ using UnityEngine;
 namespace LevelImposter.Core;
 
 /// <summary>
-///     Multi-threaded sprite loader
+///     Asynchronous object sprite loader
 /// </summary>
 public class SpriteLoader(IntPtr intPtr) : MonoBehaviour(intPtr)
 {
@@ -55,7 +55,7 @@ public class SpriteLoader(IntPtr intPtr) : MonoBehaviour(intPtr)
         foreach (var spriteData in _spriteCache)
             if (spriteData.ID == spriteID)
             {
-                LILogger.Info($" + Found sprite in cache [{spriteID}]");
+                LILogger.Debug($" + Found sprite in cache [{spriteID}]");
                 return spriteData;
             }
 
@@ -106,7 +106,7 @@ public class SpriteLoader(IntPtr intPtr) : MonoBehaviour(intPtr)
     [HideFromIl2Cpp]
     public void LoadSpriteAsync(LIElement element, GameObject? obj)
     {
-        LILogger.Info($"Loading sprite for {element}");
+        LILogger.Debug($"Loading sprite for {element}");
         var stopwatch = Stopwatch.StartNew();
 
         // Get Sprite Data
@@ -139,7 +139,7 @@ public class SpriteLoader(IntPtr intPtr) : MonoBehaviour(intPtr)
                 var gifAnimator = obj.AddComponent<GIFAnimator>();
                 gifAnimator.Init(element, spriteData.GIFData);
                 stopwatch.Stop();
-                LILogger.Info(
+                LILogger.Debug(
                     $"Done loading {spriteData.GIFData?.Width}x{spriteData.GIFData?.Height} sprite for {element} ({RenderCount} Left) [{stopwatch.ElapsedMilliseconds}ms]");
             }
             else // Still Image
@@ -148,7 +148,7 @@ public class SpriteLoader(IntPtr intPtr) : MonoBehaviour(intPtr)
                 spriteRenderer.sprite = spriteData.Sprite;
                 var spriteDim = spriteData.Sprite?.rect ?? new Rect();
                 stopwatch.Stop();
-                LILogger.Info(
+                LILogger.Debug(
                     $"Done loading {spriteDim.width}x{spriteDim.height} sprite for {element} ({RenderCount} Left) [{stopwatch.ElapsedMilliseconds}ms]");
             }
 

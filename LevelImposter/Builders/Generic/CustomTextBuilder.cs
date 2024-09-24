@@ -97,7 +97,7 @@ public class CustomTextBuilder : IElemBuilder
 
             // Replace Text
             shipStatus.Renames.Add(stringName, text);
-            LILogger.Info($"Custom Text '{stringName}' >>> '{text}'");
+            LILogger.Debug($"Custom Text '{stringName}' >>> '{text}'");
         }
     }
 }

@@ -45,7 +45,7 @@ public class SabMixupBuilder : IElemBuilder
             return;
 
         // Create Task
-        LILogger.Info($" + Adding sabotage for {elem}...");
+        LILogger.Debug($" + Adding sabotage for {elem}...");
         var task = taskContainer.AddComponent<MushroomMixupSabotageTask>();
         {
             // Properties

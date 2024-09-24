@@ -91,6 +91,15 @@ public static class LILogger
     }
 
     /// <summary>
+    ///     Logs debug text to BepInEx console (gray text).
+    /// </summary>
+    /// <param name="data">String or object to log</param>
+    public static void Debug(object data)
+    {
+        Log(LogLevel.Debug, data);
+    }
+
+    /// <summary>
     ///     Sends a message to notifications (if exists)
     /// </summary>
     /// <param name="data">String message to log</param>

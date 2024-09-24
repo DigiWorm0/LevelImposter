@@ -39,7 +39,6 @@ public class LIShakeArea(IntPtr intPtr) : PlayerArea(intPtr)
 
     protected override void OnPlayerEnter(PlayerControl player)
     {
-        LILogger.Info("Player Entered");
         if (player.AmOwner)
             SetShakeEnabled(true);
     }

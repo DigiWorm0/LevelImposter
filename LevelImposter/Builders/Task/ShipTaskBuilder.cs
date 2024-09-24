@@ -92,7 +92,7 @@ public class ShipTaskBuilder : IElemBuilder
         var isBuilt = _builtTypes.Contains(elem.type);
         if (!isBuilt)
         {
-            LILogger.Info($" + Creating task for {elem}...");
+            LILogger.Debug($" + Creating task for {elem}...");
             _builtTypes.Add(elem.type);
         }
 
