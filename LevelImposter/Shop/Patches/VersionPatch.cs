@@ -1,64 +1,62 @@
-﻿using HarmonyLib;
+﻿using System;
+using HarmonyLib;
 using LevelImposter.Core;
-using System;
 using TMPro;
 using UnityEngine;
 
-namespace LevelImposter.Shop
+namespace LevelImposter.Shop;
+
+/*
+ *      I swear to god if I find that
+ *      any of you patch over my logo
+ *      I will swallow your entire house whole.
+ */
+[HarmonyPatch(typeof(VersionShower), nameof(VersionShower.Start))]
+public static class VersionPatch
 {
-    /*
-     *      I swear to god if I find that
-     *      any of you patch over my logo
-     *      I will swallow your entire house whole.
-     */
-    [HarmonyPatch(typeof(VersionShower), nameof(VersionShower.Start))]
-    public static class VersionPatch
+    private static Sprite? _logoSprite;
+
+    public static GameObject? VersionObject { get; private set; }
+
+    public static void Postfix()
     {
-        private static Sprite? _logoSprite = null;
-        private static GameObject? _versionObject = null;
+        if (!GameState.IsInMainMenu)
+            return;
 
-        public static GameObject? VersionObject => _versionObject;
+        var antiPiracy = Guid.NewGuid().ToString();
 
-        public static void Postfix()
-        {
-            if (!GameState.IsInMainMenu)
-                return;
+        VersionObject = new GameObject("LevelImposterVersion " + antiPiracy);
+        VersionObject.transform.localScale = new Vector3(0.55f, 0.55f, 1.0f);
+        VersionObject.layer = (int)Layer.UI;
 
-            string antiPiracy = Guid.NewGuid().ToString();
+        var logoPosition = VersionObject.AddComponent<AspectPosition>();
+        logoPosition.Alignment = AspectPosition.EdgeAlignments.Right;
+        logoPosition.DistanceFromEdge = new Vector3(1.8f, -2.3f, 0);
+        logoPosition.AdjustPosition();
 
-            _versionObject = new("LevelImposterVersion " + antiPiracy);
-            _versionObject.transform.localScale = new Vector3(0.55f, 0.55f, 1.0f);
-            _versionObject.layer = (int)Layer.UI;
+        var logoRenderer = VersionObject.AddComponent<SpriteRenderer>();
+        logoRenderer.sprite = GetLogoSprite();
 
-            AspectPosition logoPosition = _versionObject.AddComponent<AspectPosition>();
-            logoPosition.Alignment = AspectPosition.EdgeAlignments.Right;
-            logoPosition.DistanceFromEdge = new Vector3(1.8f, -2.3f, 0);
-            logoPosition.AdjustPosition();
+        GameObject logoTextObj = new("LevelImposterText " + antiPiracy);
+        logoTextObj.transform.SetParent(VersionObject.transform);
+        logoTextObj.transform.localPosition = new Vector3(3.2f, 0, 0);
 
-            SpriteRenderer logoRenderer = _versionObject.AddComponent<SpriteRenderer>();
-            logoRenderer.sprite = GetLogoSprite();
+        var logoTransform = logoTextObj.AddComponent<RectTransform>();
+        logoTransform.sizeDelta = new Vector2(2, 0.19f);
 
-            GameObject logoTextObj = new("LevelImposterText " + antiPiracy);
-            logoTextObj.transform.SetParent(_versionObject.transform);
-            logoTextObj.transform.localPosition = new Vector3(3.2f, 0, 0);
+        var logoText = logoTextObj.AddComponent<TextMeshPro>();
+        logoText.fontSize = 1.5f;
+        logoText.alignment = TextAlignmentOptions.BottomLeft;
+        logoText.raycastTarget = false;
+        logoText.SetText("v" + LevelImposter.DisplayVersion);
+    }
 
-            RectTransform logoTransform = logoTextObj.AddComponent<RectTransform>();
-            logoTransform.sizeDelta = new Vector2(2, 0.19f);
-
-            TextMeshPro logoText = logoTextObj.AddComponent<TextMeshPro>();
-            logoText.fontSize = 1.5f;
-            logoText.alignment = TextAlignmentOptions.BottomLeft;
-            logoText.raycastTarget = false;
-            logoText.SetText("v" + LevelImposter.DisplayVersion);
-        }
-
-        private static Sprite GetLogoSprite()
-        {
-            if (_logoSprite == null)
-                _logoSprite = MapUtils.LoadSpriteResource("LevelImposterLogo.png");
-            if (_logoSprite == null)
-                throw new Exception("The \"LevelImposterLogo.png\" resource was not found in assembly");
-            return _logoSprite;
-        }
+    private static Sprite GetLogoSprite()
+    {
+        if (_logoSprite == null)
+            _logoSprite = MapUtils.LoadSpriteResource("LevelImposterLogo.png");
+        if (_logoSprite == null)
+            throw new Exception("The \"LevelImposterLogo.png\" resource was not found in assembly");
+        return _logoSprite;
     }
 }

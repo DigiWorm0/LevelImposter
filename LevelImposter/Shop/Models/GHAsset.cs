@@ -1,12 +1,14 @@
 using System;
+using System.Text.Json.Serialization;
 
-namespace LevelImposter.Shop
+namespace LevelImposter.Shop;
+
+[Serializable]
+public class GHAsset
 {
-    [Serializable]
-    public class GHAsset
-    {
-        public string name { get; set; }
-        public int size { get; set; }
-        public string browser_download_url { get; set; }
-    }
+    [JsonPropertyName("name")] public string? Name { get; set; }
+    [JsonPropertyName("size")] public int Size { get; set; }
+
+    [JsonPropertyName("browser_download_url")]
+    public string? BrowserDownloadURL { get; set; }
 }

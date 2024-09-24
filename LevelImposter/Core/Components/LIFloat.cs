@@ -1,40 +1,49 @@
 ﻿using System;
 using UnityEngine;
-using Il2CppInterop.Runtime.Attributes;
 
-namespace LevelImposter.Core
+namespace LevelImposter.Core;
+
+/// <summary>
+///     Object that oscillates up and down
+/// </summary>
+public class LIFloat(IntPtr intPtr) : MonoBehaviour(intPtr)
 {
-    /// <summary>
-    /// Object that oscillates up and down
-    /// </summary>
-    public class LIFloat : MonoBehaviour
+    private float _height = 0.2f;
+    private Vector3 _lastPosition;
+    private float _speed = 2.0f;
+    private float _yScale = 1;
+
+    public void Awake()
     {
-        public LIFloat(IntPtr intPtr) : base(intPtr)
-        {
-        }
+        // Get LI data
+        var objectData = gameObject.GetLIData();
+        if (objectData == null)
+            throw new Exception("LIFloat is missing LI data");
 
-        private float _t => Time.time;
-        private float _height = 0.2f;
-        private float _speed = 2.0f;
-        private float _yOffset = 0;
-        private float _yScale = 1;
+        _height = objectData.Element.properties.floatingHeight ?? _height;
+        _speed = objectData.Element.properties.floatingSpeed ?? _speed;
+        _yScale = objectData.Element.yScale;
+    }
 
-        [HideFromIl2Cpp]
-        public void Init(LIElement elem)
-        {
-            _height = elem.properties.floatingHeight ?? _height;
-            _speed = elem.properties.floatingSpeed ?? _speed;
-            _yOffset = elem.y;
-            _yScale = elem.yScale;
-        }
+    public void Update()
+    {
+        // Oscillate
+        var time = Time.time;
+        var value = (Mathf.Sin(time * _speed) + 1) * _yScale * _height / 2;
+        var rotation = -transform.rotation.eulerAngles.z * Mathf.Deg2Rad;
 
-        public void Update()
-        {
-            transform.localPosition = new Vector3(
-                transform.localPosition.x,
-                (Mathf.Sin(_t * _speed) + 1) * _yScale * _height / 2 + _yOffset,
-                transform.localPosition.z
-            );
-        }
+        // Get new position
+        var newPosition = new Vector3(
+            Mathf.Sin(rotation) * value,
+            Mathf.Cos(rotation) * value,
+            0
+        );
+
+        // Move object by delta
+        var delta = newPosition - _lastPosition;
+        transform.position += delta;
+
+        // Update last position
+        _lastPosition = newPosition;
     }
 }

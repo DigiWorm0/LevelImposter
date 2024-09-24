@@ -1,149 +1,151 @@
-using Il2CppInterop.Runtime.Attributes;
-using LevelImposter.Core;
 using System;
 using System.IO;
+using System.Reflection;
 using System.Text.Json;
+using Il2CppInterop.Runtime.Attributes;
+using LevelImposter.Core;
 
-namespace LevelImposter.Shop
+namespace LevelImposter.Shop;
+
+/// <summary>
+///     API to recieve updates from GitHub.com
+/// </summary>
+public static class GitHubAPI
 {
+    public const string API_PATH = "https://api.github.com/repos/DigiWorm0/LevelImposter/releases?per_page=5";
+    public const string UPDATE_FORBIDDEN_FLAG = "[NoAutoUpdate]";
+    public const string DEV_VERSION_FLAG = "dev";
+
     /// <summary>
-    /// API to recieve updates from GitHub.com
+    ///     Gets the current path where the LevelImposter DLL is stored.
     /// </summary>
-    public static class GitHubAPI
+    /// <returns>String path where the LevelImposter DLL is stored.</returns>
+    public static string GetDLLDirectory()
     {
-        public const string API_PATH = "https://api.github.com/repos/DigiWorm0/LevelImposter/releases?per_page=5";
-        public const string UPDATE_FORBIDDEN_FLAG = "[NoAutoUpdate]";
-        public const string DEV_VERSION_FLAG = "dev";
+        var gameDir = Assembly.GetAssembly(typeof(LevelImposter))?.Location ?? "/";
+        return gameDir;
+    }
 
-        /// <summary>
-        /// Gets the current path where the LevelImposter DLL is stored.
-        /// </summary>
-        /// <returns>String path where the LevelImposter DLL is stored.</returns>
-        public static string GetDLLDirectory()
+    /// <summary>
+    ///     Gets the latest release info from GitHub
+    /// </summary>
+    /// <param name="onSuccess">Callback on success</param>
+    /// <param name="onError">Callback on error</param>
+    [HideFromIl2Cpp]
+    private static void GetLatestReleases(Action<GHRelease[]> onSuccess, Action<string> onError)
+    {
+        LILogger.Info("Getting latest release info from GitHub");
+        HTTPHandler.Instance?.Request(API_PATH, json =>
         {
-            string gameDir = System.Reflection.Assembly.GetAssembly(typeof(LevelImposter))?.Location ?? "/";
-            return gameDir;
+            var response = JsonSerializer.Deserialize<GHRelease[]>(json);
+            if (response != null)
+                onSuccess(response);
+            else
+                onError("Invalid API response");
+        }, onError);
+    }
+
+    /// <summary>
+    ///     Gets the latest release data from GitHub
+    /// </summary>
+    /// <param name="onSuccess">Callback on success</param>
+    /// <param name="onError">Callback on error</param>
+    [HideFromIl2Cpp]
+    public static void GetLatestRelease(Action<GHRelease> onSuccess, Action<string> onError)
+    {
+        GetLatestReleases(releases => { onSuccess(releases[0]); }, onError);
+    }
+
+    /// <summary>
+    ///     Checks release chain if update is forbidden
+    /// </summary>
+    /// <param name="releases">List of releases in order of relevancy</param>
+    /// <returns>TRUE if the update is forbidden. FALSE otherwise</returns>
+    [HideFromIl2Cpp]
+    private static bool IsUpdateForbidden(GHRelease[] releases)
+    {
+        foreach (var release in releases)
+        {
+            if (IsCurrent(release))
+                return false;
+            if (release.Body.Contains(UPDATE_FORBIDDEN_FLAG))
+                return true;
         }
 
-        /// <summary>
-        /// Gets the latest release info from GitHub
-        /// </summary>
-        /// <param name="onSuccess">Callback on success</param>
-        /// <param name="onError">Callback on error</param>
-        [HideFromIl2Cpp]
-        private static void GetLatestReleases(Action<GHRelease[]> onSuccess, Action<string> onError)
-        {
-            LILogger.Info("Getting latest release info from GitHub");
-            HTTPHandler.Instance?.Request(API_PATH, (json) =>
-            {
-                GHRelease[]? response = JsonSerializer.Deserialize<GHRelease[]>(json);
-                if (response != null)
-                    onSuccess(response);
-                else
-                    onError("Invalid API response");
-            }, onError);
-        }
+        return false;
+    }
 
-        /// <summary>
-        /// Gets the latest release data from GitHub
-        /// </summary>
-        /// <param name="onSuccess">Callback on success</param>
-        /// <param name="onError">Callback on error</param>
-        [HideFromIl2Cpp]
-        public static void GetLatestRelease(Action<GHRelease> onSuccess, Action<string> onError)
-        {
-            GetLatestReleases((releases) =>
-            {
-                onSuccess(releases[0]);
-            }, onError);
-        }
+    /// <summary>
+    ///     Checks if the GitHub release matches
+    ///     the current release version
+    /// </summary>
+    /// <param name="release">Release data to check</param>
+    /// <returns>True if the release matches the current version</returns>
+    [HideFromIl2Cpp]
+    public static bool IsCurrent(GHRelease release)
+    {
+        var versionString = release.Name.Split(" ")[1];
+        return versionString == LevelImposter.DisplayVersion || LevelImposter.DisplayVersion.Contains(DEV_VERSION_FLAG);
+    }
 
-        /// <summary>
-        /// Checks release chain if update is forbidden
-        /// </summary>
-        /// <param name="releases">List of releases in order of relevancy</param>
-        /// <returns>TRUE if the update is forbidden. FALSE otherwise</returns>
-        [HideFromIl2Cpp]
-        private static bool IsUpdateForbidden(GHRelease[] releases)
+    /// <summary>
+    ///     Downloads and updates the DLL to the latest version
+    /// </summary>
+    /// <param name="onSuccess">Callback on success</param>
+    /// <param name="onError">Callback on error</param>
+    [HideFromIl2Cpp]
+    public static void UpdateMod(Action onSuccess, Action<string> onError)
+    {
+        LILogger.Info("Updating mod from GitHub");
+        GetLatestReleases(releases =>
         {
-            foreach (GHRelease release in releases)
+            var release = releases[0];
+            LILogger.Info($"Downloading DLL from {release}");
+            if (release.Assets.Length <= 0)
             {
-                if (IsCurrent(release))
-                    return false;
-                if (release.body.Contains(UPDATE_FORBIDDEN_FLAG))
-                    return true;
+                var errorMsg = $"No release assets were found for {release}";
+                LILogger.Error(errorMsg);
+                onError(errorMsg);
+                return;
             }
-            return false;
-        }
 
-        /// <summary>
-        /// Checks if the GitHub release matches
-        /// the current release version
-        /// </summary>
-        /// <param name="release">Release data to check</param>
-        /// <returns>True if the release matches the current version</returns>
-        [HideFromIl2Cpp]
-        public static bool IsCurrent(GHRelease release)
-        {
-            string versionString = release.name.Split(" ")[1];
-            return versionString == LevelImposter.DisplayVersion || LevelImposter.DisplayVersion.Contains(DEV_VERSION_FLAG);
-        }
-
-        /// <summary>
-        /// Downloads and updates the DLL to the latest version
-        /// </summary>
-        /// <param name="onSuccess">Callback on success</param>
-        /// <param name="onError">Callback on error</param>
-        [HideFromIl2Cpp]
-        public static void UpdateMod(Action onSuccess, Action<string> onError)
-        {
-            LILogger.Info("Updating mod from GitHub");
-            GetLatestReleases((releases) =>
+            if (IsUpdateForbidden(releases))
             {
-                GHRelease release = releases[0];
-                LILogger.Info($"Downloading DLL from {release}");
-                if (release.assets.Length <= 0)
+                var errorMsg = $"Auto-update to {release} is unavailable.";
+                LILogger.Error(errorMsg);
+                onError(errorMsg);
+                return;
+            }
+
+            var downloadURL = release.Assets[0].BrowserDownloadURL;
+            HTTPHandler.Instance?.Request(downloadURL, dllBytes =>
+            {
+                LILogger.Info($"Saving {dllBytes.Length / 1024}kb DLL to local filesystem");
+                try
                 {
-                    string errorMsg = $"No release assets were found for {release}";
-                    LILogger.Error(errorMsg);
-                    onError(errorMsg);
-                    return;
-                }
-                if (IsUpdateForbidden(releases))
-                {
-                    string errorMsg = $"Auto-update to {release} is unavailable.";
-                    LILogger.Error(errorMsg);
-                    onError(errorMsg);
-                    return;
-                }
-                string downloadURL = release.assets[0].browser_download_url;
-                HTTPHandler.Instance?.Request(downloadURL, (dllBytes) =>
-                {
-                    LILogger.Info($"Saving {dllBytes.Length / 1024}kb DLL to local filesystem");
-                    try
+                    var dllPath = GetDLLDirectory();
+                    var dllOldPath = dllPath + ".old";
+
+                    if (File.Exists(dllOldPath))
+                        File.Delete(dllOldPath);
+                    File.Move(dllPath, dllOldPath);
+
+                    using (var fileStream = File.Create(dllPath))
                     {
-                        string dllPath = GetDLLDirectory();
-                        string dllOldPath = dllPath + ".old";
-
-                        if (File.Exists(dllOldPath))
-                            File.Delete(dllOldPath);
-                        File.Move(dllPath, dllOldPath);
-
-                        using (FileStream fileStream = File.Create(dllPath))
-                            fileStream.Write(dllBytes, 0, dllBytes.Length);
-
-                        FileCache.Clear();
-
-                        LILogger.Info("Update complete");
-                        onSuccess();
+                        fileStream.Write(dllBytes, 0, dllBytes.Length);
                     }
-                    catch (Exception e)
-                    {
-                        LILogger.Error(e);
-                        onError(e.Message);
-                    }
-                }, onError);
+
+                    FileCache.Clear();
+
+                    LILogger.Info("Update complete");
+                    onSuccess();
+                }
+                catch (Exception e)
+                {
+                    LILogger.Error(e);
+                    onError(e.Message);
+                }
             }, onError);
-        }
+        }, onError);
     }
 }

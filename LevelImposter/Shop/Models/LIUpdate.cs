@@ -1,20 +1,14 @@
 ﻿using System;
+using System.Text.Json.Serialization;
 
-namespace LevelImposter.Shop
+namespace LevelImposter.Shop;
+
+[Serializable]
+public class LIUpdate
 {
-    [Serializable]
-    public class LIUpdate
-    {
-        public string name { get; set; }
-        public string tag { get; set; }
-        public string downloadURL { get; set; }
+    [JsonPropertyName("name")] public string? Name { get; set; }
+    [JsonPropertyName("tag")] public string? Tag { get; set; }
+    [JsonPropertyName("downloadURL")] public string? DownloadURL { get; set; }
 
-        public bool isCurrent
-        {
-            get
-            {
-                return tag.Equals(LevelImposter.DisplayVersion);
-            }
-        }
-    }
+    public bool IsCurrent => Tag?.Equals(LevelImposter.DisplayVersion) ?? false;
 }

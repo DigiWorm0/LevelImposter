@@ -1,14 +1,13 @@
-﻿namespace LevelImposter.Core
+﻿namespace LevelImposter.Core;
+
+public enum MapType
 {
-    public enum MapType : int
-    {
-        Skeld = 0,
-        Mira,
-        Polus,
-        Dleks,
-        Airship,
-        Fungle,
-        Submerged, // TODO: Add Submerged Support
-        LevelImposter
-    }
+    Skeld = 0,
+    Mira,
+    Polus,
+    Dleks,
+    Airship,
+    Fungle,
+    Submerged,
+    LevelImposter
 }

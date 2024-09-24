@@ -1,45 +1,42 @@
 ﻿using BepInEx.Unity.IL2CPP;
 
-namespace LevelImposter.Core
+namespace LevelImposter.Core;
+
+public static class ModCompatibility
 {
-    public static class ModCompatibility
+    public const string REACTOR_ID = "gg.reactor.api";
+    public const string TOR_GUID = "me.eisbison.theotherroles";
+    public const string TOU_GUID = "com.slushiegoose.townofus";
+    public const string REW_GUID = "me.alchlcdvl.reworked";
+    public const string SUBMERGED_GUID = "Submerged";
+
+    public static bool IsTOREnabled { get; private set; }
+
+    public static bool IsTOUEnabled { get; private set; }
+
+    public static bool IsSubmergedEnabled { get; private set; }
+
+    public static bool IsReworkedEnabled { get; private set; }
+
+    public static void Init()
     {
-        public const string REACTOR_ID = "gg.reactor.api";
-        public const string TOR_GUID = "me.eisbison.theotherroles";
-        public const string TOU_GUID = "com.slushiegoose.townofus";
-        public const string REW_GUID = "me.alchlcdvl.reworked";
-        public const string SUBMERGED_GUID = "Submerged";
+        IsTOREnabled = IsPlugin(TOR_GUID);
+        IsTOUEnabled = IsPlugin(TOU_GUID);
+        IsSubmergedEnabled = IsPlugin(SUBMERGED_GUID);
+        IsReworkedEnabled = IsPlugin(REW_GUID);
 
-        private static bool _isTOREnabled = false;
-        private static bool _isTOUEnabled = false;
-        private static bool _isSubmergedEnabled = false;
-        private static bool _isReworkedEnabled = false;
+        if (IsTOREnabled)
+            LILogger.Info("LevelImposter detected TOR installed, compatibility enabled");
+        if (IsTOUEnabled)
+            LILogger.Info("LevelImposter detected TOU installed, compatibility enabled");
+        if (IsReworkedEnabled)
+            LILogger.Info("LevelImposter detected Reworked installed, compatibility enabled");
+        if (IsSubmergedEnabled)
+            LILogger.Info("LevelImposter detected Submerged installed, currently unsupported");
+    }
 
-        public static bool IsTOREnabled => _isTOREnabled;
-        public static bool IsTOUEnabled => _isTOUEnabled;
-        public static bool IsSubmergedEnabled => _isSubmergedEnabled;
-        public static bool IsReworkedEnabled => _isReworkedEnabled;
-
-        public static void Init()
-        {
-            _isTOREnabled = IsPlugin(TOR_GUID);
-            _isTOUEnabled = IsPlugin(TOU_GUID);
-            _isSubmergedEnabled = IsPlugin(SUBMERGED_GUID);
-            _isReworkedEnabled = IsPlugin(REW_GUID);
-
-            if (_isTOREnabled)
-                LILogger.Info("LevelImposter detected TOR installed, compatibility enabled");
-            if (_isTOUEnabled)
-                LILogger.Info("LevelImposter detected TOU installed, compatibility enabled");
-            if (_isReworkedEnabled)
-                LILogger.Info("LevelImposter detected Reworked installed, compatibility enabled");
-            if (_isSubmergedEnabled)
-                LILogger.Info("LevelImposter detected Submerged installed, currently unsupported");
-        }
-
-        private static bool IsPlugin(string guid)
-        {
-            return IL2CPPChainloader.Instance.Plugins.TryGetValue(guid, out _);
-        }
+    private static bool IsPlugin(string guid)
+    {
+        return IL2CPPChainloader.Instance.Plugins.TryGetValue(guid, out _);
     }
 }

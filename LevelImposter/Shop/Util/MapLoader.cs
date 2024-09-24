@@ -1,61 +1,82 @@
-using LevelImposter.Core;
 using System;
+using LevelImposter.Core;
 
-namespace LevelImposter.Shop
+namespace LevelImposter.Shop;
+
+public static class MapLoader
 {
-    public static class MapLoader
+    private static string? _lastMapID;
+
+    public static LIMap? CurrentMap { get; private set; }
+
+    public static bool IsFallback { get; private set; }
+
+    /// <summary>
+    ///     Loads a map from <c>LIMap</c> model
+    /// </summary>
+    /// <param name="map">LevelImposter map data</param>
+    public static void LoadMap(LIMap? map, bool isFallback)
     {
-        private static string? _lastMapID = null;
-        private static LIMap? _currentMap = null;
-        private static bool _isFallback = false;
+        if (_lastMapID != map?.id)
+            GCHandler.Clean();
+        _lastMapID = map?.id;
+        CurrentMap = map;
+        IsFallback = isFallback;
 
-        public static LIMap? CurrentMap => _currentMap;
-        public static bool IsFallback => _isFallback;
+        // Should never happen, but just in case - load the map
+        if (map != null && LIShipStatus.IsInstance())
+            LIShipStatus.GetInstance().LoadMap(map);
 
-        /// <summary>
-        /// Loads a map from <c>LIMap</c> model
-        /// </summary>
-        /// <param name="map">LevelImposter map data</param>
-        public static void LoadMap(LIMap? map, bool isFallback)
-        {
-            if (_lastMapID != map?.id)
-                GCHandler.Clean();
-            _lastMapID = map?.id;
-            _currentMap = map;
-            _isFallback = isFallback;
+        // Only continue if in lobby
+        if (!GameState.IsInLobby)
+            return;
 
-            if (map != null && LIShipStatus.Instance != null)
-                LIShipStatus.Instance.LoadMap(map);
-        }
+        // Lobby Message
+        LobbyVersionTag.UpdateText();
 
-        /// <summary>
-        /// Loads a map based on ID from filesystem
-        /// </summary>
-        /// <param name="mapID">Map file name or ID without extension</param>
-        /// <param name="callback">Callback on success</param>
-        public static void LoadMap(string mapID, bool isFallback, Action? callback)
-        {
-            var mapData = MapFileAPI.Get(mapID);
-            LoadMap(mapData, isFallback);
-            callback?.Invoke(); // TODO: Make synchronous
-        }
+        // Preload all sprites
+        MapUtils.PreloadAllMapSprites();
+        LoadingBar.Run();
 
-        /// <summary>
-        /// Unloads any map, if loaded
-        /// </summary>
-        public static void UnloadMap()
-        {
-            _currentMap = null;
-            _isFallback = false;
-        }
+        // Send map change message
+        if (!isFallback)
+            DestroyableSingleton<HudManager>.Instance.Notifier.AddSettingsChangeMessage(
+                StringNames.GameMapName,
+                map?.name,
+                false
+            );
+    }
 
-        /// <summary>
-        /// Manually sets the fallback flag on the loaded map
-        /// </summary>
-        /// <param name="isFallback">True iff the current map is fallback</param>
-        public static void SetFallback(bool isFallback)
-        {
-            _isFallback = isFallback;
-        }
+    /// <summary>
+    ///     Ldsoads a map based on ID from filesystem
+    /// </summary>
+    /// <param name="mapID">Map file name or ID without extension</param>
+    /// <param name="callback">Callback on success</param>
+    public static void LoadMap(string mapID, bool isFallback, Action? callback)
+    {
+        var mapData = MapFileAPI.Get(mapID);
+        LoadMap(mapData, isFallback);
+        callback?.Invoke(); // TODO: Make synchronous
+    }
+
+    /// <summary>
+    ///     Unloads any map, if loaded
+    /// </summary>
+    public static void UnloadMap()
+    {
+        CurrentMap = null;
+        IsFallback = false;
+    }
+
+    /// <summary>
+    ///     Manually sets the fallback flag on the loaded map
+    /// </summary>
+    /// <param name="isFallback">True iff the current map is fallback</param>
+    public static void SetFallback(bool isFallback)
+    {
+        IsFallback = isFallback;
+
+        // Lobby Message
+        LobbyVersionTag.UpdateText();
     }
 }

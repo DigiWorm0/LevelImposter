@@ -1,12 +1,12 @@
 ManifestFileVersion: 0
-CRC: 3049509670
+CRC: 726449313
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: 2e5e38824854ae56f754be848fb8fa52
+    Hash: a398350dd5964fbe7b3ebe882ae8797e
   TypeTreeHash:
     serializedVersion: 2
-    Hash: 7c653b85788f9e6027325f678c0f4f02
+    Hash: 88090b8c0c4b5f05c5f6aecb7bb164ea
 HashAppended: 0
 ClassTypes:
 - Class: 1
@@ -21,12 +21,18 @@ ClassTypes:
   Script: {instanceID: 0}
 - Class: 48
   Script: {instanceID: 0}
+- Class: 61
+  Script: {instanceID: 0}
+- Class: 114
+  Script: {fileID: 11500000, guid: 2ec83e780abe18b43a55d71c77eb60b8, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: c6ea27cd3f9735f47aab6223f9778625, type: 3}
 - Class: 114
   Script: {fileID: 11500000, guid: 9541d86e2fd84c1d9990edf0852d74ab, type: 3}
 - Class: 114
-  Script: {fileID: 11500000, guid: 71c1514a6bd24e1e882cebbe1904ce04, type: 3}
+  Script: {fileID: 11500000, guid: cecba029fb8abf849a4d05f5077c634e, type: 3}
 - Class: 114
-  Script: {fileID: 11500000, guid: e27d931aa83cda344a1633cd123a82c9, type: 3}
+  Script: {fileID: 11500000, guid: 71c1514a6bd24e1e882cebbe1904ce04, type: 3}
 - Class: 115
   Script: {instanceID: 0}
 - Class: 128
@@ -40,6 +46,8 @@ ClassTypes:
 - Class: 331
   Script: {instanceID: 0}
 SerializeReferenceClassIdentifiers:
+- AssemblyName: Assembly-CSharp
+  ClassName: ControllerNavigation
 - AssemblyName: Unity.TextMeshPro
   ClassName: TMPro.FaceInfo_Legacy
 - AssemblyName: Unity.TextMeshPro
@@ -62,6 +70,8 @@ SerializeReferenceClassIdentifiers:
   ClassName: TMPro.VertexGradient
 - AssemblyName: UnityEngine.CoreModule
   ClassName: UnityEngine.Events.PersistentCallGroup
+- AssemblyName: UnityEngine.CoreModule
+  ClassName: UnityEngine.Events.UnityEvent
 - AssemblyName: UnityEngine.TextCoreModule
   ClassName: UnityEngine.TextCore.FaceInfo
 - AssemblyName: UnityEngine.TextCoreModule
@@ -70,6 +80,8 @@ SerializeReferenceClassIdentifiers:
   ClassName: UnityEngine.TextCore.GlyphMetrics
 - AssemblyName: UnityEngine.TextCoreModule
   ClassName: UnityEngine.TextCore.GlyphRect
+- AssemblyName: UnityEngine.UI
+  ClassName: UnityEngine.UI.Button/ButtonClickedEvent
 - AssemblyName: UnityEngine.UI
   ClassName: UnityEngine.UI.MaskableGraphic/CullStateChangedEvent
 Assets:

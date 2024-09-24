@@ -1,95 +1,96 @@
+using System.Collections.Generic;
 using LevelImposter.Core;
 using LevelImposter.DB;
-using System.Collections.Generic;
 using UnityEngine;
 
-namespace LevelImposter.Builders
+namespace LevelImposter.Builders;
+
+internal class LadderBuilder : IElemBuilder
 {
-    class LadderBuilder : IElemBuilder
+    public const float LADDER_Y_OFFSET = -0.4f;
+
+    public static readonly Dictionary<string, float> DEFAULT_LADDER_HEIGHTS = new()
     {
-        public const float LADDER_Y_OFFSET = -0.4f;
-        public static readonly Dictionary<string, float> DEFAULT_LADDER_HEIGHTS = new()
-        {
-            { "util-ladder1", 3.0f },
-            { "util-ladder2", 1.5f }
-        };
+        { "util-ladder1", 3.0f },
+        { "util-ladder2", 1.5f }
+    };
 
-        private static List<Ladder> _allLadders = new();
+    private static readonly List<Ladder> _allLadders = new();
 
-        private byte _ladderID = 0;
+    private byte _ladderID;
 
-        public LadderBuilder()
-        {
-            _allLadders.Clear();
-        }
+    public LadderBuilder()
+    {
+        _allLadders.Clear();
+    }
 
-        public void Build(LIElement elem, GameObject obj)
-        {
-            if (!elem.type.StartsWith("util-ladder"))
-                return;
-            
-            // Prefab
-            var prefab = AssetDB.GetObject(elem.type);
-            if (prefab == null)
-                return;
-            var topPrefab = prefab.transform.FindChild("LadderTop").GetComponent<Ladder>();
-            var bottomPrefab = prefab.transform.FindChild("LadderBottom").GetComponent<Ladder>();
+    public void OnBuild(LIElement elem, GameObject obj)
+    {
+        if (!elem.type.StartsWith("util-ladder"))
+            return;
 
-            // Default Sprite
-            SpriteRenderer spriteRenderer = MapUtils.CloneSprite(obj, prefab);
+        // Prefab
+        var prefab = AssetDB.GetObject(elem.type);
+        if (prefab == null)
+            return;
+        var topPrefab = prefab.transform.FindChild("LadderTop").GetComponent<Ladder>();
+        var bottomPrefab = prefab.transform.FindChild("LadderBottom").GetComponent<Ladder>();
 
-            // Console
-            float ladderHeight = elem.properties.ladderHeight ?? DEFAULT_LADDER_HEIGHTS[elem.type];
-            
-            GameObject topObj = new("LadderTop");
-            topObj.transform.SetParent(obj.transform);
-            topObj.transform.localPosition = new Vector3(0, ladderHeight + LADDER_Y_OFFSET, 0);
-            topObj.AddComponent<BoxCollider2D>().isTrigger = true;
-            GameObject bottomObj = new("LadderBottom");
-            bottomObj.transform.SetParent(obj.transform);
-            bottomObj.transform.localPosition = new Vector3(0, -ladderHeight + LADDER_Y_OFFSET, 0);
-            bottomObj.AddComponent<BoxCollider2D>().isTrigger = true;
+        // Default Sprite
+        var spriteRenderer = MapUtils.CloneSprite(obj, prefab);
 
-            Ladder topConsole = topObj.AddComponent<Ladder>();
-            Ladder bottomConsole = bottomObj.AddComponent<Ladder>();
-            topConsole.Id = _ladderID++;
-            topConsole.IsTop = true;
-            topConsole.Destination = bottomConsole;
-            topConsole.UseSound = topPrefab.UseSound;
-            topConsole.Image = spriteRenderer;
-            _allLadders.Add(topConsole);
+        // Console
+        var ladderHeight = elem.properties.ladderHeight ?? DEFAULT_LADDER_HEIGHTS[elem.type];
 
-            bottomConsole.Id = _ladderID++;
-            bottomConsole.IsTop = false;
-            bottomConsole.Destination = topConsole;
-            bottomConsole.UseSound = bottomPrefab.UseSound;
-            bottomConsole.Image = spriteRenderer;
-            _allLadders.Add(bottomConsole);
-        }
+        GameObject topObj = new("LadderTop");
+        topObj.transform.SetParent(obj.transform);
+        topObj.transform.localPosition = new Vector3(0, ladderHeight + LADDER_Y_OFFSET, 0);
+        topObj.AddComponent<BoxCollider2D>().isTrigger = true;
+        GameObject bottomObj = new("LadderBottom");
+        bottomObj.transform.SetParent(obj.transform);
+        bottomObj.transform.localPosition = new Vector3(0, -ladderHeight + LADDER_Y_OFFSET, 0);
+        bottomObj.AddComponent<BoxCollider2D>().isTrigger = true;
 
-        public void PostBuild()
-        {
-            _allLadders.RemoveAll(ladder => ladder == null);
-        }
+        var topConsole = topObj.AddComponent<EditableLadderConsole>();
+        var bottomConsole = bottomObj.AddComponent<EditableLadderConsole>();
+        topConsole.Id = _ladderID++;
+        topConsole.IsTop = true;
+        topConsole.Destination = bottomConsole;
+        topConsole.UseSound = topPrefab.UseSound;
+        topConsole.Image = spriteRenderer;
+        topConsole.SetCooldownDuration(elem.properties.ladderCooldown ?? 5.0f);
+        _allLadders.Add(topConsole);
 
-        /// <summary>
-        /// Trys the find the ladder of specified id
-        /// </summary>
-        /// <param name="id">ID of the ladder</param>
-        /// <param name="ladder">Cooresponding ladder, if found</param>
-        /// <returns>TRUE if found</returns>
-        public static bool TryGetLadder(byte id, out Ladder? ladder)
-        {
-            foreach (Ladder l in _allLadders)
+        bottomConsole.Id = _ladderID++;
+        bottomConsole.IsTop = false;
+        bottomConsole.Destination = topConsole;
+        bottomConsole.UseSound = bottomPrefab.UseSound;
+        bottomConsole.Image = spriteRenderer;
+        bottomConsole.SetCooldownDuration(elem.properties.ladderCooldown ?? 5.0f);
+        _allLadders.Add(bottomConsole);
+    }
+
+    public void OnCleanup()
+    {
+        _allLadders.RemoveAll(ladder => ladder == null);
+    }
+
+    /// <summary>
+    ///     Trys the find the ladder of specified id
+    /// </summary>
+    /// <param name="id">ID of the ladder</param>
+    /// <param name="ladder">Cooresponding ladder, if found</param>
+    /// <returns>TRUE if found</returns>
+    public static bool TryGetLadder(byte id, out Ladder? ladder)
+    {
+        foreach (var l in _allLadders)
+            if (l.Id == id)
             {
-                if (l.Id == id)
-                {
-                    ladder = l;
-                    return true;
-                }
+                ladder = l;
+                return true;
             }
-            ladder = null;
-            return false;
-        }
+
+        ladder = null;
+        return false;
     }
 }

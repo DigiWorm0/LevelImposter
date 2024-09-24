@@ -1,85 +1,78 @@
-﻿using Il2CppInterop.Runtime.Attributes;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using Il2CppInterop.Runtime.Attributes;
 using UnityEngine;
 
-namespace LevelImposter.Core
+namespace LevelImposter.Core;
+
+/// <summary>
+///     Object that tracks the players that are inside it's range
+/// </summary>
+public class PlayerArea(IntPtr intPtr) : MonoBehaviour(intPtr)
 {
-    /// <summary>
-    /// Object that tracks the players that are inside it's range
-    /// </summary>
-    public class PlayerArea : MonoBehaviour
+    [HideFromIl2Cpp] protected List<byte>? CurrentPlayersIDs { get; private set; } = new();
+
+    protected bool IsLocalPlayerInside { get; private set; }
+
+    public void OnDestroy()
     {
-        public PlayerArea(IntPtr intPtr) : base(intPtr)
-        {
-        }
+        CurrentPlayersIDs = null;
+    }
 
-        private List<byte>? _currentPlayersIDs = new();
-        private bool _isLocalPlayerInside = false;
+    public void OnTriggerEnter2D(Collider2D collider)
+    {
+        var player = collider.GetComponent<PlayerControl>();
+        if (player == null)
+            return;
 
-        [HideFromIl2Cpp]
-        protected List<byte>? CurrentPlayersIDs => _currentPlayersIDs;
-        protected bool IsLocalPlayerInside => _isLocalPlayerInside;
+        CurrentPlayersIDs?.Add(player.PlayerId);
+        if (player.AmOwner)
+            IsLocalPlayerInside = true;
 
-        /// <summary>
-        /// Gets a player by it's ID
-        /// </summary>
-        /// <param name="playerID">Player ID to search</param>
-        /// <returns>The cooresponding PlayerControl or null if it can't be found</returns>
-        protected PlayerControl? GetPlayer(byte playerID)
-        {
-            foreach (PlayerControl player in PlayerControl.AllPlayerControls)
-                if (player.PlayerId == playerID)
-                    return player;
-            return null;
-        }
+        if (enabled)
+            OnPlayerEnter(player);
+    }
 
-        /// <summary>
-        /// Called when a player enters the collider
-        /// </summary>
-        /// <param name="player">Player that entered the collider</param>
-        virtual protected void OnPlayerEnter(PlayerControl player)
-        {
-        }
+    public void OnTriggerExit2D(Collider2D collider)
+    {
+        var player = collider.GetComponent<PlayerControl>();
+        if (player == null)
+            return;
 
-        /// <summary>
-        /// Called when a player exits the collider
-        /// </summary>
-        /// <param name="player">Player that exited the collider</param>
-        virtual protected void OnPlayerExit(PlayerControl player)
-        {
-        }
+        CurrentPlayersIDs?.RemoveAll(id => id == player.PlayerId);
+        if (player.AmOwner)
+            IsLocalPlayerInside = false;
 
-        public void OnTriggerEnter2D(Collider2D collider)
-        {
-            PlayerControl? player = collider.GetComponent<PlayerControl>();
-            if (player == null)
-                return;
+        if (enabled)
+            OnPlayerExit(player);
+    }
 
-            _currentPlayersIDs?.Add(player.PlayerId);
-            if (player.AmOwner)
-                _isLocalPlayerInside = true;
+    /// <summary>
+    ///     Gets a player by it's ID
+    /// </summary>
+    /// <param name="playerID">Player ID to search</param>
+    /// <returns>The cooresponding PlayerControl or null if it can't be found</returns>
+    protected PlayerControl? GetPlayer(byte playerID)
+    {
+        foreach (var player in PlayerControl.AllPlayerControls)
+            if (player.PlayerId == playerID)
+                return player;
+        return null;
+    }
 
-            if (enabled)
-                OnPlayerEnter(player);
-        }
+    /// <summary>
+    ///     Called when a player enters the collider
+    /// </summary>
+    /// <param name="player">Player that entered the collider</param>
+    protected virtual void OnPlayerEnter(PlayerControl player)
+    {
+    }
 
-        public void OnTriggerExit2D(Collider2D collider)
-        {
-            PlayerControl? player = collider.GetComponent<PlayerControl>();
-            if (player == null)
-                return;
-
-            _currentPlayersIDs?.RemoveAll(id => id == player.PlayerId);
-            if (player.AmOwner)
-                _isLocalPlayerInside = false;
-
-            if (enabled)
-                OnPlayerExit(player);
-        }
-        public void OnDestroy()
-        {
-            _currentPlayersIDs = null;
-        }
+    /// <summary>
+    ///     Called when a player exits the collider
+    /// </summary>
+    /// <param name="player">Player that exited the collider</param>
+    protected virtual void OnPlayerExit(PlayerControl player)
+    {
     }
 }

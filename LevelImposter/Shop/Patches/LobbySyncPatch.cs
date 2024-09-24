@@ -1,38 +1,50 @@
 ﻿using HarmonyLib;
 using LevelImposter.Core;
 
-namespace LevelImposter.Shop
+namespace LevelImposter.Shop;
+
+/*
+ *      Synchronizes a random seed
+ *      value to all connected clients
+ */
+[HarmonyPatch(typeof(PlayerPhysics), nameof(PlayerPhysics.CoSpawnPlayer))]
+public static class TestJoinPatch2
 {
-    /*
-     *      Synchronizes a random seed
-     *      value to all connected clients
-     */
-    [HarmonyPatch(typeof(LobbyBehaviour), nameof(LobbyBehaviour.Start))]
-    public static class LobbyStartSyncPatch
+    public static void Postfix(PlayerControl __instance)
     {
-        public static void Postfix()
+        if (!AmongUsClient.Instance.AmHost)
+            return;
+
+        // Sync Random Seed
+        RandomizerSync.SyncRandomSeed();
+
+        // This is a new Lobby
+        if (__instance.AmOwner)
         {
-            RandomizerSync.SyncRandomSeed();
+            var wasFallback = MapLoader.IsFallback;
+            var isNoMap = MapLoader.CurrentMap == null;
 
-            string? lastMapID = ConfigAPI.GetLastMapID();
-            bool hasLastMap = lastMapID != null && MapFileAPI.Exists(lastMapID);
-            bool isHost = AmongUsClient.Instance.AmHost;
-
-            if (MapLoader.CurrentMap == null && lastMapID != null && hasLastMap && isHost)
-                MapLoader.LoadMap(lastMapID, false, MapSync.SyncMapID);
-            else if (MapLoader.IsFallback || MapLoader.CurrentMap == null)
+            // If the map was a fallback or no map is currently loaded
+            if (wasFallback || isNoMap)
+            {
+                // Choose a new random map
                 MapSync.RegenerateFallbackID();
-            else
-                MapSync.SyncMapID();
+                return;
+            }
         }
-    }
-    [HarmonyPatch(typeof(AmongUsClient), nameof(AmongUsClient.CreatePlayer))]
-    public static class ClientJoinSyncPatch
-    {
-        public static void Postfix()
-        {
-            RandomizerSync.SyncRandomSeed();
-            MapSync.SyncMapID();
-        }
+
+        // Sync the current map ID
+        // TODO: Remember last map ID
+        MapSync.SyncMapID();
     }
 }
+
+// [HarmonyPatch(typeof(AmongUsClient), nameof(AmongUsClient.CreatePlayer))]
+// public static class ClientJoinSyncPatch
+// {
+//     public static void Postfix()
+//     {
+//         RandomizerSync.SyncRandomSeed();
+//         MapSync.SyncMapID();
+//     }
+// }

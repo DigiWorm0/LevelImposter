@@ -1,24 +1,22 @@
 ﻿using System;
 using System.Text.Json.Serialization;
 
-namespace LevelImposter.Core
-{
-    [Serializable]
-    public class LIMap : LIMetadata
-    {
-        public LIElement[] elements { get; set; }
-        public LIMapProperties properties { get; set; }
+namespace LevelImposter.Core;
 
-        // LIM2
-        [JsonIgnore]
-        public const int LIM_VERSION = 2;
-        [JsonIgnore]
-        public bool isLegacy
-        {
-            get => v < LIM_VERSION;
-            set => v = value ? 1 : LIM_VERSION;
-        }
-        [JsonIgnore]
-        public MapAssetDB? mapAssetDB { get; set; }
+[Serializable]
+public class LIMap : LIMetadata
+{
+    // LIM2
+    [JsonIgnore] public const int LIM_VERSION = 2;
+    public LIElement[] elements { get; set; }
+    public LIMapProperties properties { get; set; }
+
+    [JsonIgnore]
+    public bool isLegacy
+    {
+        get => v < LIM_VERSION;
+        set => v = value ? 1 : LIM_VERSION;
     }
+
+    [JsonIgnore] public MapAssetDB? mapAssetDB { get; set; }
 }

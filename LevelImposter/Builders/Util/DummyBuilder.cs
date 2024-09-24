@@ -1,26 +1,21 @@
 ﻿using LevelImposter.Core;
 using UnityEngine;
 
-namespace LevelImposter.Builders
+namespace LevelImposter.Builders;
+
+public class DummyBuilder : IElemBuilder
 {
-    public class DummyBuilder : IElemBuilder
+    public void OnBuild(LIElement elem, GameObject obj)
     {
-        public void Build(LIElement elem, GameObject obj)
-        {
-            if (elem.type != "util-dummy")
-                return;
+        if (elem.type != "util-dummy")
+            return;
 
-            // ShipStatus
-            var shipStatus = LIShipStatus.Instance?.ShipStatus;
-            if (shipStatus == null)
-                throw new MissingShipException();
+        // ShipStatus
+        var shipStatus = LIShipStatus.GetInstance().ShipStatus;
 
-            // Add Location
-            shipStatus.DummyLocations = MapUtils.AddToArr(shipStatus.DummyLocations, obj.transform);
+        // Add Location
+        shipStatus.DummyLocations = MapUtils.AddToArr(shipStatus.DummyLocations, obj.transform);
 
-            // TODO: Customize each dummy location with name/outfit
-        }
-
-        public void PostBuild() { }
+        // TODO: Customize each dummy location with name/outfit
     }
 }

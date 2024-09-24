@@ -1,97 +1,121 @@
-using LevelImposter.Core;
+using System;
 using System.Collections.Generic;
-using UnityEngine;
+using System.Diagnostics;
+using LevelImposter.Core;
 
-namespace LevelImposter.Builders
+namespace LevelImposter.Builders;
+
+public class BuildRouter
 {
-    public class BuildRouter
+    public enum BuildStep
     {
-        private List<IElemBuilder> _buildStack = new() {
-            new TransformBuilder(),
-            new SpriteBuilder(),
-            new ColliderBuilder(),
-            new MinigameSpriteBuilder(),
-            new LayerBuilder(),
+        PreBuild,
+        Build,
+        PostBuild
+    }
 
-            new RoomBuilder(),
-            new AdminMapBuilder(),
-            new RoomNameBuilder(),
+    private readonly List<IElemBuilder> _buildStack = new()
+    {
+        new TransformBuilder(),
+        new SpriteBuilder(),
+        new ColliderBuilder(),
+        new MinigameSpriteBuilder(),
+        new LayerBuilder(),
 
-            new MinimapBuilder(),
-            new DummyBuilder(),
-            new UtilBuilder(),
-            new SpawnBuilder(),
-            new VentBuilder(),
-            new CamBuilder(),
-            new DisplayBuilder(),
-            new TaskBuilder(),
-            new DecBuilder(),
-            new PhysicsObjectBuilder(),
-            new MeetingOptionsBuilder(),
-            new SabotageOptionsBuilder(),
-            new OneWayColliderBuilder(),
-            new DecontaminationBuilder(),
-            new SporeBuilder(),
-            new BinocularsBuilder(),
-            new FilterBuilder(),
+        new RoomBuilder(),
+        new AdminMapBuilder(),
+        new RoomNameBuilder(),
 
-            new SabBuilder(),
-            new SabMixupBuilder(),
-            new SabConsoleBuilder(),
-            new SabMapBuilder(),
-            new SabDoorBuilder(),
+        new MinimapBuilder(),
+        new DummyBuilder(),
+        new UtilBuilder(),
+        new SpawnBuilder(),
+        new VentBuilder(),
+        new CamBuilder(),
+        new DisplayBuilder(),
+        new TaskBuilder(),
+        new DecBuilder(),
+        new PhysicsObjectBuilder(),
+        new MeetingOptionsBuilder(),
+        new SabotageOptionsBuilder(),
+        new OneWayColliderBuilder(),
+        new DecontaminationBuilder(),
+        new SporeBuilder(),
+        new BinocularsBuilder(),
+        new FilterBuilder(),
 
-            new MinimapSpriteBuilder(),
-            new LadderBuilder(),
-            new PlatformBuilder(),
-            new StarfieldBuilder(),
-            new FloatBuilder(),
-            new ScrollBuilder(),
-            new AmbientSoundBuilder(),
-            new StepSoundBuilder(),
-            new TeleBuilder(),
-            new TriggerAreaBuilder(),
-            new TriggerConsoleBuilder(),
-            new TriggerStartBuilder(),
-            new TriggerDeathBuilder(),
-            new TriggerShakeBuilder(),
+        new SabBuilder(),
+        new SabMixupBuilder(),
+        new SabConsoleBuilder(),
+        new SabMapBuilder(),
+        new SabDoorBuilder(),
 
-            new TriggerBuilder(),
-            new CustomTextBuilder(),
-            new ColorBuilder()
-        };
+        new MinimapSpriteBuilder(),
+        new LadderBuilder(),
+        new PlatformBuilder(),
+        new StarfieldBuilder(),
+        new FloatBuilder(),
+        new ScrollBuilder(),
+        new AmbientSoundBuilder(),
+        new StepSoundBuilder(),
+        new TeleBuilder(),
+        new TriggerAreaBuilder(),
+        new TriggerConsoleBuilder(),
+        new TriggerStartBuilder(),
+        new TriggerDeathBuilder(),
+        new TriggerShakeBuilder(),
+        new TriggerAnimBuilder(),
 
-        /// <summary>
-        /// Patch me to add your own custom builders.
-        /// Builders should implement <c>IElemBuilder</c>.
-        /// </summary>
-        public BuildRouter() { }
+        new CustomTextBuilder(),
+        new ColorBuilder()
+    };
 
-        /// <summary>
-        /// Passes <c>LIElement</c> data through the build 
-        /// stack to construct a GameObject.
-        /// Should be run from <c>LIShipStatus.AddElement</c>.
-        /// </summary>
-        /// <param name="element">Element data to build</param>
-        /// <returns></returns>
-        public GameObject Build(LIElement element)
+    private readonly Stopwatch _sw = new();
+
+    public void RunBuildStep(BuildStep buildStep, LIElement elem)
+    {
+        try
         {
-            string objName = element.name.Replace("\\n", " ");
-            var gameObject = new GameObject(objName);
-            foreach (IElemBuilder builder in _buildStack)
-            {
-                builder.Build(element, gameObject);
-            }
-            return gameObject;
-        }
+            // Start Build Timer
+            _sw.Restart();
 
-        /// <summary>
-        /// Runs the post-build process on every <c>IElemBuilder</c>.
-        /// </summary>
-        public void PostBuild()
-        {
-            foreach (IElemBuilder builder in _buildStack)
-                builder.PostBuild();
+            // Get Element
+            var obj = LIShipStatus.GetInstance().MapObjectDB.GetObject(elem.id);
+            if (obj == null)
+                throw new Exception($"Could not find {elem} in map object db");
+
+            // Run Builders
+            foreach (var builder in _buildStack)
+                switch (buildStep)
+                {
+                    case BuildStep.PreBuild:
+                        builder.OnPreBuild(elem, obj);
+                        break;
+                    case BuildStep.Build:
+                        builder.OnBuild(elem, obj);
+                        break;
+                    case BuildStep.PostBuild:
+                        builder.OnPostBuild(elem, obj);
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException(nameof(buildStep), buildStep, null);
+                }
+
+            // Stop Build Timer
+            _sw.Stop();
+            if (_sw.ElapsedMilliseconds > LIConstants.ELEM_WARN_TIME)
+                LILogger.Warn($"{elem.name} took {_sw.ElapsedMilliseconds}ms to {buildStep}");
         }
+        catch (Exception ex)
+        {
+            // Log Error
+            LILogger.Error($"Error building {elem.name} during {buildStep}: {ex}");
+        }
+    }
+
+    public void Cleanup()
+    {
+        foreach (var builder in _buildStack)
+            builder.OnCleanup();
     }
 }

@@ -1,9 +1,8 @@
-﻿namespace LevelImposter.DB
+﻿namespace LevelImposter.DB;
+
+public enum TaskLength
 {
-    public enum TaskLength : int
-    {
-        Common,
-        Short,
-        Long
-    }
+    Common,
+    Short,
+    Long
 }
