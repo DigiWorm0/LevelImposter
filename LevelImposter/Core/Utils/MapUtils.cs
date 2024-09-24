@@ -10,6 +10,7 @@ using AmongUs.GameOptions;
 using Il2CppInterop.Runtime;
 using Il2CppInterop.Runtime.InteropTypes;
 using Il2CppInterop.Runtime.InteropTypes.Arrays;
+using LevelImposter.Shop;
 using PowerTools;
 using Reactor.Utilities;
 using Reactor.Utilities.Extensions;
@@ -419,6 +420,25 @@ public static class MapUtils
             onFinish.Invoke();
             onFinish = null;
         }
+    }
+
+    /// <summary>
+    ///     Loads all sprites into cache for the current map
+    /// </summary>
+    public static void PreloadAllMapSprites()
+    {
+        // Get current map
+        var map = MapLoader.CurrentMap;
+        if (map == null)
+            return;
+
+        // Log
+        LILogger.Info("Preloading all sprites for " + map.name);
+
+        // Start Async Loading
+        foreach (var elem in map.elements)
+            if (elem.properties.spriteID != null)
+                SpriteLoader.Instance?.LoadSpriteAsync(elem, null);
     }
 
     /// <summary>

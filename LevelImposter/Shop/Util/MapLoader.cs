@@ -23,18 +23,27 @@ public static class MapLoader
         CurrentMap = map;
         IsFallback = isFallback;
 
+        // Should never happen, but just in case - load the map
         if (map != null && LIShipStatus.IsInstance())
             LIShipStatus.GetInstance().LoadMap(map);
+
+        // Only continue if in lobby
+        if (!GameState.IsInLobby)
+            return;
 
         // Lobby Message
         LobbyVersionTag.UpdateText();
 
-        if (GameState.IsInLobby)
-            DestroyableSingleton<HudManager>.Instance.Notifier.AddSettingsChangeMessage(
-                StringNames.GameMapName,
-                map?.name,
-                false
-            );
+        // Preload all sprites
+        MapUtils.PreloadAllMapSprites();
+        LoadingBar.Run();
+
+        // Send map change message
+        DestroyableSingleton<HudManager>.Instance.Notifier.AddSettingsChangeMessage(
+            StringNames.GameMapName,
+            map?.name,
+            false
+        );
     }
 
     /// <summary>

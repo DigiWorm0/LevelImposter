@@ -59,25 +59,19 @@ public class LIShipStatus(IntPtr intPtr) : MonoBehaviour(intPtr)
     };
 
     private static LIShipStatus? _instance;
-    private bool _isReady = true;
 
     [Obsolete("Use LIShipStatus.IsInstance() or LIShipStatus.GetInstance() instead")]
     public static LIShipStatus? Instance => _instance;
 
     [HideFromIl2Cpp] public MapObjectDB MapObjectDB { get; } = new();
-
     [HideFromIl2Cpp] public TriggerSystem TriggerSystem { get; } = new();
-
     [HideFromIl2Cpp] public RenameHandler Renames { get; } = new();
-
     [HideFromIl2Cpp] public LIMap? CurrentMap { get; private set; }
 
-    public ShipStatus? ShipStatus { get; private set; }
+    public bool IsBuilding { get; private set; } = true;
+    public bool IsReady => !IsBuilding && !LoadingBar.IsVisible;
 
-    public bool IsReady =>
-        SpriteLoader.Instance?.RenderCount <= 0 &&
-        !MapSync.IsDownloadingMap &&
-        _isReady;
+    public ShipStatus? ShipStatus { get; private set; }
 
     public void Awake()
     {
@@ -166,6 +160,8 @@ public class LIShipStatus(IntPtr intPtr) : MonoBehaviour(intPtr)
             DestroyImmediate(transform.GetChild(0).gameObject);
         Destroy(GetComponent<TagAmbientSoundPlayer>());
 
+        if (Camera.main == null)
+            throw new Exception("Main Camera is missing");
         var camera = Camera.main.GetComponent<FollowerCamera>();
         camera.shakeAmount = 0;
         camera.shakePeriod = 0;
@@ -216,8 +212,8 @@ public class LIShipStatus(IntPtr intPtr) : MonoBehaviour(intPtr)
     public void LoadMap(LIMap map)
     {
         LILogger.Msg($"Loading {map}");
-        _isReady = false;
-        StartCoroutine(CoLoadingScreen().WrapToIl2Cpp());
+        IsBuilding = true;
+        LoadingBar.Run();
         CurrentMap = map;
         ResetMap();
         LoadMapProperties(map);
@@ -280,7 +276,7 @@ public class LIShipStatus(IntPtr intPtr) : MonoBehaviour(intPtr)
         LILogger.Msg("Running Cleanup");
         buildRouter.Cleanup();
 
-        _isReady = true;
+        IsBuilding = false;
         LILogger.Msg("Done");
     }
 
@@ -314,80 +310,6 @@ public class LIShipStatus(IntPtr intPtr) : MonoBehaviour(intPtr)
                 return;
             ShipStatus.ExileCutscenePrefab = prefabShipStatus.ExileCutscenePrefab;
         }
-    }
-
-    /// <summary>
-    ///     Coroutine that displayes the loading screen until map is built
-    /// </summary>
-    [HideFromIl2Cpp]
-    private IEnumerator CoLoadingScreen()
-    {
-        yield return null;
-
-        // Objects
-        var isFreeplay = GameState.IsInFreeplay;
-        var fullScreen = DestroyableSingleton<HudManager>.Instance.FullScreen;
-        var loadingBean = DestroyableSingleton<HudManager>.Instance.GameLoadAnimation;
-        var sabColor = fullScreen.color;
-
-        // Create LoadingBar
-        if (LoadingBar.Instance == null)
-            Instantiate(MapUtils.LoadAssetBundle<GameObject>("loadingbar"),
-                DestroyableSingleton<HudManager>.Instance.transform);
-        if (LoadingBar.Instance == null)
-            LILogger.Warn("Failed to load LoadingBar asset bundle!");
-
-        // Show Loading Screen
-        LILogger.Info($"Showing loading screen (Freeplay={isFreeplay})");
-        if (isFreeplay)
-        {
-            fullScreen.color = new Color(0, 0, 0, 0.9f);
-            fullScreen.gameObject.SetActive(true);
-        }
-
-        // Map name
-        var mapName = "Loading...";
-        if (CurrentMap != null)
-            mapName = $"<color=#1a95d8>{CurrentMap.name}</color> by {CurrentMap.authorName}";
-
-        LoadingBar.Instance?.SetMapName(mapName);
-        LoadingBar.Instance?.SetVisible(true);
-        while (!IsReady)
-        {
-            loadingBean.SetActive(true);
-
-            // Approximate Progress
-            if (SpriteLoader.Instance?.RenderCount > 0)
-            {
-                double renderTotal = SpriteLoader.Instance?.RenderTotal ?? 1;
-                if (renderTotal == 0)
-                    renderTotal = 1;
-                var renderCount = renderTotal - (SpriteLoader.Instance?.RenderCount ?? 0);
-                var progress = (float)(renderCount / renderTotal);
-                LoadingBar.Instance?.SetProgress(progress);
-                LoadingBar.Instance?.SetStatus(
-                    $"{Math.Round(progress * 100)}% <size=1.2>({renderCount}/{renderTotal})</size>"
-                );
-            }
-            else
-            {
-                LoadingBar.Instance?.SetProgress(1);
-                LoadingBar.Instance?.SetStatus("waiting for host");
-            }
-
-            yield return null;
-        }
-
-        // Revert Loading Screen
-        LILogger.Info($"Hiding loading screen (Freeplay={isFreeplay})");
-        if (isFreeplay)
-        {
-            fullScreen.color = sabColor;
-            fullScreen.gameObject.SetActive(false);
-        }
-
-        loadingBean.SetActive(false);
-        LoadingBar.Instance?.SetVisible(false);
     }
 
     /// <summary>

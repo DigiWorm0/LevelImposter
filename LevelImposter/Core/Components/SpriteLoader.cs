@@ -7,6 +7,7 @@ using System.Linq;
 using BepInEx.Unity.IL2CPP.Utils.Collections;
 using Il2CppInterop.Runtime.Attributes;
 using Il2CppInterop.Runtime.InteropTypes.Arrays;
+using LevelImposter.Shop;
 using UnityEngine;
 
 namespace LevelImposter.Core;
@@ -103,13 +104,13 @@ public class SpriteLoader(IntPtr intPtr) : MonoBehaviour(intPtr)
     /// <param name="element">LIElement to grab sprite from</param>
     /// <param name="obj">GameObject to apply sprite data to</param>
     [HideFromIl2Cpp]
-    public void LoadSpriteAsync(LIElement element, GameObject obj)
+    public void LoadSpriteAsync(LIElement element, GameObject? obj)
     {
         LILogger.Info($"Loading sprite for {element}");
         var stopwatch = Stopwatch.StartNew();
 
         // Get Sprite Data
-        var spriteDB = LIShipStatus.GetInstanceOrNull()?.CurrentMap?.mapAssetDB;
+        var spriteDB = MapLoader.CurrentMap?.mapAssetDB;
         var spriteID = element.properties.spriteID;
         var spriteStream = spriteDB?.Get(spriteID)?.OpenStream();
         if (spriteStream == null)

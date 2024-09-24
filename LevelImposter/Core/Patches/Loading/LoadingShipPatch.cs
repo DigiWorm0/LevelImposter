@@ -26,17 +26,3 @@ public static class LoadingShipPatch
         return false;
     }
 }
-
-/// <summary>
-///     Increases the maximum wait time for all clients to load the ship.
-///     Normally, this is 10 seconds, but it is increased to 20 seconds.
-/// </summary>
-[HarmonyPatch(typeof(AmongUsClient), nameof(AmongUsClient.Awake))]
-public static class LoadingShipTimerPatch
-{
-    public static void Postfix(AmongUsClient __instance)
-    {
-        // TODO: Fix me
-        //AmongUsClient.MAX_CLIENT_WAIT_SECONDS = LIConstants.MAX_HOST_TIMEOUT; // TODO: Fix Max Client Timeout Adjust
-    }
-}

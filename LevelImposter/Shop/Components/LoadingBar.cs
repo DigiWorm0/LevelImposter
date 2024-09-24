@@ -1,4 +1,8 @@
 using System;
+using System.Collections;
+using Il2CppInterop.Runtime.Attributes;
+using LevelImposter.Core;
+using Reactor.Utilities;
 using TMPro;
 using UnityEngine;
 
@@ -9,8 +13,10 @@ public class LoadingBar(IntPtr intPtr) : MonoBehaviour(intPtr)
     private GameObject? _loadingBar;
     private TMP_Text? _mapText;
     private TMP_Text? _statusText;
+    private bool _visible;
 
     public static LoadingBar? Instance { get; private set; }
+    public static bool IsVisible => Instance?._visible ?? false;
 
     public void Awake()
     {
@@ -26,8 +32,6 @@ public class LoadingBar(IntPtr intPtr) : MonoBehaviour(intPtr)
         _loadingBar = transform.Find("BarMask").Find("Bar").gameObject;
         _mapText = transform.Find("MapText").GetComponent<TMP_Text>();
         _statusText = transform.Find("StatusText").GetComponent<TMP_Text>();
-
-        //DontDestroyOnLoad(gameObject);
     }
 
     public void OnDestroy()
@@ -37,6 +41,90 @@ public class LoadingBar(IntPtr intPtr) : MonoBehaviour(intPtr)
         _loadingBar = null;
         _mapText = null;
         _statusText = null;
+    }
+
+    /// <summary>
+    ///     Runs the loading screen coroutine. Automatically manages the lifecycle of the loading bar.
+    /// </summary>
+    public static void Run()
+    {
+        // Create LoadingBar
+        if (Instance == null)
+            Instantiate(
+                MapUtils.LoadAssetBundle<GameObject>("loadingbar"),
+                DestroyableSingleton<HudManager>.Instance.transform
+            );
+
+        // Check if asset bundle loaded
+        if (Instance == null)
+            throw new Exception("Failed to load LoadingBar asset bundle!");
+
+        // Check if visible
+        if (Instance._visible)
+            return;
+
+        // Start Coroutine
+        Coroutines.Start(Instance.CoLoadingScreen());
+    }
+
+    /// <summary>
+    ///     Coroutine that displayes the loading screen until map is built
+    /// </summary>
+    [HideFromIl2Cpp]
+    private IEnumerator CoLoadingScreen()
+    {
+        yield return null;
+
+        // Objects
+        var isFreeplay = GameState.IsInFreeplay;
+        var currentMap = MapLoader.CurrentMap;
+
+        // Show Loading Screen
+        LILogger.Info($"Showing loading screen (Freeplay={isFreeplay})");
+
+        // Set Map Name
+        var mapName = "Loading...";
+        if (currentMap != null)
+            mapName = $"<color=#1a95d8>{currentMap.name}</color> by {currentMap.authorName}";
+        Instance?.SetMapName(mapName);
+
+        // Show Loading Screen
+        Instance?.SetVisible(true);
+
+        // Update Progress
+        while (_visible)
+        {
+            // Approximate Progress
+            if (SpriteLoader.Instance?.RenderCount > 0)
+            {
+                double renderTotal = SpriteLoader.Instance?.RenderTotal ?? 1;
+                if (renderTotal == 0)
+                    renderTotal = 1;
+                var renderCount = renderTotal - (SpriteLoader.Instance?.RenderCount ?? 0);
+                var progress = (float)(renderCount / renderTotal);
+                Instance?.SetProgress(progress);
+                Instance?.SetStatus(
+                    $"{Math.Round(progress * 100)}% <size=1.2>({renderCount}/{renderTotal})</size>"
+                );
+            }
+            else
+            {
+                Instance?.SetProgress(1);
+                Instance?.SetStatus("waiting for host");
+            }
+
+            // Check if done
+            var isSpritesLoading = SpriteLoader.Instance?.RenderCount > 0;
+            var isDownloading = MapSync.IsDownloadingMap;
+            var isBuilding = LIShipStatus.GetInstanceOrNull()?.IsBuilding ?? false;
+            if (!isSpritesLoading && !isDownloading && !isBuilding)
+                break;
+
+            yield return null;
+        }
+
+        // Hide Loading Screen
+        Instance?.SetVisible(false);
     }
 
     /// <summary>
@@ -75,6 +163,13 @@ public class LoadingBar(IntPtr intPtr) : MonoBehaviour(intPtr)
     /// <param name="visible">True iff the loading bar should be visible</param>
     public void SetVisible(bool visible)
     {
+        // Me
         gameObject.SetActive(visible);
+
+        // Running Bean
+        DestroyableSingleton<HudManager>.Instance.GameLoadAnimation.SetActive(visible);
+
+        // Set
+        _visible = visible;
     }
 }
