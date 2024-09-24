@@ -95,8 +95,8 @@ public static class LIDeserializer
                 }
             }
 
-            // Repair
-            RepairMap(mapData);
+            // Migrate
+            MigrateMap(mapData);
 
             // Return
             return mapData;
@@ -108,11 +108,18 @@ public static class LIDeserializer
         }
     }
 
-    private static void RepairMap(LIMap map)
+    private static void MigrateMap(LIMap map)
     {
+        // TODO: Add advanced map migration logic
         foreach (var element in map.elements)
-            // Fix layers defaulted to z=Number.MAX_SAFE_INTEGER
-            if (element.type == "util-layer" && element.z >= JS_MAX_SAFE_INTEGER)
+            if (element.type == "util-layer" && map.v < 3)
+            {
+                element.x = 0;
+                element.y = 0;
                 element.z = 0;
+                element.xScale = 1;
+                element.yScale = 1;
+                element.rotation = 0;
+            }
     }
 }

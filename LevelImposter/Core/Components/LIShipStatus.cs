@@ -242,18 +242,31 @@ public class LIShipStatus(IntPtr intPtr) : MonoBehaviour(intPtr)
         // Set Parenting
         foreach (var elem in map.elements)
         {
+            // Get Element Properties
             var elemObject = MapObjectDB.GetObject(elem.id);
             if (elemObject == null)
                 continue;
 
+            // Get Parent ID
             var parent = elem.parentID;
             if (parent == null)
                 continue;
 
+            // Find Parent Object
             var parentObject = MapObjectDB.GetObject((Guid)parent);
             if (parentObject == null)
                 continue;
 
+            // Get Parent Element Properties
+            var parentElement = parentObject.GetComponent<MapObjectData>();
+            if (parentElement == null)
+                continue;
+
+            // Check if parent is a util-layer
+            if (parentElement.Element.type != "util-layer")
+                continue;
+
+            // Set Parent
             elemObject.transform.SetParent(parentObject.transform);
         }
 
