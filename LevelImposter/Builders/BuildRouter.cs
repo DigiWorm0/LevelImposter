@@ -43,6 +43,7 @@ public class BuildRouter
         new SporeBuilder(),
         new BinocularsBuilder(),
         new FilterBuilder(),
+        new EjectBuilder(),
 
         new SabBuilder(),
         new SabMixupBuilder(),

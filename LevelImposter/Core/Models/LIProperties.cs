@@ -30,6 +30,11 @@ public class LIProperties
     public LIColor? color { get; set; }
     public bool? loopGIF { get; set; }
 
+    // Eject
+    public float? ejectPreTextDuration { get; set; }
+    public float? ejectTextDuration { get; set; }
+    public float? ejectPostTextDuration { get; set; }
+
     // Shake
     public float? shakeAmount { get; set; }
     public float? shakePeriod { get; set; }
