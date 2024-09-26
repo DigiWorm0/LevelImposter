@@ -34,4 +34,16 @@ public static class GameObjectExtensions
             throw new Exception($"{gameObject} is missing {typeof(T).FullName}");
         return component;
     }
+
+    /// <summary>
+    ///     Recursively sets the layer of a GameObject and all of its children.
+    /// </summary>
+    /// <param name="gameObject">Parent GameObject</param>
+    /// <param name="layer">Layer to set to</param>
+    public static void SetLayerOfChildren(this GameObject gameObject, int layer)
+    {
+        gameObject.layer = layer;
+        for (var i = 0; i < gameObject.transform.childCount; i++)
+            gameObject.transform.GetChild(i).gameObject.SetLayerOfChildren(layer);
+    }
 }

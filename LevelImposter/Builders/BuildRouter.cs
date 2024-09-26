@@ -44,6 +44,7 @@ public class BuildRouter
         new BinocularsBuilder(),
         new FilterBuilder(),
         new EjectBuilder(),
+        new EjectDummyBuilder(),
 
         new SabBuilder(),
         new SabMixupBuilder(),

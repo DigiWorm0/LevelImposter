@@ -75,6 +75,30 @@ public class LIExileController(IntPtr intPtr) : ExileController(intPtr)
         TriggerSignal ejectSignal = new(baseController, ON_EJECT_TRIGGER_ID, playerControl);
         TriggerSystem.GetInstance().FireTrigger(ejectSignal);
 
+        // Copy Player Outfit to Eject Dummies
+        if (initData?.outfit != null)
+            foreach (var ejectDummy in EjectDummyBuilder.PoolablePlayers)
+            {
+                ejectDummy.UpdateFromPlayerOutfit(
+                    initData?.outfit,
+                    PlayerMaterial.MaskType.Exile,
+                    false,
+                    false,
+                    new Action(() =>
+                    {
+                        // Get Skin Data
+                        //SkinViewData skinViewData = GameManager.Instance != null ? ShipStatus.Instance.CosmeticsCache.GetSkin(initData.outfit.SkinId) : ejectDummy.GetSkinView();
+                        var skinViewData = ejectDummy.GetSkinView();
+
+                        // Fix Skin Sprite (Idle or Eject)
+                        ejectDummy.FixSkinSprite(skinViewData.EjectFrame);
+                    })
+                );
+                ejectDummy.ToggleName(false);
+                ejectDummy.SetCustomHatPosition(exileHatPosition);
+                ejectDummy.SetCustomVisorPosition(exileVisorPosition);
+            }
+
         // Switch to Eject Camera
         var ejectCamera = _camera ?? CreateCamera();
         ejectCamera.enabled = true;

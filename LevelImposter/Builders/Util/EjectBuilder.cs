@@ -16,7 +16,7 @@ public class EjectBuilder : IElemBuilder
             return;
 
         // Create container object (This will be a prefab)
-        var container = new GameObject("LI Eject Container");
+        var container = new GameObject("EjectContainer");
         container.transform.SetParent(obj.transform.parent);
         container.SetActive(false);
         obj.transform.SetParent(container.transform);
