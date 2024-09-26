@@ -16,8 +16,10 @@ namespace LevelImposter.Core;
 public class LIExileController(IntPtr intPtr) : ExileController(intPtr)
 {
     private const string ON_EJECT_TRIGGER_ID = "onEject";
+    private const string ON_SKIP_TRIGGER_ID = "onSkip";
     private const string ON_FINISH_TRIGGER_ID = "onFinish";
     private const float DURATION_OFFSET = 0.9f; // 0.2f per fade, 0.5f for text
+
     private Camera? _camera;
     private float _cameraXOffset;
     private float _cameraYOffset;
@@ -71,33 +73,38 @@ public class LIExileController(IntPtr intPtr) : ExileController(intPtr)
         // Get Player Control
         var playerControl = initData?.networkedPlayer?.Object;
 
-        // Trigger Eject
-        TriggerSignal ejectSignal = new(baseController, ON_EJECT_TRIGGER_ID, playerControl);
-        TriggerSystem.GetInstance().FireTrigger(ejectSignal);
-
         // Copy Player Outfit to Eject Dummies
-        if (initData?.outfit != null)
-            foreach (var ejectDummy in EjectDummyBuilder.PoolablePlayers)
-            {
-                ejectDummy.UpdateFromPlayerOutfit(
-                    initData?.outfit,
-                    PlayerMaterial.MaskType.Exile,
-                    false,
-                    false,
-                    new Action(() =>
-                    {
-                        // Get Skin Data
-                        //SkinViewData skinViewData = GameManager.Instance != null ? ShipStatus.Instance.CosmeticsCache.GetSkin(initData.outfit.SkinId) : ejectDummy.GetSkinView();
-                        var skinViewData = ejectDummy.GetSkinView();
+        var isEjectingPlayer = initData?.outfit != null;
+        foreach (var ejectDummy in EjectDummyBuilder.PoolablePlayers)
+        {
+            ejectDummy.gameObject.SetActive(isEjectingPlayer);
 
-                        // Fix Skin Sprite (Idle or Eject)
-                        ejectDummy.FixSkinSprite(skinViewData.EjectFrame);
-                    })
-                );
-                ejectDummy.ToggleName(false);
-                ejectDummy.SetCustomHatPosition(exileHatPosition);
-                ejectDummy.SetCustomVisorPosition(exileVisorPosition);
-            }
+            if (!isEjectingPlayer)
+                continue;
+
+            ejectDummy.UpdateFromPlayerOutfit(
+                initData?.outfit,
+                PlayerMaterial.MaskType.Exile,
+                false,
+                false,
+                new Action(() =>
+                {
+                    // Get Skin Data
+                    var skinViewData = ejectDummy.GetSkinView();
+
+                    // Fix Skin Sprite (Idle or Eject)
+                    ejectDummy.FixSkinSprite(skinViewData.EjectFrame);
+                })
+            );
+            ejectDummy.ToggleName(false);
+            ejectDummy.SetCustomHatPosition(exileHatPosition);
+            ejectDummy.SetCustomVisorPosition(exileVisorPosition);
+        }
+
+        // Trigger Eject
+        var triggerID = isEjectingPlayer ? ON_EJECT_TRIGGER_ID : ON_SKIP_TRIGGER_ID;
+        TriggerSignal ejectSignal = new(baseController, triggerID, playerControl);
+        TriggerSystem.GetInstance().FireTrigger(ejectSignal);
 
         // Switch to Eject Camera
         var ejectCamera = _camera ?? CreateCamera();

@@ -61,5 +61,8 @@ public class EjectDummyBuilder : IElemBuilder
 
             player.cosmetics.skin.layer.sprite = spriteRenderer.sprite;
         };
+
+        // Hide Object By Default
+        player.gameObject.SetActive(false);
     }
 }
