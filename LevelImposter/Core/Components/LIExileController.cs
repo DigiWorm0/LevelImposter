@@ -101,6 +101,18 @@ public class LIExileController(IntPtr intPtr) : ExileController(intPtr)
             ejectDummy.SetCustomVisorPosition(exileVisorPosition);
         }
 
+        // Copy Player Outfit to Eject Hands
+        var colorID = (int)initData?.outfit.ColorId!;
+        foreach (var hand in EjectHandBuilder.AllHands)
+        {
+            hand.gameObject.SetActive(isEjectingPlayer);
+            if (!isEjectingPlayer)
+                continue;
+
+            hand.sharedMaterial = CosmeticsLayer.GetBodyMaterial(PlayerMaterial.MaskType.Exile);
+            PlayerMaterial.SetColors(colorID, hand);
+        }
+
         // Trigger Eject
         var triggerID = isEjectingPlayer ? ON_EJECT_TRIGGER_ID : ON_SKIP_TRIGGER_ID;
         TriggerSignal ejectSignal = new(baseController, triggerID, playerControl);

@@ -35,7 +35,11 @@ public class EjectDummyBuilder : IElemBuilder
 
         // Clone Prefab to Object
         var player = Object.Instantiate(playerPrefab, obj.transform);
-        player.transform.localPosition = Vector3.zero;
+        if (!player)
+            throw new Exception("Failed to clone Player Prefab");
+
+        // Reset Transform
+        player!.transform.localPosition = Vector3.zero;
         player.transform.localScale = Vector3.one;
         player.transform.localRotation = Quaternion.identity;
 
