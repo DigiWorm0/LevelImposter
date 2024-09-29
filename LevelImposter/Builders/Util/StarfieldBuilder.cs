@@ -20,12 +20,9 @@ internal class StarfieldBuilder : IElemBuilder
         // Sprite
         var spriteRenderer = obj.GetComponent<SpriteRenderer>();
         if (spriteRenderer == null)
-        {
             LILogger.Warn($"{elem.name} missing a sprite");
-            return;
-        }
-
-        spriteRenderer.material = prefabRenderer.material;
+        else
+            spriteRenderer.material = prefabRenderer.material;
 
         // Star Prefab
         var starPrefab = Object.Instantiate(obj);
@@ -59,8 +56,8 @@ internal class StarfieldBuilder : IElemBuilder
             foreach (var liStar in liStars)
             {
                 var starRenderer = liStar.GetComponent<SpriteRenderer>();
-                starRenderer.sprite = spriteRenderer.sprite;
-                starRenderer.color = spriteRenderer.color;
+                starRenderer.sprite = spriteRenderer?.sprite;
+                starRenderer.color = spriteRenderer?.color ?? starRenderer.color;
             }
         };
 

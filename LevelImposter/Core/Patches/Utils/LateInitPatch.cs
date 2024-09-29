@@ -16,7 +16,6 @@ public static class LateInitPatch
     {
         if (_hasInitialized)
             return;
-        _hasInitialized = true;
 
         // Add Mod Stamp (In case Reactor is missing)
         DestroyableSingleton<ModManager>.Instance.ShowModStamp();
@@ -40,5 +39,7 @@ public static class LateInitPatch
         apiParent.AddComponent<HTTPHandler>();
         apiParent.AddComponent<SpriteLoader>();
         Object.DontDestroyOnLoad(apiParent);
+        
+        _hasInitialized = true;
     }
 }

@@ -19,6 +19,13 @@ public class LIProperties
     public bool? triggerLoop { get; set; }
     public bool? createDeadBody { get; set; }
     public float? triggerFadeTime { get; set; }
+    public Guid? triggerGateValueID { get; set; }
+
+    // Value
+    public bool? defaultBoolValue { get; set; }
+    public Guid? comparatorValueID1 { get; set; }
+    public Guid? comparatorValueID2 { get; set; }
+    public string? comparatorOperation { get; set; }
 
     // Anim
     public LIAnimTarget[]? animTargets { get; set; }

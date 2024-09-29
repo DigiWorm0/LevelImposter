@@ -46,6 +46,7 @@ public class BuildRouter
         new EjectBuilder(),
         new EjectDummyBuilder(),
         new EjectHandBuilder(),
+        new ValueBuilder(),
 
         new SabBuilder(),
         new SabMixupBuilder(),

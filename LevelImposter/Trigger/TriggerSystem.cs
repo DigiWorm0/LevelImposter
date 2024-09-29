@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using LevelImposter.Core;
+using LevelImposter.Shop;
 using Reactor.Networking.Attributes;
 using UnityEngine;
 
@@ -28,6 +29,8 @@ public class TriggerSystem
         new TeleportTriggerHandle(),
         new TimerTriggerHandle(),
         new AnimTriggerHandle(),
+        new GateTriggerHandle(),
+        new ValueTriggerHandle(),
 
         // Propogates triggers to target elements
         new TriggerPropogationHandle()
@@ -38,8 +41,7 @@ public class TriggerSystem
         OnCreate();
     }
 
-    private static bool _shouldLog =>
-        LIShipStatus.GetInstanceOrNull()?.CurrentMap?.properties.triggerLogging ?? true;
+    private static bool _shouldLog => MapLoader.CurrentMap?.properties.triggerLogging ?? false;
 
     /// <summary>
     ///     Patch me to add your own custom trigger handles.
