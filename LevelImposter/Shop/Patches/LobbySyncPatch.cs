@@ -1,4 +1,4 @@
-﻿using HarmonyLib;
+using HarmonyLib;
 using LevelImposter.Core;
 
 namespace LevelImposter.Shop;
@@ -8,7 +8,7 @@ namespace LevelImposter.Shop;
  *      value to all connected clients
  */
 [HarmonyPatch(typeof(PlayerPhysics), nameof(PlayerPhysics.CoSpawnPlayer))]
-public static class TestJoinPatch2
+public static class ClientJoinSyncPatch
 {
     public static void Postfix(PlayerControl __instance)
     {

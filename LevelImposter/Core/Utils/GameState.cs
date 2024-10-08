@@ -5,19 +5,26 @@ namespace LevelImposter.Core;
 
 public static class GameState
 {
-    public static bool IsHost => AmongUsClient.Instance?.AmHost ?? false;
+    // Map State
+    public static MapType SelectedMapType => IsInFreeplay
+        ? (MapType)AmongUsClient.Instance.TutorialMapId
+        : (MapType)GameOptionsManager.Instance.CurrentGameOptions.MapId;
 
+    public static bool IsCustomMapSelected => SelectedMapType == MapType.LevelImposter;
+    public static bool IsCustomMapLoaded => MapLoader.CurrentMap != null;
+    public static bool IsInCustomMap => LIShipStatus.GetInstanceOrNull() != null;
+    public static bool IsFallbackMap => MapLoader.IsFallback;
+
+    public static string MapName => MapLoader.CurrentMap?.name ?? LIConstants.MAP_NAME;
+
+    // Scenes
     public static bool IsInFreeplay => AmongUsClient.Instance?.NetworkMode == NetworkModes.FreePlay;
     public static bool IsInLobby => LobbyBehaviour.Instance != null;
     public static bool IsInMainMenu => SceneManager.GetActiveScene().name == "MainMenu";
     public static bool IsInShop => ShopManager.Instance != null;
     public static bool IsInMeeting => MeetingHud.Instance != null;
+    public static bool IsPlayerLoaded => PlayerControl.LocalPlayer != null;
 
-    public static bool IsInCustomMap => LIShipStatus.GetInstanceOrNull() != null;
-    public static bool IsCustomMapLoaded => MapLoader.CurrentMap != null && !MapLoader.IsFallback;
-    public static bool IsFallbackMapLoaded => MapLoader.CurrentMap != null && MapLoader.IsFallback;
-
-    public static string MapName => IsFallbackMapLoaded && IsInLobby
-        ? LIConstants.MAP_NAME
-        : MapLoader.CurrentMap?.name ?? LIConstants.MAP_NAME;
+    // Network
+    public static bool IsHost => AmongUsClient.Instance?.AmHost ?? false;
 }

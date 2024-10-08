@@ -553,19 +553,6 @@ public static class MapUtils
     }
 
     /// <summary>
-    ///     Gets the current map type
-    /// </summary>
-    /// <returns>Current MapType enum</returns>
-    public static MapType GetCurrentMapType()
-    {
-        var isFreeplay = AmongUsClient.Instance.NetworkMode == NetworkModes.FreePlay;
-        var mapID = isFreeplay
-            ? AmongUsClient.Instance.TutorialMapId
-            : GameOptionsManager.Instance.CurrentGameOptions.MapId;
-        return (MapType)mapID;
-    }
-
-    /// <summary>
     ///     Gets the default 100x100 white square sprite
     /// </summary>
     /// <returns>A 100x100 default white square</returns>
