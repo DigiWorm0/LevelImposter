@@ -18,7 +18,6 @@ internal class TeleBuilder : IElemBuilder
             obj.layer = (int)Layer.Default;
 
         // Teleporter
-        var tele = obj.AddComponent<LITeleporter>();
-        tele.SetElement(elem);
+        obj.AddComponent<LITeleporter>();
     }
 }

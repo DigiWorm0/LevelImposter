@@ -3,7 +3,7 @@
 internal enum Layer
 {
     /// <summary>
-    ///     Only visible in light
+    ///     Only visible in light, interacts with ghosts
     /// </summary>
     Default,
     TransparentFX,

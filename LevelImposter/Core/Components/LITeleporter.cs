@@ -1,7 +1,5 @@
 using System;
 using System.Collections.Generic;
-using Il2CppInterop.Runtime.Attributes;
-using Reactor.Networking.Attributes;
 using UnityEngine;
 
 namespace LevelImposter.Core;
@@ -14,11 +12,10 @@ public class LITeleporter(IntPtr intPtr) : MonoBehaviour(intPtr)
     private static readonly List<LITeleporter> _teleList = new();
     private readonly List<Collider2D> _colliderBuffer = new();
 
+    private bool _clientSide = true;
+    private LIElement? _element;
     private bool _preserveOffset = true;
-
-    [HideFromIl2Cpp] public LIElement? CurrentElem { get; private set; }
-
-    public LITeleporter? CurrentTarget { get; private set; }
+    private LITeleporter? _targetTeleporter;
 
     public void Awake()
     {
@@ -27,21 +24,20 @@ public class LITeleporter(IntPtr intPtr) : MonoBehaviour(intPtr)
 
     public void Start()
     {
-        if (CurrentElem == null)
-            return;
-        foreach (var teleporter in _teleList)
-        {
-            var targetID = CurrentElem.properties.teleporter;
-            if (targetID != null)
-                CurrentTarget = _teleList.Find(tele => tele.CurrentElem?.id == targetID);
-        }
+        _element = gameObject.GetLIData().Element;
+        _preserveOffset = _element.properties.preserveOffset ?? true;
+        _clientSide = _element.properties.triggerClientSide ?? false;
+
+        var targetID = _element.properties.teleporter;
+        if (targetID != null)
+            _targetTeleporter = _teleList.Find(tele => tele._element?.id == targetID);
     }
 
     public void OnDestroy()
     {
         _teleList.Clear();
-        CurrentElem = null;
-        CurrentTarget = null;
+        _targetTeleporter = null;
+        _element = null;
     }
 
     public void OnTriggerEnter2D(Collider2D collider)
@@ -56,31 +52,6 @@ public class LITeleporter(IntPtr intPtr) : MonoBehaviour(intPtr)
         _colliderBuffer.RemoveAll(col => col == collider);
     }
 
-
-    /// <summary>
-    ///     Sets the Teleporter's LIElement source
-    /// </summary>
-    /// <param name="elem">Element to read properties from</param>
-    [HideFromIl2Cpp]
-    public void SetElement(LIElement elem)
-    {
-        CurrentElem = elem;
-        _preserveOffset = elem.properties.preserveOffset ?? true;
-    }
-
-    /// <summary>
-    ///     RPC that is ran when the player is teleported
-    /// </summary>
-    /// <param name="player">PlayerControl that is teleported</param>
-    /// <param name="x">Global X position to teleport to</param>
-    /// <param name="y">Global Y position to teleport to</param>
-    [MethodRpc((uint)LIRpc.TeleportPlayer)]
-    public static void RPCTeleport(PlayerControl player, float x, float y)
-    {
-        LILogger.Info($"Teleported {player.name} to ({x},{y})");
-        player.NetTransform.SnapTo(player.transform.position);
-    }
-
     /// <summary>
     ///     Checks if the local player is in the teleporter and teleports them
     /// </summary>
@@ -92,50 +63,60 @@ public class LITeleporter(IntPtr intPtr) : MonoBehaviour(intPtr)
     }
 
     /// <summary>
-    ///     Teleports the collider to the target teleporter if its the local player
+    ///     Teleports the collider to the target teleporter if it's the local player
     /// </summary>
     /// <param name="collider">Collider to teleport</param>
     /// <returns>True if the collider was teleported</returns>
     private bool TryTeleport(Collider2D? collider)
     {
-        if (CurrentElem == null || CurrentTarget == null || collider == null)
+        if (_targetTeleporter == null || collider == null)
             return false;
 
-        // Check Player
+        // Find the player
         var player = collider.GetComponent<PlayerControl>();
         if (player == null)
             return false;
-        if (!MapUtils.IsLocalPlayer(player.gameObject))
-            return false;
-        if (collider.TryCast<CircleCollider2D>() == null) // Disable BoxCollider2D
+
+        // Only teleport the local player if server-side
+        if (!_clientSide && !player.AmOwner)
             return false;
 
-        // Offset
+        // Disable the BoxCollider2D which is around the player
+        if (collider.TryCast<CircleCollider2D>() == null)
+            return false;
+
+        // Calculate offset
         Vector3 offset;
         if (_preserveOffset)
-            offset = transform.position - CurrentTarget.transform.position;
+            offset = transform.position - _targetTeleporter.transform.position;
         else
-            offset = player.transform.position - CurrentTarget.transform.position;
+            offset = player.transform.position - _targetTeleporter.transform.position;
         offset.z = 0;
 
         // Pet
         var pet = player.cosmetics.currentPet;
-        if (pet != null) pet.transform.position -= offset;
+        if (pet != null)
+            pet.transform.position -= offset;
 
         // Player
         player.transform.position -= offset;
 
         // Camera
-        Camera.main.transform.position -= offset;
-        var followerCam = Camera.main.GetComponent<FollowerCamera>();
-        followerCam.centerPosition = Camera.main.transform.position;
+        if (Camera.main != null)
+        {
+            Camera.main.transform.position -= offset;
+
+            var followerCam = Camera.main.gameObject.GetComponent<FollowerCamera>();
+            if (followerCam != null)
+                followerCam.centerPosition = Camera.main.transform.position;
+        }
 
         // RPC
-        RPCTeleport(
-            player,
-            player.transform.position.x,
-            player.transform.position.y
-        );
+        if (_clientSide)
+            player.NetTransform.SnapTo(player.transform.position);
+        else
+            player.NetTransform.RpcSnapTo(player.transform.position);
+
         return true;
     }
 }
