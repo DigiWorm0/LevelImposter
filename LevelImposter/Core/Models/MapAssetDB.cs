@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using Il2CppInterop.Runtime.InteropTypes.Arrays;
 
 namespace LevelImposter.Core;
 
@@ -29,9 +28,9 @@ public class MapAssetDB
         return result;
     }
 
-    public class DBElement
+    public class DBElement : IStreamable
     {
-        public Il2CppStructArray<byte>? rawData { get; set; }
+        public byte[]? rawData { get; set; }
         public FileChunk? fileChunk { get; set; }
 
         public Stream OpenStream()
@@ -47,15 +46,16 @@ public class MapAssetDB
         {
             if (rawData != null)
                 return rawData;
-            if (fileChunk != null)
-                using (var stream = fileChunk.OpenStream())
-                {
-                    var buffer = new byte[stream.Length];
-                    stream.Read(buffer, 0, buffer.Length);
-                    return buffer;
-                }
+            if (fileChunk == null)
+                throw new Exception("No data to convert to bytes");
 
-            throw new Exception("No data to convert to bytes");
+            using var stream = fileChunk.OpenStream();
+            var buffer = new byte[stream.Length];
+            var byteCount = stream.Read(buffer, 0, buffer.Length);
+            if (byteCount != buffer.Length)
+                throw new Exception("Failed to read all bytes from stream");
+
+            return buffer;
         }
     }
 }

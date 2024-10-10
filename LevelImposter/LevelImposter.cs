@@ -33,7 +33,6 @@ public partial class LevelImposter : BasePlugin
         LILogger.Init();
         MapFileAPI.Init();
         FileCache.Init();
-        LIDeepLink.Init();
         ModCompatibility.Init();
 
         // IUsable Interface
@@ -59,11 +58,11 @@ public partial class LevelImposter : BasePlugin
         ClassInjector.RegisterTypeInIl2Cpp<MinigameSprites>();
         ClassInjector.RegisterTypeInIl2Cpp<LagLimiter>();
         ClassInjector.RegisterTypeInIl2Cpp<GIFAnimator>();
-        ClassInjector.RegisterTypeInIl2Cpp<SpriteLoader>();
         ClassInjector.RegisterTypeInIl2Cpp<TriggerSoundPlayer>();
         ClassInjector.RegisterTypeInIl2Cpp<TriggerConsole>(usableInterface);
         ClassInjector.RegisterTypeInIl2Cpp<MapObjectData>();
         ClassInjector.RegisterTypeInIl2Cpp<EditableLadderConsole>();
+        ClassInjector.RegisterTypeInIl2Cpp<LIExileController>();
 
         ClassInjector.RegisterTypeInIl2Cpp<AssetDB>();
 

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using LevelImposter.AssetLoader;
 using Object = UnityEngine.Object;
 
 namespace LevelImposter.Core;
@@ -41,8 +42,11 @@ public static class GCHandler
         while (_disposables.Count > 0)
             _disposables.Pop().Dispose();
 
-        // SpriteLoader
-        SpriteLoader.Instance?.Clean();
+        // Asset Loaders
+        LILogger.Info($"{SpriteLoader.Instance.CacheSize} cached sprites");
+        LILogger.Info($"{AudioLoader.Instance.CacheSize} cached audio clips");
+        SpriteLoader.Instance.Clear();
+        AudioLoader.Instance.Clear();
 
         // GC
         GC.Collect();

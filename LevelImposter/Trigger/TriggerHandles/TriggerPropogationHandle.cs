@@ -7,14 +7,15 @@ public class TriggerPropogationHandle : ITriggerHandle
     public void OnTrigger(TriggerSignal signal)
     {
         // Get the object data
-        var objectData = signal.TargetObject.GetLIData();
+        var objectData = signal.TargetObject?.GetLIData();
 
         // Check if the object has triggers
-        if (objectData.Properties.triggers == null)
+        var triggers = objectData?.Properties?.triggers;
+        if (triggers == null)
             return;
 
         // Find cooresponding trigger
-        foreach (var trigger in objectData.Properties.triggers)
+        foreach (var trigger in triggers)
         {
             // Check if the trigger has the triggerID
             if (trigger.id != signal.TriggerID)

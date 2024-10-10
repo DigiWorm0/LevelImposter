@@ -1,3 +1,4 @@
+using LevelImposter.AssetLoader;
 using LevelImposter.Core;
 using UnityEngine;
 
@@ -35,6 +36,6 @@ internal class SabotageOptionsBuilder : IElemBuilder
         // Sabotage Sound
         var sabotageSound = MapUtils.FindSound(elem.properties.sounds, SABOTAGE_SOUND_NAME);
         if (sabotageSound != null)
-            shipStatus.SabotageSound = WAVFile.LoadSound(sabotageSound) ?? shipStatus.SabotageSound;
+            shipStatus.SabotageSound = WAVLoader.Load(sabotageSound) ?? shipStatus.SabotageSound;
     }
 }

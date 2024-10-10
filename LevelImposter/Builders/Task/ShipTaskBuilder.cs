@@ -202,11 +202,11 @@ public class ShipTaskBuilder : IElemBuilder
     {
         // Check Map
         var instance = LIShipStatus.GetInstance();
-        if (instance.CurrentMap == null)
+        if (LIShipStatus.CurrentMap == null)
             throw new Exception("Current map is unavailable");
 
         // Find Elements
-        return instance.CurrentMap.elements.Where(mapElem => mapElem.type == type).ToList();
+        return LIShipStatus.CurrentMap.elements.Where(mapElem => mapElem.type == type).ToList();
     }
 
     /// <summary>

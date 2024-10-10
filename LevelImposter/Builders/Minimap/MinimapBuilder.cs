@@ -48,14 +48,8 @@ public class MinimapBuilder : IElemBuilder
         background.transform.localScale = obj.transform.localScale / mapScale;
         background.transform.localRotation = obj.transform.localRotation;
 
-        // On Load
-        if (SpriteLoader.Instance == null)
-        {
-            LILogger.Warn("Spite Loader is not instantiated");
-            return;
-        }
-
-        SpriteLoader.Instance.OnLoad += loadedElem =>
+        // Load Sprite
+        SpriteBuilder.OnSpriteLoad += (loadedElem, _) =>
         {
             if (loadedElem.id != elem.id || bgRenderer == null)
                 return;

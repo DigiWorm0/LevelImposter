@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using BepInEx.Unity.IL2CPP.Utils.Collections;
 using Il2CppInterop.Runtime.Attributes;
 using Il2CppInterop.Runtime.InteropTypes.Fields;
+using LevelImposter.Shop;
 using UnityEngine;
 
 namespace LevelImposter.Core;
@@ -74,7 +75,7 @@ public class GIFAnimator(IntPtr intPtr) : MonoBehaviour(intPtr)
         _defaultLoopGIF = element.properties.loopGIF ?? true;
 
         // Preload GIFs
-        var shouldPreload = LIShipStatus.GetInstanceOrNull()?.CurrentMap?.properties?.preloadAllGIFs ?? false;
+        var shouldPreload = MapLoader.CurrentMap?.properties.preloadAllGIFs ?? false;
         if (shouldPreload)
             _gifData?.RenderAllFrames();
 

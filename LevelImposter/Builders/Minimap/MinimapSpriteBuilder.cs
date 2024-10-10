@@ -50,15 +50,9 @@ public class MinimapSpriteBuilder : IElemBuilder
             return;
         }
 
-        // Background
-        if (SpriteLoader.Instance == null)
-        {
-            LILogger.Warn("Spite Loader is not instantiated");
-            return;
-        }
-
+        // Load Sprite
         var bgRenderer = spriteObj.AddComponent<SpriteRenderer>();
-        SpriteLoader.Instance.OnLoad += loadedElem =>
+        SpriteBuilder.OnSpriteLoad += (loadedElem, _) =>
         {
             if (loadedElem.id != elem.id || bgRenderer == null)
                 return;

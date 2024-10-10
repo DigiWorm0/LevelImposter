@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Text.Json;
 using Il2CppInterop.Runtime.Attributes;
+using LevelImposter.AssetLoader;
 using LevelImposter.Core;
 using UnityEngine;
 
@@ -112,28 +113,24 @@ public static class LevelImposterAPI
                 LILogger.Info($"Parsing map {id}...");
                 try
                 {
-                    using (var memoryStream = new MemoryStream(fileData))
+                    // Open the memory stream
+                    using var memoryStream = new MemoryStream(fileData);
+
+                    // Deserialize the map
+                    var mapData = LIDeserializer.DeserializeMap(memoryStream);
+
+                    // Check Download
+                    if (mapData == null)
                     {
-                        // Deserialize the map
-                        var mapData = LIDeserializer.DeserializeMap(memoryStream);
-
-                        // Free memory
-                        fileData = null!;
-
-                        // Check Download
-                        if (mapData == null)
-                        {
-                            onError("Map was null");
-                            return;
-                        }
-
-                        // Make Sure the ID Matches
-                        mapData.id = id.ToString();
-
-                        // Callback
-                        callback(mapData);
-                        mapData = null;
+                        onError("Map was null");
+                        return;
                     }
+
+                    // Make Sure the ID Matches
+                    mapData.id = id.ToString();
+
+                    // Callback
+                    callback(mapData);
                 }
                 catch (Exception e)
                 {
@@ -154,20 +151,15 @@ public static class LevelImposterAPI
         LILogger.Info($"Downloading thumbnail for map {metadata}...");
         HTTPHandler.Instance?.Request(API_PATH + $"map/{metadata.id}/thumbnail", imgData =>
         {
+            // Save to file cache
             ThumbnailCache.Save(metadata.id, imgData);
-            var imgStream = new MemoryStream(imgData);
-            SpriteLoader.Instance?.LoadSpriteAsync(imgStream, spriteData =>
-            {
-                if (spriteData == null)
-                {
-                    LILogger.Warn($"Error loading {metadata} thumbnail from API");
-                    return;
-                }
 
-                var sprite = spriteData.Sprite;
-                if (sprite != null)
-                    callback(sprite);
-            }, metadata.id, null);
+            // Load the sprite
+            SpriteLoader.LoadAsync(
+                $"{metadata.id}_thumb",
+                new MemoryStreamable(imgData),
+                callback
+            );
         }, null);
     }
 }

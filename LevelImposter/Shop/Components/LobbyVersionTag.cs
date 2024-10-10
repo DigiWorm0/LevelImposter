@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Text;
 using Il2CppInterop.Runtime.Attributes;
 using LevelImposter.Core;
@@ -55,14 +55,13 @@ public class LobbyVersionTag(IntPtr intPtr) : MonoBehaviour(intPtr)
 
         // Get the current map
         var currentMap = MapLoader.CurrentMap;
-        var isFallback = GameState.IsFallbackMapLoaded;
 
         // Generate version tag
         StringBuilder versionTagBuilder = new();
 
         // Map Name
         versionTagBuilder.Append("<font=\"Barlow-Black SDF\" material=\"Barlow-Black Outline\">");
-        if (isFallback || currentMap == null)
+        if (GameState.IsFallbackMap || currentMap == null)
         {
             versionTagBuilder.Append("Random Custom Map");
         }
@@ -95,7 +94,7 @@ public class LobbyVersionTag(IntPtr intPtr) : MonoBehaviour(intPtr)
         if (MapLoader.CurrentMap == null)
             return false;
 
-        if (MapUtils.GetCurrentMapType() != MapType.LevelImposter)
+        if (!GameState.IsCustomMapSelected)
             return false;
 
         if (!GameState.IsInLobby)

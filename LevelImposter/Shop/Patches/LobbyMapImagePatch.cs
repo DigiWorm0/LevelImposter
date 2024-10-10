@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using HarmonyLib;
 using LevelImposter.Core;
 using UnityEngine;

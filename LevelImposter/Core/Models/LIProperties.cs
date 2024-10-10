@@ -19,6 +19,13 @@ public class LIProperties
     public bool? triggerLoop { get; set; }
     public bool? createDeadBody { get; set; }
     public float? triggerFadeTime { get; set; }
+    public Guid? triggerGateValueID { get; set; }
+
+    // Value
+    public bool? defaultBoolValue { get; set; }
+    public Guid? comparatorValueID1 { get; set; }
+    public Guid? comparatorValueID2 { get; set; }
+    public string? comparatorOperation { get; set; }
 
     // Anim
     public LIAnimTarget[]? animTargets { get; set; }
@@ -29,6 +36,11 @@ public class LIProperties
     public bool? noShadowsBehaviour { get; set; }
     public LIColor? color { get; set; }
     public bool? loopGIF { get; set; }
+
+    // Eject
+    public float? ejectPreTextDuration { get; set; }
+    public float? ejectTextDuration { get; set; }
+    public float? ejectPostTextDuration { get; set; }
 
     // Shake
     public float? shakeAmount { get; set; }
@@ -103,6 +115,7 @@ public class LIProperties
     // Ladder
     public float? ladderHeight { get; set; }
     public float? ladderCooldown { get; set; }
+    public float? ladderOffset { get; set; }
 
     // Platform
     public float? platformXOffset { get; set; }

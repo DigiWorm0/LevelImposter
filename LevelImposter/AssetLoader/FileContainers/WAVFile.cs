@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using LevelImposter.Shop;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
@@ -8,7 +9,7 @@ namespace LevelImposter.Core;
 /// <summary>
 ///     Represents a WAV file.
 /// </summary>
-public class WAVFile : IDisposable
+public class WAVFile(string _name) : IDisposable
 {
     private const string CLIP_NAME = "WAVFile";
 
@@ -34,7 +35,7 @@ public class WAVFile : IDisposable
             return null;
 
         // Get Asset DB
-        var mapAssetDB = LIShipStatus.GetInstanceOrNull()?.CurrentMap?.mapAssetDB;
+        var mapAssetDB = MapLoader.CurrentMap?.mapAssetDB;
         if (mapAssetDB == null)
             return null;
 
@@ -44,23 +45,21 @@ public class WAVFile : IDisposable
             return null;
 
         // Get Sound Data
-        using (var stream = soundDBElem.OpenStream())
-        {
-            return LoadStream(stream);
-        }
+        using var stream = soundDBElem.OpenStream();
+        return LoadStream(stream);
     }
 
     /// <summary>
     ///     Loads a WAV file from the given base64 string and adds to map's GC list
     /// </summary>
-    /// <param name="base64">Base64 string to load from</param>
+    /// <param name="dataStream">Data stream to load from</param>
     /// <returns>A Unity AudioClip</returns>
     public static AudioClip? LoadStream(Stream dataStream)
     {
         try
         {
             // Load File
-            var wavFile = new WAVFile();
+            var wavFile = new WAVFile(CLIP_NAME);
             wavFile.Load(dataStream);
 
             // Add to GC list
@@ -82,17 +81,16 @@ public class WAVFile : IDisposable
     /// <param name="dataStream">Data stream to read from</param>
     public void Load(Stream dataStream)
     {
-        using (var reader = new BinaryReader(dataStream))
-        {
-            IsLoaded = false;
-            ReadHeader(reader);
-            while (ReadBlock(reader))
-            {
-            }
+        using var reader = new BinaryReader(dataStream);
 
-            GenerateClip();
-            IsLoaded = true;
+        IsLoaded = false;
+        ReadHeader(reader);
+        while (ReadBlock(reader))
+        {
         }
+
+        GenerateClip();
+        IsLoaded = true;
     }
 
     /// <summary>
@@ -191,7 +189,7 @@ public class WAVFile : IDisposable
         if (_data == null)
             throw new Exception("WAV data is not loaded");
 
-        _clip = AudioClip.Create(CLIP_NAME, _data.Length, _channelCount, _sampleRate, false);
+        _clip = AudioClip.Create(_name, _data.Length, _channelCount, _sampleRate, false);
         _clip.SetData(_data, 0);
         _clip.hideFlags = HideFlags.HideAndDontSave;
 

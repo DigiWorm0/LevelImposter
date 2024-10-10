@@ -1,6 +1,7 @@
 using System;
 using LevelImposter.Core;
 using LevelImposter.DB;
+using LevelImposter.Shop;
 using UnityEngine;
 
 namespace LevelImposter.Builders;
@@ -54,7 +55,7 @@ internal class DisplayBuilder : IElemBuilder
         meshRenderer.sharedMaterial = minigamePrefab?.DefaultMaterial;
 
         // Render Texture
-        var pixelArtMode = LIShipStatus.GetInstanceOrNull()?.CurrentMap?.properties.pixelArtMode ?? false;
+        var pixelArtMode = MapLoader.CurrentMap?.properties.pixelArtMode ?? false;
         var renderTexture = RenderTexture.GetTemporary(
             width,
             height,

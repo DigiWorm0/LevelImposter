@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using Il2CppInterop.Runtime.Attributes;
+using LevelImposter.AssetLoader;
 using LevelImposter.Core;
 using Reactor.Utilities;
 using TMPro;
@@ -12,6 +13,7 @@ public class LoadingBar(IntPtr intPtr) : MonoBehaviour(intPtr)
 {
     private GameObject? _loadingBar;
     private TMP_Text? _mapText;
+    private int _maxQueueSize = 1;
     private TMP_Text? _statusText;
     private bool _visible;
 
@@ -96,17 +98,21 @@ public class LoadingBar(IntPtr intPtr) : MonoBehaviour(intPtr)
         while (_visible)
         {
             // Approximate Progress
-            if (SpriteLoader.Instance?.RenderCount > 0)
+            if (SpriteLoader.Instance.QueueSize > 0)
             {
-                double renderTotal = SpriteLoader.Instance?.RenderTotal ?? 1;
-                if (renderTotal == 0)
-                    renderTotal = 1;
-                var renderCount = renderTotal - (SpriteLoader.Instance?.RenderCount ?? 0);
-                var progress = (float)(renderCount / renderTotal);
+                // Calculate Max Queue Size
+                _maxQueueSize = Math.Max(_maxQueueSize, SpriteLoader.Instance.QueueSize);
+                if (_maxQueueSize == 0)
+                    _maxQueueSize = 1;
 
+                // Calculate Progress
+                var loadedCount = _maxQueueSize - SpriteLoader.Instance.QueueSize;
+                var progress = (float)loadedCount / _maxQueueSize;
+
+                // Update UI
                 Instance?.SetProgress(progress);
                 Instance?.SetStatus(
-                    $"{Math.Round(progress * 100)}% <size=1.2>({renderCount}/{renderTotal})</size>"
+                    $"{Math.Round(progress * 100)}% <size=1.2>({loadedCount}/{_maxQueueSize})</size>"
                 );
             }
             else
@@ -116,9 +122,9 @@ public class LoadingBar(IntPtr intPtr) : MonoBehaviour(intPtr)
             }
 
             // Check if done
-            var isSpritesLoading = SpriteLoader.Instance?.RenderCount > 0;
+            var isSpritesLoading = SpriteLoader.Instance.QueueSize > 0;
             var isDownloading = MapSync.IsDownloadingMap;
-            var isBuilding = LIShipStatus.GetInstanceOrNull()?.IsBuilding ?? false;
+            var isBuilding = LIShipStatus.GetInstanceOrNull()?.Builder.IsBuilding ?? false;
             if (!isSpritesLoading && !isDownloading && !isBuilding)
                 break;
 

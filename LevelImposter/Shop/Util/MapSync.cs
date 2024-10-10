@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using LevelImposter.Core;
 using Reactor.Networking.Attributes;
@@ -17,10 +17,9 @@ public static class MapSync
     /// </summary>
     public static void RegenerateFallbackID()
     {
-        var isHost = AmongUsClient.Instance.AmHost;
-        var isPlayerInit = PlayerControl.LocalPlayer != null;
-        var isFreeplay = DestroyableSingleton<TutorialManager>.InstanceExists;
-        if (!isHost || isFreeplay || !isPlayerInit)
+        if (!GameState.IsPlayerLoaded ||
+            !GameState.IsHost ||
+            GameState.IsInFreeplay)
             return;
 
         var randomMapID = GetRandomMapID(new List<string>());
@@ -40,10 +39,9 @@ public static class MapSync
     /// </summary>
     public static void SyncMapID()
     {
-        var isHost = AmongUsClient.Instance.AmHost;
-        var isPlayerInit = PlayerControl.LocalPlayer != null;
-        var isFreeplay = DestroyableSingleton<TutorialManager>.InstanceExists;
-        if (!isHost || isFreeplay || !isPlayerInit)
+        if (!GameState.IsHost ||
+            !PlayerControl.LocalPlayer ||
+            GameState.IsInFreeplay)
             return;
 
         // Get ID
@@ -58,10 +56,9 @@ public static class MapSync
         RPCSendMapID(PlayerControl.LocalPlayer, mapIDStr, MapLoader.IsFallback);
 
         // Set Map ID
-        var isEmpty = MapLoader.CurrentMap == null;
-        if (!isEmpty && !MapLoader.IsFallback)
+        if (GameState.IsCustomMapLoaded && !MapLoader.IsFallback)
             MapUtils.SetLobbyMapType(MapType.LevelImposter);
-        else if (isEmpty && GameOptionsManager.Instance.CurrentGameOptions.MapId == (byte)MapType.LevelImposter)
+        else if (!GameState.IsCustomMapLoaded && GameState.IsCustomMapSelected)
             MapUtils.SetLobbyMapType(MapType.Skeld, true);
     }
 

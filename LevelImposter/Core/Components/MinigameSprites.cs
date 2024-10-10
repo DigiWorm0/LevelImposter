@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
 using Il2CppInterop.Runtime.Attributes;
+using LevelImposter.AssetLoader;
 using LevelImposter.DB;
+using LevelImposter.Shop;
 using PowerTools;
 using QRCoder;
 using QRCoder.Unity;
@@ -78,21 +80,33 @@ public class MinigameSprites(IntPtr intPtr) : MonoBehaviour(intPtr)
             foreach (var minigameData in _minigameDataArr)
             {
                 // Get Pivot
-                Vector2? pivot = PIVOTS.ContainsKey(minigameData.type) ? PIVOTS[minigameData.type] : null;
+                var hasPivot = PIVOTS.TryGetValue(minigameData.type, out var pivot);
 
                 // Get Sprite Stream
-                var mapAssetDB = LIShipStatus.GetInstanceOrNull()?.CurrentMap?.mapAssetDB;
+                var mapAssetDB = MapLoader.CurrentMap?.mapAssetDB;
                 var guid = minigameData.spriteID;
                 var mapAsset = mapAssetDB?.Get(guid);
 
-                // Load Sprite
-                if (mapAsset != null)
-                    SpriteLoader.Instance?.LoadSpriteAsync(
-                        mapAsset.OpenStream(),
-                        spriteData => LoadMinigameSprite(minigame, minigameData.type, spriteData?.Sprite),
-                        minigameData.spriteID?.ToString(),
-                        pivot
-                    );
+                // Check Map Asset
+                if (mapAsset == null)
+                    continue;
+
+                // Create Loadable Sprite
+                var loadableSprite = new LoadableSprite(
+                    minigameData.spriteID?.ToString() ?? "",
+                    mapAsset
+                );
+
+                // Apply Options
+                if (hasPivot)
+                    loadableSprite.Options.Pivot = pivot;
+                loadableSprite.Options.PixelArt = MapLoader.CurrentMap?.properties.pixelArtMode ?? false;
+
+                // Add to Queue
+                SpriteLoader.Instance.AddToQueue(
+                    loadableSprite,
+                    loadedSprite => { LoadMinigameSprite(minigame, minigameData.type, loadedSprite.Sprite); }
+                );
             }
         }
         catch (Exception e)

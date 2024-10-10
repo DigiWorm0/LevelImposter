@@ -1,4 +1,5 @@
 ﻿using System;
+using LevelImposter.Builders;
 using UnityEngine;
 
 namespace LevelImposter.Core;
@@ -31,9 +32,7 @@ public class LIScroll(IntPtr intPtr) : MonoBehaviour(intPtr)
 
         // Replace SpriteRenderer with MeshRenderer because
         // Unity doesn't support scrolling textures on sprites
-        if (SpriteLoader.Instance == null)
-            throw new Exception("Sprite Loader is not instantiated");
-        SpriteLoader.Instance.OnLoad += loadedElem =>
+        SpriteBuilder.OnSpriteLoad += (loadedElem, _) =>
         {
             if (loadedElem.id != objData.ID)
                 return;

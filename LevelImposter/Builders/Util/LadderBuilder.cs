@@ -7,7 +7,7 @@ namespace LevelImposter.Builders;
 
 internal class LadderBuilder : IElemBuilder
 {
-    public const float LADDER_Y_OFFSET = -0.4f;
+    public const float DEFAULT_LADDER_OFFSET = -0.4f;
 
     public static readonly Dictionary<string, float> DEFAULT_LADDER_HEIGHTS = new()
     {
@@ -38,17 +38,20 @@ internal class LadderBuilder : IElemBuilder
 
         // Default Sprite
         var spriteRenderer = MapUtils.CloneSprite(obj, prefab);
+        
+        // Offset
+        var heightOffset = elem.properties.ladderOffset ?? DEFAULT_LADDER_OFFSET;
 
         // Console
         var ladderHeight = elem.properties.ladderHeight ?? DEFAULT_LADDER_HEIGHTS[elem.type];
 
         GameObject topObj = new("LadderTop");
         topObj.transform.SetParent(obj.transform);
-        topObj.transform.localPosition = new Vector3(0, ladderHeight + LADDER_Y_OFFSET, 0);
+        topObj.transform.localPosition = new Vector3(0, ladderHeight + heightOffset, 0);
         topObj.AddComponent<BoxCollider2D>().isTrigger = true;
         GameObject bottomObj = new("LadderBottom");
         bottomObj.transform.SetParent(obj.transform);
-        bottomObj.transform.localPosition = new Vector3(0, -ladderHeight + LADDER_Y_OFFSET, 0);
+        bottomObj.transform.localPosition = new Vector3(0, -ladderHeight + heightOffset, 0);
         bottomObj.AddComponent<BoxCollider2D>().isTrigger = true;
 
         var topConsole = topObj.AddComponent<EditableLadderConsole>();
