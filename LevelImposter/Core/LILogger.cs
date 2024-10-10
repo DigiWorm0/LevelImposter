@@ -11,7 +11,7 @@ namespace LevelImposter.Core;
 public static class LILogger
 {
     // Set to true to log Unity Stack traces to the BepInEx console. Useful when debugging.
-    private const bool LOG_UNITY_STACK_TRACE = true;
+    private const bool LOG_UNITY_STACK_TRACE = false;
 
     private static ManualLogSource? _logger;
 
