@@ -25,7 +25,7 @@ public static class MapLoader
 
         // Should never happen, but just in case - load the map
         if (map != null && LIShipStatus.IsInstance())
-            LIShipStatus.GetInstance().LoadMap(map);
+            LIShipStatus.GetInstance().Builder.BuildMap(map);
 
         // Only continue if in lobby
         if (!GameState.IsInLobby)

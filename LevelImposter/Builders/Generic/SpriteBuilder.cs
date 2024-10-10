@@ -15,6 +15,11 @@ public class SpriteBuilder : IElemBuilder
 
     public static SpriteLoadEvent? OnSpriteLoad;
 
+    public SpriteBuilder()
+    {
+        OnSpriteLoad = null;
+    }
+
     public void OnBuild(LIElement elem, GameObject obj)
     {
         if (elem.properties.spriteID == null)
@@ -37,7 +42,14 @@ public class SpriteBuilder : IElemBuilder
             }
 
             // Invoke Callback
-            OnSpriteLoad?.Invoke(elem, loadedSprite);
+            try
+            {
+                OnSpriteLoad?.Invoke(elem, loadedSprite);
+            }
+            catch (Exception e)
+            {
+                LILogger.Error(e);
+            }
         });
     }
 

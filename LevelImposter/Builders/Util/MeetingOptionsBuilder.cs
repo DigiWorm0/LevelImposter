@@ -1,6 +1,7 @@
 using System;
 using LevelImposter.AssetLoader;
 using LevelImposter.Core;
+using LevelImposter.Shop;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
@@ -39,7 +40,7 @@ internal class MeetingOptionsBuilder : IElemBuilder
         // Meeting Background
         if (elem.properties.meetingBackgroundID != null)
         {
-            var mapAssetDB = LIShipStatus.GetInstanceOrNull()?.CurrentMap?.mapAssetDB;
+            var mapAssetDB = MapLoader.CurrentMap?.mapAssetDB;
             var mapAsset = mapAssetDB?.Get(elem.properties.meetingBackgroundID);
             if (mapAsset == null)
                 throw new Exception("Meeting Background ID not found in MapAssetDB");

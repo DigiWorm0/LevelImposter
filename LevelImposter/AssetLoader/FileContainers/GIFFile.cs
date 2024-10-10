@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using LevelImposter.Shop;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
@@ -562,7 +563,7 @@ public class GIFFile(string name) : IDisposable
             }
 
             // Create frame texture
-            var pixelArtMode = LIShipStatus.GetInstanceOrNull()?.CurrentMap?.properties.pixelArtMode == true;
+            var pixelArtMode = MapLoader.CurrentMap?.properties.pixelArtMode == true;
             var texture = new Texture2D(Width, Height, TextureFormat.RGBA32, false)
             {
                 wrapMode = TextureWrapMode.Clamp,

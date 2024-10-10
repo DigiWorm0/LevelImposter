@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using LevelImposter.Core;
+using LevelImposter.Shop;
 using UnityEngine;
 
 namespace LevelImposter.AssetLoader;
@@ -18,7 +19,7 @@ public class WAVLoader
             return null;
 
         // Get Asset DB
-        var mapAssetDB = LIShipStatus.GetInstanceOrNull()?.CurrentMap?.mapAssetDB;
+        var mapAssetDB = MapLoader.CurrentMap?.mapAssetDB;
 
         // Get Sound Stream
         var soundDBElem = mapAssetDB?.Get(soundData.dataID);

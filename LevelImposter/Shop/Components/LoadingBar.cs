@@ -124,7 +124,7 @@ public class LoadingBar(IntPtr intPtr) : MonoBehaviour(intPtr)
             // Check if done
             var isSpritesLoading = SpriteLoader.Instance.QueueSize > 0;
             var isDownloading = MapSync.IsDownloadingMap;
-            var isBuilding = LIShipStatus.GetInstanceOrNull()?.IsBuilding ?? false;
+            var isBuilding = LIShipStatus.GetInstanceOrNull()?.Builder.IsBuilding ?? false;
             if (!isSpritesLoading && !isDownloading && !isBuilding)
                 break;
 

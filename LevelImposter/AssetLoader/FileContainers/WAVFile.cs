@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using LevelImposter.Shop;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
@@ -34,7 +35,7 @@ public class WAVFile(string _name) : IDisposable
             return null;
 
         // Get Asset DB
-        var mapAssetDB = LIShipStatus.GetInstanceOrNull()?.CurrentMap?.mapAssetDB;
+        var mapAssetDB = MapLoader.CurrentMap?.mapAssetDB;
         if (mapAssetDB == null)
             return null;
 

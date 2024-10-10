@@ -63,24 +63,31 @@ public abstract class AsyncQueue<TInput, TOutput> where TInput : ICachable
 
             // Continuously load items until the lag limit is reached
             while (LagLimiter.ShouldContinue(20) && Queue.Count > 0)
-            {
-                // Get the next item in the queue
-                var queuedItem = Queue.Dequeue();
 
-                // Check if item is in cache
-                var output = Cache.Get(queuedItem.ID);
-                if (output == null)
+                // Handle exceptions
+                try
                 {
-                    // Load the item
-                    output = Load(queuedItem.InputData);
+                    // Get the next item in the queue
+                    var queuedItem = Queue.Dequeue();
 
-                    // Add the item to the cache
-                    Cache.Add(queuedItem.ID, output);
+                    // Check if item is in cache
+                    var output = Cache.Get(queuedItem.ID);
+                    if (output == null)
+                    {
+                        // Load the item
+                        output = Load(queuedItem.InputData);
+
+                        // Add the item to the cache
+                        Cache.Add(queuedItem.ID, output);
+                    }
+
+                    // Call the onLoad callback
+                    queuedItem.OnLoad(output);
                 }
-
-                // Call the onLoad callback
-                queuedItem.OnLoad(output);
-            }
+                catch (Exception e)
+                {
+                    LILogger.Error(e);
+                }
         }
 
         // Clear the coroutine

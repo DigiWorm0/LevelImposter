@@ -33,7 +33,6 @@ public partial class LevelImposter : BasePlugin
         LILogger.Init();
         MapFileAPI.Init();
         FileCache.Init();
-        LIDeepLink.Init();
         ModCompatibility.Init();
 
         // IUsable Interface

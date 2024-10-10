@@ -16,6 +16,8 @@ public class BuildRouter
 
     private readonly List<IElemBuilder> _buildStack = new()
     {
+        new MapPropertiesBuilder(),
+
         new TransformBuilder(),
         new SpriteBuilder(),
         new ColliderBuilder(),

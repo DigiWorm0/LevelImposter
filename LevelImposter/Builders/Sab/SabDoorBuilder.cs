@@ -36,7 +36,7 @@ public class SabDoorBuilder : IElemBuilder
         if (_specialDoorIDs == null)
         {
             _specialDoorIDs = new List<Guid>();
-            var mapElems = liShipStatus.CurrentMap?.elements;
+            var mapElems = LIShipStatus.CurrentMap?.elements;
             if (mapElems == null)
                 throw new MissingShipException();
 
