@@ -9,7 +9,6 @@ namespace LevelImposter.Core;
 /// </summary>
 public class LITeleporter(IntPtr intPtr) : MonoBehaviour(intPtr)
 {
-    private static readonly List<LITeleporter> _teleList = new();
     private readonly List<Collider2D> _colliderBuffer = new();
 
     private bool _clientSide = true;
@@ -19,23 +18,13 @@ public class LITeleporter(IntPtr intPtr) : MonoBehaviour(intPtr)
 
     public void Awake()
     {
-        _teleList.Add(this);
-    }
-
-    public void Start()
-    {
         _element = gameObject.GetLIData().Element;
         _preserveOffset = _element.properties.preserveOffset ?? true;
         _clientSide = _element.properties.triggerClientSide ?? false;
-
-        var targetID = _element.properties.teleporter;
-        if (targetID != null)
-            _targetTeleporter = _teleList.Find(tele => tele._element?.id == targetID);
     }
 
     public void OnDestroy()
     {
-        _teleList.Clear();
         _targetTeleporter = null;
         _element = null;
     }
@@ -50,6 +39,15 @@ public class LITeleporter(IntPtr intPtr) : MonoBehaviour(intPtr)
     public void OnTriggerExit2D(Collider2D collider)
     {
         _colliderBuffer.RemoveAll(col => col == collider);
+    }
+
+    /// <summary>
+    ///     Sets the target teleporter
+    /// </summary>
+    /// <param name="target">Target teleporter component</param>
+    public void SetTargetTeleporter(LITeleporter? target)
+    {
+        _targetTeleporter = target;
     }
 
     /// <summary>
