@@ -29,7 +29,7 @@ public class SpriteLoader : AsyncQueue<LoadableSprite, LoadedSprite>
     protected override LoadedSprite Load(LoadableSprite loadable)
     {
         // Open the stream
-        var stream = loadable.Streamable.OpenStream();
+        using var stream = loadable.Streamable.OpenStream();
 
         // Check file type
         var isGIF = GIFFile.IsGIF(stream);
@@ -41,9 +41,6 @@ public class SpriteLoader : AsyncQueue<LoadableSprite, LoadedSprite>
             "GIF" => GIFLoader.Load(stream, loadable),
             _ => PNGLoader.Load(stream, loadable)
         };
-
-        // Close the stream
-        stream.Close();
 
         // Return the loaded sprite
         return loadedSprite;

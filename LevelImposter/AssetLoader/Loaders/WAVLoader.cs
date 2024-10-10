@@ -27,11 +27,8 @@ public class WAVLoader
             return null;
 
         // Get Sound Data
-        var stream = soundDBElem.OpenStream();
-        var audioClip = Load(stream, soundData.id.ToString());
-        stream.Close();
-
-        return audioClip;
+        using var stream = soundDBElem.OpenStream();
+        return Load(stream, soundData.id.ToString());
     }
 
     /// <summary>

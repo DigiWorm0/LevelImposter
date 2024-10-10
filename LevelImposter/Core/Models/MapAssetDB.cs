@@ -49,10 +49,12 @@ public class MapAssetDB
             if (fileChunk == null)
                 throw new Exception("No data to convert to bytes");
 
-            var stream = fileChunk.OpenStream();
+            using var stream = fileChunk.OpenStream();
             var buffer = new byte[stream.Length];
-            stream.Read(buffer, 0, buffer.Length);
-            stream.Close();
+            var byteCount = stream.Read(buffer, 0, buffer.Length);
+            if (byteCount != buffer.Length)
+                throw new Exception("Failed to read all bytes from stream");
+
             return buffer;
         }
     }

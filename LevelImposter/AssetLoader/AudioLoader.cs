@@ -29,13 +29,10 @@ public class AudioLoader : AsyncQueue<LoadableAudio, AudioClip>
     protected override AudioClip Load(LoadableAudio loadable)
     {
         // Open the stream
-        var stream = loadable.Streamable.OpenStream();
+        using var stream = loadable.Streamable.OpenStream();
 
         // Load the sprite
         var loadedFile = WAVLoader.Load(stream, loadable.ID);
-
-        // Close the stream
-        stream.Close();
 
         // Return the loaded sprite
         return loadedFile;

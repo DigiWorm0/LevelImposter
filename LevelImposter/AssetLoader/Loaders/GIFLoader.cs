@@ -10,7 +10,7 @@ public class GIFLoader
     ///     Loads a GIF image from a stream.
     /// </summary>
     /// <param name="imgStream">Image stream to load from</param>
-    /// <param name="options">Options to apply</param>
+    /// <param name="loadable">Loadable sprite object</param>
     /// <returns>A fully-loaded GIFFile containing the image data</returns>
     public static LoadedGIF Load(
         Stream imgStream,
