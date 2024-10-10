@@ -1,7 +1,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -10,6 +9,8 @@ using AmongUs.GameOptions;
 using Il2CppInterop.Runtime;
 using Il2CppInterop.Runtime.InteropTypes;
 using Il2CppInterop.Runtime.InteropTypes.Arrays;
+using LevelImposter.AssetLoader;
+using LevelImposter.Builders;
 using LevelImposter.Shop;
 using PowerTools;
 using Reactor.Utilities;
@@ -200,41 +201,6 @@ public static class MapUtils
     }
 
     /// <summary>
-    ///     Parses a base64 encoded file chunk into a byte array
-    /// </summary>
-    /// <param name="chunk">Base64 File Chunk</param>
-    /// <param name="isGIF">True if the file chunk is a GIF. False otherwise</param>
-    /// <returns>A byte array of the base64 data</returns>
-    public static Il2CppStructArray<byte> ParseBase64(FileChunk? chunk, out bool isGIF)
-    {
-        if (chunk == null)
-        {
-            isGIF = false;
-            return new Il2CppStructArray<byte>(0);
-        }
-
-        using (var stream = chunk.OpenStream())
-        using (var reader = new StreamReader(stream))
-        {
-            // Read buffer to comma
-            var buffer = "";
-            while (reader.Peek() != -1)
-            {
-                var c = (char)reader.Read();
-                if (c == ',')
-                    break;
-                buffer += c;
-            }
-
-            isGIF = buffer.ToLower() == "data:image/gif;base64";
-
-            // Read rest of stream
-            var sub64 = reader.ReadToEnd();
-            return Convert.FromBase64String(sub64);
-        }
-    }
-
-    /// <summary>
     ///     Checks if a GameObject is the local player
     /// </summary>
     /// <param name="obj">Game Object to check</param>
@@ -340,7 +306,7 @@ public static class MapUtils
         var spriteData = GetResourceAsIl2Cpp(name);
         if (spriteData == null)
             return null;
-        return SpriteLoader.Instance?.LoadSprite(spriteData, name);
+        return PNGLoader.ImageDataToSprite(spriteData, name);
     }
 
     /// <summary>
@@ -438,7 +404,7 @@ public static class MapUtils
         // Start Async Loading
         foreach (var elem in map.elements)
             if (elem.properties.spriteID != null)
-                SpriteLoader.Instance?.LoadSpriteAsync(elem, null);
+                SpriteBuilder.LoadSprite(elem, _ => { });
     }
 
     /// <summary>

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using LevelImposter.AssetLoader;
 using LevelImposter.Core;
 using LevelImposter.DB;
 using PowerTools;
@@ -118,11 +119,11 @@ public class SabDoorBuilder : IElemBuilder
         // Sound
         var openSound = MapUtils.FindSound(elem.properties.sounds, OPEN_SOUND_NAME);
         if (openSound != null)
-            doorComponent.OpenSound = WAVFile.LoadSound(openSound);
+            doorComponent.OpenSound = WAVLoader.Load(openSound);
 
         var closeSound = MapUtils.FindSound(elem.properties.sounds, CLOSE_SOUND_NAME);
         if (closeSound != null)
-            doorComponent.CloseSound = WAVFile.LoadSound(closeSound);
+            doorComponent.CloseSound = WAVLoader.Load(closeSound);
 
         // SpriteAnim
         if (isSpriteAnim)

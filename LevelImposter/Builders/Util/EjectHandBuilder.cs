@@ -40,13 +40,6 @@ public class EjectHandBuilder : IElemBuilder
         var isThumb = elem.type == "util-ejectthumb";
         hand.sprite = isThumb ? polusEjectController?.GoodHand : polusEjectController?.BadHand;
 
-        // Update Cosmetics on Sprite Load
-        if (SpriteLoader.Instance == null)
-        {
-            LILogger.Warn("Spite Loader is not instantiated");
-            return;
-        }
-
         // Add to Hands
         AllHands.Add(hand);
 

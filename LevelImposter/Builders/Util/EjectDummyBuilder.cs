@@ -46,19 +46,12 @@ public class EjectDummyBuilder : IElemBuilder
         // Set Layer
         player.gameObject.SetLayerOfChildren((int)Layer.Ship);
 
-        // Update Cosmetics on Sprite Load
-        if (SpriteLoader.Instance == null)
-        {
-            LILogger.Warn("Spite Loader is not instantiated");
-            return;
-        }
-
         // Add to PoolablePlayers
         PoolablePlayers.Add(player);
 
         // Update Cosmetics on Sprite Load
         var spriteRenderer = obj.GetComponent<SpriteRenderer>();
-        SpriteLoader.Instance.OnLoad += loadedElem =>
+        SpriteBuilder.OnSpriteLoad += (loadedElem, _) =>
         {
             if (loadedElem.id != elem.id || player == null)
                 return;

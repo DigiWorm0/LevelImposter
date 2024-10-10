@@ -4,24 +4,20 @@ using System.Text;
 
 namespace LevelImposter.Core;
 
-public class FileChunkStream : Stream
+/// <summary>
+///     Represents a stream to a specific length and offset within a file.
+/// </summary>
+/// <param name="fileStream">The derived file stream. Automatically closed/disposed with this stream.</param>
+/// <param name="offset">Offset of the stream in bytes</param>
+/// <param name="length">Length of the stream in bytes</param>
+public class FileChunkStream(FileStream fileStream, long offset, long length) : Stream
 {
-    private readonly FileStream _fileStream;
-    private readonly long _length = -1;
-    private readonly long _offset = -1;
     private long _position;
-
-    public FileChunkStream(FileStream fileStream, long offset, long length)
-    {
-        _fileStream = fileStream;
-        _offset = offset;
-        _length = length;
-    }
 
     public override bool CanRead => true;
     public override bool CanSeek => true;
     public override bool CanWrite => false;
-    public override long Length => _length;
+    public override long Length => length;
 
     public override long Position
     {
@@ -34,27 +30,29 @@ public class FileChunkStream : Stream
         // Nothing to flush
     }
 
-    public override int Read(byte[] buffer, int offset, int count)
+    public override int Read(byte[] buffer, int offset1, int count)
     {
-        _fileStream.Seek(_offset + _position, SeekOrigin.Begin);
-        var read = _fileStream.Read(buffer, offset, count);
+        fileStream.Seek(offset + _position, SeekOrigin.Begin);
+        var read = fileStream.Read(buffer, offset1, count);
         _position += read;
         return read;
     }
 
-    public override long Seek(long offset, SeekOrigin origin)
+    public override long Seek(long seekOffset, SeekOrigin origin)
     {
         switch (origin)
         {
             case SeekOrigin.Begin:
-                _position = offset;
+                _position = seekOffset;
                 break;
             case SeekOrigin.Current:
-                _position += offset;
+                _position += seekOffset;
                 break;
             case SeekOrigin.End:
-                _position = _length - offset;
+                _position = length - seekOffset;
                 break;
+            default:
+                throw new ArgumentOutOfRangeException(nameof(origin), origin, null);
         }
 
         return _position;
@@ -74,20 +72,27 @@ public class FileChunkStream : Stream
 
     public override string ToString()
     {
-        var buffer = new byte[_length];
-        Read(buffer, 0, (int)_length);
+        // Read to buffer
+        var buffer = new byte[length];
+        var bytesRead = Read(buffer, 0, (int)length);
+
+        // Check if the entire file chunk was read
+        if (bytesRead != length)
+            throw new IOException("Failed to read entire file chunk");
+
+        // Convert buffer to string
         return Encoding.UTF8.GetString(buffer);
     }
 
     public override void Close()
     {
-        _fileStream.Close();
+        fileStream.Close();
         base.Close();
     }
 
     protected override void Dispose(bool disposing)
     {
-        _fileStream.Dispose();
+        fileStream.Dispose();
         base.Dispose(disposing);
     }
 }

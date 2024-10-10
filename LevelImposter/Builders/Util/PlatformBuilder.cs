@@ -1,3 +1,4 @@
+using LevelImposter.AssetLoader;
 using LevelImposter.Core;
 using LevelImposter.DB;
 using UnityEngine;
@@ -74,7 +75,7 @@ internal class PlatformBuilder : IElemBuilder
         // Sound
         var moveSound = MapUtils.FindSound(elem.properties.sounds, MOVE_SOUND_NAME);
         if (moveSound != null)
-            movingPlatform.MovingSound = WAVFile.LoadSound(moveSound);
+            movingPlatform.MovingSound = WAVLoader.Load(moveSound);
 
         // Consoles
         GameObject leftObj = new("Left Console");

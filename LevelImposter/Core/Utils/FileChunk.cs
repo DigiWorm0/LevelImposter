@@ -2,7 +2,10 @@
 
 namespace LevelImposter.Core;
 
-public class FileChunk
+/// <summary>
+///     Represents a specific chunk of a file that can be streamed.
+/// </summary>
+public class FileChunk : IStreamable
 {
     private readonly string _filePath;
     private readonly long _length = -1;
@@ -18,8 +21,8 @@ public class FileChunk
     /// <summary>
     ///     Opens a stream to the file chunk.
     /// </summary>
-    /// <returns>A stream to the cooresponding file chunk</returns>
-    public FileChunkStream OpenStream()
+    /// <returns>A FileChunkStream to the cooresponding file chunk</returns>
+    public Stream OpenStream()
     {
         var fileStream = File.OpenRead(_filePath);
         return new FileChunkStream(fileStream, _offset, _length);

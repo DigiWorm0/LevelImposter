@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Il2CppInterop.Runtime.InteropTypes.Arrays;
+using LevelImposter.AssetLoader;
 using LevelImposter.Core;
 using LevelImposter.DB;
 using UnityEngine;
@@ -37,7 +38,7 @@ internal class DecontaminationBuilder : IElemBuilder
         // Sound
         var deconSound = MapUtils.FindSound(elem.properties.sounds, DECONTAM_SOUND_NAME);
         if (deconSound != null)
-            deconSystem.SpraySound = WAVFile.LoadSound(deconSound);
+            deconSystem.SpraySound = WAVLoader.Load(deconSound);
 
         _deconSystemDB.Add(elem.id, deconSystem);
         _deconElemDB.Add(elem.id, elem);

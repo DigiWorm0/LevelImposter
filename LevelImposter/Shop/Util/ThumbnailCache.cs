@@ -1,6 +1,6 @@
 using System;
-using System.IO;
 using Il2CppInterop.Runtime.Attributes;
+using LevelImposter.AssetLoader;
 using LevelImposter.Core;
 using UnityEngine;
 
@@ -37,7 +37,7 @@ public static class ThumbnailCache
     /// <param name="mapID">Map ID for the thumbnail</param>
     /// <param name="callback">Callback on success</param>
     [HideFromIl2Cpp]
-    public static void Get(string mapID, Action<Sprite?> callback)
+    public static void Get(string mapID, Action<Sprite> callback)
     {
         if (!Exists(mapID))
         {
@@ -47,22 +47,12 @@ public static class ThumbnailCache
 
         // Read thumbnail from filesystem
         LILogger.Info($"Loading thumbnail [{mapID}] from filesystem");
-        var isInSpriteCache = SpriteLoader.Instance?.IsSpriteInCache(mapID) ?? false;
-        Stream? thumbnailStream = null;
-        if (!isInSpriteCache)
-            thumbnailStream = File.OpenRead(FileCache.GetPath($"{mapID}.png"));
 
         // Load thumbnail into sprite
-        SpriteLoader.Instance?.LoadSpriteAsync(thumbnailStream, spriteData =>
-        {
-            var sprite = spriteData?.Sprite;
-            if (sprite == null)
-            {
-                LILogger.Warn($"Error loading [{mapID}] thumbnail from filesystem");
-                return;
-            }
-
-            callback.Invoke(spriteData?.Sprite);
-        }, mapID, null);
+        SpriteLoader.LoadAsync(
+            $"{mapID}_thumb",
+            new FileStreamable(FileCache.GetPath($"{mapID}.png")),
+            callback
+        );
     }
 }

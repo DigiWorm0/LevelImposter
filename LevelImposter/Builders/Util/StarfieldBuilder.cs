@@ -41,14 +41,8 @@ internal class StarfieldBuilder : IElemBuilder
 
         Object.Destroy(starPrefab);
 
-        // Clones
-        if (SpriteLoader.Instance == null)
-        {
-            LILogger.Warn("Spite Loader is not instantiated");
-            return;
-        }
-
-        SpriteLoader.Instance.OnLoad += loadedElem =>
+        // Load Sprite
+        SpriteBuilder.OnSpriteLoad += (loadedElem, _) =>
         {
             if (loadedElem.id != elem.id)
                 return;

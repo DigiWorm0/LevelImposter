@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using Il2CppInterop.Runtime.Attributes;
+using LevelImposter.AssetLoader;
 using UnityEngine;
 using UnityEngine.Audio;
 
@@ -37,7 +38,7 @@ public class TriggerSoundPlayer(IntPtr intPtr) : MonoBehaviour(intPtr)
     [HideFromIl2Cpp]
     public void Init(LISound soundData, Collider2D[] colliders)
     {
-        _clip = WAVFile.LoadSound(soundData);
+        _clip = WAVLoader.Load(soundData);
         _volume = soundData?.volume ?? 1.0f;
         _colliders = colliders;
         _channel = soundData?.channel switch

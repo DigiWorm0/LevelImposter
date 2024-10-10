@@ -150,15 +150,9 @@ public class SabMapBuilder : IElemBuilder
         btnRenderer.material = _btnMat;
         button.OnClick.AddListener(btnAction);
 
-        // Sprite Renderer
-        if (SpriteLoader.Instance == null)
-        {
-            LILogger.Warn("Spite Loader is not instantiated");
-            return;
-        }
-
+        // Load Sprite
         var spriteRenderer = obj.GetComponent<SpriteRenderer>();
-        SpriteLoader.Instance.OnLoad += loadedElem =>
+        SpriteBuilder.OnSpriteLoad += (loadedElem, _) =>
         {
             if (loadedElem.id != elem.id || btnRenderer == null)
                 return;

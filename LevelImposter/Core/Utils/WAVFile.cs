@@ -8,7 +8,7 @@ namespace LevelImposter.Core;
 /// <summary>
 ///     Represents a WAV file.
 /// </summary>
-public class WAVFile : IDisposable
+public class WAVFile(string _name) : IDisposable
 {
     private const string CLIP_NAME = "WAVFile";
 
@@ -60,7 +60,7 @@ public class WAVFile : IDisposable
         try
         {
             // Load File
-            var wavFile = new WAVFile();
+            var wavFile = new WAVFile(CLIP_NAME);
             wavFile.Load(dataStream);
 
             // Add to GC list

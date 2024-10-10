@@ -1,5 +1,8 @@
+using System;
+using LevelImposter.AssetLoader;
 using LevelImposter.Core;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace LevelImposter.Builders;
 
@@ -22,7 +25,7 @@ internal class MeetingOptionsBuilder : IElemBuilder
             return;
 
         // ShipStatus
-        var shipStatus = LIShipStatus.GetInstance().ShipStatus;
+        var shipStatus = LIShipStatus.GetShip();
 
         // Singleton
         if (TriggerObject != null)
@@ -38,13 +41,14 @@ internal class MeetingOptionsBuilder : IElemBuilder
         {
             var mapAssetDB = LIShipStatus.GetInstanceOrNull()?.CurrentMap?.mapAssetDB;
             var mapAsset = mapAssetDB?.Get(elem.properties.meetingBackgroundID);
+            if (mapAsset == null)
+                throw new Exception("Meeting Background ID not found in MapAssetDB");
 
             // Load Sprite
-            SpriteLoader.Instance?.LoadSpriteAsync(
-                mapAsset?.OpenStream(),
-                spriteData => { LoadMeetingBackground(elem, spriteData); },
-                elem.properties.meetingBackgroundID?.ToString(),
-                null
+            SpriteLoader.LoadAsync(
+                elem.properties.meetingBackgroundID?.ToString() ?? "",
+                mapAsset,
+                spriteData => { LoadMeetingBackground(elem, spriteData); }
             );
         }
 
@@ -57,7 +61,7 @@ internal class MeetingOptionsBuilder : IElemBuilder
         var buttonSound = MapUtils.FindSound(elem.properties.sounds, BUTTON_SOUND_NAME);
         if (buttonSound != null)
         {
-            meetingOverlay.Stinger = WAVFile.LoadSound(buttonSound) ?? meetingOverlay.Stinger;
+            meetingOverlay.Stinger = WAVLoader.Load(buttonSound) ?? meetingOverlay.Stinger;
             meetingOverlay.StingerVolume = buttonSound?.volume ?? 1;
         }
 
@@ -70,24 +74,14 @@ internal class MeetingOptionsBuilder : IElemBuilder
         var reportSound = MapUtils.FindSound(elem.properties.sounds, REPORT_SOUND_NAME);
         if (reportSound != null)
         {
-            reportOverlay.Stinger = WAVFile.LoadSound(reportSound) ?? reportOverlay.Stinger;
+            reportOverlay.Stinger = WAVLoader.Load(reportSound) ?? reportOverlay.Stinger;
             reportOverlay.StingerVolume = reportSound?.volume ?? 1;
         }
     }
 
-    private void LoadMeetingBackground(LIElement elem, SpriteLoader.SpriteData? spriteData)
+    private void LoadMeetingBackground(LIElement elem, Sprite sprite)
     {
-        // Handle Error
-        if (spriteData == null)
-        {
-            LILogger.Warn($"Error loading sprite for {elem}");
-            return;
-        }
-
-        // ShipStatus
-        var shipStatus = LIShipStatus.GetInstance().ShipStatus;
-
-        // Set Background
-        shipStatus.MeetingBackground = spriteData.Sprite;
+        var shipStatus = LIShipStatus.GetShip();
+        shipStatus.MeetingBackground = sprite;
     }
 }

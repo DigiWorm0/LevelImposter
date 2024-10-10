@@ -1,4 +1,5 @@
 ﻿using HarmonyLib;
+using LevelImposter.AssetLoader;
 
 namespace LevelImposter.Core;
 
@@ -10,15 +11,13 @@ public static class LoadingCameraPatch
 {
     public static bool Prefix(FollowerCamera __instance)
     {
-        if (SpriteLoader.Instance == null || !LIShipStatus.IsInstance())
+        if (!LIShipStatus.IsInstance())
             return true;
 
-        if (SpriteLoader.Instance.RenderCount > 0)
-        {
-            __instance.centerPosition = __instance.transform.position;
-            return false;
-        }
+        if (SpriteLoader.Instance.QueueSize <= 0)
+            return true;
 
-        return true;
+        __instance.centerPosition = __instance.transform.position;
+        return false;
     }
 }

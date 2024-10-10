@@ -37,9 +37,8 @@ public static class LateInitPatch
         var apiParent = new GameObject("LevelImposter");
         apiParent.AddComponent<LagLimiter>();
         apiParent.AddComponent<HTTPHandler>();
-        apiParent.AddComponent<SpriteLoader>();
         Object.DontDestroyOnLoad(apiParent);
-        
+
         _hasInitialized = true;
     }
 }

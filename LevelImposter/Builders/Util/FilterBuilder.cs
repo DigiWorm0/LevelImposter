@@ -39,14 +39,8 @@ internal class FilterBuilder : IElemBuilder
         var maskRenderer = maskObj.GetComponent<SpriteRenderer>();
         maskRenderer.material = maskPrefabRenderer.material;
 
-        // Custom Sprite Onload
-        if (SpriteLoader.Instance == null)
-        {
-            LILogger.Warn("Spite Loader is not instantiated");
-            return;
-        }
-
-        SpriteLoader.Instance.OnLoad += loadedElem =>
+        // Update Mask on Sprite Load
+        SpriteBuilder.OnSpriteLoad += (loadedElem, _) =>
         {
             if (loadedElem.id != elem.id || maskRenderer == null)
                 return;

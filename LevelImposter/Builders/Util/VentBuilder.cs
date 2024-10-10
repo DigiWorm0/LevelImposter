@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Il2CppInterop.Runtime.InteropTypes.Arrays;
+using LevelImposter.AssetLoader;
 using LevelImposter.Core;
 using LevelImposter.DB;
 using UnityEngine;
@@ -75,13 +76,13 @@ internal class VentBuilder : IElemBuilder
 
             var openSound = MapUtils.FindSound(elem.properties.sounds, OPEN_SOUND_NAME);
             if (openSound != null)
-                shipStatus.VentEnterSound = WAVFile.LoadSound(openSound);
+                shipStatus.VentEnterSound = WAVLoader.Load(openSound);
 
             var moveSound = MapUtils.FindSound(elem.properties.sounds, MOVE_SOUND_NAME);
             if (moveSound != null)
                 shipStatus.VentMoveSounds = new Il2CppReferenceArray<AudioClip>(new[]
                 {
-                    WAVFile.LoadSound(moveSound)
+                    WAVLoader.Load(moveSound)
                 });
         }
 

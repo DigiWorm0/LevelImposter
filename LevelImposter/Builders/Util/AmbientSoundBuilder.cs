@@ -1,3 +1,4 @@
+using LevelImposter.AssetLoader;
 using LevelImposter.Core;
 using UnityEngine;
 
@@ -47,7 +48,7 @@ internal class AmbientSoundBuilder : IElemBuilder
             var ambientPlayer = obj.AddComponent<AmbientSoundPlayer>();
             ambientPlayer.HitAreas = colliders;
             ambientPlayer.MaxVolume = soundData.volume;
-            ambientPlayer.AmbientSound = WAVFile.LoadSound(soundData);
+            ambientPlayer.AmbientSound = WAVLoader.Load(soundData);
         }
         else if (isTrigger)
         {
