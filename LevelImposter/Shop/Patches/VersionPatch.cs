@@ -31,7 +31,7 @@ public static class VersionPatch
 
         var logoPosition = VersionObject.AddComponent<AspectPosition>();
         logoPosition.Alignment = AspectPosition.EdgeAlignments.Right;
-        logoPosition.DistanceFromEdge = new Vector3(1.8f, -2.3f, 0);
+        logoPosition.DistanceFromEdge = new Vector3(1.8f, -2.3f, 4.5f);
         logoPosition.AdjustPosition();
 
         var logoRenderer = VersionObject.AddComponent<SpriteRenderer>();

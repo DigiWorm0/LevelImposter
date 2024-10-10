@@ -21,10 +21,10 @@ public static class UpdateButtonBuilder
     {
         // Object
         var buttonPrefab = GameObject.Find(BUTTON_PATH);
-        _btnObj = Object.Instantiate(buttonPrefab);
-        _btnObj.transform.SetParent(VersionPatch.VersionObject?.transform);
+        _btnObj = Object.Instantiate(buttonPrefab, VersionPatch.VersionObject?.transform);
         _btnObj.name = "button_LevelImposterUpdater";
-        _btnObj.transform.localPosition = new Vector3(0.5f, 0.7f, 0);
+        _btnObj.transform.localScale = new Vector3(1.5f, 1.5f, 1.0f);
+        _btnObj.transform.localPosition = new Vector3(-2.5f, 0.05f, 0);
 
         // Active/Inactive
         var active = _btnObj.transform.Find("Highlight").gameObject;
