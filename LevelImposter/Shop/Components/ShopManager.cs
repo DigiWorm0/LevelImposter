@@ -35,6 +35,7 @@ public class ShopManager(IntPtr intPtr) : MonoBehaviour(intPtr)
     private GameObject? _overlay;
     private SpriteRenderer? _overlayBackground;
     private TMP_Text? _overlayText;
+    private PassiveButton? _randomButton;
     private Scroller? _scroller;
     private bool _shouldRegenerateFallback;
     private ShopTabs? _tabs;
@@ -56,6 +57,7 @@ public class ShopManager(IntPtr intPtr) : MonoBehaviour(intPtr)
         _overlayText = _overlay?.transform.Find("Text").GetComponent<TMP_Text>();
         _scroller = transform.Find("Scroll/Scroller").GetComponent<Scroller>();
         Title = _scroller?.transform.Find("Inner/Title").GetComponent<SpriteRenderer>();
+        _randomButton = _scroller?.transform.Find("Inner/RandomButton").GetComponent<PassiveButton>();
         _tabs = transform.Find("Header/Tabs").GetComponent<ShopTabs>();
         _bannerPrefab = _scroller?.transform.Find("Inner/MapBanner").GetComponent<MapBanner>();
     }
@@ -71,6 +73,10 @@ public class ShopManager(IntPtr intPtr) : MonoBehaviour(intPtr)
         // Freeplay Component
         _freeplayComp = gameObject.AddComponent<HostLocalGameButton>();
         _freeplayComp.NetworkMode = NetworkModes.FreePlay;
+
+        // Toggle Random Button
+        _randomButton?.gameObject.SetActive(GameState.IsInLobby);
+        _randomButton?.OnClick.AddListener((Action)SetRandomMaps);
 
         // Starfield
         var starfield = transform.FindChild("Star Field").gameObject;
@@ -112,10 +118,6 @@ public class ShopManager(IntPtr intPtr) : MonoBehaviour(intPtr)
     public void Close()
     {
         ConfigAPI.Save();
-
-        if (GameState.IsInLobby && !GameState.IsCustomMapLoaded && _shouldRegenerateFallback)
-            MapSync.RegenerateFallbackID();
-
         DestroyableSingleton<TransitionFade>.Instance.DoTransitionFade(gameObject, null, (Action)OnClose);
     }
 
@@ -313,6 +315,16 @@ public class ShopManager(IntPtr intPtr) : MonoBehaviour(intPtr)
 
         _shouldRegenerateFallback = false;
         CloseShop();
+    }
+
+    /// <summary>
+    ///     Selects random LI Maps as the current map
+    /// </summary>
+    public void SetRandomMaps()
+    {
+        MapUtils.SetLobbyMapType(MapType.LevelImposter, true);
+        MapSync.RegenerateFallbackID();
+        Close();
     }
 
     /// <summary>

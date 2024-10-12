@@ -39,16 +39,16 @@ public static class MapLoader
         LoadingBar.Run();
 
         // Send map change message
-        if (!isFallback)
+        if (GameState.IsCustomMapSelected)
             DestroyableSingleton<HudManager>.Instance.Notifier.AddSettingsChangeMessage(
                 StringNames.GameMapName,
-                map?.name,
+                isFallback ? "Random" : map?.name,
                 false
             );
     }
 
     /// <summary>
-    ///     Ldsoads a map based on ID from filesystem
+    ///     Loads a map based on ID from filesystem
     /// </summary>
     /// <param name="mapID">Map file name or ID without extension</param>
     /// <param name="callback">Callback on success</param>
