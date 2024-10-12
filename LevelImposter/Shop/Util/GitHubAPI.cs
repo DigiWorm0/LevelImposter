@@ -4,6 +4,7 @@ using System.Reflection;
 using System.Text.Json;
 using Il2CppInterop.Runtime.Attributes;
 using LevelImposter.Core;
+using UnityEngine;
 
 namespace LevelImposter.Shop;
 
@@ -12,9 +13,10 @@ namespace LevelImposter.Shop;
 /// </summary>
 public static class GitHubAPI
 {
-    public const string API_PATH = "https://api.github.com/repos/DigiWorm0/LevelImposter/releases?per_page=5";
-    public const string UPDATE_FORBIDDEN_FLAG = "[NoAutoUpdate]";
+    public const string API_PATH = "https://api.github.com/repos/DigiWorm0/LevelImposter/releases?per_page=1";
     public const string DEV_VERSION_FLAG = "dev";
+    public const string UPDATE_BLACKLIST_FLAG = "[NoAutoUpdate]";
+    public static readonly string UPDATE_WHITELIST_FLAG = $"[AU={Application.version}]";
 
     /// <summary>
     ///     Gets the current path where the LevelImposter DLL is stored.
@@ -32,60 +34,64 @@ public static class GitHubAPI
     /// <param name="onSuccess">Callback on success</param>
     /// <param name="onError">Callback on error</param>
     [HideFromIl2Cpp]
-    private static void GetLatestReleases(Action<GHRelease[]> onSuccess, Action<string> onError)
+    public static void GetLatestRelease(Action<GHRelease> onSuccess, Action<string> onError)
     {
         LILogger.Info("Getting latest release info from GitHub");
+        LILogger.Info(UPDATE_WHITELIST_FLAG);
         HTTPHandler.Instance?.Request(API_PATH, json =>
         {
-            var response = JsonSerializer.Deserialize<GHRelease[]>(json);
-            if (response != null)
-                onSuccess(response);
+            var responses = JsonSerializer.Deserialize<GHRelease[]>(json);
+            if (responses != null && responses.Length > 0)
+                onSuccess(responses[0]);
             else
                 onError("Invalid API response");
         }, onError);
     }
 
     /// <summary>
-    ///     Gets the latest release data from GitHub
+    ///     Checks if a GHRelease can be updated to
     /// </summary>
-    /// <param name="onSuccess">Callback on success</param>
-    /// <param name="onError">Callback on error</param>
+    /// <param name="release">GitHub release object</param>
+    /// <param name="reason">Reason for not being able to update</param>
+    /// <returns>True if the release can be updated to</returns>
     [HideFromIl2Cpp]
-    public static void GetLatestRelease(Action<GHRelease> onSuccess, Action<string> onError)
+    public static bool CanUpdateTo(GHRelease release, out string reason)
     {
-        GetLatestReleases(releases => { onSuccess(releases[0]); }, onError);
+        // Get version info
+        var versionString = release.Name?.Split(" ")[1];
+        var isCurrent = IsCurrent(release);
+        var isDevVersion = versionString?.Contains(DEV_VERSION_FLAG) ?? false;
+        var isWhitelisted = release.Body?.Contains(UPDATE_WHITELIST_FLAG) ?? false;
+        var isBlacklisted = release.Body?.Contains(UPDATE_BLACKLIST_FLAG) ?? false;
+        var hasReleaseAssets = release.Assets?.Length > 0;
+
+        // Set reason
+        if (isCurrent)
+            reason = "Already up-to-date";
+        else if (isDevVersion)
+            reason = "You're on a dev version";
+        else if (!isWhitelisted)
+            reason = "Incorrect Among Us version";
+        else if (isBlacklisted)
+            reason = "Auto-update to this version is disabled";
+        else if (!hasReleaseAssets)
+            reason = "No release assets found";
+        else
+            reason = "Unknown";
+
+        // Return result
+        return !isCurrent && !isDevVersion && isWhitelisted && !isBlacklisted && hasReleaseAssets;
     }
 
     /// <summary>
-    ///     Checks release chain if update is forbidden
+    ///     Checks if the release is the current version installed
     /// </summary>
-    /// <param name="releases">List of releases in order of relevancy</param>
-    /// <returns>TRUE if the update is forbidden. FALSE otherwise</returns>
-    [HideFromIl2Cpp]
-    private static bool IsUpdateForbidden(GHRelease[] releases)
-    {
-        foreach (var release in releases)
-        {
-            if (IsCurrent(release))
-                return false;
-            if (release.Body.Contains(UPDATE_FORBIDDEN_FLAG))
-                return true;
-        }
-
-        return false;
-    }
-
-    /// <summary>
-    ///     Checks if the GitHub release matches
-    ///     the current release version
-    /// </summary>
-    /// <param name="release">Release data to check</param>
-    /// <returns>True if the release matches the current version</returns>
+    /// <param name="release">True if the release matches the current mod version</param>
     [HideFromIl2Cpp]
     public static bool IsCurrent(GHRelease release)
     {
-        var versionString = release.Name.Split(" ")[1];
-        return versionString == LevelImposter.DisplayVersion || LevelImposter.DisplayVersion.Contains(DEV_VERSION_FLAG);
+        var versionString = release.Name?.Split(" ")[1];
+        return versionString == LevelImposter.DisplayVersion;
     }
 
     /// <summary>
@@ -97,46 +103,42 @@ public static class GitHubAPI
     public static void UpdateMod(Action onSuccess, Action<string> onError)
     {
         LILogger.Info("Updating mod from GitHub");
-        GetLatestReleases(releases =>
+        GetLatestRelease(release =>
         {
-            var release = releases[0];
+            // Check if update is available
+            if (!CanUpdateTo(release, out var reason))
+            {
+                var errorMsg = $"Auto-update to {release} is unavailable:\n{reason}";
+                LILogger.Error(errorMsg);
+                onError(errorMsg);
+                return;
+            }
+
+            // Download DLL
             LILogger.Info($"Downloading DLL from {release}");
-            if (release.Assets.Length <= 0)
-            {
-                var errorMsg = $"No release assets were found for {release}";
-                LILogger.Error(errorMsg);
-                onError(errorMsg);
-                return;
-            }
-
-            if (IsUpdateForbidden(releases))
-            {
-                var errorMsg = $"Auto-update to {release} is unavailable.";
-                LILogger.Error(errorMsg);
-                onError(errorMsg);
-                return;
-            }
-
-            var downloadURL = release.Assets[0].BrowserDownloadURL;
+            var downloadURL = release.Assets?[0].BrowserDownloadURL ?? "";
             HTTPHandler.Instance?.Request(downloadURL, dllBytes =>
             {
                 LILogger.Info($"Saving {dllBytes.Length / 1024}kb DLL to local filesystem");
                 try
                 {
+                    // Get DLL path
                     var dllPath = GetDLLDirectory();
                     var dllOldPath = dllPath + ".old";
 
+                    // Move old DLL
                     if (File.Exists(dllOldPath))
                         File.Delete(dllOldPath);
                     File.Move(dllPath, dllOldPath);
 
-                    using (var fileStream = File.Create(dllPath))
-                    {
-                        fileStream.Write(dllBytes, 0, dllBytes.Length);
-                    }
+                    // Write new DLL
+                    using var fileStream = File.Create(dllPath);
+                    fileStream.Write(dllBytes, 0, dllBytes.Length);
 
+                    // Clear cache
                     FileCache.Clear();
 
+                    // Log success
                     LILogger.Info("Update complete");
                     onSuccess();
                 }
