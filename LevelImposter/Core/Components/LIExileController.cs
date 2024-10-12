@@ -18,7 +18,7 @@ public class LIExileController(IntPtr intPtr) : ExileController(intPtr)
     private const string ON_EJECT_TRIGGER_ID = "onEject";
     private const string ON_SKIP_TRIGGER_ID = "onSkip";
     private const string ON_FINISH_TRIGGER_ID = "onFinish";
-    private const float DURATION_OFFSET = 0.9f; // 0.2f per fade, 0.5f for text
+    private const float DURATION_OFFSET = 1.4f; // 0.2f per fade, 0.5f for text, 0.5f for delay
 
     private Camera? _camera;
     private float _cameraXOffset;
@@ -34,6 +34,10 @@ public class LIExileController(IntPtr intPtr) : ExileController(intPtr)
     public new void Awake()
     {
         base.Awake();
+
+        // Fix Serialized Fields
+        exileHatPosition = new Vector3(-0.216f, 0.528f);
+        exileVisorPosition = new Vector3(-0.148f, 0.647f, -0.002f);
 
         // Get Element Data
         var elementData = EjectBuilder.EjectController?.gameObject.GetLIData();
@@ -82,10 +86,10 @@ public class LIExileController(IntPtr intPtr) : ExileController(intPtr)
             if (!isEjectingPlayer)
                 continue;
 
-            ejectDummy.UpdateFromPlayerOutfit(
-                initData?.outfit,
+            ejectDummy.UpdateFromEitherPlayerDataOrCache(
+                initData?.networkedPlayer,
+                PlayerOutfitType.Default,
                 PlayerMaterial.MaskType.Exile,
-                false,
                 false,
                 new Action(() =>
                 {
@@ -128,8 +132,10 @@ public class LIExileController(IntPtr intPtr) : ExileController(intPtr)
 
         // Wait then show text
         yield return HandleText(_preTextDuration, _textDuration);
-
-        // TODO: Add delay here
+        
+        // Wait before finishing
+        yield return new WaitForSeconds(0.5f);
+        // TODO: Add customizable delay here
 
         // Show "x Impostors Remain" text
         if (initData?.confirmImpostor ?? false)
