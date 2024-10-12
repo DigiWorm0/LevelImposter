@@ -102,7 +102,7 @@ public class LIExileController(IntPtr intPtr) : ExileController(intPtr)
         }
 
         // Copy Player Outfit to Eject Hands
-        var colorID = (int)initData?.outfit.ColorId!;
+        var colorID = initData?.outfit?.ColorId;
         foreach (var hand in EjectHandBuilder.AllHands)
         {
             hand.gameObject.SetActive(isEjectingPlayer);
@@ -110,7 +110,7 @@ public class LIExileController(IntPtr intPtr) : ExileController(intPtr)
                 continue;
 
             hand.sharedMaterial = CosmeticsLayer.GetBodyMaterial(PlayerMaterial.MaskType.Exile);
-            PlayerMaterial.SetColors(colorID, hand);
+            PlayerMaterial.SetColors((int)colorID!, hand);
         }
 
         // Trigger Eject
