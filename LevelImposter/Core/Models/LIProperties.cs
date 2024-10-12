@@ -58,6 +58,16 @@ public class LIProperties
     // Spores
     public LIColor? gasColor { get; set; }
 
+    // Physics
+    public float? physicsBounciness { get; set; }
+    public float? physicsFriction { get; set; }
+    public float? physicsMass { get; set; }
+    public float? physicsDrag { get; set; }
+    public float? physicsAngularDrag { get; set; }
+    public bool? physicsFreezeX { get; set; }
+    public bool? physicsFreezeY { get; set; }
+    public bool? physicsFreezeRotation { get; set; }
+
     // Decontamination
     public Guid? doorA { get; set; }
     public Guid? doorB { get; set; }
