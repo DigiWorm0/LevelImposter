@@ -18,7 +18,7 @@ public class MinimapSpriteBuilder : IElemBuilder
             return;
 
         // ShipStatus
-        var shipStatus = LIShipStatus.GetInstance().ShipStatus;
+        var shipStatus = LIShipStatus.GetShip();
 
         // Minimap
         var mapBehaviour = MinimapBuilder.GetMinimap();
@@ -31,34 +31,12 @@ public class MinimapSpriteBuilder : IElemBuilder
 
         // GameObject
         var mapScale = shipStatus.MapScale;
-        GameObject spriteObj = new(elem.name);
-        spriteObj.layer = (int)Layer.UI;
-        spriteObj.transform.SetParent(parentTransform);
-        spriteObj.transform.localPosition = new Vector3(
+        obj.layer = (int)Layer.UI;
+        obj.transform.SetParent(parentTransform, false);
+        obj.transform.localPosition = new Vector3(
             elem.x / mapScale,
             elem.y / mapScale,
             elem.z
         );
-        spriteObj.transform.localScale = new Vector3(elem.xScale, elem.yScale, 1);
-        spriteObj.transform.localRotation = Quaternion.Euler(0, 0, elem.rotation);
-
-        // Sprite Renderer
-        var spriteRenderer = obj.GetComponent<SpriteRenderer>();
-        if (spriteRenderer == null)
-        {
-            LILogger.Warn("util-minimapsprite does not have a sprite attatched");
-            return;
-        }
-
-        // Load Sprite
-        var bgRenderer = spriteObj.AddComponent<SpriteRenderer>();
-        SpriteBuilder.OnSpriteLoad += (loadedElem, _) =>
-        {
-            if (loadedElem.id != elem.id || bgRenderer == null)
-                return;
-            bgRenderer.sprite = spriteRenderer.sprite;
-            bgRenderer.color = spriteRenderer.color;
-            Object.Destroy(obj);
-        };
     }
 }

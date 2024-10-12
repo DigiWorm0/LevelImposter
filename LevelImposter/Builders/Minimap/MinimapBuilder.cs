@@ -9,13 +9,13 @@ public class MinimapBuilder : IElemBuilder
 
     private bool _isBuilt;
 
-    public void OnBuild(LIElement elem, GameObject obj)
+    public void OnPreBuild(LIElement elem, GameObject obj)
     {
         if (elem.type != "util-minimap")
             return;
 
         // ShipStatus
-        var shipStatus = LIShipStatus.GetInstance().ShipStatus;
+        var shipStatus = LIShipStatus.GetShip();
 
         // Check Singleton
         if (_isBuilt)
@@ -28,33 +28,23 @@ public class MinimapBuilder : IElemBuilder
         var mapBehaviour = GetMinimap();
 
         // Map Scale
-        var mapScaleVal = elem.properties.minimapScale == null ? 1 : (float)elem.properties.minimapScale;
-        var mapScale = mapScaleVal * DEFAULT_SCALE;
-        shipStatus.MapScale = mapScale;
-        var mapOffset = -(obj.transform.localPosition / mapScale);
-
-        // Sprite Renderer
-        var spriteRenderer = obj.GetComponent<SpriteRenderer>();
-        if (spriteRenderer == null)
-        {
-            LILogger.Warn("Minimap object has no sprite attached");
-            return;
-        }
+        var mapScaleVal = elem.properties.minimapScale ?? 1;
+        shipStatus.MapScale = mapScaleVal * DEFAULT_SCALE;
+        var mapOffset = -(obj.transform.localPosition / shipStatus.MapScale);
 
         // Background
         var background = mapBehaviour.ColorControl.gameObject;
         var bgRenderer = background.GetComponent<SpriteRenderer>();
         background.transform.localPosition = background.transform.localPosition;
-        background.transform.localScale = obj.transform.localScale / mapScale;
+        background.transform.localScale = obj.transform.localScale / shipStatus.MapScale;
         background.transform.localRotation = obj.transform.localRotation;
 
         // Load Sprite
-        SpriteBuilder.OnSpriteLoad += (loadedElem, _) =>
+        SpriteBuilder.OnSpriteLoad += (loadedElem, loadedSprite) =>
         {
             if (loadedElem.id != elem.id || bgRenderer == null)
                 return;
-            bgRenderer.sprite = spriteRenderer.sprite;
-            bgRenderer.color = spriteRenderer.color;
+            bgRenderer.sprite = loadedSprite.Sprite;
             Object.Destroy(obj);
         };
 
