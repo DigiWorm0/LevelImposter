@@ -140,6 +140,13 @@ public class LIExileController(IntPtr intPtr) : ExileController(intPtr)
         // Update Eject Dummies/Hands
         UpdateEjectDummies();
 
+        // Trigger Eject
+        var isEjectingPlayer = initData?.outfit != null;
+        var triggerID = isEjectingPlayer ? ON_EJECT_TRIGGER_ID : ON_SKIP_TRIGGER_ID;
+        TriggerSignal ejectSignal = new(baseController, triggerID, playerControl);
+        TriggerSystem.GetInstance().FireTrigger(ejectSignal);
+
+
         // Switch to Eject Camera
         var ejectCamera = _camera ?? CreateCamera();
         ejectCamera.enabled = true;
