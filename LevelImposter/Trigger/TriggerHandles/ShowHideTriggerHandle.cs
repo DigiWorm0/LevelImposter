@@ -67,7 +67,8 @@ public class ShowHideTriggerHandle : ITriggerHandle
         var spriteColor = spriteRenderers[0].color;
         var visibleAlpha = objectData?.Properties.color?.a ?? 1.0f; // Use original sprite color, if applicable
 
-        var fromAlpha = spriteColor.a;
+        // Sprite color can be 0 - 255, so clamp it
+        var fromAlpha = Mathf.Clamp(spriteColor.a, 0.0f, visibleAlpha);
         var toAlpha = fadeIn ? visibleAlpha : 0.0f;
 
         // Run Fade
@@ -132,7 +133,7 @@ public class ShowHideTriggerHandle : ITriggerHandle
                 gifAnimator.Stop();
         }
 
-        // Get Togglable Components
+        // Get Toggleable Components
         MonoBehaviour[] toggleComponents =
         {
             gameObject.GetComponent<AmbientSoundPlayer>(),
