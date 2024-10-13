@@ -39,6 +39,9 @@ internal class PhysicsObjectBuilder : IElemBuilder
         // Set Layer
         obj.layer = (int)Layer.Physics;
 
+        // Add Physics Object Component
+        obj.AddComponent<LIPhysicsObject>();
+
         // Fix Camera
         if (_isCameraFixed)
             return;
@@ -54,7 +57,5 @@ internal class PhysicsObjectBuilder : IElemBuilder
             shadowCamera.cullingMask |= 1 << (int)Layer.Physics;
 
         _isCameraFixed = true;
-
-        // TODO: Create InnerNet Object to handle networked communication
     }
 }

@@ -11,7 +11,7 @@
 public enum LIRpc
 {
     FireTrigger = 94, // Fires a global trigger on an object
-    TeleportPlayer, // Used by util-tele object
+    UpdateObjectPos, // Used by util-physics object
     SyncMapID, // Syncs the map ID in the lobby
     SyncRandomSeed, // Syncs a random seed for util-triggerrand
     ResetPlayer, // Resets the player on Ctrl-R E S
