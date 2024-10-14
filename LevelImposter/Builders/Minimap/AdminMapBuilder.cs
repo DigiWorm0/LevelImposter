@@ -22,7 +22,7 @@ public class AdminMapBuilder : IElemBuilder
             return;
 
         // ShipStatus
-        var shipStatus = LIShipStatus.GetInstance().ShipStatus;
+        var shipStatus = LIShipStatus.GetShip();
 
         var mapBehaviour = MinimapBuilder.GetMinimap();
         var mapCountOverlay = mapBehaviour.countOverlay;

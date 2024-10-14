@@ -9,20 +9,34 @@ namespace LevelImposter.Builders;
 
 public class EjectDummyBuilder : IElemBuilder
 {
-    public EjectDummyBuilder()
+    public enum PlayerDummyType
     {
-        PoolablePlayers.Clear();
+        Floating,
+        Standing
     }
 
-    public static List<PoolablePlayer> PoolablePlayers { get; } = new();
+    public EjectDummyBuilder()
+    {
+        PlayerDummies.Clear();
+    }
+
+    public static List<PlayerDummy> PlayerDummies { get; } = new();
 
     public void OnBuild(LIElement elem, GameObject obj)
     {
-        if (elem.type != "util-ejectdummy")
+        if (!elem.type.StartsWith("util-ejectdummy"))
             return;
 
+        // Get Type
+        var type = elem.type switch
+        {
+            "util-ejectdummy" => PlayerDummyType.Floating,
+            "util-ejectdummy2" => PlayerDummyType.Standing,
+            _ => throw new ArgumentOutOfRangeException()
+        };
+
         // Get Eject Controller Prefab
-        var skeldPrefab = AssetDB.GetObject("ss-skeld");
+        var skeldPrefab = AssetDB.GetObject(type == PlayerDummyType.Floating ? "ss-skeld" : "ss-fungle");
         var skeldShipStatus = skeldPrefab?.GetComponent<ShipStatus>();
         var skeldEjectController = skeldShipStatus?.ExileCutscenePrefab;
         if (!skeldEjectController)
@@ -47,7 +61,7 @@ public class EjectDummyBuilder : IElemBuilder
         player.gameObject.SetLayerOfChildren((int)Layer.Ship);
 
         // Add to PoolablePlayers
-        PoolablePlayers.Add(player);
+        PlayerDummies.Add(new PlayerDummy(player, type));
 
         // Update Cosmetics on Sprite Load
         var spriteRenderer = obj.GetComponent<SpriteRenderer>();
@@ -61,5 +75,11 @@ public class EjectDummyBuilder : IElemBuilder
 
         // Hide Object By Default
         player.gameObject.SetActive(false);
+    }
+
+    public readonly struct PlayerDummy(PoolablePlayer _poolablePlayer, PlayerDummyType _type)
+    {
+        public PoolablePlayer PoolablePlayer => _poolablePlayer;
+        public PlayerDummyType Type => _type;
     }
 }

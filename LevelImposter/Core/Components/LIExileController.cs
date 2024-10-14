@@ -18,7 +18,7 @@ public class LIExileController(IntPtr intPtr) : ExileController(intPtr)
     private const string ON_EJECT_TRIGGER_ID = "onEject";
     private const string ON_SKIP_TRIGGER_ID = "onSkip";
     private const string ON_FINISH_TRIGGER_ID = "onFinish";
-    private const float DURATION_OFFSET = 0.9f; // 0.2f per fade, 0.5f for text
+    private const float DURATION_OFFSET = 1.4f; // 0.2f per fade, 0.5f for text, 0.5f for delay
 
     private Camera? _camera;
     private float _cameraXOffset;
@@ -34,6 +34,10 @@ public class LIExileController(IntPtr intPtr) : ExileController(intPtr)
     public new void Awake()
     {
         base.Awake();
+
+        // Fix Serialized Fields
+        exileHatPosition = new Vector3(-0.216f, 0.528f);
+        exileVisorPosition = new Vector3(-0.148f, 0.647f, -0.002f);
 
         // Get Element Data
         var elementData = EjectBuilder.EjectController?.gameObject.GetLIData();
@@ -59,6 +63,66 @@ public class LIExileController(IntPtr intPtr) : ExileController(intPtr)
         return CoAnimate().WrapToIl2Cpp();
     }
 
+    private void UpdateEjectDummies()
+    {
+        // Copy Player Outfit to Eject Dummies
+        var isEjectingPlayer = initData?.outfit != null;
+        foreach (var ejectDummy in EjectDummyBuilder.PlayerDummies)
+        {
+            // Get Player
+            var poolablePlayer = ejectDummy.PoolablePlayer;
+            var type = ejectDummy.Type;
+
+            // Set Active
+            poolablePlayer.gameObject.SetActive(isEjectingPlayer);
+            if (!isEjectingPlayer)
+                continue;
+
+            // Update Player Outfit
+            poolablePlayer.UpdateFromEitherPlayerDataOrCache(
+                initData?.networkedPlayer,
+                PlayerOutfitType.Default,
+                PlayerMaterial.MaskType.Exile,
+                false,
+                new Action(() =>
+                {
+                    // Get Skin Data
+                    var skinViewData = poolablePlayer.GetSkinView();
+
+                    // Fix Skin Sprite (Idle or Eject)
+                    var sprite = type switch
+                    {
+                        EjectDummyBuilder.PlayerDummyType.Floating => skinViewData.EjectFrame,
+                        EjectDummyBuilder.PlayerDummyType.Standing => skinViewData.IdleFrame,
+                        _ => throw new ArgumentOutOfRangeException()
+                    };
+                    poolablePlayer.FixSkinSprite(sprite);
+                })
+            );
+
+            // Hide Name
+            poolablePlayer.ToggleName(false);
+
+            // Fix Hat and Visor Position
+            if (type == EjectDummyBuilder.PlayerDummyType.Standing)
+                continue;
+            poolablePlayer.SetCustomHatPosition(exileHatPosition);
+            poolablePlayer.SetCustomVisorPosition(exileVisorPosition);
+        }
+
+        // Copy Player Outfit to Eject Hands
+        var colorID = initData?.outfit?.ColorId;
+        foreach (var hand in EjectHandBuilder.AllHands)
+        {
+            hand.gameObject.SetActive(isEjectingPlayer);
+            if (!isEjectingPlayer)
+                continue;
+
+            hand.sharedMaterial = CosmeticsLayer.GetBodyMaterial(PlayerMaterial.MaskType.Exile);
+            PlayerMaterial.SetColors((int)colorID!, hand);
+        }
+    }
+
     /// <summary>
     ///     Flexible coroutine for running ejection animation
     /// </summary>
@@ -73,50 +137,15 @@ public class LIExileController(IntPtr intPtr) : ExileController(intPtr)
         // Get Player Control
         var playerControl = initData?.networkedPlayer?.Object;
 
-        // Copy Player Outfit to Eject Dummies
-        var isEjectingPlayer = initData?.outfit != null;
-        foreach (var ejectDummy in EjectDummyBuilder.PoolablePlayers)
-        {
-            ejectDummy.gameObject.SetActive(isEjectingPlayer);
-
-            if (!isEjectingPlayer)
-                continue;
-
-            ejectDummy.UpdateFromPlayerOutfit(
-                initData?.outfit,
-                PlayerMaterial.MaskType.Exile,
-                false,
-                false,
-                new Action(() =>
-                {
-                    // Get Skin Data
-                    var skinViewData = ejectDummy.GetSkinView();
-
-                    // Fix Skin Sprite (Idle or Eject)
-                    ejectDummy.FixSkinSprite(skinViewData.EjectFrame);
-                })
-            );
-            ejectDummy.ToggleName(false);
-            ejectDummy.SetCustomHatPosition(exileHatPosition);
-            ejectDummy.SetCustomVisorPosition(exileVisorPosition);
-        }
-
-        // Copy Player Outfit to Eject Hands
-        var colorID = (int)initData?.outfit.ColorId!;
-        foreach (var hand in EjectHandBuilder.AllHands)
-        {
-            hand.gameObject.SetActive(isEjectingPlayer);
-            if (!isEjectingPlayer)
-                continue;
-
-            hand.sharedMaterial = CosmeticsLayer.GetBodyMaterial(PlayerMaterial.MaskType.Exile);
-            PlayerMaterial.SetColors(colorID, hand);
-        }
+        // Update Eject Dummies/Hands
+        UpdateEjectDummies();
 
         // Trigger Eject
+        var isEjectingPlayer = initData?.outfit != null;
         var triggerID = isEjectingPlayer ? ON_EJECT_TRIGGER_ID : ON_SKIP_TRIGGER_ID;
         TriggerSignal ejectSignal = new(baseController, triggerID, playerControl);
         TriggerSystem.GetInstance().FireTrigger(ejectSignal);
+
 
         // Switch to Eject Camera
         var ejectCamera = _camera ?? CreateCamera();
@@ -129,7 +158,9 @@ public class LIExileController(IntPtr intPtr) : ExileController(intPtr)
         // Wait then show text
         yield return HandleText(_preTextDuration, _textDuration);
 
-        // TODO: Add delay here
+        // Wait before finishing
+        yield return new WaitForSeconds(0.5f);
+        // TODO: Add customizable delay here
 
         // Show "x Impostors Remain" text
         if (initData?.confirmImpostor ?? false)

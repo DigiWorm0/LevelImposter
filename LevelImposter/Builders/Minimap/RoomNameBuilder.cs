@@ -19,10 +19,9 @@ public class RoomNameBuilder : IElemBuilder
             return;
 
         // ShipStatus
-        var shipStatus = LIShipStatus.GetInstanceOrNull()?.ShipStatus;
-        if (shipStatus == null)
-            throw new MissingShipException();
+        var shipStatus = LIShipStatus.GetShip();
 
+        // Minimap
         var mapBehaviour = MinimapBuilder.GetMinimap();
 
         // Clone

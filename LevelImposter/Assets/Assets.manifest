@@ -1,13 +1,13 @@
 ManifestFileVersion: 0
-CRC: 2067836792
+CRC: 97968246
 AssetBundleManifest:
   AssetBundleInfos:
     Info_0:
       Name: defaultthumbnail
       Dependencies: {}
     Info_1:
-      Name: shop
+      Name: loadingbar
       Dependencies: {}
     Info_2:
-      Name: loadingbar
+      Name: shop
       Dependencies: {}

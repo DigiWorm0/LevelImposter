@@ -8,7 +8,14 @@ internal enum Layer
     Default,
     TransparentFX,
     IgnoreRaycast,
-    Water = 4,
+
+    /// <summary>
+    ///     Made-up layer for physics objects so they collide with each other
+    ///     Camera is modified to render this layer
+    /// </summary>
+    Physics,
+
+    Water,
 
     /// <summary>
     ///     Full-brightness and always visible

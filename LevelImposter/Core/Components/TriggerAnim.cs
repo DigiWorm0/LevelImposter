@@ -115,25 +115,32 @@ public class TriggerAnim(IntPtr intPtr) : MonoBehaviour(intPtr)
         if (targetObject == null)
             throw new Exception($"Could not find object with ID {id}");
 
-        // Create Container
-        var containerObject = new GameObject($"AnimTarget_{id}");
+        // Create Containers
+        var parentObject = new GameObject($"AnimParent_{id}");
+        var childObject = new GameObject($"AnimChild_{id}");
 
-        // Match Transform
-        containerObject.transform.SetParent(targetObject.transform.parent);
-        containerObject.transform.position = targetObject.transform.position;
-        containerObject.transform.rotation = targetObject.transform.rotation;
-        containerObject.transform.localScale = targetObject.transform.localScale;
+        // Create Parent
+        parentObject.transform.SetParent(targetObject.transform.parent);
+        parentObject.transform.position = targetObject.transform.position;
+        parentObject.transform.rotation = targetObject.transform.rotation;
+        parentObject.transform.localScale = Vector3.one;
+
+        // Create Child
+        childObject.transform.SetParent(parentObject.transform);
+        childObject.transform.localPosition = Vector3.zero;
+        childObject.transform.localRotation = Quaternion.identity;
+        childObject.transform.localScale = Vector3.one;
 
         // Set Object as Child
-        targetObject.transform.SetParent(containerObject.transform);
+        targetObject.transform.SetParent(childObject.transform);
         targetObject.transform.localPosition = Vector3.zero;
         targetObject.transform.localRotation = Quaternion.identity;
-        targetObject.transform.localScale = Vector3.one;
+        // Do not set scale to 1, as it will be scaled by the animation
 
         // Cache Object
-        _objectDB[id] = targetObject;
+        _objectDB[id] = childObject;
 
-        return targetObject;
+        return childObject;
     }
 
     [HideFromIl2Cpp]
@@ -170,18 +177,17 @@ public class TriggerAnim(IntPtr intPtr) : MonoBehaviour(intPtr)
         var v1 = prevKeyframe.value;
         var v2 = nextKeyframe.value;
 
-        // Linear
-        if (method == "linear")
-            return Mathf.Lerp(v1, v2, (_t - t1) / (t2 - t1));
-        if (method == "easeIn")
-            return Mathf.Lerp(v1, v2, Mathf.Pow((_t - t1) / (t2 - t1), 2));
-        if (method == "easeOut")
-            return Mathf.Lerp(v1, v2, 1 - Mathf.Pow(1 - (_t - t1) / (t2 - t1), 2));
-        if (method == "easeInOut")
-            return Mathf.Lerp(v1, v2, Mathf.SmoothStep(0, 1, (_t - t1) / (t2 - t1)));
+        return method switch
+        {
+            // Linear
+            "linear" => Mathf.Lerp(v1, v2, (_t - t1) / (t2 - t1)),
+            "easeIn" => Mathf.Lerp(v1, v2, Mathf.Pow((_t - t1) / (t2 - t1), 2)),
+            "easeOut" => Mathf.Lerp(v1, v2, 1 - Mathf.Pow(1 - (_t - t1) / (t2 - t1), 2)),
+            "easeInOut" => Mathf.Lerp(v1, v2, Mathf.SmoothStep(0, 1, (_t - t1) / (t2 - t1))),
+            _ => null
+        };
 
         // Unknown Method
-        return null;
     }
 
     [HideFromIl2Cpp]
@@ -197,8 +203,12 @@ public class TriggerAnim(IntPtr intPtr) : MonoBehaviour(intPtr)
         var yScale = GetPropertyValue(target, "yScale") ?? 1;
         var rotation = GetPropertyValue(target, "rotation") ?? 0;
 
+        // Scale Position w/ Object Scale
+        var pos = new Vector2(x, y);
+        pos.Scale(targetObject.transform.lossyScale);
+
         // Apply Transform
-        targetObject.transform.localPosition = new Vector3(x, y, targetObject.transform.localPosition.z);
+        targetObject.transform.localPosition = new Vector3(pos.x, pos.y, targetObject.transform.localPosition.z);
         targetObject.transform.localScale = new Vector3(xScale, yScale, targetObject.transform.localScale.z);
         targetObject.transform.localRotation = Quaternion.Euler(0, 0, -rotation);
     }

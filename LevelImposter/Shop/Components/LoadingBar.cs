@@ -102,8 +102,6 @@ public class LoadingBar(IntPtr intPtr) : MonoBehaviour(intPtr)
             {
                 // Calculate Max Queue Size
                 _maxQueueSize = Math.Max(_maxQueueSize, SpriteLoader.Instance.QueueSize);
-                if (_maxQueueSize == 0)
-                    _maxQueueSize = 1;
 
                 // Calculate Progress
                 var loadedCount = _maxQueueSize - SpriteLoader.Instance.QueueSize;
@@ -130,6 +128,9 @@ public class LoadingBar(IntPtr intPtr) : MonoBehaviour(intPtr)
 
             yield return null;
         }
+
+        // Reset Queue Size
+        _maxQueueSize = 1;
 
         // Hide Loading Screen
         Instance?.SetVisible(false);
