@@ -32,7 +32,7 @@ public static class SabStartPatch
         { SystemTypes.MushroomMixupSabotage, "onMixupStart" }
     };
 
-    public static bool Prefix([HarmonyArgument(0)] SystemTypes systemType)
+    public static bool Prefix([HarmonyArgument(0)] SystemTypes systemType, ref PlayerTask __result)
     {
         if (!LIShipStatus.IsInstance())
             return true;
@@ -52,6 +52,7 @@ public static class SabStartPatch
                 taskClone.Owner = localPlayer;
                 taskClone.Initialize();
                 localPlayer.myTasks.Add(taskClone);
+                __result = taskClone;
 
                 // Fire Trigger
                 if (SabotageOptionsBuilder.TriggerObject != null)
