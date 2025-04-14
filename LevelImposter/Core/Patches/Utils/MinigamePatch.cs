@@ -1,4 +1,3 @@
-using System;
 using HarmonyLib;
 using UnityEngine;
 
@@ -34,14 +33,15 @@ public static class MinigamePatch
     }
 }
 
+// HACK: Temporarily removed to fix TOU bug. May cause issues with Meta-tasks (Divert power)
 /// <summary>
 ///     When a minigame is closed, clear the last console.
 /// </summary>
-[HarmonyPatch(typeof(Minigame), nameof(Minigame.Close), new Type[0])]
-public static class MinigameClosePatch
-{
-    public static void Postfix()
-    {
-        MinigamePatch.LastConsole = null;
-    }
-}
+// [HarmonyPatch(typeof(Minigame), nameof(Minigame.Close), new Type[0])]
+// public static class MinigameClosePatch
+// {
+//     public static void Postfix()
+//     {
+//         MinigamePatch.LastConsole = null;
+//     }
+// }
