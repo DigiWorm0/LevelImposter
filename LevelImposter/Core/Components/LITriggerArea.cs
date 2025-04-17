@@ -22,7 +22,7 @@ public class LITriggerArea(IntPtr intPtr) : PlayerArea(intPtr)
         _isClientSide = isClientSide;
     }
 
-    protected override void OnPlayerEnter(PlayerControl player)
+    public override void OnPlayerEnter(PlayerControl player)
     {
         var triggerServerSided = CurrentPlayersIDs?.Count <= 1 && !_isClientSide;
         var triggerClientSided = player.AmOwner && _isClientSide;
@@ -33,7 +33,7 @@ public class LITriggerArea(IntPtr intPtr) : PlayerArea(intPtr)
         }
     }
 
-    protected override void OnPlayerExit(PlayerControl player)
+    public override void OnPlayerExit(PlayerControl player)
     {
         var triggerServerSided = CurrentPlayersIDs?.Count <= 0 && !_isClientSide;
         var triggerClientSided = player.AmOwner && _isClientSide;

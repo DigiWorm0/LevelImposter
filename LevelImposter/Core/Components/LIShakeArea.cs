@@ -37,13 +37,13 @@ public class LIShakeArea(IntPtr intPtr) : PlayerArea(intPtr)
         }
     }
 
-    protected override void OnPlayerEnter(PlayerControl player)
+    public override void OnPlayerEnter(PlayerControl player)
     {
         if (player.AmOwner)
             SetShakeEnabled(true);
     }
 
-    protected override void OnPlayerExit(PlayerControl player)
+    public override void OnPlayerExit(PlayerControl player)
     {
         if (player.AmOwner)
             SetShakeEnabled(false);
