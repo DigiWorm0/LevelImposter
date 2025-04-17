@@ -10,9 +10,9 @@ namespace LevelImposter.Core;
 /// </summary>
 public class PlayerArea(IntPtr intPtr) : MonoBehaviour(intPtr)
 {
-    [HideFromIl2Cpp] protected List<byte>? CurrentPlayersIDs { get; private set; } = new();
+    [HideFromIl2Cpp] public List<byte>? CurrentPlayersIDs { get; private set; } = new();
 
-    protected bool IsLocalPlayerInside { get; private set; }
+    public bool IsLocalPlayerInside { get; private set; }
 
     public void OnDestroy()
     {
@@ -52,7 +52,7 @@ public class PlayerArea(IntPtr intPtr) : MonoBehaviour(intPtr)
     /// </summary>
     /// <param name="playerID">Player ID to search</param>
     /// <returns>The cooresponding PlayerControl or null if it can't be found</returns>
-    protected PlayerControl? GetPlayer(byte playerID)
+    public PlayerControl? GetPlayer(byte playerID)
     {
         foreach (var player in PlayerControl.AllPlayerControls)
             if (player.PlayerId == playerID)
@@ -64,7 +64,7 @@ public class PlayerArea(IntPtr intPtr) : MonoBehaviour(intPtr)
     ///     Called when a player enters the collider
     /// </summary>
     /// <param name="player">Player that entered the collider</param>
-    protected virtual void OnPlayerEnter(PlayerControl player)
+    public virtual void OnPlayerEnter(PlayerControl player)
     {
     }
 
@@ -72,7 +72,7 @@ public class PlayerArea(IntPtr intPtr) : MonoBehaviour(intPtr)
     ///     Called when a player exits the collider
     /// </summary>
     /// <param name="player">Player that exited the collider</param>
-    protected virtual void OnPlayerExit(PlayerControl player)
+    public virtual void OnPlayerExit(PlayerControl player)
     {
     }
 }
