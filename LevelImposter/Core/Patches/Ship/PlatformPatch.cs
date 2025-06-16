@@ -56,9 +56,10 @@ public static class PlatformPatchRPC
             platform.Use(__instance);
         else
             // Request Use Platform
-            AmongUsClient.Instance.StartRpc(
+            AmongUsClient.Instance.StartRpcImmediately(
                 __instance.NetId,
-                (byte)RpcCalls.UsePlatform
+                (byte)RpcCalls.UsePlatform,
+                Hazel.SendOption.None
             ).EndMessage();
         return false;
     }

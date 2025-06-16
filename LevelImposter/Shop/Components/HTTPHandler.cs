@@ -72,7 +72,7 @@ public class HTTPHandler(IntPtr intPtr) : MonoBehaviour(intPtr)
             }
             else if (onSuccessBytes != null)
             {
-                onSuccessBytes(request.downloadHandler.data);
+                onSuccessBytes(request.downloadHandler.GetUnstrippedData());
             }
 
             // Free memory (because BepInEx)

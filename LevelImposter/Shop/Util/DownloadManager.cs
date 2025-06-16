@@ -2,6 +2,7 @@
 using System.Linq;
 using LevelImposter.Core;
 using Reactor.Networking.Attributes;
+using UnityEngine.Networking;
 
 namespace LevelImposter.Shop;
 
@@ -126,5 +127,18 @@ public static class DownloadManager
     {
         _downloadPercent = 0;
         MapUtils.WaitForPlayer(() => { RPCDownload(PlayerControl.LocalPlayer, true); });
+    }
+
+    /// <summary>
+    ///     Gets native data as a byte array. Replaces removed method: <c>DownloadHandler.InternalGetByteArray</c>
+    /// </summary>
+    public static byte[]? GetUnstrippedData(this DownloadHandler dh)
+    {
+        var nativeData = dh.GetNativeData();
+
+        if (nativeData.IsCreated)
+            return nativeData.ToArray();
+
+        return null;
     }
 }
