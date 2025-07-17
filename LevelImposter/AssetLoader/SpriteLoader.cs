@@ -33,11 +33,15 @@ public class SpriteLoader : AsyncQueue<LoadableSprite, LoadedSprite>
 
         // Check file type
         var isGIF = GIFFile.IsGIF(stream);
-        var format = isGIF ? "GIF" : "PNG/JPG";
+        var isDDS = DDSLoader.IsDDS(stream);
+        var format = isGIF ? "GIF" :
+            isDDS ? "DDS" :
+            "PNG/JPG";
 
         // Load the sprite
         var loadedSprite = format switch
         {
+            "DDS" => DDSLoader.Load(stream, loadable),
             "GIF" => GIFLoader.Load(stream, loadable),
             _ => PNGLoader.Load(stream, loadable)
         };
