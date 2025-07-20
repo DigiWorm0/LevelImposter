@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Buffers;
+using System.IO;
 using Il2CppInterop.Runtime.Attributes;
 using LevelImposter.Core;
 using UnityEngine;
@@ -8,6 +9,12 @@ namespace LevelImposter.AssetLoader;
 public class PNGLoader
 {
     /// <summary>
+    ///     We must read the entire file into memory to process it.
+    ///     We can use a shared ArrayPool to avoid excessive memory allocations.
+    /// </summary>
+    private static ArrayPool<byte> BytePool => ArrayPool<byte>.Shared;
+
+    /// <summary>
     ///     Loads a PNG/JPG image from a stream.
     /// </summary>
     /// <param name="imgStream">Raw PNG/JPG file stream</param>
@@ -16,28 +23,40 @@ public class PNGLoader
     /// <exception cref="IOException">If the Stream fails to read image data</exception>
     public static LoadedSprite Load(Stream imgStream, LoadableSprite loadable)
     {
-        // Get All Data
-        var imageDataBuffer = new byte[imgStream.Length];
-        var readBytes = imgStream.Read(imageDataBuffer, 0, imageDataBuffer.Length);
-        if (readBytes != imageDataBuffer.Length)
-            throw new IOException("Failed to read all image data");
+        // Before we do anything, rent a buffer for reading the image data
+        var imageDataLength = (int)imgStream.Length;
+        var imageDataBuffer = BytePool.Rent(imageDataLength);
 
-        // Get Options
-        var options = loadable.Options;
+        try
+        {
+            // Read Image Data
+            var readBytes = imgStream.Read(imageDataBuffer, 0, imageDataLength);
+            if (readBytes != imageDataLength)
+                throw new IOException("Failed to read all image data");
 
-        // Create Texture
-        var sprite = ImageDataToSprite(
-            imageDataBuffer,
-            loadable.ID,
-            options.Pivot,
-            options.PixelArt
-        );
+            // Get Options
+            var options = loadable.Options;
 
-        // Register in GC
-        GCHandler.Register(sprite);
+            // Create Texture
+            var sprite = ImageDataToSprite(
+                imageDataBuffer,
+                loadable.ID,
+                options.Pivot,
+                options.PixelArt
+            );
 
-        // Create Loaded Sprite
-        return new LoadedSprite(sprite);
+            // Register in GC
+            GCHandler.Register(sprite);
+
+            // Create Loaded Sprite
+            return new LoadedSprite(sprite);
+        }
+        catch
+        {
+            // If we fail, we must return the rented buffer
+            BytePool.Return(imageDataBuffer);
+            throw;
+        }
     }
 
     /// <summary>
