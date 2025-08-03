@@ -199,6 +199,7 @@ public class TriggerAnim(IntPtr intPtr) : MonoBehaviour(intPtr)
         // Get Property Values
         var x = GetPropertyValue(target, "x") ?? 0;
         var y = GetPropertyValue(target, "y") ?? 0;
+        var z = y / 1000.0f; // <-- Fixes bug when Z = -5 (player position)
         var xScale = GetPropertyValue(target, "xScale") ?? 1;
         var yScale = GetPropertyValue(target, "yScale") ?? 1;
         var rotation = GetPropertyValue(target, "rotation") ?? 0;
@@ -208,7 +209,7 @@ public class TriggerAnim(IntPtr intPtr) : MonoBehaviour(intPtr)
         pos.Scale(targetObject.transform.lossyScale);
 
         // Apply Transform
-        targetObject.transform.localPosition = new Vector3(pos.x, pos.y, targetObject.transform.localPosition.z);
+        targetObject.transform.localPosition = new Vector3(pos.x, pos.y, z);
         targetObject.transform.localScale = new Vector3(xScale, yScale, targetObject.transform.localScale.z);
         targetObject.transform.localRotation = Quaternion.Euler(0, 0, -rotation);
     }
