@@ -61,7 +61,8 @@ public class LIDeathArea(IntPtr intPtr) : PlayerArea(intPtr)
     private static void CreateDeadBody(PlayerControl player)
     {
         // Create/Disable Dead Body
-        var deadBody = Instantiate(GameManager.Instance.DeadBodyPrefab);
+        var deadBodyPrefab = GameManager.Instance.deadBodyPrefab.First();
+        var deadBody = Instantiate(deadBodyPrefab);
         deadBody.enabled = false;
         deadBody.ParentId = player.PlayerId;
 
