@@ -141,7 +141,9 @@ public class ShowHideTriggerHandle : ITriggerHandle
             gameObject.GetComponent<SystemConsole>(),
             gameObject.GetComponent<MapConsole>(),
             gameObject.GetComponent<LITeleporter>(),
-            gameObject.GetComponent<LIShakeArea>()
+            gameObject.GetComponent<LIShakeArea>(),
+            gameObject.GetComponent<LITriggerArea>(),
+            gameObject.GetComponent<LIPlayerMover>()
         };
 
         // Toggle the components
