@@ -105,9 +105,9 @@ public class HTTPHandler(IntPtr intPtr) : MonoBehaviour(intPtr)
         StartCoroutine(CoRequest(url, onSuccessString, onSuccessBytes, onProgress, onError).WrapToIl2Cpp());
     }
 
-    // Shorthand overloads
+    // "RequestString" has to be defined separately to avoid limitations with ambiguous calls
     [HideFromIl2Cpp]
-    public void Request(string url, Action<string>? onSuccess, Action<string>? onError)
+    public void RequestString(string url, Action<string>? onSuccess, Action<string>? onError)
     {
         Request(url, onSuccess, null, null, onError);
     }

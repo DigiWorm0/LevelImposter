@@ -29,7 +29,7 @@ public static class LevelImposterAPI
     [HideFromIl2Cpp]
     public static void Request<T>(string url, Action<T> callback, Action<string> onError)
     {
-        HTTPHandler.Instance?.Request(url, json =>
+        HTTPHandler.Instance?.RequestString(url, json =>
         {
             var response = JsonSerializer.Deserialize<LICallback<T>>(json);
 
