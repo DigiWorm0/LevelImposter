@@ -42,22 +42,24 @@ internal class PlatformBuilder : IElemBuilder
         var spriteRenderer = MapUtils.CloneSprite(obj, prefab);
 
         // Offsets
-        var leftPos = obj.transform.position;
-        var leftUsePos = leftPos + new Vector3(
+        var leftPos = obj.transform.localPosition;
+        var leftUsePos = GetOffsetFromTransform(obj.transform, new Vector3(
             elem.properties.platformXEntranceOffset ?? -1.5f,
             elem.properties.platformYEntranceOffset ?? 0,
             0
-        );
-        var rightPos = leftPos + new Vector3(
-            elem.properties.platformXOffset ?? 3,
+        ));
+
+        var rightPos = GetOffsetFromTransform(obj.transform, new Vector3(
+            elem.properties.platformXOffset ?? 3.0f,
             elem.properties.platformYOffset ?? 0,
             0
-        );
-        var rightUsePos = rightPos + new Vector3(
-            elem.properties.platformXExitOffset ?? 1.5f,
-            elem.properties.platformYExitOffset ?? 0,
+        ));
+
+        var rightUsePos = GetOffsetFromTransform(obj.transform, new Vector3(
+            (elem.properties.platformXExitOffset ?? 1.5f) + (elem.properties.platformXOffset ?? 3.0f),
+            (elem.properties.platformYExitOffset ?? 0) + (elem.properties.platformYOffset ?? 0),
             0
-        );
+        ));
 
         // Platform
         var movingPlatform = obj.AddComponent<MovingPlatformBehaviour>();
@@ -79,19 +81,26 @@ internal class PlatformBuilder : IElemBuilder
 
         // Consoles
         GameObject leftObj = new("Left Console");
-        leftObj.transform.SetParent(shipStatus.transform);
+        leftObj.transform.SetParent(obj.transform.parent);
         leftObj.transform.localPosition = leftUsePos;
         leftObj.AddComponent<BoxCollider2D>().isTrigger = true;
+
         GameObject rightObj = new("Right Console");
-        rightObj.transform.SetParent(shipStatus.transform);
+        rightObj.transform.SetParent(obj.transform.parent);
         rightObj.transform.localPosition = rightUsePos;
         rightObj.AddComponent<BoxCollider2D>().isTrigger = true;
 
         var leftConsole = leftObj.AddComponent<PlatformConsole>();
         leftConsole.Image = spriteRenderer;
         leftConsole.Platform = movingPlatform;
+
         var rightConsole = rightObj.AddComponent<PlatformConsole>();
         rightConsole.Image = spriteRenderer;
         rightConsole.Platform = movingPlatform;
+    }
+
+    private Vector3 GetOffsetFromTransform(Transform transform, Vector3 offset)
+    {
+        return transform.parent.InverseTransformPoint(transform.TransformPoint(offset));
     }
 }
