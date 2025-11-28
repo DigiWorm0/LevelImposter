@@ -43,6 +43,9 @@ public class TriggerSystem
 
     private static bool _shouldLog => MapLoader.CurrentMap?.properties.triggerLogging ?? false;
 
+    private static bool _detectStackOverflow =>
+        MapLoader.CurrentMap?.properties.triggerDetectStackOverflow ?? true;
+
     /// <summary>
     ///     Patch me to add your own custom trigger handles.
     ///     Handles should implement <c>ITriggerHandle</c>.
@@ -147,7 +150,7 @@ public class TriggerSystem
         var playerName = signal.SourcePlayer == null ? "null" : signal.SourcePlayer.name;
 
         // Infinite Loop
-        if (signal.StackSize > MAX_STACK_SIZE)
+        if (_detectStackOverflow && signal.StackSize > MAX_STACK_SIZE)
         {
             LILogger.Warn(
                 $"{objectName} >>> {signal.TriggerID} detected an infinite trigger loop and aborted");
