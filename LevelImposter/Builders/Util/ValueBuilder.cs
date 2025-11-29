@@ -13,6 +13,13 @@ public class ValueBuilder : IElemBuilder
     }
 
     public static Dictionary<Guid, IBoolValue> AllBoolValues { get; } = new();
+    
+    private static Dictionary<string, IBoolValue> PresetBoolValues { get; } = new()
+    {
+        {"isImposter", new DelegateBoolValue(() => GameState.IsLocalPlayerImpostor)},
+        {"isInMeeting", new DelegateBoolValue(() => GameState.IsInMeeting)},
+        {"isDead", new DelegateBoolValue(() => GameState.IsLocalPlayerDead)}
+    };
 
     public void OnBuild(LIElement elem, GameObject obj)
     {
@@ -27,6 +34,13 @@ public class ValueBuilder : IElemBuilder
                 AllBoolValues.Add(elem.id, new BasicBoolValue(elem.id, defaultValue));
                 break;
             }
+            case "util-valueboolpreset":
+                var preset = elem.properties.valuePresetType ?? "";
+                if (!PresetBoolValues.TryGetValue(preset, out var value))
+                    throw new Exception($"Invalid value preset: {preset}");
+                
+                AllBoolValues.Add(elem.id, value);
+                break;
             case "util-valuecomparator":
             {
                 var operation = elem.properties.comparatorOperation switch

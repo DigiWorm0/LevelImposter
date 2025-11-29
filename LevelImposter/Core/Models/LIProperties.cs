@@ -22,6 +22,7 @@ public class LIProperties
     public Guid? triggerGateValueID { get; set; }
 
     // Value
+    public string? valuePresetType { get; set; }
     public bool? defaultBoolValue { get; set; }
     public Guid? comparatorValueID1 { get; set; }
     public Guid? comparatorValueID2 { get; set; }
