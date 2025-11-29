@@ -123,7 +123,7 @@ public class TriggerAnim(IntPtr intPtr) : MonoBehaviour(intPtr)
         parentObject.transform.SetParent(targetObject.transform.parent);
         parentObject.transform.position = targetObject.transform.position;
         parentObject.transform.rotation = targetObject.transform.rotation;
-        parentObject.transform.localScale = Vector3.one;
+        parentObject.transform.localScale = targetObject.transform.localScale;
 
         // Create Child
         childObject.transform.SetParent(parentObject.transform);
@@ -135,7 +135,7 @@ public class TriggerAnim(IntPtr intPtr) : MonoBehaviour(intPtr)
         targetObject.transform.SetParent(childObject.transform);
         targetObject.transform.localPosition = Vector3.zero;
         targetObject.transform.localRotation = Quaternion.identity;
-        // Do not set scale to 1, as it will be scaled by the animation
+        targetObject.transform.localScale = Vector3.one;
 
         // Cache Object
         _objectDB[id] = childObject;
@@ -204,12 +204,8 @@ public class TriggerAnim(IntPtr intPtr) : MonoBehaviour(intPtr)
         var yScale = GetPropertyValue(target, "yScale") ?? 1;
         var rotation = GetPropertyValue(target, "rotation") ?? 0;
 
-        // Scale Position w/ Object Scale
-        var pos = new Vector2(x, y);
-        pos.Scale(targetObject.transform.lossyScale);
-
         // Apply Transform
-        targetObject.transform.localPosition = new Vector3(pos.x, pos.y, z);
+        targetObject.transform.localPosition = new Vector3(x, y, z);
         targetObject.transform.localScale = new Vector3(xScale, yScale, targetObject.transform.localScale.z);
         targetObject.transform.localRotation = Quaternion.Euler(0, 0, -rotation);
     }
