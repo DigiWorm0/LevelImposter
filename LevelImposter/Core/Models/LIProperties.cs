@@ -33,6 +33,7 @@ public class LIProperties
 
     // Sprite
     public Guid? spriteID { get; set; }
+    public Guid? animationID { get; set; }
     public bool? noShadows { get; set; }
     public bool? noShadowsBehaviour { get; set; }
     public LIColor? color { get; set; }

@@ -25,6 +25,18 @@ public class SpriteLoader : AsyncQueue<LoadableSprite, LoadedSprite>
             loadedSprite => callback(loadedSprite.Sprite)
         );
     }
+    
+    /// <summary>
+    ///     Loads a sprite synchronously.
+    /// </summary>
+    /// <param name="id">ID for cache</param>
+    /// <param name="streamable">Streamable with raw image data</param>
+    /// <returns>Loaded Sprite</returns>
+    public static Sprite LoadSync(string id, IStreamable streamable)
+    {
+        var loadedSprite = Instance.Load(new LoadableSprite(id, streamable));
+        return loadedSprite.Sprite;
+    }
 
     protected override LoadedSprite Load(LoadableSprite loadable)
     {

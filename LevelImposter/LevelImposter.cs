@@ -7,6 +7,7 @@ using LevelImposter.DB;
 using LevelImposter.Shop;
 using Reactor.Networking;
 using Reactor.Networking.Attributes;
+using UnityEngine;
 
 namespace LevelImposter;
 
@@ -58,6 +59,7 @@ public partial class LevelImposter : BasePlugin
         ClassInjector.RegisterTypeInIl2Cpp<MinigameSprites>();
         ClassInjector.RegisterTypeInIl2Cpp<LagLimiter>();
         ClassInjector.RegisterTypeInIl2Cpp<GIFAnimator>();
+        ClassInjector.RegisterTypeInIl2Cpp<SpriteAnimator>();
         ClassInjector.RegisterTypeInIl2Cpp<TriggerSoundPlayer>();
         ClassInjector.RegisterTypeInIl2Cpp<LIPlayerMover>();
         ClassInjector.RegisterTypeInIl2Cpp<TriggerConsole>(usableInterface);

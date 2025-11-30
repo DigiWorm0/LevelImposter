@@ -7,8 +7,9 @@ namespace LevelImposter.Core;
 public class LIMap : LIMetadata
 {
     // LIM2
-    [JsonIgnore] public const int LIM_VERSION = 2;
+    [JsonIgnore] public const int LIM_VERSION = 3;
     public LIElement[] elements { get; set; }
+    public LISpriteAnimation[]? animations { get; set; }
     public LIMapProperties properties { get; set; }
 
     [JsonIgnore]

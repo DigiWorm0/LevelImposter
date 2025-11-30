@@ -3,6 +3,7 @@ using LevelImposter.AssetLoader;
 using LevelImposter.Core;
 using LevelImposter.Shop;
 using UnityEngine;
+using System.Linq;
 
 namespace LevelImposter.Builders;
 
@@ -33,6 +34,19 @@ public class SpriteBuilder : IElemBuilder
         {
             // Set Sprite
             spriteRenderer.sprite = loadedSprite.Sprite;
+            
+            // Handle Sprite Anim
+            if (elem.properties.animationID != null)
+            {
+                // Find the animation
+                var anim = GetAnimationFromID(elem.properties.animationID);
+                if (anim != null)
+                {
+                    // Add SpriteAnimator
+                    var spriteAnimator = obj.AddComponent<SpriteAnimator>();
+                    spriteAnimator.Init(elem, anim);
+                }
+            }
 
             // Handle GIF
             if (loadedSprite is GIFLoader.LoadedGIF gifData)
@@ -51,6 +65,17 @@ public class SpriteBuilder : IElemBuilder
                 LILogger.Error(e);
             }
         });
+    }
+    
+    /// <summary>
+    /// Gets an animation from its ID
+    /// </summary>
+    /// <param name="animationID">ID of the animation</param>
+    /// <returns>The animation, or null if not found</returns>
+    private LISpriteAnimation? GetAnimationFromID(Guid? animationID)
+    {
+        var allAnimations = MapLoader.CurrentMap?.animations;
+        return allAnimations?.FirstOrDefault(a => a.id == animationID);
     }
 
     /// <summary>
