@@ -24,15 +24,15 @@ public static class EnterVentPatch
 
         // Check for components
         var spriteAnim = __instance.GetComponent<SpriteAnim>();
-        var gifAnim = __instance.GetComponent<GIFAnimator>();
+        var animator = __instance.GetComponent<LIAnimatorBase>();
 
         // Sprite animation
         if (spriteAnim != null && __instance.EnterVentAnim != null)
             spriteAnim.Play(__instance.EnterVentAnim);
 
         // GIF animation
-        else if (gifAnim != null)
-            gifAnim.Play(false, false);
+        else if (animator != null)
+            animator.Play(false, false);
 
         // Still image
         else
@@ -63,15 +63,15 @@ public static class ExitVentPatch
 
         // Check for components
         var spriteAnim = __instance.GetComponent<SpriteAnim>();
-        var gifAnim = __instance.GetComponent<GIFAnimator>();
+        var animator = __instance.GetComponent<LIAnimatorBase>();
 
         // Sprite animation
         if (spriteAnim != null && __instance.ExitVentAnim != null)
             spriteAnim.Play(__instance.ExitVentAnim);
 
         // GIF animation
-        else if (gifAnim != null)
-            gifAnim.Play(false, true);
+        else if (animator != null)
+            animator.Play(false, true);
 
         // Still image
         else

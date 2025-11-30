@@ -124,13 +124,13 @@ public class ShowHideTriggerHandle : ITriggerHandle
         }
 
         // Animation
-        var gifAnimator = gameObject.GetComponent<GIFAnimator>();
-        if (gifAnimator != null)
+        var animator = gameObject.GetComponent<LIAnimatorBase>();
+        if (animator != null)
         {
-            if (isEnabled ?? !gifAnimator.IsAnimating)
-                gifAnimator.Play();
+            if (isEnabled ?? !animator.IsAnimating)
+                animator.Play();
             else
-                gifAnimator.Stop();
+                animator.Stop();
         }
 
         // Get Toggleable Components
