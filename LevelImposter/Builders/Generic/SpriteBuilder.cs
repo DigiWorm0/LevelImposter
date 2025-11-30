@@ -36,16 +36,11 @@ public class SpriteBuilder : IElemBuilder
             spriteRenderer.sprite = loadedSprite.Sprite;
             
             // Handle Sprite Anim
-            if (elem.properties.animationID != null)
+            if (elem.properties.animation != null)
             {
-                // Find the animation
-                var anim = GetAnimationFromID(elem.properties.animationID);
-                if (anim != null)
-                {
-                    // Add SpriteAnimator
-                    var spriteAnimator = obj.AddComponent<SpriteAnimator>();
-                    spriteAnimator.Init(elem, anim);
-                }
+                // Add SpriteAnimator
+                var spriteAnimator = obj.AddComponent<SpriteAnimator>();
+                spriteAnimator.Init(elem, elem.properties.animation);
             }
 
             // Handle GIF
@@ -65,17 +60,6 @@ public class SpriteBuilder : IElemBuilder
                 LILogger.Error(e);
             }
         });
-    }
-    
-    /// <summary>
-    /// Gets an animation from its ID
-    /// </summary>
-    /// <param name="animationID">ID of the animation</param>
-    /// <returns>The animation, or null if not found</returns>
-    private LISpriteAnimation? GetAnimationFromID(Guid? animationID)
-    {
-        var allAnimations = MapLoader.CurrentMap?.animations;
-        return allAnimations?.FirstOrDefault(a => a.id == animationID);
     }
 
     /// <summary>
