@@ -127,7 +127,7 @@ public class LIExileController(IntPtr intPtr) : ExileController(intPtr)
     ///     Flexible coroutine for running ejection animation
     /// </summary>
     [HideFromIl2Cpp]
-    public System.Collections.IEnumerator CoAnimate()
+    private System.Collections.IEnumerator CoAnimate()
     {
         // Get Base Controller
         var baseController = EjectBuilder.EjectController?.gameObject;
@@ -156,7 +156,7 @@ public class LIExileController(IntPtr intPtr) : ExileController(intPtr)
             yield return DestroyableSingleton<HudManager>.Instance.CoFadeFullScreen(Color.black, Color.clear);
 
         // Wait then show text
-        yield return HandleText(_preTextDuration, _textDuration);
+        yield return CoHandleText();
 
         // Wait before finishing
         yield return new WaitForSeconds(0.5f);
@@ -182,7 +182,56 @@ public class LIExileController(IntPtr intPtr) : ExileController(intPtr)
         TriggerSystem.GetInstance().FireTrigger(finishSignal);
 
         // Wrap Up Base
-        WrapUp();
+        WrapUpAlt();
+    }
+
+    /// <summary>
+    ///  Coroutine based on ExileController.HandleText but with customizable timings
+    /// </summary>
+    [HideFromIl2Cpp]
+    private System.Collections.IEnumerator CoHandleText()
+    {
+        // DO NOT REFERENCE this.completeString
+        var exileString = ExileTextPatch.LastExileText;
+        
+        yield return Effects.Wait(_preTextDuration);
+        for (var t = 0f; t <= _textDuration; t += Time.deltaTime)
+        {
+            var num = (int)(t / _textDuration * exileString.Length);
+            if (num > Text.text.Length)
+            {
+                Text.text = exileString.Substring(0, num);
+                Text.gameObject.SetActive(true);
+                if (exileString[num - 1] != ' ')
+                    SoundManager.Instance.PlaySoundImmediate(TextSound, false, 0.8f);
+            }
+            yield return null;
+        }
+        Text.text = exileString;
+    }
+
+    /// <summary>
+    /// Based on ExileController.WrapUp but modified to avoid bugs with IL2CPP
+    /// </summary>
+    private void WrapUpAlt()
+    {
+        // Mark Player as Exiled/Dead
+        if (initData.networkedPlayer != null)
+        {
+            var playerObject = initData.networkedPlayer.Object;
+            if (playerObject)
+                playerObject.Exiled();
+            
+            initData.networkedPlayer.IsDead = true;
+        }
+        
+        // Re-enable Gameplay
+        if (DestroyableSingleton<TutorialManager>.InstanceExists || 
+            (GameManager.Instance != null && !GameManager.Instance.LogicFlow.IsGameOverDueToDeath()))
+            ReEnableGameplay();
+        
+        // Destroy Eject Controller
+        GameObject.Destroy(gameObject);
     }
 
     /// <summary>
