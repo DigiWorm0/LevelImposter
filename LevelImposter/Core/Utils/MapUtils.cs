@@ -296,17 +296,43 @@ public static class MapUtils
     }
 
     /// <summary>
-    ///     Loads a Sprite from assembly resources
+    ///     Loads a texture from assembly resources
     /// </summary>
-    /// <param name="name">Name of the sprite file</param>
-    /// <returns>Sprite or null if not found</returns>
-    public static Sprite? LoadSpriteResource(string name)
+    /// <param name="name">Name of the texture file</param>
+    /// <returns>Texture or null if not found</returns>
+    public static Texture2D? LoadTextureResource(string name)
     {
-        LILogger.Info($"Loading sprite resource {name}");
+        LILogger.Info($"Loading texture resource {name}");
         var spriteData = GetResourceAsIl2Cpp(name);
         if (spriteData == null)
             return null;
-        return PNGLoader.ImageDataToSprite(spriteData, name);
+        return PNGLoader.ImageDataToTexture2D(spriteData, name);
+    }
+
+    public static Sprite? LoadSpriteResource(string name)
+    {
+        // Load Texture
+        var texture = LoadTextureResource(name);
+        if (texture == null)
+            return null;
+        
+        // Create Sprite
+        var sprite = Sprite.Create(
+            texture,
+            new Rect(0, 0, texture.width, texture.height),
+            new Vector2(0.5f, 0.5f),
+            100.0f,
+            0,
+            SpriteMeshType.FullRect
+        );
+        
+        // Set Sprite Flags
+        sprite.name = $"{name}_resource_sprite";
+        sprite.hideFlags = HideFlags.DontUnloadUnusedAsset;
+        
+        // Register in GC
+        GCHandler.Register(sprite);
+        return sprite;
     }
 
     /// <summary>

@@ -44,6 +44,8 @@ public class MinigameSprites(IntPtr intPtr) : MonoBehaviour(intPtr)
 
     private LIMinigameSprite[]? _minigameDataArr;
     private LIMinigameProps? _minigameProps;
+    
+    private static bool PixelArtMode => MapLoader.CurrentMap?.properties.pixelArtMode ?? false;
 
     public void OnDestroy()
     {
@@ -91,21 +93,21 @@ public class MinigameSprites(IntPtr intPtr) : MonoBehaviour(intPtr)
                 if (mapAsset == null)
                     continue;
 
+                // Create Loadable Texture
+                var loadableTexture = new LoadableTexture(guid?.ToString() ?? "", mapAsset);
+                loadableTexture.Options.PixelArt = PixelArtMode;
+                
                 // Create Loadable Sprite
-                var loadableSprite = new LoadableSprite(
-                    minigameData.spriteID?.ToString() ?? "",
-                    mapAsset
-                );
+                var loadableSprite = new LoadableSprite(guid?.ToString() ?? "", loadableTexture);
 
                 // Apply Options
                 if (hasPivot)
                     loadableSprite.Options.Pivot = pivot;
-                loadableSprite.Options.PixelArt = MapLoader.CurrentMap?.properties.pixelArtMode ?? false;
 
                 // Add to Queue
                 SpriteLoader.Instance.AddToQueue(
                     loadableSprite,
-                    loadedSprite => { LoadMinigameSprite(minigame, minigameData.type, loadedSprite.Sprite); }
+                    sprite => { LoadMinigameSprite(minigame, minigameData.type, sprite); }
                 );
             }
         }

@@ -40,7 +40,6 @@ public class GIFFile(string name) : IDisposable
     private bool _hasGlobalColorTable; // True if there is a global color table
 
     // Other Data
-    private Vector2 _pivotPoint = new(0.5f, 0.5f);
     private Color[]? _pixelBuffer; // Buffer of pixel colors
 
     // GIF File
@@ -63,10 +62,8 @@ public class GIFFile(string name) : IDisposable
         _pixelBuffer = null;
         foreach (var frame in Frames)
         {
-            if (frame.RenderedSprite?.texture != null)
-                Object.Destroy(frame.RenderedSprite.texture);
-            if (frame.RenderedSprite != null)
-                Object.Destroy(frame.RenderedSprite);
+            if (frame.RenderedTexture != null)
+                Object.Destroy(frame.RenderedTexture);
             frame.IndexStream = null;
         }
     }
@@ -104,15 +101,6 @@ public class GIFFile(string name) : IDisposable
     }
 
     /// <summary>
-    ///     Sets the pivot point for all frame sprites.
-    /// </summary>
-    /// <param name="pivot">Pivot point to set to</param>
-    public void SetPivot(Vector2? pivot)
-    {
-        _pivotPoint = pivot ?? new Vector2(0.5f, 0.5f);
-    }
-
-    /// <summary>
     ///     Loads the GIF file from a given stream.
     /// </summary>
     /// <param name="dataStream">Stream of raw GIF data</param>
@@ -134,11 +122,11 @@ public class GIFFile(string name) : IDisposable
     }
 
     /// <summary>
-    ///     Gets the sprite of a frame. Renders the frame if it hasn't been rendered yet.
+    ///     Gets the texture of a frame. Renders the frame if it hasn't been rendered yet.
     /// </summary>
     /// <param name="frameIndex">Index of the frame</param>
-    /// <returns>The sprite of the frame</returns>
-    public Sprite GetFrameSprite(int frameIndex)
+    /// <returns>The texture of the frame</returns>
+    public Texture2D GetFrameTexture(int frameIndex)
     {
         if (!IsLoaded)
             throw new Exception("GIF file is not loaded");
@@ -148,9 +136,9 @@ public class GIFFile(string name) : IDisposable
         var frame = Frames[frameIndex];
         if (!frame.IsRendered)
             RenderFrame(frameIndex);
-        if (frame.RenderedSprite == null)
+        if (frame.RenderedTexture == null)
             throw new Exception("Frame sprite is null");
-        return frame.RenderedSprite;
+        return frame.RenderedTexture;
     }
 
     /// <summary>
@@ -635,19 +623,8 @@ public class GIFFile(string name) : IDisposable
                     break;
             }
 
-            // Generate Sprite
-            var sprite = Sprite.Create(
-                texture,
-                new Rect(0, 0, texture.width, texture.height),
-                _pivotPoint,
-                100.0f,
-                0,
-                SpriteMeshType.FullRect
-            );
-            sprite.hideFlags = HideFlags.DontUnloadUnusedAsset;
-
             // Apply to frame
-            frame.RenderedSprite = sprite;
+            frame.RenderedTexture = texture;
         }
 
         // If last frame, free memory
@@ -683,7 +660,7 @@ public class GIFFile(string name) : IDisposable
         public FrameDisposalMethod DisposalMethod =>
             GraphicsControl?.DisposalMethod ?? FrameDisposalMethod.DoNotDispose;
 
-        public bool IsRendered => RenderedSprite != null;
+        public bool IsRendered => RenderedTexture != null;
 
         // Image Descriptor
         public Color[]? LocalColorTable { get; set; }
@@ -697,6 +674,6 @@ public class GIFFile(string name) : IDisposable
         public int Height { get; set; }
 
         public List<ushort>? IndexStream { get; set; }
-        public Sprite? RenderedSprite { get; set; }
+        public Texture2D? RenderedTexture { get; set; }
     }
 }

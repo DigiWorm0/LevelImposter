@@ -40,11 +40,11 @@ public class MinimapBuilder : IElemBuilder
         background.transform.localRotation = obj.transform.localRotation;
 
         // Load Sprite
-        SpriteBuilder.OnSpriteLoad += (loadedElem, loadedSprite) =>
+        SpriteBuilder.OnSpriteLoad += (loadedElem, sprite) =>
         {
             if (loadedElem.id != elem.id || bgRenderer == null)
                 return;
-            bgRenderer.sprite = loadedSprite.Sprite;
+            bgRenderer.sprite = sprite;
             Object.Destroy(obj);
         };
 

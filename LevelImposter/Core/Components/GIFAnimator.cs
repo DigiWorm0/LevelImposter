@@ -9,12 +9,19 @@ namespace LevelImposter.Core;
 /// </summary>
 public class GIFAnimator(IntPtr intPtr) : LIAnimatorBase(intPtr)
 {
-    private GIFFile? _gifFile = null;
+    private string _id = string.Empty;
+    private GIFFile? _gifFile;
+    private Sprite?[] _frameSprites = Array.Empty<Sprite>();
     
     [HideFromIl2Cpp]
     public void Init(LIElement element, GIFFile gifFile)
     {
+        if (!_gifFile?.IsLoaded ?? true)
+            throw new Exception("GIF data is not fully loaded");
+
+        _id = element.id.ToString();
         _gifFile = gifFile;
+        _frameSprites = new Sprite[_gifFile.Frames.Count];
         Init(element);
     }
     
@@ -25,10 +32,34 @@ public class GIFAnimator(IntPtr intPtr) : LIAnimatorBase(intPtr)
     
     protected override Sprite GetFrameSprite(int frameIndex)
     {
-        var sprite = _gifFile?.GetFrameSprite(frameIndex);
-        if (sprite == null)
+        // Check to see if we have the sprite cached
+        if (_frameSprites.Length > frameIndex && _frameSprites[frameIndex] != null)
+            return _frameSprites[frameIndex];
+        
+        // Load the texture for the frame
+        var texture = _gifFile?.GetFrameTexture(frameIndex);
+        if (texture == null)
             throw new Exception("GIF frame sprite not found");
         
+        // Create the sprite
+        var sprite = Sprite.Create(
+            texture,
+            new Rect(0, 0, texture.width, texture.height),
+            new Vector2(0.5f, 0.5f),
+            100.0f,
+            0,
+            SpriteMeshType.FullRect
+        );
+        
+        // Set Sprite Flags
+        sprite.name = $"{_id}_gif_{frameIndex}";
+        sprite.hideFlags = HideFlags.DontUnloadUnusedAsset;
+        
+        // Register in GC
+        GCHandler.Register(sprite);
+        
+        // Cache the sprite
+        _frameSprites[frameIndex] = sprite;
         return sprite;
     }
 
