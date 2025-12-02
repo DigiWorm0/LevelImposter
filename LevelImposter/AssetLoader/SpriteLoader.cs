@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace LevelImposter.AssetLoader;
 
-public class SpriteLoader : AsyncQueue<LoadableSprite, Sprite>
+public class SpriteLoader : AsyncQueue<LoadableSprite, LoadedSprite>
 {
     private SpriteLoader()
     {
@@ -22,7 +22,7 @@ public class SpriteLoader : AsyncQueue<LoadableSprite, Sprite>
     {
         var loadableTexture = new LoadableTexture(id, fileStream);
         var loadableSprite = new LoadableSprite(id, loadableTexture);
-        Instance.AddToQueue(loadableSprite, onLoad);
+        Instance.AddToQueue(loadableSprite, loadedSprite => onLoad(loadedSprite));
     }
 
     /// <summary>
@@ -30,15 +30,16 @@ public class SpriteLoader : AsyncQueue<LoadableSprite, Sprite>
     /// </summary>
     /// <param name="sprite">Loadable sprite data</param>
     /// <returns>Loaded sprite</returns>
-    public static Sprite LoadSync(LoadableSprite sprite)
+    public static LoadedSprite LoadSync(LoadableSprite sprite)
     {
         return Instance.LoadImmediate(sprite);
     }
 
-    protected override Sprite Load(LoadableSprite loadable)
+    protected override LoadedSprite Load(LoadableSprite loadable)
     {
         // Load the texture
-        var texture = TextureLoader.LoadSync(loadable.Texture);
+        var loadedTexture = TextureLoader.LoadSync(loadable.Texture);
+        var texture = loadedTexture.Texture;
         
         // Generate Sprite
         var options = loadable.Options;
@@ -59,6 +60,6 @@ public class SpriteLoader : AsyncQueue<LoadableSprite, Sprite>
         GCHandler.Register(sprite);
         
         // Return Loaded Sprite
-        return sprite;
+        return new LoadedSprite(sprite, loadedTexture);
     }
 }

@@ -106,19 +106,18 @@ public class GIFFile(string name) : IDisposable
     /// <param name="dataStream">Stream of raw GIF data</param>
     public void Load(Stream dataStream)
     {
-        using (var reader = new BinaryReader(dataStream))
+        using var reader = new BinaryReader(dataStream);
+        
+        IsLoaded = false;
+        ReadHeader(reader);
+        ReadDescriptor(reader);
+        ReadGlobalColorTable(reader);
+        while (ReadBlock(reader))
         {
-            IsLoaded = false;
-            ReadHeader(reader);
-            ReadDescriptor(reader);
-            ReadGlobalColorTable(reader);
-            while (ReadBlock(reader))
-            {
-            }
-
-            _pixelBuffer = null;
-            IsLoaded = true;
         }
+
+        _pixelBuffer = null;
+        IsLoaded = true;
     }
 
     /// <summary>
@@ -162,7 +161,6 @@ public class GIFFile(string name) : IDisposable
     ///     Retrieves the metadata of the GIF file.
     /// </summary>
     /// <param name="reader">The binary reader to read from</param>
-    /// <param name="gifData">The GIFData to store the metadata in</param>
     private void ReadDescriptor(BinaryReader reader)
     {
         // Logical Screen Descriptor
@@ -191,7 +189,6 @@ public class GIFFile(string name) : IDisposable
     ///     Reads the global color table from the GIF file.
     /// </summary>
     /// <param name="reader">The binary reader to read from</param>
-    /// <param name="gifData">GIFData to store color data</param>
     private void ReadGlobalColorTable(BinaryReader reader)
     {
         if (!_hasGlobalColorTable)
@@ -215,8 +212,6 @@ public class GIFFile(string name) : IDisposable
     ///     Reads a block of unknown data from the GIF file.
     /// </summary>
     /// <param name="reader">The binary reader to read from</param>
-    /// <param name="gifData">GIFData to store block data</param>
-    /// \
     /// <returns><c>true</c> if the block was read successfully, <c>false</c> if the end of the file was reached</returns>
     private bool ReadBlock(BinaryReader reader)
     {
@@ -241,7 +236,6 @@ public class GIFFile(string name) : IDisposable
     ///     Reads an extension block from the GIF file.
     /// </summary>
     /// <param name="reader">The binary reader to read from</param>
-    /// <param name="gifData">GIFData to store extension data</param>
     private void ReadExtension(BinaryReader reader)
     {
         var extensionLabel = reader.ReadByte();
@@ -296,8 +290,6 @@ public class GIFFile(string name) : IDisposable
     ///     Reads an image block from the GIF file.
     /// </summary>
     /// <param name="reader">The binary reader to read from</param>
-    /// <param name="gifData">GIFData to store image data</param>
-    /// \
     private void ReadImageBlock(BinaryReader reader)
     {
         // Image Descriptor

@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace LevelImposter.AssetLoader;
 
-public class GIFLoader
+public static class GIFLoader
 {
     /// <summary>
     ///     Loads a GIF image from a stream.
@@ -12,7 +12,7 @@ public class GIFLoader
     /// <param name="imgStream">Image stream to load from</param>
     /// <param name="loadable">Loadable sprite object</param>
     /// <returns>A fully-loaded GIFFile containing the image data</returns>
-    public static Texture2D Load(
+    public static LoadedGIFTexture Load(
         Stream imgStream,
         LoadableTexture loadable)
     {
@@ -22,9 +22,13 @@ public class GIFLoader
 
         // Load the GIF file from the stream
         gifFile.Load(imgStream);
-
+        
         // Return the GIF file
-        // TODO: Stow gifFile to use later for animated textures
-        return gifFile.GetFrameTexture(0);
+        return new LoadedGIFTexture(gifFile);
+    }
+
+    public class LoadedGIFTexture(GIFFile gifFile) : LoadedTexture(gifFile.GetFrameTexture(0))
+    {
+        public GIFFile GIFFile => gifFile;
     }
 }

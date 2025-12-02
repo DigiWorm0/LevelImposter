@@ -28,33 +28,37 @@ public class SpriteBuilder : IElemBuilder
     public void OnBuild(LIElement elem, GameObject obj)
     {
         // Load Animations
-        // TODO: Re-implement GIF support
         if (elem.properties.animations != null)
         {
+            // Add SpriteRenderer immediately
+            obj.GetOrAddComponent<SpriteRenderer>();
+            
             // Add SpriteAnimator
-            obj.AddComponent<SpriteRenderer>();
             var spriteAnimator = obj.AddComponent<SpriteAnimator>();
             spriteAnimator.Init(elem, elem.properties.animations);
         }
         
         // Load Sprite
-        if (elem.properties.spriteID == null)
+        if (elem.properties.spriteID != null)
         {
+            // Add SpriteRenderer immediately
+            var spriteRenderer = obj.GetOrAddComponent<SpriteRenderer>();
+            
             // Load Sprite
             LoadSprite(elem, sprite =>
             {
-                // Check if animations are playing
+                // Set sprite if no animation is playing
                 var animator = obj.GetComponent<LIAnimatorBase>();
                 var animating = animator != null && animator.IsAnimating;
-                
-                // Check if sprite renderer exists
-                var spriteRenderer = obj.GetComponent<SpriteRenderer>();
-                if (spriteRenderer == null)
-                    spriteRenderer = obj.AddComponent<SpriteRenderer>();
-                
-                // Set sprite if no animation is playing
                 if (!animating)
                     spriteRenderer.sprite = sprite;
+                
+                // Check if loaded sprite is a GIF
+                if (sprite.Texture is GIFLoader.LoadedGIFTexture gifTexture)
+                {
+                    var gifAnimator = obj.AddComponent<GIFAnimator>();
+                    gifAnimator.Init(elem, gifTexture.GIFFile);
+                }
 
                 // Invoke Callback
                 try
@@ -69,15 +73,14 @@ public class SpriteBuilder : IElemBuilder
         }
 
     }
-
-
+    
     /// <summary>
     ///     Loads a sprite from an LIElement. Can also be used to preload sprites.
     /// </summary>
     /// <param name="elem">Element to load</param>
     /// <param name="onLoad">Callback when the sprite is loaded</param>
     /// <exception cref="Exception">Thrown if the sprite asset is not found in the AssetDB</exception>
-    public static void LoadSprite(LIElement elem, Action<Sprite> onLoad)
+    public static void LoadSprite(LIElement elem, Action<LoadedSprite> onLoad)
     {
         // Get LoadableSprite
         var loadableSprite = GetLoadableFromID(elem.properties.spriteID);

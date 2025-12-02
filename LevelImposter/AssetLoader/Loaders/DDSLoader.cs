@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace LevelImposter.AssetLoader;
 
-public class DDSLoader
+public static class DDSLoader
 {
     private const int DDS_HEADER_SIZE = 128;
     private const int DDS_PIXEL_FORMAT_SIZE = 32;
@@ -26,7 +26,7 @@ public class DDSLoader
     /// <param name="loadable">Loadable texture</param>
     /// <returns>A still UnityEngine.Texture2D containing the image data</returns>
     /// <exception cref="IOException">If the Stream fails to read image data</exception>
-    public static Texture2D Load(Stream imgStream, LoadableTexture loadable)
+    public static LoadedTexture Load(Stream imgStream, LoadableTexture loadable)
     {
         // Before we do anything, rent buffers for reading the DDS header and texture data
         var textureDataLength = (int)imgStream.Length - DDS_HEADER_SIZE;
@@ -59,7 +59,7 @@ public class DDSLoader
             BytePool.Return(imageDataBuffer);
 
             // Return the created texture
-            return texture;
+            return new LoadedTexture(texture);
         }
         catch
         {
@@ -108,24 +108,23 @@ public class DDSLoader
     /// <returns>True if the stream is a valid DDS file, otherwise false.</returns>
     public static bool IsDDS(Stream dataStream)
     {
-        using (var reader = new BinaryReader(dataStream, Encoding.ASCII, true))
+        using var reader = new BinaryReader(dataStream, Encoding.ASCII, true);
+        
+        try
         {
-            try
-            {
-                // Read Header
-                var header = reader.ReadBytes(4);
-                if (header.Length != 4)
-                    return false;
-                reader.BaseStream.Position = 0;
-
-                // Check for DDS magic number
-                return header[0] == 'D' && header[1] == 'D' && header[2] == 'S' && header[3] == ' ';
-            }
-
-            catch
-            {
+            // Read Header
+            var header = reader.ReadBytes(4);
+            if (header.Length != 4)
                 return false;
-            }
+            reader.BaseStream.Position = 0;
+
+            // Check for DDS magic number
+            return header[0] == 'D' && header[1] == 'D' && header[2] == 'S' && header[3] == ' ';
+        }
+
+        catch
+        {
+            return false;
         }
     }
 
@@ -142,11 +141,11 @@ public class DDSLoader
     /// <param name="options">Texture options to apply</param>
     /// <returns>A Unity Texture2D containing the resulting image data</returns>
     [HideFromIl2Cpp]
-    public static Texture2D ImageDataToTexture2D(
+    private static Texture2D ImageDataToTexture2D(
         byte[] headerData,
         byte[] textureData,
         string name = "CustomTexture",
-        LoadableTexture.TextureOptions options = null)
+        LoadableTexture.TextureOptions? options = null)
     {
         // Check the first 4 bytes for DDS magic number
         if (headerData.Length < 4 ||
@@ -184,7 +183,7 @@ public class DDSLoader
         {
             name = $"{name}_tex",
             wrapMode = TextureWrapMode.Clamp,
-            filterMode = (options?.PixelArt ?? false) ? FilterMode.Point : FilterMode.Bilinear,
+            filterMode = options?.PixelArt ?? false ? FilterMode.Point : FilterMode.Bilinear,
             hideFlags = HideFlags.HideAndDontSave,
             requestedMipmapLevel = 0
         };

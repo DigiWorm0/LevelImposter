@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace LevelImposter.AssetLoader;
 
-public class TextureLoader : AsyncQueue<LoadableTexture, Texture2D>
+public class TextureLoader : AsyncQueue<LoadableTexture, LoadedTexture>
 {
     private TextureLoader()
     {
@@ -17,12 +17,12 @@ public class TextureLoader : AsyncQueue<LoadableTexture, Texture2D>
     /// </summary>
     /// <param name="loadable">Loadable texture 2d</param>
     /// <returns>Loaded texture 2d</returns>
-    public static Texture2D LoadSync(LoadableTexture loadable)
+    public static LoadedTexture LoadSync(LoadableTexture loadable)
     {
         return Instance.LoadImmediate(loadable);
     }
 
-    protected override Texture2D Load(LoadableTexture loadable)
+    protected override LoadedTexture Load(LoadableTexture loadable)
     {
         // Open the stream
         using var stream = loadable.Streamable.OpenStream();

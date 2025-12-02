@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace LevelImposter.AssetLoader;
 
-public class PNGLoader
+public static class PNGLoader
 {
     /// <summary>
     ///     We must read the entire file into memory to process it.
@@ -21,7 +21,7 @@ public class PNGLoader
     /// <param name="loadable">Texture options to apply</param>
     /// <returns>A still UnityEngine.Texture2D containing the image data</returns>
     /// <exception cref="IOException">If the Stream fails to read image data</exception>
-    public static Texture2D Load(Stream imgStream, LoadableTexture loadable)
+    public static LoadedTexture Load(Stream imgStream, LoadableTexture loadable)
     {
         // Before we do anything, rent a buffer for reading the image data
         var imageDataLength = (int)imgStream.Length;
@@ -48,7 +48,7 @@ public class PNGLoader
             BytePool.Return(imageDataBuffer);
             
             // Return the loaded texture
-            return texture;
+            return new LoadedTexture(texture);
         }
         catch
         {

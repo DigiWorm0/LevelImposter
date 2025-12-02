@@ -26,7 +26,7 @@ public class GIFAnimator(IntPtr intPtr) : LIAnimatorBase(intPtr)
     [HideFromIl2Cpp]
     public void Init(LIElement element, GIFFile gifFile)
     {
-        if (!_gifFile?.IsLoaded ?? true)
+        if (gifFile == null || !gifFile.IsLoaded)
             throw new Exception("GIF data is not fully loaded");
 
         _id = element.id.ToString();

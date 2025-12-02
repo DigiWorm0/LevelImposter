@@ -30,13 +30,19 @@ public class SpriteAnimator(IntPtr intPtr) : LIAnimatorBase(intPtr)
         Init(element);
     }
     
+    [HideFromIl2Cpp]
     private LISpriteAnimation? GetCurrentAnimation()
     {
         if (_animations == null)
             throw new InvalidOperationException("Animations not initialized");
         
-        var animation = _animations.FirstOrDefault(anim => anim.id == _currentAnimationID);
-        return animation ?? _defaultAnimation;
+        // Avoid using LINQ for IL2CPP compatibility
+        foreach (var animation in _animations)
+        {
+            if (animation.id == _currentAnimationID)
+                return animation;
+        }
+        return null;
     }
     
     public override void PlayType(string type)
@@ -63,7 +69,7 @@ public class SpriteAnimator(IntPtr intPtr) : LIAnimatorBase(intPtr)
             throw new Exception("Animation sprite loadable not found");
         
         // Load and return the sprite
-        return SpriteLoader.LoadSync((LoadableSprite)loadableSprite);
+        return SpriteLoader.LoadSync((LoadableSprite)loadableSprite).Sprite;
     }
 
     protected override float GetFrameDelay(int frameIndex)
