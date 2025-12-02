@@ -27,44 +27,47 @@ public class SpriteBuilder : IElemBuilder
 
     public void OnBuild(LIElement elem, GameObject obj)
     {
-        if (elem.properties.spriteID == null)
-            return;
-
-        // Add SpriteRenderer
-        var spriteRenderer = obj.AddComponent<SpriteRenderer>();
-
-        // Load Sprite
-        LoadSprite(elem, sprite =>
+        // Load Animations
+        // TODO: Re-implement GIF support
+        if (elem.properties.animations != null)
         {
-            // Set Sprite
-            spriteRenderer.sprite = sprite;
-
-            // Handle Sprite Anim
-            if (elem.properties.animation != null)
+            // Add SpriteAnimator
+            obj.AddComponent<SpriteRenderer>();
+            var spriteAnimator = obj.AddComponent<SpriteAnimator>();
+            spriteAnimator.Init(elem, elem.properties.animations);
+        }
+        
+        // Load Sprite
+        if (elem.properties.spriteID == null)
+        {
+            // Load Sprite
+            LoadSprite(elem, sprite =>
             {
-                // Add SpriteAnimator
-                var spriteAnimator = obj.AddComponent<SpriteAnimator>();
-                spriteAnimator.Init(elem, elem.properties.animation);
-            }
+                // Check if animations are playing
+                var animator = obj.GetComponent<LIAnimatorBase>();
+                var animating = animator != null && animator.IsAnimating;
+                
+                // Check if sprite renderer exists
+                var spriteRenderer = obj.GetComponent<SpriteRenderer>();
+                if (spriteRenderer == null)
+                    spriteRenderer = obj.AddComponent<SpriteRenderer>();
+                
+                // Set sprite if no animation is playing
+                if (!animating)
+                    spriteRenderer.sprite = sprite;
 
-            // Handle GIF
-            // TODO: Re-implement GIF support
-            // if (loadedSprite is GIFLoader.LoadedGIF gifData)
-            // {
-            //     var gifAnimator = obj.AddComponent<GIFAnimator>();
-            //     gifAnimator.Init(elem, gifData.GIFFile);
-            // }
+                // Invoke Callback
+                try
+                {
+                    OnSpriteLoad?.Invoke(elem, sprite);
+                }
+                catch (Exception e)
+                {
+                    LILogger.Error(e);
+                }
+            });
+        }
 
-            // Invoke Callback
-            try
-            {
-                OnSpriteLoad?.Invoke(elem, sprite);
-            }
-            catch (Exception e)
-            {
-                LILogger.Error(e);
-            }
-        });
     }
 
 

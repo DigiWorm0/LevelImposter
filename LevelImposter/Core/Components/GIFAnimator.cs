@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Il2CppInterop.Runtime.Attributes;
 using UnityEngine;
 
@@ -12,6 +13,15 @@ public class GIFAnimator(IntPtr intPtr) : LIAnimatorBase(intPtr)
     private string _id = string.Empty;
     private GIFFile? _gifFile;
     private Sprite?[] _frameSprites = Array.Empty<Sprite>();
+
+    private static readonly List<string> AUTOPLAY_BLACKLIST =
+    [
+        "util-vent1",
+        "util-vent2",
+        "sab-doorv",
+        "sab-doorh",
+        "util-cam"
+    ];
     
     [HideFromIl2Cpp]
     public void Init(LIElement element, GIFFile gifFile)
@@ -22,7 +32,35 @@ public class GIFAnimator(IntPtr intPtr) : LIAnimatorBase(intPtr)
         _id = element.id.ToString();
         _gifFile = gifFile;
         _frameSprites = new Sprite[_gifFile.Frames.Count];
+        
+        // Initialize base
         Init(element);
+        
+        // Stop autoplay for certain elements
+        var door = GetComponent<PlainDoor>();
+        if (AUTOPLAY_BLACKLIST.Contains(element.type)) // Don't autoplay
+            Stop(door && !door.IsOpen); // Jump to end if door is closed
+    }
+
+    public override void PlayType(string type)
+    {
+        switch (type)
+        {
+            case "openDoor":
+            case "exitVent":
+                Play(false, true);
+                break;
+            case "closeDoor":
+            case "enterVent":
+                Play(false, false);
+                break;
+            case "camsInactive":
+                Stop();
+                break;
+            default:
+                Play();
+                break;
+        }
     }
     
     protected override int GetFrameCount()

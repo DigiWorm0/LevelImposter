@@ -32,7 +32,7 @@ public static class EnterVentPatch
 
         // GIF animation
         else if (animator != null)
-            animator.Play(false, false);
+            animator.PlayType("enterVent");
 
         // Still image
         else
@@ -71,8 +71,8 @@ public static class ExitVentPatch
 
         // GIF animation
         else if (animator != null)
-            animator.Play(false, true);
-
+            animator.PlayType("exitVent");
+                
         // Still image
         else
             return false;

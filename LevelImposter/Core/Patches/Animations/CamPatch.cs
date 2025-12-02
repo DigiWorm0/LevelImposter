@@ -27,10 +27,7 @@ public static class CamAnimationPatch
         }
         else if (animator != null)
         {
-            if (on)
-                animator.Play();
-            else
-                animator.Stop();
+            animator.PlayType(on ? "camsActive" : "camsInactive");
         }
 
         return false;

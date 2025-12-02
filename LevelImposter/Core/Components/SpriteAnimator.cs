@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using BepInEx.Unity.IL2CPP.Utils.Collections;
 using Il2CppInterop.Runtime.Attributes;
 using Il2CppInterop.Runtime.InteropTypes.Fields;
@@ -16,18 +17,39 @@ namespace LevelImposter.Core;
 /// </summary>
 public class SpriteAnimator(IntPtr intPtr) : LIAnimatorBase(intPtr)
 {
-    private LISpriteAnimation? _animation;
+    private Guid _currentAnimationID = Guid.Empty;
+    private LISpriteAnimation? _defaultAnimation;
+    private LISpriteAnimation[]? _animations;
     
     [HideFromIl2Cpp]
-    public void Init(LIElement element, LISpriteAnimation animation)
+    public void Init(LIElement element, LISpriteAnimation[] animations)
     {
-        _animation = animation;
+        _animations = animations;
+        _defaultAnimation = animations.FirstOrDefault(anim => anim.type == "default");
+        _currentAnimationID = _defaultAnimation?.id ?? Guid.Empty;
         Init(element);
+    }
+    
+    private LISpriteAnimation? GetCurrentAnimation()
+    {
+        if (_animations == null)
+            throw new InvalidOperationException("Animations not initialized");
+        
+        var animation = _animations.FirstOrDefault(anim => anim.id == _currentAnimationID);
+        return animation ?? _defaultAnimation;
+    }
+    
+    public override void PlayType(string type)
+    {
+        SetAnimationType(type);
+        
+        var isDefault = type == "default";
+        Play(isDefault, false);
     }
     
     protected override int GetFrameCount()
     {
-        return _animation?.frames.Length ?? 0;
+        return GetCurrentAnimation()?.frames.Length ?? 0;
     }
     
     protected override Sprite GetFrameSprite(int frameIndex)
@@ -53,7 +75,11 @@ public class SpriteAnimator(IntPtr intPtr) : LIAnimatorBase(intPtr)
     protected override void OnClone(LIAnimatorBase originalAnim)
     {
         if (originalAnim is SpriteAnimator originalSpriteAnim)
-            _animation = originalSpriteAnim._animation;
+        {
+            _animations = originalSpriteAnim._animations;
+            _defaultAnimation = originalSpriteAnim._defaultAnimation;
+            _currentAnimationID = originalSpriteAnim._currentAnimationID;
+        }
     }
 
     /// <summary>
@@ -65,9 +91,20 @@ public class SpriteAnimator(IntPtr intPtr) : LIAnimatorBase(intPtr)
     [HideFromIl2Cpp]
     private LISpriteAnimationFrame GetFrameData(int frameIndex)
     {
-        if (_animation == null)
+        var animation = GetCurrentAnimation();
+        if (animation == null)
             throw new InvalidOperationException("Animation not initialized");
         
-        return _animation.frames[frameIndex % _animation.frames.Length];
+        return animation.frames[frameIndex % animation.frames.Length];
+    }
+    
+    /// <summary>
+    /// Sets the current animation based on type
+    /// </summary>
+    /// <param name="type">Type of animation to set</param>
+    private void SetAnimationType(string type)
+    {
+        var animation = _animations?.FirstOrDefault(anim => anim.type == type);
+        _currentAnimationID = animation?.id ?? _defaultAnimation?.id ?? Guid.Empty;
     }
 }

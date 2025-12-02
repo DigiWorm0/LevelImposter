@@ -9,21 +9,13 @@ using UnityEngine;
 namespace LevelImposter.Core;
 
 /// <summary>
-///     Component to animate GIF data in-game
+///     Base component to animate LI elements in-game.
+///     Implemented by specific animator types (e.g. GIFAnimator, SpriteAnimator)
 /// </summary>
 public class LIAnimatorBase(IntPtr intPtr) : MonoBehaviour(intPtr)
 {
     private static readonly Dictionary<long, LIAnimatorBase> _allAnimators = new();
     private static long _nextAnimatorID = 1;
-
-    private static readonly List<string> AUTOPLAY_BLACKLIST =
-    [
-        "util-vent1",
-        "util-vent2",
-        "sab-doorv",
-        "sab-doorh",
-        "util-cam"
-    ];
 
     private bool _loopByDefault;
     private int _frameIndex;
@@ -71,20 +63,15 @@ public class LIAnimatorBase(IntPtr intPtr) : MonoBehaviour(intPtr)
         _spriteRenderer = GetComponent<SpriteRenderer>();
         _loopByDefault = element.properties.loopGIF ?? true;
 
-        // Check for Door Component
-        var door = GetComponent<PlainDoor>();
-
-        // Check for AutoPlay
-        if (_frameCount == 1) // Still image
+        // AutoPlay
+        if (_frameCount == 1)
             _spriteRenderer.sprite = GetFrameSprite(0);
-        else if (AUTOPLAY_BLACKLIST.Contains(element.type)) // Don't autoplay
-            Stop(door && !door.IsOpen); // Jump to end if door is closed
-        else // Autoplay
+        else 
             Play();
     }
 
     /// <summary>
-    ///     Plays the GIF animation with default options
+    ///     Plays the animation with default options
     /// </summary>
     public void Play()
     {
@@ -92,10 +79,10 @@ public class LIAnimatorBase(IntPtr intPtr) : MonoBehaviour(intPtr)
     }
 
     /// <summary>
-    ///     Plays the GIF animation with custom options
+    ///     Plays the animation with custom options
     /// </summary>
-    /// <param name="repeat">True iff the GIF should loop</param>
-    /// <param name="reverse">True iff the GIF should play in reverse</param>
+    /// <param name="repeat">True iff the animation should loop</param>
+    /// <param name="reverse">True iff the animation should play in reverse</param>
     public void Play(bool repeat, bool reverse)
     {
         if (_spriteRenderer == null)
@@ -105,8 +92,17 @@ public class LIAnimatorBase(IntPtr intPtr) : MonoBehaviour(intPtr)
         _animationCoroutine = StartCoroutine(CoAnimate(repeat, reverse).WrapToIl2Cpp());
     }
 
+    /**
+     * Plays a specific type of animation, if supported by the animator
+     * @param type The type of animation to play
+     */
+    public virtual void PlayType(string type)
+    {
+        throw new NotImplementedException();
+    }
+
     /// <summary>
-    ///     Stops the GIF animation
+    ///     Stops the animation
     /// </summary>
     public void Stop(bool reversed = false)
     {
@@ -123,7 +119,7 @@ public class LIAnimatorBase(IntPtr intPtr) : MonoBehaviour(intPtr)
     }
 
     /// <summary>
-    ///     Coroutine to run GIF animation
+    ///     Coroutine to run animation
     /// </summary>
     /// <param name="repeat">TRUE if animation should loop</param>
     /// <param name="reverse">TRUE if animation should run in reverse</param>

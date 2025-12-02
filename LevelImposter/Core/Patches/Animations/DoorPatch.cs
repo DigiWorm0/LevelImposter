@@ -46,7 +46,7 @@ public static class DoorPatch
         {
             // GIFAnimator
             if (_hasStateChanged)
-                animator.Play(false, open);
+                animator.PlayType(open ? "openDoor" : "closeDoor");
             spriteRenderer.enabled = true;
         }
         else

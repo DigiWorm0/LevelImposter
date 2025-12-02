@@ -6,5 +6,6 @@ namespace LevelImposter.Core;
 public class LISpriteAnimation
 {
     public Guid id { get; set; }
+    public string? type { get; set; }
     public LISpriteAnimationFrame[] frames { get; set; }
 }
