@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using BepInEx.Unity.IL2CPP.Utils.Collections;
 using Il2CppInterop.Runtime.Attributes;
-using Il2CppInterop.Runtime.InteropTypes.Fields;
-using LevelImposter.Shop;
 using UnityEngine;
 
 namespace LevelImposter.Core;
@@ -12,10 +8,11 @@ namespace LevelImposter.Core;
 /// <summary>
 ///     Component to animate GIF data in-game
 /// </summary>
-public class GIFAnimator(IntPtr intPtr) : MonoBehaviour(intPtr)
+public class GIFAnimator(IntPtr intPtr) : LIAnimatorBase(intPtr)
 {
-    private static readonly Dictionary<long, GIFAnimator> _allAnimators = new();
-    private static long _nextAnimatorID = 1;
+    private string _id = string.Empty;
+    private GIFFile? _gifFile;
+    private Sprite?[] _frameSprites = Array.Empty<Sprite>();
 
     private static readonly List<string> AUTOPLAY_BLACKLIST =
     [
@@ -25,168 +22,103 @@ public class GIFAnimator(IntPtr intPtr) : MonoBehaviour(intPtr)
         "sab-doorh",
         "util-cam"
     ];
-
-    private Coroutine? _animationCoroutine;
-
-    private bool _defaultLoopGIF;
-    private int _frame;
-    private GIFFile? _gifData;
-    private SpriteRenderer? _spriteRenderer;
-
-    public Il2CppValueField<long> AnimatorID; // Unique ID maintained on instantiation
-
-    public bool IsAnimating { get; private set; }
-
-    private long _animatorID => AnimatorID.Get();
-
-    public void Awake()
-    {
-        // Check if object was cloned
-        if (_animatorID != 0)
-        {
-            var objectExists = _allAnimators.TryGetValue(_animatorID, out var originalObject);
-            if (objectExists && originalObject != null) OnClone(originalObject);
-        }
-
-        // Update Object ID
-        AnimatorID.Set(_nextAnimatorID++);
-        _allAnimators.Add(_animatorID, this);
-    }
-
-    public void OnDestroy()
-    {
-        _allAnimators.Remove(_animatorID);
-
-        _gifData = null;
-        _spriteRenderer = null;
-        _animationCoroutine = null;
-    }
-
-    /// <summary>
-    ///     Initializes the component with GIF data
-    /// </summary>
-    /// <param name="element">Element that is initialized</param>
-    /// <param name="gifData">GIF data to animate</param>
+    
     [HideFromIl2Cpp]
-    public void Init(LIElement element, GIFFile? gifData)
+    public void Init(LIElement element, GIFFile gifFile)
     {
-        _spriteRenderer = GetComponent<SpriteRenderer>();
-        _gifData = gifData;
-        _defaultLoopGIF = element.properties.loopGIF ?? true;
+        if (gifFile == null || !gifFile.IsLoaded)
+            throw new Exception("GIF data is not fully loaded");
 
-        // Preload GIFs
-        var shouldPreload = MapLoader.CurrentMap?.properties.preloadAllGIFs ?? false;
-        if (shouldPreload)
-            _gifData?.RenderAllFrames();
-
-        // Check for Door Component
+        _id = element.id.ToString();
+        _gifFile = gifFile;
+        _frameSprites = new Sprite[_gifFile.Frames.Count];
+        
+        // Initialize base
+        Init(element);
+        
+        // Stop autoplay for certain elements
         var door = GetComponent<PlainDoor>();
-
-        // Check for AutoPlay
-        if (_gifData?.Frames.Count == 1) // Still image
-            _spriteRenderer.sprite = _gifData.GetFrameSprite(0);
-        else if (AUTOPLAY_BLACKLIST.Contains(element.type)) // Don't autoplay
+        if (AUTOPLAY_BLACKLIST.Contains(element.type)) // Don't autoplay
             Stop(door && !door.IsOpen); // Jump to end if door is closed
-        else // Autoplay
-            Play();
     }
 
-    /// <summary>
-    ///     Plays the GIF animation with default options
-    /// </summary>
-    public void Play()
+    public override void PlayType(string type)
     {
-        Play(_defaultLoopGIF, false);
-    }
-
-    /// <summary>
-    ///     Plays the GIF animation with custom options
-    /// </summary>
-    /// <param name="repeat">True iff the GIF should loop</param>
-    /// <param name="reverse">True iff the GIF should play in reverse</param>
-    public void Play(bool repeat, bool reverse)
-    {
-        if (_gifData == null)
-            LILogger.Warn($"{name} does not have any data");
-        if (_spriteRenderer == null)
-            LILogger.Warn($"{name} does not have a spriteRenderer");
-        if (_animationCoroutine != null)
-            StopCoroutine(_animationCoroutine);
-        _animationCoroutine = StartCoroutine(CoAnimate(repeat, reverse).WrapToIl2Cpp());
-    }
-
-    /// <summary>
-    ///     Stops the GIF animation
-    /// </summary>
-    public void Stop(bool reversed = false)
-    {
-        if (_animationCoroutine != null)
-            StopCoroutine(_animationCoroutine);
-        IsAnimating = false;
-
-        if (_spriteRenderer == null || _gifData == null)
-            return;
-
-        _frame = reversed ? _gifData.Frames.Count - 1 : 0;
-        _spriteRenderer.sprite = _gifData.GetFrameSprite(_frame);
-        _spriteRenderer.enabled = true;
-    }
-
-    /// <summary>
-    ///     Coroutine to run GIF animation
-    /// </summary>
-    /// <param name="repeat">TRUE if animation should loop</param>
-    /// <param name="reverse">TRUE if animation should run in reverse</param>
-    /// <returns>IEnumerator for Unity Coroutine</returns>
-    [HideFromIl2Cpp]
-    private IEnumerator CoAnimate(bool repeat, bool reverse)
-    {
-        if (_gifData == null || _spriteRenderer == null)
-            yield break;
-        // Flag Start
-        IsAnimating = true;
-        _spriteRenderer.enabled = true;
-
-        // Reset frame
-        if (reverse && _frame == 0)
-            _frame = _gifData.Frames.Count - 1;
-        else if (!reverse && _frame == _gifData.Frames.Count - 1)
-            _frame = 0;
-
-        // Loop
-        while (IsAnimating)
+        switch (type)
         {
-            // Wait for main thread
-            while (!LagLimiter.ShouldContinue(60))
-                yield return null;
-
-            // Render sprite
-            _spriteRenderer.sprite = _gifData.GetFrameSprite(_frame);
-
-            // Wait for next frame
-            yield return new WaitForSeconds(_gifData.Frames[_frame].Delay);
-
-            // Update frame index
-            _frame = reverse ? _frame - 1 : _frame + 1;
-
-            // Keep frame in bounds
-            var isOutOfBounds = _frame < 0 || _frame >= _gifData.Frames.Count;
-            _frame = (_frame + _gifData.Frames.Count) % _gifData.Frames.Count;
-
-            // Stop if out of bounds
-            if (isOutOfBounds && !repeat)
-                Stop(!reverse);
+            case "openDoor":
+            case "exitVent":
+                Play(false, true);
+                break;
+            case "closeDoor":
+            case "enterVent":
+                Play(false, false);
+                break;
+            case "camsInactive":
+                Stop();
+                break;
+            default:
+                Play();
+                break;
         }
     }
-
-    /// <summary>
-    ///     Fires when the animator is cloned
-    /// </summary>
-    /// <param name="original"></param>
-    private void OnClone(GIFAnimator originalAnim)
+    
+    protected override int GetFrameCount()
     {
-        _spriteRenderer = GetComponent<SpriteRenderer>();
-        _gifData = originalAnim._gifData;
-        _defaultLoopGIF = originalAnim._defaultLoopGIF;
+        return _gifFile?.Frames.Count ?? 0;
+    }
+    
+    protected override Sprite GetFrameSprite(int frameIndex)
+    {
+        // Check to see if we have the sprite cached
+        if (_frameSprites.Length > frameIndex && _frameSprites[frameIndex] != null)
+            return _frameSprites[frameIndex];
+        
+        // Load the texture for the frame
+        var texture = _gifFile?.GetFrameTexture(frameIndex);
+        if (texture == null)
+            throw new Exception("GIF frame sprite not found");
+        
+        // Create the sprite
+        var sprite = Sprite.Create(
+            texture,
+            new Rect(0, 0, texture.width, texture.height),
+            new Vector2(0.5f, 0.5f),
+            100.0f,
+            0,
+            SpriteMeshType.FullRect
+        );
+        
+        // Set Sprite Flags
+        sprite.name = $"{_id}_gif_{frameIndex}";
+        sprite.hideFlags = HideFlags.DontUnloadUnusedAsset;
+        
+        // Register in GC
+        GCHandler.Register(sprite);
+        
+        // Cache the sprite
+        _frameSprites[frameIndex] = sprite;
+        return sprite;
+    }
+
+    protected override float GetFrameDelay(int frameIndex)
+    {
+        var frame = GetFrameData(frameIndex);
+        return frame.Delay;
+    }
+    
+    protected override void OnClone(LIAnimatorBase originalAnim)
+    {
+        if (originalAnim is GIFAnimator originalGIFAnim)
+            _gifFile = originalGIFAnim._gifFile;
+    }
+    
+    [HideFromIl2Cpp]
+    private GIFFile.GIFFrame GetFrameData(int frameIndex)
+    {
+        if (_gifFile == null)
+            throw new Exception("GIF data not initialized");
+        
+        return _gifFile.Frames[frameIndex % _gifFile.Frames.Count];
     }
 }

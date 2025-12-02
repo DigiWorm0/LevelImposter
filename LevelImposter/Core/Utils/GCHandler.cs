@@ -43,8 +43,10 @@ public static class GCHandler
             _disposables.Pop().Dispose();
 
         // Asset Loaders
+        LILogger.Info($"{TextureLoader.Instance.CacheSize} cached textures");
         LILogger.Info($"{SpriteLoader.Instance.CacheSize} cached sprites");
         LILogger.Info($"{AudioLoader.Instance.CacheSize} cached audio clips");
+        TextureLoader.Instance.Clear();
         SpriteLoader.Instance.Clear();
         AudioLoader.Instance.Clear();
 
@@ -53,7 +55,7 @@ public static class GCHandler
     }
 
     /// <summary>
-    ///     Gets f the current memory usage is high
+    ///     Gets if the current memory usage is high
     /// </summary>
     /// <returns>True if memory usage is high. False otherwise</returns>
     public static bool IsLowMemory()

@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace LevelImposter.AssetLoader;
 
-public class DDSLoader
+public static class DDSLoader
 {
     private const int DDS_HEADER_SIZE = 128;
     private const int DDS_PIXEL_FORMAT_SIZE = 32;
@@ -20,13 +20,13 @@ public class DDSLoader
     private static ArrayPool<byte> BytePool => ArrayPool<byte>.Shared;
 
     /// <summary>
-    ///     Loads a DDS (DirectDraw Surface) image from a stream.
+    ///     Loads a DDS (DirectDraw Surface) image from a loadable.
     /// </summary>
     /// <param name="imgStream">Raw DDS file stream</param>
-    /// <param name="loadable">Sprite options to apply</param>
-    /// <returns>A still UnityEngine.Sprite containing the image data</returns>
+    /// <param name="loadable">Loadable texture</param>
+    /// <returns>A still UnityEngine.Texture2D containing the image data</returns>
     /// <exception cref="IOException">If the Stream fails to read image data</exception>
-    public static LoadedSprite Load(Stream imgStream, LoadableSprite loadable)
+    public static LoadedTexture Load(Stream imgStream, LoadableTexture loadable)
     {
         // Before we do anything, rent buffers for reading the DDS header and texture data
         var textureDataLength = (int)imgStream.Length - DDS_HEADER_SIZE;
@@ -46,27 +46,20 @@ public class DDSLoader
             if (readBytes != textureDataLength)
                 throw new IOException("Failed to read all image data");
 
-            // Get Options
-            var options = loadable.Options;
-
             // Create Texture
-            var sprite = ImageDataToSprite(
+            var texture = ImageDataToTexture2D(
                 headerData,
                 imageDataBuffer,
                 loadable.ID,
-                options.Pivot,
-                options.PixelArt
+                loadable.Options
             );
 
             // Return the rented buffers
             BytePool.Return(headerData);
             BytePool.Return(imageDataBuffer);
 
-            // Register in GC
-            GCHandler.Register(sprite);
-
-            // Create Loaded Sprite
-            return new LoadedSprite(sprite);
+            // Return the created texture
+            return new LoadedTexture(texture);
         }
         catch
         {
@@ -115,47 +108,44 @@ public class DDSLoader
     /// <returns>True if the stream is a valid DDS file, otherwise false.</returns>
     public static bool IsDDS(Stream dataStream)
     {
-        using (var reader = new BinaryReader(dataStream, Encoding.ASCII, true))
+        using var reader = new BinaryReader(dataStream, Encoding.ASCII, true);
+        
+        try
         {
-            try
-            {
-                // Read Header
-                var header = reader.ReadBytes(4);
-                if (header.Length != 4)
-                    return false;
-                reader.BaseStream.Position = 0;
-
-                // Check for DDS magic number
-                return header[0] == 'D' && header[1] == 'D' && header[2] == 'S' && header[3] == ' ';
-            }
-
-            catch
-            {
+            // Read Header
+            var header = reader.ReadBytes(4);
+            if (header.Length != 4)
                 return false;
-            }
+            reader.BaseStream.Position = 0;
+
+            // Check for DDS magic number
+            return header[0] == 'D' && header[1] == 'D' && header[2] == 'S' && header[3] == ' ';
+        }
+
+        catch
+        {
+            return false;
         }
     }
 
     /// <summary>
-    ///     Converts raw DDS (DirectDraw Surface) bytes to a still sprite.
+    ///     Converts raw DDS (DirectDraw Surface) bytes to a still Texture2D.
     ///     <para>
     ///         This is a relatively expensive operation and must be done on the main Unity thread.
-    ///         Texture data is removed from CPU memory making the resulting Sprite non-readable.
+    ///         Texture data is removed from CPU memory making the resulting texture non-readable.
     ///     </para>
     /// </summary>
     /// <param name="headerData">DDS header data in within IL2CPP memory</param>
     /// <param name="textureData">Raw texture data in within IL2CPP memory</param>
-    /// <param name="name">Name of the resulting sprite objects</param>
-    /// <param name="pivot">Pivots the sprite by a Vector2. (Default: 0.5f, 0.5f)</param>
-    /// <param name="isPixelArt">Whether the image is pixel art or not. Disables Bilinear filtering. (Default: false)</param>
-    /// <returns>A Unity Sprite containing the resulting image data</returns>
+    /// <param name="name">Name of the resulting texture object</param>
+    /// <param name="options">Texture options to apply</param>
+    /// <returns>A Unity Texture2D containing the resulting image data</returns>
     [HideFromIl2Cpp]
-    public static Sprite ImageDataToSprite(
+    private static Texture2D ImageDataToTexture2D(
         byte[] headerData,
         byte[] textureData,
-        string name = "CustomSprite",
-        Vector2? pivot = null,
-        bool isPixelArt = false)
+        string name = "CustomTexture",
+        LoadableTexture.TextureOptions? options = null)
     {
         // Check the first 4 bytes for DDS magic number
         if (headerData.Length < 4 ||
@@ -193,7 +183,7 @@ public class DDSLoader
         {
             name = $"{name}_tex",
             wrapMode = TextureWrapMode.Clamp,
-            filterMode = isPixelArt ? FilterMode.Point : FilterMode.Bilinear,
+            filterMode = options?.PixelArt ?? false ? FilterMode.Point : FilterMode.Bilinear,
             hideFlags = HideFlags.HideAndDontSave,
             requestedMipmapLevel = 0
         };
@@ -201,21 +191,10 @@ public class DDSLoader
 
         // Remove from CPU Memory
         texture.Apply(false, true);
-
-        // Generate Sprite
-        var sprite = Sprite.Create(
-            texture,
-            new Rect(0, 0, imgWidth, imgHeight),
-            pivot ?? new Vector2(0.5f, 0.5f),
-            100.0f,
-            0,
-            SpriteMeshType.FullRect
-        );
-
-        // Set Sprite Flags
-        sprite.name = $"{name}_sprite";
-        sprite.hideFlags = HideFlags.DontUnloadUnusedAsset;
-
-        return sprite;
+        
+        // Register in GC
+        GCHandler.Register(texture);
+        
+        return texture;
     }
 }

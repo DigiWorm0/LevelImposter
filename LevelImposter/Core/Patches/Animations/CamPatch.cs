@@ -19,18 +19,15 @@ public static class CamAnimationPatch
 
         // Animation
         var spriteAnim = __instance.GetComponent<SpriteAnim>();
-        var gifAnim = __instance.GetComponent<GIFAnimator>();
+        var animator = __instance.GetComponent<LIAnimatorBase>();
         var clipAnim = on ? __instance.OnAnim : __instance.OffAnim;
         if (spriteAnim != null && clipAnim != null)
         {
             spriteAnim.Play(clipAnim);
         }
-        else if (gifAnim != null)
+        else if (animator != null)
         {
-            if (on)
-                gifAnim.Play();
-            else
-                gifAnim.Stop();
+            animator.PlayType(on ? "camsActive" : "camsInactive");
         }
 
         return false;

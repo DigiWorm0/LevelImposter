@@ -153,7 +153,7 @@ public static class LevelImposterAPI
         {
             // Save to file cache
             ThumbnailCache.Save(metadata.id, imgData);
-
+            
             // Load the sprite
             SpriteLoader.LoadAsync(
                 $"{metadata.id}_thumb",

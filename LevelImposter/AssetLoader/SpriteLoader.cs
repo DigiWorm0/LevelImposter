@@ -15,38 +15,51 @@ public class SpriteLoader : AsyncQueue<LoadableSprite, LoadedSprite>
     /// <summary>
     ///     Simplified shorthand to load a sprite asynchronously.
     /// </summary>
-    /// <param name="id">ID for cache</param>
-    /// <param name="streamable">Streamable with raw image data</param>
-    /// <param name="callback">Callback when the sprite is loaded</param>
-    public static void LoadAsync(string id, IStreamable streamable, Action<Sprite> callback)
+    /// <param name="id">ID of the sprite</param>
+    /// <param name="fileStream">Streamable file to load from</param>
+    /// <param name="onLoad">Callback when the sprite is loaded</param>
+    public static void LoadAsync(string id, IStreamable fileStream, Action<Sprite> onLoad)
     {
-        Instance.AddToQueue(
-            new LoadableSprite(id, streamable),
-            loadedSprite => callback(loadedSprite.Sprite)
-        );
+        var loadableTexture = new LoadableTexture(id, fileStream);
+        var loadableSprite = new LoadableSprite(id, loadableTexture);
+        Instance.AddToQueue(loadableSprite, loadedSprite => onLoad(loadedSprite));
+    }
+
+    /// <summary>
+    ///    Simplified shorthand to load a sprite synchronously.
+    /// </summary>
+    /// <param name="sprite">Loadable sprite data</param>
+    /// <returns>Loaded sprite</returns>
+    public static LoadedSprite LoadSync(LoadableSprite sprite)
+    {
+        return Instance.LoadImmediate(sprite);
     }
 
     protected override LoadedSprite Load(LoadableSprite loadable)
     {
-        // Open the stream
-        using var stream = loadable.Streamable.OpenStream();
+        // Load the texture
+        var loadedTexture = TextureLoader.LoadSync(loadable.Texture);
+        var texture = loadedTexture.Texture;
+        
+        // Generate Sprite
+        var options = loadable.Options;
+        var sprite = Sprite.Create(
+            texture,
+            options.Frame ?? new Rect(0, 0, texture.width, texture.height),
+            options.Pivot ?? new Vector2(0.5f, 0.5f),
+            100.0f,
+            0,
+            SpriteMeshType.FullRect
+        );
 
-        // Check file type
-        var isGIF = GIFFile.IsGIF(stream);
-        var isDDS = DDSLoader.IsDDS(stream);
-        var format = isGIF ? "GIF" :
-            isDDS ? "DDS" :
-            "PNG/JPG";
-
-        // Load the sprite
-        var loadedSprite = format switch
-        {
-            "DDS" => DDSLoader.Load(stream, loadable),
-            "GIF" => GIFLoader.Load(stream, loadable),
-            _ => PNGLoader.Load(stream, loadable)
-        };
-
-        // Return the loaded sprite
-        return loadedSprite;
+        // Set Sprite Flags
+        sprite.name = $"{loadable.ID}_sprite";
+        sprite.hideFlags = HideFlags.DontUnloadUnusedAsset;
+        
+        // Register in GC
+        GCHandler.Register(sprite);
+        
+        // Return Loaded Sprite
+        return new LoadedSprite(sprite, loadedTexture);
     }
 }

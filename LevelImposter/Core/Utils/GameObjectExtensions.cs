@@ -46,4 +46,19 @@ public static class GameObjectExtensions
         for (var i = 0; i < gameObject.transform.childCount; i++)
             gameObject.transform.GetChild(i).gameObject.SetLayerOfChildren(layer);
     }
+    
+    /// <summary>
+    /// Gets a component of type T from the GameObject.
+    /// If the component does not exist, it is added.
+    /// </summary>
+    /// <param name="gameObject">The GameObject to get or add the component to.</param>
+    /// <typeparam name="T">The type of component to get or add.</typeparam>
+    /// <returns>The existing or newly added component of type T.</returns>
+    public static T GetOrAddComponent<T>(this GameObject gameObject) where T : Component
+    {
+        var component = gameObject.GetComponent<T>();
+        if (component == null)
+            component = gameObject.AddComponent<T>();
+        return component;
+    }
 }
