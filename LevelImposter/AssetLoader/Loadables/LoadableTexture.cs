@@ -17,7 +17,8 @@ public readonly struct LoadableTexture(string _id, IDataStore _dataStore) : ICac
         /// If true, the texture will use pixel art filtering (point filtering)
         public bool PixelArt { get; set; } = false;
         
-        /// If false, the texture will be disposed automatically after the map is unloaded
+        /// If true (default), the texture will be disposed automatically after the map is unloaded.
+        /// If false, you must manage the texture's lifecycle manually.
         public bool AddToGC { get; set; } = true;
     }
     

@@ -17,7 +17,8 @@ public readonly struct LoadableSprite(string _id, LoadableTexture _tex) : ICacha
         /// If set, defines the portion of the texture to use for the sprite. Otherwise, the full texture is used.
         public Rect? Frame { get; set; }
         
-        /// If false, the texture will be disposed automatically after the map is unloaded
+        /// If true (default), the sprite will be disposed automatically after the map is unloaded.
+        /// If false, you must manage the sprite's lifecycle manually.
         public bool AddToGC { get; set; } = true;
     }
 

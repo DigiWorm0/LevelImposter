@@ -17,8 +17,11 @@ public static class MapLoader
     /// <param name="map">LevelImposter map data</param>
     public static void LoadMap(LIMap? map, bool isFallback)
     {
+        // Wipe cache if map changed
+        // (Keeps cache if replaying the same map)
         if (_lastMapID != map?.id)
             GCHandler.Clean();
+        
         _lastMapID = map?.id;
         CurrentMap = map;
         IsFallback = isFallback;
