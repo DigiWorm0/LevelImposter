@@ -122,7 +122,10 @@ public class SpriteBuilder : IElemBuilder
         // Fallback to normal sprite
         var asset = AssetDB?.Get(spriteID);
         if (asset == null)
-            throw new Exception($"Asset {spriteID} not found");
+        {
+            LILogger.Warn($"Could not find asset for sprite {spriteID}");
+            return null;
+        }
         
         // Create LoadableTexture
         var loadableTexture = new LoadableTexture(spriteID.ToString() ?? "", asset);
@@ -144,7 +147,10 @@ public class SpriteBuilder : IElemBuilder
         var baseAssetID = spriteAtlas.assetID;
         var baseAsset = AssetDB?.Get(baseAssetID);
         if (baseAsset == null)
-            throw new Exception($"Asset {baseAssetID} not found");
+        {
+            LILogger.Warn($"Could not find asset for sprite {baseAssetID}");
+            return null;
+        }
 
         // Create LoadableTexture
         var loadableTexture = new LoadableTexture(baseAssetID.ToString(), baseAsset);

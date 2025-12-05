@@ -1,5 +1,6 @@
 ﻿using System;
 using LevelImposter.Core;
+using LevelImposter.Shop;
 using UnityEngine;
 
 namespace LevelImposter.AssetLoader;
@@ -13,28 +14,29 @@ public class AudioLoader : AsyncQueue<LoadableAudio, AudioClip>
     public static AudioLoader Instance { get; } = new();
 
     /// <summary>
-    ///     Simplified shorthand to load an audioclip asynchronously.
+    /// Loads an AudioClip asynchronously from the given asset ID.
     /// </summary>
-    /// <param name="id">ID for cache</param>
-    /// <param name="streamable">Streamable with raw image data</param>
-    /// <param name="callback">Callback when the AudioClip is loaded</param>
-    public static void LoadAsync(string id, IStreamable streamable, Action<AudioClip> callback)
+    /// <param name="assetID">Asset ID of the audio clip to load</param>
+    /// <param name="onLoad">Callback invoked when the audio clip is loaded</param>
+    public static void LoadAsync(Guid? assetID, Action<AudioClip> onLoad)
     {
-        Instance.AddToQueue(
-            new LoadableAudio(id, streamable),
-            callback
-        );
-    }
+        if (assetID == null)
+            return;
+        
+        // Get Data Store from AssetDB
+        var soundDataStore = MapLoader.CurrentMap?.mapAssetDB?.Get(assetID);
+        if (soundDataStore == null)
+            return;
 
+        // Create LoadableAudio
+        var loadableAudio = new LoadableAudio(assetID?.ToString() ?? "", soundDataStore);
+        
+        // Enqueue Loadable
+        Instance.AddToQueue(loadableAudio, onLoad);
+    }
+    
     protected override AudioClip Load(LoadableAudio loadable)
     {
-        // Open the stream
-        using var stream = loadable.Streamable.OpenStream();
-
-        // Load the sprite
-        var loadedFile = WAVLoader.Load(stream, loadable.ID);
-
-        // Return the loaded sprite
-        return loadedFile;
+        return WAVLoader.Load(loadable.DataStore, loadable.ID);
     }
 }

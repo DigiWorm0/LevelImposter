@@ -76,28 +76,29 @@ public class GIFFile(string name) : IDisposable
     /// <returns>True if the Stream is a GIF file. False otherwise</returns>
     public static bool IsGIF(Stream dataStream)
     {
-        using (var reader = new BinaryReader(dataStream, Encoding.ASCII, true))
+        if (!dataStream.CanSeek)
+            throw new Exception("Stream must be seekable to check for GIF format");
+        
+        using var reader = new BinaryReader(dataStream, Encoding.ASCII, true);
+        try
         {
-            try
-            {
-                // Read Header
-                var header = reader.ReadBytes(6);
-                if (header.Length != 6)
-                    return false;
-                reader.BaseStream.Position = 0;
-
-                // Check Header
-                return header[0] == 'G' &&
-                       header[1] == 'I' &&
-                       header[2] == 'F' &&
-                       header[3] == '8' &&
-                       (header[4] == '7' || header[4] == '9') &&
-                       header[5] == 'a';
-            }
-            catch
-            {
+            // Read Header
+            var header = reader.ReadBytes(6);
+            if (header.Length != 6)
                 return false;
-            }
+            reader.BaseStream.Position = 0;
+
+            // Check Header
+            return header[0] == 'G' &&
+                   header[1] == 'I' &&
+                   header[2] == 'F' &&
+                   header[3] == '8' &&
+                   (header[4] == '7' || header[4] == '9') &&
+                   header[5] == 'a';
+        }
+        catch
+        {
+            return false;
         }
     }
 

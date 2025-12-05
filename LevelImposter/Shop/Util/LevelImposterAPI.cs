@@ -162,7 +162,7 @@ public static class LevelImposterAPI
             // Load the sprite
             SpriteLoader.LoadAsync(
                 $"{metadata.id}_thumb",
-                new MemoryStreamable(imgData),
+                new MemoryStore(imgData),
                 callback
             );
         }, null);

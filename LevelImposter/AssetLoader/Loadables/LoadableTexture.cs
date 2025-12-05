@@ -6,10 +6,10 @@ using UnityEngine;
 
 namespace LevelImposter.AssetLoader;
 
-public readonly struct LoadableTexture(string _id, IStreamable _streamable) : ICachable
+public readonly struct LoadableTexture(string _id, IDataStore _dataStore) : ICachable
 {
     public string ID => _id;
-    public IStreamable Streamable => _streamable;
+    public IDataStore DataStore => _dataStore;
     public readonly TextureOptions Options { get; } = new();
 
     public class TextureOptions
@@ -29,7 +29,7 @@ public readonly struct LoadableTexture(string _id, IStreamable _streamable) : IC
     /// <returns>A LoadableTexture instance.</returns>
     public static LoadableTexture FromByteArray(string id, Il2CppArrayBase<byte> data)
     {
-        var stream = new MemoryStreamable(data);
+        var stream = new MemoryStore(data);
         return new LoadableTexture(id, stream);
     }
 }

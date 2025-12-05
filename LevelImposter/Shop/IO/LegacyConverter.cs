@@ -76,7 +76,7 @@ public static class LegacyConverter
     {
         // Find Asset
         foreach (var asset in assetDB.DB)
-            if (CompareData(asset.Value.rawData, data))
+            if (CompareData(asset.Value.LoadToMemory().Get(), data))
                 return asset.Key;
 
         // Create Asset

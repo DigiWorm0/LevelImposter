@@ -19,7 +19,7 @@ public class TriggerSoundPlayer(IntPtr intPtr) : MonoBehaviour(intPtr)
     private float _volume = 1.0f;
 
     public string SoundName => name + GetInstanceID();
-    public bool IsPlaying => _clip ? SoundManager.Instance.SoundIsPlaying(_clip) : false;
+    public bool IsPlaying => _clip && SoundManager.Instance.SoundIsPlaying(_clip);
 
     public void OnDestroy()
     {
@@ -38,7 +38,6 @@ public class TriggerSoundPlayer(IntPtr intPtr) : MonoBehaviour(intPtr)
     [HideFromIl2Cpp]
     public void Init(LISound soundData, Collider2D[] colliders)
     {
-        _clip = WAVLoader.Load(soundData);
         _volume = soundData?.volume ?? 1.0f;
         _colliders = colliders;
         _channel = soundData?.channel switch
@@ -48,6 +47,11 @@ public class TriggerSoundPlayer(IntPtr intPtr) : MonoBehaviour(intPtr)
             "ambient" => SoundManager.Instance.AmbienceChannel,
             _ => SoundManager.Instance.SfxChannel
         };
+        
+        // Load asynchronously
+        AudioLoader.LoadAsync(
+            soundData?.dataID ?? Guid.Empty,
+            clip => _clip = clip);
     }
 
     /// <summary>

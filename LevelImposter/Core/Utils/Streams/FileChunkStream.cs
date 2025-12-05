@@ -7,11 +7,12 @@ namespace LevelImposter.Core;
 /// <summary>
 ///     Represents a stream to a specific length and offset within a file.
 /// </summary>
-/// <param name="fileStream">The derived file stream. Automatically closed/disposed with this stream.</param>
+/// <param name="filePath">Path to the file</param>
 /// <param name="offset">Offset of the stream in bytes</param>
 /// <param name="length">Length of the stream in bytes</param>
-public class FileChunkStream(FileStream fileStream, long offset, long length) : Stream
+public class FileChunkStream(string filePath, long offset, long length) : Stream
 {
+    private readonly FileStream _fileStream = File.OpenRead(filePath);
     private long _position;
 
     public override bool CanRead => true;
@@ -32,8 +33,8 @@ public class FileChunkStream(FileStream fileStream, long offset, long length) : 
 
     public override int Read(byte[] buffer, int offset1, int count)
     {
-        fileStream.Seek(offset + _position, SeekOrigin.Begin);
-        var read = fileStream.Read(buffer, offset1, count);
+        _fileStream.Seek(offset + _position, SeekOrigin.Begin);
+        var read = _fileStream.Read(buffer, offset1, count);
         _position += read;
         return read;
     }
@@ -86,13 +87,13 @@ public class FileChunkStream(FileStream fileStream, long offset, long length) : 
 
     public override void Close()
     {
-        fileStream.Close();
+        _fileStream.Close();
         base.Close();
     }
 
     protected override void Dispose(bool disposing)
     {
-        fileStream.Dispose();
+        _fileStream.Dispose();
         base.Dispose(disposing);
     }
 }

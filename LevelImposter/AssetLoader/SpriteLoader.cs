@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO.Compression;
 using LevelImposter.Core;
 using UnityEngine;
 
@@ -16,11 +17,11 @@ public class SpriteLoader : AsyncQueue<LoadableSprite, LoadedSprite>
     ///     Simplified shorthand to load a sprite asynchronously.
     /// </summary>
     /// <param name="id">ID of the sprite</param>
-    /// <param name="fileStream">Streamable file to load from</param>
+    /// <param name="dataStore">Data store to load from</param>
     /// <param name="onLoad">Callback when the sprite is loaded</param>
-    public static void LoadAsync(string id, IStreamable fileStream, Action<Sprite> onLoad)
+    public static void LoadAsync(string id, IDataStore dataStore, Action<Sprite> onLoad)
     {
-        var loadableTexture = new LoadableTexture(id, fileStream);
+        var loadableTexture = new LoadableTexture(id, dataStore);
         var loadableSprite = new LoadableSprite(id, loadableTexture);
         Instance.AddToQueue(loadableSprite, loadedSprite => onLoad(loadedSprite));
     }
