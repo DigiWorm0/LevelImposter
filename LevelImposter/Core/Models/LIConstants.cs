@@ -8,7 +8,7 @@ public static class LIConstants
     public const StringNames MAP_STRING_NAME = (StringNames)392001; // StringName that placeholdes the map names
     public const string MAP_NAME = "Random Custom Map"; // Name to populate Constants.MapNames
     public const float PLAYER_POS = -5.0f; // Z value of the player
-    public const int MAX_LOAD_TIME = 10; // Maximum time to build map before aborting
+    public const int MAX_LOAD_TIME = 9; // Maximum time to build map before aborting
     public const int MAX_CONNECTION_TIMEOUT = 10; // Maximum time to wait for a client connection
 
     public const int
