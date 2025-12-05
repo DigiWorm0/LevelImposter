@@ -7,7 +7,7 @@ namespace LevelImposter.Shop;
  *      Synchronizes a random seed
  *      value to all connected clients
  */
-[HarmonyPatch(typeof(PlayerPhysics), nameof(PlayerPhysics.CoSpawnPlayer))]
+[HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.Start))]
 public static class ClientJoinSyncPatch
 {
     public static void Postfix(PlayerControl __instance)

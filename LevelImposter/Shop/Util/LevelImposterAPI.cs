@@ -148,6 +148,11 @@ public static class LevelImposterAPI
     [HideFromIl2Cpp]
     public static void DownloadThumbnail(LIMetadata metadata, Action<Sprite> callback)
     {
+        // Check if ID is valid
+        if (!Guid.TryParse(metadata.id, out _))
+            return;
+        
+        // Download Thumbnail
         LILogger.Info($"Downloading thumbnail for map {metadata}...");
         HTTPHandler.Instance?.Request(API_PATH + $"map/{metadata.id}/thumbnail", imgData =>
         {

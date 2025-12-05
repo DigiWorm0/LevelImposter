@@ -5,6 +5,8 @@ namespace LevelImposter.Builders;
 
 public class PlayerMoverBuilder : IElemBuilder
 {
+    private uint _playerMoverCounter = 1;
+    
     public void OnBuild(LIElement elem, GameObject obj)
     {
         if (elem.type != "util-playermover")
@@ -16,6 +18,7 @@ public class PlayerMoverBuilder : IElemBuilder
             collider.isTrigger = true;
 
         // Add Component
-        obj.AddComponent<LIPlayerMover>();
+        var playerMover = obj.AddComponent<LIPlayerMover>();
+        playerMover.SetObjectID(_playerMoverCounter++);
     }
 }

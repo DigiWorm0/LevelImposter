@@ -87,7 +87,7 @@ public class MapBuilder
         IsBuilding = true;
 
         // Show Loading Bar
-        LoadingBar.Run();
+        // LoadingBar.Run();
 
         // Get Ship Status
         var liShipStatus = LIShipStatus.GetInstance();

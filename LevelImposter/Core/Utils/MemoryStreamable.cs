@@ -1,11 +1,12 @@
 ﻿using System.IO;
+using Il2CppInterop.Runtime.InteropTypes.Arrays;
 
 namespace LevelImposter.Core;
 
-public class MemoryStreamable(byte[] _rawData) : IStreamable
+public class MemoryStreamable(Il2CppArrayBase<byte> rawData) : IStreamable
 {
     public Stream OpenStream()
     {
-        return new MemoryStream(_rawData);
+        return new MemoryStream(rawData);
     }
 }
