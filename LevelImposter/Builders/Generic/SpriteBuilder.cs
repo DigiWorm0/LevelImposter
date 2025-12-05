@@ -125,12 +125,11 @@ public class SpriteBuilder : IElemBuilder
             throw new Exception($"Asset {spriteID} not found");
         
         // Create LoadableTexture
-        var loadableTexture = new LoadableTexture(spriteID.ToString(), asset);
+        var loadableTexture = new LoadableTexture(spriteID.ToString() ?? "", asset);
         loadableTexture.Options.PixelArt = PixelArtMode;
         
         // Create LoadableSprite
-        var loadableSprite = new LoadableSprite(spriteID.ToString() ?? "", loadableTexture);
-        return loadableSprite;
+        return LoadableSprite.FromLoadableTexture(loadableTexture);
     }
 
     /// <summary>

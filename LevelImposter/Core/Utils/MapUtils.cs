@@ -295,44 +295,31 @@ public static class MapUtils
         return asset;
     }
 
+
     /// <summary>
-    ///     Loads a texture from assembly resources
+    /// Loads a PNG sprite from assembly resources
     /// </summary>
-    /// <param name="name">Name of the texture file</param>
-    /// <returns>Texture or null if not found</returns>
-    public static Texture2D? LoadTextureResource(string name)
+    /// <param name="name">Name of the PNG file</param>
+    /// <returns>Sprite or null if not found</returns>
+    public static Sprite? LoadSpriteResource(string name)
     {
-        LILogger.Info($"Loading texture resource {name}");
+        // Log
+        LILogger.Info($"Loading sprite resource {name}");
+        
+        // Get Sprite Data
         var spriteData = GetResourceAsIl2Cpp(name);
         if (spriteData == null)
             return null;
-        return PNGLoader.ImageDataToTexture2D(spriteData, name);
-    }
 
-    public static Sprite? LoadSpriteResource(string name)
-    {
-        // Load Texture
-        var texture = LoadTextureResource(name);
-        if (texture == null)
-            return null;
+        // Create Loadables
+        var loadableTexture = LoadableTexture.FromByteArray($"{name}-resource", spriteData);
+        loadableTexture.Options.AddToGC = false;
         
-        // Create Sprite
-        var sprite = Sprite.Create(
-            texture,
-            new Rect(0, 0, texture.width, texture.height),
-            new Vector2(0.5f, 0.5f),
-            100.0f,
-            0,
-            SpriteMeshType.FullRect
-        );
+        var loadableSprite = LoadableSprite.FromLoadableTexture(loadableTexture);
+        loadableSprite.Options.AddToGC = false;
         
-        // Set Sprite Flags
-        sprite.name = $"{name}_resource_sprite";
-        sprite.hideFlags = HideFlags.DontUnloadUnusedAsset;
-        
-        // Register in GC
-        GCHandler.Register(sprite);
-        return sprite;
+        // Load Sprite (Synchronously)
+        return SpriteLoader.LoadSync(loadableSprite);
     }
 
     /// <summary>

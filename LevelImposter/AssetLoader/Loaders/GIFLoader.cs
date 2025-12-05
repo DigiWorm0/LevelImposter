@@ -16,12 +16,16 @@ public static class GIFLoader
         Stream imgStream,
         LoadableTexture loadable)
     {
+        // Get whether to add to GC
+        var addToGC = loadable.Options?.AddToGC ?? true;
+        
         // Create new file
         var gifFile = new GIFFile(loadable.ID);
-        GCHandler.Register(gifFile);
+        if (addToGC)
+            GCHandler.Register(gifFile);
 
         // Load the GIF file from the stream
-        gifFile.Load(imgStream);
+        gifFile.Load(imgStream, addToGC);
         
         // Return the GIF file
         return new LoadedGIFTexture(gifFile);

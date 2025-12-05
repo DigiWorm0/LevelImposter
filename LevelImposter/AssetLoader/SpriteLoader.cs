@@ -57,7 +57,8 @@ public class SpriteLoader : AsyncQueue<LoadableSprite, LoadedSprite>
         sprite.hideFlags = HideFlags.DontUnloadUnusedAsset;
         
         // Register in GC
-        GCHandler.Register(sprite);
+        if (options.AddToGC)
+            GCHandler.Register(sprite);
         
         // Return Loaded Sprite
         return new LoadedSprite(sprite, loadedTexture);
