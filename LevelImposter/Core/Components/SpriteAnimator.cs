@@ -24,7 +24,7 @@ public class SpriteAnimator(IntPtr intPtr) : LIAnimatorBase(intPtr)
     public void Init(LIElement element, LISpriteAnimation[] animations)
     {
         _allAnimations = animations;
-        _currentAnimation = animations.FirstOrDefault(anim => anim.type == "default");
+        SetAnimationType("default");
         Init(element);
     }
     
@@ -97,6 +97,6 @@ public class SpriteAnimator(IntPtr intPtr) : LIAnimatorBase(intPtr)
     /// <param name="type">Type of animation to set</param>
     private void SetAnimationType(string type)
     {
-        _currentAnimation = _allAnimations?.FirstOrDefault(anim => anim.type == type);
+        _currentAnimation = _allAnimations?.FirstOrDefault(anim => anim.type == type && anim.frames.Length > 0);
     }
 }

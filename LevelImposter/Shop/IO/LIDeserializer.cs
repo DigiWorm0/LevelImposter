@@ -24,7 +24,6 @@ public static class LIDeserializer
         {
             // Identify Format
             var mapFormat = IdentifyMapFormat(dataStream, filePath);
-            LILogger.Info($"Identified map format: {mapFormat}");
             
             // Legacy Map
             if (mapFormat == MapFormat.Legacy)
