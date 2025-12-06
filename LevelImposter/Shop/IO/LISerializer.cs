@@ -42,14 +42,14 @@ public static class LISerializer
 
             // SpriteDB
             if (mapData.mapAssetDB != null)
-                foreach (var sprite in mapData.mapAssetDB.DB)
+                foreach (var spriteAsset in mapData.mapAssetDB.DB)
                 {
-                    var data = sprite.Value.ToBytes();
-                    var idBytes = Encoding.UTF8.GetBytes(sprite.Key.ToString());
+                    var data = spriteAsset.Value.LoadToMemory().Get();
+                    var idBytes = Encoding.UTF8.GetBytes(spriteAsset.Key.ToString());
 
                     // Write Element
                     stream.Write(idBytes);
-                    stream.Write(BitConverter.GetBytes(data.Length));
+                    stream.Write(BitConverter.GetBytes(data.Length)); // <-- TODO: Improve memory usage here
                     stream.Write(data);
                 }
 

@@ -124,13 +124,13 @@ public class ShowHideTriggerHandle : ITriggerHandle
         }
 
         // Animation
-        var gifAnimator = gameObject.GetComponent<GIFAnimator>();
-        if (gifAnimator != null)
+        var animator = gameObject.GetComponent<LIAnimatorBase>();
+        if (animator != null)
         {
-            if (isEnabled ?? !gifAnimator.IsAnimating)
-                gifAnimator.Play();
+            if (isEnabled ?? !animator.IsAnimating)
+                animator.Play();
             else
-                gifAnimator.Stop();
+                animator.Stop();
         }
 
         // Get Toggleable Components
@@ -141,7 +141,9 @@ public class ShowHideTriggerHandle : ITriggerHandle
             gameObject.GetComponent<SystemConsole>(),
             gameObject.GetComponent<MapConsole>(),
             gameObject.GetComponent<LITeleporter>(),
-            gameObject.GetComponent<LIShakeArea>()
+            gameObject.GetComponent<LIShakeArea>(),
+            gameObject.GetComponent<LITriggerArea>(),
+            gameObject.GetComponent<LIPlayerMover>()
         };
 
         // Toggle the components

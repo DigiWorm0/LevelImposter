@@ -100,6 +100,7 @@ public class TriggerAnim(IntPtr intPtr) : MonoBehaviour(intPtr)
             targetObject.transform.localPosition = Vector3.zero;
             targetObject.transform.localScale = Vector3.one;
             targetObject.transform.localRotation = Quaternion.identity;
+            SetOpacity(targetObject, 1);
         }
     }
 
@@ -123,7 +124,7 @@ public class TriggerAnim(IntPtr intPtr) : MonoBehaviour(intPtr)
         parentObject.transform.SetParent(targetObject.transform.parent);
         parentObject.transform.position = targetObject.transform.position;
         parentObject.transform.rotation = targetObject.transform.rotation;
-        parentObject.transform.localScale = Vector3.one;
+        parentObject.transform.localScale = targetObject.transform.localScale;
 
         // Create Child
         childObject.transform.SetParent(parentObject.transform);
@@ -135,7 +136,7 @@ public class TriggerAnim(IntPtr intPtr) : MonoBehaviour(intPtr)
         targetObject.transform.SetParent(childObject.transform);
         targetObject.transform.localPosition = Vector3.zero;
         targetObject.transform.localRotation = Quaternion.identity;
-        // Do not set scale to 1, as it will be scaled by the animation
+        targetObject.transform.localScale = Vector3.one;
 
         // Cache Object
         _objectDB[id] = childObject;
@@ -199,18 +200,37 @@ public class TriggerAnim(IntPtr intPtr) : MonoBehaviour(intPtr)
         // Get Property Values
         var x = GetPropertyValue(target, "x") ?? 0;
         var y = GetPropertyValue(target, "y") ?? 0;
+        var z = y / 1000.0f; // <-- Fixes bug when Z = -5 (player position)
         var xScale = GetPropertyValue(target, "xScale") ?? 1;
         var yScale = GetPropertyValue(target, "yScale") ?? 1;
         var rotation = GetPropertyValue(target, "rotation") ?? 0;
-
-        // Scale Position w/ Object Scale
-        var pos = new Vector2(x, y);
-        pos.Scale(targetObject.transform.lossyScale);
+        var opacity = GetPropertyValue(target, "opacity") ?? 1;
 
         // Apply Transform
-        targetObject.transform.localPosition = new Vector3(pos.x, pos.y, targetObject.transform.localPosition.z);
+        targetObject.transform.localPosition = new Vector3(x, y, z);
         targetObject.transform.localScale = new Vector3(xScale, yScale, targetObject.transform.localScale.z);
         targetObject.transform.localRotation = Quaternion.Euler(0, 0, -rotation);
+        SetOpacity(targetObject, opacity);
+    }
+
+    /// <summary>
+    /// Sets the opacity of the target object
+    /// </summary>
+    /// <param name="targetObject">Target object to edit opacity</param>
+    /// <param name="opacity">Opacity value to set. 0 for transparent, 1 for opaque</param>
+    private void SetOpacity(GameObject targetObject, float opacity)
+    {
+        // Clamp Opacity between 0 and 1
+        opacity = Mathf.Clamp01(opacity);
+        
+        // Update all SpriteRenderers in children
+        var renderers = targetObject.GetComponentsInChildren<SpriteRenderer>(true);
+        foreach (var renderer in renderers)
+        {
+            var color = renderer.color;
+            color.a = opacity;
+            renderer.color = color;
+        }
     }
 
     [HideFromIl2Cpp]

@@ -40,17 +40,13 @@ internal class MeetingOptionsBuilder : IElemBuilder
         // Meeting Background
         if (elem.properties.meetingBackgroundID != null)
         {
-            var mapAssetDB = MapLoader.CurrentMap?.mapAssetDB;
-            var mapAsset = mapAssetDB?.Get(elem.properties.meetingBackgroundID);
-            if (mapAsset == null)
-                throw new Exception("Meeting Background ID not found in MapAssetDB");
-
-            // Load Sprite
-            SpriteLoader.LoadAsync(
-                elem.properties.meetingBackgroundID?.ToString() ?? "",
-                mapAsset,
-                spriteData => { LoadMeetingBackground(elem, spriteData); }
-            );
+            var loadable = SpriteBuilder.GetLoadableFromID(elem.properties.meetingBackgroundID);
+            if (loadable != null)
+            {
+                SpriteLoader.Instance.AddToQueue(
+                    (LoadableSprite)loadable,
+                    spriteData => { LoadMeetingBackground(elem, spriteData); });
+            }
         }
 
         // Meeting Overlay

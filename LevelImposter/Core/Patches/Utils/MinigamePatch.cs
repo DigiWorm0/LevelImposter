@@ -33,7 +33,8 @@ public static class MinigamePatch
     }
 }
 
-// HACK: Temporarily removed to fix TOU bug. May cause issues with Meta-tasks (Divert power)
+
+
 /// <summary>
 ///     When a minigame is closed, clear the last console.
 /// </summary>

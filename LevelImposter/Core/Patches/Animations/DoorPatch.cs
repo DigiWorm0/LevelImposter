@@ -36,17 +36,17 @@ public static class DoorPatch
         // Sprite Renderer
         var animClip = open ? __instance.OpenDoorAnim : __instance.CloseDoorAnim;
         var spriteAnim = __instance.GetComponent<SpriteAnim>();
-        var gifAnim = __instance.GetComponent<GIFAnimator>();
+        var animator = __instance.GetComponent<LIAnimatorBase>();
         var spriteRenderer = __instance.GetComponent<SpriteRenderer>();
         if (spriteAnim != null && animClip != null)
         {
             // SpriteAnim
         }
-        else if (gifAnim != null)
+        else if (animator != null)
         {
             // GIFAnimator
             if (_hasStateChanged)
-                gifAnim.Play(false, open);
+                animator.PlayType(open ? "openDoor" : "closeDoor");
             spriteRenderer.enabled = true;
         }
         else

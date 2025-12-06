@@ -27,4 +27,8 @@ public static class GameState
 
     // Network
     public static bool IsHost => AmongUsClient.Instance?.AmHost ?? false;
+    
+    // Player State
+    public static bool IsLocalPlayerImpostor => PlayerControl.LocalPlayer?.Data?.Role.TeamType == RoleTeamTypes.Impostor;
+    public static bool IsLocalPlayerDead => PlayerControl.LocalPlayer?.Data?.IsDead ?? true;
 }

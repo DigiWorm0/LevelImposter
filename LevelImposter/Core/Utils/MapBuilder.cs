@@ -86,8 +86,9 @@ public class MapBuilder
         LILogger.Msg($"Loading {map}");
         IsBuilding = true;
 
-        // Show Loading Bar
-        LoadingBar.Run();
+        // Show Loading Bar (Freeplay Only)
+        if (GameState.IsInFreeplay)
+            LoadingBar.Run();
 
         // Get Ship Status
         var liShipStatus = LIShipStatus.GetInstance();

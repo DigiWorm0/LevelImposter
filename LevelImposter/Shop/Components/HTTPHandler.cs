@@ -5,7 +5,7 @@ using Il2CppInterop.Runtime.Attributes;
 using LevelImposter.Core;
 using UnityEngine;
 using UnityEngine.Networking;
-using ByteArray = Il2CppInterop.Runtime.InteropTypes.Arrays.Il2CppStructArray<byte>;
+using ByteArray = Il2CppInterop.Runtime.InteropTypes.Arrays.Il2CppArrayBase<byte>;
 
 namespace LevelImposter.Shop;
 
@@ -72,7 +72,8 @@ public class HTTPHandler(IntPtr intPtr) : MonoBehaviour(intPtr)
             }
             else if (onSuccessBytes != null)
             {
-                onSuccessBytes(request.downloadHandler.data);
+                var downloadedBytes = request.downloadHandler.GetNativeData().ToArray();
+                onSuccessBytes(downloadedBytes);
             }
 
             // Free memory (because BepInEx)
@@ -104,9 +105,9 @@ public class HTTPHandler(IntPtr intPtr) : MonoBehaviour(intPtr)
         StartCoroutine(CoRequest(url, onSuccessString, onSuccessBytes, onProgress, onError).WrapToIl2Cpp());
     }
 
-    // Shorthand overloads
+    // "RequestString" has to be defined separately to avoid limitations with ambiguous calls
     [HideFromIl2Cpp]
-    public void Request(string url, Action<string>? onSuccess, Action<string>? onError)
+    public void RequestString(string url, Action<string>? onSuccess, Action<string>? onError)
     {
         Request(url, onSuccess, null, null, onError);
     }

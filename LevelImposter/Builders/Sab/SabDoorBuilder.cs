@@ -116,14 +116,22 @@ public class SabDoorBuilder : IElemBuilder
         if (!isSpecialDoor)
             shipStatus.AllDoors = MapUtils.AddToArr(shipStatus.AllDoors, doorComponent);
 
-        // Sound
+        // Load Sounds
         var openSound = MapUtils.FindSound(elem.properties.sounds, OPEN_SOUND_NAME);
         if (openSound != null)
-            doorComponent.OpenSound = WAVLoader.Load(openSound);
+        {
+            AudioLoader.LoadAsync(
+                openSound.dataID,
+                loadedSound => doorComponent.OpenSound = loadedSound);
+        }
 
         var closeSound = MapUtils.FindSound(elem.properties.sounds, CLOSE_SOUND_NAME);
         if (closeSound != null)
-            doorComponent.CloseSound = WAVLoader.Load(closeSound);
+        {
+            AudioLoader.LoadAsync(
+                closeSound.dataID,
+                loadedSound => doorComponent.CloseSound = loadedSound);
+        }
 
         // SpriteAnim
         if (isSpriteAnim)

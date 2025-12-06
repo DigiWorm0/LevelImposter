@@ -1,3 +1,4 @@
+using AmongUs.InnerNet.GameDataMessages;
 using HarmonyLib;
 using LevelImposter.Builders;
 
@@ -52,14 +53,17 @@ public static class PlatformPatchRPC
         }
 
         if (AmongUsClient.Instance.AmHost)
+        {
             // Use Platform
             platform.Use(__instance);
+        }
         else
+        {
             // Request Use Platform
-            AmongUsClient.Instance.StartRpc(
-                __instance.NetId,
-                (byte)RpcCalls.UsePlatform
-            ).EndMessage();
+            var rpcMessage = new RpcUsePlatformMessage(__instance.NetId);
+            AmongUsClient.Instance.LateBroadcastReliableMessage(rpcMessage.Cast<IGameDataMessage>());
+        }
+
         return false;
     }
 }

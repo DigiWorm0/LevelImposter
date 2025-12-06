@@ -38,7 +38,7 @@ public static class GitHubAPI
     {
         LILogger.Info("Getting latest release info from GitHub");
         LILogger.Info(UPDATE_WHITELIST_FLAG);
-        HTTPHandler.Instance?.Request(API_PATH, json =>
+        HTTPHandler.Instance?.RequestString(API_PATH, json =>
         {
             var responses = JsonSerializer.Deserialize<GHRelease[]>(json);
             if (responses != null && responses.Length > 0)

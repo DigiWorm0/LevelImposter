@@ -3,15 +3,33 @@ using UnityEngine;
 
 namespace LevelImposter.AssetLoader;
 
-public readonly struct LoadableSprite(string _id, IStreamable _streamable) : ICachable
+public readonly struct LoadableSprite(string _id, LoadableTexture _tex) : ICachable
 {
     public string ID => _id;
-    public IStreamable Streamable => _streamable;
+    public LoadableTexture Texture => _tex;
     public readonly SpriteOptions Options { get; } = new();
 
     public class SpriteOptions
     {
-        public Vector2 Pivot { get; set; } = new(0.5f, 0.5f);
-        public bool PixelArt { get; set; } = false;
+        /// If set, defines the pivot point of the sprite. Otherwise, the center (0.5, 0.5) is used.
+        public Vector2? Pivot { get; set; }
+        
+        /// If set, defines the portion of the texture to use for the sprite. Otherwise, the full texture is used.
+        public Rect? Frame { get; set; }
+        
+        /// If true (default), the sprite will be disposed automatically after the map is unloaded.
+        /// If false, you must manage the sprite's lifecycle manually.
+        public bool AddToGC { get; set; } = true;
+    }
+
+    /// <summary>
+    /// Creates a LoadableSprite from a LoadableTexture.
+    /// Copies the ID and uses the provided texture.
+    /// </summary>
+    /// <param name="texture">LoadableTexture to create the sprite from.</param>
+    /// <returns>A LoadableSprite instance.</returns>
+    public static LoadableSprite FromLoadableTexture(LoadableTexture texture)
+    {
+        return new LoadableSprite(texture.ID, texture);
     }
 }

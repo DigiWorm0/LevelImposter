@@ -13,10 +13,13 @@ namespace LevelImposter.AssetLoader;
 /// <typeparam name="TOutput">Type used for output values (must be ICachable)</typeparam>
 public abstract class AsyncQueue<TInput, TOutput> where TInput : ICachable
 {
+    private const int MIN_FPS = 5;
+    
     private IEnumerator? _consumeQueueCoroutine;
 
     public int QueueSize => Queue.Count;
     public int CacheSize => Cache.Count;
+    
     protected Queue<QueuedItem> Queue { get; } = new();
     protected ItemCache<TOutput> Cache { get; } = new();
 
@@ -45,6 +48,11 @@ public abstract class AsyncQueue<TInput, TOutput> where TInput : ICachable
 
     /// <summary>
     ///     Called when an item is loaded.
+    ///     <para>
+    ///         Should be implemented to define how to load an item from input data.
+    ///         Do not call this method directly;
+    ///         Instead, use <see cref="AddToQueue"/> or <see cref="LoadImmediate"/>.
+    ///     </para>
     /// </summary>
     /// <param name="inputData">Input data used to load item</param>
     /// <returns>Output data of the item</returns>
@@ -62,36 +70,56 @@ public abstract class AsyncQueue<TInput, TOutput> where TInput : ICachable
             yield return null;
 
             // Continuously load items until the lag limit is reached
-            while (LagLimiter.ShouldContinue(20) && Queue.Count > 0)
+            while (LagLimiter.ShouldContinue(MIN_FPS) && Queue.Count > 0)
+                ConsumeQueueOnce();
 
-                // Handle exceptions
-                try
-                {
-                    // Get the next item in the queue
-                    var queuedItem = Queue.Dequeue();
-
-                    // Check if item is in cache
-                    var output = Cache.Get(queuedItem.ID);
-                    if (output == null)
-                    {
-                        // Load the item
-                        output = Load(queuedItem.InputData);
-
-                        // Add the item to the cache
-                        Cache.Add(queuedItem.ID, output);
-                    }
-
-                    // Call the onLoad callback
-                    queuedItem.OnLoad(output);
-                }
-                catch (Exception e)
-                {
-                    LILogger.Error(e);
-                }
         }
 
         // Clear the coroutine
         _consumeQueueCoroutine = null;
+    }
+
+    /// <summary>
+    /// Loads a single item from the queue.
+    /// </summary>
+    private void ConsumeQueueOnce()
+    {
+        try
+        {
+            // Get the next item in the queue
+            var queuedItem = Queue.Dequeue();
+            
+            // Load the item
+            var output = LoadImmediate(queuedItem.InputData);
+
+            // Call the onLoad callback
+            queuedItem.OnLoad(output);
+        }
+        catch (Exception e)
+        {
+            LILogger.Error(e);
+        }
+    }
+
+    /// <summary>
+    /// Loads an item immediately, checking the cache first.
+    /// </summary>
+    /// <param name="inputData">Loadable item data</param>
+    /// <returns>Loaded item</returns>
+    protected TOutput LoadImmediate(TInput inputData)
+    {
+        // Check if item is in cache
+        var output = Cache.Get(inputData.ID);
+        if (output != null)
+            return output;
+        
+        // Load the item
+        output = Load(inputData);
+
+        // Add the item to the cache
+        Cache.Add(inputData.ID, output);
+
+        return output;
     }
 
     /// <summary>

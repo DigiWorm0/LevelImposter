@@ -1,4 +1,5 @@
 using System;
+using LevelImposter.AssetLoader;
 using LevelImposter.Core;
 
 namespace LevelImposter.Shop;
@@ -10,6 +11,12 @@ public static class MapLoader
     public static LIMap? CurrentMap { get; private set; }
 
     public static bool IsFallback { get; private set; }
+    
+    public static int QueueSize => TextureLoader.Instance.QueueSize +
+                                    SpriteLoader.Instance.QueueSize +
+                                    AudioLoader.Instance.QueueSize;
+
+    public static bool IsLoading => QueueSize > 0;
 
     /// <summary>
     ///     Loads a map from <c>LIMap</c> model
@@ -17,8 +24,11 @@ public static class MapLoader
     /// <param name="map">LevelImposter map data</param>
     public static void LoadMap(LIMap? map, bool isFallback)
     {
+        // Wipe cache if map changed
+        // (Keeps cache if replaying the same map)
         if (_lastMapID != map?.id)
             GCHandler.Clean();
+        
         _lastMapID = map?.id;
         CurrentMap = map;
         IsFallback = isFallback;

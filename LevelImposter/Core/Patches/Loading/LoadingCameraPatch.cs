@@ -1,5 +1,6 @@
 ﻿using HarmonyLib;
 using LevelImposter.AssetLoader;
+using LevelImposter.Shop;
 
 namespace LevelImposter.Core;
 
@@ -14,7 +15,7 @@ public static class LoadingCameraPatch
         if (!LIShipStatus.IsInstance())
             return true;
 
-        if (SpriteLoader.Instance.QueueSize <= 0)
+        if (!MapLoader.IsLoading)
             return true;
 
         __instance.centerPosition = __instance.transform.position;

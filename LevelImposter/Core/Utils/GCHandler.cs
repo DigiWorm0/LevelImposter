@@ -11,8 +11,7 @@ namespace LevelImposter.Core;
 /// </summary>
 public static class GCHandler
 {
-    private const long MAX_MEMORY = 1024 * 1024 * 1024; // 1GB
-    private static readonly Stack<IDisposable> _disposables = new();
+    private static readonly Stack<IDisposable> Disposables = new();
 
     /// <summary>
     ///     Registers a new disposable object to be cleaned. Cleaning happens when a map is unloaded.
@@ -20,7 +19,7 @@ public static class GCHandler
     /// <param name="disposable">Object to be cleaned</param>
     public static void Register(IDisposable disposable)
     {
-        _disposables.Push(disposable);
+        Disposables.Push(disposable);
     }
 
     /// <summary>
@@ -38,13 +37,15 @@ public static class GCHandler
     public static void Clean()
     {
         // Disposables
-        LILogger.Info($"Disposing of {_disposables.Count} objects");
-        while (_disposables.Count > 0)
-            _disposables.Pop().Dispose();
+        LILogger.Info($"Disposing of {Disposables.Count} objects");
+        while (Disposables.Count > 0)
+            Disposables.Pop().Dispose();
 
         // Asset Loaders
+        LILogger.Info($"{TextureLoader.Instance.CacheSize} cached textures");
         LILogger.Info($"{SpriteLoader.Instance.CacheSize} cached sprites");
         LILogger.Info($"{AudioLoader.Instance.CacheSize} cached audio clips");
+        TextureLoader.Instance.Clear();
         SpriteLoader.Instance.Clear();
         AudioLoader.Instance.Clear();
 
@@ -53,22 +54,9 @@ public static class GCHandler
     }
 
     /// <summary>
-    ///     Gets f the current memory usage is high
-    /// </summary>
-    /// <returns>True if memory usage is high. False otherwise</returns>
-    public static bool IsLowMemory()
-    {
-        var process = Process.GetCurrentProcess();
-        var isLow = process.PrivateMemorySize64 > MAX_MEMORY;
-        //if (isLow)
-        //    LILogger.Msg("Warning: Low on memory");
-        return isLow;
-    }
-
-    /// <summary>
     ///     A thin wrapper around UnityEngine.Object.Destroy
     /// </summary>
-    public class DisposableUnityObject(Object obj) : IDisposable
+    private class DisposableUnityObject(Object obj) : IDisposable
     {
         public void Dispose()
         {

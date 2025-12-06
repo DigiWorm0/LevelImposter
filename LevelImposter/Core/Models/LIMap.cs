@@ -7,9 +7,10 @@ namespace LevelImposter.Core;
 public class LIMap : LIMetadata
 {
     // LIM2
-    [JsonIgnore] public const int LIM_VERSION = 2;
+    [JsonIgnore] public const int LIM_VERSION = 3;
     public LIElement[] elements { get; set; }
     public LIMapProperties properties { get; set; }
+    public LISpriteAtlas[] spriteAtlases { get; set; }
 
     [JsonIgnore]
     public bool isLegacy

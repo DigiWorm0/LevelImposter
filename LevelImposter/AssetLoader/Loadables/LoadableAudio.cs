@@ -2,8 +2,8 @@
 
 namespace LevelImposter.AssetLoader;
 
-public readonly struct LoadableAudio(string _id, IStreamable _streamable) : ICachable
+public readonly struct LoadableAudio(string id, IDataStore dataStore) : ICachable
 {
-    public string ID => _id;
-    public IStreamable Streamable => _streamable;
+    public string ID => id;
+    public IDataStore DataStore => dataStore;
 }

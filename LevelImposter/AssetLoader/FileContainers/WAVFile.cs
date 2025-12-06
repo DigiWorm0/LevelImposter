@@ -122,10 +122,10 @@ public class WAVFile(string _name) : IDisposable
     /// <returns><c>true</c> if the block was read, <c>false</c> if the end of the file was reached</returns>
     private bool ReadBlock(BinaryReader reader)
     {
-        if (reader.BaseStream.Position == reader.BaseStream.Length)
-            return false;
-
         var blockName = new string(reader.ReadChars(4));
+        if (string.IsNullOrEmpty(blockName))
+            return false;
+        
         switch (blockName)
         {
             case "fmt ":
@@ -137,7 +137,7 @@ public class WAVFile(string _name) : IDisposable
             default:
                 // Skip unknown block (INFO, etc.)
                 var chunkSize = reader.ReadInt32();
-                reader.BaseStream.Position += chunkSize;
+                SkipBytes(reader, chunkSize);
                 return true;
         }
     }
@@ -163,7 +163,22 @@ public class WAVFile(string _name) : IDisposable
         _sampleRate = reader.ReadInt32();
 
         // Unused bytes
-        reader.BaseStream.Position += chunkSize - 8;
+        SkipBytes(reader, chunkSize - 8);
+    }
+    
+    /// <summary>
+    /// Skips the specified number of bytes in the binary reader.
+    /// If the underlying stream supports seeking, it adjusts the position directly.
+    /// Otherwise, it reads and discards the bytes.
+    /// </summary>
+    /// <param name="reader">The binary reader to read from</param>
+    /// <param name="byteCount">The number of bytes to skip</param>
+    private void SkipBytes(BinaryReader reader, int byteCount)
+    {
+        if (reader.BaseStream.CanSeek)
+            reader.BaseStream.Position += byteCount;
+        else
+            reader.ReadBytes(byteCount);
     }
 
     /// <summary>

@@ -1,3 +1,4 @@
+using System;
 using LevelImposter.AssetLoader;
 using LevelImposter.Core;
 using UnityEngine;
@@ -35,10 +36,16 @@ internal class AmbientSoundBuilder : IElemBuilder
         }
 
         // Sound Data
-        var soundData = elem.properties.sounds[0];
-        if (soundData == null)
+        if (elem.properties.sounds.Length == 0)
         {
             LILogger.Warn($"{elem.name} missing audio data");
+            return;
+        }
+        
+        var soundData = elem.properties.sounds[0];
+        if (soundData.dataID == null)
+        {
+            LILogger.Warn($"{elem.name} missing audio data ID");
             return;
         }
 
@@ -47,8 +54,12 @@ internal class AmbientSoundBuilder : IElemBuilder
         {
             var ambientPlayer = obj.AddComponent<AmbientSoundPlayer>();
             ambientPlayer.HitAreas = colliders;
-            ambientPlayer.MaxVolume = soundData.volume;
-            ambientPlayer.AmbientSound = WAVLoader.Load(soundData);
+            ambientPlayer.MaxVolume = soundData?.volume ?? 1f;
+            
+            // Load asynchronously
+            AudioLoader.LoadAsync(
+                soundData?.dataID ?? Guid.Empty,
+                clip => ambientPlayer.AmbientSound = clip);
         }
         else if (isTrigger)
         {

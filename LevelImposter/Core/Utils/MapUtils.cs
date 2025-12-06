@@ -295,18 +295,31 @@ public static class MapUtils
         return asset;
     }
 
+
     /// <summary>
-    ///     Loads a Sprite from assembly resources
+    /// Loads a PNG sprite from assembly resources
     /// </summary>
-    /// <param name="name">Name of the sprite file</param>
+    /// <param name="name">Name of the PNG file</param>
     /// <returns>Sprite or null if not found</returns>
     public static Sprite? LoadSpriteResource(string name)
     {
+        // Log
         LILogger.Info($"Loading sprite resource {name}");
+        
+        // Get Sprite Data
         var spriteData = GetResourceAsIl2Cpp(name);
         if (spriteData == null)
             return null;
-        return PNGLoader.ImageDataToSprite(spriteData, name);
+
+        // Create Loadables
+        var loadableTexture = LoadableTexture.FromByteArray($"{name}-resource", spriteData);
+        loadableTexture.Options.AddToGC = false;
+        
+        var loadableSprite = LoadableSprite.FromLoadableTexture(loadableTexture);
+        loadableSprite.Options.AddToGC = false;
+        
+        // Load Sprite (Synchronously)
+        return SpriteLoader.LoadSync(loadableSprite);
     }
 
     /// <summary>

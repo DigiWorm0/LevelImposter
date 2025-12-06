@@ -1,5 +1,5 @@
 ﻿namespace LevelImposter.Core;
-// Among Us     0 - 61
+// Among Us     0 - 65
 // TOR          60 - 73, 100 - 149
 // Las Monjas   60 - 69, 75 - 194
 // StellaRoles  60 - 169
@@ -17,7 +17,7 @@ public enum LIRpc
     ResetPlayer, // Resets the player on Ctrl-R E S
     DownloadCheck, // Warns the host that the client is still downloading the map
     KillPlayer, // Used by util-triggerdeath object
-    Reserved97,
+    SyncPlayerMover, // Used by LIPlayerMover to sync player transforms
     Reserved98,
     Reserved99
 }

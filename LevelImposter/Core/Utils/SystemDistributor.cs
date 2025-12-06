@@ -13,7 +13,11 @@ public static class SystemDistributor
     {
         // Breaks task-fuel
         SystemTypes.LowerEngine,
-        SystemTypes.UpperEngine
+        SystemTypes.UpperEngine,
+        
+        // Reserved for their StringTypes
+        SystemTypes.Admin,      // <-- Admin Use Button
+        SystemTypes.Security,   // <-- Cams Use Button
     };
 
     private static int _deconID = _minDeconID;

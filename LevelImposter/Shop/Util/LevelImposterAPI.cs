@@ -29,7 +29,7 @@ public static class LevelImposterAPI
     [HideFromIl2Cpp]
     public static void Request<T>(string url, Action<T> callback, Action<string> onError)
     {
-        HTTPHandler.Instance?.Request(url, json =>
+        HTTPHandler.Instance?.RequestString(url, json =>
         {
             var response = JsonSerializer.Deserialize<LICallback<T>>(json);
 
@@ -148,16 +148,21 @@ public static class LevelImposterAPI
     [HideFromIl2Cpp]
     public static void DownloadThumbnail(LIMetadata metadata, Action<Sprite> callback)
     {
+        // Check if ID is valid
+        if (!Guid.TryParse(metadata.id, out _))
+            return;
+        
+        // Download Thumbnail
         LILogger.Info($"Downloading thumbnail for map {metadata}...");
         HTTPHandler.Instance?.Request(API_PATH + $"map/{metadata.id}/thumbnail", imgData =>
         {
             // Save to file cache
             ThumbnailCache.Save(metadata.id, imgData);
-
+            
             // Load the sprite
             SpriteLoader.LoadAsync(
                 $"{metadata.id}_thumb",
-                new MemoryStreamable(imgData),
+                new MemoryStore(imgData),
                 callback
             );
         }, null);

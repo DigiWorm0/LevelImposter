@@ -51,7 +51,7 @@ public static class ThumbnailCache
         // Load thumbnail into sprite
         SpriteLoader.LoadAsync(
             $"{mapID}_thumb",
-            new FileStreamable(FileCache.GetPath($"{mapID}.png")),
+            new FileStore(FileCache.GetPath($"{mapID}.png")),
             callback
         );
     }

@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <Title>LevelImposter</Title>
-        <Version>0.20.3</Version>
+        <Version>0.21.1</Version>
         <Description>Custom Among Us Mapping Studio</Description>
         <Authors>DigiWorm</Authors>
 
@@ -13,7 +13,7 @@
 
     <PropertyGroup>
         <AmongUs>C:\Program Files (x86)\Steam\steamapps\common\Among Us</AmongUs>
-        <GameVersion>2025.3.25</GameVersion>
+        <GameVersion>2025.11.18</GameVersion>
     </PropertyGroup>
 
     <ItemGroup>

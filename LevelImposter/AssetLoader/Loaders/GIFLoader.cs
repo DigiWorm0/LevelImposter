@@ -4,36 +4,33 @@ using UnityEngine;
 
 namespace LevelImposter.AssetLoader;
 
-public class GIFLoader
+public static class GIFLoader
 {
     /// <summary>
     ///     Loads a GIF image from a stream.
     /// </summary>
-    /// <param name="imgStream">Image stream to load from</param>
     /// <param name="loadable">Loadable sprite object</param>
     /// <returns>A fully-loaded GIFFile containing the image data</returns>
-    public static LoadedGIF Load(
-        Stream imgStream,
-        LoadableSprite loadable)
+    public static LoadedGIFTexture Load(LoadableTexture loadable)
     {
+        // Get whether to add to GC
+        var addToGC = loadable.Options?.AddToGC ?? true;
+        
         // Create new file
         var gifFile = new GIFFile(loadable.ID);
-        GCHandler.Register(gifFile);
-
-        // Append Options
-        var options = loadable.Options;
-        gifFile.SetPivot(options.Pivot);
-        // TODO: Allow pixel art in GIFs
+        if (addToGC)
+            GCHandler.Register(gifFile);
 
         // Load the GIF file from the stream
-        gifFile.Load(imgStream);
-
+        using var imgStream = loadable.DataStore.OpenStream();
+        gifFile.Load(imgStream, addToGC);
+        
         // Return the GIF file
-        return new LoadedGIF(gifFile.GetFrameSprite(0), gifFile);
+        return new LoadedGIFTexture(gifFile);
     }
 
-    public class LoadedGIF(Sprite _sprite, GIFFile _gifFile) : LoadedSprite(_sprite)
+    public class LoadedGIFTexture(GIFFile gifFile) : LoadedTexture(gifFile.GetFrameTexture(0))
     {
-        public GIFFile GIFFile => _gifFile;
+        public GIFFile GIFFile => gifFile;
     }
 }

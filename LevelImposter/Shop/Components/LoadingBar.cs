@@ -97,14 +97,16 @@ public class LoadingBar(IntPtr intPtr) : MonoBehaviour(intPtr)
         // Update Progress
         while (_visible)
         {
+            var queueSize = MapLoader.QueueSize;
+            
             // Approximate Progress
-            if (SpriteLoader.Instance.QueueSize > 0)
+            if (queueSize > 0)
             {
                 // Calculate Max Queue Size
-                _maxQueueSize = Math.Max(_maxQueueSize, SpriteLoader.Instance.QueueSize);
+                _maxQueueSize = Math.Max(_maxQueueSize, queueSize);
 
                 // Calculate Progress
-                var loadedCount = _maxQueueSize - SpriteLoader.Instance.QueueSize;
+                var loadedCount = _maxQueueSize - queueSize;
                 var progress = (float)loadedCount / _maxQueueSize;
 
                 // Update UI
