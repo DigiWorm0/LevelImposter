@@ -13,10 +13,13 @@ namespace LevelImposter.AssetLoader;
 /// <typeparam name="TOutput">Type used for output values (must be ICachable)</typeparam>
 public abstract class AsyncQueue<TInput, TOutput> where TInput : ICachable
 {
+    private const int MIN_FPS = 5;
+    
     private IEnumerator? _consumeQueueCoroutine;
 
     public int QueueSize => Queue.Count;
     public int CacheSize => Cache.Count;
+    
     protected Queue<QueuedItem> Queue { get; } = new();
     protected ItemCache<TOutput> Cache { get; } = new();
 
@@ -67,7 +70,7 @@ public abstract class AsyncQueue<TInput, TOutput> where TInput : ICachable
             yield return null;
 
             // Continuously load items until the lag limit is reached
-            while (LagLimiter.ShouldContinue(20) && Queue.Count > 0)
+            while (LagLimiter.ShouldContinue(MIN_FPS) && Queue.Count > 0)
                 ConsumeQueueOnce();
 
         }

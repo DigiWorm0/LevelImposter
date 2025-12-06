@@ -64,8 +64,10 @@ public class LIAnimatorBase(IntPtr intPtr) : MonoBehaviour(intPtr)
         _loopByDefault = element.properties.loopGIF ?? true;
 
         // AutoPlay
+        if (!IsReady())
+            return;
         if (_frameCount == 1)
-            _spriteRenderer.sprite = GetFrameSprite(0);
+            _spriteRenderer.sprite = TryGetFrameSprite(0);
         else 
             Play();
     }
@@ -112,9 +114,11 @@ public class LIAnimatorBase(IntPtr intPtr) : MonoBehaviour(intPtr)
 
         if (_spriteRenderer == null)
             return;
-
+        if (!IsReady())
+            return;
+        
         _frameIndex = reversed ? _frameCount - 1 : 0;
-        _spriteRenderer.sprite = GetFrameSprite(_frameIndex);
+        _spriteRenderer.sprite = TryGetFrameSprite(_frameIndex);
         _spriteRenderer.enabled = true;
     }
 
@@ -146,24 +150,75 @@ public class LIAnimatorBase(IntPtr intPtr) : MonoBehaviour(intPtr)
             // Wait for main thread
             while (!LagLimiter.ShouldContinue(60))
                 yield return null;
+            
+            // Wait for readiness
+            while (!IsReady())
+                yield return null;
 
             // Render sprite
-            _spriteRenderer.sprite = GetFrameSprite(_frameIndex);
+            _spriteRenderer.sprite = TryGetFrameSprite(_frameIndex);
 
             // Wait for next frame
-            yield return new WaitForSeconds(GetFrameDelay(_frameIndex));
+            yield return new WaitForSeconds(TryGetFrameDelay(_frameIndex));
 
             // Update frame index
             _frameIndex = reverse ? _frameIndex - 1 : _frameIndex + 1;
 
             // Keep frame in bounds
             var isOutOfBounds = _frameIndex < 0 || _frameIndex >= _frameCount;
-            _frameIndex = (_frameIndex + _frameCount) % _frameCount;
+            if (_frameCount > 0) // <-- Prevent division by zero
+                _frameIndex = (_frameIndex + _frameCount) % _frameCount;
 
             // Stop if out of bounds
             if (isOutOfBounds && !repeat)
                 Stop(!reverse);
         }
+    }
+
+    /// <summary>
+    /// Tries to get the sprite for a given frame, returning null on error
+    /// </summary>
+    /// <param name="frame">Index of the frame, starting at 0</param>
+    /// <returns>The sprite for the given frame, or null on error</returns>
+    private Sprite? TryGetFrameSprite(int frame)
+    {
+        try
+        {
+            return GetFrameSprite(frame);
+        }
+        catch
+        {
+            LILogger.Warn($"Problem loading {name}'s animation frame (frame {frame})");
+            return null;
+        }
+    }
+    
+    /// <summary>
+    /// Tries to get the delay for a given frame, returning 0.0f on error
+    /// </summary>
+    /// <param name="frame">Index of the frame, starting at 0</param>
+    /// <returns>The delay for the given frame in seconds, or 0.0f on error</returns>
+    private float TryGetFrameDelay(int frame)
+    {
+        try
+        {
+            return GetFrameDelay(frame);
+        }
+        catch
+        {
+            LILogger.Warn($"Problem loading {name}'s animation delay (frame {frame})");
+            return 0.1f;
+        }
+    }
+
+    /// <summary>
+    /// Checks if an animation is available and ready to play
+    /// </summary>
+    /// <returns>TRUE if the animation is ready</returns>
+    /// <exception cref="NotImplementedException">Thrown if not implemented by subclass</exception>
+    protected virtual bool IsReady()
+    {
+        throw new NotImplementedException();
     }
 
     /// <summary>

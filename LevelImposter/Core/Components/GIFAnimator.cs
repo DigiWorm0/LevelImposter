@@ -113,6 +113,11 @@ public class GIFAnimator(IntPtr intPtr) : LIAnimatorBase(intPtr)
             _gifFile = originalGIFAnim._gifFile;
     }
     
+    protected override bool IsReady()
+    {
+        return _gifFile?.IsLoaded ?? false;
+    }
+    
     [HideFromIl2Cpp]
     private GIFFile.GIFFrame GetFrameData(int frameIndex)
     {

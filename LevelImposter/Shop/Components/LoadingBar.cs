@@ -97,9 +97,7 @@ public class LoadingBar(IntPtr intPtr) : MonoBehaviour(intPtr)
         // Update Progress
         while (_visible)
         {
-            var queueSize = TextureLoader.Instance.QueueSize +
-                            SpriteLoader.Instance.QueueSize +
-                            AudioLoader.Instance.QueueSize;
+            var queueSize = MapLoader.QueueSize;
             
             // Approximate Progress
             if (queueSize > 0)
