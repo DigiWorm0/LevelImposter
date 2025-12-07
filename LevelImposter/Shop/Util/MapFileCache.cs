@@ -1,6 +1,7 @@
 using Il2CppInterop.Runtime.Attributes;
 using LevelImposter.Core;
 using System.IO;
+using Il2CppInterop.Runtime.InteropTypes.Arrays;
 
 namespace LevelImposter.Shop
 {
@@ -62,8 +63,20 @@ namespace LevelImposter.Shop
         public static void Save(LIMap map)
         {
             LILogger.Info($"Saving {map} to filesystem");
-            using (var memoryStream = LISerializer.SerializeMap(map))
-                FileCache.Save($"{map.id}.lim2", memoryStream);
+            using var memoryStream = LISerializer.SerializeMap(map);
+            FileCache.Save($"{map.id}.lim2", memoryStream);
+        }
+
+        /// <summary>
+        /// Saves raw map data to the local map cache
+        /// </summary>
+        /// <param name="dataStream">Stream of raw map data to save</param>
+        /// <param name="mapID">ID of the map to save</param>
+        [HideFromIl2Cpp]
+        public static void Save(MemoryStream dataStream, string mapID)
+        {
+            LILogger.Info($"Saving {mapID} to filesystem");
+            FileCache.Save($"{mapID}.lim2", dataStream);
         }
     }
 }

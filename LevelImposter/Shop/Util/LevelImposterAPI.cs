@@ -102,41 +102,13 @@ public static class LevelImposterAPI
     /// <param name="callback">Callback on success</param>
     /// <param name="onError">Callback on error</param>
     [HideFromIl2Cpp]
-    public static void DownloadMap(Guid id, Action<float>? onProgress, Action<LIMap> callback, Action<string> onError)
+    public static void DownloadMap(Guid id, Action<float>? onProgress, Action<byte[]> callback, Action<string> onError)
     {
         LILogger.Info($"Downloading map [{id}]...");
 
         GetMap(id, metadata =>
         {
-            HTTPHandler.Instance?.Download(metadata.downloadURL, onProgress, fileData =>
-            {
-                LILogger.Info($"Parsing map {id}...");
-                try
-                {
-                    // Open the memory stream
-                    using var memoryStream = new MemoryStream(fileData);
-
-                    // Deserialize the map
-                    var mapData = LIDeserializer.DeserializeMap(memoryStream);
-
-                    // Check Download
-                    if (mapData == null)
-                    {
-                        onError("Map was null");
-                        return;
-                    }
-
-                    // Make Sure the ID Matches
-                    mapData.id = id.ToString();
-
-                    // Callback
-                    callback(mapData);
-                }
-                catch (Exception e)
-                {
-                    onError(e.Message);
-                }
-            }, onError);
+            HTTPHandler.Instance?.Download(metadata.downloadURL, onProgress, fileData => callback(fileData), onError);
         }, onError);
     }
 

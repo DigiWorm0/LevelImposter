@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using Il2CppInterop.Runtime.Attributes;
 using LevelImposter.Core;
 using TMPro;
@@ -113,11 +114,12 @@ public class MapBanner(IntPtr intPtr) : MonoBehaviour(intPtr)
     /// <summary>
     ///     Event that is called when the <c>LIMap</c> is downloaded
     /// </summary>
-    /// <param name="map"></param>
+    /// <param name="mapData">Raw map data in byte array form</param>
     [HideFromIl2Cpp]
-    private void OnDownload(LIMap map)
+    private void OnDownload(byte[] mapData)
     {
-        MapFileAPI.Save(map);
+        using var memoryStream = new MemoryStream(mapData);
+        MapFileAPI.Save(memoryStream, _currentMap?.id ?? "");
         ShopManager.Instance?.SetOverlayEnabled(false);
         ShopManager.RegenerateFallbackMap();
         UpdateButtons();
