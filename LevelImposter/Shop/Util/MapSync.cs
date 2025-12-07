@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using LevelImposter.Core;
 using Reactor.Networking.Attributes;
 using Random = UnityEngine.Random;
@@ -128,16 +129,18 @@ public static class MapSync
             LevelImposterAPI.DownloadMap(
                 mapID,
                 DownloadManager.SetProgress,
-                map =>
+                mapData =>
                 {
-                    MapFileCache.Save(map);
-                    if (_activeDownloadingID == mapID)
-                    {
-                        MapLoader.LoadMap(map, isFallback);
-                        DownloadManager.StopDownload();
-                        LILogger.Notify("Download finished", false);
-                        _activeDownloadingID = null;
-                    }
+                    using var mapStream = new MemoryStream(mapData);
+                    MapFileCache.Save(mapStream, mapIDStr);
+                    
+                    if (_activeDownloadingID != mapID)
+                        return;
+                    
+                    MapLoader.LoadMap(MapFileCache.Get(mapIDStr), isFallback);
+                    DownloadManager.StopDownload();
+                    LILogger.Notify("Download finished", false);
+                    _activeDownloadingID = null;
                 },
                 error =>
                 {

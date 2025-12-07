@@ -101,23 +101,34 @@ namespace LevelImposter.Shop
         [HideFromIl2Cpp]
         public static void Save(LIMap map)
         {
+            using var dataStream = LISerializer.SerializeMap(map);
+            Save(dataStream, map.id);
+        }
+
+        /// <summary>
+        /// Saves raw map data into the local filesystem based on the map's ID.
+        /// </summary>
+        /// <param name="dataStream">Raw map data stream to save</param>
+        /// <param name="mapID">ID of the map to save</param>
+        [HideFromIl2Cpp]
+        public static void Save(MemoryStream dataStream, string mapID)
+        {
             try
             {
-                LILogger.Info($"Saving {map} to filesystem");
-                string mapPath = GetPath(map.id);
+                LILogger.Info($"Saving {mapID} to filesystem");
+                var mapPath = GetPath(mapID);
 
                 // Create Directory
                 if (!Directory.Exists(GetDirectory()))
                     Directory.CreateDirectory(GetDirectory());
-
+                
                 // Write to File
-                using (var dataStream = LISerializer.SerializeMap(map))
-                using (var outputFileStream = File.OpenWrite(mapPath))
-                    dataStream.CopyTo(outputFileStream);
+                using var outputFileStream = File.OpenWrite(mapPath);
+                dataStream.CopyTo(outputFileStream);
             }
             catch (System.Exception e)
             {
-                LILogger.Error($"Failed to save {map} to filesystem");
+                LILogger.Error($"Failed to save {mapID} to filesystem");
                 LILogger.Info(e);
             }
         }
