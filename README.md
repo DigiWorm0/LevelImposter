@@ -61,6 +61,7 @@ Custom Among Us Mapping Studio
 | [Town of Us-R](https://github.com/eDonnes124/Town-Of-Us-R) | ✅ |  |
 | [Town of Us Reworked](https://github.com/AlchlcDvl/TownOfUsReworked) | ⚠️ | Mod is in early beta |
 | [Stellar Roles](https://github.com/Mr-Fluuff/StellarRolesAU) | ✅ |  |
+| [NewMod](https://github.com/CallOfCreator/NewMod) | ✅ |  |
 | [Submerged](https://github.com/SubmergedAmongUs/Submerged) | ⚠️ | Some minor visual bugs |
 
 Don\'t see a compatible mod here? Create a [Pull Request](https://github.com/DigiWorm0/LevelImposter/pulls)!
