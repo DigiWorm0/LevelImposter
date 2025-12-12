@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Level Imposter Docs</title>
+    <meta name="description" content="LevelImposter documentation">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="style.css" rel="stylesheet" type="text/css">
+    
+    <!-- google font families, because Jetbrains is life and Mono Emoji is always nice to have -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Emoji:wght@700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=JetBrains Mono" rel="stylesheet">
+  </head>
+  
+  <body>
+    <!-- The sidebar, containing the redirects to various pages of the documentation -->
+    <div class="sideholder">
+      <h1 class="sidetitle">LevelImposter Docs</h1>
+      <p id="home" class="sidebutton" style="text-decoration: underline; font-weight: bold;">Home</p>
+      <p id="basics" class="sidebutton">Basics</p>
+    </div>
+    
+    <div id="pageholder" class="pageholder">
+      <!-- HOW TO ADD A PAGE -->
+      <!-- to add a page, simply create an option on the sidebar located above, then create a page element like the ones below -->
+      <!-- be sure to name your page's id "[your sidebar's id]page" (ex- "home" leads to "homepage") -->
+      <!-- from there, add elements using the existing css styling to your page, or create your own -->
+      
+      <!-- The home page -->
+      <div id="homepage" class="page" style="display: block">
+        <h1 class="pagetitle">Home</h1>
+        <hr class="pagedivider">
+        <p class="pagetext">LevelImposter is a mod for Among Us which allows you to create, test, and play custom maps.</p>
+      </div>
+      
+      <!-- The basics page -->
+      <div id="basicspage" class="page">
+        <h1 class="pagetitle">Basics</h1>
+        <hr class="pagedivider">
+        <p class="pagetext">This is the basics page.</p>
+        <img class="pageimg" src="https://cdn.glitch.global/c8d2697e-f6ac-426a-9cef-bb5f0deba42f/8075d52b-25de-4908-996e-5a62d5b765c7.image.png?v=1714781423589">
+        <p class="pagetext">Pictured above is the LevelImposter editor.</p>
+      </div>
+        
+    </div>
+  </body>
+  
+  
+  <script src="./index.js" type="module"></script>
+</html>
