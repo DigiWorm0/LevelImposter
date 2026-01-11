@@ -53,7 +53,7 @@ public class LoadingBar(IntPtr intPtr) : MonoBehaviour(intPtr)
         // Create LoadingBar
         if (Instance == null)
             Instantiate(
-                MapUtils.LoadAssetBundle<GameObject>("loadingbar"),
+                MapUtils.LoadResourceFromAssetBundle<GameObject>("loadingbar"),
                 DestroyableSingleton<HudManager>.Instance.transform
             );
 

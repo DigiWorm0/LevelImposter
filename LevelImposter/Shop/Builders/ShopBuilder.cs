@@ -3,6 +3,7 @@ using LevelImposter.Core;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
+
 namespace LevelImposter.Shop;
 
 public static class ShopBuilder
@@ -12,9 +13,9 @@ public static class ShopBuilder
     private static GameObject GetShopPrefab()
     {
         if (_mapShopPrefab == null)
-            _mapShopPrefab = MapUtils.LoadAssetBundle<GameObject>("shop");
+            _mapShopPrefab = MapUtils.LoadResourceFromAssetBundle<GameObject>(LIConstants.IsMobile ? "Shop-Mobile" : "Shop");
         if (_mapShopPrefab == null)
-            throw new Exception("The \"shop\" asset bundle was not found in assembly");
+            throw new Exception("The shop asset bundle was not found in assembly");
         return _mapShopPrefab;
     }
 

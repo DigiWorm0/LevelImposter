@@ -61,7 +61,7 @@ public static class LobbyMapImagePatch
 
         // Get default map icon
         if (_defaultThumbnail == null)
-            _defaultThumbnail = MapUtils.LoadAssetBundle<Sprite>("defaultthumbnail");
+            _defaultThumbnail = MapUtils.LoadResourceFromAssetBundle<Sprite>("defaultthumbnail");
         if (_defaultThumbnail == null)
             throw new Exception("Error loading default thumbnail from asset bundle");
 

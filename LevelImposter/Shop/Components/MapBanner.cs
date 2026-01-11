@@ -98,7 +98,7 @@ public class MapBanner(IntPtr intPtr) : MonoBehaviour(intPtr)
         _trashButton?.SetButtonEnableState(isLoaded && isDownloaded && isPublic);
         _downloadButton?.SetButtonEnableState(isLoaded && !isDownloaded && isPublic);
         _remixButton?.SetButtonEnableState(isLoaded && isRemix);
-        _externalButton?.gameObject.SetActive(isLoaded && isOnline);
+        _externalButton?.gameObject.SetActive(isLoaded && isOnline && !LIConstants.IsMobile);
     }
 
     /// <summary>

@@ -27,6 +27,9 @@ namespace LevelImposter.Core;
 public static class MapUtils
 {
     private static Sprite? _defaultSquare;
+    
+    private const string RESOURCE_BUNDLE_NAME = "li_resources";
+    private static AssetBundle? _resourceBundle;
 
     /// <summary>
     ///     Adds an element to an Il2CppReferenceArray
@@ -273,28 +276,40 @@ public static class MapUtils
             return resourceData;
         }
     }
+    
+    /// <summary>
+    /// Gets or loads the resource asset bundle
+    /// </summary>
+    /// <returns>AssetBundle instance containing LI resources stored in the AssetBundle</returns>
+    private static AssetBundle GetResourceBundle()
+    {
+        if (_resourceBundle != null)
+            return _resourceBundle;
+        
+        LILogger.Info($"Loading asset bundle {RESOURCE_BUNDLE_NAME}");
+        
+        _resourceBundle = AssetBundleManager.Load(RESOURCE_BUNDLE_NAME);
+        if (_resourceBundle == null)
+            throw new Exception("Could not load resource asset bundle");
+        
+        return _resourceBundle;
+    }
 
     /// <summary>
-    ///     Loads a GameObject from asembly resources
+    ///     Loads a GameObject from assembly resources
     /// </summary>
     /// <param name="name">Name of the AssetBundle file</param>
     /// <returns>GameObject or null if not found</returns>
-    public static T? LoadAssetBundle<T>(string name) where T : Object
+    public static T? LoadResourceFromAssetBundle<T>(string name) where T : Object
     {
-        LILogger.Info($"Loading asset bundle {name}");
-        var assembly = Assembly.GetExecutingAssembly();
-        var resourceName = assembly.GetManifestResourceNames().FirstOrDefault(str => str.EndsWith(name));
-        using var assetStream = assembly.GetManifestResourceStream(resourceName ?? "");
-
-        if (assetStream == null)
-            return null;
-
-        var assetBundle = AssetBundle.LoadFromStream(assetStream.AsIl2Cpp());
-        var asset = assetBundle.LoadAsset(name, Il2CppType.Of<T>()).Cast<T>();
-        assetBundle.Unload(false);
+        LILogger.Info($"Loading resource {name}");
+        
+        var asset = GetResourceBundle().LoadAsset(name, Il2CppType.Of<T>())?.Cast<T>();
+        if (asset == null)
+            throw new Exception($"Could not find resource {name} in asset bundle");
+        
         return asset;
     }
-
 
     /// <summary>
     /// Loads a PNG sprite from assembly resources

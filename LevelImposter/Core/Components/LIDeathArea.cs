@@ -5,7 +5,7 @@ using Reactor.Networking.Attributes;
 namespace LevelImposter.Core;
 
 /// <summary>
-///     Object that kills all players that enter it's range
+///     Object that kills all players that enter its range
 /// </summary>
 public class LIDeathArea(IntPtr intPtr) : PlayerArea(intPtr)
 {

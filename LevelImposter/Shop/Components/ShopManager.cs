@@ -24,13 +24,16 @@ public class ShopManager(IntPtr intPtr) : MonoBehaviour(intPtr)
         Recent
     }
 
-    private const string SHOP_NAME = "LIShop";
-    private const float BANNER_HEIGHT = 2.0f;
-    private const float BANNER_WIDTH = 2.4f;
     private const int COL_COUNT = 3;
+    private const string SHOP_NAME = "LIShop";
+    
+    private static readonly float BannerHeight = LIConstants.IsMobile ? 2.8f : 2.0f;
+    private static readonly float BannerWidth = LIConstants.IsMobile ? 3.4f : 2.4f;
+    private static readonly float BannerOffsetY = LIConstants.IsMobile ? -0.45f : 0.0f;
+
     private readonly Stack<MapBanner>? _shopBanners = new();
     private MapBanner? _bannerPrefab;
-
+    
     private HostLocalGameButton? _freeplayComp;
     private GameObject? _overlay;
     private SpriteRenderer? _overlayBackground;
@@ -41,7 +44,7 @@ public class ShopManager(IntPtr intPtr) : MonoBehaviour(intPtr)
     private ShopTabs? _tabs;
 
     public static ShopManager? Instance { get; private set; }
-    private Transform? _bannerParent => _bannerPrefab?.transform.parent;
+    private Transform? BannerParent => _bannerPrefab?.transform.parent;
 
     public Tab CurrentTab { get; private set; } = Tab.None;
 
@@ -286,21 +289,21 @@ public class ShopManager(IntPtr intPtr) : MonoBehaviour(intPtr)
         var bannerCount = _shopBanners.Count;
 
         // Instantiate Banner
-        var banner = Instantiate(_bannerPrefab, _bannerParent);
+        var banner = Instantiate(_bannerPrefab, BannerParent);
         banner.gameObject.SetActive(true);
         banner.SetMap(map);
         _shopBanners.Push(banner);
 
         // Position Banner
         banner.transform.localPosition = new Vector3(
-            bannerCount % COL_COUNT * BANNER_WIDTH - (COL_COUNT - 1) * (BANNER_WIDTH / 2),
-            bannerCount / COL_COUNT * -BANNER_HEIGHT,
+            bannerCount % COL_COUNT * BannerWidth - (COL_COUNT - 1) * (BannerWidth / 2),
+            bannerCount / COL_COUNT * -BannerHeight + BannerOffsetY,
             0
         );
 
         // Set Scroll Height
         if (_scroller != null)
-            _scroller.ContentYBounds.max = bannerCount / COL_COUNT * BANNER_HEIGHT;
+            _scroller.ContentYBounds.max = bannerCount / COL_COUNT * BannerHeight;
     }
 
     /// <summary>
@@ -313,7 +316,6 @@ public class ShopManager(IntPtr intPtr) : MonoBehaviour(intPtr)
         MapLoader.LoadMap(id, false, MapSync.SyncMapID);
         ConfigAPI.SetLastMapID(id);
 
-        _shouldRegenerateFallback = false;
         CloseShop();
     }
 
