@@ -4,8 +4,6 @@ using System.IO;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-using Il2CppFile = Il2CppSystem.IO.File;
-
 namespace LevelImposter.Shop
 {
     /// <summary>
@@ -114,7 +112,7 @@ namespace LevelImposter.Shop
                     Directory.CreateDirectory(GetDirectory());
                 
                 // Write to File
-                Il2CppFile.WriteAllBytes(mapPath, mapData.Data);
+                File.WriteAllBytes(mapPath, mapData.Data);
             }
             catch (System.Exception e)
             {

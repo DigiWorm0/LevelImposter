@@ -6,8 +6,6 @@ using Il2CppInterop.Runtime.Attributes;
 using LevelImposter.Core;
 using UnityEngine;
 
-using Il2CppFile = Il2CppSystem.IO.File;
-
 namespace LevelImposter.Shop;
 
 /// <summary>
@@ -139,7 +137,7 @@ public static class GitHubAPI
                         throw new Exception("DLL size exceeds maximum file size");
 
                     // Create file stream
-                    var fileStream = Il2CppFile.Create(dllPath);
+                    var fileStream = File.Create(dllPath);
                     try
                     {
                         // Write DLL bytes to file

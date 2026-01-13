@@ -22,14 +22,9 @@ public static class WAVLoader
         var soundDBElem = MapLoader.CurrentMap?.mapAssetDB?.Get(soundData.dataID);
         if (soundDBElem == null)
             return null;
-        
-        // Load data into IL2CPP memory
-        var il2cppData = soundDBElem.LoadToMemory();
-        var managedData = il2cppData.ToManagedArray();
 
-        // Get Sound Data from stream
-        using var stream = new MemoryStream(managedData);
-        return Load(stream, soundData.id.ToString());
+        // Load from data store
+        return Load(soundDBElem, soundData.id.ToString());
     }
 
     /// <summary>
@@ -41,11 +36,10 @@ public static class WAVLoader
     public static AudioClip Load(IDataStore dataStore, string name)
     {
         // Load data into managed memory
-        var il2cppData = dataStore.LoadToMemory();
-        var managedData = il2cppData.ToManagedArray();
+        var wavData = dataStore.LoadToManagedMemory();
         
         // Load the WAV from the stream
-        using var stream = new MemoryStream(managedData);
+        using var stream = new MemoryStream(wavData);
         return Load(stream, name);
     }
     

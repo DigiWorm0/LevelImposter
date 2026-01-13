@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Text.Json;
+using System.IO;
 using AmongUs.GameOptions;
 using Il2CppInterop.Runtime;
 using Il2CppInterop.Runtime.InteropTypes;
@@ -242,32 +243,25 @@ public static class MapUtils
         mesh.RecalculateNormals();
         return mesh;
     }
+    
+    private static Stream OpenResourceStream(string name)
+    {
+        var assembly = Assembly.GetExecutingAssembly();
+        var resourceStream = assembly.GetManifestResourceStream($"LevelImposter.Assets.{name}");
+        if (resourceStream == null)
+            throw new Exception($"Resource {name} not found in assembly");
 
-    /// <summary>
-    ///     Grabs a resource from the assembly
-    /// </summary>
-    /// <param name="name">Name of the resource file</param>
-    /// <returns>Raw resource data</returns>
+        return resourceStream;
+    }
     private static byte[]? GetResource(string name)
     {
-        var assembly = Assembly.GetExecutingAssembly();
-        using var resourceStream = assembly.GetManifestResourceStream($"LevelImposter.Assets.{name}");
-        if (resourceStream == null)
-            return null;
-
-        var resourceData = new byte[resourceStream.Length];
-        resourceStream.Read(resourceData);
-        return resourceData;
+        using var resourceStream = OpenResourceStream(name);
+        return resourceStream.ToManagedArray();
     }
-
     private static MemoryBlock? GetResourceAsIl2Cpp(string name)
     {
-        var assembly = Assembly.GetExecutingAssembly();
-        using var resourceStream = assembly.GetManifestResourceStream($"LevelImposter.Assets.{name}");
-        if (resourceStream == null)
-            return null;
-
-        return MemoryBlock.FromStream(resourceStream);
+        using var resourceStream = OpenResourceStream(name);
+        return resourceStream.ToIl2CppArray();
     }
     
     /// <summary>

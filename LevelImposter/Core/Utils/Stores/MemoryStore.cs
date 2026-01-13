@@ -1,5 +1,4 @@
-﻿using System.IO;
-using Il2CppInterop.Runtime.InteropTypes.Arrays;
+﻿using System;
 
 namespace LevelImposter.Core;
 
@@ -13,5 +12,17 @@ public class MemoryStore(MemoryBlock memoryBlock) : IDataStore
     public MemoryBlock LoadToMemory()
     {
         return memoryBlock;
+    }
+
+    public byte[] LoadToManagedMemory()
+    {
+        return memoryBlock.ToManagedArray();
+    }
+
+    public byte[] Peek(int count)
+    {
+        var managedArray = new byte[count];
+        Buffer.BlockCopy(memoryBlock.Data, 0, managedArray, 0, (int)Math.Min(count, memoryBlock.Length));
+        return managedArray;
     }
 }

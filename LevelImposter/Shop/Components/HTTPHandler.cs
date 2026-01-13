@@ -73,7 +73,7 @@ public class HTTPHandler(IntPtr intPtr) : MonoBehaviour(intPtr)
             else if (onSuccessData != null)
             {
                 var downloadedBytes = request.downloadHandler.GetNativeData().ToArray();
-                var memoryBlock = MemoryBlock.FromIl2CppArray(downloadedBytes.Cast<Il2CppStructArray<byte>>());
+                var memoryBlock = new MemoryBlock(downloadedBytes.Cast<Il2CppStructArray<byte>>());
                 onSuccessData(memoryBlock);
             }
 

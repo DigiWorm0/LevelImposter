@@ -30,7 +30,7 @@ public readonly struct LoadableTexture(string _id, IDataStore _dataStore) : ICac
     /// <returns>A LoadableTexture instance.</returns>
     public static LoadableTexture FromMemory(string id, MemoryBlock data)
     {
-        var stream = new MemoryStore(data);
-        return new LoadableTexture(id, stream);
+        var store = new MemoryStore(data);
+        return new LoadableTexture(id, store);
     }
 }

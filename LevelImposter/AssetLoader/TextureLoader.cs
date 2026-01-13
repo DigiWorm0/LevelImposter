@@ -33,18 +33,15 @@ public class TextureLoader : AsyncQueue<LoadableTexture, LoadedTexture>
 
     protected override LoadedTexture Load(LoadableTexture loadable)
     {
-        // Load data into memory
-        var data = loadable.DataStore.LoadToMemory();
-        
         // Determine file type
-        var fileType = GetFileType(data);
+        var fileType = GetFileType(loadable);
         
         // Load the sprite
         var loadedTexture = fileType switch
         {
-            FileType.DDS => DDSLoader.Load(loadable, data),
-            FileType.GIF => GIFLoader.Load(loadable, data),
-            _ => PNGLoader.Load(loadable, data)
+            FileType.DDS => DDSLoader.Load(loadable),
+            FileType.GIF => GIFLoader.Load(loadable),
+            _ => PNGLoader.Load(loadable)
         };
 
         // Return the loaded sprite
@@ -64,13 +61,16 @@ public class TextureLoader : AsyncQueue<LoadableTexture, LoadedTexture>
     /// Checks the file type of <see cref="MemoryBlock"/> by
     /// inspecting its magic numbers from a data stream.
     /// </summary>
-    /// <param name="data">Data block to check</param>
+    /// <param name="loadable">Loadable texture to check</param>
     /// <returns>Cooresponding file type</returns>
-    private static FileType? GetFileType(MemoryBlock data)
+    private static FileType? GetFileType(LoadableTexture loadable)
     {
-        if (GIFFile.IsGIF(data))
+        // Peek at the start of the data
+        var signature = loadable.DataStore.Peek(FILE_TYPE_BUFFER_SIZE);
+
+        if (GIFFile.IsGIF(signature))
             return FileType.GIF;
-        if (DDSLoader.IsDDS(data))
+        if (DDSLoader.IsDDS(signature))
             return FileType.DDS;
         
         return null;

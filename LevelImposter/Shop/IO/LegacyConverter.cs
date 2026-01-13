@@ -81,7 +81,7 @@ public static class LegacyConverter
 
         // Create Asset
         var assetID = Guid.NewGuid();
-        assetDB.Add(assetID, MemoryBlock.FromArray(data));
+        assetDB.Add(assetID, new MemoryBlock(data));
         return assetID;
     }
 

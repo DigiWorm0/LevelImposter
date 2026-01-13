@@ -74,7 +74,7 @@ public class GIFFile(string name) : IDisposable
     /// </summary>
     /// <param name="data">MemoryBlock of raw GIF data</param>
     /// <returns>True if the data is a GIF file. False otherwise</returns>
-    public static bool IsGIF(MemoryBlock data)
+    public static bool IsGIF(byte[] data)
     {
         return data[0] == 'G' &&
                data[1] == 'I' &&
@@ -368,6 +368,7 @@ public class GIFFile(string name) : IDisposable
     /// <returns>List of color indices</returns>
     private List<ushort> DecodeLZW(byte[] byteBuffer, byte minCodeSize, int expectedSize)
     {
+        // Initialize LZW Variables
         var clearCode = 1 << minCodeSize; // Code used to clear the code table
         var endOfInformationCode = clearCode + 1; // Code used to signal the end of the image data
 

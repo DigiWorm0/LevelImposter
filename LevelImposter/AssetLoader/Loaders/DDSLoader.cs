@@ -21,13 +21,12 @@ public static class DDSLoader
     ///     Loads a DDS (DirectDraw Surface) image from a loadable.
     /// </summary>
     /// <param name="loadable">Loadable texture</param>
-    /// <param name="data">Optional preloaded data block</param>
     /// <returns>A still UnityEngine.Texture2D containing the image data</returns>
     /// <exception cref="IOException">If the Stream fails to read image data</exception>
-    public static LoadedTexture Load(LoadableTexture loadable, MemoryBlock? data = null)
+    public static LoadedTexture Load(LoadableTexture loadable)
     {
         // Rent buffers from the pool
-        var imgData = data ?? loadable.DataStore.LoadToMemory();
+        var imgData = loadable.DataStore.LoadToMemory();
 
         // Create Texture
         var texture = ImageDataToTexture2D(
@@ -73,7 +72,7 @@ public static class DDSLoader
     /// </summary>
     /// <param name="data">MemoryBlock of raw DDS data</param>
     /// <returns>True if the data is a DDS file. False otherwise</returns>
-    public static bool IsDDS(MemoryBlock data)
+    public static bool IsDDS(byte[] data)
     {
         return data[0] == 'D' &&
                data[1] == 'D' &&

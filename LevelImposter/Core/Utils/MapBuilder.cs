@@ -101,6 +101,36 @@ public class MapBuilder
             LILogger.Warn("Asset DB is not initialized yet!");
 
         // Create GameObjects
+        CreateGameObjects(map);
+
+        // Prebuild
+        LILogger.Msg("Running Pre-Build");
+        foreach (var elem in map.elements)
+            buildRouter.RunBuildStep(BuildRouter.BuildStep.PreBuild, elem);
+
+        // Build
+        LILogger.Msg("Running Build");
+        foreach (var elem in map.elements)
+            buildRouter.RunBuildStep(BuildRouter.BuildStep.Build, elem);
+
+        // Postbuild
+        LILogger.Msg("Running Post-Build");
+        foreach (var elem in map.elements)
+            buildRouter.RunBuildStep(BuildRouter.BuildStep.PostBuild, elem);
+
+        // Cleanup
+        LILogger.Msg("Running Cleanup");
+        buildRouter.Cleanup();
+
+        // Finish
+        IsBuilding = false;
+        LILogger.Msg("Done");
+    }
+
+    private void CreateGameObjects(LIMap map)
+    {
+        // Create each element's GameObject and MapObjectData
+        var liShipStatus = LIShipStatus.GetInstance();
         foreach (var elem in map.elements)
         {
             // Create GameObject
@@ -116,7 +146,13 @@ public class MapBuilder
             liShipStatus.MapObjectDB.AddObject(elem.id, elemObject);
         }
 
-        // Set Parenting
+        ApplyGameObjectHierarchy(map);
+    }
+
+    private void ApplyGameObjectHierarchy(LIMap map)
+    {
+        // Set Parent-Child Relationships
+        var liShipStatus = LIShipStatus.GetInstance();
         foreach (var elem in map.elements)
         {
             // Get Element Properties
@@ -146,28 +182,5 @@ public class MapBuilder
             // Set Parent
             elemObject.transform.SetParent(parentObject.transform);
         }
-
-        // Prebuild
-        LILogger.Msg("Running Pre-Build");
-        foreach (var elem in map.elements)
-            buildRouter.RunBuildStep(BuildRouter.BuildStep.PreBuild, elem);
-
-        // Build
-        LILogger.Msg("Running Build");
-        foreach (var elem in map.elements)
-            buildRouter.RunBuildStep(BuildRouter.BuildStep.Build, elem);
-
-        // Postbuild
-        LILogger.Msg("Running Post-Build");
-        foreach (var elem in map.elements)
-            buildRouter.RunBuildStep(BuildRouter.BuildStep.PostBuild, elem);
-
-        // Cleanup
-        LILogger.Msg("Running Cleanup");
-        buildRouter.Cleanup();
-
-        // Finish
-        IsBuilding = false;
-        LILogger.Msg("Done");
     }
 }

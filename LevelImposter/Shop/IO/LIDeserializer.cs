@@ -84,7 +84,8 @@ public static class LIDeserializer
                 var dataLength = BitConverter.ToInt32(lengthBytes, 0);
 
                 // Check Length
-                if (dataLength <= 0)
+                if (dataLength <= 0 ||
+                    dataStream.Position + dataLength > dataStream.Length)
                 {
                     LILogger.Error($"Invalid data length: {dataLength}");
                     continue;
@@ -101,7 +102,7 @@ public static class LIDeserializer
                 else
                 {
                     // Reading from a stream, save the raw data to memory
-                    mapData.mapAssetDB.Add(spriteID, MemoryBlock.FromStream(dataStream, dataLength));
+                    mapData.mapAssetDB.Add(spriteID, dataStream.ToIl2CppArray(dataLength));
                 }
             }
 

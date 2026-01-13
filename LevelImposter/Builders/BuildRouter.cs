@@ -92,7 +92,9 @@ public class BuildRouter
                 throw new Exception($"Could not find {elem} in map object db");
 
             // Run Builders
-            foreach (var builder in _buildStack)
+            foreach (var builder in _buildStack) {
+                
+                // Execute Build Step
                 switch (buildStep)
                 {
                     case BuildStep.PreBuild:
@@ -107,6 +109,7 @@ public class BuildRouter
                     default:
                         throw new ArgumentOutOfRangeException(nameof(buildStep), buildStep, null);
                 }
+            }
 
             // Stop Build Timer
             _sw.Stop();

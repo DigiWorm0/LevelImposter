@@ -12,8 +12,6 @@ namespace LevelImposter.Core;
 /// </summary>
 public class WAVFile(string _name) : IDisposable
 {
-    private const string CLIP_NAME = "WAVFile";
-
     private short _channelCount;
     private AudioClip? _clip;
     private float[]? _data;

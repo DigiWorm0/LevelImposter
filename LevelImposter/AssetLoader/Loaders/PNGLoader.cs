@@ -13,13 +13,12 @@ public static class PNGLoader
     ///     Loads a PNG/JPG image from a stream.
     /// </summary>
     /// <param name="loadable">Texture options to apply</param>
-    /// <param name="data">Optional preloaded data block</param>
     /// <returns>A still UnityEngine.Texture2D containing the image data</returns>
     /// <exception cref="IOException">If the Stream fails to read image data</exception>
-    public static LoadedTexture Load(LoadableTexture loadable, MemoryBlock? data = null)
+    public static LoadedTexture Load(LoadableTexture loadable)
     {
         // Read all image data into memory
-        var imgData = data ?? loadable.DataStore.LoadToMemory();
+        var imgData = loadable.DataStore.LoadToMemory();
         
         // Get Options
         var options = loadable.Options;

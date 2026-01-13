@@ -4,8 +4,6 @@ using System;
 using System.IO;
 using System.Linq;
 
-using Il2CppFile = Il2CppSystem.IO.File;
-
 namespace LevelImposter.Shop
 {
     /// <summary>
@@ -115,8 +113,8 @@ namespace LevelImposter.Shop
                 return null;
             }
 
-            var data = Il2CppFile.ReadAllBytes(GetPath(fileName));
-            return MemoryBlock.FromIl2CppArray(data);
+            using var stream = File.OpenRead(GetPath(fileName));
+            return stream.ToIl2CppArray();
         }
 
         /// <summary>
@@ -141,7 +139,7 @@ namespace LevelImposter.Shop
                     File.Delete(filePath);
 
                 // Write File
-                Il2CppFile.WriteAllBytes(filePath, fileBytes.Data);
+                File.WriteAllBytes(filePath, fileBytes.ToManagedArray());
             }
             catch (Exception e)
             {

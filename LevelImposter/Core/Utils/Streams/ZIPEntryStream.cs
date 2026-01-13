@@ -17,7 +17,7 @@ public class ZIPEntryStream : Stream
     private readonly Stream _baseStream;
     
     /// <summary>
-    /// Represents a stream to a specific entry within a ZIP file.
+    ///     Represents a stream to a specific entry within a ZIP file.
     /// </summary>
     /// <param name="zipFilePath">The path to the ZIP file.</param>
     /// <param name="zipEntryName">The name of the entry within the ZIP file.</param>

@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 
 namespace LevelImposter.Core;
 
@@ -11,7 +12,30 @@ public class FileStore(string filePath) : IDataStore
 {
     public MemoryBlock LoadToMemory()
     {
-        using var stream = File.OpenRead(filePath);
-        return MemoryBlock.FromStream(stream);
+        using var stream = OpenStream();
+        return stream.ToIl2CppArray();
+    }
+
+    public byte[] LoadToManagedMemory()
+    {
+        using var stream = OpenStream();
+        return stream.ToManagedArray();
+    }
+
+    public byte[] Peek(int count)
+    {
+        using var stream = OpenStream();
+        var managedArray = new byte[count];
+        stream.Read(managedArray, 0, (int)Math.Min(count, stream.Length));
+        return managedArray;
+    }
+
+    /// <summary>
+    /// Opens a stream to read the entire file.
+    /// </summary>
+    /// <returns>The file stream.</returns>
+    public Stream OpenStream()
+    {
+        return File.OpenRead(filePath);
     }
 }
