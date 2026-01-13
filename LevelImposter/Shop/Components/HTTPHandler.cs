@@ -2,10 +2,10 @@ using System;
 using System.Collections;
 using BepInEx.Unity.IL2CPP.Utils.Collections;
 using Il2CppInterop.Runtime.Attributes;
+using Il2CppInterop.Runtime.InteropTypes.Arrays;
 using LevelImposter.Core;
 using UnityEngine;
 using UnityEngine.Networking;
-using ByteArray = Il2CppInterop.Runtime.InteropTypes.Arrays.Il2CppArrayBase<byte>;
 
 namespace LevelImposter.Shop;
 
@@ -34,13 +34,13 @@ public class HTTPHandler(IntPtr intPtr) : MonoBehaviour(intPtr)
     /// </summary>
     /// <param name="url">URL to send request to</param>
     /// <param name="onSuccessString">Callback on success as a continuous string</param>
-    /// <param name="onSuccessBytes">Callback on success as a byte stream</param>
+    /// <param name="onSuccessData">Callback on success as raw byte data</param>
     /// <param name="onProgress">Callback on progress, value from 0 to 1</param>
     /// <param name="onError">Callback on error with error info</param>
     [HideFromIl2Cpp]
     private IEnumerator CoRequest(string url,
         Action<string>? onSuccessString,
-        Action<ByteArray>? onSuccessBytes,
+        Action<MemoryBlock>? onSuccessData,
         Action<float>? onProgress,
         Action<string>? onError)
     {
@@ -70,10 +70,11 @@ public class HTTPHandler(IntPtr intPtr) : MonoBehaviour(intPtr)
             {
                 onSuccessString(request.downloadHandler.text);
             }
-            else if (onSuccessBytes != null)
+            else if (onSuccessData != null)
             {
                 var downloadedBytes = request.downloadHandler.GetNativeData().ToArray();
-                onSuccessBytes(downloadedBytes);
+                var memoryBlock = MemoryBlock.FromIl2CppArray(downloadedBytes.Cast<Il2CppStructArray<byte>>());
+                onSuccessData(memoryBlock);
             }
 
             // Free memory (because BepInEx)
@@ -81,7 +82,7 @@ public class HTTPHandler(IntPtr intPtr) : MonoBehaviour(intPtr)
             request = null;
             url = "";
             onSuccessString = null;
-            onSuccessBytes = null;
+            onSuccessData = null;
             onProgress = null;
             onError = null;
         }
@@ -92,17 +93,17 @@ public class HTTPHandler(IntPtr intPtr) : MonoBehaviour(intPtr)
     /// </summary>
     /// <param name="url">URL to send request to</param>
     /// <param name="onSuccessString">Callback on success as a continuous string</param>
-    /// <param name="onSuccessBytes">Callback on success as a byte stream</param>
+    /// <param name="onSuccessData">Callback on success as raw byte data</param>
     /// <param name="onProgress">Callback on progress, value from 0 to 1</param>
     /// <param name="onError">Callback on error with error info</param>
     [HideFromIl2Cpp]
     private void Request(string url,
         Action<string>? onSuccessString,
-        Action<ByteArray>? onSuccessBytes,
+        Action<MemoryBlock>? onSuccessData,
         Action<float>? onProgress,
         Action<string>? onError)
     {
-        StartCoroutine(CoRequest(url, onSuccessString, onSuccessBytes, onProgress, onError).WrapToIl2Cpp());
+        StartCoroutine(CoRequest(url, onSuccessString, onSuccessData, onProgress, onError).WrapToIl2Cpp());
     }
 
     // "RequestString" has to be defined separately to avoid limitations with ambiguous calls
@@ -113,7 +114,7 @@ public class HTTPHandler(IntPtr intPtr) : MonoBehaviour(intPtr)
     }
 
     [HideFromIl2Cpp]
-    public void Request(string url, Action<ByteArray>? onSuccess, Action<string>? onError)
+    public void Request(string url, Action<MemoryBlock>? onSuccess, Action<string>? onError)
     {
         Request(url, null, onSuccess, null, onError);
     }
@@ -126,7 +127,7 @@ public class HTTPHandler(IntPtr intPtr) : MonoBehaviour(intPtr)
     }
 
     [HideFromIl2Cpp]
-    public void Download(string url, Action<float>? onProgress, Action<ByteArray>? onSuccess,
+    public void Download(string url, Action<float>? onProgress, Action<MemoryBlock>? onSuccess,
         Action<string>? onError)
     {
         Request(url, null, onSuccess, onProgress, onError);

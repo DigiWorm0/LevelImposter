@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Buffers;
 using System.IO;
+using Il2CppInterop.Runtime.InteropTypes.Arrays;
 using LevelImposter.Core;
 using UnityEngine;
 
@@ -32,15 +33,18 @@ public class TextureLoader : AsyncQueue<LoadableTexture, LoadedTexture>
 
     protected override LoadedTexture Load(LoadableTexture loadable)
     {
+        // Load data into memory
+        var data = loadable.DataStore.LoadToMemory();
+        
         // Determine file type
-        var fileType = GetFileType(loadable);
-
+        var fileType = GetFileType(data);
+        
         // Load the sprite
         var loadedTexture = fileType switch
         {
-            FileType.DDS => DDSLoader.Load(loadable),
-            FileType.GIF => GIFLoader.Load(loadable),
-            _ => PNGLoader.Load(loadable)
+            FileType.DDS => DDSLoader.Load(loadable, data),
+            FileType.GIF => GIFLoader.Load(loadable, data),
+            _ => PNGLoader.Load(loadable, data)
         };
 
         // Return the loaded sprite
@@ -57,24 +61,16 @@ public class TextureLoader : AsyncQueue<LoadableTexture, LoadedTexture>
     }
     
     /// <summary>
-    /// Checks the file type of loadable texture by
+    /// Checks the file type of <see cref="MemoryBlock"/> by
     /// inspecting its magic numbers from a data stream.
     /// </summary>
-    /// <param name="loadable">Loadable texture</param>
+    /// <param name="data">Data block to check</param>
     /// <returns>Cooresponding file type</returns>
-    private static FileType? GetFileType(LoadableTexture loadable)
+    private static FileType? GetFileType(MemoryBlock data)
     {
-        // Buffer the first 16 bytes of the stream
-        // This is because we can't seek some types of streams
-        using var loadableStream = loadable.DataStore.OpenStream();
-        using var memoryBlock = new PoolableMemoryBlock(FILE_TYPE_BUFFER_SIZE);
-        loadableStream.Read(memoryBlock.Get(), 0, FILE_TYPE_BUFFER_SIZE);
-        
-        // Check file type
-        using var memoryStream = new MemoryStream(memoryBlock.Get());
-        if (GIFFile.IsGIF(memoryStream))
+        if (GIFFile.IsGIF(data))
             return FileType.GIF;
-        if (DDSLoader.IsDDS(memoryStream))
+        if (DDSLoader.IsDDS(data))
             return FileType.DDS;
         
         return null;

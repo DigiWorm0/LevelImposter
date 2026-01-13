@@ -76,12 +76,12 @@ public static class LegacyConverter
     {
         // Find Asset
         foreach (var asset in assetDB.DB)
-            if (CompareData(asset.Value.LoadToMemory().Get(), data))
+            if (CompareData(asset.Value.LoadToMemory().Data, data))
                 return asset.Key;
 
         // Create Asset
         var assetID = Guid.NewGuid();
-        assetDB.Add(assetID, data);
+        assetDB.Add(assetID, MemoryBlock.FromArray(data));
         return assetID;
     }
 
@@ -188,11 +188,8 @@ public static class LegacyConverter
         UpdateMap(mapFile);
 
         // Serialize & Write to new file
-        using (var dataStream = LISerializer.SerializeMap(mapFile))
-        using (var outputFileStream = File.OpenWrite(newPath))
-        {
-            dataStream.CopyTo(outputFileStream);
-        }
+        using var outputFileStream = File.Create(newPath);
+        LISerializer.SerializeMap(mapFile, outputFileStream);
 
         // Delete legacy file
         File.Move(legacyPath, $"{legacyPath}.bak");

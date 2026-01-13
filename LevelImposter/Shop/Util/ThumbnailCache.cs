@@ -26,7 +26,7 @@ public static class ThumbnailCache
     /// </summary>
     /// <param name="mapID">ID of the map thumbnail to save</param>
     /// <param name="thumbnailBytes">Raw image bytes to write to disk</param>
-    public static void Save(string mapID, byte[] thumbnailBytes)
+    public static void Save(string mapID, MemoryBlock thumbnailBytes)
     {
         FileCache.Save($"{mapID}.png", thumbnailBytes);
     }

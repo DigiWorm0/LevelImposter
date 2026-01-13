@@ -70,36 +70,18 @@ public class GIFFile(string name) : IDisposable
     }
 
     /// <summary>
-    ///     Checks if the given stream is a GIF file. Keeps the stream open.
+    ///     Checks if the given data is a GIF file.
     /// </summary>
-    /// <param name="dataStream">Stream of raw image data</param>
-    /// <returns>True if the Stream is a GIF file. False otherwise</returns>
-    public static bool IsGIF(Stream dataStream)
+    /// <param name="data">MemoryBlock of raw GIF data</param>
+    /// <returns>True if the data is a GIF file. False otherwise</returns>
+    public static bool IsGIF(MemoryBlock data)
     {
-        if (!dataStream.CanSeek)
-            throw new Exception("Stream must be seekable to check for GIF format");
-        
-        using var reader = new BinaryReader(dataStream, Encoding.ASCII, true);
-        try
-        {
-            // Read Header
-            var header = reader.ReadBytes(6);
-            if (header.Length != 6)
-                return false;
-            reader.BaseStream.Position = 0;
-
-            // Check Header
-            return header[0] == 'G' &&
-                   header[1] == 'I' &&
-                   header[2] == 'F' &&
-                   header[3] == '8' &&
-                   (header[4] == '7' || header[4] == '9') &&
-                   header[5] == 'a';
-        }
-        catch
-        {
-            return false;
-        }
+        return data[0] == 'G' &&
+               data[1] == 'I' &&
+               data[2] == 'F' &&
+               data[3] == '8' &&
+               (data[4] == '7' || data[4] == '9') &&
+               data[5] == 'a';
     }
 
     /// <summary>

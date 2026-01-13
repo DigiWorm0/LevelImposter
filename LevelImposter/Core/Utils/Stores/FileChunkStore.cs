@@ -1,4 +1,6 @@
 ﻿using System.IO;
+using FileMode = Il2CppSystem.IO.FileMode;
+using Il2CppFile = Il2CppSystem.IO.File;
 
 namespace LevelImposter.Core;
 
@@ -8,14 +10,9 @@ namespace LevelImposter.Core;
 /// </summary>
 public class FileChunkStore(string filePath, long offset, long length) : IDataStore
 {
-    public IMemoryBlock LoadToMemory()
+    public MemoryBlock LoadToMemory()
     {
-        using var stream = OpenStream();
-        return stream.ToDataBlock();
-    }
-
-    public Stream OpenStream()
-    {
-        return new FileChunkStream(filePath, offset, length);
+        using var stream = new FileChunkStream(filePath, offset, length);
+        return MemoryBlock.FromStream(stream);
     }
 }

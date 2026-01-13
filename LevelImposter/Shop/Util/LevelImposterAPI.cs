@@ -102,14 +102,14 @@ public static class LevelImposterAPI
     /// <param name="callback">Callback on success</param>
     /// <param name="onError">Callback on error</param>
     [HideFromIl2Cpp]
-    public static void DownloadMap(Guid id, Action<float>? onProgress, Action<byte[]> callback, Action<string> onError)
+    public static void DownloadMap(Guid id, Action<float>? onProgress, Action<MemoryBlock> callback, Action<string> onError)
     {
         LILogger.Info($"Downloading map [{id}]...");
 
-        GetMap(id, metadata =>
-        {
-            HTTPHandler.Instance?.Download(metadata.downloadURL, onProgress, fileData => callback(fileData), onError);
-        }, onError);
+        GetMap(
+            id,
+            metadata => HTTPHandler.Instance?.Download(metadata.downloadURL, onProgress, callback, onError),
+            onError);
     }
 
     /// <summary>

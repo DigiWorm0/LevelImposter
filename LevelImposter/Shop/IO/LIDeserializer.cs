@@ -101,9 +101,7 @@ public static class LIDeserializer
                 else
                 {
                     // Reading from a stream, save the raw data to memory
-                    var buffer = new byte[dataLength];
-                    dataStream.Read(buffer, 0, dataLength);
-                    mapData.mapAssetDB.Add(spriteID, buffer);
+                    mapData.mapAssetDB.Add(spriteID, MemoryBlock.FromStream(dataStream, dataLength));
                 }
             }
 

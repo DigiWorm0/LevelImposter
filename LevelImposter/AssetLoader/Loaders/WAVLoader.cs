@@ -18,13 +18,17 @@ public static class WAVLoader
         if (soundData == null)
             return null;
 
-        // Get Sound Stream
+        // Get data from Map Asset DB
         var soundDBElem = MapLoader.CurrentMap?.mapAssetDB?.Get(soundData.dataID);
         if (soundDBElem == null)
             return null;
+        
+        // Load data into IL2CPP memory
+        var il2cppData = soundDBElem.LoadToMemory();
+        var managedData = il2cppData.ToManagedArray();
 
-        // Get Sound Data
-        using var stream = soundDBElem.OpenStream();
+        // Get Sound Data from stream
+        using var stream = new MemoryStream(managedData);
         return Load(stream, soundData.id.ToString());
     }
 
@@ -36,7 +40,12 @@ public static class WAVLoader
     /// <returns>Sound data in the form of a Unity AudioClip</returns>
     public static AudioClip Load(IDataStore dataStore, string name)
     {
-        using var stream = dataStore.OpenStream();
+        // Load data into managed memory
+        var il2cppData = dataStore.LoadToMemory();
+        var managedData = il2cppData.ToManagedArray();
+        
+        // Load the WAV from the stream
+        using var stream = new MemoryStream(managedData);
         return Load(stream, name);
     }
     

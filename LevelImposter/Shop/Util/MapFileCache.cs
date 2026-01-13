@@ -32,6 +32,7 @@ namespace LevelImposter.Shop
         [HideFromIl2Cpp]
         public static LIMap? Get(string mapID)
         {
+            // Check if map exists
             if (!Exists(mapID))
             {
                 LILogger.Warn($"Could not find map [{mapID}] in cache");
@@ -40,15 +41,16 @@ namespace LevelImposter.Shop
 
             LILogger.Info($"Loading map [{mapID}] from cache");
 
-            string mapPath = GetPath(mapID);
-            using (FileStream fileStream = File.OpenRead(mapPath))
+            // Deserialize map file
+            var mapPath = GetPath(mapID);
+            using var fileStream = File.OpenRead(mapPath);
+            var mapData = LIDeserializer.DeserializeMap(fileStream);
+            
+            // Reassign map ID (just in case)
+            if (mapData != null)
             {
-                LIMap? mapData = LIDeserializer.DeserializeMap(fileStream);
-                if (mapData != null)
-                {
-                    mapData.id = mapID;
-                    return mapData;
-                }
+                mapData.id = mapID;
+                return mapData;
             }
 
             LILogger.Warn($"Failed to read map [{mapID}] from cache");
@@ -56,27 +58,15 @@ namespace LevelImposter.Shop
         }
 
         /// <summary>
-        /// Saves a map to the local map cache
-        /// </summary>
-        /// <param name="map">Map to save to cache</param>
-        [HideFromIl2Cpp]
-        public static void Save(LIMap map)
-        {
-            LILogger.Info($"Saving {map} to filesystem");
-            using var memoryStream = LISerializer.SerializeMap(map);
-            FileCache.Save($"{map.id}.lim2", memoryStream);
-        }
-
-        /// <summary>
         /// Saves raw map data to the local map cache
         /// </summary>
-        /// <param name="dataStream">Stream of raw map data to save</param>
+        /// <param name="memoryBlock">Raw map data to save</param>
         /// <param name="mapID">ID of the map to save</param>
         [HideFromIl2Cpp]
-        public static void Save(MemoryStream dataStream, string mapID)
+        public static void Save(MemoryBlock memoryBlock, string mapID)
         {
             LILogger.Info($"Saving {mapID} to filesystem");
-            FileCache.Save($"{mapID}.lim2", dataStream);
+            FileCache.Save($"{mapID}.lim2", memoryBlock);
         }
     }
 }

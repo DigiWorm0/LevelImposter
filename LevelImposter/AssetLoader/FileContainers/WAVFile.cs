@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Linq;
 using LevelImposter.Shop;
 using UnityEngine;
 using Object = UnityEngine.Object;
@@ -26,53 +27,6 @@ public class WAVFile(string _name) : IDisposable
             Object.Destroy(_clip);
         _clip = null;
         _data = null;
-    }
-
-    public static AudioClip? LoadSound(LISound? soundData)
-    {
-        // Get Sound Data
-        if (soundData == null)
-            return null;
-
-        // Get Asset DB
-        var mapAssetDB = MapLoader.CurrentMap?.mapAssetDB;
-        if (mapAssetDB == null)
-            return null;
-
-        // Get Sound Stream
-        var soundDBElem = mapAssetDB.Get(soundData.dataID);
-        if (soundDBElem == null)
-            return null;
-
-        // Get Sound Data
-        using var stream = soundDBElem.OpenStream();
-        return LoadStream(stream);
-    }
-
-    /// <summary>
-    ///     Loads a WAV file from the given base64 string and adds to map's GC list
-    /// </summary>
-    /// <param name="dataStream">Data stream to load from</param>
-    /// <returns>A Unity AudioClip</returns>
-    public static AudioClip? LoadStream(Stream dataStream)
-    {
-        try
-        {
-            // Load File
-            var wavFile = new WAVFile(CLIP_NAME);
-            wavFile.Load(dataStream);
-
-            // Add to GC list
-            GCHandler.Register(wavFile);
-
-            // Return clip
-            return wavFile.GetClip();
-        }
-        catch (Exception e)
-        {
-            LILogger.Warn(e);
-            return null;
-        }
     }
 
     /// <summary>
@@ -103,7 +57,7 @@ public class WAVFile(string _name) : IDisposable
         var isWAV = new string(reader.ReadChars(4)) == "RIFF";
         if (!isWAV)
             throw new Exception("File is not a RIFF file");
-
+        
         // Chunk size
         var chunkSize = reader.ReadInt32();
         if (chunkSize != reader.BaseStream.Length - 8)

@@ -131,8 +131,8 @@ public static class MapSync
                 DownloadManager.SetProgress,
                 mapData =>
                 {
-                    using var mapStream = new MemoryStream(mapData);
-                    MapFileCache.Save(mapStream, mapIDStr);
+                    // Save to cache
+                    MapFileCache.Save(mapData, mapIDStr);
                     
                     if (_activeDownloadingID != mapID)
                         return;

@@ -116,10 +116,9 @@ public class MapBanner(IntPtr intPtr) : MonoBehaviour(intPtr)
     /// </summary>
     /// <param name="mapData">Raw map data in byte array form</param>
     [HideFromIl2Cpp]
-    private void OnDownload(byte[] mapData)
+    private void OnDownload(MemoryBlock mapData)
     {
-        using var memoryStream = new MemoryStream(mapData);
-        MapFileAPI.Save(memoryStream, _currentMap?.id ?? "");
+        MapFileAPI.Save(mapData, _currentMap?.id ?? "");
         ShopManager.Instance?.SetOverlayEnabled(false);
         ShopManager.RegenerateFallbackMap();
         UpdateButtons();

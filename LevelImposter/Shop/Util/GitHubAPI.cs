@@ -6,6 +6,8 @@ using Il2CppInterop.Runtime.Attributes;
 using LevelImposter.Core;
 using UnityEngine;
 
+using Il2CppFile = Il2CppSystem.IO.File;
+
 namespace LevelImposter.Shop;
 
 /// <summary>
@@ -13,10 +15,11 @@ namespace LevelImposter.Shop;
 /// </summary>
 public static class GitHubAPI
 {
-    public const string API_PATH = "https://api.github.com/repos/DigiWorm0/LevelImposter/releases?per_page=1";
-    public const string DEV_VERSION_FLAG = "dev";
-    public const string UPDATE_BLACKLIST_FLAG = "[NoAutoUpdate]";
-    public static readonly string UPDATE_WHITELIST_FLAG = $"[AU={Application.version}]";
+    private const string API_PATH = "https://api.github.com/repos/DigiWorm0/LevelImposter/releases?per_page=1";
+    private const string DEV_VERSION_FLAG = "dev";
+    private const string UPDATE_BLACKLIST_FLAG = "[NoAutoUpdate]";
+    
+    private static readonly string UpdateWhitelistFlag = $"[AU={Application.version}]";
 
     /// <summary>
     ///     Gets the current path where the LevelImposter DLL is stored.
@@ -37,7 +40,7 @@ public static class GitHubAPI
     public static void GetLatestRelease(Action<GHRelease> onSuccess, Action<string> onError)
     {
         LILogger.Info("Getting latest release info from GitHub");
-        LILogger.Info(UPDATE_WHITELIST_FLAG);
+        LILogger.Info(UpdateWhitelistFlag);
         HTTPHandler.Instance?.RequestString(API_PATH, json =>
         {
             var responses = JsonSerializer.Deserialize<GHRelease[]>(json);
@@ -61,7 +64,7 @@ public static class GitHubAPI
         var versionString = release.Name?.Split(" ")[1];
         var isCurrent = IsCurrent(release);
         var isDevVersion = versionString?.Contains(DEV_VERSION_FLAG) ?? false;
-        var isWhitelisted = release.Body?.Contains(UPDATE_WHITELIST_FLAG) ?? false;
+        var isWhitelisted = release.Body?.Contains(UpdateWhitelistFlag) ?? false;
         var isBlacklisted = release.Body?.Contains(UPDATE_BLACKLIST_FLAG) ?? false;
         var hasReleaseAssets = release.Assets?.Length > 0;
 
@@ -130,10 +133,23 @@ public static class GitHubAPI
                     if (File.Exists(dllOldPath))
                         File.Delete(dllOldPath);
                     File.Move(dllPath, dllOldPath);
+                    
+                    // Check file size
+                    if (dllBytes.Length > int.MaxValue)
+                        throw new Exception("DLL size exceeds maximum file size");
 
-                    // Write new DLL
-                    using var fileStream = File.Create(dllPath);
-                    fileStream.Write(dllBytes, 0, dllBytes.Length);
+                    // Create file stream
+                    var fileStream = Il2CppFile.Create(dllPath);
+                    try
+                    {
+                        // Write DLL bytes to file
+                        fileStream.Write(dllBytes.Data, 0, (int)dllBytes.Length);
+                    }
+                    finally
+                    {
+                        // We have to manually close the file stream since it doesn't (directly) implement System.IDisposable
+                        fileStream.Close();
+                    }
 
                     // Clear cache
                     FileCache.Clear();

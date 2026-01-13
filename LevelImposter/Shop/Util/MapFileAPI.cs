@@ -4,6 +4,8 @@ using System.IO;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
+using Il2CppFile = Il2CppSystem.IO.File;
+
 namespace LevelImposter.Shop
 {
     /// <summary>
@@ -95,23 +97,12 @@ namespace LevelImposter.Shop
         }
 
         /// <summary>
-        /// Saves map data into the local filesystem based on the map's ID.
-        /// </summary>
-        /// <param name="map">Map data to save</param>
-        [HideFromIl2Cpp]
-        public static void Save(LIMap map)
-        {
-            using var dataStream = LISerializer.SerializeMap(map);
-            Save(dataStream, map.id);
-        }
-
-        /// <summary>
         /// Saves raw map data into the local filesystem based on the map's ID.
         /// </summary>
-        /// <param name="dataStream">Raw map data stream to save</param>
+        /// <param name="mapData">Raw map data to save</param>
         /// <param name="mapID">ID of the map to save</param>
         [HideFromIl2Cpp]
-        public static void Save(MemoryStream dataStream, string mapID)
+        public static void Save(MemoryBlock mapData, string mapID)
         {
             try
             {
@@ -123,8 +114,7 @@ namespace LevelImposter.Shop
                     Directory.CreateDirectory(GetDirectory());
                 
                 // Write to File
-                using var outputFileStream = File.OpenWrite(mapPath);
-                dataStream.CopyTo(outputFileStream);
+                Il2CppFile.WriteAllBytes(mapPath, mapData.Data);
             }
             catch (System.Exception e)
             {

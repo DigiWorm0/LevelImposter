@@ -197,9 +197,9 @@ public static class MapUtils
     /// </summary>
     /// <param name="base64">Base64 encoded data</param>
     /// <returns>Stream of bytes representing raw base64 data</returns>
-    public static Il2CppStructArray<byte> ParseBase64(string base64)
+    public static byte[] ParseBase64(string base64)
     {
-        var sub64 = base64.Substring(base64.IndexOf(",") + 1);
+        var sub64 = base64.Substring(base64.IndexOf(",", StringComparison.Ordinal) + 1);
         return Convert.FromBase64String(sub64);
     }
 
@@ -251,30 +251,23 @@ public static class MapUtils
     private static byte[]? GetResource(string name)
     {
         var assembly = Assembly.GetExecutingAssembly();
-        using (var resourceStream = assembly.GetManifestResourceStream($"LevelImposter.Assets.{name}"))
-        {
-            if (resourceStream == null)
-                return null;
+        using var resourceStream = assembly.GetManifestResourceStream($"LevelImposter.Assets.{name}");
+        if (resourceStream == null)
+            return null;
 
-            var resourceData = new byte[resourceStream.Length];
-            resourceStream.Read(resourceData);
-            return resourceData;
-        }
+        var resourceData = new byte[resourceStream.Length];
+        resourceStream.Read(resourceData);
+        return resourceData;
     }
 
-    private static Il2CppStructArray<byte>? GetResourceAsIl2Cpp(string name)
+    private static MemoryBlock? GetResourceAsIl2Cpp(string name)
     {
         var assembly = Assembly.GetExecutingAssembly();
-        using (var resourceStream = assembly.GetManifestResourceStream($"LevelImposter.Assets.{name}"))
-        {
-            if (resourceStream == null)
-                return null;
+        using var resourceStream = assembly.GetManifestResourceStream($"LevelImposter.Assets.{name}");
+        if (resourceStream == null)
+            return null;
 
-            var length = (int)resourceStream.Length;
-            var resourceData = new Il2CppStructArray<byte>(length);
-            resourceStream.AsIl2Cpp().Read(resourceData, 0, length);
-            return resourceData;
-        }
+        return MemoryBlock.FromStream(resourceStream);
     }
     
     /// <summary>
@@ -327,7 +320,7 @@ public static class MapUtils
             return null;
 
         // Create Loadables
-        var loadableTexture = LoadableTexture.FromByteArray($"{name}-resource", spriteData);
+        var loadableTexture = LoadableTexture.FromMemory($"{name}-resource", spriteData);
         loadableTexture.Options.AddToGC = false;
         
         var loadableSprite = LoadableSprite.FromLoadableTexture(loadableTexture);

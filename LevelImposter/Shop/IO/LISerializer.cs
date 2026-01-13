@@ -15,8 +15,8 @@ public static class LISerializer
     ///     Serializes a map into a string
     /// </summary>
     /// <param name="mapData">Map Data to serialize</param>
-    /// <returns>Raw LIM2 file data</returns>
-    public static MemoryStream SerializeMap(LIMap mapData)
+    /// <param name="stream">Stream to write to</param>
+    public static void SerializeMap(LIMap mapData, Stream stream)
     {
         try
         {
@@ -27,9 +27,6 @@ public static class LISerializer
                 _options.DefaultIgnoreCondition =
                     JsonIgnoreCondition.WhenWritingNull;
             }
-
-            // Open Stream
-            MemoryStream stream = new();
 
             // Update Legacy Format
             if (mapData.isLegacy)
@@ -44,23 +41,18 @@ public static class LISerializer
             if (mapData.mapAssetDB != null)
                 foreach (var spriteAsset in mapData.mapAssetDB.DB)
                 {
-                    var data = spriteAsset.Value.LoadToMemory().Get();
+                    var data = spriteAsset.Value.LoadToMemory().Data;
                     var idBytes = Encoding.UTF8.GetBytes(spriteAsset.Key.ToString());
 
                     // Write Element
                     stream.Write(idBytes);
-                    stream.Write(BitConverter.GetBytes(data.Length)); // <-- TODO: Improve memory usage here
+                    stream.Write(BitConverter.GetBytes(data.Length)); // <-- TODO: ** Improve memory usage here **
                     stream.Write(data);
                 }
-
-            // Return
-            stream.Position = 0;
-            return stream;
         }
         catch (Exception ex)
         {
             LILogger.Error(ex);
-            return new MemoryStream();
         }
     }
 }

@@ -9,14 +9,9 @@ namespace LevelImposter.Core;
 /// <param name="filePath">The path to the file.</param>
 public class FileStore(string filePath) : IDataStore
 {
-    public IMemoryBlock LoadToMemory()
+    public MemoryBlock LoadToMemory()
     {
-        using var stream = OpenStream();
-        return stream.ToDataBlock();
-    }
-
-    public Stream OpenStream()
-    {
-        return File.OpenRead(filePath);
+        using var stream = File.OpenRead(filePath);
+        return MemoryBlock.FromStream(stream);
     }
 }

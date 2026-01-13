@@ -4,6 +4,8 @@ using System;
 using System.IO;
 using System.Linq;
 
+using Il2CppFile = Il2CppSystem.IO.File;
+
 namespace LevelImposter.Shop
 {
     /// <summary>
@@ -33,8 +35,8 @@ namespace LevelImposter.Shop
         /// </summary>
         private static void DeleteLegacyDir()
         {
-            string gameDir = System.Reflection.Assembly.GetAssembly(typeof(LevelImposter))?.Location ?? "/";
-            string legacyDir = Path.Combine(Path.GetDirectoryName(gameDir) ?? "/", "LevelImposter/Thumbnails");
+            var gameDir = System.Reflection.Assembly.GetAssembly(typeof(LevelImposter))?.Location ?? "/";
+            var legacyDir = Path.Combine(Path.GetDirectoryName(gameDir) ?? "/", "LevelImposter/Thumbnails");
             if (Directory.Exists(legacyDir))
                 Directory.Delete(legacyDir, true);
         }
@@ -46,7 +48,7 @@ namespace LevelImposter.Shop
         /// <returns>String path where LevelImposter map thumbnails is stored.</returns>
         public static string GetDirectory()
         {
-            string gameDir = System.Reflection.Assembly.GetAssembly(typeof(LevelImposter))?.Location ?? "/";
+            var gameDir = System.Reflection.Assembly.GetAssembly(typeof(LevelImposter))?.Location ?? "/";
             return Path.Combine(Path.GetDirectoryName(gameDir) ?? "/", "LevelImposter/.cache");
         }
 
@@ -57,12 +59,12 @@ namespace LevelImposter.Shop
         public static void Clear(long maxDirectorySize = 0)
         {
             // Get Directory
-            DirectoryInfo directory = new DirectoryInfo(GetDirectory());
+            var directory = new DirectoryInfo(GetDirectory());
             if (!directory.Exists)
                 return;
 
             // Check Directory Size
-            long directorySize = directory.EnumerateFiles("*.*", SearchOption.AllDirectories).Sum(fi => fi.Length);
+            var directorySize = directory.EnumerateFiles("*.*", SearchOption.AllDirectories).Sum(fi => fi.Length);
             if (directorySize < maxDirectorySize)
                 return;
 
@@ -100,12 +102,12 @@ namespace LevelImposter.Shop
         }
 
         /// <summary>
-        /// Reads and parses a entire cached file into memory.
+        /// Reads and parses an entire cached file into memory.
         /// </summary>
-        /// <param name="id">ID of the file</param>
+        /// <param name="fileName">Name of the file</param>
         /// <returns>Byte array with cooresponding file info</returns>
         [HideFromIl2Cpp]
-        public static byte[]? Get(string fileName)
+        public static MemoryBlock? Get(string fileName)
         {
             if (!Exists(fileName))
             {
@@ -113,7 +115,8 @@ namespace LevelImposter.Shop
                 return null;
             }
 
-            return File.ReadAllBytes(GetPath(fileName));
+            var data = Il2CppFile.ReadAllBytes(GetPath(fileName));
+            return MemoryBlock.FromIl2CppArray(data);
         }
 
         /// <summary>
@@ -122,12 +125,12 @@ namespace LevelImposter.Shop
         /// <param name="fileName">Name of the file</param>
         /// <param name="fileBytes">Raw data to write to disk</param>
         [HideFromIl2Cpp]
-        public static void Save(string fileName, byte[] fileBytes)
+        public static void Save(string fileName, MemoryBlock fileBytes)
         {
             LILogger.Info($"Saving {fileName} to file cache");
             try
             {
-                string filePath = GetPath(fileName);
+                var filePath = GetPath(fileName);
 
                 // Create Directory
                 if (!Directory.Exists(GetDirectory()))
@@ -138,7 +141,7 @@ namespace LevelImposter.Shop
                     File.Delete(filePath);
 
                 // Write File
-                File.WriteAllBytes(filePath, fileBytes);
+                Il2CppFile.WriteAllBytes(filePath, fileBytes.Data);
             }
             catch (Exception e)
             {
@@ -148,7 +151,7 @@ namespace LevelImposter.Shop
         }
 
         /// <summary>
-        /// Sabes a cached file to the local filesystem.
+        /// Saves a cached file to the local filesystem.
         /// </summary>
         /// <param name="fileName">Name of the file</param>
         /// <param name="dataStream">Data stream to write to disk</param>
@@ -158,7 +161,7 @@ namespace LevelImposter.Shop
             LILogger.Info($"Saving {fileName} to file cache");
             try
             {
-                string filePath = GetPath(fileName);
+                var filePath = GetPath(fileName);
 
                 // Create Directory
                 if (!Directory.Exists(GetDirectory()))
@@ -169,8 +172,8 @@ namespace LevelImposter.Shop
                     File.Delete(filePath);
 
                 // Write File
-                using (FileStream fileStream = File.Create(filePath))
-                    dataStream.CopyTo(fileStream);
+                using var fileStream = File.Create(filePath);
+                dataStream.CopyTo(fileStream);
             }
             catch (Exception e)
             {
@@ -190,7 +193,7 @@ namespace LevelImposter.Shop
             LILogger.Info($"Saving {fileName} to file cache");
             try
             {
-                string filePath = GetPath(fileName);
+                var filePath = GetPath(fileName);
 
                 // Create Directory
                 if (!Directory.Exists(GetDirectory()))

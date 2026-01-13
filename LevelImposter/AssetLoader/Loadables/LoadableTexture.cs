@@ -23,12 +23,12 @@ public readonly struct LoadableTexture(string _id, IDataStore _dataStore) : ICac
     }
     
     /// <summary>
-    /// Creates a LoadableTexture from a byte array.
+    /// Creates a LoadableTexture from data stored in memory.
     /// </summary>
     /// <param name="id">Unique identifier to be used in caching.</param>
     /// <param name="data">Byte array containing the image data.</param>
     /// <returns>A LoadableTexture instance.</returns>
-    public static LoadableTexture FromByteArray(string id, Il2CppArrayBase<byte> data)
+    public static LoadableTexture FromMemory(string id, MemoryBlock data)
     {
         var stream = new MemoryStore(data);
         return new LoadableTexture(id, stream);

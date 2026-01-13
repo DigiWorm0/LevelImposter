@@ -4,19 +4,14 @@ using Il2CppInterop.Runtime.InteropTypes.Arrays;
 namespace LevelImposter.Core;
 
 /// <summary>
-/// Stores a block of data in memory.
+/// Wrapper around an existing <see cref="MemoryBlock"/> to provide it as an <see cref="IDataStore"/>.
+/// Since the data is already in memory at construction time, it simply returns the existing block on load.
 /// </summary>
-/// <param name="rawData">The raw data to store.</param>
-public class MemoryStore(byte[] rawData) : IDataStore
+/// <param name="memoryBlock">The existing memory block.</param>
+public class MemoryStore(MemoryBlock memoryBlock) : IDataStore
 {
-    public IMemoryBlock LoadToMemory()
+    public MemoryBlock LoadToMemory()
     {
-        // We can reuse the existing data block since the data is already in memory.
-        return new ExistingMemoryBlock(rawData);
-    }
-    
-    public Stream OpenStream()
-    {
-        return new MemoryStream(rawData);
+        return memoryBlock;
     }
 }
