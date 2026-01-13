@@ -4,6 +4,7 @@ using BepInEx.Unity.IL2CPP.Utils.Collections;
 using Il2CppInterop.Runtime.Attributes;
 using Il2CppInterop.Runtime.InteropTypes.Arrays;
 using LevelImposter.Core;
+using Unity.Collections.LowLevel.Unsafe;
 using UnityEngine;
 using UnityEngine.Networking;
 
@@ -72,8 +73,17 @@ public class HTTPHandler(IntPtr intPtr) : MonoBehaviour(intPtr)
             }
             else if (onSuccessData != null)
             {
-                var downloadedBytes = request.downloadHandler.GetNativeData().ToArray();
-                var memoryBlock = new MemoryBlock(downloadedBytes.Cast<Il2CppStructArray<byte>>());
+                // Get raw data
+                var nativeData = request.downloadHandler.GetNativeData();
+                var memoryBlock = new MemoryBlock(nativeData.Length);
+
+                // Move data from NativeArray to MemoryBlock
+                unsafe {
+                    void* src = nativeData.GetUnsafeReadOnlyPtr();
+                    void* dst = (void*)memoryBlock.BasePointer;
+                    UnsafeUtility.MemCpy(dst, src, nativeData.Length);
+                }
+
                 onSuccessData(memoryBlock);
             }
 

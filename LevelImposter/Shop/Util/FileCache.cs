@@ -139,7 +139,7 @@ namespace LevelImposter.Shop
                     File.Delete(filePath);
 
                 // Write File
-                File.WriteAllBytes(filePath, fileBytes.ToManagedArray());
+                fileBytes.WriteToFile(filePath);
             }
             catch (Exception e)
             {

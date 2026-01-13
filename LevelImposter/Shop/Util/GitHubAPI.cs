@@ -136,18 +136,8 @@ public static class GitHubAPI
                     if (dllBytes.Length > int.MaxValue)
                         throw new Exception("DLL size exceeds maximum file size");
 
-                    // Create file stream
-                    var fileStream = File.Create(dllPath);
-                    try
-                    {
-                        // Write DLL bytes to file
-                        fileStream.Write(dllBytes.Data, 0, (int)dllBytes.Length);
-                    }
-                    finally
-                    {
-                        // We have to manually close the file stream since it doesn't (directly) implement System.IDisposable
-                        fileStream.Close();
-                    }
+                    // Write new DLL
+                    dllBytes.WriteToFile(dllPath);
 
                     // Clear cache
                     FileCache.Clear();

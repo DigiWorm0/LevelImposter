@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using ByteArray = Il2CppInterop.Runtime.InteropTypes.Arrays.Il2CppStructArray<byte>;
 
 namespace LevelImposter.Core;
@@ -64,5 +65,27 @@ public class MemoryBlock
         var managedArray = new byte[Data.Length];
         Buffer.BlockCopy(Data, 0, managedArray, 0, Data.Length);
         return managedArray;
+    }
+
+    /// <summary>
+    /// Writes the contents of this memory block to a file.
+    /// </summary>
+    /// <param name="path">The file path to write to.</param>
+    public unsafe void WriteToFile(string path)
+    {
+        // Get pointer to IL2CPP array data
+        byte* ptr = (byte*)BasePointer;
+
+        // Write to file using UnmanagedMemoryStream
+        using var ums = new UnmanagedMemoryStream(ptr, Data.Length);
+        using var fs = new FileStream(
+            path,
+            FileMode.Create,
+            FileAccess.Write,
+            FileShare.None,
+            bufferSize: 64 * 1024,
+            FileOptions.SequentialScan);
+
+        ums.CopyTo(fs);
     }
 }

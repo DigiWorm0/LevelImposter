@@ -110,7 +110,8 @@ namespace LevelImposter.Shop
                     Directory.CreateDirectory(GetDirectory());
                 
                 // Write to File
-                File.WriteAllBytes(mapPath, mapData.Data);
+                mapData.WriteToFile(mapPath);
+
             }
             catch (System.Exception e)
             {
