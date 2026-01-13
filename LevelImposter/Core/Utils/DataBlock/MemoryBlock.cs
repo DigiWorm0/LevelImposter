@@ -1,12 +1,11 @@
 ﻿using System;
-using System.IO;
 using ByteArray = Il2CppInterop.Runtime.InteropTypes.Arrays.Il2CppStructArray<byte>;
 
 namespace LevelImposter.Core;
 
 /// <summary>
+/// Thin wrapper around Il2CppStructArray<byte>.
 /// Represents a block of data in IL2CPP memory.
-/// Must be disposed of after use to free resources.
 /// </summary>
 public class MemoryBlock
 {

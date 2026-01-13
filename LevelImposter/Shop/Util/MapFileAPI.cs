@@ -72,13 +72,11 @@ namespace LevelImposter.Shop
         public static LIMap? Get(string mapID, bool spriteDB = true)
         {
             string path = GetPath(mapID);
-            using (var stream = File.OpenRead(path))
-            {
-                var mapData = LIDeserializer.DeserializeMap(stream, spriteDB, path);
-                if (mapData != null)
-                    mapData.id = mapID;
-                return mapData;
-            }
+            using var stream = File.OpenRead(path);
+            var mapData = LIDeserializer.DeserializeMap(stream, spriteDB, path);
+            if (mapData != null)
+                mapData.id = mapID;
+            return mapData;
         }
 
         /// <summary>

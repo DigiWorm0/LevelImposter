@@ -383,14 +383,25 @@ public class GIFFile(string name) : IDisposable
             _codeTable[k] = k < clearCode ? new[] { k } : new ushort[0];
 
         // Decode LZW
-        var i = 0;
-        while (i + codeSize < byteBuffer.Length * 8)
+        var bitOffset = 0;
+        var byteIndex = 0;
+        while (byteIndex * 8 + bitOffset + codeSize < byteBuffer.Length * 8)
         {
-            // Read Code
+            // Read code at current byte/bit position
             var code = 0;
-            for (var j = 0; j < codeSize; j++)
-                code |= GetBit(byteBuffer, i + j) ? 1 << j : 0;
-            i += codeSize;
+            for (var i = 0; i < codeSize; i++) {
+
+                // Get Bit
+                code |= ((byteBuffer[byteIndex] >> bitOffset) & 1) << i;
+
+                // Increment position
+                bitOffset++;
+                if (bitOffset == 8)
+                {
+                    bitOffset = 0;
+                    byteIndex++;
+                }
+            }
 
             // Special Codes
             if (code == clearCode)
@@ -467,19 +478,6 @@ public class GIFFile(string name) : IDisposable
             _codeTable[k] = null;
 
         return indexStream;
-    }
-
-    /// <summary>
-    ///     Gets a bit from a byte array.
-    /// </summary>
-    /// <param name="arr">Array of raw byte data</param>
-    /// <param name="index">Offset in bits</param>
-    /// <returns><c>true</c> if the bit is a 1, <c>false</c> otherwise</returns>
-    private bool GetBit(byte[] arr, int index)
-    {
-        var byteIndex = index / 8;
-        var bitIndex = index % 8;
-        return (arr[byteIndex] & (1 << bitIndex)) != 0;
     }
 
     /// <summary>

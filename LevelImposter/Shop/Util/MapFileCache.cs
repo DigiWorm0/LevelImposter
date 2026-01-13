@@ -44,7 +44,7 @@ namespace LevelImposter.Shop
             // Deserialize map file
             var mapPath = GetPath(mapID);
             using var fileStream = File.OpenRead(mapPath);
-            var mapData = LIDeserializer.DeserializeMap(fileStream);
+            var mapData = LIDeserializer.DeserializeMap(fileStream, true, mapPath);
             
             // Reassign map ID (just in case)
             if (mapData != null)
