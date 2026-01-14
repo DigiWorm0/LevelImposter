@@ -119,7 +119,7 @@ public static class MapSync
         {
             MapLoader.LoadMap(MapFileCache.Get(mapIDStr), isFallback);
         }
-        // Download if Unavailable
+        // Download to cache if unavailable
         else
         {
             _activeDownloadingID = mapID;
@@ -128,12 +128,10 @@ public static class MapSync
             DownloadManager.StartDownload();
             LevelImposterAPI.DownloadMap(
                 mapID,
+                MapFileCache.GetPath(mapIDStr),
                 DownloadManager.SetProgress,
-                mapData =>
+                () =>
                 {
-                    // Save to cache
-                    MapFileCache.Save(mapData, mapIDStr);
-                    
                     if (_activeDownloadingID != mapID)
                         return;
                     
@@ -147,8 +145,7 @@ public static class MapSync
                     if (_activeDownloadingID == mapID)
                         DownloadManager.SetError(error);
                     _activeDownloadingID = null;
-                }
-            );
+                });
         }
     }
 

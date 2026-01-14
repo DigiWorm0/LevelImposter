@@ -106,19 +106,29 @@ public class MapBanner(IntPtr intPtr) : MonoBehaviour(intPtr)
     /// </summary>
     public void OnDownloadClick()
     {
+        // Validate the map ID
+        if (_currentMap?.id == null)
+            throw new Exception("Current map is null or has no ID");
+        
+        // Update UI Overlay
         ShopManager.Instance?.SetOverlayEnabled(true);
         OnDownloadProgress(0);
-        LevelImposterAPI.DownloadMap(new Guid(_currentMap?.id ?? ""), OnDownloadProgress, OnDownload, OnError);
+        
+        // Start Download
+        LevelImposterAPI.DownloadMap(
+            new Guid(_currentMap.id),
+            MapFileAPI.GetPath(_currentMap.id),
+            OnDownloadProgress,
+            OnDownload,
+            OnError);
     }
 
     /// <summary>
     ///     Event that is called when the <c>LIMap</c> is downloaded
     /// </summary>
-    /// <param name="mapData">Raw map data in byte array form</param>
     [HideFromIl2Cpp]
-    private void OnDownload(MemoryBlock mapData)
+    private void OnDownload()
     {
-        MapFileAPI.Save(mapData, _currentMap?.id ?? "");
         ShopManager.Instance?.SetOverlayEnabled(false);
         ShopManager.RegenerateFallbackMap();
         UpdateButtons();
@@ -138,7 +148,7 @@ public class MapBanner(IntPtr intPtr) : MonoBehaviour(intPtr)
     /// <summary>
     ///     Event that is called when there is a download error
     /// </summary>
-    /// <param name="map"></param>
+    /// <param name="error">Error info</param>
     [HideFromIl2Cpp]
     private void OnError(string error)
     {

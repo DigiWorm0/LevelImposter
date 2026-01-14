@@ -13,7 +13,7 @@ namespace LevelImposter.Shop;
 /// </summary>
 public static class LevelImposterAPI
 {
-    public const string API_PATH = "https://api.levelimposter.net/";
+    public const string API_PATH = "https://api.levelimposter.net";
     public const int API_VERSION = 1;
 
     /// <summary>
@@ -27,22 +27,23 @@ public static class LevelImposterAPI
     /// <param name="callback">Callback on success</param>
     /// <param name="onError">Callback on error</param>
     [HideFromIl2Cpp]
-    public static void Request<T>(string url, Action<T> callback, Action<string> onError)
+    public static void Request<T>(string url, Action<T> callback, Action<string>? onError)
     {
-        HTTPHandler.Instance?.RequestString(url, json =>
+        // TODO: Handle onError for HTTPHandler request
+        HTTPHandler.Instance?.Request(url, json =>
         {
             var response = JsonSerializer.Deserialize<LICallback<T>>(json);
 
             if (response == null)
-                onError("Invalid API Response");
+                onError?.Invoke("Invalid API Response");
             else if (response.Version != API_VERSION)
-                onError(
+                onError?.Invoke(
                     $"You are running on an older version of LevelImposter {LevelImposter.DisplayVersion}. Update to get access to the API.");
             else if (!string.IsNullOrEmpty(response.Error))
-                onError(response.Error);
+                onError?.Invoke(response.Error);
             else if (response.Data != null)
                 callback(response.Data);
-        }, onError);
+        });
     }
 
     /// <summary>
@@ -54,7 +55,7 @@ public static class LevelImposterAPI
     public static void GetTop(Action<LIMetadata[]> callback, Action<string> onError)
     {
         LILogger.Info("Getting top maps...");
-        Request(API_PATH + "maps/top", callback, onError);
+        Request(API_PATH + "/maps/top", callback, onError);
     }
 
     /// <summary>
@@ -66,7 +67,7 @@ public static class LevelImposterAPI
     public static void GetRecent(Action<LIMetadata[]> callback, Action<string> onError)
     {
         LILogger.Info("Getting recent maps...");
-        Request(API_PATH + "maps/recent", callback, onError);
+        Request(API_PATH + "/maps/recent", callback, onError);
     }
 
     /// <summary>
@@ -78,7 +79,7 @@ public static class LevelImposterAPI
     public static void GetFeatured(Action<LIMetadata[]> callback, Action<string> onError)
     {
         LILogger.Info("Getting verified maps...");
-        Request(API_PATH + "maps/verified", callback, onError);
+        Request(API_PATH + "/maps/verified", callback, onError);
     }
 
     /// <summary>
@@ -88,28 +89,36 @@ public static class LevelImposterAPI
     /// <param name="callback">Callback on success</param>
     /// <param name="onError">Callback on error</param>
     [HideFromIl2Cpp]
-    public static void GetMap(Guid id, Action<LIMetadata> callback, Action<string> onError)
+    public static void GetMap(Guid id, Action<LIMetadata> callback, Action<string>? onError)
     {
         LILogger.Info($"Getting map [{id}]...");
-        Request(API_PATH + "map/" + id, callback, onError);
+        Request(API_PATH + "/map/" + id, callback, onError);
     }
 
     /// <summary>
     ///     Downloads specific map data from the LevelImposter API.
     /// </summary>
     /// <param name="id">ID of the map to download</param>
+    /// <param name="downloadPath">Path to download the map to</param>
     /// <param name="onProgress">Callback on download progress</param>
     /// <param name="callback">Callback on success</param>
     /// <param name="onError">Callback on error</param>
     [HideFromIl2Cpp]
-    public static void DownloadMap(Guid id, Action<float>? onProgress, Action<MemoryBlock> callback, Action<string> onError)
+    public static void DownloadMap(
+        Guid id,
+        string downloadPath,
+        Action<float>? onProgress,
+        Action callback,
+        Action<string>? onError)
     {
         LILogger.Info($"Downloading map [{id}]...");
-
-        GetMap(
-            id,
-            metadata => HTTPHandler.Instance?.Download(metadata.downloadURL, onProgress, callback, onError),
-            onError);
+        
+        GetMap(id, metadata => HTTPHandler.Instance?.DownloadFile(
+            metadata.downloadURL,
+            downloadPath,
+            onProgress,
+            callback
+        ), null);
     }
 
     /// <summary>
@@ -124,19 +133,20 @@ public static class LevelImposterAPI
         if (!Guid.TryParse(metadata.id, out _))
             return;
         
-        // Download Thumbnail
+        var downloadURL = $"{API_PATH}/map/{metadata.id}/thumbnail";
+        var downloadPath = ThumbnailCache.GetPath(metadata.id);
+        
+        // Download Thumbnail from API
         LILogger.Info($"Downloading thumbnail for map {metadata}...");
-        HTTPHandler.Instance?.Request(API_PATH + $"map/{metadata.id}/thumbnail", imgData =>
-        {
-            // Save to file cache
-            ThumbnailCache.Save(metadata.id, imgData);
-            
-            // Load the sprite
-            SpriteLoader.LoadAsync(
+        HTTPHandler.Instance?.DownloadFile(
+            downloadURL,
+            downloadPath,
+            null,
+            // On load, load the sprite from filesystem
+            () => SpriteLoader.LoadAsync(
                 $"{metadata.id}_thumb",
-                new MemoryStore(imgData),
+                new FileStore(downloadPath),
                 callback
-            );
-        }, null);
+            ));
     }
 }

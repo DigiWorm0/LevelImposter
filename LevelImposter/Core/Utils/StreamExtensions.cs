@@ -24,16 +24,16 @@ public static class StreamExtensions
     public static byte[] ToManagedArray(this Stream stream)
     {
         // Ensure the stream length fits in an int
-        long length = stream.Length;
+        var length = stream.Length;
         if (length > int.MaxValue)
             throw new InvalidOperationException("Stream too large");
 
         // Read the entire stream into buffer, one chunk at a time
-        byte[] buffer = new byte[length];
-        int offset = 0;
+        var buffer = new byte[length];
+        var offset = 0;
         while (offset < buffer.Length)
         {
-            int read = stream.Read(buffer, offset, buffer.Length - offset);
+            var read = stream.Read(buffer, offset, buffer.Length - offset);
             if (read == 0)
                 break; // End of stream
 
@@ -49,7 +49,7 @@ public static class StreamExtensions
     /// <param name="stream">The stream to read from.</param>
     /// <param name="length">The length of data to read from the stream. Negative values will result in stream.Length being used.</param>
     /// <returns>An IL2CPP MemoryBlock containing the data.</returns>
-    public unsafe static MemoryBlock ToIl2CppArray(this Stream stream, long length = -1)
+    public static unsafe MemoryBlock ToIl2CppArray(this Stream stream, long length = -1)
     {
         // Validate length
         if (length < 0)

@@ -30,6 +30,16 @@ public static class ThumbnailCache
     {
         FileCache.Save($"{mapID}.png", thumbnailBytes);
     }
+    
+    /// <summary>
+    ///     Gets the file path for a thumbnail in the local cache
+    /// </summary>
+    /// <param name="mapID">Map ID for the thumbnail</param>
+    /// <returns>String path to the thumbnail file</returns>
+    public static string GetPath(string mapID)
+    {
+        return FileCache.GetPath($"{mapID}.png");
+    }
 
     /// <summary>
     ///     Reads and parses a thumbnail file into a Texture2D.
@@ -51,7 +61,7 @@ public static class ThumbnailCache
         // Load thumbnail into sprite
         SpriteLoader.LoadAsync(
             $"{mapID}_thumb",
-            new FileStore(FileCache.GetPath($"{mapID}.png")),
+            new FileStore(GetPath(mapID)),
             callback
         );
     }

@@ -39,14 +39,15 @@ public static class GitHubAPI
     {
         LILogger.Info("Getting latest release info from GitHub");
         LILogger.Info(UpdateWhitelistFlag);
-        HTTPHandler.Instance?.RequestString(API_PATH, json =>
+        HTTPHandler.Instance?.Request(API_PATH, json =>
         {
             var responses = JsonSerializer.Deserialize<GHRelease[]>(json);
             if (responses != null && responses.Length > 0)
                 onSuccess(responses[0]);
             else
                 onError("Invalid API response");
-        }, onError);
+        });
+        // TODO: Handle onError
     }
 
     /// <summary>
@@ -104,6 +105,7 @@ public static class GitHubAPI
     public static void UpdateMod(Action onSuccess, Action<string> onError)
     {
         LILogger.Info("Updating mod from GitHub");
+        // TODO: FIX ME
         GetLatestRelease(release =>
         {
             // Check if update is available
@@ -114,44 +116,45 @@ public static class GitHubAPI
                 onError(errorMsg);
                 return;
             }
-
+        
+            // Prepare paths
+            var tempDLLPath = Path.GetTempFileName();
+            var activeDLLPath = GetDLLDirectory();
+            var oldDLLPath = activeDLLPath + ".old";
+            
             // Download DLL
             LILogger.Info($"Downloading DLL from {release}");
             var downloadURL = release.Assets?[0].BrowserDownloadURL ?? "";
-            HTTPHandler.Instance?.Request(downloadURL, dllBytes =>
-            {
-                LILogger.Info($"Saving {dllBytes.Length / 1024}kb DLL to local filesystem");
-                try
+            HTTPHandler.Instance?.DownloadFile(
+                downloadURL,
+                tempDLLPath,
+                null,
+                () =>
                 {
-                    // Get DLL path
-                    var dllPath = GetDLLDirectory();
-                    var dllOldPath = dllPath + ".old";
-
-                    // Move old DLL
-                    if (File.Exists(dllOldPath))
-                        File.Delete(dllOldPath);
-                    File.Move(dllPath, dllOldPath);
-                    
-                    // Check file size
-                    if (dllBytes.Length > int.MaxValue)
-                        throw new Exception("DLL size exceeds maximum file size");
-
-                    // Write new DLL
-                    dllBytes.WriteToFile(dllPath);
-
-                    // Clear cache
-                    FileCache.Clear();
-
-                    // Log success
-                    LILogger.Info("Update complete");
-                    onSuccess();
-                }
-                catch (Exception e)
-                {
-                    LILogger.Error(e);
-                    onError(e.Message);
-                }
-            }, onError);
+                    LILogger.Info("Replacing old DLL with new DLL");
+                    try
+                    {
+                        // Move the active DLL to .old
+                        if (File.Exists(oldDLLPath))
+                            File.Delete(oldDLLPath);
+                        File.Move(activeDLLPath, oldDLLPath);
+                        
+                        // Move the temp DLL to active
+                        File.Move(tempDLLPath, activeDLLPath);
+        
+                        // Clear cache
+                        FileCache.Clear();
+        
+                        // Log success
+                        LILogger.Info("Update complete");
+                        onSuccess();
+                    }
+                    catch (Exception e)
+                    {
+                        LILogger.Error(e);
+                        onError(e.Message);
+                    }
+                });
         }, onError);
     }
 }
