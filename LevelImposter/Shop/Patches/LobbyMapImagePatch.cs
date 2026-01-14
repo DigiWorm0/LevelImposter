@@ -1,6 +1,8 @@
 using System;
 using HarmonyLib;
 using LevelImposter.Core;
+using LevelImposter.FileIO;
+using LevelImposter.Networking.API;
 using UnityEngine;
 
 namespace LevelImposter.Shop;
@@ -76,25 +78,21 @@ public static class LobbyMapImagePatch
         _settingsHeader.SetActive(!isCustomMap);
 
         // Load Thumbnail
-        if (!isCustomMap || isFallbackMap)
-            return;
+        if (isCustomMap &&
+            !isFallbackMap &&
+            currentMap.HasThumbnail)
+        {
+            ThumbnailCache.Get(mapID ?? "", SetMapIcon);
+        }
+    }
 
-        // Check if in cache
-        if (ThumbnailCache.Exists(currentMap.id))
-            ThumbnailCache.Get(currentMap.id, sprite =>
-            {
-                MapIcon.MapIcon = sprite;
-                MapIcon.MapImage = sprite;
-                MapIcon.NameImage = sprite;
-            });
-        // Download the thumbnail
-        else if (!string.IsNullOrEmpty(currentMap?.thumbnailURL))
-            LevelImposterAPI.DownloadThumbnail(currentMap, sprite =>
-            {
-                MapIcon.MapIcon = sprite;
-                MapIcon.MapImage = sprite;
-                MapIcon.NameImage = sprite;
-            });
+    private static void SetMapIcon(Sprite sprite)
+    {
+        if (MapIcon == null)
+            return;
+        MapIcon.MapIcon = sprite;
+        MapIcon.MapImage = sprite;
+        MapIcon.NameImage = sprite;
     }
 }
 

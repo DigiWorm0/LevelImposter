@@ -4,7 +4,7 @@ using System.IO.Compression;
 using System.Text.Json;
 using LevelImposter.Core;
 
-namespace LevelImposter.Shop;
+namespace LevelImposter.FileIO;
 
 public static class LICompressedDeserializer
 {

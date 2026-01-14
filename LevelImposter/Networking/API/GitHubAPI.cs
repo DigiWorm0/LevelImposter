@@ -2,11 +2,13 @@ using System;
 using System.IO;
 using System.Reflection;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using Il2CppInterop.Runtime.Attributes;
 using LevelImposter.Core;
+using LevelImposter.FileIO;
 using UnityEngine;
 
-namespace LevelImposter.Shop;
+namespace LevelImposter.Networking.API;
 
 /// <summary>
 ///     API to recieve updates from GitHub.com
@@ -35,29 +37,35 @@ public static class GitHubAPI
     /// <param name="onSuccess">Callback on success</param>
     /// <param name="onError">Callback on error</param>
     [HideFromIl2Cpp]
-    public static void GetLatestRelease(Action<GHRelease> onSuccess, Action<string> onError)
+    public static void GetLatestRelease(Action<GitHubRelease> onSuccess, Action<string> onError)
     {
         LILogger.Info("Getting latest release info from GitHub");
         LILogger.Info(UpdateWhitelistFlag);
-        HTTPHandler.Instance?.Request(API_PATH, json =>
+        HTTPHandler.RequestJSON<GitHubRelease[]>(API_PATH, result =>
         {
-            var responses = JsonSerializer.Deserialize<GHRelease[]>(json);
-            if (responses != null && responses.Length > 0)
-                onSuccess(responses[0]);
-            else
+            // Validate response
+            if (result.ErrorText != null)
+                onError(result.ErrorText);
+
+            else if (result.Data == null)
                 onError("Invalid API response");
+
+            else if (result.Data.Length == 0)
+                onError("No releases found");
+
+            else
+                onSuccess(result.Data[0]);
         });
-        // TODO: Handle onError
     }
 
     /// <summary>
-    ///     Checks if a GHRelease can be updated to
+    ///     Checks if a GitHubRelease can be updated to
     /// </summary>
     /// <param name="release">GitHub release object</param>
     /// <param name="reason">Reason for not being able to update</param>
     /// <returns>True if the release can be updated to</returns>
     [HideFromIl2Cpp]
-    public static bool CanUpdateTo(GHRelease release, out string reason)
+    public static bool CanUpdateTo(GitHubRelease release, out string reason)
     {
         // Get version info
         var versionString = release.Name?.Split(" ")[1];
@@ -90,7 +98,7 @@ public static class GitHubAPI
     /// </summary>
     /// <param name="release">True if the release matches the current mod version</param>
     [HideFromIl2Cpp]
-    public static bool IsCurrent(GHRelease release)
+    public static bool IsCurrent(GitHubRelease release)
     {
         var versionString = release.Name?.Split(" ")[1];
         return versionString == LevelImposter.DisplayVersion;
@@ -125,11 +133,11 @@ public static class GitHubAPI
             // Download DLL
             LILogger.Info($"Downloading DLL from {release}");
             var downloadURL = release.Assets?[0].BrowserDownloadURL ?? "";
-            HTTPHandler.Instance?.DownloadFile(
+            HTTPHandler.DownloadFile(
                 downloadURL,
                 tempDLLPath,
                 null,
-                () =>
+                (_) =>
                 {
                     LILogger.Info("Replacing old DLL with new DLL");
                     try
@@ -156,5 +164,34 @@ public static class GitHubAPI
                     }
                 });
         }, onError);
+    }
+
+    /// <summary>
+    /// Represents a single release on a GitHub repository.
+    /// </summary>
+    [Serializable]
+    public class GitHubRelease
+    {
+        [JsonPropertyName("name")] public string? Name { get; set; }
+        [JsonPropertyName("body")] public string? Body { get; set; }
+        [JsonPropertyName("assets")] public GitHubAsset[]? Assets { get; set; }
+
+        public override string ToString()
+        {
+            return Name ?? base.ToString() ?? "GitHubRelease";
+        }
+    }
+
+    /// <summary>
+    ///   Represents a downloadable asset embedded in a GitHub release.
+    ///   Typically, this would either be the LevelImposter DLL or a ZIP file containing the complete BepInEx mod.
+    /// </summary>
+    [Serializable]
+    public class GitHubAsset
+    {
+        /// <summary>
+        ///  URL to download the asset from.
+        /// </summary>
+        [JsonPropertyName("browser_download_url")] public string? BrowserDownloadURL { get; set; }
     }
 }

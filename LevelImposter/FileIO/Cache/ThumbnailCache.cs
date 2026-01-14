@@ -1,10 +1,10 @@
 using System;
-using Il2CppInterop.Runtime.Attributes;
 using LevelImposter.AssetLoader;
 using LevelImposter.Core;
+using LevelImposter.Networking.API;
 using UnityEngine;
 
-namespace LevelImposter.Shop;
+namespace LevelImposter.FileIO;
 
 /// <summary>
 ///     API to manage thumbnail files in the local filesystem
@@ -19,16 +19,6 @@ public static class ThumbnailCache
     public static bool Exists(string mapID)
     {
         return FileCache.Exists($"{mapID}.png");
-    }
-
-    /// <summary>
-    ///     Saves a thumbnail to the local cache
-    /// </summary>
-    /// <param name="mapID">ID of the map thumbnail to save</param>
-    /// <param name="thumbnailBytes">Raw image bytes to write to disk</param>
-    public static void Save(string mapID, MemoryBlock thumbnailBytes)
-    {
-        FileCache.Save($"{mapID}.png", thumbnailBytes);
     }
     
     /// <summary>
@@ -46,17 +36,16 @@ public static class ThumbnailCache
     /// </summary>
     /// <param name="mapID">Map ID for the thumbnail</param>
     /// <param name="callback">Callback on success</param>
-    [HideFromIl2Cpp]
     public static void Get(string mapID, Action<Sprite> callback)
     {
         if (!Exists(mapID))
         {
-            LILogger.Warn($"Could not find [{mapID}] thumbnail in filesystem");
+            DownloadThumbnail(mapID, callback);
             return;
         }
 
         // Read thumbnail from filesystem
-        LILogger.Info($"Loading thumbnail [{mapID}] from filesystem");
+        LILogger.Info($"Loading thumbnail for [{mapID}] from filesystem");
 
         // Load thumbnail into sprite
         SpriteLoader.LoadAsync(
@@ -64,5 +53,16 @@ public static class ThumbnailCache
             new FileStore(GetPath(mapID)),
             callback
         );
+    }
+
+    /// <summary>
+    /// Downloads and caches a thumbnail from the LevelImposter API
+    /// </summary>
+    /// <param name="mapID">Map ID for the thumbnail</param>
+    /// <param name="callback">Callback on success</param>
+    public static void DownloadThumbnail(string mapID, Action<Sprite> callback)
+    {
+        LILogger.Info($"Downloading thumbnail for [{mapID}]");
+        LevelImposterAPI.DownloadThumbnail(mapID, GetPath(mapID), callback);
     }
 }

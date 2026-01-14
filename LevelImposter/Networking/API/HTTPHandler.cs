@@ -3,39 +3,26 @@ using System.Collections;
 using System.IO;
 using System.Net.Http;
 using System.Net.Security;
+using System.Text.Json;
 using System.Threading.Tasks;
-using BepInEx.Unity.IL2CPP.Utils.Collections;
-using Il2CppInterop.Runtime.Attributes;
 using LevelImposter.Core;
-using UnityEngine;
+using Reactor.Utilities;
 using UnityEngine.Networking;
 
-namespace LevelImposter.Shop;
+using DownloadResult = LevelImposter.Networking.API.HTTPHandler.HTTPResult<LevelImposter.Core.FileStore>;
+using FetchResult = LevelImposter.Networking.API.HTTPHandler.HTTPResult<string>;
+
+namespace LevelImposter.Networking.API;
 
 /// <summary>
 ///     Handles async HTTP Requests within Unity
 /// </summary>
-public class HTTPHandler(IntPtr intPtr) : MonoBehaviour(intPtr)
+public static class HTTPHandler
 {
-    public static HTTPHandler? Instance;
-    
     /// <summary>
     /// The size of the buffer to use when downloading files.
     /// </summary>
     private const int DOWNLOAD_BUFFER_SIZE = 8192;
-
-    public void Awake()
-    {
-        if (Instance == null)
-        {
-            Instance = this;
-            DontDestroyOnLoad(gameObject);
-        }
-        else
-        {
-            Destroy(gameObject);
-        }
-    }
     
     /// <summary>
     /// Downloads a file asynchronously from the given URL and saves it to the specified file path using dotnet HttpClient.
@@ -43,20 +30,14 @@ public class HTTPHandler(IntPtr intPtr) : MonoBehaviour(intPtr)
     /// <param name="url">URL to download from</param>
     /// <param name="filePath">Local file path to save to</param>
     /// <param name="onProgress">Callback on progress, value from 0 to 1</param>
-    /// <param name="onSuccess">Callback on success</param>
-    [HideFromIl2Cpp]
-    public void DownloadFile(
+    /// <param name="onComplete">Callback on completion (or error)</param>
+    public static void DownloadFile(
         string url,
         string filePath,
         Action<float>? onProgress,
-        Action? onSuccess)
+        Action<DownloadResult>? onComplete)
     {
-        var coroutine = CoDownloadFile(
-            url,
-            filePath,
-            onProgress,
-            onSuccess);
-        StartCoroutine(coroutine.WrapToIl2Cpp());
+        Coroutines.Start(CoDownloadFile(url, filePath, onProgress, onComplete));
     }
     
     /// <summary>
@@ -65,13 +46,12 @@ public class HTTPHandler(IntPtr intPtr) : MonoBehaviour(intPtr)
     /// <param name="url">URL to download from</param>
     /// <param name="filePath">Local file path to save to</param>
     /// <param name="onProgress">Callback on progress, value from 0 to 1</param>
-    /// <param name="onSuccess">Callback on success</param>
-    [HideFromIl2Cpp]
+    /// <param name="onComplete">Callback on completion (or error)</param>
     private static IEnumerator CoDownloadFile(
         string url,
         string filePath,
         Action<float>? onProgress,
-        Action? onSuccess)
+        Action<DownloadResult>? onComplete)
     {
         // Log start
         LILogger.Info($"DOWNLOAD: {url} >> {filePath}");
@@ -94,7 +74,7 @@ public class HTTPHandler(IntPtr intPtr) : MonoBehaviour(intPtr)
         
         // Log completion
         LILogger.Info($"DONE: {filePath}");
-        onSuccess?.Invoke();
+        onComplete?.Invoke(task.Result);
     }
 
     /// <summary>
@@ -103,8 +83,7 @@ public class HTTPHandler(IntPtr intPtr) : MonoBehaviour(intPtr)
     /// <param name="url">URL to download from</param>
     /// <param name="filePath">Local file path to save to</param>
     /// <param name="onProgress">Callback on progress, value from 0 to 1. Warning: This is not called on the main Unity thread.</param>
-    [HideFromIl2Cpp]
-    private static async Task DownloadFileTask(
+    private static async Task<DownloadResult> DownloadFileTask(
         string url,
         string filePath,
         Action<float>? onProgress)
@@ -156,7 +135,7 @@ public class HTTPHandler(IntPtr intPtr) : MonoBehaviour(intPtr)
             do
             {
                 // Read chunk
-                bytesRead = contentStream.ReadAsync(buffer, 0, buffer.Length).Result;
+                bytesRead = await contentStream.ReadAsync(buffer, 0, buffer.Length);
 
                 // Write to file
                 fileStream.WriteAsync(buffer, 0, bytesRead).Wait();
@@ -175,23 +154,24 @@ public class HTTPHandler(IntPtr intPtr) : MonoBehaviour(intPtr)
                 File.Delete(filePath);
             fileStream.Close(); // <-- Ensure file is closed before moving
             File.Move(tempFilePath, filePath);
-        }
-        catch (HttpRequestException ex)
-        {
-            LILogger.Error($"HTTP Error downloading file from {url} to {filePath}:\n{ex}");
-            if (ex.InnerException != null)
-            {
-                LILogger.Error($"Inner Exception: {ex.InnerException}");
 
-                if (ex.InnerException.InnerException != null)
-                {
-                    LILogger.Error($"Inner Inner Exception: {ex.InnerException.InnerException}");
-                }
-            }
+            // Return success
+            return new DownloadResult
+            {
+                Data = new FileStore(filePath),
+                ErrorText = null
+            };
         }
         catch (Exception e)
         {
             LILogger.Error($"Error downloading file from {url} to {filePath}:\n{e}");
+
+            // Return error
+            return new DownloadResult
+            {
+                Data = null,
+                ErrorText = e.Message
+            };
         }
     }
     
@@ -200,21 +180,19 @@ public class HTTPHandler(IntPtr intPtr) : MonoBehaviour(intPtr)
     /// </summary>
     /// <param name="url">URL to send request to</param>
     /// <param name="callback">Callback once request has completed</param>
-    [HideFromIl2Cpp]
-    public void Request(string url, Action<string>? callback)
+    public static void RequestText(string url, Action<FetchResult>? callback)
     {
-        StartCoroutine(CoRequest(url, callback).WrapToIl2Cpp());
+        Coroutines.Start(CoRequestText(url, callback));
     }
     
     /// <summary>
     ///     Background coroutine to handle HTTP Requests
     /// </summary>
     /// <param name="url">URL to send request to</param>
-    /// <param name="onSuccessString">Callback on success as a continuous string</param>
-    [HideFromIl2Cpp]
-    private static IEnumerator CoRequest(
+    /// <param name="callback">Callback once request has completed</param>
+    private static IEnumerator CoRequestText(
         string url,
-        Action<string>? onSuccessString)
+        Action<FetchResult>? callback)
     {
         // Start the request
         LILogger.Info($"GET: {url}");
@@ -224,16 +202,91 @@ public class HTTPHandler(IntPtr intPtr) : MonoBehaviour(intPtr)
         yield return request.SendWebRequest();
         LILogger.Info($"RES: {request.responseCode}");
         
-        // Warn for 404/500 errors
-        if (request.result == UnityWebRequest.Result.ConnectionError ||
-            request.result == UnityWebRequest.Result.ProtocolError)
-        {
-            // TODO: Handle errors properly
-            //onError?.Invoke($"HTTP Error: {request.responseCode} - {request.error}");
-            yield break;
+        try {
+            // Throw error on failure
+            if (request.result == UnityWebRequest.Result.ConnectionError ||
+                request.result == UnityWebRequest.Result.ProtocolError)
+                throw new Exception($"HTTP Error {request.responseCode}: {request.error}");
+
+            // Return response text on success
+            callback?.Invoke(new FetchResult
+            {
+                Data = request.downloadHandler.text,
+                ErrorText = null
+            });
         }
-        
-        // Success
-        onSuccessString?.Invoke(request.downloadHandler.text);
+        catch (Exception e)
+        {
+            LILogger.Error($"HTTP Request Error: {e}");
+
+            // Return error
+            callback?.Invoke(new FetchResult
+            {
+                Data = null,
+                ErrorText = e.Message
+            });
+        }
+    }
+
+    /// <summary>
+    ///   Sends an asynchronous request over HTTP(S) to the given URL and parses the JSON response into the given type.
+    /// </summary>
+    /// <typeparam name="T">Type to parse the JSON response into</typeparam>
+    /// <param name="url">URL to send request to</param>
+    /// <param name="callback">Callback once request has completed</param>
+    public static void RequestJSON<T>(string url, Action<HTTPResult<T>>? callback)
+    {
+        RequestText(url, result => ParseJSONResponse(result, callback));
+    }
+    private static void ParseJSONResponse<T>(HTTPResult<string> result, Action<HTTPResult<T>>? callback)
+    {
+        // Handle HTTP errors
+        if (result.ErrorText != null)
+        {
+            callback?.Invoke(new HTTPResult<T>
+            {
+                Data = default,
+                ErrorText = result.ErrorText
+            });
+            return;
+        }
+
+        try
+        {
+            // Attempt to deserialize JSON
+            var data = JsonSerializer.Deserialize<T>(result.Data ?? "");
+            callback?.Invoke(new HTTPResult<T>
+            {
+                Data = data,
+                ErrorText = null
+            });
+        }
+        catch (Exception e)
+        {
+            // Handle deserialization errors
+            LILogger.Error($"JSON Deserialization Error: {e}");
+            callback?.Invoke(new HTTPResult<T>
+            {
+                Data = default,
+                ErrorText = "JSON Deserialization Error: " + e.Message
+            });
+        }
+    }
+
+    /// <summary>
+    /// Represents the result of an HTTP request.
+    /// </summary>
+    /// <typeparam name="T">Type of the data returned by the request.</typeparam>
+    public struct HTTPResult<T>
+    {
+        /// <summary>
+        /// Data returned by the request.
+        /// </summary>
+        public T? Data;
+
+        /// <summary>
+        /// Indicates whether the request was successful.
+        /// </summary>
+        public string? ErrorText;
     }
 }

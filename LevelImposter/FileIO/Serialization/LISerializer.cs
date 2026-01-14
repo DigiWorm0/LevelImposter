@@ -5,7 +5,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using LevelImposter.Core;
 
-namespace LevelImposter.Shop;
+namespace LevelImposter.FileIO;
 
 public static class LISerializer
 {

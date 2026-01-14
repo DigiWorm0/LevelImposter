@@ -5,14 +5,14 @@ using System.Reflection;
 using System.Text.Json;
 using LevelImposter.Core;
 
-namespace LevelImposter.Shop;
+namespace LevelImposter.FileIO;
 
 /// <summary>
 ///     API to read and write from local config file
 /// </summary>
 public static class ConfigAPI
 {
-    private static LIConfig _configFile = new();
+    private static ConfigData _configData = new();
 
     /// <summary>
     ///     Gets the current directory where config file is stored.
@@ -34,7 +34,7 @@ public static class ConfigAPI
         if (!File.Exists(directory))
             return;
         var configJSON = File.ReadAllText(directory);
-        _configFile = JsonSerializer.Deserialize<LIConfig>(configJSON) ?? new LIConfig();
+        _configData = JsonSerializer.Deserialize<ConfigData>(configJSON) ?? new ConfigData();
     }
 
     /// <summary>
@@ -54,7 +54,7 @@ public static class ConfigAPI
                 Directory.CreateDirectory(directory);
 
             // Write File
-            var configJSON = JsonSerializer.Serialize(_configFile);
+            var configJSON = JsonSerializer.Serialize(_configData);
             File.WriteAllText(path, configJSON);
         }
         catch (Exception e)
@@ -71,8 +71,8 @@ public static class ConfigAPI
     /// <returns>Value from 0 to 1</returns>
     public static float GetMapWeight(string mapID)
     {
-        if (_configFile.RandomWeights?.ContainsKey(mapID) == true)
-            return _configFile.RandomWeights[mapID];
+        if (_configData.RandomWeights?.ContainsKey(mapID) == true)
+            return _configData.RandomWeights[mapID];
         return 0.5f;
     }
 
@@ -83,12 +83,12 @@ public static class ConfigAPI
     /// <param name="weight">Value from 0 to 1</param>
     public static void SetMapWeight(string mapID, float weight)
     {
-        if (_configFile.RandomWeights == null)
-            _configFile.RandomWeights = new Dictionary<string, float>();
-        if (_configFile.RandomWeights.ContainsKey(mapID))
-            _configFile.RandomWeights[mapID] = weight;
+        if (_configData.RandomWeights == null)
+            _configData.RandomWeights = new Dictionary<string, float>();
+        if (_configData.RandomWeights.ContainsKey(mapID))
+            _configData.RandomWeights[mapID] = weight;
         else
-            _configFile.RandomWeights.Add(mapID, weight);
+            _configData.RandomWeights.Add(mapID, weight);
     }
 
     /// <summary>
@@ -97,7 +97,7 @@ public static class ConfigAPI
     /// <returns>Map ID or null if none used</returns>
     public static string? GetLastMapID()
     {
-        return _configFile.LastMapJoined;
+        return _configData.LastMapJoined;
     }
 
     /// <summary>
@@ -106,9 +106,16 @@ public static class ConfigAPI
     /// <param name="mapID">Map ID or null if none used</param>
     public static void SetLastMapID(string? mapID)
     {
-        if (_configFile.LastMapJoined == mapID)
+        if (_configData.LastMapJoined == mapID)
             return;
-        _configFile.LastMapJoined = mapID;
+        _configData.LastMapJoined = mapID;
         Save();
+    }
+
+    [Serializable]
+    public class ConfigData
+    {
+        public string? LastMapJoined { get; set; }
+        public Dictionary<string, float>? RandomWeights { get; set; }
     }
 }

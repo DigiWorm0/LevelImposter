@@ -4,6 +4,7 @@ using HarmonyLib;
 using Il2CppInterop.Runtime.Injection;
 using LevelImposter.Core;
 using LevelImposter.DB;
+using LevelImposter.FileIO;
 using LevelImposter.Shop;
 using Reactor.Networking;
 using Reactor.Networking.Attributes;
@@ -71,7 +72,6 @@ public partial class LevelImposter : BasePlugin
 
         ClassInjector.RegisterTypeInIl2Cpp<AssetDB>();
 
-        ClassInjector.RegisterTypeInIl2Cpp<HTTPHandler>();
         ClassInjector.RegisterTypeInIl2Cpp<RandomOverlay>();
         ClassInjector.RegisterTypeInIl2Cpp<MapBanner>();
         ClassInjector.RegisterTypeInIl2Cpp<ShopManager>();

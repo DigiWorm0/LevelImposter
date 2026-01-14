@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using LevelImposter.FileIO;
 using UnityEngine;
 
 namespace LevelImposter.Shop;
@@ -48,6 +49,7 @@ public class ShopTabs(IntPtr ptr) : MonoBehaviour(ptr)
     /// </summary>
     public void OpenFolder()
     {
+        // TODO: Check if the current platform is supported (windows, linux, etc.)
         Process.Start("explorer.exe", MapFileAPI.GetDirectory());
     }
 

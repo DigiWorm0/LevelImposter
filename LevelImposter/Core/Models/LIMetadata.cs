@@ -19,6 +19,11 @@ public class LIMetadata
     public string thumbnailURL { get; set; }
     public Guid? remixOf { get; set; }
 
+    /// <summary>
+    /// True if the map has a thumbnail available
+    /// </summary>
+    public bool HasThumbnail => !string.IsNullOrEmpty(thumbnailURL);
+
     public override string ToString()
     {
         return $"{name}[{id}]";

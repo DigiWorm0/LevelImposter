@@ -2,6 +2,8 @@ using System;
 using System.IO;
 using Il2CppInterop.Runtime.Attributes;
 using LevelImposter.Core;
+using LevelImposter.FileIO;
+using LevelImposter.Networking.API;
 using TMPro;
 using UnityEngine;
 
@@ -78,7 +80,7 @@ public class MapBanner(IntPtr intPtr) : MonoBehaviour(intPtr)
         _author?.SetText($"by {map.authorName}");
         _description?.SetText(map.description);
         UpdateButtons();
-        GetThumbnail();
+        UpdateThumbnail();
     }
 
     /// <summary>
@@ -115,9 +117,8 @@ public class MapBanner(IntPtr intPtr) : MonoBehaviour(intPtr)
         OnDownloadProgress(0);
         
         // Start Download
-        LevelImposterAPI.DownloadMap(
+        MapFileAPI.DownloadMap(
             new Guid(_currentMap.id),
-            MapFileAPI.GetPath(_currentMap.id),
             OnDownloadProgress,
             OnDownload,
             OnError);
@@ -127,7 +128,7 @@ public class MapBanner(IntPtr intPtr) : MonoBehaviour(intPtr)
     ///     Event that is called when the <c>LIMap</c> is downloaded
     /// </summary>
     [HideFromIl2Cpp]
-    private void OnDownload()
+    private void OnDownload(FileStore _)
     {
         ShopManager.Instance?.SetOverlayEnabled(false);
         ShopManager.RegenerateFallbackMap();
@@ -207,21 +208,19 @@ public class MapBanner(IntPtr intPtr) : MonoBehaviour(intPtr)
     /// <summary>
     ///     Updates the map banner's active thumbnail
     /// </summary>
-    private void GetThumbnail()
+    private void UpdateThumbnail()
     {
-        if (string.IsNullOrEmpty(_currentMap?.thumbnailURL))
+        if (_currentMap == null)
             return;
-        if (ThumbnailCache.Exists(_currentMap.id))
-            ThumbnailCache.Get(_currentMap.id, sprite =>
-            {
-                if (_thumbnail != null)
-                    _thumbnail.sprite = sprite;
-            });
-        else
-            LevelImposterAPI.DownloadThumbnail(_currentMap, sprite =>
-            {
-                if (_thumbnail != null)
-                    _thumbnail.sprite = sprite;
-            });
+        if (!_currentMap.HasThumbnail)
+            return;
+
+        ThumbnailCache.Get(_currentMap.id, SetThumbnail);
+    }
+
+    private void SetThumbnail(Sprite sprite)
+    {
+        if (_thumbnail != null)
+            _thumbnail.sprite = sprite;
     }
 }

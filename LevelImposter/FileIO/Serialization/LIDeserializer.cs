@@ -4,7 +4,7 @@ using System.Text;
 using System.Text.Json;
 using LevelImposter.Core;
 
-namespace LevelImposter.Shop;
+namespace LevelImposter.FileIO;
 
 public static class LIDeserializer
 {

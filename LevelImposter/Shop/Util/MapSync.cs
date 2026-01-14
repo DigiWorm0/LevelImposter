@@ -2,7 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using LevelImposter.Core;
+using LevelImposter.FileIO;
 using LevelImposter.Networking;
+using LevelImposter.Networking.API;
 using Reactor.Networking.Attributes;
 using Reactor.Networking.Rpc;
 using Random = UnityEngine.Random;
@@ -125,11 +127,10 @@ public static class MapSync
             LILogger.Notify("Downloading map, please wait...", false);
             MapLoader.UnloadMap();
             DownloadManager.StartDownload();
-            LevelImposterAPI.DownloadMap(
+            MapFileCache.DownloadMap(
                 mapID,
-                MapFileCache.GetPath(mapIDStr),
                 DownloadManager.SetProgress,
-                () =>
+                (_) =>
                 {
                     if (_activeDownloadingID != mapID)
                         return;
