@@ -19,12 +19,21 @@ public static class UpdateButtonBuilder
 
     public static void Build()
     {
-        // Object
+        // Find the VersionShower
+        var versionShower = GameObject.FindObjectOfType<VersionShower>();
+        if (versionShower == null)
+            throw new Exception("Could not find VersionShower in scene");
+        
+        // Find Button Prefab to Clone
         var buttonPrefab = GameObject.Find(BUTTON_PATH);
-        _btnObj = Object.Instantiate(buttonPrefab, VersionPatch.VersionObject?.transform);
+        if (buttonPrefab == null)
+            throw new Exception($"Could not find button prefab at path: {BUTTON_PATH}");
+        
+        // Create Button Object
+        _btnObj = Object.Instantiate(buttonPrefab, versionShower.transform.parent);
         _btnObj.name = "button_LevelImposterUpdater";
-        _btnObj.transform.localScale = new Vector3(1.5f, 1.5f, 1.0f);
-        _btnObj.transform.localPosition = new Vector3(-2.5f, 0.05f, 0);
+        _btnObj.transform.localScale = new Vector3(1.1f, 1.1f, 1.0f);
+        // _btnObj.transform.localPosition = new Vector3(-2.5f, 0.05f, 0);
 
         // Active/Inactive
         var active = _btnObj.transform.Find("Highlight").gameObject;
@@ -52,9 +61,10 @@ public static class UpdateButtonBuilder
         var textTransform = _btnObj.transform.FindChild("FontPlacer");
         Object.Destroy(textTransform.gameObject);
 
-        // Remove Aspect
+        // Update Aspect Position
         var aspectComponent = _btnObj.GetComponent<AspectPosition>();
-        Object.Destroy(aspectComponent);
+        aspectComponent.DistanceFromEdge = new Vector3(2.5f, -1.5f, 5.0f);
+        aspectComponent.Alignment = AspectPosition.EdgeAlignments.Center;
 
         // Popup
         var popupPrefab = DestroyableSingleton<TwitchManager>.Instance.TwitchPopup.gameObject;

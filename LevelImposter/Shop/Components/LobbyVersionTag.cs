@@ -29,6 +29,10 @@ public class LobbyVersionTag(IntPtr intPtr) : MonoBehaviour(intPtr)
         aspect.Alignment = AspectPosition.EdgeAlignments.LeftBottom;
         aspect.DistanceFromEdge = new Vector3(10.4f, -2.0f, -30.0f);
         aspect.AdjustPosition();
+        
+        // Scale on Mobile
+        if (LIConstants.IsMobile)
+            transform.localScale = new Vector3(1.2f, 1.2f, 1.2f);
 
         // Update Text
         UpdateText();

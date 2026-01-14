@@ -4,6 +4,7 @@ using System.Linq;
 using LevelImposter.Core;
 using LevelImposter.Shop;
 using Reactor.Networking.Attributes;
+using Reactor.Networking.Rpc;
 using UnityEngine;
 
 namespace LevelImposter.Trigger;

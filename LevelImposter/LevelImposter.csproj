@@ -23,7 +23,7 @@
         <PackageReference Include="BepInEx.AutoPlugin" Version="1.1.0" PrivateAssets="all"/>
         <PackageReference Include="BepInEx.IL2CPP.MSBuild" Version="2.1.0-rc.1" PrivateAssets="all"/>
         <PackageReference Include="System.Text.Json" Version="6.0.10" PrivateAssets="all"/>
-        <PackageReference Include="Reactor" Version="2.2.0"/>
+        <PackageReference Include="Reactor" Version="2.3.1"/>
     </ItemGroup>
 
     <ItemGroup>

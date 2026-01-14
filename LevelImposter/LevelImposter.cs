@@ -7,6 +7,7 @@ using LevelImposter.DB;
 using LevelImposter.Shop;
 using Reactor.Networking;
 using Reactor.Networking.Attributes;
+using Reactor.Utilities;
 using UnityEngine;
 
 namespace LevelImposter;
@@ -80,6 +81,9 @@ public partial class LevelImposter : BasePlugin
         ClassInjector.RegisterTypeInIl2Cpp<LobbyVersionTag>();
         ClassInjector.RegisterTypeInIl2Cpp<LobbyConsole>(usableInterface);
 
+        // Reactor Version Patch
+        ReactorCredits.Register("LevelImposter", DisplayVersion, false, ReactorCredits.AlwaysShow);
+        
         // Patch Methods
         Harmony.PatchAll();
         LILogger.Msg("LevelImposter Initialized.");
