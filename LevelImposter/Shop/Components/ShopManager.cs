@@ -338,7 +338,6 @@ public class ShopManager(IntPtr intPtr) : MonoBehaviour(intPtr)
         if (!AssetDB.IsInit)
             return;
         LILogger.Info($"Launching map [{id}]");
-        RandomizerSync.SyncRandomSeed();
         if (LIConstants.FREEPLAY_FLUSH_CACHE)
             GCHandler.Clean();
         MapLoader.LoadMap(id, false, () =>

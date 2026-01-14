@@ -17,7 +17,7 @@ public static class LIConstants
         ELEM_WARN_TIME = 200; // Time to warn the user (in ms) when an element is taking too long to load
 
     public const bool FREEPLAY_FLUSH_CACHE = true; // Whether to flush the cache when entering freeplay maps
-    public const bool IS_DEVELOPMENT_BUILD = true; // Whether this is a development build
+    public const bool IS_DEVELOPMENT_BUILD = false; // Whether this is a development build
     
     public static bool IsMobile = Application.isMobilePlatform;
 }

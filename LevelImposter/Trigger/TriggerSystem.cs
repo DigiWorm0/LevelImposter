@@ -2,8 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using LevelImposter.Core;
+using LevelImposter.Networking;
 using LevelImposter.Shop;
-using Reactor.Networking.Attributes;
 using Reactor.Networking.Rpc;
 using UnityEngine;
 
@@ -42,7 +42,7 @@ public class TriggerSystem
         OnCreate();
     }
 
-    private static bool _shouldLog => MapLoader.CurrentMap?.properties.triggerLogging ?? false;
+    public static bool EnableLogging => MapLoader.CurrentMap?.properties.triggerLogging ?? false;
 
     private static bool _detectStackOverflow =>
         MapLoader.CurrentMap?.properties.triggerDetectStackOverflow ?? true;
@@ -97,47 +97,11 @@ public class TriggerSystem
             throw new Exception($"{signal.TargetObject} is missing LI data");
 
         // Fire Trigger over RPC
-        RPCFireTrigger(
-            signal.SourcePlayer,
-            objectData.ID.ToString(),
-            signal.TriggerID
-        );
-    }
-
-    /// <summary>
-    ///     Fires a trigger over the network
-    /// </summary>
-    /// <param name="orgin">Orgin player</param>
-    /// <param name="elemIDString">LIElement ID to fire</param>
-    /// <param name="triggerID">Trigger ID to fire</param>
-    [MethodRpc((uint)LIRpc.FireTrigger)]
-    private static void RPCFireTrigger(PlayerControl orgin, string elemIDString, string triggerID)
-    {
-        // Log
-        if (_shouldLog)
-            LILogger.Msg($"[RPC] {elemIDString} >>> {triggerID} ({orgin.name})");
-
-        // Get Ship Status
-        var shipStatus = LIShipStatus.GetInstance();
-
-        // Parse ID
-        if (!Guid.TryParse(elemIDString, out var elemID))
+        Rpc<TriggerRPC>.Instance.Send(signal.SourcePlayer, new RPCTriggerPacket
         {
-            LILogger.Warn("RPC triggered element ID is invalid.");
-            return;
-        }
-
-        // Find cooresponding object
-        var gameObject = shipStatus.MapObjectDB.GetObject(elemID);
-        if (gameObject == null)
-        {
-            LILogger.Warn($"RPC object with ID {elemID} is missing");
-            return;
-        }
-
-        // Create & Fire Trigger
-        TriggerSignal signal = new(gameObject, triggerID, orgin);
-        shipStatus.TriggerSystem.FireTrigger(signal);
+            ElemIDString = objectData.ID.ToString(),
+            TriggerID = signal.TriggerID
+        });
     }
 
     /// <summary>
@@ -160,7 +124,7 @@ public class TriggerSystem
         }
 
         // Logging
-        if (_shouldLog)
+        if (EnableLogging)
         {
             var whitespace = string.Concat(Enumerable.Repeat("| ", signal.StackSize - 1)) + "+ ";
             LILogger.Info(

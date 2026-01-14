@@ -2,7 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using LevelImposter.Core;
+using LevelImposter.Networking;
 using Reactor.Networking.Attributes;
+using Reactor.Networking.Rpc;
 using Random = UnityEngine.Random;
 
 namespace LevelImposter.Shop;
@@ -47,14 +49,19 @@ public static class MapSync
 
         // Get ID
         var mapIDStr = MapLoader.CurrentMap?.id ?? Guid.Empty.ToString();
-        if (!Guid.TryParse(mapIDStr, out _))
+        if (!Guid.TryParse(mapIDStr, out var mapID))
         {
             LILogger.Error($"Invalid map ID [{mapIDStr}]");
             return;
         }
 
         LILogger.Info($"[RPC] Transmitting map ID [{mapIDStr}] (fallback={MapLoader.IsFallback})");
-        RPCSendMapID(PlayerControl.LocalPlayer, mapIDStr, MapLoader.IsFallback);
+        Rpc<MapSyncRPC>.Instance.Send(PlayerControl.LocalPlayer, new MapState
+        {
+            MapID = mapID,
+            RandomizerSeed = RandomizerSync.GenerateRandomSeed(),
+            IsFallback = MapLoader.IsFallback
+        });
 
         // Set Map ID
         if (GameState.IsCustomMapLoaded && !MapLoader.IsFallback)
@@ -63,22 +70,14 @@ public static class MapSync
             MapUtils.SetLobbyMapType(MapType.Skeld, true);
     }
 
-    [MethodRpc((uint)LIRpc.SyncMapID)]
-    private static void RPCSendMapID(PlayerControl _, string mapIDStr, bool isFallback)
+    public static void OnRPCSyncMapID(Guid mapID, bool isFallback)
     {
-        LILogger.Info($"[RPC] Received map ID [{mapIDStr}] (fallback={isFallback})");
+        LILogger.Info($"[RPC] Received map ID [{mapID.ToString()}] (fallback={isFallback})");
 
+        var mapIDStr = mapID.ToString();
         DownloadManager.Reset();
         if (DestroyableSingleton<GameStartManager>.InstanceExists)
             GameStartManager.Instance.ResetStartState();
-
-        // Parse ID
-        var isSuccess = Guid.TryParse(mapIDStr, out var mapID);
-        if (!isSuccess)
-        {
-            LILogger.Error($"Invalid map ID [{mapIDStr}]");
-            return;
-        }
 
         // Get Current
         var currentMapID = MapLoader.CurrentMap?.id ?? "";

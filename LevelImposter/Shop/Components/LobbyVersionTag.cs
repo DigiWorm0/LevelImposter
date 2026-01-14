@@ -32,7 +32,11 @@ public class LobbyVersionTag(IntPtr intPtr) : MonoBehaviour(intPtr)
         
         // Scale on Mobile
         if (LIConstants.IsMobile)
-            transform.localScale = new Vector3(1.2f, 1.2f, 1.2f);
+        {
+            transform.localScale = new Vector3(1.15f, 1.15f, 1.1f);
+            aspect.DistanceFromEdge = new Vector3(12.0f, -2.0f, -30.0f);
+            aspect.AdjustPosition();
+        }
 
         // Update Text
         UpdateText();

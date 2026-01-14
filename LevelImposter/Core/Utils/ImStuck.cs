@@ -2,7 +2,9 @@
 using System.Collections;
 using BepInEx.Unity.IL2CPP.Utils.Collections;
 using Il2CppInterop.Runtime.Attributes;
+using LevelImposter.Networking;
 using Reactor.Networking.Attributes;
+using Reactor.Networking.Rpc;
 using UnityEngine;
 
 namespace LevelImposter.Core;
@@ -29,7 +31,10 @@ public class ImStuck
         shipStatus.StartCoroutine(
             CoHandleKeyCombo(
                 RESPAWN_SEQ,
-                () => { RespawnPlayer(PlayerControl.LocalPlayer); }
+                () =>
+                {
+                    Rpc<ResetPlayerRPC>.Instance.Send(true);
+                }
             ).WrapToIl2Cpp()
         );
     }
@@ -61,28 +66,6 @@ public class ImStuck
             }
 
             yield return null;
-        }
-    }
-
-    /// <summary>
-    ///     Resets the Local Player to the
-    ///     ShipStatus's spawn location in the
-    ///     event they are stuck.
-    /// </summary>
-    /// <param name="playerControl">Player to respawn</param>
-    [MethodRpc((uint)LIRpc.ResetPlayer)]
-    private static void RespawnPlayer(PlayerControl playerControl)
-    {
-        var shipStatus = LIShipStatus.GetShip();
-        if (playerControl == null || shipStatus == null)
-            return;
-        LILogger.Info($"Resetting {playerControl.name} to spawn");
-        var playerPhysics = playerControl.GetComponent<PlayerPhysics>();
-        playerPhysics.transform.position = shipStatus.InitialSpawnCenter;
-        if (playerPhysics.AmOwner)
-        {
-            playerPhysics.ExitAllVents();
-            LILogger.Notify("You've been reset to spawn", false);
         }
     }
 }

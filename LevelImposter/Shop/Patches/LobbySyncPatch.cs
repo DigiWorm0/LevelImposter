@@ -15,9 +15,6 @@ public static class ClientJoinSyncPatch
         if (!AmongUsClient.Instance.AmHost)
             return;
 
-        // Sync Random Seed
-        RandomizerSync.SyncRandomSeed();
-
         // This is a new Lobby
         if (__instance.AmOwner)
         {

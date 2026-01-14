@@ -11,9 +11,9 @@
 public enum LIRpc
 {
     FireTrigger = 90, // Fires a global trigger on an object
-    UpdateObjectPos, // Used by util-physics object
+    SyncPhysicsObject, // Used by util-physics object
     SyncMapID, // Syncs the map ID in the lobby
-    SyncRandomSeed, // Syncs a random seed for util-triggerrand
+    SyncRandomSeed, // Syncs a random seed for util-triggerrand (No longer used)
     ResetPlayer, // Resets the player on Ctrl-R E S
     DownloadCheck, // Warns the host that the client is still downloading the map
     KillPlayer, // Used by util-triggerdeath object

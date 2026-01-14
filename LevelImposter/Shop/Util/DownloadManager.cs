@@ -1,7 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using LevelImposter.Core;
+using LevelImposter.Networking;
 using Reactor.Networking.Attributes;
+using Reactor.Networking.Rpc;
 
 namespace LevelImposter.Shop;
 
@@ -17,20 +19,13 @@ public static class DownloadManager
     public static bool CanStart => _playersDownloading.Count <= 0 && string.IsNullOrEmpty(_downloadError);
 
     /// <summary>
-    ///     RPC to sync download state across clients
+    /// Syncs the download state of a player to all clients
     /// </summary>
-    /// <param name="player">Your local PlayerControl</param>
-    /// <param name="isDownloaded">TRUE if map is downloaded. FALSE otherwise</param>
-    [MethodRpc((uint)LIRpc.DownloadCheck)]
-    public static void RPCDownload(PlayerControl player, bool isDownloaded)
+    /// <param name="player">PlayerControl to sync</param>
+    /// <param name="isDownloaded">TRUE if the player has downloaded the map, FALSE if they are downloading</param>
+    private static void SyncDownloadState(PlayerControl player, bool isDownloaded)
     {
-        LILogger.Info($"[RPC] {player.name} {(isDownloaded ? "has downloaded" : "is downloading")} the map");
-        if (DestroyableSingleton<GameStartManager>.InstanceExists)
-            DestroyableSingleton<GameStartManager>.Instance.ResetStartState();
-        if (isDownloaded)
-            RemovePlayer(player);
-        else
-            AddPlayer(player);
+        Rpc<DownloadCheckRPC>.Instance.Send(player, isDownloaded);
     }
 
     /// <summary>
@@ -116,7 +111,7 @@ public static class DownloadManager
     public static void StartDownload()
     {
         _downloadPercent = 0;
-        MapUtils.WaitForPlayer(() => { RPCDownload(PlayerControl.LocalPlayer, false); });
+        MapUtils.WaitForPlayer(() => { SyncDownloadState(PlayerControl.LocalPlayer, false); });
     }
 
     /// <summary>
@@ -125,6 +120,6 @@ public static class DownloadManager
     public static void StopDownload()
     {
         _downloadPercent = 0;
-        MapUtils.WaitForPlayer(() => { RPCDownload(PlayerControl.LocalPlayer, true); });
+        MapUtils.WaitForPlayer(() => { SyncDownloadState(PlayerControl.LocalPlayer, true); });
     }
 }
