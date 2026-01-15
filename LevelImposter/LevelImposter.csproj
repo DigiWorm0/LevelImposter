@@ -2,6 +2,7 @@
     <PropertyGroup>
         <Title>LevelImposter</Title>
         <Version>0.21.3-dev2</Version>
+        <SourceRevisionId></SourceRevisionId>
         <Description>Custom Among Us Mapping Studio</Description>
         <Authors>DigiWorm</Authors>
 

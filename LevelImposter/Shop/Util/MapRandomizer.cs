@@ -74,29 +74,34 @@ public static class MapRandomizer
         var fileIDs = new List<string>(MapFileAPI.ListIDs());
         var mapIDs = fileIDs.FindAll(id => !blacklistMaps.Contains(id));
         if (mapIDs.Count <= 0)
-            return null;    // <-- No valid maps found
+            return null;    // <-- No valid maps left
 
         // Get map weights
         var mapWeights = new float[mapIDs.Count];
-        float mapWeightSum = 0;
+        var sumOfAllMapWeights = 0.0f;
         for (var i = 0; i < mapIDs.Count; i++)
         {
             var mapWeight = ConfigAPI.GetMapWeight(mapIDs[i]);
-            mapWeights[i] = mapWeightSum + mapWeight;
-            mapWeightSum += mapWeight;
+            mapWeights[i] = sumOfAllMapWeights + mapWeight;
+            sumOfAllMapWeights += mapWeight;
         }
 
+        // All maps are of zero weight
+        if (sumOfAllMapWeights <= 0)
+            return null;
+
         // Choose a random map
-        // TODO: FIX ME, this logic is flawed and does not properly account for weights
-        var randomValue = Random.Range(0, mapWeightSum);
+        var randomValue = Random.Range(0, sumOfAllMapWeights);
+        var remainingWeight = sumOfAllMapWeights;
         for (var i = 0; i < mapIDs.Count; i++)
         {
             // Check weight
-            var mapID = mapIDs[i];
-            if (mapWeights[i] < randomValue)
+            remainingWeight -= mapWeights[i];
+            if (remainingWeight > 0)
                 continue;
             
             // Check if map is in workshop
+            var mapID = mapIDs[i];
             var isInWorkshop = Guid.TryParse(mapID, out _);
             if (isInWorkshop)
                 return mapID;
