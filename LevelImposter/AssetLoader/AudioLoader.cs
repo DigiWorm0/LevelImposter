@@ -26,7 +26,7 @@ public class AudioLoader : AsyncQueue<LoadableAudio, AudioClip>
             
         
         // Get Data Store from AssetDB
-        var soundDataStore = MapLoader.CurrentMap?.mapAssetDB?.Get(assetID);
+        var soundDataStore = GameConfiguration.CurrentMap?.mapAssetDB?.Get(assetID);
         if (soundDataStore == null)
             return;
 

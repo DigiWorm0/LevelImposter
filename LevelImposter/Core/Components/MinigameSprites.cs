@@ -45,7 +45,7 @@ public class MinigameSprites(IntPtr intPtr) : MonoBehaviour(intPtr)
     private LIMinigameSprite[]? _minigameDataArr;
     private LIMinigameProps? _minigameProps;
     
-    private static bool PixelArtMode => MapLoader.CurrentMap?.properties.pixelArtMode ?? false;
+    private static bool PixelArtMode => GameConfiguration.CurrentMap?.properties.pixelArtMode ?? false;
 
     public void OnDestroy()
     {
@@ -85,7 +85,7 @@ public class MinigameSprites(IntPtr intPtr) : MonoBehaviour(intPtr)
                 var hasPivot = PIVOTS.TryGetValue(minigameData.type, out var pivot);
 
                 // Get Sprite Stream
-                var mapAssetDB = MapLoader.CurrentMap?.mapAssetDB;
+                var mapAssetDB = GameConfiguration.CurrentMap?.mapAssetDB;
                 var guid = minigameData.spriteID;
                 var mapAsset = mapAssetDB?.Get(guid);
 

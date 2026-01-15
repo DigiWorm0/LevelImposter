@@ -55,7 +55,7 @@ internal class DisplayBuilder : IElemBuilder
         meshRenderer.sharedMaterial = minigamePrefab?.DefaultMaterial;
 
         // Render Texture
-        var pixelArtMode = MapLoader.CurrentMap?.properties.pixelArtMode ?? false;
+        var pixelArtMode = GameConfiguration.CurrentMap?.properties.pixelArtMode ?? false;
         var renderTexture = RenderTexture.GetTemporary(
             width,
             height,

@@ -26,9 +26,9 @@ public static class ConfigAPI
     }
 
     /// <summary>
-    ///     Reads all data from the configuration file
+    ///     Loads all data from the configuration file.
     /// </summary>
-    public static void ReadAll()
+    public static void Load()
     {
         var directory = GetDirectory();
         if (!File.Exists(directory))

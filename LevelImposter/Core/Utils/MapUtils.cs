@@ -56,6 +56,15 @@ public static class MapUtils
         };
         return list.ToArray();
     }
+    
+    public static Il2CppStructArray<T> AddToArr<T>(Il2CppStructArray<T> arr, T value) where T : unmanaged
+    {
+        List<T> list = new(arr)
+        {
+            value
+        };
+        return list.ToArray();
+    }
 
     /// <summary>
     ///     Removes an element from an Il2CppReferenceArray
@@ -409,7 +418,7 @@ public static class MapUtils
     public static void PreloadAllMapSprites()
     {
         // Get current map
-        var map = MapLoader.CurrentMap;
+        var map = GameConfiguration.CurrentMap;
         if (map == null)
             return;
 
@@ -517,20 +526,6 @@ public static class MapUtils
             results.AddRange(GetTransforms(remainingPath, firstPartTransform));
 
         return results;
-    }
-
-    /// <summary>
-    ///     Sets the current map type
-    /// </summary>
-    /// <param name="mapType">Current MapType enum</param>
-    /// <param name="transmit">Whether to transmit the change over RPC</param>
-    public static void SetLobbyMapType(MapType mapType, bool transmit = false)
-    {
-        var currentGameOptions = GameOptionsManager.Instance.CurrentGameOptions;
-        currentGameOptions.SetByte(ByteOptionNames.MapId, (byte)mapType);
-        GameOptionsManager.Instance.GameHostOptions = GameOptionsManager.Instance.CurrentGameOptions;
-        if (transmit)
-            GameManager.Instance.LogicOptions.SyncOptions();
     }
 
     /// <summary>

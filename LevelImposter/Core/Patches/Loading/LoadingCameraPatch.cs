@@ -15,7 +15,7 @@ public static class LoadingCameraPatch
         if (!LIShipStatus.IsInstance())
             return true;
 
-        if (!MapLoader.IsLoading)
+        if (!GameState.IsCustomMapLoading)
             return true;
 
         __instance.centerPosition = __instance.transform.position;

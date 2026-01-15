@@ -78,12 +78,8 @@ public class LoadingBar(IntPtr intPtr) : MonoBehaviour(intPtr)
         yield return null;
 
         // Objects
-        var isFreeplay = GameState.IsInFreeplay;
-        var currentMap = MapLoader.CurrentMap;
-        var isFallback = MapLoader.IsFallback;
-
-        // Show Loading Screen
-        LILogger.Info($"Showing loading screen (Freeplay={isFreeplay})");
+        var currentMap = GameConfiguration.CurrentMap;
+        var isFallback = GameConfiguration.HideMapName;
 
         // Set Map Name
         var mapName = "Loading...";
@@ -97,7 +93,7 @@ public class LoadingBar(IntPtr intPtr) : MonoBehaviour(intPtr)
         // Update Progress
         while (_visible)
         {
-            var queueSize = MapLoader.QueueSize;
+            var queueSize = GameState.LoadingAssetsCount;
             
             // Approximate Progress
             if (queueSize > 0)

@@ -314,10 +314,20 @@ public class ShopManager(IntPtr intPtr) : MonoBehaviour(intPtr)
     /// <param name="id">ID of the map to select</param>
     public void SelectMap(string id)
     {
+        // Log
         LILogger.Info($"Selecting map [{id}]");
-        MapLoader.LoadMap(id, false, MapSync.SyncMapID);
-        ConfigAPI.SetLastMapID(id);
+        
+        // Set Map
+        var map = MapFileAPI.Get(id);
+        GameConfiguration.SetMap(map);
+        
+        // Save the last selected map
+        ConfigAPI.SetLastMapID(id); // <-- Only saves if a map was manually selected by the user
+        
+        // Sync Map ID
+        MapSync.SyncMapID();
 
+        // Save Last Map
         CloseShop();
     }
 
@@ -326,8 +336,7 @@ public class ShopManager(IntPtr intPtr) : MonoBehaviour(intPtr)
     /// </summary>
     public void SetRandomMaps()
     {
-        MapUtils.SetLobbyMapType(MapType.LevelImposter, true);
-        MapSync.RegenerateFallbackID();
+        MapRandomizer.RandomizeMap();
         Close();
     }
 
@@ -337,16 +346,20 @@ public class ShopManager(IntPtr intPtr) : MonoBehaviour(intPtr)
     /// <param name="id">ID of the map to launch</param>
     public void LaunchMap(string id)
     {
+        // Check if AssetDB is initialized
         if (!AssetDB.IsInit)
             return;
-        LILogger.Info($"Launching map [{id}]");
-        if (LIConstants.FREEPLAY_FLUSH_CACHE)
-            GCHandler.Clean();
-        MapLoader.LoadMap(id, false, () =>
-        {
-            AmongUsClient.Instance.TutorialMapId = (int)MapType.LevelImposter;
-            _freeplayComp?.OnClick();
-        });
+        
+        // Log
+        LILogger.Info($"Launching map [{id}] in Freeplay");
+        
+        // Set Map
+        var map = MapFileAPI.Get(id);
+        GameConfiguration.SetMap(map);
+        
+        // Launch Freeplay
+        AmongUsClient.Instance.TutorialMapId = (int)MapType.LevelImposter;
+        _freeplayComp?.OnClick();
     }
 
     /// <summary>

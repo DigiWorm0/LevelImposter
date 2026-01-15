@@ -167,6 +167,8 @@ public class MapBanner(IntPtr intPtr) : MonoBehaviour(intPtr)
     {
         if (_currentMap == null)
             return;
+        
+        // Launch or select map
         if (GameState.IsInLobby)
             ShopManager.Instance?.SelectMap(_currentMap.id);
         else

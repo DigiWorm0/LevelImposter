@@ -35,6 +35,7 @@ public partial class LevelImposter : BasePlugin
         // Init Subsystems
         LILogger.Init();
         MapFileAPI.Init();
+        ConfigAPI.Load();
         FileCache.Init();
         ModCompatibility.Init();
 

@@ -1,5 +1,6 @@
 using HarmonyLib;
 using LevelImposter.Core;
+using LevelImposter.FileIO;
 
 namespace LevelImposter.Shop;
 
@@ -15,33 +16,42 @@ public static class ClientJoinSyncPatch
         if (!AmongUsClient.Instance.AmHost)
             return;
 
-        // This is a new Lobby
-        if (__instance.AmOwner)
+        // Another player has joined the lobby (not me)
+        if (!__instance.AmOwner)
         {
-            var wasFallback = MapLoader.IsFallback;
-            var isNoMap = MapLoader.CurrentMap == null;
+            MapSync.SyncMapID();
+            return;
+        }
+        
+        // Check if an existing map is loaded
+        var isCustomMapLoaded = GameConfiguration.CurrentMap != null;
+        var isRandomized = GameConfiguration.HideMapName;
+        
+        if (isCustomMapLoaded && !isRandomized)
+            return; // <-- A proper custom map is already loaded
 
-            // If the map was a fallback or no map is currently loaded
-            if (wasFallback || isNoMap)
+        // Attempt to load the last selected map
+        if (!isRandomized)
+        {
+            var lastMapID = ConfigAPI.GetLastMapID();
+            var lastMap = lastMapID != null ? MapFileAPI.Get(lastMapID) : null;
+            if (lastMap != null)
             {
-                // Choose a new random map
-                MapSync.RegenerateFallbackID();
+                GameConfiguration.SetMap(lastMap);
+                LILogger.Info($"Loaded last selected map [{lastMapID}] for host.");
                 return;
             }
         }
-
-        // Sync the current map ID
-        // TODO: Remember last map ID
-        MapSync.SyncMapID();
+        
+        // Otherwise, attempt to randomize map
+        MapRandomizer.RandomizeMap();
+        
+        // Fallback to Skeld if no map is loaded (and we're on LevelImposter)
+        if (GameConfiguration.CurrentMap == null &&
+            GameConfiguration.CurrentMapType == MapType.LevelImposter)
+        {
+            LILogger.Warn("No custom maps available, falling back to Skeld.");
+            GameConfiguration.SetMapType(MapType.Skeld);
+        }
     }
 }
-
-// [HarmonyPatch(typeof(AmongUsClient), nameof(AmongUsClient.CreatePlayer))]
-// public static class ClientJoinSyncPatch
-// {
-//     public static void Postfix()
-//     {
-//         RandomizerSync.SyncRandomSeed();
-//         MapSync.SyncMapID();
-//     }
-// }

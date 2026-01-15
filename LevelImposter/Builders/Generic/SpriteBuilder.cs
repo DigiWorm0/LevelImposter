@@ -17,8 +17,8 @@ public class SpriteBuilder : IElemBuilder
 
     public static SpriteLoadEvent? OnSpriteLoad;
 
-    private static bool PixelArtMode => MapLoader.CurrentMap?.properties.pixelArtMode ?? false;
-    private static MapAssetDB? AssetDB => MapLoader.CurrentMap?.mapAssetDB;
+    private static bool PixelArtMode => GameConfiguration.CurrentMap?.properties.pixelArtMode ?? false;
+    private static MapAssetDB? AssetDB => GameConfiguration.CurrentMap?.mapAssetDB;
 
     public SpriteBuilder()
     {
@@ -98,7 +98,7 @@ public class SpriteBuilder : IElemBuilder
     /// <returns>The sprite atlas or null if not found</returns>
     private static LISpriteAtlas? FindSpriteAtlasOfID(Guid? id)
     {
-        var allSpriteAtlases = MapLoader.CurrentMap?.spriteAtlases;
+        var allSpriteAtlases = GameConfiguration.CurrentMap?.spriteAtlases;
         return allSpriteAtlases?.FirstOrDefault(atlas => atlas.id == id);
     }
 

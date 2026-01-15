@@ -11,13 +11,13 @@ public struct MapState
 {
     public Guid MapID;
     public int RandomizerSeed;
-    public bool IsFallback;
+    public bool IsMapNameHidden;
 }
 
 [RegisterCustomRpc((uint)LIRpc.SyncMapID)]
 public class MapSyncRPC(LevelImposter plugin, uint id) : PlayerCustomRpc<LevelImposter, MapState>(plugin, id)
 {
-    public override RpcLocalHandling LocalHandling => RpcLocalHandling.After;
+    public override RpcLocalHandling LocalHandling => RpcLocalHandling.None; // <-- MapSync is for other clients only
     
     public override void Write(MessageWriter writer, MapState data)
     {
@@ -26,7 +26,7 @@ public class MapSyncRPC(LevelImposter plugin, uint id) : PlayerCustomRpc<LevelIm
             writer.Write(mapIDByte);
         
         writer.Write(data.RandomizerSeed);
-        writer.Write(data.IsFallback);
+        writer.Write(data.IsMapNameHidden);
     }
 
     public override MapState Read(MessageReader reader)
@@ -37,20 +37,20 @@ public class MapSyncRPC(LevelImposter plugin, uint id) : PlayerCustomRpc<LevelIm
         
         var mapID = new Guid(mapIDBytes);
         var randomizerSeed = reader.ReadInt32();
-        var isFallback = reader.ReadBoolean();
+        var isMapNameHidden = reader.ReadBoolean();
         
         return new MapState
         {
             MapID = mapID,
             RandomizerSeed = randomizerSeed,
-            IsFallback = isFallback
+            IsMapNameHidden = isMapNameHidden
         };
     }
 
     public override void Handle(PlayerControl innerNetObject, MapState data)
     {
-        LILogger.Info($"[RPC] Received map ID [{data.MapID.ToString()}] (fallback={data.IsFallback})");
-        MapSync.OnRPCSyncMapID(data.MapID, data.IsFallback);
+        LILogger.Info($"[RPC] Received map ID [{data.MapID.ToString()}] (Hidden={data.IsMapNameHidden})");
+        MapSync.OnRPCSyncMapID(data.MapID, data.IsMapNameHidden);
         RandomizerSync.SetRandomSeed(data.RandomizerSeed);
     }
 }

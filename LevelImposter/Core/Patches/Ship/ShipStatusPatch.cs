@@ -15,7 +15,7 @@ public static class ShipStatusPatch
 
         if (GameState.IsCustomMapSelected)
             __instance.gameObject.AddComponent<LIShipStatus>();
-        else if (!MapLoader.IsFallback)
+        else if (!GameConfiguration.HideMapName)
             LILogger.Msg("Another mod has changed the current map state");
     }
 }

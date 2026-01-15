@@ -28,7 +28,7 @@ public class MapPropertiesBuilder : IElemBuilder
             return;
 
         // Get Map
-        var map = MapLoader.CurrentMap;
+        var map = GameConfiguration.CurrentMap;
 
         // Set Map Name
         shipStatus.name = map.name;

@@ -26,7 +26,7 @@ public class LIShipStatus(IntPtr intPtr) : MonoBehaviour(intPtr)
 
     [Obsolete("Use MapLoader.CurrentMap instead")]
     [HideFromIl2Cpp]
-    public static LIMap? CurrentMap => MapLoader.CurrentMap;
+    public static LIMap? CurrentMap => GameConfiguration.CurrentMap;
 
     public bool IsReady => !Builder.IsBuilding && !LoadingBar.IsVisible;
 
@@ -37,8 +37,8 @@ public class LIShipStatus(IntPtr intPtr) : MonoBehaviour(intPtr)
         ShipStatus = GetComponent<ShipStatus>();
         _instance = this;
 
-        if (MapLoader.CurrentMap != null)
-            Builder.BuildMap(MapLoader.CurrentMap);
+        if (GameConfiguration.CurrentMap != null)
+            Builder.BuildMap(GameConfiguration.CurrentMap);
         else
             LILogger.Warn("No map content, no LI map will load");
     }

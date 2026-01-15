@@ -19,7 +19,7 @@ public static class WAVLoader
             return null;
 
         // Get data from Map Asset DB
-        var soundDBElem = MapLoader.CurrentMap?.mapAssetDB?.Get(soundData.dataID);
+        var soundDBElem = GameConfiguration.CurrentMap?.mapAssetDB?.Get(soundData.dataID);
         if (soundDBElem == null)
             return null;
 

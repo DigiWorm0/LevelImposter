@@ -62,14 +62,16 @@ public class LobbyVersionTag(IntPtr intPtr) : MonoBehaviour(intPtr)
             return;
 
         // Get the current map
-        var currentMap = MapLoader.CurrentMap;
+        var currentMap = GameConfiguration.CurrentMap;
+        if (currentMap == null)
+            return;
 
         // Generate version tag
         StringBuilder versionTagBuilder = new();
 
         // Map Name
         versionTagBuilder.Append("<font=\"Barlow-Black SDF\" material=\"Barlow-Black Outline\">");
-        if (GameState.IsFallbackMap || currentMap == null)
+        if (GameConfiguration.HideMapName)
         {
             versionTagBuilder.Append("Random Custom Map");
         }
@@ -99,7 +101,7 @@ public class LobbyVersionTag(IntPtr intPtr) : MonoBehaviour(intPtr)
 
     private bool ShouldEnable()
     {
-        if (MapLoader.CurrentMap == null)
+        if (GameConfiguration.CurrentMap == null)
             return false;
 
         if (!GameState.IsCustomMapSelected)

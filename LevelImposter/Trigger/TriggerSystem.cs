@@ -42,10 +42,10 @@ public class TriggerSystem
         OnCreate();
     }
 
-    public static bool EnableLogging => MapLoader.CurrentMap?.properties.triggerLogging ?? false;
+    public static bool EnableLogging => GameConfiguration.CurrentMap?.properties.triggerLogging ?? false;
 
     private static bool _detectStackOverflow =>
-        MapLoader.CurrentMap?.properties.triggerDetectStackOverflow ?? true;
+        GameConfiguration.CurrentMap?.properties.triggerDetectStackOverflow ?? true;
 
     /// <summary>
     ///     Patch me to add your own custom trigger handles.

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text.Json.Serialization;
 
 namespace LevelImposter.Core;
 
@@ -22,7 +23,13 @@ public class LIMetadata
     /// <summary>
     /// True if the map has a thumbnail available
     /// </summary>
-    public bool HasThumbnail => !string.IsNullOrEmpty(thumbnailURL);
+    [JsonIgnore] public bool HasThumbnail => !string.IsNullOrEmpty(thumbnailURL);
+    
+    /// <summary>
+    /// True if the map has been uploaded to the workshop.
+    /// (Only maps with a valid GUID as ID are workshop maps)
+    /// </summary>
+    [JsonIgnore] public bool IsInWorkshop => Guid.TryParse(id, out _);
 
     public override string ToString()
     {

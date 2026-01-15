@@ -90,11 +90,8 @@ public class MapBuilder
         if (GameState.IsInFreeplay)
             LoadingBar.Run();
 
-        // Get Ship Status
-        var liShipStatus = LIShipStatus.GetInstance();
-
+        // Reset Map
         ResetMap();
-        BuildRouter buildRouter = new();
 
         // Asset DB
         if (!AssetDB.IsInit)
@@ -102,6 +99,7 @@ public class MapBuilder
 
         // Create GameObjects
         CreateGameObjects(map);
+        BuildRouter buildRouter = new();
 
         // Prebuild
         LILogger.Msg("Running Pre-Build");

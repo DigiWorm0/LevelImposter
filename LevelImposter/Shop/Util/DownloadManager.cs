@@ -12,11 +12,11 @@ namespace LevelImposter.Shop;
 /// </summary>
 public static class DownloadManager
 {
-    private static readonly List<PlayerControl> _playersDownloading = new();
+    private static readonly List<PlayerControl> PlayersDownloading = new();
     private static string? _downloadError;
     private static int _downloadPercent;
 
-    public static bool CanStart => _playersDownloading.Count <= 0 && string.IsNullOrEmpty(_downloadError);
+    public static bool CanStart => PlayersDownloading.Count == 0 && string.IsNullOrEmpty(_downloadError);
 
     /// <summary>
     /// Syncs the download state of a player to all clients
@@ -34,7 +34,7 @@ public static class DownloadManager
     /// <param name="player">PlayerControl that disconnected</param>
     public static void RemovePlayer(PlayerControl player)
     {
-        _playersDownloading.RemoveAll(p => p.PlayerId == player.PlayerId);
+        PlayersDownloading.RemoveAll(p => p.PlayerId == player.PlayerId);
     }
 
     /// <summary>
@@ -43,8 +43,8 @@ public static class DownloadManager
     /// <param name="player">PlayerControl that connected</param>
     public static void AddPlayer(PlayerControl player)
     {
-        if (_playersDownloading.All(p => p.PlayerId != player.PlayerId))
-            _playersDownloading.Add(player);
+        if (PlayersDownloading.All(p => p.PlayerId != player.PlayerId))
+            PlayersDownloading.Add(player);
     }
 
     /// <summary>
@@ -52,7 +52,7 @@ public static class DownloadManager
     /// </summary>
     public static void Reset()
     {
-        _playersDownloading.Clear();
+        PlayersDownloading.Clear();
         _downloadError = null;
     }
 
@@ -63,7 +63,7 @@ public static class DownloadManager
     /// <returns>TRUE if the client is downloading. FALSE otherwise.</returns>
     private static bool IsDownloading()
     {
-        return _playersDownloading.Any(player => player.PlayerId == PlayerControl.LocalPlayer?.PlayerId);
+        return PlayersDownloading.Any(player => player.PlayerId == PlayerControl.LocalPlayer?.PlayerId);
     }
 
     /// <summary>
@@ -95,12 +95,10 @@ public static class DownloadManager
         if (IsDownloading())
             return $"DOWNLOADING MAP ({_downloadPercent}%)";
 
-        return _playersDownloading.Count switch
+        return PlayersDownloading.Count switch
         {
-            > 1 =>
-                $"WAITING ON <color=#1a95d8>{_playersDownloading.Count} players</color> TO DOWNLOAD MAP",
-            1 =>
-                $"WAITING ON <color=#1a95d8>{_playersDownloading[0].name}</color> TO DOWNLOAD MAP",
+            > 1 => $"WAITING ON <color=#1a95d8>{PlayersDownloading.Count} players</color> TO DOWNLOAD MAP",
+            1 => $"WAITING ON <color=#1a95d8>{PlayersDownloading[0].name}</color> TO DOWNLOAD MAP",
             _ => string.Empty
         };
     }

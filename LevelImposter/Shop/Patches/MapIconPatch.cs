@@ -8,10 +8,54 @@ using UnityEngine;
 namespace LevelImposter.Shop;
 
 /*
- *      Replaces the map image with the map thumbnail
+ *      Creates and applies a custom map icon/button for the LevelImposter map in the map picker and lobby.
  */
+[HarmonyPatch(typeof(CreateGameMapPicker), nameof(CreateGameMapPicker.Initialize))]
+public static class MapIconInitPatch
+{
+    public static void Prefix(CreateGameMapPicker __instance)
+    {
+        MapIconPatch.CurrentMapID = null;
+        MapIconPatch.MapIcon = new MapIconByName
+        {
+            Name = (MapNames)MapType.LevelImposter,
+            MapIcon = null, // ICON-Skeld (78x78)
+            MapImage = null, // IMAGE-SkeldBanner (844x89)
+            NameImage = null // IMAGE-SkeldBannerWordart (342x72)
+        };
+        __instance.AllMapIcons.Add(MapIconPatch.MapIcon);
+    }
+}
+[HarmonyPatch(typeof(CreateGameOptions), nameof(CreateGameOptions.Start))]
+public static class MapTooltipPatch
+{
+    public static void Postfix(CreateGameOptions __instance)
+    {
+        // Add tooltip for LevelImposter map
+        while (__instance.mapTooltips.Length <= (int)MapType.LevelImposter)
+            __instance.mapTooltips = MapUtils.AddToArr(__instance.mapTooltips, LIConstants.MAP_STRING_NAME);
+        
+        // Add banner for LevelImposter map
+        while (__instance.mapBanners.Length <= (int)MapType.LevelImposter)
+            __instance.mapBanners = MapUtils.AddToArr(__instance.mapBanners, null); // IMAGE-SkeldBanner-Wordart (342x72)
+        
+        while (__instance.bgCrewmates.Length <= (int)MapType.LevelImposter)
+            __instance.bgCrewmates = MapUtils.AddToArr(__instance.bgCrewmates, null); // BACKGROUND-4 players (515x895)
+    }
+}
+[HarmonyPatch(typeof(CreateGameOptions), nameof(CreateGameOptions.SetCrewmateGraphic))]
+public static class MapChangedCrewmatePatch
+{
+    public static void Prefix(CreateGameOptions __instance)
+    {
+        if (__instance.mapPicker.GetSelectedID() != (int)MapType.LevelImposter)
+            return;
+        
+        __instance.currentCrewSprites = __instance.skeldCrewSprites;
+    }
+}
 [HarmonyPatch(typeof(GameStartManager), nameof(GameStartManager.Update))]
-public static class LobbyMapImagePatch
+public static class MapIconPatch
 {
     private static readonly Vector3 _mapImagePos = new(-1.9224f, -2.5392f, -2.0f);
     private static readonly Vector3 _mapImageScale = new(1.6074f, 1.6074f, 1.6074f);
@@ -29,8 +73,8 @@ public static class LobbyMapImagePatch
             return;
 
         // Get the current lobby UI state
-        var currentMap = MapLoader.CurrentMap;
-        var isFallbackMap = MapLoader.IsFallback;
+        var currentMap = GameConfiguration.CurrentMap;
+        var isFallbackMap = GameConfiguration.HideMapName;
         var isCustomMap = GameManager.Instance?.LogicOptions.MapId == (byte)MapType.LevelImposter;
 
         // Get Map ID
@@ -93,22 +137,5 @@ public static class LobbyMapImagePatch
         MapIcon.MapIcon = sprite;
         MapIcon.MapImage = sprite;
         MapIcon.NameImage = sprite;
-    }
-}
-
-[HarmonyPatch(typeof(GameStartManager), nameof(GameStartManager.Start))]
-public static class LobbyTestPatch
-{
-    public static void Postfix(GameStartManager __instance)
-    {
-        LobbyMapImagePatch.CurrentMapID = null;
-        LobbyMapImagePatch.MapIcon = new MapIconByName
-        {
-            Name = (MapNames)MapType.LevelImposter,
-            MapIcon = null,
-            MapImage = null,
-            NameImage = null
-        };
-        __instance.AllMapIcons.Add(LobbyMapImagePatch.MapIcon);
     }
 }

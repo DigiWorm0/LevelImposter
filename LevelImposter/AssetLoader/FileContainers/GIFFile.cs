@@ -528,7 +528,7 @@ public class GIFFile(string name) : IDisposable
             }
 
             // Create frame texture
-            var pixelArtMode = MapLoader.CurrentMap?.properties.pixelArtMode == true;
+            var pixelArtMode = GameConfiguration.CurrentMap?.properties.pixelArtMode == true;
             var texture = new Texture2D(Width, Height, TextureFormat.RGBA32, false)
             {
                 wrapMode = TextureWrapMode.Clamp,

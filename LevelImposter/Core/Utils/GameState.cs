@@ -1,4 +1,5 @@
-﻿using LevelImposter.Shop;
+﻿using LevelImposter.AssetLoader;
+using LevelImposter.Shop;
 using UnityEngine.SceneManagement;
 
 namespace LevelImposter.Core;
@@ -11,11 +12,11 @@ public static class GameState
         : (MapType)GameOptionsManager.Instance.CurrentGameOptions.MapId;
 
     public static bool IsCustomMapSelected => SelectedMapType == MapType.LevelImposter;
-    public static bool IsCustomMapLoaded => MapLoader.CurrentMap != null;
+    public static bool IsCustomMapLoaded => GameConfiguration.CurrentMap != null;
     public static bool IsInCustomMap => LIShipStatus.GetInstanceOrNull() != null;
-    public static bool IsFallbackMap => MapLoader.IsFallback;
+    public static bool IsFallbackMap => GameConfiguration.HideMapName;
 
-    public static string MapName => MapLoader.CurrentMap?.name ?? LIConstants.MAP_NAME;
+    public static string MapName => GameConfiguration.CurrentMap?.name ?? LIConstants.MAP_NAME;
 
     // Scenes
     public static bool IsInFreeplay => AmongUsClient.Instance?.NetworkMode == NetworkModes.FreePlay;
@@ -31,4 +32,11 @@ public static class GameState
     // Player State
     public static bool IsLocalPlayerImpostor => PlayerControl.LocalPlayer?.Data?.Role.TeamType == RoleTeamTypes.Impostor;
     public static bool IsLocalPlayerDead => PlayerControl.LocalPlayer?.Data?.IsDead ?? true;
+    
+    // Loading State
+    public static int LoadingAssetsCount => TextureLoader.Instance.QueueSize +
+                                           SpriteLoader.Instance.QueueSize +
+                                           AudioLoader.Instance.QueueSize;
+
+    public static bool IsCustomMapLoading => LoadingAssetsCount > 0;
 }

@@ -38,6 +38,11 @@ public static class ThumbnailCache
     /// <param name="callback">Callback on success</param>
     public static void Get(string mapID, Action<Sprite> callback)
     {
+        // Check if mapID is a valid GUID
+        if (!Guid.TryParse(mapID, out _))
+            return;
+        
+        // Check if thumbnail exists
         if (!Exists(mapID))
         {
             DownloadThumbnail(mapID, callback);
@@ -60,7 +65,7 @@ public static class ThumbnailCache
     /// </summary>
     /// <param name="mapID">Map ID for the thumbnail</param>
     /// <param name="callback">Callback on success</param>
-    public static void DownloadThumbnail(string mapID, Action<Sprite> callback)
+    private static void DownloadThumbnail(string mapID, Action<Sprite> callback)
     {
         LILogger.Info($"Downloading thumbnail for [{mapID}]");
         LevelImposterAPI.DownloadThumbnail(mapID, GetPath(mapID), callback);
