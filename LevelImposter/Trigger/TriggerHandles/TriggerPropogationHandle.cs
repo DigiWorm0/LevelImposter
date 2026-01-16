@@ -7,10 +7,10 @@ public class TriggerPropogationHandle : ITriggerHandle
     public void OnTrigger(TriggerSignal signal)
     {
         // Get the object data
-        var objectData = signal.TargetObject?.GetLIData();
+        var element = MapObjectDB.Get(signal.TargetObject);
 
         // Check if the object has triggers
-        var triggers = objectData?.Properties?.triggers;
+        var triggers = element?.properties?.triggers;
         if (triggers == null)
             return;
 

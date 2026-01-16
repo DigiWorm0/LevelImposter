@@ -92,14 +92,14 @@ public class TriggerSystem
             throw new Exception("Missing PlayerControl on TriggerSignal");
 
         // Get Object Data
-        var objectData = signal.TargetObject.GetComponent<MapObjectData>();
-        if (objectData == null)
+        var element = MapObjectDB.Get(signal.TargetObject);
+        if (element == null)
             throw new Exception($"{signal.TargetObject} is missing LI data");
 
         // Fire Trigger over RPC
         Rpc<TriggerRPC>.Instance.Send(signal.SourcePlayer, new RPCTriggerPacket
         {
-            ElemIDString = objectData.ID.ToString(),
+            ElemIDString = element.id.ToString(),
             TriggerID = signal.TriggerID
         });
     }

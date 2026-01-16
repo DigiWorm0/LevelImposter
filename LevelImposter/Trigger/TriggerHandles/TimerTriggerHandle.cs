@@ -32,11 +32,11 @@ public class TimerTriggerHandle : ITriggerHandle
     private IEnumerator CoTimerTrigger(TriggerSignal signal)
     {
         // Get the object data
-        var objectData = signal.TargetObject.GetLIData();
+        var element = MapObjectDB.Get(signal.TargetObject);
 
         // Get timer properties
-        var duration = objectData.Properties.triggerTime ?? 1;
-        var isLoop = objectData.Properties.triggerLoop ?? false;
+        var duration = element?.properties.triggerTime ?? 1;
+        var isLoop = element?.properties.triggerLoop ?? false;
 
         // Create Triggers
         var startTrigger = new TriggerSignal(signal.TargetObject, "onStart", signal);

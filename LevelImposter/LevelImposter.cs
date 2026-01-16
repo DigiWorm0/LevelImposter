@@ -66,7 +66,6 @@ public partial class LevelImposter : BasePlugin
         ClassInjector.RegisterTypeInIl2Cpp<TriggerSoundPlayer>();
         ClassInjector.RegisterTypeInIl2Cpp<LIPlayerMover>();
         ClassInjector.RegisterTypeInIl2Cpp<TriggerConsole>(usableInterface);
-        ClassInjector.RegisterTypeInIl2Cpp<MapObjectData>();
         ClassInjector.RegisterTypeInIl2Cpp<EditableLadderConsole>();
         ClassInjector.RegisterTypeInIl2Cpp<LIExileController>();
         ClassInjector.RegisterTypeInIl2Cpp<LIPhysicsObject>();

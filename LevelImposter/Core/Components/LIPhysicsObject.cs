@@ -25,17 +25,17 @@ public class LIPhysicsObject(IntPtr intPtr) : MonoBehaviour(intPtr)
     private static uint _objectCounter;
     private uint _objectID;
     
-    public Rigidbody2D? rb;
-    public MapObjectData? liObject;
+    [HideFromIl2Cpp] public LIElement? Element { get; private set; }
+    [HideFromIl2Cpp] public Rigidbody2D? Rigidbody { get; private set; }
 
     public void Awake()
     {
         _objectID = _objectCounter++;
         
         AllObjects.Add(_objectID, this);
-        
-        rb = GetComponent<Rigidbody2D>();
-        liObject = gameObject.GetLIData();
+
+        Element = MapObjectDB.Get(gameObject);
+        Rigidbody = GetComponent<Rigidbody2D>();
     }
 
     public void Start()
@@ -83,7 +83,7 @@ public class LIPhysicsObject(IntPtr intPtr) : MonoBehaviour(intPtr)
 
     private void UpdateObjectPosOverRPC()
     {
-        if (rb == null)
+        if (Rigidbody == null)
             throw new Exception("Rigidbody2D is null");
         
         Rpc<PhysicsObjectRPC>.Instance.Send(PlayerControl.LocalPlayer, new RPCPhysicsObjectPacket
@@ -92,9 +92,9 @@ public class LIPhysicsObject(IntPtr intPtr) : MonoBehaviour(intPtr)
             X = transform.position.x,
             Y = transform.position.y,
             Rotation = transform.rotation.eulerAngles.z,
-            VelocityX = rb.velocity.x,
-            VelocityY = rb.velocity.y,
-            AngularVelocity = rb.angularVelocity
+            VelocityX = Rigidbody.velocity.x,
+            VelocityY = Rigidbody.velocity.y,
+            AngularVelocity = Rigidbody.angularVelocity
         });
     }
 }

@@ -134,16 +134,14 @@ public class MapBuilder
             // Create GameObject
             var objName = elem.name.Replace("\\n", " ");
             var elemObject = new GameObject(objName);
+            
+            // Set Transform
             elemObject.transform.SetParent(liShipStatus.transform);
 
-            // Append MapObjectData component
-            var mapObjectData = elemObject.AddComponent<MapObjectData>();
-            mapObjectData.SetSourceElement(elem);
-
             // Add to DB
-            liShipStatus.MapObjectDB.AddObject(elem.id, elemObject);
+            liShipStatus.MapObjectDB.AddObject(elem, elemObject);
         }
-
+        
         ApplyGameObjectHierarchy(map);
     }
 
@@ -169,12 +167,12 @@ public class MapBuilder
                 continue;
 
             // Get Parent Element Properties
-            var parentElement = parentObject.GetComponent<MapObjectData>();
+            var parentElement = liShipStatus.MapObjectDB.GetElement(parentObject);
             if (parentElement == null)
                 continue;
 
             // Check if parent is a util-layer
-            if (parentElement.Element.type != "util-layer")
+            if (parentElement.type != "util-layer")
                 continue;
 
             // Set Parent

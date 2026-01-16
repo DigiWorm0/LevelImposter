@@ -72,15 +72,15 @@ public class PhysicsObjectRPC(LevelImposter plugin, uint id) : PlayerCustomRpc<L
         obj.transform.position = new Vector3(
             data.X,
             data.Y,
-            obj.liObject?.Element.z ?? 0
+            obj.Element?.z ?? 0
         );
         obj.transform.position = MapUtils.ScaleZPositionByY(obj.transform.position);
         obj.transform.rotation = Quaternion.Euler(0, 0, data.Rotation);
 
         // Update velocity
-        if (obj.rb == null)
+        if (obj.Rigidbody == null)
             throw new Exception("Rigidbody2D is null");
-        obj.rb.velocity = new Vector2(data.VelocityX, data.VelocityY);
-        obj.rb.angularVelocity = data.AngularVelocity;
+        obj.Rigidbody.velocity = new Vector2(data.VelocityX, data.VelocityY);
+        obj.Rigidbody.angularVelocity = data.AngularVelocity;
     }
 }

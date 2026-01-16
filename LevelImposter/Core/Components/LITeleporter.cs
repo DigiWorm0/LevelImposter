@@ -18,9 +18,9 @@ public class LITeleporter(IntPtr intPtr) : MonoBehaviour(intPtr)
 
     public void Awake()
     {
-        _element = gameObject.GetLIData().Element;
-        _preserveOffset = _element.properties.preserveOffset ?? true;
-        _clientSide = _element.properties.triggerClientSide ?? false;
+        _element = MapObjectDB.Get(gameObject);
+        _preserveOffset = _element?.properties.preserveOffset ?? true;
+        _clientSide = _element?.properties.triggerClientSide ?? false;
     }
 
     public void OnDestroy()

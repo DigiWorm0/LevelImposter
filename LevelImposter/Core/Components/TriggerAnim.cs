@@ -40,13 +40,13 @@ public class TriggerAnim(IntPtr intPtr) : MonoBehaviour(intPtr)
     private void Init()
     {
         // Get Object Data
-        var elementData = gameObject.GetLIData();
-        if (elementData == null)
-            throw new Exception("No LIElement data found on object");
+        var element = MapObjectDB.Get(gameObject);
+        if (element == null)
+            throw new Exception("TriggerAnim is missing LI data");
 
         // Get Animation Data
-        _animTargets = elementData.Properties.animTargets ?? Array.Empty<LIAnimTarget>();
-        _loop = elementData.Properties.triggerLoop ?? false;
+        _animTargets = element.properties.animTargets ?? Array.Empty<LIAnimTarget>();
+        _loop = element.properties.triggerLoop ?? false;
 
         // Sort All Keyframes by Time
         // Also calculate the duration of the animation
