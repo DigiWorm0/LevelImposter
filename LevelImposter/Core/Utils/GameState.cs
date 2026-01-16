@@ -1,4 +1,5 @@
-﻿using LevelImposter.AssetLoader;
+﻿using System;
+using LevelImposter.AssetLoader;
 using LevelImposter.Shop;
 using UnityEngine.SceneManagement;
 
@@ -6,16 +7,7 @@ namespace LevelImposter.Core;
 
 public static class GameState
 {
-    // Map State
-    public static MapType SelectedMapType => IsInFreeplay
-        ? (MapType)AmongUsClient.Instance.TutorialMapId
-        : (MapType)GameOptionsManager.Instance.CurrentGameOptions.MapId;
-
-    public static bool IsCustomMapSelected => SelectedMapType == MapType.LevelImposter;
-    public static bool IsCustomMapLoaded => GameConfiguration.CurrentMap != null;
-    public static bool IsInCustomMap => LIShipStatus.GetInstanceOrNull() != null;
-    public static bool IsFallbackMap => GameConfiguration.HideMapName;
-
+    // Map
     public static string MapName => GameConfiguration.CurrentMap?.name ?? LIConstants.MAP_NAME;
 
     // Scenes

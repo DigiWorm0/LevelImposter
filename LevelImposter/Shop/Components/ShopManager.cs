@@ -42,7 +42,7 @@ public class ShopManager(IntPtr intPtr) : MonoBehaviour(intPtr)
     private TMP_Text? _overlayText;
     private PassiveButton? _randomButton;
     private Scroller? _scroller;
-    private bool _shouldRegenerateFallback;
+    private bool _shouldRandomizeMap;
     private ShopTabs? _tabs;
 
     public static ShopManager? Instance { get; private set; }
@@ -122,6 +122,9 @@ public class ShopManager(IntPtr intPtr) : MonoBehaviour(intPtr)
     /// </summary>
     public void Close()
     {
+        if (_shouldRandomizeMap)
+            MapRandomizer.RandomizeMap(false);
+        
         ConfigAPI.Save();
         DestroyableSingleton<TransitionFade>.Instance.DoTransitionFade(gameObject, null, (Action)OnClose);
     }
@@ -373,12 +376,12 @@ public class ShopManager(IntPtr intPtr) : MonoBehaviour(intPtr)
     }
 
     /// <summary>
-    ///     Set to true to regenerate the fallback map on close
+    ///     If this method is called, the map will be randomized when the shop is closed
     /// </summary>
-    public static void RegenerateFallbackMap()
+    public static void RandomizeMapOnClose()
     {
         if (Instance != null)
-            Instance._shouldRegenerateFallback = true;
+            Instance._shouldRandomizeMap = true;
     }
 
     /// <summary>

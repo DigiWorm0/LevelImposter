@@ -11,19 +11,44 @@ namespace LevelImposter.Shop;
  *      Creates and applies a custom map icon/button for the LevelImposter map in the map picker and lobby.
  */
 [HarmonyPatch(typeof(CreateGameMapPicker), nameof(CreateGameMapPicker.Initialize))]
-public static class MapIconInitPatch
+public static class CreateLobbyMapIconPatch
 {
     public static void Prefix(CreateGameMapPicker __instance)
     {
-        MapIconPatch.CurrentMapID = null;
-        MapIconPatch.MapIcon = new MapIconByName
-        {
-            Name = (MapNames)MapType.LevelImposter,
-            MapIcon = null, // ICON-Skeld (78x78)
-            MapImage = null, // IMAGE-SkeldBanner (844x89)
-            NameImage = null // IMAGE-SkeldBannerWordart (342x72)
-        };
-        __instance.AllMapIcons.Add(MapIconPatch.MapIcon);
+        __instance.AllMapIcons.Add(LIMapIconBuilder.Get());
+    }
+}
+[HarmonyPatch(typeof(GameOptionsMapPicker), nameof(GameOptionsMapPicker.Initialize))]
+public static class LobbySettingMapIconPatch
+{
+    private const float ICON_OFFSET_X = -0.1f;
+    
+    public static void Prefix(GameOptionsMapPicker __instance)
+    {
+        __instance.AllMapIcons.Add(LIMapIconBuilder.Get());
+        
+        // Move icons to the left slightly to accommodate
+        __instance.Labeltext.transform.parent.localPosition += new Vector3(ICON_OFFSET_X, 0.0f, 0.0f);
+        __instance.StartPosX += ICON_OFFSET_X;
+    }
+}
+[HarmonyPatch(typeof(GameStartManager), nameof(GameStartManager.Start))]
+public static class GameInfoMapIconPatch
+{
+    public static void Prefix(GameStartManager __instance)
+    {
+        __instance.AllMapIcons.Add(LIMapIconBuilder.Get());
+    }
+}
+[HarmonyPatch(typeof(MapSelectionGameSetting), nameof(MapSelectionGameSetting.GetValueString))]
+public static class MapSettingValueStringPatch
+{
+    public static bool Prefix([HarmonyArgument(0)] float value, ref string __result)
+    {
+        if ((int)value != (int)MapType.LevelImposter - 1) // <-- MapSelectionGameSetting.TryGetInt subtracts 1 for some reason
+            return true;
+        __result = GameState.MapName;
+        return false;
     }
 }
 [HarmonyPatch(typeof(CreateGameOptions), nameof(CreateGameOptions.Start))]
@@ -54,88 +79,69 @@ public static class MapChangedCrewmatePatch
         __instance.currentCrewSprites = __instance.skeldCrewSprites;
     }
 }
+// TODO: Fix thumbnails
 [HarmonyPatch(typeof(GameStartManager), nameof(GameStartManager.Update))]
 public static class MapIconPatch
 {
-    private static readonly Vector3 _mapImagePos = new(-1.9224f, -2.5392f, -2.0f);
-    private static readonly Vector3 _mapImageScale = new(1.6074f, 1.6074f, 1.6074f);
+    private static readonly Vector3 MapImagePos = new(-2.0f, -2.25f, -2.2f);
+    private static readonly Vector3 MapImageScale = new(0.91f, 0.91f, 1.0f);
 
+    private static SpriteRenderer? _thumbnailRenderer;
+    private static string? _activeThumbnailID;
     private static GameObject? _settingsHeader;
     private static Sprite? _defaultThumbnail;
 
-    public static string? CurrentMapID;
-    public static MapIconByName? MapIcon;
-
     public static void Postfix(GameStartManager __instance)
     {
-        // Null Check
-        if (__instance.MapImage == null)
-            return;
-
-        // Get the current lobby UI state
-        var currentMap = GameConfiguration.CurrentMap;
-        var isFallbackMap = GameConfiguration.HideMapName;
-        var isCustomMap = GameManager.Instance?.LogicOptions.MapId == (byte)MapType.LevelImposter;
-
-        // Get Map ID
-        var mapID = currentMap?.id;
-        if (isFallbackMap)
-            mapID = "Fallback";
-        if (!isCustomMap)
-            mapID = null;
-
-        // Update the scale
-        if (isCustomMap)
-        {
-            __instance.MapImage.transform.localScale = _mapImageScale * 0.59f;
-            __instance.MapImage.transform.localPosition = _mapImagePos + new Vector3(-0.08f, 0.25f, -1.0f);
-        }
-        else
-        {
-            __instance.MapImage.transform.localScale = _mapImageScale;
-            __instance.MapImage.transform.localPosition = _mapImagePos;
-        }
-
-        // Null Check
-        if (MapIcon == null || currentMap == null)
-            return;
-
-        // Check if the map has changed
-        if (CurrentMapID == mapID)
-            return;
-        CurrentMapID = mapID;
-
-        // Get default map icon
+        // If the default thumbnail is null, load it
         if (_defaultThumbnail == null)
             _defaultThumbnail = MapUtils.LoadResourceFromAssetBundle<Sprite>("defaultthumbnail");
         if (_defaultThumbnail == null)
             throw new Exception("Error loading default thumbnail from asset bundle");
-
-        // Set the default map icon
-        MapIcon.MapIcon = _defaultThumbnail;
-        MapIcon.MapImage = _defaultThumbnail;
-        MapIcon.NameImage = _defaultThumbnail;
-
-        // Toggle Settings Header
-        if (_settingsHeader == null)
-            _settingsHeader = __instance.MapImage.transform.parent.FindChild("RoomSettingsHeader").gameObject;
-        _settingsHeader.SetActive(!isCustomMap);
-
-        // Load Thumbnail
-        if (isCustomMap &&
-            !isFallbackMap &&
-            currentMap.HasThumbnail)
+        
+        // If the thumbnail renderer is null, create it
+        if (_thumbnailRenderer == null)
         {
-            ThumbnailCache.Get(mapID ?? "", SetMapIcon);
+            var thumbnailRendererObj = new GameObject("LI_MapThumbnailRenderer");
+            thumbnailRendererObj.transform.SetParent(__instance.MapImage.transform.parent);
+            thumbnailRendererObj.transform.localPosition = MapImagePos;
+            thumbnailRendererObj.transform.localScale = MapImageScale;
+            thumbnailRendererObj.layer = (int)Layer.UI;
+            
+            _thumbnailRenderer = thumbnailRendererObj.AddComponent<SpriteRenderer>();
+            _thumbnailRenderer.sprite = _defaultThumbnail;
+        }
+
+        // Update thumbnail visibility
+        _thumbnailRenderer.enabled = GameConfiguration.CurrentMapType == MapType.LevelImposter;
+        
+        // Get Map ID
+        var currentMapID = GameConfiguration.CurrentMap?.id;
+        if (GameConfiguration.HideMapName ||
+            GameConfiguration.CurrentMapType != MapType.LevelImposter)
+            currentMapID = null;
+
+        // Check if the thumbnail has changed
+        if (currentMapID == _activeThumbnailID)
+            return;
+        _activeThumbnailID = currentMapID;
+
+        // Reload Thumbnail
+        _thumbnailRenderer.sprite = _defaultThumbnail;
+        if (_activeThumbnailID != null &&
+            !GameConfiguration.HideMapName &&
+            GameConfiguration.CurrentMap != null &&
+            GameConfiguration.CurrentMap.HasThumbnail)
+        {
+            ThumbnailCache.Get(_activeThumbnailID, UpdateMapThumbnail);
         }
     }
-
-    private static void SetMapIcon(Sprite sprite)
+    
+    private static void UpdateMapThumbnail(Sprite? sprite)
     {
-        if (MapIcon == null)
+        if (_thumbnailRenderer == null || sprite == null)
             return;
-        MapIcon.MapIcon = sprite;
-        MapIcon.MapImage = sprite;
-        MapIcon.NameImage = sprite;
+        
+        _thumbnailRenderer.sprite = sprite;
     }
 }

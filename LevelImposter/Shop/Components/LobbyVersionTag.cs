@@ -104,7 +104,7 @@ public class LobbyVersionTag(IntPtr intPtr) : MonoBehaviour(intPtr)
         if (GameConfiguration.CurrentMap == null)
             return false;
 
-        if (!GameState.IsCustomMapSelected)
+        if (GameConfiguration.CurrentMapType != MapType.LevelImposter)
             return false;
 
         if (!GameState.IsInLobby)

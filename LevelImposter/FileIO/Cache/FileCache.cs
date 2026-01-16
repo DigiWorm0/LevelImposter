@@ -19,32 +19,28 @@ public static class FileCache
         // Clear cache if it's too big
         Clear(1024 * 1024 * 50); // 50 MB
 
-        // Create cache directory if it doesn't exist
-        if (!Directory.Exists(GetDirectory()))
-            Directory.CreateDirectory(GetDirectory());
-
-        // Delete legacy directory if it exists
-        DeleteLegacyDir();
+        // Ensure cache directory exists
+        MakeDirectoryIfNotExists();
     }
-
-
+    
     /// <summary>
-    /// Finds and deletes the old thumbnail directory
+    /// Makes the cache directory if it does not already exist
     /// </summary>
-    private static void DeleteLegacyDir()
+    private static void MakeDirectoryIfNotExists()
     {
-        var gameDir = System.Reflection.Assembly.GetAssembly(typeof(LevelImposter))?.Location ?? "/";
-        var legacyDir = Path.Combine(Path.GetDirectoryName(gameDir) ?? "/", "LevelImposter/Thumbnails");
-        if (Directory.Exists(legacyDir))
-            Directory.Delete(legacyDir, true);
+        var directory = GetDirectory();
+        if (Directory.Exists(directory))
+            return;
+        var cacheFolder = Directory.CreateDirectory(directory);
+        cacheFolder.Attributes = FileAttributes.Directory | FileAttributes.Hidden;
     }
 
     /// <summary>
     /// Gets the current directory where LevelImposter cached files are stored.
-    /// Usually in a sub-directory within the LevelImposter folder beside the LevelImposter.dll.
+    /// Usually in a subdirectory within the LevelImposter folder beside the LevelImposter.dll.
     /// </summary>
     /// <returns>String path where LevelImposter map thumbnails is stored.</returns>
-    public static string GetDirectory()
+    private static string GetDirectory()
     {
         var gameDir = System.Reflection.Assembly.GetAssembly(typeof(LevelImposter))?.Location ?? "/";
         return Path.Combine(Path.GetDirectoryName(gameDir) ?? "/", "LevelImposter/.cache");
@@ -97,23 +93,5 @@ public static class FileCache
     public static bool Exists(string fileName)
     {
         return File.Exists(GetPath(fileName));
-    }
-
-    /// <summary>
-    /// Reads and parses an entire cached file into memory.
-    /// </summary>
-    /// <param name="fileName">Name of the file</param>
-    /// <returns>Byte array with cooresponding file info</returns>
-    [HideFromIl2Cpp]
-    public static MemoryBlock? Get(string fileName)
-    {
-        if (!Exists(fileName))
-        {
-            LILogger.Warn($"Could not find {fileName} in file cache");
-            return null;
-        }
-
-        using var stream = File.OpenRead(GetPath(fileName));
-        return stream.ToIl2CppArray();
     }
 }

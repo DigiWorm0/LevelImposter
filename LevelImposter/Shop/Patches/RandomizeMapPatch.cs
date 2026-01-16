@@ -13,7 +13,8 @@ public static class RandomizeMapPatch
     public static void Postfix()
     {
         // If a vanilla map is selected, ensure the map is randomized
-        if (!GameState.IsCustomMapSelected && !GameConfiguration.HideMapName)
+        if (GameConfiguration.CurrentMapType != MapType.LevelImposter && 
+            !GameConfiguration.HideMapName)
             MapRandomizer.RandomizeMap(false);
     }
 }

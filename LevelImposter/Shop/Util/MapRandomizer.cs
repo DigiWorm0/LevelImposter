@@ -81,9 +81,8 @@ public static class MapRandomizer
         var sumOfAllMapWeights = 0.0f;
         for (var i = 0; i < mapIDs.Count; i++)
         {
-            var mapWeight = ConfigAPI.GetMapWeight(mapIDs[i]);
-            mapWeights[i] = sumOfAllMapWeights + mapWeight;
-            sumOfAllMapWeights += mapWeight;
+            mapWeights[i] = ConfigAPI.GetMapWeight(mapIDs[i]);
+            sumOfAllMapWeights += mapWeights[i];
         }
 
         // All maps are of zero weight
@@ -92,12 +91,11 @@ public static class MapRandomizer
 
         // Choose a random map
         var randomValue = Random.Range(0, sumOfAllMapWeights);
-        var remainingWeight = sumOfAllMapWeights;
         for (var i = 0; i < mapIDs.Count; i++)
         {
             // Check weight
-            remainingWeight -= mapWeights[i];
-            if (remainingWeight > 0)
+            randomValue -= mapWeights[i];
+            if (randomValue > 0)
                 continue;
             
             // Check if map is in workshop

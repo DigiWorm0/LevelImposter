@@ -13,7 +13,7 @@ public static class ShipStatusPatch
     {
         //UnityToMapGenerator.GenerateMap(__instance);
 
-        if (GameState.IsCustomMapSelected)
+        if (GameConfiguration.CurrentMapType == MapType.LevelImposter)
             __instance.gameObject.AddComponent<LIShipStatus>();
         else if (!GameConfiguration.HideMapName)
             LILogger.Msg("Another mod has changed the current map state");

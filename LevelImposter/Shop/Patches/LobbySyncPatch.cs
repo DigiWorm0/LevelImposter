@@ -24,8 +24,9 @@ public static class ClientJoinSyncPatch
         }
         
         // Check if an existing map is loaded
+        var isLISelected = GameConfiguration.CurrentMapType == MapType.LevelImposter;
         var isCustomMapLoaded = GameConfiguration.CurrentMap != null;
-        var isRandomized = GameConfiguration.HideMapName;
+        var isRandomized = GameConfiguration.HideMapName || !isLISelected;  // <-- If not LevelImposter, treat as randomized
         
         if (isCustomMapLoaded && !isRandomized)
             return; // <-- A proper custom map is already loaded
@@ -44,11 +45,10 @@ public static class ClientJoinSyncPatch
         }
         
         // Otherwise, attempt to randomize map
-        MapRandomizer.RandomizeMap();
+        MapRandomizer.RandomizeMap(false);
         
         // Fallback to Skeld if no map is loaded (and we're on LevelImposter)
-        if (GameConfiguration.CurrentMap == null &&
-            GameConfiguration.CurrentMapType == MapType.LevelImposter)
+        if (GameConfiguration.CurrentMap == null && isLISelected)
         {
             LILogger.Warn("No custom maps available, falling back to Skeld.");
             GameConfiguration.SetMapType(MapType.Skeld);

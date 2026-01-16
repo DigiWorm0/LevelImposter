@@ -1,16 +1,22 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <Title>LevelImposter</Title>
-        <Version>0.21.3-dev2</Version>
-        <SourceRevisionId></SourceRevisionId>
+        <VersionPrefix>0.21.3</VersionPrefix>
+        <VersionSuffix>dev</VersionSuffix>
+        
         <Description>Custom Among Us Mapping Studio</Description>
-        <Authors>DigiWorm</Authors>
+        <Authors>Digi</Authors>
+        <RepositoryType>git</RepositoryType>
+        <RepositoryUrl>https://github.com/DigiWorm0/LevelImposter</RepositoryUrl>
+        <PackageLicenseExpression>GPL-3.0</PackageLicenseExpression>
 
         <TargetFramework>net6.0</TargetFramework>
         <LangVersion>latest</LangVersion>
         <DebugType>embedded</DebugType>
         <Nullable>enable</Nullable>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+        
+        <ContinuousIntegrationBuild Condition="'$(GITHUB_ACTIONS)' == 'true'">true</ContinuousIntegrationBuild>
     </PropertyGroup>
 
     <PropertyGroup>

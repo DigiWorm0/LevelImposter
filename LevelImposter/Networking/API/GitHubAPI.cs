@@ -16,7 +16,6 @@ namespace LevelImposter.Networking.API;
 public static class GitHubAPI
 {
     private const string API_PATH = "https://api.github.com/repos/DigiWorm0/LevelImposter/releases?per_page=1";
-    private const string DEV_VERSION_FLAG = "dev";
     private const string UPDATE_BLACKLIST_FLAG = "[NoAutoUpdate]";
     
     private static readonly string UpdateWhitelistFlag = $"[AU={Application.version}]";
@@ -25,7 +24,7 @@ public static class GitHubAPI
     ///     Gets the current path where the LevelImposter DLL is stored.
     /// </summary>
     /// <returns>String path where the LevelImposter DLL is stored.</returns>
-    public static string GetDLLDirectory()
+    private static string GetDLLDirectory()
     {
         var gameDir = Assembly.GetAssembly(typeof(LevelImposter))?.Location ?? "/";
         return gameDir;
@@ -65,21 +64,18 @@ public static class GitHubAPI
     /// <param name="reason">Reason for not being able to update</param>
     /// <returns>True if the release can be updated to</returns>
     [HideFromIl2Cpp]
-    public static bool CanUpdateTo(GitHubRelease release, out string reason)
+    private static bool CanUpdateTo(GitHubRelease release, out string reason)
     {
         // Get version info
-        var versionString = release.Name?.Split(" ")[1];
         var isCurrent = IsCurrent(release);
-        var isDevVersion = versionString?.Contains(DEV_VERSION_FLAG) ?? false;
         var isWhitelisted = release.Body?.Contains(UpdateWhitelistFlag) ?? false;
         var isBlacklisted = release.Body?.Contains(UPDATE_BLACKLIST_FLAG) ?? false;
         var hasReleaseAssets = release.Assets?.Length > 0;
+        
 
         // Set reason
         if (isCurrent)
             reason = "Already up-to-date";
-        else if (isDevVersion)
-            reason = "You're on a dev version";
         else if (!isWhitelisted)
             reason = "Incorrect Among Us version";
         else if (isBlacklisted)
@@ -90,7 +86,7 @@ public static class GitHubAPI
             reason = "Unknown";
 
         // Return result
-        return !isCurrent && !isDevVersion && isWhitelisted && !isBlacklisted && hasReleaseAssets;
+        return !isCurrent && isWhitelisted && !isBlacklisted && hasReleaseAssets;
     }
 
     /// <summary>
@@ -113,7 +109,6 @@ public static class GitHubAPI
     public static void UpdateMod(Action onSuccess, Action<string> onError)
     {
         LILogger.Info("Updating mod from GitHub");
-        // TODO: FIX ME
         GetLatestRelease(release =>
         {
             // Check if update is available

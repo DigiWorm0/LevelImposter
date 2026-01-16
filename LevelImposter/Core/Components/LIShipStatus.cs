@@ -14,19 +14,12 @@ public class LIShipStatus(IntPtr intPtr) : MonoBehaviour(intPtr)
 {
     private static LIShipStatus? _instance;
 
-    [Obsolete("Use LIShipStatus.IsInstance() or LIShipStatus.GetInstance() instead")]
-    public static LIShipStatus? Instance => _instance;
-
     // Components
     [HideFromIl2Cpp] public MapObjectDB MapObjectDB { get; } = new();
     [HideFromIl2Cpp] public TriggerSystem TriggerSystem { get; } = new();
     [HideFromIl2Cpp] public RenameHandler Renames { get; } = new();
     [HideFromIl2Cpp] public MapBuilder Builder { get; } = new();
     [HideFromIl2Cpp] public ImStuck ImStuck { get; } = new();
-
-    [Obsolete("Use MapLoader.CurrentMap instead")]
-    [HideFromIl2Cpp]
-    public static LIMap? CurrentMap => GameConfiguration.CurrentMap;
 
     public bool IsReady => !Builder.IsBuilding && !LoadingBar.IsVisible;
 

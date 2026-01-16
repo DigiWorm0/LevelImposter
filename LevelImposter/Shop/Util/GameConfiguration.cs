@@ -80,11 +80,15 @@ public static class GameConfiguration
         }
 
         // Send map change message
-        if (CurrentMap != null && sendNotification)
+        if (CurrentMap != null &&
+            CurrentMapType == MapType.LevelImposter &&
+            sendNotification)
+        {
             DestroyableSingleton<HudManager>.Instance.Notifier.AddSettingsChangeMessage(
                 StringNames.GameMapName,
                 HideMapName ? "Random" : CurrentMap?.name,
                 false
             );
+        }
     }
 }

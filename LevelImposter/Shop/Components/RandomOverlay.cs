@@ -73,7 +73,7 @@ public class RandomOverlay(IntPtr intPtr) : MonoBehaviour(intPtr)
     {
         _randomWeight = Mathf.Clamp(_randomWeight + DELTA_WEIGHT, 0, 1);
         ConfigAPI.SetMapWeight(_mapID ?? "", _randomWeight);
-        ShopManager.RegenerateFallbackMap();
+        ShopManager.RandomizeMapOnClose();
         UpdateText();
     }
 
@@ -84,7 +84,7 @@ public class RandomOverlay(IntPtr intPtr) : MonoBehaviour(intPtr)
     {
         _randomWeight = Mathf.Clamp(_randomWeight - DELTA_WEIGHT, 0, 1);
         ConfigAPI.SetMapWeight(_mapID ?? "", _randomWeight);
-        ShopManager.RegenerateFallbackMap();
+        ShopManager.RandomizeMapOnClose();
         UpdateText();
     }
 

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using LevelImposter.Core;
 using LevelImposter.DB;
+using LevelImposter.Shop;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
@@ -201,12 +202,12 @@ public class ShipTaskBuilder : IElemBuilder
     public static List<LIElement> FindElementsOfType(string type)
     {
         // Check Map
-        var instance = LIShipStatus.GetInstance();
-        if (LIShipStatus.CurrentMap == null)
+        var currentMap = GameConfiguration.CurrentMap;
+        if (currentMap == null)
             throw new Exception("Current map is unavailable");
 
         // Find Elements
-        return LIShipStatus.CurrentMap.elements.Where(mapElem => mapElem.type == type).ToList();
+        return currentMap.elements.Where(mapElem => mapElem.type == type).ToList();
     }
 
     /// <summary>

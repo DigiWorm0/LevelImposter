@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using BepInEx.Unity.IL2CPP.Utils.Collections;
 using Il2CppInterop.Runtime.Attributes;
 using LevelImposter.Networking;
+using LevelImposter.Shop;
 using LevelImposter.Trigger;
 using Reactor.Networking.Attributes;
 using Reactor.Networking.Rpc;
@@ -73,7 +74,7 @@ public class LIPhysicsObject(IntPtr intPtr) : MonoBehaviour(intPtr)
     [HideFromIl2Cpp]
     private IEnumerator CoUpdatePosAsHost()
     {
-        while (GameState.IsCustomMapLoaded)
+        while (GameConfiguration.CurrentMap != null)
         {
             yield return new WaitForSeconds(HOST_UPDATE_INTERVAL);
             if (GameState.IsHost)

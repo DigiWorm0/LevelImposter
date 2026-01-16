@@ -131,7 +131,7 @@ public class MapBanner(IntPtr intPtr) : MonoBehaviour(intPtr)
     private void OnDownload(FileStore _)
     {
         ShopManager.Instance?.SetOverlayEnabled(false);
-        ShopManager.RegenerateFallbackMap();
+        ShopManager.RandomizeMapOnClose();
         UpdateButtons();
     }
 
@@ -194,7 +194,7 @@ public class MapBanner(IntPtr intPtr) : MonoBehaviour(intPtr)
             return;
         MapFileAPI.Delete(_currentMap?.id ?? "");
         UpdateButtons();
-        ShopManager.RegenerateFallbackMap();
+        ShopManager.RandomizeMapOnClose();
     }
 
     /// <summary>

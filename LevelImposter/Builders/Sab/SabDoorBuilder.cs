@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using LevelImposter.AssetLoader;
 using LevelImposter.Core;
 using LevelImposter.DB;
+using LevelImposter.Shop;
 using PowerTools;
 using UnityEngine;
 
@@ -36,7 +37,7 @@ public class SabDoorBuilder : IElemBuilder
         if (_specialDoorIDs == null)
         {
             _specialDoorIDs = new List<Guid>();
-            var mapElems = LIShipStatus.CurrentMap?.elements;
+            var mapElems = GameConfiguration.CurrentMap?.elements;
             if (mapElems == null)
                 throw new MissingShipException();
 
