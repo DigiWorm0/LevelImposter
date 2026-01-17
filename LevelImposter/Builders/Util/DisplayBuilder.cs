@@ -72,7 +72,7 @@ internal class DisplayBuilder : IElemBuilder
     ///     Destroy() doesn't release from memory
     ///     This replaces it with RenderTexture.ReleaseTemporary()
     /// </summary>
-    public class DisposableRenderTex(RenderTexture tex) : IDisposable
+    private class DisposableRenderTex(RenderTexture tex) : IDisposable
     {
         public void Dispose()
         {

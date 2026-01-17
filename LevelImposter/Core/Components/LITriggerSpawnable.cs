@@ -48,7 +48,7 @@ public class LITriggerSpawnable(IntPtr intPtr) : MonoBehaviour(intPtr)
     private IEnumerator CoFireTrigger()
     {
         while (PlayerControl.LocalPlayer == null
-               || LIShipStatus.GetInstanceOrNull()?.IsReady != true
+               || !LIShipStatus.IsReady
                || (!GameManager.Instance.GameHasStarted && GameManager.Instance.ShouldCheckForGameEnd)
                || !LagLimiter.ShouldContinue(30))
             yield return null;

@@ -5,13 +5,13 @@ namespace LevelImposter.Builders;
 
 public class MinimapSpriteBuilder : IElemBuilder
 {
-    public MinimapSpriteBuilder()
+    public static int SabCount { get; private set; }
+
+    public void OnPreBuild()
     {
         SabCount = 0;
     }
-
-    public static int SabCount { get; private set; }
-
+    
     public void OnBuild(LIElement elem, GameObject obj)
     {
         if (elem.type != "util-minimapsprite")

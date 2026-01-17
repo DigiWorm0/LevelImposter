@@ -10,6 +10,11 @@ public class SabMixupBuilder : IElemBuilder
 
     public static MushroomMixupSabotageSystem? SabotageSystem { get; private set; }
 
+    public void OnPreBuild()
+    {
+        SabotageSystem = null;
+    }
+
     public void OnBuild(LIElement elem, GameObject obj)
     {
         if (elem.type != "sab-btnmixup")
@@ -23,7 +28,7 @@ public class SabMixupBuilder : IElemBuilder
         }
 
         // ShipStatus
-        var shipStatus = LIShipStatus.GetInstance()?.ShipStatus;
+        var shipStatus = LIShipStatus.GetShip();
 
         // ShipStatus Prefab
         var fungleShipStatus = AssetDB.GetObject("ss-fungle")?.GetComponent<FungleShipStatus>();

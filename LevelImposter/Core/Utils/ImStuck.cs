@@ -33,7 +33,7 @@ public class ImStuck
                 RESPAWN_SEQ,
                 () =>
                 {
-                    Rpc<ResetPlayerRPC>.Instance.Send(true);
+                    Rpc<ResetPlayerRPC>.Instance.Send(true, true);
                 }
             ).WrapToIl2Cpp()
         );

@@ -64,9 +64,12 @@ public static class MapFileAPI
     /// <returns>Representation of the map file data in the form of a <c>LIMap</c>.</returns>
     public static LIMap? Get(string mapID, bool spriteDB = true)
     {
-        // Check Existence
+        // Check if map exists
         if (!Exists(mapID))
+        {
+            LILogger.Warn($"Could not find map [{mapID}] in filesystem");
             return null;
+        }
         
         // Get Path
         var path = GetPath(mapID);

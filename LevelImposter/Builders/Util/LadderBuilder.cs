@@ -7,21 +7,20 @@ namespace LevelImposter.Builders;
 
 internal class LadderBuilder : IElemBuilder
 {
-    public const float DEFAULT_LADDER_OFFSET = -0.4f;
+    private const float DEFAULT_LADDER_OFFSET = -0.4f;
 
-    public static readonly Dictionary<string, float> DEFAULT_LADDER_HEIGHTS = new()
+    private static readonly List<Ladder> AllLadders = [];
+    private static readonly Dictionary<string, float> DefaultLadderHeights = new()
     {
         { "util-ladder1", 3.0f },
         { "util-ladder2", 1.5f }
     };
-
-    private static readonly List<Ladder> _allLadders = new();
-
+    
     private byte _ladderID;
 
-    public LadderBuilder()
+    public void OnPreBuild()
     {
-        _allLadders.Clear();
+        AllLadders.Clear();
     }
 
     public void OnBuild(LIElement elem, GameObject obj)
@@ -43,7 +42,7 @@ internal class LadderBuilder : IElemBuilder
         var heightOffset = elem.properties.ladderOffset ?? DEFAULT_LADDER_OFFSET;
 
         // Console
-        var ladderHeight = elem.properties.ladderHeight ?? DEFAULT_LADDER_HEIGHTS[elem.type];
+        var ladderHeight = elem.properties.ladderHeight ?? DefaultLadderHeights[elem.type];
 
         GameObject topObj = new("LadderTop");
         topObj.transform.SetParent(obj.transform);
@@ -62,7 +61,7 @@ internal class LadderBuilder : IElemBuilder
         topConsole.UseSound = topPrefab.UseSound;
         topConsole.Image = spriteRenderer;
         topConsole.SetCooldownDuration(elem.properties.ladderCooldown ?? 5.0f);
-        _allLadders.Add(topConsole);
+        AllLadders.Add(topConsole);
 
         bottomConsole.Id = _ladderID++;
         bottomConsole.IsTop = false;
@@ -70,12 +69,12 @@ internal class LadderBuilder : IElemBuilder
         bottomConsole.UseSound = bottomPrefab.UseSound;
         bottomConsole.Image = spriteRenderer;
         bottomConsole.SetCooldownDuration(elem.properties.ladderCooldown ?? 5.0f);
-        _allLadders.Add(bottomConsole);
+        AllLadders.Add(bottomConsole);
     }
 
-    public void OnCleanup()
+    public void OnPostBuild()
     {
-        _allLadders.RemoveAll(ladder => ladder == null);
+        AllLadders.RemoveAll(ladder => ladder == null);
     }
 
     /// <summary>
@@ -86,7 +85,7 @@ internal class LadderBuilder : IElemBuilder
     /// <returns>TRUE if found</returns>
     public static bool TryGetLadder(byte id, out Ladder? ladder)
     {
-        foreach (var l in _allLadders)
+        foreach (var l in AllLadders)
             if (l.Id == id)
             {
                 ladder = l;

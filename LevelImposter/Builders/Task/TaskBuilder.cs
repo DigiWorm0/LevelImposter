@@ -10,6 +10,12 @@ public class TaskBuilder : IElemBuilder
     private readonly TaskConsoleBuilder _consoleBuilder = new();
     private readonly ShipTaskBuilder _shipBuilder = new();
 
+    public void OnPreBuild()
+    {
+        _consoleBuilder.OnPreBuild();
+        _shipBuilder.OnPreBuild();
+    }
+
     public void OnBuild(LIElement elem, GameObject obj)
     {
         if (!elem.type.StartsWith("task-"))
@@ -45,7 +51,7 @@ public class TaskBuilder : IElemBuilder
         if (isMedscan)
         {
             // ShipStatus
-            var shipStatus = LIShipStatus.GetInstance().ShipStatus;
+            var shipStatus = LIShipStatus.GetShip();
 
             // MedScanner
             if (shipStatus.MedScanner != null)
@@ -55,9 +61,9 @@ public class TaskBuilder : IElemBuilder
         }
     }
 
-    public void OnCleanup()
+    public void OnPostBuild()
     {
-        _consoleBuilder.OnCleanup();
-        _shipBuilder.OnCleanup();
+        _consoleBuilder.OnPostBuild();
+        _shipBuilder.OnPostBuild();
     }
 }

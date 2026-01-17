@@ -58,6 +58,6 @@ public class LIPlayerMover(IntPtr intPtr) : PlayerArea(intPtr)
             Rotation = playerTransform.localRotation.eulerAngles.z,
             ScaleX = playerTransform.localScale.x,
             ScaleY = playerTransform.localScale.y
-        });
+        }, true);
     }
 }

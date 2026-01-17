@@ -26,12 +26,12 @@ internal class OneWayColliderBuilder : IElemBuilder
             var isShadow = child.gameObject.layer == (int)Layer.Shadow;
 
             // Add Component to Shadows
-            if (isShadow)
-            {
-                var shadowComponent = child.gameObject.AddComponent<OneWayShadows>();
-                shadowComponent.RoomCollider = shipRoom.roomArea;
-                shadowComponent.IgnoreImpostor = elem.properties.isImposterIgnored ?? false;
-            }
+            if (!isShadow)
+                continue;
+            
+            var shadowComponent = child.gameObject.AddComponent<OneWayShadows>();
+            shadowComponent.RoomCollider = shipRoom.roomArea;
+            shadowComponent.IgnoreImpostor = elem.properties.isImposterIgnored ?? false;
         }
     }
 }

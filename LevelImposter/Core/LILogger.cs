@@ -98,6 +98,15 @@ public static class LILogger
     {
         Log(LogLevel.Debug, data);
     }
+    
+    /// <summary>
+    /// Logs an exception's message and stack trace to BepInEx console.
+    /// </summary>
+    /// <param name="ex">The exception to log</param>
+    public static void LogException(Exception ex)
+    {
+        Info($"Exception: {ex}\n{ex.StackTrace}");
+    }
 
     /// <summary>
     ///     Sends a message to notifications (if exists)

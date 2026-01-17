@@ -14,13 +14,13 @@ public class EjectDummyBuilder : IElemBuilder
         Floating,
         Standing
     }
-
-    public EjectDummyBuilder()
+    
+    public static List<PlayerDummy> PlayerDummies { get; } = [];
+    
+    public void OnPreBuild()
     {
         PlayerDummies.Clear();
     }
-
-    public static List<PlayerDummy> PlayerDummies { get; } = new();
 
     public void OnBuild(LIElement elem, GameObject obj)
     {
@@ -77,9 +77,9 @@ public class EjectDummyBuilder : IElemBuilder
         player.gameObject.SetActive(false);
     }
 
-    public readonly struct PlayerDummy(PoolablePlayer _poolablePlayer, PlayerDummyType _type)
+    public readonly struct PlayerDummy(PoolablePlayer poolablePlayer, PlayerDummyType type)
     {
-        public PoolablePlayer PoolablePlayer => _poolablePlayer;
-        public PlayerDummyType Type => _type;
+        public PoolablePlayer PoolablePlayer => poolablePlayer;
+        public PlayerDummyType Type => type;
     }
 }

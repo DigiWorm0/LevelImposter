@@ -7,7 +7,7 @@ namespace LevelImposter.Builders;
 
 public class TaskConsoleBuilder : IElemBuilder
 {
-    private static readonly Dictionary<string, int> CONSOLE_ID_PAIRS = new()
+    private static readonly Dictionary<string, int> ConsoleIDPairs = new()
     {
         { "task-garbage2", 1 },
         { "task-garbage3", 0 },
@@ -27,7 +27,7 @@ public class TaskConsoleBuilder : IElemBuilder
         { "task-replaceparts1", 0 }
     };
 
-    private static readonly Dictionary<string, int> CONSOLE_ID_INCREMENTS = new()
+    private static readonly Dictionary<string, int> ConsoleIDIncrements = new()
     {
         { "task-toilet", 0 },
         { "task-breakers", 0 },
@@ -45,63 +45,28 @@ public class TaskConsoleBuilder : IElemBuilder
         { "task-hoist", 0 }
     };
 
-    private readonly Dictionary<string, int> _consoleIDIncrements = new(CONSOLE_ID_INCREMENTS);
+    private readonly Dictionary<string, int> _consoleIDIncrements = new(ConsoleIDIncrements);
 
     private int _consoleID;
 
-    public TaskConsoleBuilder()
-    {
-        TowelPickupCount = null;
-    }
-
     public static byte BreakerCount { get; private set; }
-
     public static byte ToiletCount { get; private set; }
-
     public static byte TowelCount { get; private set; }
-
     public static byte FuelCount { get; private set; }
-
     public static byte WaterWheelCount { get; private set; }
-
     public static byte AlignEngineCount { get; private set; }
-
     public static byte RecordsCount { get; private set; }
-
     public static byte WiresCount { get; private set; }
-
     public static byte? TowelPickupCount { get; private set; }
 
-    /// <summary>
-    ///     Performs final clean-up
-    /// </summary>
-    public void OnCleanup()
+    public void OnPreBuild()
     {
-        // TODO: Move this to OnPostBuild
-        var keys = new string[_consoleIDIncrements.Keys.Count];
-        _consoleIDIncrements.Keys.CopyTo(keys, 0);
+        _consoleIDIncrements.Clear();
+        foreach (var pair in ConsoleIDIncrements)
+            _consoleIDIncrements[pair.Key] = pair.Value;
 
-        foreach (var key in keys)
-        {
-            var count = (byte)_consoleIDIncrements[key];
-            if (key == "task-breakers")
-                BreakerCount = count;
-            if (key == "task-toilet")
-                ToiletCount = count;
-            if (key == "task-towels")
-                TowelCount = count;
-            if (key == "task-fuel2")
-                FuelCount = count;
-            if (key == "task-waterwheel1")
-                WaterWheelCount = count;
-            if (key == "task-align1")
-                AlignEngineCount = count;
-            if (key == "task-records2")
-                RecordsCount = count;
-            if (key == "task-wires")
-                WiresCount = count;
-            _consoleIDIncrements[key] = 0;
-        }
+        _consoleID = 0;
+        TowelPickupCount = null;
     }
 
     /// <summary>
@@ -161,6 +126,34 @@ public class TaskConsoleBuilder : IElemBuilder
 
         return console;
     }
+    
+    public void OnPostBuild()
+    {
+        var keys = new string[_consoleIDIncrements.Keys.Count];
+        _consoleIDIncrements.Keys.CopyTo(keys, 0);
+
+        foreach (var key in keys)
+        {
+            var count = (byte)_consoleIDIncrements[key];
+            if (key == "task-breakers")
+                BreakerCount = count;
+            if (key == "task-toilet")
+                ToiletCount = count;
+            if (key == "task-towels")
+                TowelCount = count;
+            if (key == "task-fuel2")
+                FuelCount = count;
+            if (key == "task-waterwheel1")
+                WaterWheelCount = count;
+            if (key == "task-align1")
+                AlignEngineCount = count;
+            if (key == "task-records2")
+                RecordsCount = count;
+            if (key == "task-wires")
+                WiresCount = count;
+            _consoleIDIncrements[key] = 0;
+        }
+    }
 
 
     /// <summary>
@@ -172,8 +165,8 @@ public class TaskConsoleBuilder : IElemBuilder
     {
         var isTowels = type.StartsWith("task-towels");
 
-        if (CONSOLE_ID_PAIRS.ContainsKey(type))
-            return CONSOLE_ID_PAIRS[type];
+        if (ConsoleIDPairs.ContainsKey(type))
+            return ConsoleIDPairs[type];
         if (isTowels)
             return type == "task-towels1" ? 255 : _consoleIDIncrements["task-towels"]++;
         if (_consoleIDIncrements.ContainsKey(type))
@@ -187,7 +180,7 @@ public class TaskConsoleBuilder : IElemBuilder
     /// <param name="type">LIElement Type</param>
     /// <param name="consoleID">ID of the Console object</param>
     /// <returns>A Il2Cpp Reference Array of TaskSets or NULL if default should be used</returns>
-    private Il2CppReferenceArray<TaskSet>? GetConsoleTasks(string type, int consoleID)
+    private static Il2CppReferenceArray<TaskSet>? GetConsoleTasks(string type, int consoleID)
     {
         var isWaterJug = type == "task-waterjug2";
         var isFuel = type == "task-fuel1";
@@ -201,7 +194,7 @@ public class TaskConsoleBuilder : IElemBuilder
                 taskType = TaskTypes.ReplaceWaterJug,
                 taskStep = new IntRange(1, 1)
             };
-            return new Il2CppReferenceArray<TaskSet>(new[] { taskSet });
+            return new Il2CppReferenceArray<TaskSet>([taskSet]);
         }
 
         if (isFuel)

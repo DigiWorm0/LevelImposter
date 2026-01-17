@@ -16,7 +16,7 @@ public static class LoadingShipPatch
             return true;
 
         // Continue if ship is already loaded
-        if (LIShipStatus.GetInstance().IsReady)
+        if (LIShipStatus.IsReady)
             return true;
         
         // Wait for ship to finish loading, then send packet

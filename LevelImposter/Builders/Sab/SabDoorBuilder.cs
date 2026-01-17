@@ -13,13 +13,17 @@ public class SabDoorBuilder : IElemBuilder
 {
     private const string OPEN_SOUND_NAME = "doorOpen";
     private const string CLOSE_SOUND_NAME = "doorClose";
-    private static readonly Dictionary<Guid, PlainDoor> _doorDB = new();
+    
+    private static readonly Dictionary<Guid, PlainDoor> DoorDB = new();
+    
     private int _doorId;
     private List<Guid>? _specialDoorIDs;
 
-    public SabDoorBuilder()
+    public void OnPreBuild()
     {
-        _doorDB.Clear();
+        DoorDB.Clear();
+        _doorId = 0;
+        _specialDoorIDs?.Clear();
     }
 
     public void OnBuild(LIElement elem, GameObject obj)
@@ -36,7 +40,7 @@ public class SabDoorBuilder : IElemBuilder
         // Special Doors
         if (_specialDoorIDs == null)
         {
-            _specialDoorIDs = new List<Guid>();
+            _specialDoorIDs = [];
             var mapElems = GameConfiguration.CurrentMap?.elements;
             if (mapElems == null)
                 throw new MissingShipException();
@@ -93,7 +97,7 @@ public class SabDoorBuilder : IElemBuilder
         // Door
         var doorType = elem.properties.doorType;
         var isManualDoor = doorType == "polus" || doorType == "airship";
-        PlainDoor? doorComponent = null;
+        PlainDoor? doorComponent;
         if (isManualDoor || isSpecialDoor)
         {
             doorComponent = obj.AddComponent<PlainDoor>();
@@ -113,7 +117,7 @@ public class SabDoorBuilder : IElemBuilder
         doorComponent.CloseSound = prefabDoor.CloseSound;
 
         // Add to DB
-        _doorDB.Add(elem.id, doorComponent);
+        DoorDB.Add(elem.id, doorComponent);
         if (!isSpecialDoor)
             shipStatus.AllDoors = MapUtils.AddToArr(shipStatus.AllDoors, doorComponent);
 
@@ -178,6 +182,6 @@ public class SabDoorBuilder : IElemBuilder
     /// <returns><c>PlainDoor</c> component of the object or <c>null</c> if not found</returns>
     public static PlainDoor? GetDoor(Guid elementID)
     {
-        return _doorDB.GetValueOrDefault(elementID);
+        return DoorDB.GetValueOrDefault(elementID);
     }
 }

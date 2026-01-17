@@ -7,20 +7,19 @@ namespace LevelImposter.Builders;
 
 public class ValueBuilder : IElemBuilder
 {
-    public ValueBuilder()
-    {
-        AllBoolValues.Clear();
-    }
-
-    public static Dictionary<Guid, IBoolValue> AllBoolValues { get; } = new();
-    
+    private static Dictionary<Guid, IBoolValue> AllBoolValues { get; } = new();
     private static Dictionary<string, IBoolValue> PresetBoolValues { get; } = new()
     {
         {"isImposter", new DelegateBoolValue(() => GameState.IsLocalPlayerImpostor)},
         {"isInMeeting", new DelegateBoolValue(() => GameState.IsInMeeting)},
         {"isDead", new DelegateBoolValue(() => GameState.IsLocalPlayerDead)}
     };
-
+    
+    public void OnPreBuild()
+    {
+        AllBoolValues.Clear();
+    }
+    
     public void OnBuild(LIElement elem, GameObject obj)
     {
         if (!elem.type.StartsWith("util-value"))

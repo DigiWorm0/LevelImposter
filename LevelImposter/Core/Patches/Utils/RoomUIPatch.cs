@@ -18,8 +18,8 @@ public static class RoomUIPatch
 
         // Remove room colliders
         foreach (var roomData in RoomBuilder.RoomDB)
-            if (!roomData.isUIVisible && roomData.shipRoom != null)
-                roomData.shipRoom.roomArea = null;
+            if (!roomData.IsUIVisible && roomData.ShipRoom != null)
+                roomData.ShipRoom.roomArea = null;
     }
 
     public static void Postfix()
@@ -29,7 +29,7 @@ public static class RoomUIPatch
 
         // Add room colliders
         foreach (var roomData in RoomBuilder.RoomDB)
-            if (!roomData.isUIVisible && roomData.shipRoom != null)
-                roomData.shipRoom.roomArea = roomData.collider;
+            if (!roomData.IsUIVisible && roomData.ShipRoom != null)
+                roomData.ShipRoom.roomArea = roomData.Collider;
     }
 }

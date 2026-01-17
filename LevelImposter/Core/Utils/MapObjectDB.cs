@@ -45,25 +45,6 @@ public class MapObjectDB
         var instanceID = gameObject.GetInstanceID();
         return _instanceIDToElement.GetValueOrDefault(instanceID);
     }
-
-    /// <summary>
-    ///     Gets an object from the database
-    /// </summary>
-    /// <param name="guid">Element ID</param>
-    /// <returns>The cooresponding GameObject or null if it wasn't found</returns>
-    public static GameObject? Get(Guid guid)
-    {
-        // Get Ship Status
-        var shipStatus = LIShipStatus.GetInstanceOrNull();
-        if (shipStatus == null)
-        {
-            LILogger.Warn("Ship Status is missing");
-            return null;
-        }
-
-        // Get object
-        return shipStatus.MapObjectDB.GetObject(guid);
-    }
     
     /// <summary>
     ///    Gets an element from the database by the looking up the GameObject's instance ID.
@@ -72,15 +53,7 @@ public class MapObjectDB
     /// <returns>The corresponding LIElement or null if not found</returns>
     public static LIElement? Get(GameObject gameObject)
     {
-        // Get Ship Status
-        var shipStatus = LIShipStatus.GetInstanceOrNull();
-        if (shipStatus == null)
-        {
-            LILogger.Warn("Ship Status is missing");
-            return null;
-        }
-
-        // Get element
-        return shipStatus.MapObjectDB.GetElement(gameObject);
+        // TODO: Remove dependency on LIShipStatus
+        return LIShipStatus.MapObjectDB.GetElement(gameObject);
     }
 }

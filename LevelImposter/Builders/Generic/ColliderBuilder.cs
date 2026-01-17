@@ -10,12 +10,13 @@ namespace LevelImposter.Builders;
 /// </summary>
 public class ColliderBuilder : IElemBuilder
 {
-    private static readonly string[] SHADOW_ONLY_TYPES =
-    {
+    private static readonly string[] ShadowOnlyTypes = [
         "util-onewaycollider"
-    };
+    ];
+    
+    public int Priority => IElemBuilder.HIGH_PRIORITY; // <-- Run before other builders that may need colliders
 
-    public void OnPreBuild(LIElement elem, GameObject obj)
+    public void OnBuild(LIElement elem, GameObject obj)
     {
         if (elem.properties.colliders == null)
             return;
@@ -38,7 +39,7 @@ public class ColliderBuilder : IElemBuilder
             }
 
             // Shadow Only
-            if (SHADOW_ONLY_TYPES.Contains(elem.type))
+            if (ShadowOnlyTypes.Contains(elem.type))
                 continue;
 
             // PolygonCollider2D

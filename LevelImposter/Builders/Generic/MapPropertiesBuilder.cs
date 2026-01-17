@@ -11,7 +11,7 @@ namespace LevelImposter.Builders;
 /// </summary>
 public class MapPropertiesBuilder : IElemBuilder
 {
-    public static readonly Dictionary<string, string> EXILE_IDS = new()
+    private static readonly Dictionary<string, string> ExileIds = new()
     {
         { "Skeld", "ss-skeld" },
         { "MiraHQ", "ss-mira" },
@@ -20,7 +20,7 @@ public class MapPropertiesBuilder : IElemBuilder
         { "Fungle", "ss-fungle" }
     };
 
-    public MapPropertiesBuilder()
+    public void OnPreBuild()
     {
         // Get Ship Status
         var shipStatus = LIShipStatus.GetShip();
@@ -29,12 +29,14 @@ public class MapPropertiesBuilder : IElemBuilder
 
         // Get Map
         var map = GameConfiguration.CurrentMap;
+        if (map == null)
+            throw new System.Exception("No map loaded in GameConfiguration!");
 
         // Set Map Name
         shipStatus.name = map.name;
 
         // Set Background Color
-        if (!string.IsNullOrEmpty(map.properties.bgColor))
+        if (!string.IsNullOrEmpty(map.properties.bgColor) && Camera.main != null)
             if (ColorUtility.TryParseHtmlString(map.properties.bgColor, out var bgColor))
                 Camera.main.backgroundColor = bgColor;
 
@@ -42,16 +44,14 @@ public class MapPropertiesBuilder : IElemBuilder
         if (string.IsNullOrEmpty(map.properties.exileID))
             return;
 
-        if (!EXILE_IDS.ContainsKey(map.properties.exileID))
-        {
-            LILogger.Warn($"Unknown exile ID: {map.properties.exileID}");
-            return;
-        }
+        if (!ExileIds.TryGetValue(map.properties.exileID, out var exileID))
+            throw new System.Exception($"Exile ID '{map.properties.exileID}' not found in EXILE_IDS!");
 
-        var prefabShip = AssetDB.GetObject(EXILE_IDS[map.properties.exileID]);
+        var prefabShip = AssetDB.GetObject(exileID);
         var prefabShipStatus = prefabShip?.GetComponent<ShipStatus>();
         if (prefabShipStatus == null)
-            return;
+            throw new System.Exception($"Exile ShipStatus prefab for ID '{exileID}' not found!");
+        
         shipStatus.ExileCutscenePrefab = prefabShipStatus.ExileCutscenePrefab;
     }
 }

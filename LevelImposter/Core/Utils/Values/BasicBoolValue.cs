@@ -21,7 +21,7 @@ public class BasicBoolValue(Guid id, bool value) : IBoolValue
     private void OnValueChange(TriggerSignal sourceSignal)
     {
         // Get Target Object
-        var targetObj = MapObjectDB.Get(id);
+        var targetObj = LIShipStatus.MapObjectDB.GetObject(id);
         if (targetObj == null)
             return;
 

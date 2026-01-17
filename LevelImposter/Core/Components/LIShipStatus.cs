@@ -15,13 +15,12 @@ public class LIShipStatus(IntPtr intPtr) : MonoBehaviour(intPtr)
     private static LIShipStatus? _instance;
 
     // Components
-    [HideFromIl2Cpp] public MapObjectDB MapObjectDB { get; } = new();
     [HideFromIl2Cpp] public TriggerSystem TriggerSystem { get; } = new();
     [HideFromIl2Cpp] public RenameHandler Renames { get; } = new();
-    [HideFromIl2Cpp] public MapBuilder Builder { get; } = new();
     [HideFromIl2Cpp] public ImStuck ImStuck { get; } = new();
 
-    public bool IsReady => !Builder.IsBuilding && !LoadingBar.IsVisible;
+    public static bool IsReady => !MapBuilder.IsBuilding && !LoadingBar.IsVisible;
+    public static MapObjectDB MapObjectDB => MapBuilder.MapBuildRouter.MapObjectDB;
 
     public ShipStatus? ShipStatus { get; private set; }
 
@@ -31,7 +30,7 @@ public class LIShipStatus(IntPtr intPtr) : MonoBehaviour(intPtr)
         _instance = this;
 
         if (GameConfiguration.CurrentMap != null)
-            Builder.BuildMap(GameConfiguration.CurrentMap);
+            MapBuilder.RebuildMap();
         else
             LILogger.Warn("No LevelImposter maps are available to load!");
     }

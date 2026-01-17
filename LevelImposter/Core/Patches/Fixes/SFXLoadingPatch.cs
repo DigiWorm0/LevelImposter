@@ -12,7 +12,7 @@ public class SFXLoadingPatch
     {
         if (!LIShipStatus.IsInstance())
             return true;
-        if (LIShipStatus.GetInstance().IsReady)
+        if (LIShipStatus.IsReady)
             return true;
 
         // Prevent SFX from playing

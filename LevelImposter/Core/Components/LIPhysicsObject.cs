@@ -96,6 +96,6 @@ public class LIPhysicsObject(IntPtr intPtr) : MonoBehaviour(intPtr)
             VelocityX = Rigidbody.velocity.x,
             VelocityY = Rigidbody.velocity.y,
             AngularVelocity = Rigidbody.angularVelocity
-        });
+        }, true);
     }
 }

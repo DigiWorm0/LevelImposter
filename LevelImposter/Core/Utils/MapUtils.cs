@@ -381,7 +381,7 @@ public static class MapUtils
     {
         {
             float timer = 0;
-            while (LIShipStatus.GetInstanceOrNull()?.IsReady == false && timer < timeout)
+            while (!LIShipStatus.IsReady && timer < timeout)
             {
                 timer += Time.deltaTime;
                 yield return null;

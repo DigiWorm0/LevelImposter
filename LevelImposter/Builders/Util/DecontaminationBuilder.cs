@@ -12,9 +12,15 @@ namespace LevelImposter.Builders;
 internal class DecontaminationBuilder : IElemBuilder
 {
     private const string DECONTAM_SOUND_NAME = "decontamSound";
+    
     private readonly Dictionary<Guid, LIElement> _deconElemDB = new();
-
     private readonly Dictionary<Guid, DeconSystem> _deconSystemDB = new();
+
+    public void OnPreBuild()
+    {
+        _deconElemDB.Clear();
+        _deconSystemDB.Clear();
+    }
 
     public void OnBuild(LIElement elem, GameObject obj)
     {
@@ -48,7 +54,7 @@ internal class DecontaminationBuilder : IElemBuilder
             deconSystem.RoomArea.isTrigger = true;
     }
 
-    public void OnCleanup()
+    public void OnPostBuild()
     {
         // TODO: Move this to OnPostBuild
         // Assign Doors
@@ -81,7 +87,8 @@ internal class DecontaminationBuilder : IElemBuilder
     /// <param name="deconSystem">Associated decontamination system</param>
     /// <param name="door">Door object to append to</param>
     /// <param name="isUpper"><c>true</c> if the door is the upper one</param>
-    private void AddDoorConsole(DeconSystem deconSystem, PlainDoor door, bool isUpper, bool isInner)
+    /// <param name="isInner"><c>true</c> if the console is on the inner side of the door</param>
+    private static void AddDoorConsole(DeconSystem deconSystem, PlainDoor door, bool isUpper, bool isInner)
     {
         // GameObject
         var doorConsole = new GameObject("DoorConsole");

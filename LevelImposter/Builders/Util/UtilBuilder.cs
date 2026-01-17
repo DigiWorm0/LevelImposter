@@ -24,7 +24,6 @@ internal class UtilBuilder : IElemBuilder
         var prefab = AssetDB.GetObject(elem.type);
         if (prefab == null)
             return;
-        var prefabRenderer = prefab.GetComponent<SpriteRenderer>();
         var prefabSystem = prefab.GetComponent<SystemConsole>();
         var prefabMap = prefab.GetComponent<MapConsole>();
         var prefabBtn = prefab.GetComponent<PassiveButton>();

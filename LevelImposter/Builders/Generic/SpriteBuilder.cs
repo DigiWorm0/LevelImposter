@@ -20,9 +20,11 @@ public class SpriteBuilder : IElemBuilder
     private static bool PixelArtMode => GameConfiguration.CurrentMap?.properties.pixelArtMode ?? false;
     private static MapAssetDB? AssetDB => GameConfiguration.CurrentMap?.mapAssetDB;
 
-    public SpriteBuilder()
+    public int Priority => IElemBuilder.HIGH_PRIORITY; // <-- Ensure `SpriteRenderer` is added before other builders that may need it
+    
+    public void OnPreBuild()
     {
-        OnSpriteLoad = null;
+        OnSpriteLoad = null; // <-- Clears any previous subscriptions
     }
 
     public void OnBuild(LIElement elem, GameObject obj)
@@ -39,38 +41,38 @@ public class SpriteBuilder : IElemBuilder
         }
         
         // Load Sprite
-        if (elem.properties.spriteID != null)
-        {
-            // Add SpriteRenderer immediately
-            var spriteRenderer = obj.GetOrAddComponent<SpriteRenderer>();
+        if (elem.properties.spriteID == null)
+            return;
+        
+        // Add SpriteRenderer immediately
+        var spriteRenderer = obj.GetOrAddComponent<SpriteRenderer>();
             
-            // Load Sprite
-            LoadSprite(elem, sprite =>
-            {
-                // Set sprite if no animation is playing
-                var animator = obj.GetComponent<LIAnimatorBase>();
-                var animating = animator != null && animator.IsAnimating;
-                if (!animating)
-                    spriteRenderer.sprite = sprite;
+        // Load Sprite
+        LoadSprite(elem, sprite =>
+        {
+            // Set sprite if no animation is playing
+            var animator = obj.GetComponent<LIAnimatorBase>();
+            var animating = animator != null && animator.IsAnimating;
+            if (!animating)
+                spriteRenderer.sprite = sprite;
                 
-                // Check if loaded sprite is a GIF
-                if (sprite.Texture is GIFLoader.LoadedGIFTexture gifTexture)
-                {
-                    var gifAnimator = obj.AddComponent<GIFAnimator>();
-                    gifAnimator.Init(elem, gifTexture.GIFFile);
-                }
+            // Check if loaded sprite is a GIF
+            if (sprite.Texture is GIFLoader.LoadedGIFTexture gifTexture)
+            {
+                var gifAnimator = obj.AddComponent<GIFAnimator>();
+                gifAnimator.Init(elem, gifTexture.GIFFile);
+            }
 
-                // Invoke Callback
-                try
-                {
-                    OnSpriteLoad?.Invoke(elem, sprite);
-                }
-                catch (Exception e)
-                {
-                    LILogger.Error(e);
-                }
-            });
-        }
+            // Invoke Callback
+            try
+            {
+                OnSpriteLoad?.Invoke(elem, sprite);
+            }
+            catch (Exception e)
+            {
+                LILogger.Error(e);
+            }
+        });
 
     }
     

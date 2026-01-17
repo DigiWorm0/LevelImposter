@@ -6,6 +6,11 @@ namespace LevelImposter.Builders;
 internal class PhysicsObjectBuilder : IElemBuilder
 {
     private bool _isCameraFixed;
+    
+    public void OnPreBuild()
+    {
+        _isCameraFixed = false;
+    }
 
     public void OnBuild(LIElement elem, GameObject obj)
     {

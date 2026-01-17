@@ -8,13 +8,13 @@ namespace LevelImposter.Builders;
 
 public class EjectHandBuilder : IElemBuilder
 {
-    public EjectHandBuilder()
+    public static List<SpriteRenderer> AllHands { get; } = [];
+    
+    public void OnPreBuild()
     {
         AllHands.Clear();
     }
-
-    public static List<SpriteRenderer> AllHands { get; } = new();
-
+    
     public void OnBuild(LIElement elem, GameObject obj)
     {
         if (elem.type != "util-ejecthand" &&

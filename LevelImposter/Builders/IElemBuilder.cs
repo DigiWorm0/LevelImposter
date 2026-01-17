@@ -9,38 +9,33 @@ namespace LevelImposter.Builders;
 /// </summary>
 public interface IElemBuilder
 {
+    protected const int LOW_PRIORITY = -100;
+    protected const int HIGH_PRIORITY = 100;
+    
     /// <summary>
-    ///     First step in the build process, called before <see cref="OnBuild"/> for each element in the map.
+    /// The priority of this builder.
+    /// Builders with a higher priority value will execute on EVERY element
+    /// before builders with a lower priority value. If this is not what you want,
+    /// consider re-ordering your build stack instead.
     /// </summary>
-    /// <param name="elem">Element to be parsed and built</param>
-    /// <param name="obj">GameObject to append data and components to</param>
-    public void OnPreBuild(LIElement elem, GameObject obj)
-    {
-    }
+    public int Priority => 0;
 
     /// <summary>
-    ///     Primary step in the build process, called for each element in the map.
+    /// Runs before any elements are built.
     /// </summary>
-    /// <param name="elem">Element to be parsed and built</param>
-    /// <param name="obj">GameObject to append data and components to</param>
-    public void OnBuild(LIElement elem, GameObject obj)
-    {
-    }
+    public void OnPreBuild() {}
 
     /// <summary>
-    ///     Third step in the build process, called after <see cref="OnBuild"/> for each element in the map.
+    ///     Called once before building each element.
+    ///     Applies whatever components/properties
+    ///     that the current builder is responsible for.
     /// </summary>
-    /// <param name="elem">Element to be parsed and built</param>
+    /// <param name="elem">Map element to be parsed and built</param>
     /// <param name="obj">GameObject to append data and components to</param>
-    public void OnPostBuild(LIElement elem, GameObject obj)
-    {
-    }
+    public void OnBuild(LIElement elem, GameObject obj) {}
 
     /// <summary>
-    ///     Final clean-up after all elements in a map have been built.
-    ///     Only called once per map build.
+    /// Runs after all elements have been built.
     /// </summary>
-    public void OnCleanup()
-    {
-    }
+    public void OnPostBuild() {}
 }

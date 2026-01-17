@@ -10,6 +10,11 @@ public class SporeBuilder : IElemBuilder
 {
     public static List<Mushroom> Mushrooms { get; } = new();
 
+    public void OnPreBuild()
+    {
+        Mushrooms.Clear();
+    }
+
     public void OnBuild(LIElement elem, GameObject obj)
     {
         if (elem.type != "util-spore")

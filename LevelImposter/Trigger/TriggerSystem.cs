@@ -78,7 +78,7 @@ public class TriggerSystem
             return null;
 
         // Get Object
-        return LIShipStatus.GetInstance().MapObjectDB.GetObject((Guid)objectID);
+        return LIShipStatus.MapObjectDB.GetObject((Guid)objectID);
     }
 
     /// <summary>
@@ -101,7 +101,7 @@ public class TriggerSystem
         {
             ElemIDString = element.id.ToString(),
             TriggerID = signal.TriggerID
-        });
+        }, true);
     }
 
     /// <summary>
