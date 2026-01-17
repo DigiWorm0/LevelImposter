@@ -37,7 +37,7 @@ public class LIDeathArea(IntPtr intPtr) : PlayerArea(intPtr)
                 continue;
 
             // Fire RPC to kill player
-            Rpc<DeathAreaRPC>.Instance.Send(player, _createDeadBody);
+            Rpc<DeathAreaRPC>.Instance.Send(player, _createDeadBody, true);
         }
     }
 

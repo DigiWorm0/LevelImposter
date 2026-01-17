@@ -76,17 +76,7 @@ public class LoadingBar(IntPtr intPtr) : MonoBehaviour(intPtr)
     private IEnumerator CoLoadingScreen()
     {
         yield return null;
-
-        // Objects
-        var currentMap = GameConfiguration.CurrentMap;
-        var isFallback = GameConfiguration.HideMapName;
-
-        // Set Map Name
-        var mapName = "Loading...";
-        if (currentMap != null && !isFallback)
-            mapName = $"<color=#1a95d8>{currentMap.name}</color> by {currentMap.authorName}";
-        Instance?.SetMapName(mapName);
-
+        
         // Show Loading Screen
         Instance?.SetVisible(true);
 
@@ -106,15 +96,26 @@ public class LoadingBar(IntPtr intPtr) : MonoBehaviour(intPtr)
                 var progress = (float)loadedCount / _maxQueueSize;
 
                 // Update UI
+                Instance?.SetTitle(!GameConfiguration.HideMapName ? 
+                    $"<color=#1a95d8>{GameConfiguration.CurrentMap?.name ?? "???"}</color> by {GameConfiguration.CurrentMap?.authorName ?? "???"}" :
+                    "Loading...");
                 Instance?.SetProgress(progress);
                 Instance?.SetStatus(
                     $"{Math.Round(progress * 100)}% <size=1.2>({loadedCount}/{_maxQueueSize})</size>"
                 );
+                
+            }
+            else if (MapSync.IsDownloadingMap)
+            {
+                Instance?.SetTitle("Downloading map...");
+                Instance?.SetProgress(DownloadManager.DownloadPercent / 100f);
+                Instance?.SetStatus($"{DownloadManager.DownloadPercent}%");
             }
             else
             {
+                Instance?.SetTitle("Waiting for host...");
                 Instance?.SetProgress(1);
-                Instance?.SetStatus("waiting for host");
+                Instance?.SetStatus("");
             }
 
             // Check if done
@@ -138,7 +139,7 @@ public class LoadingBar(IntPtr intPtr) : MonoBehaviour(intPtr)
     ///     Sets the name of the map being loaded
     /// </summary>
     /// <param name="mapName">Name of the map</param>
-    public void SetMapName(string mapName)
+    public void SetTitle(string mapName)
     {
         _mapText?.SetText($"<font=\"Barlow-Black SDF\" material=\"Barlow-Black Outline\">{mapName}</font>");
     }

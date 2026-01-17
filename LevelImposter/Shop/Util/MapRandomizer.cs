@@ -33,6 +33,9 @@ public static class MapRandomizer
         // Set map type to LevelImposter
         if (setMapType)
             GameConfiguration.SetMapType(MapType.LevelImposter);
+        
+        // Sync Map
+        MapSync.SyncMapID();
     }
     
     /// <summary>

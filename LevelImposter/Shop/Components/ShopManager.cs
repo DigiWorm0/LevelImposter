@@ -300,7 +300,7 @@ public class ShopManager(IntPtr intPtr) : MonoBehaviour(intPtr)
         _shopBanners.Push(banner);
         
         // Fade In Banner
-        TransitionHelper.FadeIn(banner.gameObject, 0.15f, bannerCount * 0.015f);
+        // TransitionHelper.FadeIn(banner.gameObject, 0.2f, bannerCount * 0.01f);
 
         // Position Banner
         banner.transform.localPosition = new Vector3(

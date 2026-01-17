@@ -11,7 +11,9 @@ public static class GameConfiguration
     /// <summary>
     /// The selected map type from the game options (Skeld, Mira, LevelImposter, etc.).
     /// </summary>
-    public static MapType CurrentMapType => (MapType)GameOptionsManager.Instance.CurrentGameOptions.MapId;
+    public static MapType CurrentMapType => GameState.IsInFreeplay
+        ? (MapType)AmongUsClient.Instance.TutorialMapId
+        : (MapType)GameOptionsManager.Instance.CurrentGameOptions.MapId;
     
     /// <summary>
     /// Represents the currently active map data.

@@ -60,15 +60,24 @@ public static class MapFileAPI
     /// Reads and parses a map file into memory.
     /// </summary>
     /// <param name="mapID">Map ID to read and parse</param>
-    /// <param name="callback">Callback on success</param>
+    /// <param name="spriteDB">Whether to load the sprite database into memory</param>
     /// <returns>Representation of the map file data in the form of a <c>LIMap</c>.</returns>
     public static LIMap? Get(string mapID, bool spriteDB = true)
     {
-        string path = GetPath(mapID);
+        // Check Existence
+        if (!Exists(mapID))
+            return null;
+        
+        // Get Path
+        var path = GetPath(mapID);
+        
+        // Open File
         using var stream = File.OpenRead(path);
+        
+        // Deserialize
         var mapData = LIDeserializer.DeserializeMap(stream, spriteDB, path);
-        if (mapData != null)
-            mapData.id = mapID;
+        mapData?.id = mapID;
+        
         return mapData;
     }
 
@@ -77,7 +86,6 @@ public static class MapFileAPI
     /// Less memory-intensive than <c>MapFileAPI.Get()</c>.
     /// </summary>
     /// <param name="mapID">Map ID to read and parse</param>
-    /// <param name="callback">Callback on success</param>
     /// <returns>Representation of the map file data in the form of a <c>LIMetadata</c>.</returns>
     public static LIMetadata? GetMetadata(string mapID)
     {
@@ -91,7 +99,7 @@ public static class MapFileAPI
     public static void Delete(string mapID)
     {
         LILogger.Info($"Deleting [{mapID}] from filesystem");
-        string mapPath = GetPath(mapID);
+        var mapPath = GetPath(mapID);
         File.Delete(mapPath);
     }
 

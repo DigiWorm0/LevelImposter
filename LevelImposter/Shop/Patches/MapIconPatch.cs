@@ -7,6 +7,8 @@ using UnityEngine;
 
 namespace LevelImposter.Shop;
 
+
+
 /*
  *      Creates and applies a custom map icon/button for the LevelImposter map in the map picker and lobby.
  */
@@ -15,7 +17,7 @@ public static class CreateLobbyMapIconPatch
 {
     public static void Prefix(CreateGameMapPicker __instance)
     {
-        __instance.AllMapIcons.Add(LIMapIconBuilder.Get());
+        LIMapIconBuilder.AddToList(__instance.AllMapIcons);
     }
 }
 [HarmonyPatch(typeof(GameOptionsMapPicker), nameof(GameOptionsMapPicker.Initialize))]
@@ -25,7 +27,7 @@ public static class LobbySettingMapIconPatch
     
     public static void Prefix(GameOptionsMapPicker __instance)
     {
-        __instance.AllMapIcons.Add(LIMapIconBuilder.Get());
+        LIMapIconBuilder.AddToList(__instance.AllMapIcons);
         
         // Move icons to the left slightly to accommodate
         __instance.Labeltext.transform.parent.localPosition += new Vector3(ICON_OFFSET_X, 0.0f, 0.0f);
@@ -37,7 +39,7 @@ public static class GameInfoMapIconPatch
 {
     public static void Prefix(GameStartManager __instance)
     {
-        __instance.AllMapIcons.Add(LIMapIconBuilder.Get());
+        LIMapIconBuilder.AddToList(__instance.AllMapIcons);
     }
 }
 [HarmonyPatch(typeof(MapSelectionGameSetting), nameof(MapSelectionGameSetting.GetValueString))]

@@ -14,8 +14,8 @@ public static class DownloadManager
 {
     private static readonly List<PlayerControl> PlayersDownloading = new();
     private static string? _downloadError;
-    private static int _downloadPercent;
-
+    
+    public static int DownloadPercent { get; private set; }
     public static bool CanStart => PlayersDownloading.Count == 0 && string.IsNullOrEmpty(_downloadError);
 
     /// <summary>
@@ -25,7 +25,7 @@ public static class DownloadManager
     /// <param name="isDownloaded">TRUE if the player has downloaded the map, FALSE if they are downloading</param>
     private static void SyncDownloadState(PlayerControl player, bool isDownloaded)
     {
-        Rpc<DownloadCheckRPC>.Instance.Send(player, isDownloaded);
+        Rpc<DownloadCheckRPC>.Instance.Send(player, isDownloaded, true);
     }
 
     /// <summary>
@@ -72,7 +72,7 @@ public static class DownloadManager
     /// <param name="percent">Progress between 0 and 1 (inclusive)</param>
     public static void SetProgress(float percent)
     {
-        _downloadPercent = (int)(percent * 100);
+        DownloadPercent = (int)(percent * 100);
     }
 
     /// <summary>
@@ -93,7 +93,7 @@ public static class DownloadManager
         if (_downloadError != null)
             return $"ERROR: {_downloadError}";
         if (IsDownloading())
-            return $"DOWNLOADING MAP ({_downloadPercent}%)";
+            return $"DOWNLOADING MAP ({DownloadPercent}%)";
 
         return PlayersDownloading.Count switch
         {
@@ -108,7 +108,7 @@ public static class DownloadManager
     /// </summary>
     public static void StartDownload()
     {
-        _downloadPercent = 0;
+        DownloadPercent = 0;
         MapUtils.WaitForPlayer(() => { SyncDownloadState(PlayerControl.LocalPlayer, false); });
     }
 
@@ -117,7 +117,7 @@ public static class DownloadManager
     /// </summary>
     public static void StopDownload()
     {
-        _downloadPercent = 0;
+        DownloadPercent = 0;
         MapUtils.WaitForPlayer(() => { SyncDownloadState(PlayerControl.LocalPlayer, true); });
     }
 }

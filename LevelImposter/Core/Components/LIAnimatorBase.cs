@@ -188,7 +188,7 @@ public class LIAnimatorBase(IntPtr intPtr) : MonoBehaviour(intPtr)
         }
         catch
         {
-            LILogger.Warn($"Problem loading {name}'s animation frame (frame {frame})");
+            LILogger.Info($"Problem loading {name}'s animation frame (frame {frame})");
             return null;
         }
     }
@@ -206,7 +206,7 @@ public class LIAnimatorBase(IntPtr intPtr) : MonoBehaviour(intPtr)
         }
         catch
         {
-            LILogger.Warn($"Problem loading {name}'s animation delay (frame {frame})");
+            LILogger.Info($"Problem loading {name}'s animation delay (frame {frame})");
             return 0.1f;
         }
     }

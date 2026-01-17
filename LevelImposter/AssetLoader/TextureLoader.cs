@@ -33,6 +33,9 @@ public class TextureLoader : AsyncQueue<LoadableTexture, LoadedTexture>
 
     protected override LoadedTexture Load(LoadableTexture loadable)
     {
+        // Log
+        LILogger.Info($"Loading texture [{loadable.ID}]...");
+        
         // Determine file type
         var fileType = GetFileType(loadable);
         
