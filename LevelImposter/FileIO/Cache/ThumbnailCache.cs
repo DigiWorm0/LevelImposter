@@ -45,19 +45,36 @@ public static class ThumbnailCache
         // Check if thumbnail exists
         if (!Exists(mapID))
         {
-            DownloadThumbnail(mapID, callback);
+            DownloadThumbnail(mapID, _ => LoadThumbnailSpriteFromFilesystem(mapID, callback));
             return;
         }
 
+        // Load thumbnail into sprite
+        LoadThumbnailSpriteFromFilesystem(mapID, callback);
+    }
+
+    /// <summary>
+    /// Loads a thumbnail sprite from the local filesystem.
+    /// </summary>
+    /// <param name="mapID">Map ID for the thumbnail</param>
+    /// <param name="callback">Callback on success</param>
+    private static void LoadThumbnailSpriteFromFilesystem(string mapID, Action<Sprite> callback)
+    {
         // Read thumbnail from filesystem
         LILogger.Info($"Loading thumbnail for [{mapID}] from filesystem");
+        
+        // Prepare LoadableTexture and LoadableSprite
+        var id = $"{mapID}_thumb";
+        var loadableTexture = new LoadableTexture(id, new FileStore(GetPath(mapID)));
+        var loadableSprite = new LoadableSprite(id, loadableTexture);
 
-        // Load thumbnail into sprite
-        SpriteLoader.LoadAsync(
-            $"{mapID}_thumb",
-            new FileStore(GetPath(mapID)),
-            callback
-        );
+        // Thumbnails are small enough to allow them to be always loaded
+        loadableTexture.Options.AddToGC = false;
+        loadableSprite.Options.AddToGC = false;
+        
+        // Add to SpriteLoader queue
+        SpriteLoader.Instance.AddToQueue(loadableSprite, loadedSprite => callback(loadedSprite));
+
     }
 
     /// <summary>
@@ -65,7 +82,7 @@ public static class ThumbnailCache
     /// </summary>
     /// <param name="mapID">Map ID for the thumbnail</param>
     /// <param name="callback">Callback on success</param>
-    private static void DownloadThumbnail(string mapID, Action<Sprite> callback)
+    private static void DownloadThumbnail(string mapID, Action<FileStore> callback)
     {
         LILogger.Info($"Downloading thumbnail for [{mapID}]");
         LevelImposterAPI.DownloadThumbnail(mapID, GetPath(mapID), callback);

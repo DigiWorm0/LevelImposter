@@ -76,6 +76,7 @@ public class LobbyConsole(IntPtr intPtr) : MonoBehaviour(intPtr)
         CanUse(PlayerControl.LocalPlayer.Data, out var canUse, out _);
         if (!canUse)
             return;
-        ShopBuilder.Build();
+        
+        DestroyableSingleton<TransitionFade>.Instance.DoTransitionFade(null, ShopBuilder.Build(), null);
     }
 }

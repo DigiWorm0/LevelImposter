@@ -1,13 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using LevelImposter.Core;
 using LevelImposter.FileIO;
+using UnityEngine;
 using Random = UnityEngine.Random;
+
 
 namespace LevelImposter.Shop;
 
 public static class MapRandomizer
 {
+    private const int FLOATING_POINT_PRECISION = 1000;
+    
     /// <summary>
     /// Loads a random map from the filesystem and sets it as the current map.
     /// </summary>
@@ -81,7 +86,7 @@ public static class MapRandomizer
         var sumOfAllMapWeights = 0.0f;
         for (var i = 0; i < mapIDs.Count; i++)
         {
-            mapWeights[i] = ConfigAPI.GetMapWeight(mapIDs[i]);
+            mapWeights[i] = RoundToPrecision(ConfigAPI.GetMapWeight(mapIDs[i]));
             sumOfAllMapWeights += mapWeights[i];
         }
 
@@ -95,7 +100,7 @@ public static class MapRandomizer
         {
             // Check weight
             randomValue -= mapWeights[i];
-            if (randomValue > 0)
+            if (randomValue >= 0)
                 continue;
             
             // Check if map is in workshop
@@ -109,7 +114,17 @@ public static class MapRandomizer
             return RecursivelyFindRandomMapID(blacklistMaps);
         }
 
-        // (Code should never reach here)
+        // No map found
         return null;
+    }
+    
+    /// <summary>
+    /// Rounds a floating point value to the defined precision.
+    /// </summary>
+    /// <param name="value">Value to round</param>
+    /// <returns>Rounded value</returns>
+    private static float RoundToPrecision(float value)
+    {
+        return Mathf.Round(value * FLOATING_POINT_PRECISION) / FLOATING_POINT_PRECISION;
     }
 }

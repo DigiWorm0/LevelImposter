@@ -330,14 +330,14 @@ public static class MapUtils
         loadableSprite.Options.AddToGC = false;
         
         // Load Sprite (Synchronously)
-        return SpriteLoader.LoadSync(loadableSprite);
+        return SpriteLoader.Instance.LoadImmediate(loadableSprite);
     }
 
     /// <summary>
     ///     Deserializes a JSON object from assembly resources
     /// </summary>
     /// <typeparam name="T">JSON type to deserialize to</typeparam>
-    /// <param name="name">Name of the json file</param>
+    /// <param name="name">Name of the JSON file</param>
     /// <returns>JSON object or null if not found</returns>
     public static T? LoadJsonResource<T>(string name) where T : class
     {

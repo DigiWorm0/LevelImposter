@@ -19,10 +19,11 @@ public static class ShopBuilder
         return _mapShopPrefab;
     }
 
-    public static void Build()
+    public static GameObject Build()
     {
         var mapShop = Object.Instantiate(GetShopPrefab());
         mapShop.transform.SetParent(Camera.main.transform, false);
         mapShop.transform.localPosition = new Vector3(0, 0, -990.0f);
+        return mapShop;
     }
 }

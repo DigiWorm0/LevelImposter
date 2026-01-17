@@ -208,7 +208,7 @@ public class ShopManager(IntPtr intPtr) : MonoBehaviour(intPtr)
             yield return LegacyConverter.ConvertAllMaps().WrapToIl2Cpp();
             yield return null;
             Clear();
-            var mapIDs = MapFileAPI.ListIDs() ?? new string[0];
+            var mapIDs = MapFileAPI.ListIDs();
             foreach (var mapID in mapIDs)
             {
                 var metadata = MapFileAPI.GetMetadata(mapID);
@@ -298,6 +298,9 @@ public class ShopManager(IntPtr intPtr) : MonoBehaviour(intPtr)
         banner.gameObject.SetActive(true);
         banner.SetMap(map);
         _shopBanners.Push(banner);
+        
+        // Fade In Banner
+        TransitionHelper.FadeIn(banner.gameObject, 0.15f, bannerCount * 0.015f);
 
         // Position Banner
         banner.transform.localPosition = new Vector3(
@@ -323,6 +326,7 @@ public class ShopManager(IntPtr intPtr) : MonoBehaviour(intPtr)
         // Set Map
         var map = MapFileAPI.Get(id);
         GameConfiguration.SetMap(map);
+        GameConfiguration.SetMapType(MapType.LevelImposter);
         
         // Save the last selected map
         ConfigAPI.SetLastMapID(id); // <-- Only saves if a map was manually selected by the user

@@ -1,13 +1,12 @@
-﻿using LevelImposter.Core;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace LevelImposter.AssetLoader;
 
-public readonly struct LoadableSprite(string _id, LoadableTexture _tex) : ICachable
+public readonly struct LoadableSprite(string id, LoadableTexture tex) : ICachable
 {
-    public string ID => _id;
-    public LoadableTexture Texture => _tex;
-    public readonly SpriteOptions Options { get; } = new();
+    public string ID => id;
+    public LoadableTexture Texture => tex;
+    public SpriteOptions Options { get; } = new();
 
     public class SpriteOptions
     {

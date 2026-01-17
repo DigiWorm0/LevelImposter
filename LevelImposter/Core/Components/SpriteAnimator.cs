@@ -53,7 +53,7 @@ public class SpriteAnimator(IntPtr intPtr) : LIAnimatorBase(intPtr)
             throw new Exception("Animation sprite loadable not found");
         
         // Load and return the sprite
-        return SpriteLoader.LoadSync((LoadableSprite)loadableSprite).Sprite;
+        return SpriteLoader.Instance.LoadImmediate((LoadableSprite)loadableSprite).Sprite;
     }
 
     protected override float GetFrameDelay(int frameIndex)

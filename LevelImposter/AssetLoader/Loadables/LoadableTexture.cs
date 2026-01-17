@@ -6,11 +6,11 @@ using UnityEngine;
 
 namespace LevelImposter.AssetLoader;
 
-public readonly struct LoadableTexture(string _id, IDataStore _dataStore) : ICachable
+public readonly struct LoadableTexture(string id, IDataStore dataStore) : ICachable
 {
-    public string ID => _id;
-    public IDataStore DataStore => _dataStore;
-    public readonly TextureOptions Options { get; } = new();
+    public string ID => id;
+    public IDataStore DataStore => dataStore;
+    public TextureOptions Options { get; } = new();
 
     public class TextureOptions
     {

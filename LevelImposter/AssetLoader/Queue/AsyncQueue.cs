@@ -106,7 +106,7 @@ public abstract class AsyncQueue<TInput, TOutput> where TInput : ICachable
     /// </summary>
     /// <param name="inputData">Loadable item data</param>
     /// <returns>Loaded item</returns>
-    protected TOutput LoadImmediate(TInput inputData)
+    public TOutput LoadImmediate(TInput inputData)
     {
         // Check if item is in cache
         var output = Cache.Get(inputData.ID);

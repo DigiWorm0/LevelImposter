@@ -140,7 +140,7 @@ public static class LevelImposterAPI
     public static void DownloadThumbnail(
         string mapID,
         string downloadPath,
-        Action<Sprite> onSuccess,
+        Action<FileStore> onSuccess,
         Action<string>? onError = null)
     {
         // Prepare download URL
@@ -158,7 +158,7 @@ public static class LevelImposterAPI
                 else if (result.Data == null)
                     onError?.Invoke("Unknown error downloading thumbnail");
                 else
-                    SpriteLoader.LoadAsync($"{mapID}_thumb", result.Data, onSuccess);
+                    onSuccess?.Invoke(result.Data);
             }
         );
     }

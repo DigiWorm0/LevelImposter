@@ -47,7 +47,7 @@ public static class MapSettingValueStringPatch
     {
         if ((int)value != (int)MapType.LevelImposter - 1) // <-- MapSelectionGameSetting.TryGetInt subtracts 1 for some reason
             return true;
-        __result = GameState.MapName;
+        __result = TranslationController.Instance.GetString(LIConstants.MAP_STRING_NAME);
         return false;
     }
 }
@@ -56,92 +56,26 @@ public static class MapTooltipPatch
 {
     public static void Postfix(CreateGameOptions __instance)
     {
-        // Add tooltip for LevelImposter map
+        // Add tooltip
         while (__instance.mapTooltips.Length <= (int)MapType.LevelImposter)
             __instance.mapTooltips = MapUtils.AddToArr(__instance.mapTooltips, LIConstants.MAP_STRING_NAME);
         
-        // Add banner for LevelImposter map
+        // Add wordart banner
+        var wordart = LIMapIconBuilder.Get().NameImage;
         while (__instance.mapBanners.Length <= (int)MapType.LevelImposter)
-            __instance.mapBanners = MapUtils.AddToArr(__instance.mapBanners, null); // IMAGE-SkeldBanner-Wordart (342x72)
+            __instance.mapBanners = MapUtils.AddToArr(__instance.mapBanners, wordart); // IMAGE-SkeldBanner-Wordart (342x72)
         
+        // Add crewmate background
+        var background = MapUtils.LoadSpriteResource("LOBBY-Background.png");
         while (__instance.bgCrewmates.Length <= (int)MapType.LevelImposter)
-            __instance.bgCrewmates = MapUtils.AddToArr(__instance.bgCrewmates, null); // BACKGROUND-4 players (515x895)
+            __instance.bgCrewmates = MapUtils.AddToArr(__instance.bgCrewmates, background); // BACKGROUND-4 players (515x895)
     }
 }
 [HarmonyPatch(typeof(CreateGameOptions), nameof(CreateGameOptions.SetCrewmateGraphic))]
 public static class MapChangedCrewmatePatch
 {
-    public static void Prefix(CreateGameOptions __instance)
+    public static bool Prefix(CreateGameOptions __instance)
     {
-        if (__instance.mapPicker.GetSelectedID() != (int)MapType.LevelImposter)
-            return;
-        
-        __instance.currentCrewSprites = __instance.skeldCrewSprites;
-    }
-}
-// TODO: Fix thumbnails
-[HarmonyPatch(typeof(GameStartManager), nameof(GameStartManager.Update))]
-public static class MapIconPatch
-{
-    private static readonly Vector3 MapImagePos = new(-2.0f, -2.25f, -2.2f);
-    private static readonly Vector3 MapImageScale = new(0.91f, 0.91f, 1.0f);
-
-    private static SpriteRenderer? _thumbnailRenderer;
-    private static string? _activeThumbnailID;
-    private static GameObject? _settingsHeader;
-    private static Sprite? _defaultThumbnail;
-
-    public static void Postfix(GameStartManager __instance)
-    {
-        // If the default thumbnail is null, load it
-        if (_defaultThumbnail == null)
-            _defaultThumbnail = MapUtils.LoadResourceFromAssetBundle<Sprite>("defaultthumbnail");
-        if (_defaultThumbnail == null)
-            throw new Exception("Error loading default thumbnail from asset bundle");
-        
-        // If the thumbnail renderer is null, create it
-        if (_thumbnailRenderer == null)
-        {
-            var thumbnailRendererObj = new GameObject("LI_MapThumbnailRenderer");
-            thumbnailRendererObj.transform.SetParent(__instance.MapImage.transform.parent);
-            thumbnailRendererObj.transform.localPosition = MapImagePos;
-            thumbnailRendererObj.transform.localScale = MapImageScale;
-            thumbnailRendererObj.layer = (int)Layer.UI;
-            
-            _thumbnailRenderer = thumbnailRendererObj.AddComponent<SpriteRenderer>();
-            _thumbnailRenderer.sprite = _defaultThumbnail;
-        }
-
-        // Update thumbnail visibility
-        _thumbnailRenderer.enabled = GameConfiguration.CurrentMapType == MapType.LevelImposter;
-        
-        // Get Map ID
-        var currentMapID = GameConfiguration.CurrentMap?.id;
-        if (GameConfiguration.HideMapName ||
-            GameConfiguration.CurrentMapType != MapType.LevelImposter)
-            currentMapID = null;
-
-        // Check if the thumbnail has changed
-        if (currentMapID == _activeThumbnailID)
-            return;
-        _activeThumbnailID = currentMapID;
-
-        // Reload Thumbnail
-        _thumbnailRenderer.sprite = _defaultThumbnail;
-        if (_activeThumbnailID != null &&
-            !GameConfiguration.HideMapName &&
-            GameConfiguration.CurrentMap != null &&
-            GameConfiguration.CurrentMap.HasThumbnail)
-        {
-            ThumbnailCache.Get(_activeThumbnailID, UpdateMapThumbnail);
-        }
-    }
-    
-    private static void UpdateMapThumbnail(Sprite? sprite)
-    {
-        if (_thumbnailRenderer == null || sprite == null)
-            return;
-        
-        _thumbnailRenderer.sprite = sprite;
+        return __instance.mapPicker.GetSelectedID() != (int)MapType.LevelImposter;
     }
 }

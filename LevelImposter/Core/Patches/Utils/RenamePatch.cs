@@ -1,5 +1,6 @@
 using HarmonyLib;
 using Il2CppSystem;
+using LevelImposter.Shop;
 using ObjList = Il2CppInterop.Runtime.InteropTypes.Arrays.Il2CppReferenceArray<Il2CppSystem.Object>;
 
 namespace LevelImposter.Core;
@@ -50,7 +51,13 @@ public static class StringRenamePatch
         // Handle Special Cases
         if (stringNames == LIConstants.MAP_STRING_NAME)
         {
-            __result = GameState.MapName;
+            // Hide map name in lobby
+            if (GameConfiguration.HideMapName && GameState.IsInLobby)
+                __result = LIConstants.MAP_NAME;
+            
+            // Otherwise, get the current map name
+            else
+                __result = GameConfiguration.CurrentMap?.name ?? LIConstants.MAP_NAME;
             return false;
         }
 

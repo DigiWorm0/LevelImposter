@@ -11,9 +11,9 @@ public static class LIMapIconBuilder
         _mapIcon ??= new MapIconByName
         {
             Name = (MapNames)MapType.LevelImposter,
-            MapIcon = null, // ICON-Skeld (78x78)
-            MapImage = null, // IMAGE-SkeldBanner (844x89)
-            NameImage = null // IMAGE-SkeldBannerWordart (342x72)
+            MapIcon = MapUtils.LoadSpriteResource("LOBBY-Icon.png"),
+            MapImage = MapUtils.LoadSpriteResource("LOBBY-Banner.png"),
+            NameImage = MapUtils.LoadSpriteResource("LOBBY-WordArt.png"),
         };
 
         return _mapIcon;

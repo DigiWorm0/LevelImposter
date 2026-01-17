@@ -33,7 +33,7 @@ public class LIShipStatus(IntPtr intPtr) : MonoBehaviour(intPtr)
         if (GameConfiguration.CurrentMap != null)
             Builder.BuildMap(GameConfiguration.CurrentMap);
         else
-            LILogger.Warn("No map content, no LI map will load");
+            LILogger.Warn("No LevelImposter maps are available to load!");
     }
 
     public void Start()
