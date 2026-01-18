@@ -1,6 +1,7 @@
 ﻿using System;
 using Hazel;
 using LevelImposter.Core;
+using LevelImposter.Lobby;
 using LevelImposter.Shop;
 using Reactor.Networking.Attributes;
 using Reactor.Networking.Rpc;

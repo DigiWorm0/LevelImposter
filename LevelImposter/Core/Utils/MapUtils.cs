@@ -458,7 +458,7 @@ public static class MapUtils
     /// <returns>obj's SpriteRenderer</returns>
     public static SpriteRenderer CloneSprite(GameObject obj, GameObject? prefab, bool isSpriteAnim = false)
     {
-        var prefabRenderer = prefab?.GetComponentInChildren<SpriteRenderer>();
+        var prefabRenderer = prefab?.GetComponentInChildren<SpriteRenderer>(true);
         if (!prefabRenderer)
             throw new Exception("Failed to get SpriteRenderer from prefab");
 

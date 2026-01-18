@@ -1,10 +1,8 @@
-using System;
 using AmongUs.GameOptions;
-using LevelImposter.AssetLoader;
-using LevelImposter.Core;
-using LevelImposter.FileIO;
+using LevelImposter.Lobby;
+using LevelImposter.Shop;
 
-namespace LevelImposter.Shop;
+namespace LevelImposter.Core;
 
 public static class GameConfiguration
 {

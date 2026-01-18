@@ -3,6 +3,7 @@ using System.Collections;
 using Il2CppInterop.Runtime.Attributes;
 using LevelImposter.AssetLoader;
 using LevelImposter.Core;
+using LevelImposter.Lobby;
 using Reactor.Utilities;
 using TMPro;
 using UnityEngine;

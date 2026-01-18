@@ -1,4 +1,5 @@
 ﻿using HarmonyLib;
+using LevelImposter.Core;
 using LevelImposter.FileIO;
 using LevelImposter.Shop;
 using UnityEngine;

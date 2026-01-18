@@ -1,6 +1,7 @@
 ﻿using System;
 using Il2CppInterop.Runtime.InteropTypes.Arrays;
 using LevelImposter.Builders;
+using LevelImposter.Builders.Lobby;
 using LevelImposter.Core;
 using LevelImposter.Shop;
 using UnityEngine;
@@ -18,8 +19,12 @@ public static class LobbyMapBuilder
         new AmbientSoundBuilder(),
         new StepSoundBuilder(),
         
+        new LobbyOptionsConsoleBuilder(),
+        new LobbyWardrobeConsoleBuilder(),
+        new LobbyMapConsoleBuilder(),
+        
         new TriggerShakeBuilder(),
-        new StarfieldBuilder()
+        new StarfieldBuilder(),
     ]);
     
     /// <summary>
@@ -66,8 +71,10 @@ public static class LobbyMapBuilder
     private static void BuildMap(LIMap map)
     {
         LILogger.Info($"Building lobby map from {map}...");
+        
         var lobbyBehaviour = LILobbyBehaviour.GetInstance();
         LobbyBuildRouter.BuildMap(map.elements, lobbyBehaviour.transform);
+        
         LILogger.Info($"Built lobby map from {map}");
     }
 
@@ -76,10 +83,15 @@ public static class LobbyMapBuilder
     /// </summary>
     private static void BuildDropship()
     {
-        var lobbyBehaviour = LILobbyBehaviour.GetLobbyBehaviour();
+        LILogger.Info("Rebuilding original lobby dropship...");
         
-        lobbyBehaviour.GetComponent<Collider2D>().enabled = true;
+        var lobbyBehaviour = LILobbyBehaviour.GetInstance();
+        Object.Destroy(lobbyBehaviour.gameObject);
         
-        throw new NotImplementedException();
+        LobbyDropshipPrefab.Instantiate();
+        
+        // TODO: Replay spawn animation
+        
+        LILogger.Info("Rebuilt original lobby dropship");
     }
 }

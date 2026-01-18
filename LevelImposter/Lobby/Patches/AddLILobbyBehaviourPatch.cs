@@ -1,6 +1,6 @@
 ﻿using HarmonyLib;
+using LevelImposter.Core;
 using LevelImposter.FileIO;
-using LevelImposter.Shop;
 
 namespace LevelImposter.Lobby;
 

@@ -5,7 +5,7 @@ using LevelImposter.Networking;
 using Reactor.Networking.Attributes;
 using Reactor.Networking.Rpc;
 
-namespace LevelImposter.Shop;
+namespace LevelImposter.Lobby;
 
 /// <summary>
 ///     Handles the download state of all connected clients

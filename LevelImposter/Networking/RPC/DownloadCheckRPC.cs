@@ -2,6 +2,7 @@
 using Hazel;
 using InnerNet;
 using LevelImposter.Core;
+using LevelImposter.Lobby;
 using LevelImposter.Shop;
 using LevelImposter.Trigger;
 using Reactor.Networking.Attributes;

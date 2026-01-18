@@ -1,8 +1,9 @@
 ﻿using HarmonyLib;
 using InnerNet;
 using LevelImposter.Core;
+using LevelImposter.Shop;
 
-namespace LevelImposter.Shop;
+namespace LevelImposter.Lobby;
 
 public static class PreventGameStartHelper
 {

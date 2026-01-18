@@ -4,7 +4,7 @@ using LevelImposter.FileIO;
 using LevelImposter.Networking;
 using Reactor.Networking.Rpc;
 
-namespace LevelImposter.Shop;
+namespace LevelImposter.Lobby;
 
 public static class MapSync
 {

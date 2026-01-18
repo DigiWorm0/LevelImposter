@@ -1,7 +1,7 @@
 using HarmonyLib;
 using UnityEngine;
 
-namespace LevelImposter.Shop;
+namespace LevelImposter.Lobby;
 
 /*
  *      Gives credit to map makers
@@ -9,11 +9,11 @@ namespace LevelImposter.Shop;
  *      the bottom left corner of the screen
  */
 [HarmonyPatch(typeof(HudManager), nameof(HudManager.Start))]
-public static class PingPatch
+public static class LobbyVersionTagPatch
 {
     public static void Postfix(HudManager __instance)
     {
-        if (LobbyVersionTag.Instance != null)
+        if (LobbyVersionTag.IsInitialized)
             return;
 
         // Create Lobby Version Tag

@@ -6,6 +6,7 @@ using Il2CppInterop.Runtime.Attributes;
 using LevelImposter.Core;
 using LevelImposter.DB;
 using LevelImposter.FileIO;
+using LevelImposter.Lobby;
 using LevelImposter.Networking.API;
 using TMPro;
 using UnityEngine;

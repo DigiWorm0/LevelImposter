@@ -1,11 +1,21 @@
 ﻿using System;
+using LevelImposter.Shop;
 using UnityEngine;
 
-namespace LevelImposter.Shop;
+namespace LevelImposter.Lobby;
 
-public class LobbyConsole(IntPtr intPtr) : MonoBehaviour(intPtr)
+// Disable warnings since this indirectly inherits IUsable
+// ReSharper disable MemberCanBePrivate.Global
+// ReSharper disable MemberCanBeMadeStatic.Global
+#pragma warning disable CA1822
+
+public class LobbyMapConsole(IntPtr intPtr) : MonoBehaviour(intPtr)
 {
-    private readonly Color HIGHLIGHT_COLOR = Color.white;
+    private static readonly int OutlineProperty = Shader.PropertyToID("_Outline");
+    private static readonly int OutlineColorProperty = Shader.PropertyToID("_OutlineColor");
+    private static readonly int AddColorProperty = Shader.PropertyToID("_AddColor");
+    
+    private readonly Color _highlightColor = Color.white;
 
     private SpriteRenderer? _spriteRenderer;
 
@@ -14,18 +24,13 @@ public class LobbyConsole(IntPtr intPtr) : MonoBehaviour(intPtr)
     public float PercentCool => 0;
     public ImageNames UseIcon => ImageNames.UseButton;
 
+    public void Awake()
+    {
+        _spriteRenderer = GetComponent<SpriteRenderer>();
+    }
     public void OnDestroy()
     {
         _spriteRenderer = null;
-    }
-
-    /// <summary>
-    ///     Sets the sprite renderer for the console
-    /// </summary>
-    /// <param name="renderer">Sprite renderer to use</param>
-    public void SetRenderer(SpriteRenderer renderer)
-    {
-        _spriteRenderer = renderer;
     }
 
     /// <summary>
@@ -38,9 +43,9 @@ public class LobbyConsole(IntPtr intPtr) : MonoBehaviour(intPtr)
         if (_spriteRenderer == null)
             return;
 
-        _spriteRenderer.material.SetFloat("_Outline", isVisible ? 1 : 0);
-        _spriteRenderer.material.SetColor("_OutlineColor", HIGHLIGHT_COLOR);
-        _spriteRenderer.material.SetColor("_AddColor", isTargeted ? HIGHLIGHT_COLOR : Color.clear);
+        _spriteRenderer.material.SetFloat(OutlineProperty, isVisible ? 1 : 0);
+        _spriteRenderer.material.SetColor(OutlineColorProperty, _highlightColor);
+        _spriteRenderer.material.SetColor(AddColorProperty, isTargeted ? _highlightColor : Color.clear);
     }
 
     /// <summary>
@@ -80,3 +85,4 @@ public class LobbyConsole(IntPtr intPtr) : MonoBehaviour(intPtr)
         DestroyableSingleton<TransitionFade>.Instance.DoTransitionFade(null, ShopBuilder.Build(), null);
     }
 }
+#pragma warning restore CA1822

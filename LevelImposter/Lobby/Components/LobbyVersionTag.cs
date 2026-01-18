@@ -1,21 +1,22 @@
 using System;
 using System.Text;
-using Il2CppInterop.Runtime.Attributes;
 using LevelImposter.Core;
+using LevelImposter.Shop;
 using TMPro;
 using UnityEngine;
 
-namespace LevelImposter.Shop;
+namespace LevelImposter.Lobby;
 
 public class LobbyVersionTag(IntPtr intPtr) : MonoBehaviour(intPtr)
 {
     private TMP_Text? _text;
-
-    [HideFromIl2Cpp] public static LobbyVersionTag? Instance { get; private set; }
+    private static LobbyVersionTag? _instance;
+    
+    public static bool IsInitialized => _instance != null;
 
     public void Awake()
     {
-        Instance = this;
+        _instance = this;
     }
 
     public void Start()
@@ -44,21 +45,17 @@ public class LobbyVersionTag(IntPtr intPtr) : MonoBehaviour(intPtr)
 
     public void Update()
     {
-        if (!_text)
-            return;
-
-        // Enable/Disable Text
-        _text.enabled = ShouldEnable();
+        _text?.enabled = ShouldEnable();
     }
 
     public void OnDestroy()
     {
-        Instance = null;
+        _instance = null;
     }
 
     public static void UpdateText()
     {
-        if (Instance == null || Instance._text == null)
+        if (_instance == null || _instance._text == null)
             return;
 
         // Get the current map
@@ -96,10 +93,10 @@ public class LobbyVersionTag(IntPtr intPtr) : MonoBehaviour(intPtr)
         versionTagBuilder.Append("</font>");
 
         // Set Text
-        Instance._text.text = versionTagBuilder.ToString();
+        _instance._text.text = versionTagBuilder.ToString();
     }
 
-    private bool ShouldEnable()
+    private static bool ShouldEnable()
     {
         if (GameConfiguration.CurrentMap == null)
             return false;
