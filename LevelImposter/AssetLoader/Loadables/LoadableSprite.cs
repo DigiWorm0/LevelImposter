@@ -30,6 +30,8 @@ public readonly struct LoadableSprite(string id, LoadableTexture tex) : IIdentif
     /// <returns>A LoadableSprite instance.</returns>
     public static LoadableSprite FromLoadableTexture(LoadableTexture texture)
     {
-        return new LoadableSprite(texture.ID, texture);
+        var loadableSprite = new LoadableSprite(texture.ID, texture);
+        loadableSprite.Options.GCBehavior = texture.Options.GCBehavior;
+        return loadableSprite;
     }
 }

@@ -1,9 +1,7 @@
-﻿using System;
-using Il2CppInterop.Runtime.InteropTypes.Arrays;
+﻿using Il2CppInterop.Runtime.InteropTypes.Arrays;
 using LevelImposter.Builders;
 using LevelImposter.Builders.Lobby;
 using LevelImposter.Core;
-using LevelImposter.Shop;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
@@ -13,7 +11,7 @@ public static class LobbyMapBuilder
 {
     private static readonly BuildRouter LobbyBuildRouter = new([
         new TransformBuilder(),
-        new SpriteBuilder(),
+        new SpriteBuilder(MapTarget.Lobby),
         new ColliderBuilder(),
         new RoomBuilder(),
         new AmbientSoundBuilder(),

@@ -7,7 +7,8 @@ using Object = UnityEngine.Object;
 namespace LevelImposter.Core;
 
 /// <summary>
-///     Handles garbage collection of disposable objects
+///     Handles garbage collection of disposable objects.
+///     Garbage collection is automatically triggered on lobby change or map unload depending on <see cref="GCBehavior"/> flags.
 /// </summary>
 public static class GCHandler
 {
@@ -15,7 +16,7 @@ public static class GCHandler
     private static GCBehavior _defaultBehavior = GCBehavior.AlwaysDispose;
     
     /// <summary>
-    /// Changes default garbage collection behavior for registered objects
+    ///     Changes default garbage collection behavior for registered objects
     /// </summary>
     /// <param name="behavior">New default behavior</param>
     public static void SetDefaultBehavior(GCBehavior behavior = GCBehavior.AlwaysDispose)
@@ -55,7 +56,7 @@ public static class GCHandler
             .ToList();
         
         // Dispose of each object
-        LILogger.Info($"Disposing of {toDispose} objects with behavior: {behaviorFlag}");
+        LILogger.Info($"Disposing of {toDispose.Count} objects with behavior: {behaviorFlag}");
         foreach (var disposable in toDispose)
         {
             try
@@ -72,12 +73,12 @@ public static class GCHandler
 
         // Invalidate all AssetLoader caches
         // TODO: Selective cache clearing based on disposed objects
-        LILogger.Info($"{TextureLoader.Instance.CacheSize} cached textures");
-        LILogger.Info($"{SpriteLoader.Instance.CacheSize} cached sprites");
-        LILogger.Info($"{AudioLoader.Instance.CacheSize} cached audio clips");
-        TextureLoader.Instance.ClearCache();
-        SpriteLoader.Instance.ClearCache();
-        AudioLoader.Instance.ClearCache();
+        // LILogger.Info($"{TextureLoader.Instance.CacheSize} cached textures");
+        // LILogger.Info($"{SpriteLoader.Instance.CacheSize} cached sprites");
+        // LILogger.Info($"{AudioLoader.Instance.CacheSize} cached audio clips");
+        // TextureLoader.Instance.ClearCache();
+        // SpriteLoader.Instance.ClearCache();
+        // AudioLoader.Instance.ClearCache();
 
         // Force a garbage collection cycle
         GC.Collect();

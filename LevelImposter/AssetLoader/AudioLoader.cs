@@ -30,6 +30,7 @@ public class AudioLoader : AsyncQueue<LoadableAudio, LoadedAudioClip>
 
         // Create LoadableAudio
         var loadableAudio = new LoadableAudio(assetID?.ToString() ?? "", soundDataStore);
+        loadableAudio.Options.GCBehavior = GCBehavior.DisposeOnMapUnload; // TODO: Make configurable for lobbies
         
         // Enqueue Loadable
         Instance.AddToQueue(loadableAudio, loadedAudioClip => onLoad(loadedAudioClip.AudioClip));

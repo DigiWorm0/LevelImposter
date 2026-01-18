@@ -427,9 +427,10 @@ public static class MapUtils
 
         // Start Async Loading
         GCHandler.SetDefaultBehavior(GCBehavior.DisposeOnMapUnload);
+        var spriteBuilder = new SpriteBuilder();
         foreach (var elem in map.elements)
             if (elem.properties.spriteID != null)
-                SpriteBuilder.LoadSprite(elem, _ => { });
+                spriteBuilder.LoadSprite(elem, _ => { });
     }
 
     /// <summary>

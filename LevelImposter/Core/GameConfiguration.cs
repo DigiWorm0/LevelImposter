@@ -96,7 +96,7 @@ public static class GameConfiguration
         if (preloadSprites)
         {
             // TODO: FIX ME!
-            // MapUtils.PreloadAllMapSprites();
+            MapUtils.PreloadAllMapSprites();
             LoadingBar.Run();
         }
 

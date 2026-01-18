@@ -15,16 +15,6 @@ public class TextureLoader : AsyncQueue<LoadableTexture, LoadedTexture>
     private const int FILE_TYPE_BUFFER_SIZE = 8;
     
     public static TextureLoader Instance { get; } = new();
-    
-    /// <summary>
-    /// Loads a texture 2D synchronously.
-    /// </summary>
-    /// <param name="loadable">Loadable texture 2d</param>
-    /// <returns>Loaded texture 2d</returns>
-    public static LoadedTexture LoadSync(LoadableTexture loadable)
-    {
-        return Instance.LoadImmediate(loadable);
-    }
 
     protected override LoadedTexture Load(LoadableTexture loadable)
     {
@@ -71,6 +61,6 @@ public class TextureLoader : AsyncQueue<LoadableTexture, LoadedTexture>
         if (DDSLoader.IsDDS(signature))
             return FileType.DDS;
         
-        return null;
+        return null; // <-- Attempts to use Unity's built-in by default (PNG, JPG, etc.)
     }
 }

@@ -39,7 +39,8 @@ internal class MeetingOptionsBuilder : IElemBuilder
         // Meeting Background
         if (elem.properties.meetingBackgroundID != null)
         {
-            var loadable = SpriteBuilder.GetLoadableFromID(elem.properties.meetingBackgroundID);
+            var spriteBuilder = new SpriteBuilder(MapTarget.Game);
+            var loadable = spriteBuilder.GetLoadableFromID(elem.properties.meetingBackgroundID);
             if (loadable != null)
             {
                 SpriteLoader.Instance.AddToQueue(

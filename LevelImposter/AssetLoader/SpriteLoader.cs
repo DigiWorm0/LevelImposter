@@ -14,7 +14,7 @@ public class SpriteLoader : AsyncQueue<LoadableSprite, LoadedSprite>
     protected override LoadedSprite Load(LoadableSprite loadable)
     {
         // Load the texture
-        var loadedTexture = TextureLoader.LoadSync(loadable.Texture);
+        var loadedTexture = TextureLoader.Instance.LoadImmediate(loadable.Texture);
         var texture = loadedTexture.Texture;
 
         // Generate Sprite

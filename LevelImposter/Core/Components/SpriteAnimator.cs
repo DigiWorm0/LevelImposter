@@ -17,12 +17,14 @@ namespace LevelImposter.Core;
 /// </summary>
 public class SpriteAnimator(IntPtr intPtr) : LIAnimatorBase(intPtr)
 {
+    private SpriteBuilder? _spriteBuilder;
     private LISpriteAnimation? _currentAnimation;
     private LISpriteAnimation[]? _allAnimations;
-    
+        
     [HideFromIl2Cpp]
-    public void Init(LIElement element, LISpriteAnimation[] animations)
+    public void Init(LIElement element, LISpriteAnimation[] animations, MapTarget mapTarget)
     {
+        _spriteBuilder = new SpriteBuilder(mapTarget);
         _allAnimations = animations;
         SetAnimationType("default");
         Init(element);
@@ -48,7 +50,7 @@ public class SpriteAnimator(IntPtr intPtr) : LIAnimatorBase(intPtr)
         var frame = GetFrameData(frameIndex);
         
         // Get Loadable Sprite
-        var loadableSprite = SpriteBuilder.GetLoadableFromID(frame.spriteID);
+        var loadableSprite = _spriteBuilder?.GetLoadableFromID(frame.spriteID);
         if (loadableSprite == null)
             throw new Exception("Animation sprite loadable not found");
         
