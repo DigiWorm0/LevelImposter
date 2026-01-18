@@ -63,8 +63,7 @@ public static class PNGLoader
         texture.LoadImage(imgData.Data, true);
 
         // Add to GC
-        if (options?.AddToGC ?? true)
-            GCHandler.Register(texture);
+        GCHandler.Register(texture, options?.GCBehavior);
         
         // Return Texture
         return texture;

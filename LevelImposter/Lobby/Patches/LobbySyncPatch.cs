@@ -1,9 +1,9 @@
 using HarmonyLib;
 using LevelImposter.Core;
 using LevelImposter.FileIO;
-using LevelImposter.Lobby;
+using LevelImposter.Shop;
 
-namespace LevelImposter.Shop;
+namespace LevelImposter.Lobby;
 
 /*
  *      Synchronizes a random seed

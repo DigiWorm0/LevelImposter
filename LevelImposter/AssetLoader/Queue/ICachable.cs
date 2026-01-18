@@ -2,5 +2,5 @@
 
 public interface ICachable
 {
-    public string ID { get; }
+    public bool IsExpired { get; }
 }

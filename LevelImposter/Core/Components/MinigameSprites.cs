@@ -96,13 +96,12 @@ public class MinigameSprites(IntPtr intPtr) : MonoBehaviour(intPtr)
                 // Create Loadable Texture
                 var loadableTexture = new LoadableTexture(guid?.ToString() ?? "", mapAsset);
                 loadableTexture.Options.PixelArt = PixelArtMode;
+                loadableTexture.Options.GCBehavior = GCBehavior.DisposeOnMapUnload;
                 
                 // Create Loadable Sprite
                 var loadableSprite = new LoadableSprite(guid?.ToString() ?? "", loadableTexture);
-
-                // Apply Options
-                if (hasPivot)
-                    loadableSprite.Options.Pivot = pivot;
+                loadableSprite.Options.GCBehavior = GCBehavior.DisposeOnMapUnload;
+                loadableSprite.Options.Pivot = hasPivot ? pivot : null;
 
                 // Add to Queue
                 SpriteLoader.Instance.AddToQueue(

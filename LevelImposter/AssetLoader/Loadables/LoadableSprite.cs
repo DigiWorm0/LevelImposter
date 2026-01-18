@@ -1,8 +1,9 @@
-﻿using UnityEngine;
+﻿using LevelImposter.Core;
+using UnityEngine;
 
 namespace LevelImposter.AssetLoader;
 
-public readonly struct LoadableSprite(string id, LoadableTexture tex) : ICachable
+public readonly struct LoadableSprite(string id, LoadableTexture tex) : IIdentifiable
 {
     public string ID => id;
     public LoadableTexture Texture => tex;
@@ -16,9 +17,9 @@ public readonly struct LoadableSprite(string id, LoadableTexture tex) : ICachabl
         /// If set, defines the portion of the texture to use for the sprite. Otherwise, the full texture is used.
         public Rect? Frame { get; set; }
         
-        /// If true (default), the sprite will be disposed automatically after the map is unloaded.
-        /// If false, you must manage the sprite's lifecycle manually.
-        public bool AddToGC { get; set; } = true;
+        /// Changes how and when the texture is disposed of. 
+        /// <c>null</c> will use <see cref="GCHandler"/>'s current default behavior.
+        public GCBehavior? GCBehavior { get; set; } = null;
     }
 
     /// <summary>

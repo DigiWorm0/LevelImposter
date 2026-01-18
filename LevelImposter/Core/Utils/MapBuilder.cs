@@ -167,6 +167,9 @@ public static class MapBuilder
         // START
         IsBuilding = true;
         LILogger.Info($"Building map from {map}...");
+        
+        // Set GC Behavior
+        GCHandler.SetDefaultBehavior(GCBehavior.DisposeOnMapUnload);
 
         // Show Loading Bar (Freeplay Only)
         if (GameState.IsInFreeplay)

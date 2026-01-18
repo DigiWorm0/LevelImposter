@@ -19,7 +19,7 @@ public class BuildRouter(IElemBuilder[] buildStack)
     private readonly Stopwatch _buildTimer = new();
     
     public MapObjectDB MapObjectDB { get; } = new();
-
+    
     /// <summary>
     /// Builds the provided LIElements into GameObjects under the specified parent transform.
     /// </summary>

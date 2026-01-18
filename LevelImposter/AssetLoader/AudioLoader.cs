@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace LevelImposter.AssetLoader;
 
-public class AudioLoader : AsyncQueue<LoadableAudio, AudioClip>
+public class AudioLoader : AsyncQueue<LoadableAudio, LoadedAudioClip>
 {
     private AudioLoader()
     {
@@ -22,8 +22,6 @@ public class AudioLoader : AsyncQueue<LoadableAudio, AudioClip>
     {
         if (assetID == null)
             return;
-
-            
         
         // Get Data Store from AssetDB
         var soundDataStore = GameConfiguration.CurrentMap?.mapAssetDB?.Get(assetID);
@@ -34,11 +32,12 @@ public class AudioLoader : AsyncQueue<LoadableAudio, AudioClip>
         var loadableAudio = new LoadableAudio(assetID?.ToString() ?? "", soundDataStore);
         
         // Enqueue Loadable
-        Instance.AddToQueue(loadableAudio, onLoad);
+        Instance.AddToQueue(loadableAudio, loadedAudioClip => onLoad(loadedAudioClip.AudioClip));
     }
     
-    protected override AudioClip Load(LoadableAudio loadable)
+    protected override LoadedAudioClip Load(LoadableAudio loadable)
     {
-        return WAVLoader.Load(loadable.DataStore, loadable.ID);
+        var audioClip = WAVLoader.Load(loadable.DataStore, loadable.ID);
+        return new LoadedAudioClip(audioClip);
     }
 }

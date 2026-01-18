@@ -1,5 +1,6 @@
 using System;
 using Il2CppInterop.Runtime.Attributes;
+using LevelImposter.AssetLoader;
 using LevelImposter.Shop;
 using LevelImposter.Trigger;
 using UnityEngine;
@@ -48,9 +49,14 @@ public class LIShipStatus(IntPtr intPtr) : MonoBehaviour(intPtr)
     {
         _instance = null;
 
+        // Wipe Asset Queues
+        TextureLoader.Instance.ClearQueue();
+        SpriteLoader.Instance.ClearQueue();
+        AudioLoader.Instance.ClearQueue();
+        
         // Wipe Cache (Freeplay Only)
         if (GameState.IsInFreeplay && LIConstants.FREEPLAY_FLUSH_CACHE)
-            GCHandler.Clean();
+            GCHandler.DisposeAll(GCBehavior.DisposeOnMapUnload);
     }
 
     /// <summary>

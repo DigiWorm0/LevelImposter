@@ -41,7 +41,7 @@ public class GIFFile(string name) : IDisposable
 
     // Other Data
     private Color[]? _pixelBuffer; // Buffer of pixel colors
-    private bool _addToGC = true;
+    private GCBehavior? _gcBehavior;
 
     // GIF File
     public bool IsLoaded { get; private set; }
@@ -88,13 +88,13 @@ public class GIFFile(string name) : IDisposable
     ///     Loads the GIF file from a given stream.
     /// </summary>
     /// <param name="dataStream">Stream of raw GIF data</param>
-    /// <param name="addToGC">Whether to handle texture garbage collection automatically</param>
-    public void Load(Stream dataStream, bool addToGC = true)
+    /// <param name="gcBehavior">Garbage collection behavior for the loaded textures</param>
+    public void Load(Stream dataStream, GCBehavior? gcBehavior = null)
     {
         using var reader = new BinaryReader(dataStream);
         
         IsLoaded = false;
-        _addToGC = addToGC;
+        _gcBehavior = gcBehavior;
         ReadHeader(reader);
         ReadDescriptor(reader);
         ReadGlobalColorTable(reader);
@@ -573,8 +573,7 @@ public class GIFFile(string name) : IDisposable
             texture.Apply(false, true); // Remove from CPU memory
             
             // Add to GC
-            if (_addToGC)
-                GCHandler.Register(texture);
+            GCHandler.Register(texture, _gcBehavior);
 
             // Handle frame disposal
             switch (frame.DisposalMethod)

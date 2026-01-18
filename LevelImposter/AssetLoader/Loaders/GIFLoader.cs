@@ -13,20 +13,16 @@ public static class GIFLoader
     /// <returns>A fully-loaded GIFFile containing the image data</returns>
     public static LoadedGIFTexture Load(LoadableTexture loadable)
     {
-        // Get whether to add to GC
-        var addToGC = loadable.Options?.AddToGC ?? true;
-        
         // Create new file
         var gifFile = new GIFFile(loadable.ID);
-        if (addToGC)
-            GCHandler.Register(gifFile);
+        GCHandler.Register(gifFile, loadable.Options.GCBehavior);
 
         // Load data into managed memory
         var imgData = loadable.DataStore.LoadToManagedMemory();
         
         // Load the GIF file from the stream
         using var imgStream = new MemoryStream(imgData);
-        gifFile.Load(imgStream, addToGC);
+        gifFile.Load(imgStream, loadable.Options.GCBehavior);
         
         // Return the GIF file
         return new LoadedGIFTexture(gifFile);

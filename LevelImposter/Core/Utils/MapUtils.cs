@@ -324,10 +324,10 @@ public static class MapUtils
 
         // Create Loadables
         var loadableTexture = LoadableTexture.FromMemory($"{name}-resource", spriteData);
-        loadableTexture.Options.AddToGC = false;
+        loadableTexture.Options.GCBehavior = GCBehavior.NeverDispose;
         
         var loadableSprite = LoadableSprite.FromLoadableTexture(loadableTexture);
-        loadableSprite.Options.AddToGC = false;
+        loadableSprite.Options.GCBehavior = GCBehavior.NeverDispose;
         
         // Load Sprite (Synchronously)
         return SpriteLoader.Instance.LoadImmediate(loadableSprite);
@@ -426,6 +426,7 @@ public static class MapUtils
         LILogger.Info("Preloading all sprites for " + map.name);
 
         // Start Async Loading
+        GCHandler.SetDefaultBehavior(GCBehavior.DisposeOnMapUnload);
         foreach (var elem in map.elements)
             if (elem.properties.spriteID != null)
                 SpriteBuilder.LoadSprite(elem, _ => { });

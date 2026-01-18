@@ -69,8 +69,8 @@ public static class ThumbnailCache
         var loadableSprite = new LoadableSprite(id, loadableTexture);
 
         // Thumbnails are small enough to allow them to be always loaded
-        loadableTexture.Options.AddToGC = false;
-        loadableSprite.Options.AddToGC = false;
+        loadableTexture.Options.GCBehavior = GCBehavior.NeverDispose;
+        loadableSprite.Options.GCBehavior = GCBehavior.NeverDispose;
         
         // Add to SpriteLoader queue
         SpriteLoader.Instance.AddToQueue(loadableSprite, loadedSprite => callback(loadedSprite));

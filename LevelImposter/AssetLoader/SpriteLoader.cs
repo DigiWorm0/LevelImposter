@@ -1,6 +1,4 @@
-﻿using System;
-using System.IO.Compression;
-using LevelImposter.Core;
+﻿using LevelImposter.Core;
 using UnityEngine;
 
 namespace LevelImposter.AssetLoader;
@@ -12,13 +10,13 @@ public class SpriteLoader : AsyncQueue<LoadableSprite, LoadedSprite>
     }
 
     public static SpriteLoader Instance { get; } = new();
-    
+
     protected override LoadedSprite Load(LoadableSprite loadable)
     {
         // Load the texture
         var loadedTexture = TextureLoader.LoadSync(loadable.Texture);
         var texture = loadedTexture.Texture;
-        
+
         // Generate Sprite
         var options = loadable.Options;
         var sprite = Sprite.Create(
@@ -33,11 +31,10 @@ public class SpriteLoader : AsyncQueue<LoadableSprite, LoadedSprite>
         // Set Sprite Flags
         sprite.name = $"{loadable.ID}_sprite";
         sprite.hideFlags = HideFlags.DontUnloadUnusedAsset;
-        
+
         // Register in GC
-        if (options.AddToGC)
-            GCHandler.Register(sprite);
-        
+        GCHandler.Register(sprite, options.GCBehavior);
+
         // Return Loaded Sprite
         return new LoadedSprite(sprite, loadedTexture);
     }

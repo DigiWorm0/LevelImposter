@@ -153,8 +153,7 @@ public static class DDSLoader
         texture.Apply(false, true);
         
         // Register in GC
-        if (options?.AddToGC ?? true)
-            GCHandler.Register(texture);
+        GCHandler.Register(texture, options?.GCBehavior);
         
         return texture;
     }

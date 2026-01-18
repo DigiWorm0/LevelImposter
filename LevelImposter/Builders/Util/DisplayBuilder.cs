@@ -1,13 +1,14 @@
 using System;
 using LevelImposter.Core;
 using LevelImposter.DB;
-using LevelImposter.Shop;
 using UnityEngine;
 
 namespace LevelImposter.Builders;
 
 internal class DisplayBuilder : IElemBuilder
 {
+    private static readonly int MainTex = Shader.PropertyToID("_MainTex");
+    
     private const int DEFAULT_WIDTH = 330;
     private const int DEFAULT_HEIGHT = 220;
 
@@ -64,7 +65,7 @@ internal class DisplayBuilder : IElemBuilder
         );
         renderTexture.filterMode = pixelArtMode ? FilterMode.Point : FilterMode.Bilinear;
         camera.targetTexture = renderTexture;
-        meshRenderer.material.SetTexture("_MainTex", renderTexture);
+        meshRenderer.material.SetTexture(MainTex, renderTexture);
         GCHandler.Register(new DisposableRenderTex(renderTexture));
     }
 
@@ -74,9 +75,6 @@ internal class DisplayBuilder : IElemBuilder
     /// </summary>
     private class DisposableRenderTex(RenderTexture tex) : IDisposable
     {
-        public void Dispose()
-        {
-            RenderTexture.ReleaseTemporary(tex);
-        }
+        public void Dispose() => RenderTexture.ReleaseTemporary(tex);
     }
 }

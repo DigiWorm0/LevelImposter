@@ -39,7 +39,7 @@ public static class GameConfiguration
         // Wipe cache if map changed
         // (Keeps cache if replaying the same map)
         if (CurrentMap?.id != map?.id)
-            GCHandler.Clean();
+            GCHandler.DisposeAll(GCBehavior.DisposeOnMapUnload);
 
         // Update current map
         CurrentMap = map;
@@ -55,9 +55,8 @@ public static class GameConfiguration
     {
         // Wipe cache if map changed
         // (Keeps cache if replaying the same map)
-        // TODO: Seperate cache for lobby and in-game?
         if (CurrentLobbyMap?.id != map?.id)
-            GCHandler.Clean();
+            GCHandler.DisposeAll(GCBehavior.DisposeOnLobbyUnload);
         
         // Update current lobby map
         CurrentLobbyMap = map;

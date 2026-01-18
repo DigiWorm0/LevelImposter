@@ -1,12 +1,8 @@
-﻿using System;
-using Il2CppInterop.Runtime.InteropTypes.Arrays;
-using Il2CppSystem.IO;
-using LevelImposter.Core;
-using UnityEngine;
+﻿using LevelImposter.Core;
 
 namespace LevelImposter.AssetLoader;
 
-public readonly struct LoadableTexture(string id, IDataStore dataStore) : ICachable
+public readonly struct LoadableTexture(string id, IDataStore dataStore) : IIdentifiable
 {
     public string ID => id;
     public IDataStore DataStore => dataStore;
@@ -16,10 +12,10 @@ public readonly struct LoadableTexture(string id, IDataStore dataStore) : ICacha
     {
         /// If true, the texture will use pixel art filtering (point filtering)
         public bool PixelArt { get; set; } = false;
-        
-        /// If true (default), the texture will be disposed automatically after the map is unloaded.
-        /// If false, you must manage the texture's lifecycle manually.
-        public bool AddToGC { get; set; } = true;
+
+        /// Changes how and when the texture is disposed of. 
+        /// <c>null</c> will use <see cref="GCHandler"/>'s current default behavior.
+        public GCBehavior? GCBehavior { get; set; } = null;
     }
     
     /// <summary>

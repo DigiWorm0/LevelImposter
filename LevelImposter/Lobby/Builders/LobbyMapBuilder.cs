@@ -72,8 +72,11 @@ public static class LobbyMapBuilder
     {
         LILogger.Info($"Building lobby map from {map}...");
         
-        var lobbyBehaviour = LILobbyBehaviour.GetInstance();
-        LobbyBuildRouter.BuildMap(map.elements, lobbyBehaviour.transform);
+        GCHandler.SetDefaultBehavior(GCBehavior.DisposeOnLobbyUnload);
+        
+        LobbyBuildRouter.BuildMap(
+            map.elements,
+            LILobbyBehaviour.GetInstance().transform);
         
         LILogger.Info($"Built lobby map from {map}");
     }

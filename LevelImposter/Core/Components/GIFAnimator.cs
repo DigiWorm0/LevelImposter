@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Il2CppInterop.Runtime.Attributes;
+using LevelImposter.AssetLoader;
 using UnityEngine;
 
 namespace LevelImposter.Core;

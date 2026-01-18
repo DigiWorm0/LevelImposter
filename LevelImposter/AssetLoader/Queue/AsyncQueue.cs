@@ -11,7 +11,9 @@ namespace LevelImposter.AssetLoader;
 /// </summary>
 /// <typeparam name="TInput">Type used for input values (must be ICachable)</typeparam>
 /// <typeparam name="TOutput">Type used for output values (must be ICachable)</typeparam>
-public abstract class AsyncQueue<TInput, TOutput> where TInput : ICachable
+public abstract class AsyncQueue<TInput, TOutput>
+    where TInput : IIdentifiable
+    where TOutput : ICachable
 {
     private const int MIN_FPS = 5;
     
@@ -38,22 +40,29 @@ public abstract class AsyncQueue<TInput, TOutput> where TInput : ICachable
     }
 
     /// <summary>
-    ///     Clears the queue and cache.
+    ///     Clears any cached items.
     /// </summary>
-    public void Clear()
+    public void ClearCache()
     {
-        Queue.Clear();
         Cache.Clear();
     }
 
     /// <summary>
-    ///     Called when an item is loaded.
-    ///     <para>
-    ///         Should be implemented to define how to load an item from input data.
-    ///         Do not call this method directly;
-    ///         Instead, use <see cref="AddToQueue"/> or <see cref="LoadImmediate"/>.
-    ///     </para>
+    ///     Clears any items in the queue.
     /// </summary>
+    public void ClearQueue()
+    {
+        Queue.Clear();
+    }
+
+    /// <summary>
+    ///     Called when an item is loaded.
+    /// </summary>
+    /// <para>
+    ///     Should be implemented to define how to load an item from input data.
+    ///     Do not call this method directly;
+    ///     Instead, use <see cref="AddToQueue"/> or <see cref="LoadImmediate"/>.
+    /// </para>
     /// <param name="inputData">Input data used to load item</param>
     /// <returns>Output data of the item</returns>
     protected abstract TOutput Load(TInput inputData);
