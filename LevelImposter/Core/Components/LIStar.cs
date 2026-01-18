@@ -12,7 +12,7 @@ public class LIStar(IntPtr intPtr) : MonoBehaviour(intPtr)
 {
     private Vector3 _initialScale;
 
-    private float _currentSize;
+    private float _currentSize = 1.0f;
     private float _currentSpeed;
     
     private float _height = 10;
@@ -20,8 +20,8 @@ public class LIStar(IntPtr intPtr) : MonoBehaviour(intPtr)
     private float _maxSpeed = 2;
     private float _minSpeed = 2;
     
-    private float _minSize = 0.2f;
-    private float _maxSize = 1.0f;
+    private float _minSize = 100.0f;
+    private float _maxSize = 100.0f;
     private bool _scaleSpeedBySize = true;
     
     public void Start()
@@ -53,7 +53,9 @@ public class LIStar(IntPtr intPtr) : MonoBehaviour(intPtr)
         _length = elem.properties.starfieldLength ?? _length;
         _minSpeed = elem.properties.starfieldMinSpeed ?? _minSpeed;
         _maxSpeed = elem.properties.starfieldMaxSpeed ?? _maxSpeed;
-        // TODO: Import properties
+        _minSize = elem.properties.starfieldMinSize ?? _minSize;
+        _maxSize = elem.properties.starfieldMaxSize ?? _maxSize;
+        _scaleSpeedBySize = elem.properties.starfieldScaleSpeedBySize ?? _scaleSpeedBySize;
     }
 
     /// <summary>
@@ -63,7 +65,7 @@ public class LIStar(IntPtr intPtr) : MonoBehaviour(intPtr)
     private void Respawn(bool isInitial)
     {
         _currentSpeed = Random.Range(_minSpeed, _maxSpeed);
-        _currentSize = Random.Range(_minSize, _maxSize);
+        _currentSize = Random.Range(_minSize, _maxSize) * 0.01f;
         
         transform.localPosition = new Vector3(
             isInitial ? Random.Range(-_length, 0) : 0,
