@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using LevelImposter.Core;
+using LevelImposter.Lobby;
 using UnityEngine;
 
 namespace LevelImposter.Builders;
@@ -22,10 +23,6 @@ public class RoomBuilder : IElemBuilder
         if (elem.type != "util-room")
             return;
 
-        // ShipStatus
-        if (!LIShipStatus.IsInstance())
-            throw new MissingShipException();
-
         // Pick a new System
         var systemType = SystemDistributor.GetNewSystemType();
 
@@ -45,6 +42,7 @@ public class RoomBuilder : IElemBuilder
             LILogger.Warn($"{shipRoom.name} is missing a collider");
 
         // Rename Room Name
+        // TODO: Apply this to lobbies as well
         LIShipStatus.GetInstanceOrNull()?.Renames.Add(systemType, obj.name);
 
         // Add to DB
@@ -55,12 +53,15 @@ public class RoomBuilder : IElemBuilder
             ShipRoom = shipRoom,
             Collider = shipRoom.roomArea
         });
+        
+        // TODO: Add shiproom to lobby behaviour
     }
 
     public void OnPostBuild()
     {
         // Add Default Room Name
-        LIShipStatus.GetInstance().Renames.Add((SystemTypes)0, "Default Room");
+        // TODO: Apply this to lobbies as well
+        LIShipStatus.GetInstanceOrNull()?.Renames.Add((SystemTypes)0, "Default Room");
     }
 
     /// <summary>

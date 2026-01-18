@@ -5,6 +5,7 @@ using Il2CppInterop.Runtime.Injection;
 using LevelImposter.Core;
 using LevelImposter.DB;
 using LevelImposter.FileIO;
+using LevelImposter.Lobby;
 using LevelImposter.Shop;
 using Reactor.Networking;
 using Reactor.Networking.Attributes;
@@ -82,6 +83,7 @@ public partial class LevelImposter : BasePlugin
         ClassInjector.RegisterTypeInIl2Cpp<ShopTabs>();
         ClassInjector.RegisterTypeInIl2Cpp<Spinner>();
         ClassInjector.RegisterTypeInIl2Cpp<LoadingBar>();
+        ClassInjector.RegisterTypeInIl2Cpp<LILobbyBehaviour>();
         ClassInjector.RegisterTypeInIl2Cpp<LobbyVersionTag>();
         ClassInjector.RegisterTypeInIl2Cpp<LobbyConsole>(usableInterface);
 

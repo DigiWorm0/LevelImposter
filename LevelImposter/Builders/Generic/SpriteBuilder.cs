@@ -18,7 +18,9 @@ public class SpriteBuilder : IElemBuilder
     public static SpriteLoadEvent? OnSpriteLoad;
 
     private static bool PixelArtMode => GameConfiguration.CurrentMap?.properties.pixelArtMode ?? false;
-    private static MapAssetDB? AssetDB => GameConfiguration.CurrentMap?.mapAssetDB;
+    private static MapAssetDB? AssetDB => GameState.IsInLobby ?
+        GameConfiguration.CurrentLobbyMap?.mapAssetDB :
+        GameConfiguration.CurrentMap?.mapAssetDB;
 
     public int Priority => IElemBuilder.HIGH_PRIORITY; // <-- Ensure `SpriteRenderer` is added before other builders that may need it
     

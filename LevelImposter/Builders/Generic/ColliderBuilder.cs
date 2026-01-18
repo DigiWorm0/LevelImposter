@@ -54,6 +54,7 @@ public class ColliderBuilder : IElemBuilder
             {
                 var collider = obj.AddComponent<EdgeCollider2D>();
                 collider.SetPoints(GetPoints(colliderData));
+                collider.edgeRadius = 0.05f; // <-- Matches default in-game edge radius
             }
         }
     }

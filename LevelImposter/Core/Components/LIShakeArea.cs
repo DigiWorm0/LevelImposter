@@ -29,7 +29,7 @@ public class LIShakeArea(IntPtr intPtr) : PlayerArea(intPtr)
 
     private void SetShakeEnabled(bool enabled)
     {
-        var camera = Camera.main.GetComponent<FollowerCamera>();
+        var camera = Camera.main?.GetComponent<FollowerCamera>();
         if (camera != null)
         {
             camera.shakeAmount = enabled ? _shakeAmount : 0.0f;

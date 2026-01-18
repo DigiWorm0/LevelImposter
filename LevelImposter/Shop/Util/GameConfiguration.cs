@@ -16,6 +16,11 @@ public static class GameConfiguration
         : (MapType)GameOptionsManager.Instance.CurrentGameOptions.MapId;
     
     /// <summary>
+    /// Represents the currently selected lobby map data.
+    /// </summary>
+    public static LIMap? CurrentLobbyMap { get; private set; }
+    
+    /// <summary>
     /// Represents the currently active map data.
     /// </summary>
     public static LIMap? CurrentMap { get; private set; }
@@ -42,6 +47,22 @@ public static class GameConfiguration
         CurrentMap = map;
         HideMapName = hideMapName;
         UpdateLobbyUI();
+    }
+    
+    /// <summary>
+    ///   Sets the currently selected lobby map data.
+    /// </summary>
+    /// <param name="map">LevelImposter map data or null to reset to dropship</param>
+    public static void SetLobbyMap(LIMap? map)
+    {
+        // Wipe cache if map changed
+        // (Keeps cache if replaying the same map)
+        // TODO: Seperate cache for lobby and in-game?
+        if (CurrentLobbyMap?.id != map?.id)
+            GCHandler.Clean();
+        
+        // Update current lobby map
+        CurrentLobbyMap = map;
     }
 
     /// <summary>
@@ -77,7 +98,8 @@ public static class GameConfiguration
         // Preload all sprites
         if (preloadSprites)
         {
-            MapUtils.PreloadAllMapSprites();
+            // TODO: FIX ME!
+            // MapUtils.PreloadAllMapSprites();
             LoadingBar.Run();
         }
 
