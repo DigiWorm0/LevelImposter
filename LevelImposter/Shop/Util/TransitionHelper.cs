@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using Reactor.Utilities;
 using UnityEngine;
 
@@ -6,36 +7,23 @@ namespace LevelImposter.Shop;
 
 public static class TransitionHelper
 {
-    private static readonly int ColorMatProperty = Shader.PropertyToID("_Color");
-
-    /// <summary>
-    /// Fades in the given GameObject over the specified duration.
-    /// Warning: This will modify the materials of all renderers in the GameObject and its children.
-    /// </summary>
-    /// <param name="gameObject">The GameObject to fade in.</param>
-    /// <param name="duration">The duration of the fade in seconds.</param>
-    /// <param name="startDelay">Optional delay before starting the fade</param>
-    public static void FadeIn(
-        GameObject gameObject,
-        float duration,
-        float startDelay = 0.0f)
-    {
-        Fade(gameObject, 0.0f, 1.0f, duration, startDelay);
-    }
+    // private static readonly int ColorMatProperty = Shader.PropertyToID("_Color");
     
     /// <summary>
-    /// Fades out the given GameObject over the specified duration.
-    /// Warning: This will modify the materials of all renderers in the GameObject and its
+    /// Shortcut to run an AU transition fade between two GameObjects.
     /// </summary>
-    /// <param name="gameObject">The GameObject to fade out.</param>
-    /// <param name="duration">The duration of the fade in seconds.</param>
-    /// <param name="startDelay">Optional delay before starting the fade</param>
-    public static void FadeOut(
-        GameObject gameObject,
-        float duration,
-        float startDelay = 0.0f)
+    /// <param name="fromObject">The GameObject to fade out.</param>
+    /// <param name="toObject">>The GameObject to fade in.</param>
+    /// <param name="onComplete">Optional callback to run when the transition is complete.</param>
+    public static void RunTransitionFade(
+        GameObject? fromObject,
+        GameObject? toObject,
+        Action? onComplete)
     {
-        Fade(gameObject, 1.0f, 0.0f, duration, startDelay);
+        DestroyableSingleton<TransitionFade>.Instance.DoTransitionFade(
+            fromObject,
+            toObject,
+            onComplete);
     }
     
     /// <summary>
@@ -72,7 +60,7 @@ public static class TransitionHelper
         GameObject gameObject)
     {
         // Apply initial opacity
-        SetOpacity(gameObject, fromOpacity);
+        SetSpriteRendererOpacity(gameObject, fromOpacity);
         
         // Initial delay
         if (startDelay > 0.0f)
@@ -84,7 +72,7 @@ public static class TransitionHelper
         {
             // Calculate opacity
             var opacity = Mathf.Lerp(fromOpacity, toOpacity, t / duration);
-            SetOpacity(gameObject, opacity);
+            SetSpriteRendererOpacity(gameObject, opacity);
 
             // Wait a frame
             yield return null;
@@ -92,40 +80,63 @@ public static class TransitionHelper
         }
         
         // Ensure final opacity
-        SetOpacity(gameObject, toOpacity);
+        SetSpriteRendererOpacity(gameObject, toOpacity);
     }
     
+    // /// <summary>
+    // /// Sets the opacity of all renderers in the GameObject and its children.
+    // /// </summary>
+    // /// <param name="gameObject">The GameObject to modify</param>
+    // /// <param name="opacity">The target opacity in % [0,1]</param>
+    // private static void SetRendererOpacity(GameObject gameObject, float opacity)
+    // {
+    //     // Check if GameObject was destroyed
+    //     if (gameObject == null)
+    //         return;
+    //     
+    //     // Set All Renderers (SpriteRenderer, MeshRenderer, etc.)
+    //     var allRenderers = gameObject.GetComponentsInChildren<Renderer>(true);
+    //     foreach (var renderer in allRenderers)
+    //     {
+    //         if (!renderer.material.HasProperty(ColorMatProperty))
+    //             continue;
+    //         
+    //         var color = renderer.material.color;
+    //         color.a = opacity;
+    //         renderer.material.color = color;
+    //     }
+    //     
+    //     // Set All TextMeshPro
+    //     var allTextMeshPro = gameObject.GetComponentsInChildren<TMPro.TMP_Text>(true);
+    //     foreach (var tmp in allTextMeshPro)
+    //     {
+    //         tmp.color = new Color(
+    //             tmp.color.r,
+    //             tmp.color.g,
+    //             tmp.color.b,
+    //             opacity);
+    //     }
+    // }
+    
     /// <summary>
-    /// Sets the opacity of all renderers in the GameObject and its children.
+    /// Sets the opacity of all SpriteRenderers in the GameObject and its children.
     /// </summary>
     /// <param name="gameObject">The GameObject to modify</param>
     /// <param name="opacity">The target opacity in % [0,1]</param>
-    private static void SetOpacity(GameObject gameObject, float opacity)
+    private static void SetSpriteRendererOpacity(GameObject gameObject, float opacity)
     {
         // Check if GameObject was destroyed
         if (gameObject == null)
             return;
         
-        // Set All Renderers (SpriteRenderer, MeshRenderer, etc.)
-        var allRenderers = gameObject.GetComponentsInChildren<Renderer>(true);
-        foreach (var renderer in allRenderers)
+        // Set All SpriteRenderers
+        var allSpriteRenderers = gameObject.GetComponentsInChildren<SpriteRenderer>(true);
+        foreach (var renderer in allSpriteRenderers)
         {
-            if (!renderer.material.HasProperty(ColorMatProperty))
-                continue;
-            
-            var color = renderer.material.color;
-            color.a = opacity;
-            renderer.material.color = color;
-        }
-        
-        // Set All TextMeshPro
-        var allTextMeshPro = gameObject.GetComponentsInChildren<TMPro.TMP_Text>(true);
-        foreach (var tmp in allTextMeshPro)
-        {
-            tmp.color = new Color(
-                tmp.color.r,
-                tmp.color.g,
-                tmp.color.b,
+            renderer.color = new Color(
+                renderer.color.r,
+                renderer.color.g,
+                renderer.color.b,
                 opacity);
         }
     }

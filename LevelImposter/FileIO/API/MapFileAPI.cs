@@ -2,7 +2,9 @@ using Il2CppInterop.Runtime.Attributes;
 using LevelImposter.Core;
 using LevelImposter.Networking.API;
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace LevelImposter.FileIO;
 
@@ -44,6 +46,17 @@ public static class MapFileAPI
         return fileNames;
     }
 
+    /// <summary>
+    /// Gets the metadata of all map files located in the LevelImposter folder.
+    /// </summary>
+    /// <returns>Array of map file metadata located in the LevelImposter folder.</returns>
+    public static LIMetadata[] GetAllMetadata()
+    {
+        return ListIDs().Select(GetMetadata)
+            .OfType<LIMetadata>()
+            .ToArray();
+    }
+    
     /// <summary>
     /// Checks the existance of a map file based on ID
     /// </summary>

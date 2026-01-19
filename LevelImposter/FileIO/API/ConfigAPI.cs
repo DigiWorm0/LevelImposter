@@ -111,11 +111,33 @@ public static class ConfigAPI
         _configData.LastMapJoined = mapID;
         Save();
     }
+    
+    /// <summary>
+    ///     Gets the Map ID of the lobby map
+    /// </summary>
+    /// <returns>Map ID or null if none used</returns>
+    public static string? GetLobbyMapID()
+    {
+        return _configData.LobbyMapID;
+    }
+
+    /// <summary>
+    ///     Sets the Map ID of the lobby map
+    /// </summary>
+    /// <param name="mapID">Map ID or null if none used</param>
+    public static void SetLobbyMapID(string? mapID)
+    {
+        if (_configData.LobbyMapID == mapID)
+            return;
+        _configData.LobbyMapID = mapID;
+        Save();
+    }
 
     [Serializable]
     public class ConfigData
     {
         public string? LastMapJoined { get; set; }
+        public string? LobbyMapID { get; set; }
         public Dictionary<string, float>? RandomWeights { get; set; }
     }
 }

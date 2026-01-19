@@ -38,14 +38,15 @@ public static class LegacyConverter
                 var mapID = Path.GetFileNameWithoutExtension(legacyMapID);
                 if (!MapFileAPI.Exists(mapID))
                 {
-                    ShopManager.Instance?.SetOverlayEnabled(true);
-                    ShopManager.Instance?.SetOverlayText($"Converting legacy maps...\n<size=2>{mapID}");
+                    // TODO: FIX ME
+                    // ShopManager.Instance?.SetOverlayEnabled(true);
+                    // ShopManager.Instance?.SetOverlayText($"Converting legacy maps...\n<size=2>{mapID}");
                     yield return null;
                     ConvertFile(mapID);
                 }
             }
 
-            ShopManager.Instance?.SetOverlayEnabled(false);
+            // ShopManager.Instance?.SetOverlayEnabled(false);
         }
     }
 

@@ -19,17 +19,19 @@ public class LIMetadata
     public string downloadURL { get; set; }
     public string thumbnailURL { get; set; }
     public Guid? remixOf { get; set; }
+    public MapTarget? mapTarget { get; set; }
 
     /// <summary>
     /// True if the map has a thumbnail available
     /// </summary>
     [JsonIgnore] public bool HasThumbnail => !string.IsNullOrEmpty(thumbnailURL);
-    
+
     /// <summary>
     /// True if the map has been uploaded to the workshop.
     /// (Only maps with a valid GUID as ID are workshop maps)
     /// </summary>
-    [JsonIgnore] public bool IsInWorkshop => Guid.TryParse(id, out _);
+    [JsonIgnore]
+    public bool IsInWorkshop => Guid.TryParse(id, out _) && !string.IsNullOrEmpty(authorID);
 
     public override string ToString()
     {

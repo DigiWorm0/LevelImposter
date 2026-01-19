@@ -76,10 +76,12 @@ public partial class LevelImposter : BasePlugin
 
         ClassInjector.RegisterTypeInIl2Cpp<AssetDB>();
 
+        ClassInjector.RegisterTypeInIl2Cpp<Shop.ProgressBar>();
         ClassInjector.RegisterTypeInIl2Cpp<RandomOverlay>();
         ClassInjector.RegisterTypeInIl2Cpp<MapBanner>();
+        ClassInjector.RegisterTypeInIl2Cpp<GameObjectGrid>();
         ClassInjector.RegisterTypeInIl2Cpp<ShopManager>();
-        ClassInjector.RegisterTypeInIl2Cpp<ShopTabs>();
+        ClassInjector.RegisterTypeInIl2Cpp<ShopTabButton>();
         ClassInjector.RegisterTypeInIl2Cpp<Spinner>();
         ClassInjector.RegisterTypeInIl2Cpp<LoadingBar>();
         ClassInjector.RegisterTypeInIl2Cpp<LILobbyBehaviour>();
