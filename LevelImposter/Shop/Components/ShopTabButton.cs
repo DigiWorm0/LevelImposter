@@ -13,7 +13,6 @@ namespace LevelImposter.Shop;
 public class ShopTabButton(IntPtr ptr) : MonoBehaviour(ptr)
 {
     public Il2CppValueField<int> tab;
-    public Il2CppReferenceField<GameObject> highlightSprite;
     public Il2CppReferenceField<Sprite> titleSprite;
 
     public ShopTab TabType => (ShopTab)tab.Value;
@@ -32,7 +31,7 @@ public class ShopTabButton(IntPtr ptr) : MonoBehaviour(ptr)
     /// <param name="isSelected">Whether the tab is selected</param>
     public void SetTabSelected(bool isSelected)
     {
-        highlightSprite.Value.SetActive(isSelected);
+        _passiveButton?.SelectButton(isSelected);
     }
 
     /// <summary>

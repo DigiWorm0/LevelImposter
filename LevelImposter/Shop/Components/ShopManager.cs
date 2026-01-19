@@ -2,7 +2,9 @@ using System;
 using System.Diagnostics;
 using System.Linq;
 using Il2CppInterop.Runtime.Attributes;
+using Il2CppInterop.Runtime.InteropTypes.Arrays;
 using Il2CppInterop.Runtime.InteropTypes.Fields;
+using Il2CppSystem.Collections.Generic;
 using LevelImposter.Core;
 using LevelImposter.DB;
 using LevelImposter.FileIO;
@@ -41,14 +43,18 @@ public class ShopManager(IntPtr intPtr) : MonoBehaviour(intPtr)
     private const string CONTROLLER_OVERLAY_ID = "LIShop";
     
     /// If true, re-runs the map randomization when the shop is closed
-    private bool _randomizeMapsOnClose = false;
+    private bool _randomizeMapsOnClose;
+
     private ShopTab _currentTab = ShopTab.None;
+    private ShopTabButton[]? _shopTabButtons;
     
     public void Awake()
     {
         Instance = this;
         exitButton.Value.OnClick.AddListener((Action)CloseShop);
         openMapsFolderButton.Value.OnClick.AddListener((Action)OpenMapsFolder);
+
+        _shopTabButtons = GetComponentsInChildren<ShopTabButton>(true);
         
         ControllerManager.Instance.OpenOverlayMenu(CONTROLLER_OVERLAY_ID, null);
     }
@@ -84,11 +90,11 @@ public class ShopManager(IntPtr intPtr) : MonoBehaviour(intPtr)
     {
         if (_randomizeMapsOnClose)
             MapRandomizer.RandomizeMap(false);
-
-        TransitionHelper.RunTransitionFade(
+        
+        DestroyableSingleton<TransitionFade>.Instance.DoTransitionFade(
             gameObject,
             null,
-            () => Destroy(gameObject));
+            (Action)(() => Destroy(gameObject)));
     }
 
     /// <summary>
@@ -106,6 +112,9 @@ public class ShopManager(IntPtr intPtr) : MonoBehaviour(intPtr)
         if (_currentTab == tab)
             return;
         _currentTab = tab;
+
+        UpdateTabButtonState();
+        mapBannerGrid.Value.DestroyAll();
 
         switch (_currentTab)
         {
@@ -135,6 +144,18 @@ public class ShopManager(IntPtr intPtr) : MonoBehaviour(intPtr)
             default:
                 throw new ArgumentOutOfRangeException();
         }
+    }
+
+    /// <summary>
+    /// Updates the visual state of the tab buttons
+    /// </summary>
+    private void UpdateTabButtonState()
+    {
+        if (_shopTabButtons == null)
+            throw new InvalidOperationException("Shop tab buttons not initialized");
+        
+        foreach (var tabButton in _shopTabButtons)
+            tabButton.SetTabSelected(tabButton.TabType == _currentTab);
     }
     
     /// <summary>

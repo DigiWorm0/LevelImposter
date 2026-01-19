@@ -36,6 +36,7 @@ public class MapBanner(IntPtr intPtr) : MonoBehaviour(intPtr)
         trashButton.Value.OnClick.AddListener((Action)OnDeleteClick);
         randomButton.Value.OnClick.AddListener((Action)OnRandomClick);
         externalButton.Value.OnClick.AddListener((Action)OnExternalClick);
+        downloadButton.Value.OnClick.AddListener((Action)OnDownloadClick);
     }
 
     private void OnRandomClick() => randomOverlay.Value.Open();
@@ -89,8 +90,7 @@ public class MapBanner(IntPtr intPtr) : MonoBehaviour(intPtr)
         UpdateButtonState();
         ShopManager.Instance?.RandomizeMapOnClose();
     }
-
-    [HideFromIl2Cpp]
+    
     public void OnDownloadClick()
     {
         // Validate the map ID
@@ -105,10 +105,10 @@ public class MapBanner(IntPtr intPtr) : MonoBehaviour(intPtr)
         MapFileAPI.DownloadMap(
             new Guid(_currentMap.id),
             null,
-            _ => OnMapDownloaded(),
+            OnMapDownloaded,
             LILogger.Error);
     }
-    private void OnMapDownloaded()
+    private void OnMapDownloaded(FileStore _)
     {
         // ShopManager.Instance?.SetOverlayEnabled(false);
         ShopManager.Instance?.RandomizeMapOnClose();
@@ -202,8 +202,12 @@ public class MapBanner(IntPtr intPtr) : MonoBehaviour(intPtr)
         if (!_currentMap.HasThumbnail)
             return;
 
-        ThumbnailCache.Get(
-            _currentMap.id,
-            sprite => thumbnailRenderer.Value.sprite = sprite);
+        ThumbnailCache.Get(_currentMap.id, SetThumbnail);
+    }
+    private void SetThumbnail(Sprite sprite)
+    {
+        if (thumbnailRenderer.Value == null)
+            return;     // <-- User tabbed away before thumbnail loaded
+        thumbnailRenderer.Value.sprite = sprite;
     }
 }

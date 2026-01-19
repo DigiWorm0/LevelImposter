@@ -1,6 +1,7 @@
 using System;
 using Il2CppInterop.Runtime.InteropTypes.Fields;
 using LevelImposter.FileIO;
+using LevelImposter.Shop.Transitions;
 using TMPro;
 using UnityEngine;
 
@@ -19,9 +20,17 @@ public class RandomOverlay(IntPtr intPtr) : MonoBehaviour(intPtr)
     public Il2CppReferenceField<GameObject> backgroundShadow;
     public Il2CppReferenceField<ProgressBar> progressBar;
     
-    private const float DELTA_WEIGHT = 0.1f;
-    private const float ANIMATION_DURATION = 0.2f;
+    // Animation Constants
+    private const float ANIMATION_DURATION = 0.14f;
     private const float BACKGROUND_ALPHA = 0.7f;
+    private readonly Vector3 OpenedSlideOffset = new Vector3(0, 0, -2.0f);
+    private readonly Vector3 ClosedSlideOffset = new Vector3(0, -0.5f, -2.0f);
+
+    private readonly Color ProgressGreen = new Color(0.38f, 0.80f, 0.32f);
+    private readonly Color ProgressYellow = new Color(0.80f, 0.76f, 0.15f);
+    private  readonly Color ProgressRed = new Color(0.81f, 0.22f, 0.22f);
+    
+    private const float DELTA_WEIGHT = 0.1f;
     
     private string? _mapID;
     private float _randomWeight;
@@ -57,16 +66,56 @@ public class RandomOverlay(IntPtr intPtr) : MonoBehaviour(intPtr)
     
     public void Open()
     {
-        // TODO: Add animation
         gameObject.SetActive(true);
-        TransitionHelper.Fade(backgroundShadow.Value, 0, BACKGROUND_ALPHA, ANIMATION_DURATION);
+        SpriteOpacityTransition.Run(new TransitionParams<float>
+        {
+            TargetObject = backgroundShadow.Value,
+            FromValue = 0,
+            ToValue = BACKGROUND_ALPHA,
+            Duration = ANIMATION_DURATION
+        });
+        MatOpacityTransition.Run(new TransitionParams<float>
+        {
+            TargetObject = gameObject,
+            FromValue = 0,
+            ToValue = 1,
+            Duration = ANIMATION_DURATION
+        });
+        SlideTransition.Run(new TransitionParams<Vector3>
+        {
+            TargetObject =  gameObject,
+            FromValue = ClosedSlideOffset,
+            ToValue = OpenedSlideOffset,
+            Curve = TransitionCurve.EaseInOut,
+            Duration = ANIMATION_DURATION
+        });
     }
 
     public void Close()
     {
-        // TODO: Add animation
-        gameObject.SetActive(false);
-        TransitionHelper.Fade(backgroundShadow.Value, BACKGROUND_ALPHA, 0, ANIMATION_DURATION);
+        SpriteOpacityTransition.Run(new TransitionParams<float>
+        {
+            TargetObject = backgroundShadow.Value,
+            FromValue = BACKGROUND_ALPHA,
+            ToValue = 0,
+            Duration = ANIMATION_DURATION
+        });
+        MatOpacityTransition.Run(new TransitionParams<float>
+        {
+            TargetObject = gameObject,
+            FromValue = 1,
+            ToValue = 0,
+            Duration = ANIMATION_DURATION
+        });
+        SlideTransition.Run(new TransitionParams<Vector3>
+        {
+            TargetObject =  gameObject,
+            FromValue = OpenedSlideOffset,
+            ToValue = ClosedSlideOffset,
+            Duration = ANIMATION_DURATION,
+            Curve = TransitionCurve.EaseInOut,
+            OnComplete = () => gameObject.SetActive(false)
+        });
     }
 
     private void UpdateText()
@@ -78,5 +127,11 @@ public class RandomOverlay(IntPtr intPtr) : MonoBehaviour(intPtr)
     private void UpdateProgressBar()
     {
         progressBar.Value.SetProgress(_randomWeight);
+        
+        // Transition color from red (0% weight) to yellow (50% weight) to green (100% weight)
+        var color = _randomWeight < 0.5f ?
+            Color.Lerp(ProgressRed, ProgressYellow, _randomWeight * 2) :
+            Color.Lerp(ProgressYellow, ProgressGreen, (_randomWeight - 0.5f) * 2);
+        progressBar.Value.SetColor(color);
     }
 }

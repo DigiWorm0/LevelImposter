@@ -19,18 +19,28 @@ public class ProgressBar(IntPtr intPtr) : MonoBehaviour(intPtr)
 
     private const float ANIMATION_SPEED = 10.0f;
     private float _progress;
+    private Color? _color;
 
     public void Update()
     {
-        var currentFill = progressBarFill.Value.size.x;
-        var targetFill = _progress * progressBarBackground.Value.size.x;
-        if (Mathf.Approximately(currentFill, targetFill))
+        // Update fill size
+        var currentFillSize = progressBarFill.Value.size.x;
+        var targetFillSize = _progress * progressBarBackground.Value.size.x;
+        if (Mathf.Approximately(currentFillSize, targetFillSize))
             return;
         
         // Animate the fill towards the target
-        var deltaFill = (currentFill - targetFill) * ANIMATION_SPEED * Time.deltaTime;
-        var newFill = currentFill - deltaFill;
-        progressBarFill.Value.size = new Vector2(newFill, progressBarFill.Value.size.y);
+        var deltaFillSize = (currentFillSize - targetFillSize) * ANIMATION_SPEED * Time.deltaTime;
+        var newFillSize = currentFillSize - deltaFillSize;
+        progressBarFill.Value.size = new Vector2(newFillSize, progressBarFill.Value.size.y);
+        
+        // Update color if set
+        var currentColor = progressBarFill.Value.color;
+        var targetColor = _color ?? progressBarFill.Value.color;
+        
+        // Animate color towards target
+        var color = Color.Lerp(currentColor, targetColor, ANIMATION_SPEED * Time.deltaTime);
+        progressBarFill.Value.color = color;
     }
     
     /// <summary>
@@ -40,5 +50,14 @@ public class ProgressBar(IntPtr intPtr) : MonoBehaviour(intPtr)
     public void SetProgress(float progress)
     {
         _progress = Mathf.Clamp01(progress);
+    }
+    
+    /// <summary>
+    /// Sets the color of the progress bar fill.
+    /// </summary>
+    /// <param name="color">Color to set the fill to.</param>
+    public void SetColor(Color color)
+    {
+        _color = color;
     }
 }
