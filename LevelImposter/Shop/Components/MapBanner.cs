@@ -108,6 +108,7 @@ public class MapBanner(IntPtr intPtr) : MonoBehaviour(intPtr)
             OnMapDownloaded,
             LILogger.Error);
     }
+    [HideFromIl2Cpp]
     private void OnMapDownloaded(FileStore _)
     {
         // ShopManager.Instance?.SetOverlayEnabled(false);

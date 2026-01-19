@@ -7,6 +7,7 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using LevelImposter.Core;
 using Reactor.Utilities;
+using UnityEngine;
 using UnityEngine.Networking;
 
 using DownloadResult = LevelImposter.Networking.API.HTTPHandler.HTTPResult<LevelImposter.Core.FileStore>;

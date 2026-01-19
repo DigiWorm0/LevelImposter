@@ -9,6 +9,7 @@ using LevelImposter.Core;
 using LevelImposter.DB;
 using LevelImposter.FileIO;
 using LevelImposter.Networking.API;
+using TMPro;
 using UnityEngine;
 
 namespace LevelImposter.Shop;
@@ -37,6 +38,10 @@ public class ShopManager(IntPtr intPtr) : MonoBehaviour(intPtr)
     public Il2CppReferenceField<GameObjectGrid> mapBannerGrid;
     public Il2CppReferenceField<PassiveButton> exitButton;
     public Il2CppReferenceField<PassiveButton> openMapsFolderButton;
+    public Il2CppReferenceField<GameObject> loadingOverlay;
+    public Il2CppReferenceField<TextMeshPro> loadingText;
+    public Il2CppReferenceField<GameObject> errorOverlay;
+    public Il2CppReferenceField<TextMeshPro> errorText;
     
     public static ShopManager? Instance { get; private set; }
     
@@ -44,9 +49,20 @@ public class ShopManager(IntPtr intPtr) : MonoBehaviour(intPtr)
     
     /// If true, re-runs the map randomization when the shop is closed
     private bool _randomizeMapsOnClose;
-
     private ShopTab _currentTab = ShopTab.None;
     private ShopTabButton[]? _shopTabButtons;
+    private readonly string[] _funLoadingTexts =
+    [
+        "Searching dropship...",
+        "Calibrating engines...",
+        "Searching for habitable planets...",
+        "Stabilizing reactor...",
+        "Scanning for planetary systems...",
+        "Aligning telescope...",
+        "Navigating asteroids...",
+        "Diverting power...",
+        "Doing card swipe..."
+    ];
     
     public void Awake()
     {
@@ -131,19 +147,55 @@ public class ShopManager(IntPtr intPtr) : MonoBehaviour(intPtr)
                 SetMaps(lobbyMaps);
                 break;
             case ShopTab.FeaturedWorkshopMaps:
-                LevelImposterAPI.GetFeatured(m => OnWorkshopLoaded(m, tab), LILogger.Error);
+                SetLoadingVisible(true);
+                LevelImposterAPI.GetFeatured(
+                    m => OnWorkshopLoaded(m, tab),
+                    error => OnError(tab, error));
                 break;
             case ShopTab.TopWorkshopMaps:
-                LevelImposterAPI.GetTop(m => OnWorkshopLoaded(m, tab), LILogger.Error);
+                SetLoadingVisible(true);
+                LevelImposterAPI.GetTop(
+                    m => OnWorkshopLoaded(m, tab),
+                    error => OnError(tab, error));
                 break;
             case ShopTab.RecentWorkshopMaps:
-                LevelImposterAPI.GetRecent(m => OnWorkshopLoaded(m, tab), LILogger.Error);
+                SetLoadingVisible(true);
+                LevelImposterAPI.GetRecent(
+                    m => OnWorkshopLoaded(m, tab),
+                    error => OnError(tab, error));
                 break;
             case ShopTab.None:
                 break;
             default:
                 throw new ArgumentOutOfRangeException();
         }
+    }
+
+    [HideFromIl2Cpp]
+    private void OnWorkshopLoaded(LIMetadata[] maps, ShopTab targetTab)
+    {
+        if (_currentTab != targetTab)
+            return;
+        
+        SetMaps(maps);
+    }
+    [HideFromIl2Cpp]
+    private void OnError(ShopTab tab, string message)
+    {
+        if (_currentTab != tab)
+            return;
+        
+        SetErrorVisible(true, message);
+    }
+    private void SetErrorVisible(bool isVisible, string message = "")
+    {
+        errorOverlay.Value.SetActive(isVisible);
+        errorText.Value.text = message;
+        if (!isVisible)
+            return;
+        
+        // Disable loading overlay
+        SetLoadingVisible(false);
     }
 
     /// <summary>
@@ -157,22 +209,8 @@ public class ShopManager(IntPtr intPtr) : MonoBehaviour(intPtr)
         foreach (var tabButton in _shopTabButtons)
             tabButton.SetTabSelected(tabButton.TabType == _currentTab);
     }
-    
-    /// <summary>
-    /// Called when workshop maps are loaded.
-    /// Just checks if the current tab is still the target tab before setting the maps.
-    /// </summary>
-    /// <param name="maps">The loaded maps</param>
-    /// <param name="targetTab">The target tab</param>
-    [HideFromIl2Cpp]
-    private void OnWorkshopLoaded(LIMetadata[] maps, ShopTab targetTab)
-    {
-        if (_currentTab != targetTab)
-            return;
-        
-        SetMaps(maps);
-    }
 
+    
     /// <summary>
     /// Sets the maps to display in the shop
     /// </summary>
@@ -180,6 +218,10 @@ public class ShopManager(IntPtr intPtr) : MonoBehaviour(intPtr)
     [HideFromIl2Cpp]
     private void SetMaps(LIMetadata[] maps)
     {
+        // Hide Overlays
+        SetLoadingVisible(false);
+        SetErrorVisible(false);
+        
         // Clear Existing Banners
         mapBannerGrid.Value.DestroyAll();
         
@@ -203,6 +245,24 @@ public class ShopManager(IntPtr intPtr) : MonoBehaviour(intPtr)
     public void RandomizeMapOnClose()
     {
         _randomizeMapsOnClose = true;
+    }
+    
+    /// <summary>
+    /// Shows or hides the loading overlay
+    /// </summary>
+    /// <param name="isVisible">Whether the loading overlay should be visible</param>
+    public void SetLoadingVisible(bool isVisible)
+    {
+        loadingOverlay.Value.SetActive(isVisible);
+        if (!isVisible)
+            return;
+        
+        // Disable error overlay
+        SetErrorVisible(false);
+        
+        // Randomize loading text
+        var randomIndex = UnityEngine.Random.Range(0, _funLoadingTexts.Length);
+        loadingText.Value.text = _funLoadingTexts[randomIndex];
     }
 
     private void AddStarField()
