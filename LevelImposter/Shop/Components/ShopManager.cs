@@ -9,6 +9,7 @@ using LevelImposter.Core;
 using LevelImposter.DB;
 using LevelImposter.FileIO;
 using LevelImposter.Networking.API;
+using LevelImposter.Shop.Transitions;
 using TMPro;
 using UnityEngine;
 
@@ -82,8 +83,11 @@ public class ShopManager(IntPtr intPtr) : MonoBehaviour(intPtr)
     /// </summary>
     private static void OpenMapsFolder()
     {
-        // TODO: Check if the current platform is supported (windows, linux, etc.)
-        Process.Start("explorer.exe", MapFileAPI.GetDirectory());
+        Process.Start(new ProcessStartInfo
+        {
+            FileName = MapFileAPI.GetDirectory(),
+            UseShellExecute = true
+        });
     }
 
     /// <summary>
@@ -205,11 +209,23 @@ public class ShopManager(IntPtr intPtr) : MonoBehaviour(intPtr)
         mapBannerGrid.Value.DestroyAll();
         
         // Add New Banners
+        var delay = 0.0f;
         foreach (var map in maps)
         {
             // Instantiate Map Banner
             var mapBanner = Instantiate(mapBannerPrefab.Value);
             mapBanner.SetMap(map);
+            
+            // Animate In
+            MatOpacityTransition.Run(new TransitionParams<float>
+            {
+                TargetObject = mapBanner.gameObject,
+                FromValue = 0,
+                ToValue = 1,
+                StartDelay = delay,
+                Duration = 0.1f
+            });
+            delay += 0.05f;
 
             // Add to Grid
             mapBannerGrid.Value.AddTransform(mapBanner.transform);

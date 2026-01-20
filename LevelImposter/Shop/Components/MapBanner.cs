@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.IO;
 using Il2CppInterop.Runtime.Attributes;
 using Il2CppInterop.Runtime.InteropTypes.Fields;
@@ -7,6 +8,7 @@ using LevelImposter.DB;
 using LevelImposter.FileIO;
 using LevelImposter.Lobby;
 using LevelImposter.Networking.API;
+using LevelImposter.Shop.Transitions;
 using TMPro;
 using UnityEngine;
 
@@ -40,7 +42,15 @@ public class MapBanner(IntPtr intPtr) : MonoBehaviour(intPtr)
     }
 
     private void OnRandomClick() => randomOverlay.Value.Open();
-    private void OnExternalClick() => Application.OpenURL($"https://levelimposter.net/#/map/{_currentMap?.id}");
+
+    private void OnExternalClick()
+    {
+        Process.Start(new ProcessStartInfo
+        {
+            FileName = $"https://levelimposter.net/#/map/{_currentMap?.id}",
+            UseShellExecute = true
+        });
+    }
     private void OnPlayClick()
     {
         // Validate current map
