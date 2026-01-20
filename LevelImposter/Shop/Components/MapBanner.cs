@@ -98,22 +98,34 @@ public class MapBanner(IntPtr intPtr) : MonoBehaviour(intPtr)
             throw new InvalidOperationException("Current map is null");
         
         // Update UI Overlay
-        // ShopManager.Instance?.SetOverlayEnabled(true);
-        // OnDownloadProgress(0);
+        ShopManager.Instance?.LoadingOverlay.Show(true, true);
+        ShopManager.Instance?.LoadingOverlay.SetText($"Downloading {_currentMap.name}...", "(Looking for download URL)");
         
         // Start Download
         MapFileAPI.DownloadMap(
             new Guid(_currentMap.id),
-            null,
+            OnMapDownloadProgress,
             OnMapDownloaded,
-            LILogger.Error);
+            OnMapDownloadError);
     }
     [HideFromIl2Cpp]
     private void OnMapDownloaded(FileStore _)
     {
-        // ShopManager.Instance?.SetOverlayEnabled(false);
+        ShopManager.Instance?.LoadingOverlay.Hide();
         ShopManager.Instance?.RandomizeMapOnClose();
         UpdateButtonState();
+    }
+    private void OnMapDownloadProgress(float percent)
+    {
+        ShopManager.Instance?.LoadingOverlay.SetText(
+            $"Downloading {_currentMap?.name ?? "map"}...",
+            $"{Mathf.RoundToInt(percent * 100)}%");
+        
+        ShopManager.Instance?.LoadingOverlay.SetProgress(percent);
+    }
+    private void OnMapDownloadError(string error)
+    {
+        ShopManager.Instance?.LoadingOverlay.ShowError("The impostor sabotaged the download!", error);
     }
 
     /// <summary>

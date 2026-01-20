@@ -17,6 +17,7 @@ public class ConnectionAnimation(IntPtr intPtr) : MonoBehaviour(intPtr)
     public Il2CppValueField<float> fadePercentage;
     public Il2CppValueField<float> animationDuration;
 
+    private bool _isReverse = false;
     private readonly List<SpriteRenderer> _dots = [];
 
     public void Start()
@@ -44,6 +45,8 @@ public class ConnectionAnimation(IntPtr intPtr) : MonoBehaviour(intPtr)
                 // Calculate progress with offset
                 var dotTimeOffset = t + (i * durationPerDot);
                 var progress = (dotTimeOffset % animationDuration) / animationDuration;
+                if (_isReverse)
+                    progress = 1.0f - progress;
 
                 // Position
                 _dots[i].transform.localPosition = Vector3.Lerp(startPosition, endPosition, progress);
@@ -68,5 +71,14 @@ public class ConnectionAnimation(IntPtr intPtr) : MonoBehaviour(intPtr)
             // Wait a frame
             yield return null;
         }
+    }
+    
+    /// <summary>
+    /// Sets whether the animation is in reverse.
+    /// </summary>
+    /// <param name="isReverse">True to reverse the animation, false for normal direction.</param>
+    public void SetReverse(bool isReverse)
+    {
+        _isReverse = isReverse;
     }
 }

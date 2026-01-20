@@ -24,15 +24,15 @@ public class ProgressBar(IntPtr intPtr) : MonoBehaviour(intPtr)
     public void Update()
     {
         // Update fill size
-        var currentFillSize = progressBarFill.Value.size.x;
-        var targetFillSize = _progress * progressBarBackground.Value.size.x;
-        if (Mathf.Approximately(currentFillSize, targetFillSize))
+        var currentProgress = progressBarFill.Value.size.x / progressBarBackground.Value.size.x;
+        if (Mathf.Approximately(_progress, currentProgress))
             return;
         
         // Animate the fill towards the target
-        var deltaFillSize = (currentFillSize - targetFillSize) * ANIMATION_SPEED * Time.deltaTime;
-        var newFillSize = currentFillSize - deltaFillSize;
-        progressBarFill.Value.size = new Vector2(newFillSize, progressBarFill.Value.size.y);
+        var deltaProgress = (currentProgress - _progress) * ANIMATION_SPEED * Time.deltaTime;
+        var newProgress = currentProgress - deltaProgress;
+        var fillSize = newProgress * progressBarBackground.Value.size.x;
+        progressBarFill.Value.size = new Vector2(fillSize, progressBarFill.Value.size.y);
         
         // Update color if set
         var currentColor = progressBarFill.Value.color;

@@ -38,31 +38,18 @@ public class ShopManager(IntPtr intPtr) : MonoBehaviour(intPtr)
     public Il2CppReferenceField<GameObjectGrid> mapBannerGrid;
     public Il2CppReferenceField<PassiveButton> exitButton;
     public Il2CppReferenceField<PassiveButton> openMapsFolderButton;
-    public Il2CppReferenceField<GameObject> loadingOverlay;
-    public Il2CppReferenceField<TextMeshPro> loadingText;
-    public Il2CppReferenceField<GameObject> errorOverlay;
-    public Il2CppReferenceField<TextMeshPro> errorText;
+    public Il2CppReferenceField<LoadingOverlay> loadingOverlay;
     
     public static ShopManager? Instance { get; private set; }
     
     private const string CONTROLLER_OVERLAY_ID = "LIShop";
     
+    public LoadingOverlay LoadingOverlay => loadingOverlay.Value;
+    
     /// If true, re-runs the map randomization when the shop is closed
     private bool _randomizeMapsOnClose;
     private ShopTab _currentTab = ShopTab.None;
     private ShopTabButton[]? _shopTabButtons;
-    private readonly string[] _funLoadingTexts =
-    [
-        "Searching dropship...",
-        "Calibrating engines...",
-        "Searching for habitable planets...",
-        "Stabilizing reactor...",
-        "Scanning for planetary systems...",
-        "Aligning telescope...",
-        "Navigating asteroids...",
-        "Diverting power...",
-        "Doing card swipe..."
-    ];
     
     public void Awake()
     {
@@ -104,6 +91,9 @@ public class ShopManager(IntPtr intPtr) : MonoBehaviour(intPtr)
     /// </summary>
     public void CloseShop()
     {
+        if (LoadingOverlay.PreventClose)
+            return;
+        
         if (_randomizeMapsOnClose)
             MapRandomizer.RandomizeMap(false);
         
@@ -147,19 +137,19 @@ public class ShopManager(IntPtr intPtr) : MonoBehaviour(intPtr)
                 SetMaps(lobbyMaps);
                 break;
             case ShopTab.FeaturedWorkshopMaps:
-                SetLoadingVisible(true);
+                LoadingOverlay.Show();
                 LevelImposterAPI.GetFeatured(
                     m => OnWorkshopLoaded(m, tab),
                     error => OnError(tab, error));
                 break;
             case ShopTab.TopWorkshopMaps:
-                SetLoadingVisible(true);
+                LoadingOverlay.Show();
                 LevelImposterAPI.GetTop(
                     m => OnWorkshopLoaded(m, tab),
                     error => OnError(tab, error));
                 break;
             case ShopTab.RecentWorkshopMaps:
-                SetLoadingVisible(true);
+                LoadingOverlay.Show();
                 LevelImposterAPI.GetRecent(
                     m => OnWorkshopLoaded(m, tab),
                     error => OnError(tab, error));
@@ -185,17 +175,7 @@ public class ShopManager(IntPtr intPtr) : MonoBehaviour(intPtr)
         if (_currentTab != tab)
             return;
         
-        SetErrorVisible(true, message);
-    }
-    private void SetErrorVisible(bool isVisible, string message = "")
-    {
-        errorOverlay.Value.SetActive(isVisible);
-        errorText.Value.text = message;
-        if (!isVisible)
-            return;
-        
-        // Disable loading overlay
-        SetLoadingVisible(false);
+        LoadingOverlay.ShowError("The impostor sabotaged comms!", message);
     }
 
     /// <summary>
@@ -219,8 +199,7 @@ public class ShopManager(IntPtr intPtr) : MonoBehaviour(intPtr)
     private void SetMaps(LIMetadata[] maps)
     {
         // Hide Overlays
-        SetLoadingVisible(false);
-        SetErrorVisible(false);
+        LoadingOverlay.Hide();
         
         // Clear Existing Banners
         mapBannerGrid.Value.DestroyAll();
@@ -245,24 +224,6 @@ public class ShopManager(IntPtr intPtr) : MonoBehaviour(intPtr)
     public void RandomizeMapOnClose()
     {
         _randomizeMapsOnClose = true;
-    }
-    
-    /// <summary>
-    /// Shows or hides the loading overlay
-    /// </summary>
-    /// <param name="isVisible">Whether the loading overlay should be visible</param>
-    public void SetLoadingVisible(bool isVisible)
-    {
-        loadingOverlay.Value.SetActive(isVisible);
-        if (!isVisible)
-            return;
-        
-        // Disable error overlay
-        SetErrorVisible(false);
-        
-        // Randomize loading text
-        var randomIndex = UnityEngine.Random.Range(0, _funLoadingTexts.Length);
-        loadingText.Value.text = _funLoadingTexts[randomIndex];
     }
 
     private void AddStarField()
