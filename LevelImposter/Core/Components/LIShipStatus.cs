@@ -3,6 +3,7 @@ using Il2CppInterop.Runtime.Attributes;
 using LevelImposter.AssetLoader;
 using LevelImposter.Shop;
 using LevelImposter.Trigger;
+using Reactor.Networking.Extensions;
 using UnityEngine;
 
 namespace LevelImposter.Core;
@@ -31,9 +32,14 @@ public class LIShipStatus(IntPtr intPtr) : MonoBehaviour(intPtr)
         _instance = this;
 
         if (GameConfiguration.CurrentMap != null)
+        {
             MapBuilder.RebuildMap();
+        }
         else
-            LILogger.Warn("No LevelImposter maps are available to load!");
+        {
+            LILogger.Error("LIShipStatus loaded without any map data!");
+            AmongUsClient.Instance?.DisconnectWithReason("LevelImposter couldn't find any map data.");
+        }
     }
 
     public void Start()

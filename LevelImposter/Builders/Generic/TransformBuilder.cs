@@ -19,7 +19,8 @@ public class TransformBuilder : IElemBuilder
         
         // Scale Z position by Y if not a util-layer
         // Layers will mess up the Z position
-        if (elem.type != "util-layer")
-            obj.transform.position = MapUtils.ScaleZPositionByY(obj.transform.position);
+        obj.transform.position = elem.type != "util-layer" ? 
+            MapUtils.ScaleZPositionByY(obj.transform.position) :
+            new Vector3(obj.transform.position.x, obj.transform.position.y, 0.0f);
     }
 }
