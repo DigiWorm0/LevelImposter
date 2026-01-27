@@ -60,8 +60,9 @@ public class SabMixupBuilder : IElemBuilder
 
             // Rename Task
             if (!string.IsNullOrEmpty(elem.properties.description))
-                LIShipStatus.GetInstanceOrNull()?.Renames
-                    .Add(StringNames.MushroomMixupSabotage, elem.properties.description);
+                LIBaseShip.Instance?.Renames.Add(
+                    StringNames.MushroomMixupSabotage,
+                    elem.properties.description);
 
             // Add Task
             shipStatus.SpecialTasks = MapUtils.AddToArr(shipStatus.SpecialTasks, task);

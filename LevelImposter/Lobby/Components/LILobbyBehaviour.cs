@@ -6,16 +6,19 @@ using UnityEngine;
 
 namespace LevelImposter.Lobby;
 
-public class LILobbyBehaviour(IntPtr intPtr) : MonoBehaviour(intPtr)
+public class LILobbyBehaviour(IntPtr intPtr) : LIBaseShip(intPtr)
 {
     private static LILobbyBehaviour? _instance;
     
     private LobbyBehaviour? _lobbyBehaviour;
     
-    public void Awake()
+    protected override void Awake()
     {
-        _lobbyBehaviour = GetComponent<LobbyBehaviour>();
+        base.Awake();
+        
+        // Get LobbyBehaviour component
         _instance = this;
+        _lobbyBehaviour = GetComponent<LobbyBehaviour>();
 
         LobbyBehaviour.Instance = _lobbyBehaviour;  // <-- Jump start singleton assignment for GameState.IsInLobby
         
@@ -26,12 +29,6 @@ public class LILobbyBehaviour(IntPtr intPtr) : MonoBehaviour(intPtr)
         // Build lobby map on startup
         if (GameConfiguration.CurrentLobbyMap != null)
             LobbyMapBuilder.Rebuild();
-    }
-
-    public void Start()
-    {
-        // Set Shadow Quad Mask
-        DestroyableSingleton<HudManager>.Instance.ShadowQuad.material.SetInt("_Mask", 7);
     }
     
     /// <summary>

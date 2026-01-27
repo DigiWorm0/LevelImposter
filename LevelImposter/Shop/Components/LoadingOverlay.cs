@@ -102,8 +102,8 @@ public class LoadingOverlay(IntPtr intPtr) : MonoBehaviour(intPtr)
             return;
         }
 
-        progressBar.Value.gameObject.SetActive(true);
         progressBar.Value.SetProgress(progress.Value);
+        progressBar.Value.gameObject.SetActive(true);
     }
     
     public void SetText(string title, string description)

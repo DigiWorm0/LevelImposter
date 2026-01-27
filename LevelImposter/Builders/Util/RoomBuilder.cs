@@ -42,8 +42,7 @@ public class RoomBuilder : IElemBuilder
             LILogger.Warn($"{shipRoom.name} is missing a collider");
 
         // Rename Room Name
-        // TODO: Apply this to lobbies as well
-        LIShipStatus.GetInstanceOrNull()?.Renames.Add(systemType, obj.name);
+        LIBaseShip.Instance?.Renames.Add(systemType, obj.name);
 
         // Add to DB
         RoomDB.Add(new RoomData
@@ -60,8 +59,7 @@ public class RoomBuilder : IElemBuilder
     public void OnPostBuild()
     {
         // Add Default Room Name
-        // TODO: Apply this to lobbies as well
-        LIShipStatus.GetInstanceOrNull()?.Renames.Add((SystemTypes)0, "Default Room");
+        LIBaseShip.Instance?.Renames.Add((SystemTypes)0, "Default Room");
     }
 
     /// <summary>

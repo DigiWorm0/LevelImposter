@@ -17,9 +17,6 @@ internal class DisplayBuilder : IElemBuilder
         if (elem.type != "util-display")
             return;
 
-        // ShipStatus
-        var shipStatus = LIShipStatus.GetInstance().ShipStatus;
-
         // Prefab
         var minigamePrefab = AssetDB.GetObject("util-cams")?.GetComponent<SystemConsole>().MinigamePrefab
             .Cast<PlanetSurveillanceMinigame>();
@@ -32,7 +29,7 @@ internal class DisplayBuilder : IElemBuilder
         // Camera
         var cameraObject = new GameObject("DisplayCamera");
         cameraObject.layer = (int)Layer.UI;
-        cameraObject.transform.parent = shipStatus.transform;
+        cameraObject.transform.parent = LIBaseShip.Instance?.transform;
         cameraObject.transform.position = new Vector3(
             (elem.properties.camXOffset ?? 0) + obj.transform.position.x,
             (elem.properties.camYOffset ?? 0) + obj.transform.position.y,

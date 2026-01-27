@@ -32,7 +32,7 @@ public class LobbyVersionTag(IntPtr intPtr) : MonoBehaviour(intPtr)
         aspect.AdjustPosition();
         
         // Scale on Mobile
-        if (LIConstants.IsMobile)
+        if (GameState.IsMobile)
         {
             transform.localScale = new Vector3(1.15f, 1.15f, 1.1f);
             aspect.DistanceFromEdge = new Vector3(12.0f, -2.0f, -30.0f);

@@ -5,14 +5,17 @@ using Il2CppInterop.Runtime.Attributes;
 using LevelImposter.Networking;
 using Reactor.Networking.Attributes;
 using Reactor.Networking.Rpc;
+using Reactor.Utilities;
 using UnityEngine;
 
 namespace LevelImposter.Core;
 
-public class ImStuck
+/// <summary>
+/// Handles the "I'm Stuck" respawn functionality
+/// </summary>
+public static class ImStuck
 {
-    public static readonly KeyCode[] RESPAWN_SEQ =
-    {
+    private static readonly KeyCode[] RespawnSeq = [
         KeyCode.I,
         KeyCode.M,
         KeyCode.S,
@@ -20,23 +23,20 @@ public class ImStuck
         KeyCode.U,
         KeyCode.C,
         KeyCode.K
-    };
+    ];
 
-    public void Init()
+    public static void Init()
     {
-        // Get the ShipStatus instance
-        var shipStatus = LIShipStatus.GetInstance();
-
         // Respawn the player on key combo
-        shipStatus.StartCoroutine(
-            CoHandleKeyCombo(
-                RESPAWN_SEQ,
-                () =>
-                {
-                    Rpc<ResetPlayerRPC>.Instance.Send(true, true);
-                }
-            ).WrapToIl2Cpp()
-        );
+        Coroutines.Start(CoHandleKeyCombo(RespawnSeq, SendResetPlayerRPC));
+    }
+
+    /// <summary>
+    /// Sends an RPC to reset the player
+    /// </summary>
+    private static void SendResetPlayerRPC()
+    {
+        Rpc<ResetPlayerRPC>.Instance.Send(true, true);
     }
 
     /// <summary>
@@ -44,7 +44,7 @@ public class ImStuck
     ///     with a specific key combo. (Shift + "RES" or Shift + "CPU")
     /// </summary>
     [HideFromIl2Cpp]
-    private IEnumerator CoHandleKeyCombo(KeyCode[] sequence, Action onSequence)
+    private static IEnumerator CoHandleKeyCombo(KeyCode[] sequence, Action onSequence)
     {
         var state = 0;
 

@@ -42,6 +42,7 @@ public partial class LevelImposter : BasePlugin
         ConfigAPI.Load();
         FileCache.Init();
         ModCompatibility.Init();
+        ImStuck.Init();
 
         // IUsable Interface
         RegisterTypeOptions usableInterface = new()
@@ -53,6 +54,7 @@ public partial class LevelImposter : BasePlugin
         };
 
         // Inject MonoBehaviours
+        ClassInjector.RegisterTypeInIl2Cpp<LIBaseShip>();
         ClassInjector.RegisterTypeInIl2Cpp<LIShipStatus>();
         ClassInjector.RegisterTypeInIl2Cpp<LIStar>();
         ClassInjector.RegisterTypeInIl2Cpp<LIFloat>();

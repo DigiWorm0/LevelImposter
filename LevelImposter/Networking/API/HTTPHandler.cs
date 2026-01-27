@@ -98,12 +98,12 @@ public static class HTTPHandler
                 // This is due to an issue where root certificates are inaccessible at runtime with HttpClient on some mobile platforms
                 if (cert?.Subject == "CN=storage.googleapis.com" &&
                     request.RequestUri?.Host == "storage.googleapis.com" && 
-                    LIConstants.IsMobile)
+                    GameState.IsMobile)
                     return true;
                 
                 if (cert?.Subject == "CN=levelimposter.net" &&
                     request.RequestUri?.Host == "api.levelimposter.net" &&
-                    LIConstants.IsMobile)
+                    GameState.IsMobile)
                     return true;
                 
                 return errors == SslPolicyErrors.None;

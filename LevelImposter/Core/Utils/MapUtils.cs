@@ -368,31 +368,6 @@ public static class MapUtils
     }
 
     /// <summary>
-    ///     Waits for ShipStatus to be ready, then calls Action
-    /// </summary>
-    /// <param name="timeout">Max amount of time in seconds to wait</param>
-    /// <param name="onFinish">Action to call when the map is initialized</param>
-    public static void WaitForShip(float timeout, Action onFinish)
-    {
-        Coroutines.Start(CoWaitForShip(timeout, onFinish));
-    }
-
-    private static IEnumerator CoWaitForShip(float timeout, Action? onFinish)
-    {
-        {
-            float timer = 0;
-            while (!LIShipStatus.IsReady && timer < timeout)
-            {
-                timer += Time.deltaTime;
-                yield return null;
-            }
-
-            onFinish?.Invoke();
-            onFinish = null;
-        }
-    }
-
-    /// <summary>
     ///     Waits for a specific amount of frames, then calls Action
     /// </summary>
     /// <param name="frames">Amount of frames to wait</param>

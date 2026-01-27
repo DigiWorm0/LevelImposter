@@ -42,7 +42,7 @@ public class SabConsoleBuilder : IElemBuilder
         }
 
         if (!string.IsNullOrEmpty(elem.properties.description))
-            LIShipStatus.GetInstanceOrNull()?.Renames.Add(sabotageTask.TaskType, elem.properties.description);
+            LIBaseShip.Instance?.Renames.Add(sabotageTask.TaskType, elem.properties.description);
 
         // Console
         var console = obj.AddComponent<Console>();

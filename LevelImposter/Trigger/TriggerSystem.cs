@@ -16,9 +16,8 @@ public class TriggerSystem
 {
     private const int MAX_STACK_SIZE = 128;
 
-    private readonly List<ITriggerHandle> _triggerHandles = new()
-    {
-        // Handles trigger effects
+    private readonly List<ITriggerHandle> _triggerHandles =
+    [
         new DeathTriggerHandle(),
         new DoorTriggerHandle(),
         new MeetingTriggerHandle(),
@@ -35,26 +34,10 @@ public class TriggerSystem
 
         // Propogates triggers to target elements
         new TriggerPropogationHandle()
-    };
+    ];
 
-    public TriggerSystem()
-    {
-        OnCreate();
-    }
-
-    public static bool EnableLogging => GameConfiguration.CurrentMap?.properties.triggerLogging ?? false;
-
-    private static bool _detectStackOverflow =>
-        GameConfiguration.CurrentMap?.properties.triggerDetectStackOverflow ?? true;
-
-    /// <summary>
-    ///     Patch me to add your own custom trigger handles.
-    ///     Handles should implement <c>ITriggerHandle</c>.
-    /// </summary>
-    public void OnCreate()
-    {
-        // ...
-    }
+    public static bool EnableLogging => LIBaseShip.Instance?.CurrentMap?.properties.triggerLogging ?? false;
+    public static bool DetectStackOverflow => LIBaseShip.Instance?.CurrentMap?.properties.triggerDetectStackOverflow ?? true;
 
     /// <summary>
     ///     Gets the global instance of the trigger system
@@ -63,7 +46,7 @@ public class TriggerSystem
     /// <exception cref="MissingShipException">If LIShipStatus is missing</exception>
     public static TriggerSystem GetInstance()
     {
-        return LIShipStatus.GetInstance().TriggerSystem;
+        return LIBaseShip.Instance?.TriggerSystem ?? throw new MissingShipException();
     }
 
     /// <summary>
@@ -78,7 +61,7 @@ public class TriggerSystem
             return null;
 
         // Get Object
-        return LIShipStatus.MapObjectDB.GetObject((Guid)objectID);
+        return LIBaseShip.Instance?.MapObjectDB.GetObject((Guid)objectID);
     }
 
     /// <summary>
@@ -115,7 +98,7 @@ public class TriggerSystem
         var playerName = signal.SourcePlayer == null ? "null" : signal.SourcePlayer.name;
 
         // Infinite Loop
-        if (_detectStackOverflow && signal.StackSize > MAX_STACK_SIZE)
+        if (DetectStackOverflow && signal.StackSize > MAX_STACK_SIZE)
         {
             LILogger.Warn(
                 $"{objectName} >>> {signal.TriggerID} detected an infinite trigger loop and aborted");

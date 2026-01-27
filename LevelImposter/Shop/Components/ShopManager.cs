@@ -98,7 +98,7 @@ public class ShopManager(IntPtr intPtr) : MonoBehaviour(intPtr)
         if (LoadingOverlay.PreventClose)
             return;
         
-        if (_randomizeMapsOnClose)
+        if (_randomizeMapsOnClose && GameConfiguration.HideMapName)
             MapRandomizer.RandomizeMap(false);
         
         DestroyableSingleton<TransitionFade>.Instance.DoTransitionFade(

@@ -62,7 +62,7 @@ public class MapBanner(IntPtr intPtr) : MonoBehaviour(intPtr)
             throw new InvalidOperationException("AssetDB is not initialized");
         
         // Load map from filesystem
-        LILogger.Info($"Launching map {_currentMap} in freeplay");
+        LILogger.Info($"Launching map {_currentMap}");
         var map = MapFileAPI.Get(_currentMap.id);
         if (map == null)
             throw new InvalidOperationException("Failed to load map from filesystem");
@@ -207,10 +207,10 @@ public class MapBanner(IntPtr intPtr) : MonoBehaviour(intPtr)
         trashButton.Value.gameObject.SetActive(isDownloaded);
         
         // TODO: Fix bug where external button doesn't work on mobile
-        externalButton.Value.gameObject.SetActive(_currentMap.IsInWorkshop && !LIConstants.IsMobile);
+        externalButton.Value.gameObject.SetActive(_currentMap.IsInWorkshop && !GameState.IsMobile);
         
         randomButton.Value.SetButtonEnableState(_currentMap.IsInWorkshop);
-        playButton.Value.SetButtonEnableState(_currentMap.IsInWorkshop || !GameState.IsInLobby);
+        playButton.Value.SetButtonEnableState(/*_currentMap.IsInWorkshop || !GameState.IsInLobby*/ true);
         downloadButton.Value.SetButtonEnableState(isDownloadable);
         trashButton.Value.SetButtonEnableState(isDownloadable);     // <-- Prevents accidental deletion of non-public maps
     }

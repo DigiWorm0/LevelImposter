@@ -16,9 +16,9 @@ public class BuildRouter(IElemBuilder[] buildStack)
     /// Time to warn the user (in ms) when an element is taking too long to load
     private const int WARN_MAX_BUILD_DURATION = 200;
     
-    private readonly Stopwatch _buildTimer = new();
+    private static MapObjectDB MapObjectDB => LIBaseShip.Instance!.MapObjectDB;
     
-    public MapObjectDB MapObjectDB { get; } = new();
+    private readonly Stopwatch _buildTimer = new();
     
     /// <summary>
     /// Builds the provided LIElements into GameObjects under the specified parent transform.
@@ -27,6 +27,10 @@ public class BuildRouter(IElemBuilder[] buildStack)
     /// <param name="parentTransform">Parent transform for the built GameObjects</param>
     public void BuildMap(LIElement[] elements, Transform? parentTransform = null)
     {
+        // Check for LIBaseShip instance
+        if (LIBaseShip.Instance == null)
+            throw new Exception("LIBaseShip instance not found!");
+        
         // Create GameObjects
         foreach (var element in elements)
         {

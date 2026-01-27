@@ -19,7 +19,7 @@ internal class TeleLinkBuilder : IElemBuilder
         if (targetID == null)
             return;
         
-        var targetTeleporterGameObject = LIShipStatus.MapObjectDB.GetObject((Guid)targetID);
+        var targetTeleporterGameObject = LIBaseShip.Instance?.MapObjectDB.GetObject((Guid)targetID);
         var targetTeleporter = targetTeleporterGameObject?.GetComponent<LITeleporter>();
 
         // Get Teleporter

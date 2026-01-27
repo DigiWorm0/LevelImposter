@@ -52,7 +52,7 @@ public class TriggerRPC(LevelImposter plugin, uint id) : PlayerCustomRpc<LevelIm
         }
 
         // Find cooresponding object
-        var gameObject = LIShipStatus.MapObjectDB.GetObject(elemID);
+        var gameObject = LIBaseShip.Instance?.MapObjectDB.GetObject(elemID);
         if (gameObject == null)
         {
             LILogger.Warn($"RPC object with ID {elemID} is missing");
@@ -61,8 +61,6 @@ public class TriggerRPC(LevelImposter plugin, uint id) : PlayerCustomRpc<LevelIm
 
         // Create & Fire Trigger
         TriggerSignal signal = new(gameObject, data.TriggerID, orginPlayer);
-        
-        var shipStatus = LIShipStatus.GetInstance();
-        shipStatus.TriggerSystem.FireTrigger(signal);
+        TriggerSystem.GetInstance().FireTrigger(signal);
     }
 }

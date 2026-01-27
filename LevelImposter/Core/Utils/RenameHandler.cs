@@ -64,7 +64,7 @@ public class RenameHandler
     /// </summary>
     /// <param name="task">Task to rename</param>
     /// <returns>String to replace task with</returns>
-    public string Get(TaskTypes task)
+    public string? Get(TaskTypes task)
     {
         return _taskRenames[task];
     }
@@ -74,7 +74,7 @@ public class RenameHandler
     /// </summary>
     /// <param name="stringNames">StringNames to rename</param>
     /// <returns>String to replace text with</returns>
-    public string Get(StringNames stringNames)
+    public string? Get(StringNames stringNames)
     {
         return _stringRenames[stringNames];
     }

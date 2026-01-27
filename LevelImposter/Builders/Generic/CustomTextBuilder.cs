@@ -77,9 +77,6 @@ public class CustomTextBuilder : IElemBuilder
         if (customText == null || customText.Count <= 0)
             return;
 
-        // ShipStatus
-        var shipStatus = LIShipStatus.GetInstance();
-
         // Replace Custom Text
         foreach (var (textID, text) in customText)
         {
@@ -96,7 +93,7 @@ public class CustomTextBuilder : IElemBuilder
             }
 
             // Replace Text
-            shipStatus.Renames.Add(stringName, text);
+            LIBaseShip.Instance?.Renames.Add(stringName, text);
             LILogger.Debug($"Custom Text '{stringName}' >>> '{text}'");
         }
     }

@@ -72,7 +72,7 @@ public class SabBuilder : IElemBuilder
 
             // Rename Task
             if (!string.IsNullOrEmpty(elem.properties.description))
-                LIShipStatus.GetInstanceOrNull()?.Renames.Add(task.TaskType, elem.properties.description);
+                LIBaseShip.Instance?.Renames.Add(task.TaskType, elem.properties.description);
 
             // Add To Quick Chat
             var taskName = TranslationController.Instance.GetTaskName(task.TaskType);

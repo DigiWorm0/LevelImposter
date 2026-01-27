@@ -1,5 +1,4 @@
 ﻿using System;
-using Il2CppInterop.Runtime.Attributes;
 using Il2CppInterop.Runtime.InteropTypes.Arrays;
 using Il2CppSystem.Collections.Generic;
 using LevelImposter.Builders;
@@ -13,8 +12,8 @@ namespace LevelImposter.Core;
 public static class MapBuilder
 {
     public static bool IsBuilding { get; private set; }
-    
-    public static readonly BuildRouter MapBuildRouter = new([
+
+    private static readonly BuildRouter MapBuildRouter = new([
         new MapPropertiesBuilder(),
 
         new TransformBuilder(),
@@ -151,6 +150,7 @@ public static class MapBuilder
             throw new Exception("CurrentMap is null");
         
         ResetMap();
+        LIBaseShip.Instance?.SetMap(GameConfiguration.CurrentMap);
         BuildMap(GameConfiguration.CurrentMap);
     }
 

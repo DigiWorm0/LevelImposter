@@ -53,7 +53,6 @@ public class MapObjectDB
     /// <returns>The corresponding LIElement or null if not found</returns>
     public static LIElement? Get(GameObject gameObject)
     {
-        // TODO: Remove dependency on LIShipStatus
-        return LIShipStatus.MapObjectDB.GetElement(gameObject);
+        return LIBaseShip.Instance?.MapObjectDB.GetElement(gameObject);
     }
 }

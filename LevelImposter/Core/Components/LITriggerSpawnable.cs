@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using BepInEx.Unity.IL2CPP.Utils.Collections;
 using Il2CppInterop.Runtime.Attributes;
+using LevelImposter.Shop;
 using LevelImposter.Trigger;
 using UnityEngine;
 
@@ -48,7 +49,8 @@ public class LITriggerSpawnable(IntPtr intPtr) : MonoBehaviour(intPtr)
     private IEnumerator CoFireTrigger()
     {
         while (PlayerControl.LocalPlayer == null
-               || !LIShipStatus.IsReady
+               || MapBuilder.IsBuilding 
+               || LoadingBar.IsVisible
                || (!GameManager.Instance.GameHasStarted && GameManager.Instance.ShouldCheckForGameEnd)
                || !LagLimiter.ShouldContinue(30))
             yield return null;

@@ -13,16 +13,30 @@ public static class LobbyMapBuilder
         new TransformBuilder(),
         new SpriteBuilder(MapTarget.Lobby),
         new ColliderBuilder(),
-        new RoomBuilder(),
+        new CustomTextBuilder(),
+        
+        new DecBuilder(),
+        
         new AmbientSoundBuilder(),
+        new DisplayBuilder(),
+        new FloatBuilder(),
+        new PlayerMoverBuilder(),
+        new RoomBuilder(),
+        new StarfieldBuilder(),
         new StepSoundBuilder(),
+        new TeleBuilder(),
+        new TeleLinkBuilder(),
+        new ValueBuilder(),
         
         new LobbyOptionsConsoleBuilder(),
         new LobbyWardrobeConsoleBuilder(),
         new LobbyMapConsoleBuilder(),
         
+        new TriggerAnimBuilder(),
+        new TriggerAreaBuilder(),
+        new TriggerConsoleBuilder(),
         new TriggerShakeBuilder(),
-        new StarfieldBuilder(),
+        new TriggerStartBuilder(),
     ]);
     
     /// <summary>
@@ -32,6 +46,7 @@ public static class LobbyMapBuilder
     public static void Rebuild()
     {
         ResetMap();
+        LIBaseShip.Instance?.SetMap(GameConfiguration.CurrentLobbyMap);
 
         if (GameConfiguration.CurrentLobbyMap != null)
             BuildMap(GameConfiguration.CurrentLobbyMap);
@@ -55,6 +70,8 @@ public static class LobbyMapBuilder
         lobbyBehaviour.SpawnPositions = new Il2CppStructArray<Vector2>(1);
         lobbyBehaviour.SpawnPositions[0] = new Vector2(0, 0);
         lobbyBehaviour.GetComponent<Collider2D>().enabled = false;
+        lobbyBehaviour.DropShipSound = null;
+        lobbyBehaviour.MapTheme = null;
         
         // Remove All Children
         while (lobbyBehaviour.transform.childCount > 0)

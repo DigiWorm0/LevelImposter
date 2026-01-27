@@ -112,7 +112,7 @@ public class TriggerAnim(IntPtr intPtr) : MonoBehaviour(intPtr)
             return targetObject;
 
         // Get Object from Ship Status
-        targetObject = LIShipStatus.MapObjectDB.GetObject(id);
+        targetObject = LIBaseShip.Instance?.MapObjectDB.GetObject(id);
         if (targetObject == null)
             throw new Exception($"Could not find object with ID {id}");
 

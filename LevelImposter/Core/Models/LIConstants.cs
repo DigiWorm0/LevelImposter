@@ -18,6 +18,4 @@ public static class LIConstants
 
     public const bool FREEPLAY_FLUSH_CACHE = true; // Whether to flush the cache when entering freeplay maps
     public const bool IS_DEVELOPMENT_BUILD = false; // Whether this is a development build
-    
-    public static bool IsMobile = Application.isMobilePlatform;
 }

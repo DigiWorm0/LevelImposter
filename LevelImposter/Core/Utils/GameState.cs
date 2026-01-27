@@ -1,12 +1,16 @@
 ﻿using System;
 using LevelImposter.AssetLoader;
 using LevelImposter.Shop;
+using UnityEngine;
 using UnityEngine.SceneManagement;
 
 namespace LevelImposter.Core;
 
 public static class GameState
 {
+    // Hardware
+    public static bool IsMobile => Application.isMobilePlatform;
+    
     // Map
     public static string MapName => GameConfiguration.CurrentMap?.name ?? LIConstants.MAP_NAME;
 
@@ -29,6 +33,6 @@ public static class GameState
     public static int LoadingAssetsCount => TextureLoader.Instance.QueueSize +
                                            SpriteLoader.Instance.QueueSize +
                                            AudioLoader.Instance.QueueSize;
-
-    public static bool IsCustomMapLoading => LoadingAssetsCount > 0;
+    
+    public static bool IsLoadingCustomMap => LoadingAssetsCount > 0;
 }
