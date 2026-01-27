@@ -31,6 +31,7 @@ public static class LobbyMapBuilder
         new LobbyOptionsConsoleBuilder(),
         new LobbyWardrobeConsoleBuilder(),
         new LobbyMapConsoleBuilder(),
+        new LobbySpawnBuilder(),
         
         new TriggerAnimBuilder(),
         new TriggerAreaBuilder(),
@@ -67,8 +68,7 @@ public static class LobbyMapBuilder
         
         // Reset LobbyBehaviour Properties
         lobbyBehaviour.AllRooms = new Il2CppReferenceArray<SkeldShipRoom>(0);
-        lobbyBehaviour.SpawnPositions = new Il2CppStructArray<Vector2>(1);
-        lobbyBehaviour.SpawnPositions[0] = new Vector2(0, 0);
+        lobbyBehaviour.SpawnPositions = new Il2CppStructArray<Vector2>(0);
         lobbyBehaviour.GetComponent<Collider2D>().enabled = false;
         lobbyBehaviour.DropShipSound = null;
         lobbyBehaviour.MapTheme = null;
