@@ -6,7 +6,7 @@ using LevelImposter.Lobby;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-namespace LevelImposter.Shop;
+namespace LevelImposter.Lobby;
 
 public static class MapRandomizer
 {
@@ -34,7 +34,7 @@ public static class MapRandomizer
             GameConfiguration.SetMapType(MapType.LevelImposter);
         
         // Sync Map
-        MapSync.SyncMapID();
+        GameConfigurationSync.SendGameConfigurationRPC();
     }
     
     /// <summary>

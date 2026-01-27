@@ -14,15 +14,37 @@ public static class PreventGameStartHelper
     /// <returns>TRUE if the game can start, FALSE otherwise</returns>
     public static bool CanStartGame(out string reason)
     {
+        // Check is local player had errors downloading the map
+        var mapDownloadState = GameConfigurationSync.GameMapDownloader.CurrentDownloadState;
+        if (mapDownloadState?.Error != null) {
+            reason = $"ERROR: {mapDownloadState?.Error}";
+            return false;
+        }
+
+        // Check if local player is still downloading
+        if (mapDownloadState != null) {
+            reason = $"DOWNLOADING MAP ({mapDownloadState.Progress * 100:F1}%)";
+            return false;
+        }
+
+        
         // Check if all players have downloaded the map
-        if (!DownloadManager.CanStart)
+        var notReadyPlayerCount = PlayersReadyCounter.NotReadyPlayers.Count;
+        if (notReadyPlayerCount > 1)
         {
-            reason = DownloadManager.GetStartText();
+            reason = $"WAITING ON <color=#1a95d8>{notReadyPlayerCount} players</color> TO DOWNLOAD MAP";
+            return false;
+        }
+        if (notReadyPlayerCount == 1)
+        {
+            var notReadyPlayer = PlayersReadyCounter.NotReadyPlayers[0];
+            reason = $"WAITING ON <color=#1a95d8>{notReadyPlayer.name}</color> TO DOWNLOAD MAP";
             return false;
         }
         
         // Check if there is a map available
-        if (GameConfiguration.CurrentMapType == MapType.LevelImposter && GameConfiguration.CurrentMap == null)
+        if (GameConfiguration.CurrentMapType == MapType.LevelImposter &&
+            GameConfiguration.CurrentMap == null)
         {
             reason = "NO MAPS AVAILABLE";
             return false;
@@ -86,19 +108,5 @@ public static class LobbyButtonTextPatch
             // Clear flag
             _isDownloadTextDisplayed = false;
         }
-    }
-}
-
-/*
- *      Remove player from DownloadManager
- *      if the player disconnects
- */
-[HarmonyPatch(typeof(AmongUsClient), nameof(AmongUsClient.OnPlayerLeft))]
-public static class DisconnectPatch
-{
-    public static void Postfix([HarmonyArgument(0)] ClientData data)
-    {
-        if (data.Character != null)
-            DownloadManager.RemovePlayer(data.Character);
     }
 }

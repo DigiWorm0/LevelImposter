@@ -20,7 +20,7 @@ public static class ClientJoinSyncPatch
         // Another player has joined the lobby (not me)
         if (!__instance.AmOwner)
         {
-            MapSync.SyncMapID();
+            GameConfigurationSync.SendGameConfigurationRPC();
             return;
         }
         

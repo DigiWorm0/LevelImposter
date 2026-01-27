@@ -10,6 +10,7 @@ using LevelImposter.DB;
 using LevelImposter.FileIO;
 using LevelImposter.Networking.API;
 using LevelImposter.Shop.Transitions;
+using LevelImposter.Lobby;
 using TMPro;
 using UnityEngine;
 

@@ -1,14 +1,13 @@
-﻿using AmongUs.GameOptions;
-using HarmonyLib;
+﻿using HarmonyLib;
 using LevelImposter.Core;
 
-namespace LevelImposter.Shop;
+namespace LevelImposter.Lobby;
 
 /*
- *      Randomized the map when using a vanilla map selection
+ *      Randomizes the map when using a vanilla map selection screen in the lobby
  */
 [HarmonyPatch(typeof(GameOptionsMapPicker), nameof(GameOptionsMapPicker.SelectMap), typeof(int))]
-public static class RandomizeMapPatch
+public static class LobbyRandomizeMapPatch
 {
     public static void Postfix()
     {

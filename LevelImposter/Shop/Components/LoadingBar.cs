@@ -85,6 +85,9 @@ public class LoadingBar(IntPtr intPtr) : MonoBehaviour(intPtr)
         while (_visible)
         {
             var queueSize = GameState.LoadingAssetsCount;
+            var downloadState = 
+            GameConfigurationSync.LobbyMapDownloader.CurrentDownloadState ?? 
+            GameConfigurationSync.GameMapDownloader.CurrentDownloadState;
             
             // Approximate Progress
             if (queueSize > 0)
@@ -106,11 +109,11 @@ public class LoadingBar(IntPtr intPtr) : MonoBehaviour(intPtr)
                 );
                 
             }
-            else if (MapSync.IsDownloadingMap)
+            else if (downloadState != null)
             {
                 Instance?.SetTitle("Downloading map...");
-                Instance?.SetProgress(DownloadManager.DownloadPercent / 100f);
-                Instance?.SetStatus($"{DownloadManager.DownloadPercent}%");
+                Instance?.SetProgress(downloadState.Progress);
+                Instance?.SetStatus($"{Math.Round(downloadState.Progress * 100)}%");
             }
             else
             {
@@ -121,7 +124,7 @@ public class LoadingBar(IntPtr intPtr) : MonoBehaviour(intPtr)
 
             // Check if done
             var isSpritesLoading = SpriteLoader.Instance.QueueSize > 0;
-            var isDownloading = MapSync.IsDownloadingMap;
+            var isDownloading = downloadState != null;
             var isBuilding = MapBuilder.IsBuilding;
             if (!isSpritesLoading && !isDownloading && !isBuilding)
                 break;
