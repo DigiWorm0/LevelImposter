@@ -39,7 +39,7 @@ public static class MapUtils
     /// <param name="arr">Array to add to</param>
     /// <param name="value">Element to add</param>
     /// <returns>New array with value appended</returns>
-    public static Il2CppReferenceArray<T> AddToArr<T>(Il2CppReferenceArray<T> arr, T value) where T : Il2CppObjectBase
+    public static Il2CppReferenceArray<T> AddToArr<T>(Il2CppReferenceArray<T> arr, T value) where T : Il2CppObjectBase?
     {
         List<T> list = new(arr)
         {
@@ -469,6 +469,10 @@ public static class MapUtils
     public static Vector3 ScaleZPositionByY(Vector3 vector)
     {
         return vector - new Vector3(0, 0, -(vector.y / 1000.0f) + LIConstants.PLAYER_POS);
+    }
+    public static Vector3 InverseScaleZPositionByY(Vector3 vector)
+    {
+        return vector + new Vector3(0, 0, -(vector.y / 1000.0f) + LIConstants.PLAYER_POS);
     }
 
     /// <summary>

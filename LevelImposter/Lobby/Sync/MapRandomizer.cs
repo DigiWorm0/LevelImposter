@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using LevelImposter.Core;
 using LevelImposter.FileIO;
-using LevelImposter.Lobby;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -11,9 +10,9 @@ namespace LevelImposter.Lobby;
 public static class MapRandomizer
 {
     private const int FLOATING_POINT_PRECISION = 1000;
-    
+
     /// <summary>
-    /// Loads a random map from the filesystem and sets it as the current map.
+    ///     Loads a random map from the filesystem and sets it as the current map.
     /// </summary>
     /// <param name="setMapType">If true, sets the current map type to LevelImposter</param>
     public static void RandomizeMap(bool setMapType = true)
@@ -21,24 +20,24 @@ public static class MapRandomizer
         // Check if we're the host
         if (!GameState.IsHost)
             return;
-        
+
         // Get random map
         var map = GetRandomMap();
         if (map != null)
             GameConfiguration.SetMap(map, true);
         else
             GameConfiguration.SetMap(null);
-        
+
         // Set map type to LevelImposter
         if (setMapType)
             GameConfiguration.SetMapType(MapType.LevelImposter);
-        
+
         // Sync Map
         GameConfigurationSync.SendGameConfigurationRPC();
     }
-    
+
     /// <summary>
-    /// Attempts to find and load a random map from the filesystem, excluding blacklisted maps.
+    ///     Attempts to find and load a random map from the filesystem, excluding blacklisted maps.
     /// </summary>
     /// <param name="blacklistMaps">List of map IDs to exclude from selection</param>
     /// <returns>Loaded LIMap or null if none could be found</returns>
@@ -56,18 +55,33 @@ public static class MapRandomizer
 
             // Attempt to load map
             var map = MapFileAPI.Get(mapID);
-            if (map != null)
-                return map;
 
-            // Failed to load map, blacklist and try again
-            LILogger.Warn($"Map randomizer could not load map [{mapID}] from filesystem.");
-            blacklistMaps.Add(mapID);
+            // Check if the map loaded successfully
+            if (map == null)
+            {
+                LILogger.Warn($"Map randomizer could not load map [{mapID}] from filesystem.");
+                blacklistMaps.Add(mapID);
+            }
+
+            // Check if the map targets game (non-lobby maps)
+            else if (map.mapTarget != MapTarget.Game)
+            {
+                LILogger.Warn($"Map randomizer excluded map [{mapID}] because its a lobby map.");
+                blacklistMaps.Add(mapID);
+            }
+
+            // Successfully found a valid map
+            else
+            {
+                return map;
+            }
         }
     }
 
     /// <summary>
-    /// Recursively finds a random map ID among the currently installed custom maps (excluding blacklisted and local-only maps).
-    /// Utilizes map weights from the config.
+    ///     Recursively finds a random map ID among the currently installed custom maps (excluding blacklisted and local-only
+    ///     maps).
+    ///     Utilizes map weights from the config.
     /// </summary>
     /// <param name="blacklistMaps">List of map IDs to exclude from selection</param>
     /// <returns></returns>
@@ -76,12 +90,12 @@ public static class MapRandomizer
     {
         // Initialize blacklist
         blacklistMaps ??= [];
-        
+
         // Get all custom maps
         var fileIDs = new List<string>(MapFileAPI.ListIDs());
         var mapIDs = fileIDs.FindAll(id => !blacklistMaps.Contains(id));
         if (mapIDs.Count <= 0)
-            return null;    // <-- No valid maps left
+            return null; // <-- No valid maps left
 
         // Get map weights
         var mapWeights = new float[mapIDs.Count];
@@ -104,7 +118,7 @@ public static class MapRandomizer
             randomValue -= mapWeights[i];
             if (randomValue >= 0)
                 continue;
-            
+
             // Check if map is in workshop
             var mapID = mapIDs[i];
             var isInWorkshop = Guid.TryParse(mapID, out _);
@@ -119,9 +133,9 @@ public static class MapRandomizer
         // No map found
         return null;
     }
-    
+
     /// <summary>
-    /// Rounds a floating point value to the defined precision.
+    ///     Rounds a floating point value to the defined precision.
     /// </summary>
     /// <param name="value">Value to round</param>
     /// <returns>Rounded value</returns>

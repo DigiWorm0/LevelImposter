@@ -1,14 +1,12 @@
 using System;
 using System.Diagnostics;
-using System.IO;
 using Il2CppInterop.Runtime.Attributes;
 using Il2CppInterop.Runtime.InteropTypes.Fields;
+using InnerNet;
 using LevelImposter.Core;
 using LevelImposter.DB;
 using LevelImposter.FileIO;
 using LevelImposter.Lobby;
-using LevelImposter.Networking.API;
-using LevelImposter.Shop.Transitions;
 using TMPro;
 using UnityEngine;
 
@@ -16,22 +14,23 @@ namespace LevelImposter.Shop;
 
 public class MapBanner(IntPtr intPtr) : MonoBehaviour(intPtr)
 {
+    private LIMetadata? _currentMap;
+    public Il2CppReferenceField<TextMeshPro> authorText;
+    public Il2CppReferenceField<TextMeshPro> descriptionText;
+
+    public Il2CppReferenceField<PassiveButton> downloadButton;
+    public Il2CppReferenceField<PassiveButton> externalButton;
+    public Il2CppReferenceField<PassiveButton> playButton;
+
+    public Il2CppReferenceField<PassiveButton> randomButton;
+
     // Serialized Fields
     public Il2CppReferenceField<RandomOverlay> randomOverlay;
     public Il2CppReferenceField<SpriteRenderer> thumbnailRenderer;
-    
-    public Il2CppReferenceField<TextMeshPro> titleText;
-    public Il2CppReferenceField<TextMeshPro> authorText;
-    public Il2CppReferenceField<TextMeshPro> descriptionText;
-    
-    public Il2CppReferenceField<PassiveButton> downloadButton;
-    public Il2CppReferenceField<PassiveButton> playButton;
-    public Il2CppReferenceField<PassiveButton> trashButton;
-    public Il2CppReferenceField<PassiveButton> randomButton;
-    public Il2CppReferenceField<PassiveButton> externalButton;
 
-    private LIMetadata? _currentMap;
-    
+    public Il2CppReferenceField<TextMeshPro> titleText;
+    public Il2CppReferenceField<PassiveButton> trashButton;
+
     public void Awake()
     {
         playButton.Value.OnClick.AddListener((Action)OnPlayClick);
@@ -41,7 +40,10 @@ public class MapBanner(IntPtr intPtr) : MonoBehaviour(intPtr)
         downloadButton.Value.OnClick.AddListener((Action)OnDownloadClick);
     }
 
-    private void OnRandomClick() => randomOverlay.Value.Open();
+    private void OnRandomClick()
+    {
+        randomOverlay.Value.Open();
+    }
 
     private void OnExternalClick()
     {
@@ -51,22 +53,23 @@ public class MapBanner(IntPtr intPtr) : MonoBehaviour(intPtr)
             UseShellExecute = true
         });
     }
+
     private void OnPlayClick()
     {
         // Validate current map
         if (_currentMap == null)
             throw new InvalidOperationException("Current map is null");
-        
+
         // Check if AssetDB is initialized
         if (!AssetDB.IsInit)
             throw new InvalidOperationException("AssetDB is not initialized");
-        
+
         // Load map from filesystem
         LILogger.Info($"Launching map {_currentMap}");
         var map = MapFileAPI.Get(_currentMap.id);
         if (map == null)
             throw new InvalidOperationException("Failed to load map from filesystem");
-        
+
         // Load map depending on game state
         if (!GameState.IsInLobby)
         {
@@ -95,22 +98,23 @@ public class MapBanner(IntPtr intPtr) : MonoBehaviour(intPtr)
     {
         if (_currentMap == null)
             throw new InvalidOperationException("Current map is null");
-        
+
         MapFileAPI.Delete(_currentMap.id);
         UpdateButtonState();
         ShopManager.Instance?.RandomizeMapOnClose();
     }
-    
+
     public void OnDownloadClick()
     {
         // Validate the map ID
         if (_currentMap == null)
             throw new InvalidOperationException("Current map is null");
-        
+
         // Update UI Overlay
         ShopManager.Instance?.LoadingOverlay.Show(true, true);
-        ShopManager.Instance?.LoadingOverlay.SetText($"Downloading {_currentMap.name}...", "(Looking for download URL)");
-        
+        ShopManager.Instance?.LoadingOverlay.SetText($"Downloading {_currentMap.name}...",
+            "(Looking for download URL)");
+
         // Start Download
         MapFileAPI.DownloadMap(
             new Guid(_currentMap.id),
@@ -118,6 +122,7 @@ public class MapBanner(IntPtr intPtr) : MonoBehaviour(intPtr)
             OnMapDownloaded,
             OnMapDownloadError);
     }
+
     [HideFromIl2Cpp]
     private void OnMapDownloaded(FileStore _)
     {
@@ -125,58 +130,77 @@ public class MapBanner(IntPtr intPtr) : MonoBehaviour(intPtr)
         ShopManager.Instance?.RandomizeMapOnClose();
         UpdateButtonState();
     }
+
     private void OnMapDownloadProgress(float percent)
     {
         ShopManager.Instance?.LoadingOverlay.SetText(
             $"Downloading {_currentMap?.name ?? "map"}...",
             $"{Mathf.RoundToInt(percent * 100)}%");
-        
+
         ShopManager.Instance?.LoadingOverlay.SetProgress(percent);
     }
+
     private void OnMapDownloadError(string error)
     {
         ShopManager.Instance?.LoadingOverlay.ShowError("The impostor sabotaged the download!", error);
     }
 
     /// <summary>
-    /// Launches the specified map in freeplay mode
+    ///     Launches the specified map in freeplay mode
     /// </summary>
     /// <param name="map">Map to launch</param>
     [HideFromIl2Cpp]
     private void LaunchMapInFreeplay(LIMap map)
     {
-        GameConfiguration.SetMap(map);
+        // Stop background sounds
+        SoundManager.Instance.StopAllSound();
+
+        // Load map to GameConfiguration
+        var isLobby = map.mapTarget == MapTarget.Lobby;
+        if (isLobby)
+            GameConfiguration.SetLobbyMap(map);
+        else
+            GameConfiguration.SetMap(map);
+
+        // Set game options
+        AmongUsClient.Instance.MainMenuScene = "MainMenu";
+        AmongUsClient.Instance.OnlineScene = isLobby ? "OnlineGame" : "Tutorial";
+        AmongUsClient.Instance.NetworkMode = NetworkModes.FreePlay;
         AmongUsClient.Instance.TutorialMapId = (int)MapType.LevelImposter;
 
-        var hostGameButton = gameObject.GetOrAddComponent<HostLocalGameButton>();
-        hostGameButton.NetworkMode = NetworkModes.FreePlay;
-        hostGameButton.OnClick();
+        // Start local server
+        DestroyableSingleton<InnerNetServer>.Instance.StartAsLocalServer();
+        AmongUsClient.Instance.SetEndpoint("127.0.0.1", 22023, false);
+
+
+        // Connect to server as client
+        AmongUsClient.Instance.Connect(MatchMakerModes.HostAndClient, null);
     }
 
     /// <summary>
-    /// Sets map metadata for banner to display
+    ///     Sets map metadata for banner to display
     /// </summary>
     /// <param name="map">Map metadata to display</param>
     [HideFromIl2Cpp]
     public void SetMap(LIMetadata map)
     {
         _currentMap = map;
-        
+
         randomOverlay.Value.SetMapID(map.id);
-        
+
         UpdateText();
         UpdateButtonState();
         LoadThumbnail();
     }
 
     /// <summary>
-    /// Sets the text fields based on the current map
+    ///     Sets the text fields based on the current map
     /// </summary>
     private void UpdateText()
     {
         if (_currentMap == null)
             throw new InvalidOperationException("Current map is null");
-        
+
         titleText.Value.text = _currentMap.name;
         if (_currentMap.IsInWorkshop)
         {
@@ -189,34 +213,35 @@ public class MapBanner(IntPtr intPtr) : MonoBehaviour(intPtr)
             descriptionText.Value.text = "Upload this map to the workshop to play online";
         }
     }
-    
+
     /// <summary>
-    /// Shows/hides and enables/disables buttons based on the current map state
+    ///     Shows/hides and enables/disables buttons based on the current map state
     /// </summary>
     private void UpdateButtonState()
     {
         if (_currentMap == null)
             throw new InvalidOperationException("Current map is null");
-        
+
         var isDownloaded = MapFileAPI.Exists(_currentMap.id);
         var isDownloadable = _currentMap.IsInWorkshop && _currentMap.isPublic;
-        
+        var isGameMap = _currentMap.mapTarget != MapTarget.Lobby;
+
         downloadButton.Value.gameObject.SetActive(!isDownloaded);
         randomButton.Value.gameObject.SetActive(isDownloaded);
         playButton.Value.gameObject.SetActive(isDownloaded);
         trashButton.Value.gameObject.SetActive(isDownloaded);
-        
+
         // TODO: Fix bug where external button doesn't work on mobile
         externalButton.Value.gameObject.SetActive(_currentMap.IsInWorkshop && !GameState.IsMobile);
-        
-        randomButton.Value.SetButtonEnableState(_currentMap.IsInWorkshop);
-        playButton.Value.SetButtonEnableState(/*_currentMap.IsInWorkshop || !GameState.IsInLobby*/ true);
+
+        randomButton.Value.SetButtonEnableState(_currentMap.IsInWorkshop && isGameMap);
+        playButton.Value.SetButtonEnableState(_currentMap.IsInWorkshop || !GameState.IsInLobby);
         downloadButton.Value.SetButtonEnableState(isDownloadable);
-        trashButton.Value.SetButtonEnableState(isDownloadable);     // <-- Prevents accidental deletion of non-public maps
+        trashButton.Value.SetButtonEnableState(isDownloadable); // <-- Prevents accidental deletion of non-public maps
     }
 
     /// <summary>
-    /// Loads the thumbnail for the current map
+    ///     Loads the thumbnail for the current map
     /// </summary>
     private void LoadThumbnail()
     {
@@ -227,10 +252,11 @@ public class MapBanner(IntPtr intPtr) : MonoBehaviour(intPtr)
 
         ThumbnailCache.Get(_currentMap.id, SetThumbnail);
     }
+
     private void SetThumbnail(Sprite sprite)
     {
         if (thumbnailRenderer.Value == null)
-            return;     // <-- User tabbed away before thumbnail loaded
+            return; // <-- User tabbed away before thumbnail loaded
         thumbnailRenderer.Value.sprite = sprite;
     }
 }

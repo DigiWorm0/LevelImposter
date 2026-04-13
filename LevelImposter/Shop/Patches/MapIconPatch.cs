@@ -81,3 +81,17 @@ public static class MapChangedCrewmatePatch
         return __instance.mapPicker.GetSelectedID() != (int)MapType.LevelImposter;
     }
 }
+[HarmonyPatch(typeof(ConfirmCreatePopUp), nameof(ConfirmCreatePopUp.SetupInfo))]
+public static class MapConfirmCreatePatch
+{
+    public static void Prefix(ConfirmCreatePopUp __instance)
+    {
+        var mapIcon = LIMapIconBuilder.Get();
+        
+        while (__instance.mapLogos.Length <= (int)MapType.LevelImposter)
+            __instance.mapLogos = MapUtils.AddToArr(__instance.mapLogos, mapIcon.NameImage);
+        
+        while (__instance.mapBanners.Length <= (int)MapType.LevelImposter)
+            __instance.mapBanners = MapUtils.AddToArr(__instance.mapBanners, mapIcon.MapImage);
+    }
+}

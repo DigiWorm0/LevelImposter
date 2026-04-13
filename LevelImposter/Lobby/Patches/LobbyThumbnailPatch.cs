@@ -23,7 +23,7 @@ public static class LobbyThumbnailPatch
     {
         // If the default thumbnail is null, load it
         if (_defaultThumbnail == null)
-            _defaultThumbnail = MapUtils.LoadResourceFromAssetBundle<Sprite>("defaultthumbnail");
+            _defaultThumbnail = MapUtils.LoadResourceFromAssetBundle<Sprite>("DefaultThumbnail");
         if (_defaultThumbnail == null)
             throw new Exception("Error loading default thumbnail from asset bundle");
         
