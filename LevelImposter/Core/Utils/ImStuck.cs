@@ -2,15 +2,20 @@
 using System.Collections;
 using BepInEx.Unity.IL2CPP.Utils.Collections;
 using Il2CppInterop.Runtime.Attributes;
+using LevelImposter.Networking;
 using Reactor.Networking.Attributes;
+using Reactor.Networking.Rpc;
+using Reactor.Utilities;
 using UnityEngine;
 
 namespace LevelImposter.Core;
 
-public class ImStuck
+/// <summary>
+/// Handles the "I'm Stuck" respawn functionality
+/// </summary>
+public static class ImStuck
 {
-    public static readonly KeyCode[] RESPAWN_SEQ =
-    {
+    private static readonly KeyCode[] RespawnSeq = [
         KeyCode.I,
         KeyCode.M,
         KeyCode.S,
@@ -18,20 +23,20 @@ public class ImStuck
         KeyCode.U,
         KeyCode.C,
         KeyCode.K
-    };
+    ];
 
-    public void Init()
+    public static void Init()
     {
-        // Get the ShipStatus instance
-        var shipStatus = LIShipStatus.GetInstance();
-
         // Respawn the player on key combo
-        shipStatus.StartCoroutine(
-            CoHandleKeyCombo(
-                RESPAWN_SEQ,
-                () => { RespawnPlayer(PlayerControl.LocalPlayer); }
-            ).WrapToIl2Cpp()
-        );
+        Coroutines.Start(CoHandleKeyCombo(RespawnSeq, SendResetPlayerRPC));
+    }
+
+    /// <summary>
+    /// Sends an RPC to reset the player
+    /// </summary>
+    private static void SendResetPlayerRPC()
+    {
+        Rpc<ResetPlayerRPC>.Instance.Send(true, true);
     }
 
     /// <summary>
@@ -39,7 +44,7 @@ public class ImStuck
     ///     with a specific key combo. (Shift + "RES" or Shift + "CPU")
     /// </summary>
     [HideFromIl2Cpp]
-    private IEnumerator CoHandleKeyCombo(KeyCode[] sequence, Action onSequence)
+    private static IEnumerator CoHandleKeyCombo(KeyCode[] sequence, Action onSequence)
     {
         var state = 0;
 
@@ -61,28 +66,6 @@ public class ImStuck
             }
 
             yield return null;
-        }
-    }
-
-    /// <summary>
-    ///     Resets the Local Player to the
-    ///     ShipStatus's spawn location in the
-    ///     event they are stuck.
-    /// </summary>
-    /// <param name="playerControl">Player to respawn</param>
-    [MethodRpc((uint)LIRpc.ResetPlayer)]
-    private static void RespawnPlayer(PlayerControl playerControl)
-    {
-        var shipStatus = LIShipStatus.GetShip();
-        if (playerControl == null || shipStatus == null)
-            return;
-        LILogger.Info($"Resetting {playerControl.name} to spawn");
-        var playerPhysics = playerControl.GetComponent<PlayerPhysics>();
-        playerPhysics.transform.position = shipStatus.InitialSpawnCenter;
-        if (playerPhysics.AmOwner)
-        {
-            playerPhysics.ExitAllVents();
-            LILogger.Notify("You've been reset to spawn", false);
         }
     }
 }

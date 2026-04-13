@@ -11,7 +11,7 @@ namespace LevelImposter.Core
     {
         public static void Postfix()
         {
-            MapLoader.UnloadMap();
+            GameConfiguration.SetMap(null);
         }
     }
 }

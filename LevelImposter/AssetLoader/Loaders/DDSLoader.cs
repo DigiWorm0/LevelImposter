@@ -26,11 +26,11 @@ public static class DDSLoader
     public static LoadedTexture Load(LoadableTexture loadable)
     {
         // Rent buffers from the pool
-        using var imgData = loadable.DataStore.LoadToMemory();
+        var imgData = loadable.DataStore.LoadToMemory();
 
         // Create Texture
         var texture = ImageDataToTexture2D(
-            imgData.Get(),
+            imgData,
             loadable.ID,
             loadable.Options
         );
@@ -45,7 +45,7 @@ public static class DDSLoader
     /// <param name="data">The byte array containing the data.</param>
     /// <param name="offset">The offset in the byte array where the integer starts.</param>
     /// <returns>The 32-bit unsigned integer read from the byte array.</returns>
-    private static int ReadDword(byte[] data, int offset)
+    private static int ReadDword(MemoryBlock data, int offset)
     {
         return data[offset] |
                (data[offset + 1] << 8) |
@@ -68,33 +68,16 @@ public static class DDSLoader
     }
 
     /// <summary>
-    ///     Checks if a stream matches a DDS (DirectDraw Surface) file format.
-    ///     Resets the stream position to the beginning after checking.
+    ///     Checks if the given data is a DDS file.
     /// </summary>
-    /// <param name="dataStream">The stream to check for DDS format.</param>
-    /// <returns>True if the stream is a valid DDS file, otherwise false.</returns>
-    public static bool IsDDS(Stream dataStream)
+    /// <param name="data">MemoryBlock of raw DDS data</param>
+    /// <returns>True if the data is a DDS file. False otherwise</returns>
+    public static bool IsDDS(byte[] data)
     {
-        if (!dataStream.CanSeek)
-            throw new Exception("Stream must be seekable to check for DDS format");
-        
-        using var reader = new BinaryReader(dataStream, Encoding.ASCII, true);
-        
-        try
-        {
-            // Read Header
-            var header = reader.ReadBytes(4);
-            if (header.Length != 4)
-                return false;
-            reader.BaseStream.Position = 0;
-
-            // Check for DDS magic number
-            return header[0] == 'D' && header[1] == 'D' && header[2] == 'S' && header[3] == ' ';
-        }
-        catch
-        {
-            return false;
-        }
+        return data[0] == 'D' &&
+               data[1] == 'D' &&
+               data[2] == 'S' &&
+               data[3] == ' ';
     }
 
     /// <summary>
@@ -110,16 +93,16 @@ public static class DDSLoader
     /// <returns>A Unity Texture2D containing the resulting image data</returns>
     [HideFromIl2Cpp]
     private static Texture2D ImageDataToTexture2D(
-        byte[] textureData,
+        MemoryBlock textureData,
         string name = "CustomTexture",
         LoadableTexture.TextureOptions? options = null)
     {
         // Check the first 4 bytes for DDS magic number
-        if (textureData.Length < 4 ||
-            textureData[0] != 'D' ||
-            textureData[1] != 'D' ||
-            textureData[2] != 'S' ||
-            textureData[3] != ' ')
+        if (textureData.Data.Length < 4 ||
+            textureData.Data[0] != 'D' ||
+            textureData.Data[1] != 'D' ||
+            textureData.Data[2] != 'S' ||
+            textureData.Data[3] != ' ')
             throw new Exception("Invalid DDS texture. Unable to read");
 
         // Check if the header size is correct
@@ -154,32 +137,23 @@ public static class DDSLoader
             hideFlags = HideFlags.HideAndDontSave,
             requestedMipmapLevel = 0
         };
+    
+        // Make sure pointer is offset by 128 bytes to skip DDS header
+        var textureDataPtr = IntPtr.Add(textureData.BasePointer, DDS_TEXTURE_OFFSET);
+        var textureDataSize = textureData.Length - DDS_TEXTURE_OFFSET;
         
-        // Get pointer to texture data 
-        // (This avoids duplicating the texture data in memory)
-        var handle = GCHandle.Alloc(textureData, GCHandleType.Pinned);
-        try {
-            // Make sure pointer is offset by 128 bytes to skip DDS header
-            var basePtr = handle.AddrOfPinnedObject();
-            var textureDataPtr = IntPtr.Add(basePtr, DDS_TEXTURE_OFFSET);
-            var textureDataSize = textureData.Length - DDS_TEXTURE_OFFSET;
-            
-            // Load texture data from pointer
-            texture.LoadRawTextureData(textureDataPtr, textureDataSize);
-        }
-        finally
-        {
-            // Ensure we always free the handle
-            // (Even if LoadRawTextureData throws an exception)
-            handle.Free();
-        }
+        // Double-check before casting size to int (should never happen)
+        if (textureDataSize > int.MaxValue)
+            throw new Exception("DDS texture data is too large to load.");
+        
+        // Load texture data from pointer
+        texture.LoadRawTextureData(textureDataPtr, (int)textureDataSize);
 
         // Remove texture data from CPU memory
         texture.Apply(false, true);
         
         // Register in GC
-        if (options?.AddToGC ?? true)
-            GCHandler.Register(texture);
+        GCHandler.Register(texture, options?.GCBehavior);
         
         return texture;
     }

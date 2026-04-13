@@ -35,8 +35,9 @@ public class TriggerSoundPlayer(IntPtr intPtr) : MonoBehaviour(intPtr)
     /// </summary>
     /// <param name="soundData">Sound to play on enter/exit</param>
     /// <param name="colliders">An array of all colliders to trigger from</param>
+    /// <param name="isLobby">True to use AssetDB in lobby map. False otherwise</param>
     [HideFromIl2Cpp]
-    public void Init(LISound soundData, Collider2D[] colliders)
+    public void Init(LISound soundData, Collider2D[] colliders, bool isLobby = false)
     {
         _volume = soundData?.volume ?? 1.0f;
         _colliders = colliders;
@@ -47,11 +48,12 @@ public class TriggerSoundPlayer(IntPtr intPtr) : MonoBehaviour(intPtr)
             "ambient" => SoundManager.Instance.AmbienceChannel,
             _ => SoundManager.Instance.SfxChannel
         };
-        
+
         // Load asynchronously
         AudioLoader.LoadAsync(
             soundData?.dataID ?? Guid.Empty,
-            clip => _clip = clip);
+            clip => _clip = clip,
+            isLobby);
     }
 
     /// <summary>

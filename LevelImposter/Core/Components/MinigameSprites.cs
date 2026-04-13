@@ -45,7 +45,7 @@ public class MinigameSprites(IntPtr intPtr) : MonoBehaviour(intPtr)
     private LIMinigameSprite[]? _minigameDataArr;
     private LIMinigameProps? _minigameProps;
     
-    private static bool PixelArtMode => MapLoader.CurrentMap?.properties.pixelArtMode ?? false;
+    private static bool PixelArtMode => GameConfiguration.CurrentMap?.properties.pixelArtMode ?? false;
 
     public void OnDestroy()
     {
@@ -85,7 +85,7 @@ public class MinigameSprites(IntPtr intPtr) : MonoBehaviour(intPtr)
                 var hasPivot = PIVOTS.TryGetValue(minigameData.type, out var pivot);
 
                 // Get Sprite Stream
-                var mapAssetDB = MapLoader.CurrentMap?.mapAssetDB;
+                var mapAssetDB = GameConfiguration.CurrentMap?.mapAssetDB;
                 var guid = minigameData.spriteID;
                 var mapAsset = mapAssetDB?.Get(guid);
 
@@ -95,14 +95,13 @@ public class MinigameSprites(IntPtr intPtr) : MonoBehaviour(intPtr)
 
                 // Create Loadable Texture
                 var loadableTexture = new LoadableTexture(guid?.ToString() ?? "", mapAsset);
+                loadableTexture.Options.GCBehavior = GCBehavior.AlwaysDispose;
                 loadableTexture.Options.PixelArt = PixelArtMode;
                 
                 // Create Loadable Sprite
                 var loadableSprite = new LoadableSprite(guid?.ToString() ?? "", loadableTexture);
-
-                // Apply Options
-                if (hasPivot)
-                    loadableSprite.Options.Pivot = pivot;
+                loadableSprite.Options.GCBehavior = GCBehavior.AlwaysDispose;
+                loadableSprite.Options.Pivot = hasPivot ? pivot : null;
 
                 // Add to Queue
                 SpriteLoader.Instance.AddToQueue(

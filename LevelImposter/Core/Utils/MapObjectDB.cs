@@ -9,16 +9,20 @@ namespace LevelImposter.Core;
 /// </summary>
 public class MapObjectDB
 {
-    private readonly Dictionary<Guid, GameObject> _mapObjectDB = new();
+    private readonly Dictionary<Guid, GameObject> _guidToGameObject = new();
+    private readonly Dictionary<int, LIElement> _instanceIDToElement = new();
 
     /// <summary>
-    ///     Adds an object to the database
+    ///     Adds a constructed map element to the database
     /// </summary>
-    /// <param name="guid">Element ID</param>
-    /// <param name="obj">Cooresponding GameObject</param>
-    public void AddObject(Guid guid, GameObject obj)
+    /// <param name="element">The map element to add</param>
+    /// <param name="gameObject">The GameObject associated with the map element</param>
+    public void AddObject(
+        LIElement element,
+        GameObject gameObject)
     {
-        _mapObjectDB[guid] = obj;
+        _guidToGameObject[element.id] = gameObject;
+        _instanceIDToElement[gameObject.GetInstanceID()] = element;
     }
 
     /// <summary>
@@ -28,25 +32,27 @@ public class MapObjectDB
     /// <returns>The cooresponding GameObject or null if it wasn't found</returns>
     public GameObject? GetObject(Guid guid)
     {
-        return _mapObjectDB.GetValueOrDefault(guid);
+        return _guidToGameObject.GetValueOrDefault(guid);
     }
-
+    
     /// <summary>
-    ///     Gets an object from the database
+    /// Gets an element from the database by the looking up the GameObject's instance ID.
     /// </summary>
-    /// <param name="guid">Element ID</param>
-    /// <returns>The cooresponding GameObject or null if it wasn't found</returns>
-    public static GameObject? Get(Guid guid)
+    /// <param name="gameObject">The GameObject to look up</param>
+    /// <returns>The corresponding LIElement or null if not found</returns>
+    public LIElement? GetElement(GameObject gameObject)
     {
-        // Get Ship Status
-        var shipStatus = LIShipStatus.GetInstanceOrNull();
-        if (shipStatus == null)
-        {
-            LILogger.Warn("Ship Status is missing");
-            return null;
-        }
-
-        // Get object
-        return shipStatus.MapObjectDB.GetObject(guid);
+        var instanceID = gameObject.GetInstanceID();
+        return _instanceIDToElement.GetValueOrDefault(instanceID);
+    }
+    
+    /// <summary>
+    ///    Gets an element from the database by the looking up the GameObject's instance ID.
+    /// </summary>
+    /// <param name="gameObject">The GameObject to look up</param>
+    /// <returns>The corresponding LIElement or null if not found</returns>
+    public static LIElement? Get(GameObject gameObject)
+    {
+        return LIBaseShip.Instance?.MapObjectDB.GetElement(gameObject);
     }
 }

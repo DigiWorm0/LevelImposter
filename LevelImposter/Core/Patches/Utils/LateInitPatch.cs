@@ -36,7 +36,6 @@ public static class LateInitPatch
         // the Unity runtime in some way
         var apiParent = new GameObject("LevelImposter");
         apiParent.AddComponent<LagLimiter>();
-        apiParent.AddComponent<HTTPHandler>();
         Object.DontDestroyOnLoad(apiParent);
 
         _hasInitialized = true;

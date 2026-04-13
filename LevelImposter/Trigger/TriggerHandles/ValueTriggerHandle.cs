@@ -14,10 +14,10 @@ public class ValueTriggerHandle : ITriggerHandle
             return;
 
         // Get Element Data
-        var elementData = signal.TargetObject.GetLIData();
+        var element = MapObjectDB.Get(signal.TargetObject);
 
         // Get Value
-        var valueObj = (BasicBoolValue)ValueBuilder.GetBoolOfID(elementData.ID);
+        var valueObj = (BasicBoolValue)ValueBuilder.GetBoolOfID(element?.id);
         if (valueObj == null)
             throw new Exception("Value object is not a BasicBoolValue");
 

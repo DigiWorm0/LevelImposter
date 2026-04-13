@@ -1,5 +1,4 @@
 ﻿using System;
-using Il2CppInterop.Runtime.Attributes;
 using Il2CppInterop.Runtime.InteropTypes.Arrays;
 using Il2CppSystem.Collections.Generic;
 using LevelImposter.Builders;
@@ -10,14 +9,78 @@ using Object = UnityEngine.Object;
 
 namespace LevelImposter.Core;
 
-public class MapBuilder
+public static class MapBuilder
 {
-    public bool IsBuilding { get; private set; }
+    public static bool IsBuilding { get; private set; }
+
+    private static readonly BuildRouter MapBuildRouter = new([
+        new MapPropertiesBuilder(),
+
+        new TransformBuilder(),
+        new SpriteBuilder(),
+        new ColliderBuilder(),
+        new MinigameSpriteBuilder(),
+        new LayerBuilder(),
+
+        new RoomBuilder(),
+        new AdminMapBuilder(),
+        new RoomNameBuilder(),
+
+        new MinimapBuilder(),
+        new DummyBuilder(),
+        new UtilBuilder(),
+        new SpawnBuilder(),
+        new VentBuilder(),
+        new CamBuilder(),
+        new DisplayBuilder(),
+        new TaskBuilder(),
+        new DecBuilder(),
+        new PhysicsObjectBuilder(),
+        new MeetingOptionsBuilder(),
+        new SabotageOptionsBuilder(),
+        new OneWayColliderBuilder(),
+        new DecontaminationBuilder(),
+        new SporeBuilder(),
+        new BinocularsBuilder(),
+        new FilterBuilder(),
+        new EjectBuilder(),
+        new EjectDummyBuilder(),
+        new EjectHandBuilder(),
+        new ValueBuilder(),
+        new PlayerMoverBuilder(),
+
+        new SabBuilder(),
+        new SabMixupBuilder(),
+        new SabConsoleBuilder(),
+        new SabMapBuilder(),
+        new SabDoorBuilder(),
+
+        new MinimapSpriteBuilder(),
+        new LadderBuilder(),
+        new PlatformBuilder(),
+        new StarfieldBuilder(),
+        new FloatBuilder(),
+        new ScrollBuilder(),
+        new AmbientSoundBuilder(),
+        new StepSoundBuilder(),
+        new TeleBuilder(),
+        new TeleLinkBuilder(),
+        new TriggerAreaBuilder(),
+        new TriggerConsoleBuilder(),
+        new TriggerStartBuilder(),
+        new TriggerDeathBuilder(),
+        new TriggerShakeBuilder(),
+        new TriggerAnimBuilder(),
+
+        new CustomTextBuilder(),
+        new ColorBuilder()
+    ]);
+    
 
     /// <summary>
     ///     Resets the map to a blank slate. Ran before any map elements are applied.
     /// </summary>
-    public void ResetMap()
+    private static void ResetMap()
     {
         // Get Ship Status
         var liShipStatus = LIShipStatus.GetInstance();
@@ -75,99 +138,48 @@ public class MapBuilder
         liShipStatus.Renames.Clear();
         SystemDistributor.Reset();
     }
+    
+    /// <summary>
+    /// Resets and rebuilds the active map based on
+    /// <see cref="GameConfiguration.CurrentMap"/>.
+    /// </summary>
+    /// <exception cref="Exception">If GameConfiguration.CurrentMap is null</exception>
+    public static void RebuildMap()
+    {
+        if (GameConfiguration.CurrentMap == null)
+            throw new Exception("CurrentMap is null");
+        
+        ResetMap();
+        LIBaseShip.Instance?.SetMap(GameConfiguration.CurrentMap);
+        BuildMap(GameConfiguration.CurrentMap);
+    }
 
     /// <summary>
     ///     Replaces the active map with LevelImposter map data
     /// </summary>
     /// <param name="map">Deserialized map data from a <c>.LIM</c> file</param>
-    [HideFromIl2Cpp]
-    public void BuildMap(LIMap map)
+    private static void BuildMap(LIMap map)
     {
-        LILogger.Msg($"Loading {map}");
+        // Check Asset DB
+        if (!AssetDB.IsInit)
+            throw new Exception("AssetDB is not initialized");
+        
+        // START
         IsBuilding = true;
+        LILogger.Info($"Building map from {map}...");
+        
+        // Set GC Behavior
+        GCHandler.SetDefaultBehavior(GCBehavior.DisposeOnMapUnload);
 
         // Show Loading Bar (Freeplay Only)
         if (GameState.IsInFreeplay)
             LoadingBar.Run();
-
-        // Get Ship Status
-        var liShipStatus = LIShipStatus.GetInstance();
-
-        ResetMap();
-        BuildRouter buildRouter = new();
-
-        // Asset DB
-        if (!AssetDB.IsInit)
-            LILogger.Warn("Asset DB is not initialized yet!");
-
-        // Create GameObjects
-        foreach (var elem in map.elements)
-        {
-            // Create GameObject
-            var objName = elem.name.Replace("\\n", " ");
-            var elemObject = new GameObject(objName);
-            elemObject.transform.SetParent(liShipStatus.transform);
-
-            // Append MapObjectData component
-            var mapObjectData = elemObject.AddComponent<MapObjectData>();
-            mapObjectData.SetSourceElement(elem);
-
-            // Add to DB
-            liShipStatus.MapObjectDB.AddObject(elem.id, elemObject);
-        }
-
-        // Set Parenting
-        foreach (var elem in map.elements)
-        {
-            // Get Element Properties
-            var elemObject = liShipStatus.MapObjectDB.GetObject(elem.id);
-            if (elemObject == null)
-                continue;
-
-            // Get Parent ID
-            var parent = elem.parentID;
-            if (parent == null)
-                continue;
-
-            // Find Parent Object
-            var parentObject = liShipStatus.MapObjectDB.GetObject((Guid)parent);
-            if (parentObject == null)
-                continue;
-
-            // Get Parent Element Properties
-            var parentElement = parentObject.GetComponent<MapObjectData>();
-            if (parentElement == null)
-                continue;
-
-            // Check if parent is a util-layer
-            if (parentElement.Element.type != "util-layer")
-                continue;
-
-            // Set Parent
-            elemObject.transform.SetParent(parentObject.transform);
-        }
-
-        // Prebuild
-        LILogger.Msg("Running Pre-Build");
-        foreach (var elem in map.elements)
-            buildRouter.RunBuildStep(BuildRouter.BuildStep.PreBuild, elem);
-
-        // Build
-        LILogger.Msg("Running Build");
-        foreach (var elem in map.elements)
-            buildRouter.RunBuildStep(BuildRouter.BuildStep.Build, elem);
-
-        // Postbuild
-        LILogger.Msg("Running Post-Build");
-        foreach (var elem in map.elements)
-            buildRouter.RunBuildStep(BuildRouter.BuildStep.PostBuild, elem);
-
-        // Cleanup
-        LILogger.Msg("Running Cleanup");
-        buildRouter.Cleanup();
-
-        // Finish
+        
+        // Rebuild the map
+        MapBuildRouter.BuildMap(map.elements, LIShipStatus.GetInstance().transform);
+        
+        // FINISH
+        LILogger.Info($"Built map from {map}");
         IsBuilding = false;
-        LILogger.Msg("Done");
     }
 }

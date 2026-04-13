@@ -7,10 +7,7 @@ namespace LevelImposter.Builders;
 
 public class DecBuilder : IElemBuilder
 {
-    private static readonly List<string> _fixTypes = new()
-    {
-        "room-dropship"
-    };
+    private static readonly List<string> TypesToResetPivot = ["room-dropship"];
 
     public void OnBuild(LIElement elem, GameObject obj)
     {
@@ -28,7 +25,7 @@ public class DecBuilder : IElemBuilder
         var spriteRenderer = MapUtils.CloneSprite(obj, prefab);
 
         // Fixes Pivot Offset Bug
-        if (_fixTypes.Contains(elem.type))
+        if (TypesToResetPivot.Contains(elem.type))
         {
             var sprite = Sprite.Create(
                 spriteRenderer.sprite.texture,

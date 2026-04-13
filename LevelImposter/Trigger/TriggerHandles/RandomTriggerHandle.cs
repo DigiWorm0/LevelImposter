@@ -13,14 +13,16 @@ public class RandomTriggerHandle : ITriggerHandle
             return;
 
         // Get source element
-        var objectData = signal.TargetObject.GetLIData();
+        var element = MapObjectDB.Get(signal.TargetObject);
+        if (element == null)
+            return;
 
         // Get a random value
         // Seed is synced across all clients, so the same value is generated on all clients
-        var randVal = RandomizerSync.GetRandom(objectData.ID, _randomOffset++);
+        var randVal = RandomizerSync.GetRandom(element.id, _randomOffset++);
 
         // Get the random chance (0 - 1)
-        var randomChance = 1.0f / (objectData.Properties.triggerCount ?? 2);
+        var randomChance = 1.0f / (element.properties.triggerCount ?? 2);
 
         // Get the trigger index based on the random value (0 - triggerCount)
         var triggerIndex = Mathf.FloorToInt(randVal / randomChance);

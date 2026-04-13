@@ -4,10 +4,12 @@ using HarmonyLib;
 using Il2CppInterop.Runtime.Injection;
 using LevelImposter.Core;
 using LevelImposter.DB;
+using LevelImposter.FileIO;
+using LevelImposter.Lobby;
 using LevelImposter.Shop;
 using Reactor.Networking;
 using Reactor.Networking.Attributes;
-using UnityEngine;
+using Reactor.Utilities;
 
 namespace LevelImposter;
 
@@ -25,16 +27,22 @@ public partial class LevelImposter : BasePlugin
 
     public Harmony Harmony { get; } = new(ID);
 
-    public static string DisplayVersion { get; } =
-        Version.Contains('+') ? Version.Substring(0, Version.IndexOf('+')) : Version;
+    
+    public static string DisplayVersion => Version.Contains('+') ? 
+        Version.Substring(0, Version.IndexOf("+", System.StringComparison.Ordinal)) : 
+        Version;
+    
+    public static bool IsDevBuild => Version.Contains("dev") || Version.Contains('+');
 
     public override void Load()
     {
         // Init Subsystems
         LILogger.Init();
         MapFileAPI.Init();
+        ConfigAPI.Load();
         FileCache.Init();
         ModCompatibility.Init();
+        ImStuck.Init();
 
         // IUsable Interface
         RegisterTypeOptions usableInterface = new()
@@ -46,6 +54,7 @@ public partial class LevelImposter : BasePlugin
         };
 
         // Inject MonoBehaviours
+        ClassInjector.RegisterTypeInIl2Cpp<LIBaseShip>();
         ClassInjector.RegisterTypeInIl2Cpp<LIShipStatus>();
         ClassInjector.RegisterTypeInIl2Cpp<LIStar>();
         ClassInjector.RegisterTypeInIl2Cpp<LIFloat>();
@@ -63,23 +72,31 @@ public partial class LevelImposter : BasePlugin
         ClassInjector.RegisterTypeInIl2Cpp<TriggerSoundPlayer>();
         ClassInjector.RegisterTypeInIl2Cpp<LIPlayerMover>();
         ClassInjector.RegisterTypeInIl2Cpp<TriggerConsole>(usableInterface);
-        ClassInjector.RegisterTypeInIl2Cpp<MapObjectData>();
         ClassInjector.RegisterTypeInIl2Cpp<EditableLadderConsole>();
         ClassInjector.RegisterTypeInIl2Cpp<LIExileController>();
         ClassInjector.RegisterTypeInIl2Cpp<LIPhysicsObject>();
 
         ClassInjector.RegisterTypeInIl2Cpp<AssetDB>();
 
-        ClassInjector.RegisterTypeInIl2Cpp<HTTPHandler>();
+        ClassInjector.RegisterTypeInIl2Cpp<Shop.ProgressBar>();
+        ClassInjector.RegisterTypeInIl2Cpp<ConnectionAnimation>();
+        ClassInjector.RegisterTypeInIl2Cpp<FloatingAnimation>();
+        ClassInjector.RegisterTypeInIl2Cpp<PulseAnimation>();
+        ClassInjector.RegisterTypeInIl2Cpp<LoadingOverlay>();
         ClassInjector.RegisterTypeInIl2Cpp<RandomOverlay>();
         ClassInjector.RegisterTypeInIl2Cpp<MapBanner>();
+        ClassInjector.RegisterTypeInIl2Cpp<GameObjectGrid>();
+        ClassInjector.RegisterTypeInIl2Cpp<ShopTabButton>();
         ClassInjector.RegisterTypeInIl2Cpp<ShopManager>();
-        ClassInjector.RegisterTypeInIl2Cpp<ShopTabs>();
         ClassInjector.RegisterTypeInIl2Cpp<Spinner>();
         ClassInjector.RegisterTypeInIl2Cpp<LoadingBar>();
+        ClassInjector.RegisterTypeInIl2Cpp<LILobbyBehaviour>();
         ClassInjector.RegisterTypeInIl2Cpp<LobbyVersionTag>();
-        ClassInjector.RegisterTypeInIl2Cpp<LobbyConsole>(usableInterface);
+        ClassInjector.RegisterTypeInIl2Cpp<LobbyMapConsole>(usableInterface);
 
+        // Reactor Version Patch
+        ReactorCredits.Register("LevelImposter", DisplayVersion, false, ReactorCredits.AlwaysShow);
+        
         // Patch Methods
         Harmony.PatchAll();
         LILogger.Msg("LevelImposter Initialized.");

@@ -46,7 +46,6 @@ public class ShowHideTriggerHandle : ITriggerHandle
     {
         // Get signal info
         var fadeObject = signal.TargetObject;
-        var sourceObject = signal.SourceTrigger?.TargetObject;
 
         // Always show object during the animation
         fadeObject.SetActive(true);
@@ -60,12 +59,12 @@ public class ShowHideTriggerHandle : ITriggerHandle
         }
 
         // Get the object data
-        var objectData = sourceObject?.GetLIData();
-        var triggerFadeTime = objectData?.Properties.triggerFadeTime ?? 0;
+        var element = MapObjectDB.Get(signal.TargetObject);
+        var triggerFadeTime = element?.properties.triggerFadeTime ?? 0;
 
         // Get colors
         var spriteColor = spriteRenderers[0].color;
-        var visibleAlpha = objectData?.Properties.color?.a ?? 1.0f; // Use original sprite color, if applicable
+        var visibleAlpha = element?.properties.color?.a ?? 1.0f; // Use original sprite color, if applicable
 
         // Sprite color can be 0 - 255, so clamp it
         var fromAlpha = Mathf.Clamp(spriteColor.a, 0.0f, visibleAlpha);

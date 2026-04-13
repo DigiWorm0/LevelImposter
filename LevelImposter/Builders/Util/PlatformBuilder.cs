@@ -12,7 +12,7 @@ internal class PlatformBuilder : IElemBuilder
     // TODO: Support multiple moving platforms in 1 map
     public static MovingPlatformBehaviour? Platform;
 
-    public PlatformBuilder()
+    public void OnPreBuild()
     {
         Platform = null;
     }

@@ -18,13 +18,13 @@ public class LIScroll(IntPtr intPtr) : MonoBehaviour(intPtr)
     public void Awake()
     {
         // Get Object Data
-        var objData = gameObject.GetLIData();
-        if (objData == null)
-            throw new Exception("Missing MapObjectData");
+        var element = MapObjectDB.Get(gameObject);
+        if (element == null)
+            throw new Exception("LIScroll is missing LI data");
 
         // Get Scrolling Speeds
-        _xSpeed = objData.Element.properties.scrollingXSpeed ?? _xSpeed;
-        _ySpeed = objData.Element.properties.scrollingYSpeed ?? _ySpeed;
+        _xSpeed = element.properties.scrollingXSpeed ?? _xSpeed;
+        _ySpeed = element.properties.scrollingYSpeed ?? _ySpeed;
 
         // Set Layer
         //gameObject.layer = (int)Layer.Ship;
@@ -34,7 +34,7 @@ public class LIScroll(IntPtr intPtr) : MonoBehaviour(intPtr)
         // Unity doesn't support scrolling textures on sprites
         SpriteBuilder.OnSpriteLoad += (loadedElem, _) =>
         {
-            if (loadedElem.id != objData.ID)
+            if (loadedElem.id != element.id)
                 return;
             ReplaceRenderer();
         };

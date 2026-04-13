@@ -1,22 +1,28 @@
-﻿using System.IO;
-using Il2CppInterop.Runtime.InteropTypes.Arrays;
+﻿using System;
 
 namespace LevelImposter.Core;
 
 /// <summary>
-/// Stores a block of data in memory.
+/// Wrapper around an existing <see cref="MemoryBlock"/> to provide it as an <see cref="IDataStore"/>.
+/// Since the data is already in memory at construction time, it simply returns the existing block on load.
 /// </summary>
-/// <param name="rawData">The raw data to store.</param>
-public class MemoryStore(byte[] rawData) : IDataStore
+/// <param name="memoryBlock">The existing memory block.</param>
+public class MemoryStore(MemoryBlock memoryBlock) : IDataStore
 {
-    public IMemoryBlock LoadToMemory()
+    public MemoryBlock LoadToMemory()
     {
-        // We can reuse the existing data block since the data is already in memory.
-        return new ExistingMemoryBlock(rawData);
+        return memoryBlock;
     }
-    
-    public Stream OpenStream()
+
+    public byte[] LoadToManagedMemory()
     {
-        return new MemoryStream(rawData);
+        return memoryBlock.ToManagedArray();
+    }
+
+    public byte[] Peek(int count)
+    {
+        var managedArray = new byte[count];
+        Buffer.BlockCopy(memoryBlock.Data, 0, managedArray, 0, (int)Math.Min(count, memoryBlock.Length));
+        return managedArray;
     }
 }

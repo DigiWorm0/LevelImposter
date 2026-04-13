@@ -9,16 +9,15 @@ namespace LevelImposter.Builders;
 
 internal class MeetingOptionsBuilder : IElemBuilder
 {
-    public const string REPORT_SOUND_NAME = "meetingReportStinger";
-    public const string BUTTON_SOUND_NAME = "meetingButtonStinger";
-
-
-    public MeetingOptionsBuilder()
+    private const string REPORT_SOUND_NAME = "meetingReportStinger";
+    private const string BUTTON_SOUND_NAME = "meetingButtonStinger";
+    
+    public static GameObject? TriggerObject { get; private set; }
+    
+    public void OnPreBuild()
     {
         TriggerObject = null;
     }
-
-    public static GameObject? TriggerObject { get; private set; }
 
     public void OnBuild(LIElement elem, GameObject obj)
     {
@@ -40,12 +39,13 @@ internal class MeetingOptionsBuilder : IElemBuilder
         // Meeting Background
         if (elem.properties.meetingBackgroundID != null)
         {
-            var loadable = SpriteBuilder.GetLoadableFromID(elem.properties.meetingBackgroundID);
+            var spriteBuilder = new SpriteBuilder(MapTarget.Game);
+            var loadable = spriteBuilder.GetLoadableFromID(elem.properties.meetingBackgroundID);
             if (loadable != null)
             {
                 SpriteLoader.Instance.AddToQueue(
                     (LoadableSprite)loadable,
-                    spriteData => { LoadMeetingBackground(elem, spriteData); });
+                    spriteData => LoadMeetingBackground(spriteData));
             }
         }
 
@@ -76,7 +76,7 @@ internal class MeetingOptionsBuilder : IElemBuilder
         }
     }
 
-    private void LoadMeetingBackground(LIElement elem, Sprite sprite)
+    private static void LoadMeetingBackground(Sprite sprite)
     {
         var shipStatus = LIShipStatus.GetShip();
         shipStatus.MeetingBackground = sprite;

@@ -10,6 +10,11 @@ public class EjectBuilder : IElemBuilder
 {
     public static LIExileController? EjectController { get; private set; }
 
+    public void OnPreBuild()
+    {
+        EjectController = null;
+    }
+
     public void OnBuild(LIElement elem, GameObject obj)
     {
         if (elem.type != "util-eject")

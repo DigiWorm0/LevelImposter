@@ -40,19 +40,19 @@ public class LIExileController(IntPtr intPtr) : ExileController(intPtr)
         exileVisorPosition = new Vector3(-0.148f, 0.647f, -0.002f);
 
         // Get Element Data
-        var elementData = EjectBuilder.EjectController?.gameObject.GetLIData();
-        if (elementData == null)
+        var element = MapObjectDB.Get(EjectBuilder.EjectController?.gameObject);
+        if (element == null)
             throw new Exception("Failed to get LIElementData from EjectController");
 
         // Get Element Properties
-        _x = elementData.Element.x;
-        _y = elementData.Element.y;
-        _preTextDuration = elementData.Properties.ejectPreTextDuration ?? 2.0f;
-        _textDuration = elementData.Properties.ejectTextDuration ?? 2.0f;
-        _postTextDuration = elementData.Properties.ejectPostTextDuration ?? 2.0f;
-        _cameraXOffset = elementData.Properties.camXOffset ?? 0.0f;
-        _cameraYOffset = elementData.Properties.camYOffset ?? 0.0f;
-        _cameraZoom = elementData.Properties.camZoom ?? 3.0f;
+        _x = element.x;
+        _y = element.y;
+        _preTextDuration = element.properties.ejectPreTextDuration ?? 2.0f;
+        _textDuration = element.properties.ejectTextDuration ?? 2.0f;
+        _postTextDuration = element.properties.ejectPostTextDuration ?? 2.0f;
+        _cameraXOffset = element.properties.camXOffset ?? 0.0f;
+        _cameraYOffset = element.properties.camYOffset ?? 0.0f;
+        _cameraZoom = element.properties.camZoom ?? 3.0f;
 
         // Set Base Duration (Just in case)
         Duration = _preTextDuration + _textDuration + _postTextDuration + DURATION_OFFSET;

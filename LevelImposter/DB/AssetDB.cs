@@ -16,7 +16,6 @@ namespace LevelImposter.DB;
 /// </summary>
 internal class AssetDB : MonoBehaviour
 {
-    public const string LEVELIMPOSTER_MAP_NAME = "Random LI Map";
     private const string SUBMERGED_MAP_GUID = "Submerged";
     private readonly Stack<MapType> _loadedShips = new();
     private bool _isInit;

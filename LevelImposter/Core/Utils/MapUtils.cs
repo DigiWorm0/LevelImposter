@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Text.Json;
+using System.IO;
 using AmongUs.GameOptions;
 using Il2CppInterop.Runtime;
 using Il2CppInterop.Runtime.InteropTypes;
@@ -38,7 +39,7 @@ public static class MapUtils
     /// <param name="arr">Array to add to</param>
     /// <param name="value">Element to add</param>
     /// <returns>New array with value appended</returns>
-    public static Il2CppReferenceArray<T> AddToArr<T>(Il2CppReferenceArray<T> arr, T value) where T : Il2CppObjectBase
+    public static Il2CppReferenceArray<T> AddToArr<T>(Il2CppReferenceArray<T> arr, T value) where T : Il2CppObjectBase?
     {
         List<T> list = new(arr)
         {
@@ -50,6 +51,15 @@ public static class MapUtils
     public static Il2CppStringArray AddToArr(Il2CppStringArray arr, string value)
     {
         List<string> list = new(arr)
+        {
+            value
+        };
+        return list.ToArray();
+    }
+    
+    public static Il2CppStructArray<T> AddToArr<T>(Il2CppStructArray<T> arr, T value) where T : unmanaged
+    {
+        List<T> list = new(arr)
         {
             value
         };
@@ -197,9 +207,9 @@ public static class MapUtils
     /// </summary>
     /// <param name="base64">Base64 encoded data</param>
     /// <returns>Stream of bytes representing raw base64 data</returns>
-    public static Il2CppStructArray<byte> ParseBase64(string base64)
+    public static byte[] ParseBase64(string base64)
     {
-        var sub64 = base64.Substring(base64.IndexOf(",") + 1);
+        var sub64 = base64.Substring(base64.IndexOf(",", StringComparison.Ordinal) + 1);
         return Convert.FromBase64String(sub64);
     }
 
@@ -242,39 +252,25 @@ public static class MapUtils
         mesh.RecalculateNormals();
         return mesh;
     }
+    
+    private static Stream OpenResourceStream(string name)
+    {
+        var assembly = Assembly.GetExecutingAssembly();
+        var resourceStream = assembly.GetManifestResourceStream($"LevelImposter.Assets.{name}");
+        if (resourceStream == null)
+            throw new Exception($"Resource {name} not found in assembly");
 
-    /// <summary>
-    ///     Grabs a resource from the assembly
-    /// </summary>
-    /// <param name="name">Name of the resource file</param>
-    /// <returns>Raw resource data</returns>
+        return resourceStream;
+    }
     private static byte[]? GetResource(string name)
     {
-        var assembly = Assembly.GetExecutingAssembly();
-        using (var resourceStream = assembly.GetManifestResourceStream($"LevelImposter.Assets.{name}"))
-        {
-            if (resourceStream == null)
-                return null;
-
-            var resourceData = new byte[resourceStream.Length];
-            resourceStream.Read(resourceData);
-            return resourceData;
-        }
+        using var resourceStream = OpenResourceStream(name);
+        return resourceStream.ToManagedArray();
     }
-
-    private static Il2CppStructArray<byte>? GetResourceAsIl2Cpp(string name)
+    private static MemoryBlock? GetResourceAsIl2Cpp(string name)
     {
-        var assembly = Assembly.GetExecutingAssembly();
-        using (var resourceStream = assembly.GetManifestResourceStream($"LevelImposter.Assets.{name}"))
-        {
-            if (resourceStream == null)
-                return null;
-
-            var length = (int)resourceStream.Length;
-            var resourceData = new Il2CppStructArray<byte>(length);
-            resourceStream.AsIl2Cpp().Read(resourceData, 0, length);
-            return resourceData;
-        }
+        using var resourceStream = OpenResourceStream(name);
+        return resourceStream.ToIl2CppArray();
     }
     
     /// <summary>
@@ -327,21 +323,21 @@ public static class MapUtils
             return null;
 
         // Create Loadables
-        var loadableTexture = LoadableTexture.FromByteArray($"{name}-resource", spriteData);
-        loadableTexture.Options.AddToGC = false;
+        var loadableTexture = LoadableTexture.FromMemory($"{name}-resource", spriteData);
+        loadableTexture.Options.GCBehavior = GCBehavior.NeverDispose;
         
         var loadableSprite = LoadableSprite.FromLoadableTexture(loadableTexture);
-        loadableSprite.Options.AddToGC = false;
+        loadableSprite.Options.GCBehavior = GCBehavior.NeverDispose;
         
         // Load Sprite (Synchronously)
-        return SpriteLoader.LoadSync(loadableSprite);
+        return SpriteLoader.Instance.LoadImmediate(loadableSprite);
     }
 
     /// <summary>
     ///     Deserializes a JSON object from assembly resources
     /// </summary>
     /// <typeparam name="T">JSON type to deserialize to</typeparam>
-    /// <param name="name">Name of the json file</param>
+    /// <param name="name">Name of the JSON file</param>
     /// <returns>JSON object or null if not found</returns>
     public static T? LoadJsonResource<T>(string name) where T : class
     {
@@ -372,31 +368,6 @@ public static class MapUtils
     }
 
     /// <summary>
-    ///     Waits for ShipStatus to be ready, then calls Action
-    /// </summary>
-    /// <param name="timeout">Max amount of time in seconds to wait</param>
-    /// <param name="onFinish">Action to call when the map is initialized</param>
-    public static void WaitForShip(float timeout, Action onFinish)
-    {
-        Coroutines.Start(CoWaitForShip(timeout, onFinish));
-    }
-
-    private static IEnumerator CoWaitForShip(float timeout, Action? onFinish)
-    {
-        {
-            float timer = 0;
-            while (LIShipStatus.GetInstanceOrNull()?.IsReady == false && timer < timeout)
-            {
-                timer += Time.deltaTime;
-                yield return null;
-            }
-
-            onFinish?.Invoke();
-            onFinish = null;
-        }
-    }
-
-    /// <summary>
     ///     Waits for a specific amount of frames, then calls Action
     /// </summary>
     /// <param name="frames">Amount of frames to wait</param>
@@ -422,7 +393,7 @@ public static class MapUtils
     public static void PreloadAllMapSprites()
     {
         // Get current map
-        var map = MapLoader.CurrentMap;
+        var map = GameConfiguration.CurrentMap;
         if (map == null)
             return;
 
@@ -430,9 +401,11 @@ public static class MapUtils
         LILogger.Info("Preloading all sprites for " + map.name);
 
         // Start Async Loading
+        GCHandler.SetDefaultBehavior(GCBehavior.DisposeOnMapUnload);
+        var spriteBuilder = new SpriteBuilder();
         foreach (var elem in map.elements)
             if (elem.properties.spriteID != null)
-                SpriteBuilder.LoadSprite(elem, _ => { });
+                spriteBuilder.LoadSprite(elem, _ => { });
     }
 
     /// <summary>
@@ -462,7 +435,7 @@ public static class MapUtils
     /// <returns>obj's SpriteRenderer</returns>
     public static SpriteRenderer CloneSprite(GameObject obj, GameObject? prefab, bool isSpriteAnim = false)
     {
-        var prefabRenderer = prefab?.GetComponentInChildren<SpriteRenderer>();
+        var prefabRenderer = prefab?.GetComponentInChildren<SpriteRenderer>(true);
         if (!prefabRenderer)
             throw new Exception("Failed to get SpriteRenderer from prefab");
 
@@ -497,6 +470,10 @@ public static class MapUtils
     {
         return vector - new Vector3(0, 0, -(vector.y / 1000.0f) + LIConstants.PLAYER_POS);
     }
+    public static Vector3 InverseScaleZPositionByY(Vector3 vector)
+    {
+        return vector + new Vector3(0, 0, -(vector.y / 1000.0f) + LIConstants.PLAYER_POS);
+    }
 
     /// <summary>
     ///     Traverses a transform hierarchy and returns a list of transforms that match the given path.
@@ -530,20 +507,6 @@ public static class MapUtils
             results.AddRange(GetTransforms(remainingPath, firstPartTransform));
 
         return results;
-    }
-
-    /// <summary>
-    ///     Sets the current map type
-    /// </summary>
-    /// <param name="mapType">Current MapType enum</param>
-    /// <param name="transmit">Whether to transmit the change over RPC</param>
-    public static void SetLobbyMapType(MapType mapType, bool transmit = false)
-    {
-        var currentGameOptions = GameOptionsManager.Instance.CurrentGameOptions;
-        currentGameOptions.SetByte(ByteOptionNames.MapId, (byte)mapType);
-        GameOptionsManager.Instance.GameHostOptions = GameOptionsManager.Instance.CurrentGameOptions;
-        if (transmit)
-            GameManager.Instance.LogicOptions.SyncOptions();
     }
 
     /// <summary>

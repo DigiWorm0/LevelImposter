@@ -6,23 +6,22 @@ namespace LevelImposter.Builders;
 
 internal class SabotageOptionsBuilder : IElemBuilder
 {
-    public const string SABOTAGE_SOUND_NAME = "sabotageSound";
-
-
-    public SabotageOptionsBuilder()
+    private const string SABOTAGE_SOUND_NAME = "sabotageSound";
+    
+    public static GameObject? TriggerObject { get; private set; }
+    
+    public void OnPreBuild()
     {
         TriggerObject = null;
     }
-
-    public static GameObject? TriggerObject { get; private set; }
-
+    
     public void OnBuild(LIElement elem, GameObject obj)
     {
         if (elem.type != "util-sabotages")
             return;
 
         // ShipStatus
-        var shipStatus = LIShipStatus.GetInstance().ShipStatus;
+        var shipStatus = LIShipStatus.GetShip();
 
         // Singleton
         if (TriggerObject != null)

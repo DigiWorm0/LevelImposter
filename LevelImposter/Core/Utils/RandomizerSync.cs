@@ -36,27 +36,22 @@ public static class RandomizerSync
     }
 
     /// <summary>
-    ///     Generates a new random seed and
-    ///     synchronizes it across all clients.
+    /// Generates a new random seed based on the current time.
     /// </summary>
-    public static void SyncRandomSeed()
+    /// <returns>A new random seed integer.</returns>
+    public static int GenerateRandomSeed()
     {
-        var isConnected = AmongUsClient.Instance.AmConnected;
-        var isHost = AmongUsClient.Instance.AmHost;
-        if (isConnected && (!isHost || PlayerControl.LocalPlayer == null))
-            return;
         Random.InitState((int)DateTime.Now.Ticks);
-        var newSeed = Random.RandomRange(int.MinValue, int.MaxValue);
-        if (isConnected)
-            RPCSyncRandomSeed(PlayerControl.LocalPlayer, newSeed);
-        else
-            _randomSeed = newSeed;
+        _randomSeed = Random.RandomRange(int.MinValue, int.MaxValue);
+        return _randomSeed;
     }
 
-    [MethodRpc((uint)LIRpc.SyncRandomSeed)]
-    private static void RPCSyncRandomSeed(PlayerControl _, int randomSeed)
+    /// <summary>
+    /// Sets the random seed to a specific value.
+    /// </summary>
+    /// <param name="seed">The seed value to set.</param>
+    public static void SetRandomSeed(int seed)
     {
-        LILogger.Info($"[RPC] New random seed set: {randomSeed}");
-        _randomSeed = randomSeed;
+        _randomSeed = seed;
     }
 }

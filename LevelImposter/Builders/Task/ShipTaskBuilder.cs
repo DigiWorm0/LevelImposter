@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using LevelImposter.Core;
 using LevelImposter.DB;
+using LevelImposter.Shop;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
@@ -10,7 +11,7 @@ namespace LevelImposter.Builders;
 
 public class ShipTaskBuilder : IElemBuilder
 {
-    private static readonly Dictionary<string, TaskLength> TASK_LENGTHS = new()
+    private static readonly Dictionary<string, TaskLength> TaskLengths = new()
     {
         { "Short", TaskLength.Short },
         { "Long", TaskLength.Long },
@@ -22,15 +23,13 @@ public class ShipTaskBuilder : IElemBuilder
     private NormalPlayerTask? _wiresTask;
 
     public static SystemTypes[] DivertSystems { get; private set; } = Array.Empty<SystemTypes>();
-
-    /// <summary>
-    ///     Performs final clean-up
-    /// </summary>
-    public void OnCleanup()
+    
+    public void OnPreBuild()
     {
-        if (_wiresTask != null)
-            _wiresTask.MaxStep = Math.Min(TaskConsoleBuilder.WiresCount, (byte)3);
+        _builtTypes.Clear();
+        _taskParent = null;
         _wiresTask = null;
+        DivertSystems = Array.Empty<SystemTypes>();
     }
 
     /// <summary>
@@ -69,23 +68,23 @@ public class ShipTaskBuilder : IElemBuilder
         var systemType = RoomBuilder.GetParentOrDefault(elem);
 
         // Rename
-        var renameHandler = LIShipStatus.GetInstance().Renames;
+        var renameHandler = LIBaseShip.Instance?.Renames;
         if (prefabTask != null && !string.IsNullOrEmpty(elem.properties.description))
         {
-            renameHandler.Add(prefabTask.TaskType, elem.properties.description);
+            renameHandler?.Add(prefabTask.TaskType, elem.properties.description);
 
             // Rename Node Description
             if (isNode || isNodeSwitch)
-                renameHandler.Add(StringNames.FixWeatherNode, elem.properties.description);
+                renameHandler?.Add(StringNames.FixWeatherNode, elem.properties.description);
         }
 
         // Rename Node Room
         if (isNode)
         {
             var controlType = WeatherSwitchGame.ControlNames[console.ConsoleId];
-            var roomName = renameHandler.Get(systemType);
+            var roomName = renameHandler?.Get(systemType);
             if (roomName != null)
-                renameHandler.Add(controlType, roomName);
+                renameHandler?.Add(controlType, roomName);
         }
 
         // Built List
@@ -191,6 +190,15 @@ public class ShipTaskBuilder : IElemBuilder
             AddTaskToShip(elem, prefabLength, task);
         }
     }
+    
+    /// <summary>
+    ///     Performs final clean-up
+    /// </summary>
+    public void OnPostBuild()
+    {
+        if (_wiresTask != null)
+            _wiresTask.MaxStep = Math.Min(TaskConsoleBuilder.WiresCount, (byte)3);
+    }
 
     /// <summary>
     ///     Finds a list of elements of the specified type
@@ -198,15 +206,15 @@ public class ShipTaskBuilder : IElemBuilder
     /// <param name="type">Type to search for</param>
     /// <returns>List of all elements in the map of the cooresponding type</returns>
     /// <exception cref="Exception">If there is no LIMap loaded/loading</exception>
-    public static List<LIElement> FindElementsOfType(string type)
+    private static List<LIElement> FindElementsOfType(string type)
     {
         // Check Map
-        var instance = LIShipStatus.GetInstance();
-        if (LIShipStatus.CurrentMap == null)
+        var currentMap = GameConfiguration.CurrentMap;
+        if (currentMap == null)
             throw new Exception("Current map is unavailable");
 
         // Find Elements
-        return LIShipStatus.CurrentMap.elements.Where(mapElem => mapElem.type == type).ToList();
+        return currentMap.elements.Where(mapElem => mapElem.type == type).ToList();
     }
 
     /// <summary>
@@ -227,7 +235,7 @@ public class ShipTaskBuilder : IElemBuilder
 
         // TaskLength
         var taskLengthProp = elem.properties.taskLength;
-        var taskLength = taskLengthProp != null ? TASK_LENGTHS[taskLengthProp] : prefabLength;
+        var taskLength = taskLengthProp != null ? TaskLengths[taskLengthProp] : prefabLength;
         switch (taskLength)
         {
             case TaskLength.Common:

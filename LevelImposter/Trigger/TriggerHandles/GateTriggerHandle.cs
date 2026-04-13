@@ -14,8 +14,8 @@ public class GateTriggerHandle : ITriggerHandle
             return;
 
         // Get Value
-        var elementData = signal.TargetObject.GetLIData();
-        var valueObj = ValueBuilder.GetBoolOfID(elementData.Properties.triggerGateValueID);
+        var element = MapObjectDB.Get(signal.TargetObject);
+        var valueObj = ValueBuilder.GetBoolOfID(element?.properties.triggerGateValueID);
         var value = valueObj.GetValue(0);
 
         // Fire Trigger

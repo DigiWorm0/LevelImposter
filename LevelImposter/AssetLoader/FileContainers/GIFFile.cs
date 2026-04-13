@@ -41,7 +41,7 @@ public class GIFFile(string name) : IDisposable
 
     // Other Data
     private Color[]? _pixelBuffer; // Buffer of pixel colors
-    private bool _addToGC = true;
+    private GCBehavior? _gcBehavior;
 
     // GIF File
     public bool IsLoaded { get; private set; }
@@ -70,49 +70,31 @@ public class GIFFile(string name) : IDisposable
     }
 
     /// <summary>
-    ///     Checks if the given stream is a GIF file. Keeps the stream open.
+    ///     Checks if the given data is a GIF file.
     /// </summary>
-    /// <param name="dataStream">Stream of raw image data</param>
-    /// <returns>True if the Stream is a GIF file. False otherwise</returns>
-    public static bool IsGIF(Stream dataStream)
+    /// <param name="data">MemoryBlock of raw GIF data</param>
+    /// <returns>True if the data is a GIF file. False otherwise</returns>
+    public static bool IsGIF(byte[] data)
     {
-        if (!dataStream.CanSeek)
-            throw new Exception("Stream must be seekable to check for GIF format");
-        
-        using var reader = new BinaryReader(dataStream, Encoding.ASCII, true);
-        try
-        {
-            // Read Header
-            var header = reader.ReadBytes(6);
-            if (header.Length != 6)
-                return false;
-            reader.BaseStream.Position = 0;
-
-            // Check Header
-            return header[0] == 'G' &&
-                   header[1] == 'I' &&
-                   header[2] == 'F' &&
-                   header[3] == '8' &&
-                   (header[4] == '7' || header[4] == '9') &&
-                   header[5] == 'a';
-        }
-        catch
-        {
-            return false;
-        }
+        return data[0] == 'G' &&
+               data[1] == 'I' &&
+               data[2] == 'F' &&
+               data[3] == '8' &&
+               (data[4] == '7' || data[4] == '9') &&
+               data[5] == 'a';
     }
 
     /// <summary>
     ///     Loads the GIF file from a given stream.
     /// </summary>
     /// <param name="dataStream">Stream of raw GIF data</param>
-    /// <param name="addToGC">Whether to handle texture garbage collection automatically</param>
-    public void Load(Stream dataStream, bool addToGC = true)
+    /// <param name="gcBehavior">Garbage collection behavior for the loaded textures</param>
+    public void Load(Stream dataStream, GCBehavior? gcBehavior = null)
     {
         using var reader = new BinaryReader(dataStream);
         
         IsLoaded = false;
-        _addToGC = addToGC;
+        _gcBehavior = gcBehavior;
         ReadHeader(reader);
         ReadDescriptor(reader);
         ReadGlobalColorTable(reader);
@@ -386,6 +368,7 @@ public class GIFFile(string name) : IDisposable
     /// <returns>List of color indices</returns>
     private List<ushort> DecodeLZW(byte[] byteBuffer, byte minCodeSize, int expectedSize)
     {
+        // Initialize LZW Variables
         var clearCode = 1 << minCodeSize; // Code used to clear the code table
         var endOfInformationCode = clearCode + 1; // Code used to signal the end of the image data
 
@@ -400,14 +383,25 @@ public class GIFFile(string name) : IDisposable
             _codeTable[k] = k < clearCode ? new[] { k } : new ushort[0];
 
         // Decode LZW
-        var i = 0;
-        while (i + codeSize < byteBuffer.Length * 8)
+        var bitOffset = 0;
+        var byteIndex = 0;
+        while (byteIndex * 8 + bitOffset + codeSize < byteBuffer.Length * 8)
         {
-            // Read Code
+            // Read code at current byte/bit position
             var code = 0;
-            for (var j = 0; j < codeSize; j++)
-                code |= GetBit(byteBuffer, i + j) ? 1 << j : 0;
-            i += codeSize;
+            for (var i = 0; i < codeSize; i++) {
+
+                // Get Bit
+                code |= ((byteBuffer[byteIndex] >> bitOffset) & 1) << i;
+
+                // Increment position
+                bitOffset++;
+                if (bitOffset == 8)
+                {
+                    bitOffset = 0;
+                    byteIndex++;
+                }
+            }
 
             // Special Codes
             if (code == clearCode)
@@ -487,19 +481,6 @@ public class GIFFile(string name) : IDisposable
     }
 
     /// <summary>
-    ///     Gets a bit from a byte array.
-    /// </summary>
-    /// <param name="arr">Array of raw byte data</param>
-    /// <param name="index">Offset in bits</param>
-    /// <returns><c>true</c> if the bit is a 1, <c>false</c> otherwise</returns>
-    private bool GetBit(byte[] arr, int index)
-    {
-        var byteIndex = index / 8;
-        var bitIndex = index % 8;
-        return (arr[byteIndex] & (1 << bitIndex)) != 0;
-    }
-
-    /// <summary>
     ///     Pre-renders all frames of the GIF. Requires the GIF to be loaded.
     /// </summary>
     public void RenderAllFrames()
@@ -547,7 +528,7 @@ public class GIFFile(string name) : IDisposable
             }
 
             // Create frame texture
-            var pixelArtMode = MapLoader.CurrentMap?.properties.pixelArtMode == true;
+            var pixelArtMode = GameConfiguration.CurrentMap?.properties.pixelArtMode == true;
             var texture = new Texture2D(Width, Height, TextureFormat.RGBA32, false)
             {
                 wrapMode = TextureWrapMode.Clamp,
@@ -592,8 +573,7 @@ public class GIFFile(string name) : IDisposable
             texture.Apply(false, true); // Remove from CPU memory
             
             // Add to GC
-            if (_addToGC)
-                GCHandler.Register(texture);
+            GCHandler.Register(texture, _gcBehavior);
 
             // Handle frame disposal
             switch (frame.DisposalMethod)

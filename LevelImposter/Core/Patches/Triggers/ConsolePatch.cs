@@ -39,12 +39,12 @@ public class ConsolePatch
         MinigamePatch.LastConsole = __instance.gameObject;
 
         // Get Object Data
-        var objectData = __instance.gameObject.GetComponent<MapObjectData>();
-        if (objectData == null)
+        var element = MapObjectDB.Get(__instance.gameObject);
+        if (element == null)
             return true;
 
         // Create Trigger
-        var isClientSide = objectData.Properties.triggerClientSide ?? true;
+        var isClientSide = element.properties.triggerClientSide ?? true;
         TriggerSignal signal = new(__instance.gameObject, "onUse", PlayerControl.LocalPlayer);
 
         // Fire Trigger

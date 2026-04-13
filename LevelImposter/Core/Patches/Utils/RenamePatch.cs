@@ -1,5 +1,6 @@
 using HarmonyLib;
 using Il2CppSystem;
+using LevelImposter.Shop;
 using ObjList = Il2CppInterop.Runtime.InteropTypes.Arrays.Il2CppReferenceArray<Il2CppSystem.Object>;
 
 namespace LevelImposter.Core;
@@ -12,10 +13,10 @@ public static class SystemRenamePatch
 {
     public static bool Prefix([HarmonyArgument(0)] SystemTypes systemType, ref string __result)
     {
-        if (!LIShipStatus.IsInstance() || !LIShipStatus.GetInstance().Renames.Contains(systemType))
+        if (!LIBaseShip.Instance?.Renames.Contains(systemType) ?? true)
             return true;
 
-        __result = LIShipStatus.GetInstance().Renames.Get(systemType) ?? __result;
+        __result = LIBaseShip.Instance.Renames.Get(systemType) ?? __result;
         return false;
     }
 }
@@ -28,10 +29,10 @@ public static class TaskRenamePatch
 {
     public static bool Prefix([HarmonyArgument(0)] TaskTypes taskType, ref string __result)
     {
-        if (!LIShipStatus.IsInstance() || !LIShipStatus.GetInstance().Renames.Contains(taskType))
+        if (!LIBaseShip.Instance?.Renames.Contains(taskType) ?? true)
             return true;
 
-        __result = LIShipStatus.GetInstance().Renames.Get(taskType);
+        __result = LIBaseShip.Instance.Renames.Get(taskType) ?? __result;
         return false;
     }
 }
@@ -50,16 +51,22 @@ public static class StringRenamePatch
         // Handle Special Cases
         if (stringNames == LIConstants.MAP_STRING_NAME)
         {
-            __result = GameState.MapName;
+            // Hide map name in lobby
+            if (GameConfiguration.HideMapName && GameState.IsInLobby)
+                __result = LIConstants.MAP_NAME;
+            
+            // Otherwise, get the current map name
+            else
+                __result = GameConfiguration.CurrentMap?.name ?? LIConstants.MAP_NAME;
             return false;
         }
 
         // Handle Normal Cases
-        if (!LIShipStatus.IsInstance() || !LIShipStatus.GetInstance().Renames.Contains(stringNames))
+        if (!LIBaseShip.Instance?.Renames.Contains(stringNames) ?? true)
             return true;
 
         // Get the string from the database
-        __result = LIShipStatus.GetInstance().Renames.Get(stringNames);
+        __result = LIBaseShip.Instance.Renames.Get(stringNames) ?? __result;
 
         // Format parameters into string
         // MUST BE Il2cppSystem.String.Format (not System.String.Format)

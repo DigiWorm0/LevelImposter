@@ -9,9 +9,9 @@ public class MapAssetDB
 {
     public Dictionary<Guid, IDataStore> DB { get; } = new();
 
-    public void Add(Guid id, byte[] rawData)
+    public void Add(Guid id, MemoryBlock memoryBlock)
     {
-        DB.Add(id, new MemoryStore(rawData));
+        DB.Add(id, new MemoryStore(memoryBlock));
     }
 
     public void Add(Guid id, FileChunkStore fileChunkStore)

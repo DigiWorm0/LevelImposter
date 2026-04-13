@@ -11,7 +11,7 @@ public class DummyBuilder : IElemBuilder
             return;
 
         // ShipStatus
-        var shipStatus = LIShipStatus.GetInstance().ShipStatus;
+        var shipStatus = LIShipStatus.GetShip();
 
         // Add Location
         shipStatus.DummyLocations = MapUtils.AddToArr(shipStatus.DummyLocations, obj.transform);

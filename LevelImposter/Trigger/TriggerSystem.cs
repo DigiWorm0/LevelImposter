@@ -2,8 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using LevelImposter.Core;
+using LevelImposter.Networking;
 using LevelImposter.Shop;
-using Reactor.Networking.Attributes;
+using Reactor.Networking.Rpc;
 using UnityEngine;
 
 namespace LevelImposter.Trigger;
@@ -15,9 +16,8 @@ public class TriggerSystem
 {
     private const int MAX_STACK_SIZE = 128;
 
-    private readonly List<ITriggerHandle> _triggerHandles = new()
-    {
-        // Handles trigger effects
+    private readonly List<ITriggerHandle> _triggerHandles =
+    [
         new DeathTriggerHandle(),
         new DoorTriggerHandle(),
         new MeetingTriggerHandle(),
@@ -34,26 +34,10 @@ public class TriggerSystem
 
         // Propogates triggers to target elements
         new TriggerPropogationHandle()
-    };
+    ];
 
-    public TriggerSystem()
-    {
-        OnCreate();
-    }
-
-    private static bool _shouldLog => MapLoader.CurrentMap?.properties.triggerLogging ?? false;
-
-    private static bool _detectStackOverflow =>
-        MapLoader.CurrentMap?.properties.triggerDetectStackOverflow ?? true;
-
-    /// <summary>
-    ///     Patch me to add your own custom trigger handles.
-    ///     Handles should implement <c>ITriggerHandle</c>.
-    /// </summary>
-    public void OnCreate()
-    {
-        // ...
-    }
+    public static bool EnableLogging => LIBaseShip.Instance?.CurrentMap?.properties.triggerLogging ?? false;
+    public static bool DetectStackOverflow => LIBaseShip.Instance?.CurrentMap?.properties.triggerDetectStackOverflow ?? true;
 
     /// <summary>
     ///     Gets the global instance of the trigger system
@@ -62,7 +46,7 @@ public class TriggerSystem
     /// <exception cref="MissingShipException">If LIShipStatus is missing</exception>
     public static TriggerSystem GetInstance()
     {
-        return LIShipStatus.GetInstance().TriggerSystem;
+        return LIBaseShip.Instance?.TriggerSystem ?? throw new MissingShipException();
     }
 
     /// <summary>
@@ -77,7 +61,7 @@ public class TriggerSystem
             return null;
 
         // Get Object
-        return LIShipStatus.GetInstance().MapObjectDB.GetObject((Guid)objectID);
+        return LIBaseShip.Instance?.MapObjectDB.GetObject((Guid)objectID);
     }
 
     /// <summary>
@@ -91,52 +75,16 @@ public class TriggerSystem
             throw new Exception("Missing PlayerControl on TriggerSignal");
 
         // Get Object Data
-        var objectData = signal.TargetObject.GetComponent<MapObjectData>();
-        if (objectData == null)
+        var element = MapObjectDB.Get(signal.TargetObject);
+        if (element == null)
             throw new Exception($"{signal.TargetObject} is missing LI data");
 
         // Fire Trigger over RPC
-        RPCFireTrigger(
-            signal.SourcePlayer,
-            objectData.ID.ToString(),
-            signal.TriggerID
-        );
-    }
-
-    /// <summary>
-    ///     Fires a trigger over the network
-    /// </summary>
-    /// <param name="orgin">Orgin player</param>
-    /// <param name="elemIDString">LIElement ID to fire</param>
-    /// <param name="triggerID">Trigger ID to fire</param>
-    [MethodRpc((uint)LIRpc.FireTrigger)]
-    private static void RPCFireTrigger(PlayerControl orgin, string elemIDString, string triggerID)
-    {
-        // Log
-        if (_shouldLog)
-            LILogger.Msg($"[RPC] {elemIDString} >>> {triggerID} ({orgin.name})");
-
-        // Get Ship Status
-        var shipStatus = LIShipStatus.GetInstance();
-
-        // Parse ID
-        if (!Guid.TryParse(elemIDString, out var elemID))
+        Rpc<TriggerRPC>.Instance.Send(signal.SourcePlayer, new RPCTriggerPacket
         {
-            LILogger.Warn("RPC triggered element ID is invalid.");
-            return;
-        }
-
-        // Find cooresponding object
-        var gameObject = shipStatus.MapObjectDB.GetObject(elemID);
-        if (gameObject == null)
-        {
-            LILogger.Warn($"RPC object with ID {elemID} is missing");
-            return;
-        }
-
-        // Create & Fire Trigger
-        TriggerSignal signal = new(gameObject, triggerID, orgin);
-        shipStatus.TriggerSystem.FireTrigger(signal);
+            ElemIDString = element.id.ToString(),
+            TriggerID = signal.TriggerID
+        }, true);
     }
 
     /// <summary>
@@ -150,7 +98,7 @@ public class TriggerSystem
         var playerName = signal.SourcePlayer == null ? "null" : signal.SourcePlayer.name;
 
         // Infinite Loop
-        if (_detectStackOverflow && signal.StackSize > MAX_STACK_SIZE)
+        if (DetectStackOverflow && signal.StackSize > MAX_STACK_SIZE)
         {
             LILogger.Warn(
                 $"{objectName} >>> {signal.TriggerID} detected an infinite trigger loop and aborted");
@@ -159,7 +107,7 @@ public class TriggerSystem
         }
 
         // Logging
-        if (_shouldLog)
+        if (EnableLogging)
         {
             var whitespace = string.Concat(Enumerable.Repeat("| ", signal.StackSize - 1)) + "+ ";
             LILogger.Info(
