@@ -1,5 +1,4 @@
-﻿using System;
-using LevelImposter.AssetLoader;
+﻿using LevelImposter.AssetLoader;
 using LevelImposter.Shop;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -10,7 +9,7 @@ public static class GameState
 {
     // Hardware
     public static bool IsMobile => Application.isMobilePlatform;
-    
+
     // Map
     public static string MapName => GameConfiguration.CurrentMap?.name ?? LIConstants.MAP_NAME;
 
@@ -24,15 +23,17 @@ public static class GameState
 
     // Network
     public static bool IsHost => AmongUsClient.Instance?.AmHost ?? false;
-    
+
     // Player State
-    public static bool IsLocalPlayerImpostor => PlayerControl.LocalPlayer?.Data?.Role.TeamType == RoleTeamTypes.Impostor;
+    public static bool IsLocalPlayerImpostor =>
+        PlayerControl.LocalPlayer?.Data?.Role.TeamType == RoleTeamTypes.Impostor;
+
     public static bool IsLocalPlayerDead => PlayerControl.LocalPlayer?.Data?.IsDead ?? true;
-    
+
     // Loading State
     public static int LoadingAssetsCount => TextureLoader.Instance.QueueSize +
-                                           SpriteLoader.Instance.QueueSize +
-                                           AudioLoader.Instance.QueueSize;
-    
+                                            SpriteLoader.Instance.QueueSize +
+                                            AudioLoader.Instance.QueueSize;
+
     public static bool IsLoadingCustomMap => LoadingAssetsCount > 0;
 }

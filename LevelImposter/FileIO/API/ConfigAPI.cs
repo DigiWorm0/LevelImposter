@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Reflection;
 using System.Text.Json;
 using LevelImposter.Core;
 
@@ -15,14 +14,13 @@ public static class ConfigAPI
     private static ConfigData _configData = new();
 
     /// <summary>
-    ///     Gets the current directory where config file is stored.
+    ///     Gets the full file path where config file is stored.
     ///     Usually in a LevelImposter folder beside the LevelImposter.dll.
     /// </summary>
     /// <returns>String path where config file is stored.</returns>
-    public static string GetDirectory()
+    public static string GetPath()
     {
-        var gameDir = Assembly.GetAssembly(typeof(LevelImposter))?.Location ?? "/";
-        return Path.Combine(Path.GetDirectoryName(gameDir) ?? "/", "LevelImposter/config.json");
+        return FileAPI.GetPath("config.json");
     }
 
     /// <summary>
@@ -30,7 +28,7 @@ public static class ConfigAPI
     /// </summary>
     public static void Load()
     {
-        var directory = GetDirectory();
+        var directory = GetPath();
         if (!File.Exists(directory))
             return;
         var configJSON = File.ReadAllText(directory);
@@ -46,7 +44,7 @@ public static class ConfigAPI
         try
         {
             LILogger.Info("Saving local config file");
-            var path = GetDirectory();
+            var path = GetPath();
             var directory = Path.GetDirectoryName(path) ?? path;
 
             // Create Directory
@@ -111,7 +109,7 @@ public static class ConfigAPI
         _configData.LastMapJoined = mapID;
         Save();
     }
-    
+
     /// <summary>
     ///     Gets the Map ID of the lobby map
     /// </summary>

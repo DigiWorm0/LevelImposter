@@ -1,18 +1,17 @@
-using Il2CppInterop.Runtime.Attributes;
-using LevelImposter.Core;
 using System;
 using System.IO;
 using System.Linq;
+using LevelImposter.Core;
 
 namespace LevelImposter.FileIO;
 
 /// <summary>
-/// API to manage cached files in the local filesystem
+///     API to manage cached files in the local filesystem
 /// </summary>
 public static class FileCache
 {
     /// <summary>
-    /// Runs various initialization tasks for the FileCache
+    ///     Runs various initialization tasks for the FileCache
     /// </summary>
     public static void Init()
     {
@@ -22,9 +21,9 @@ public static class FileCache
         // Ensure cache directory exists
         MakeDirectoryIfNotExists();
     }
-    
+
     /// <summary>
-    /// Makes the cache directory if it does not already exist
+    ///     Makes the cache directory if it does not already exist
     /// </summary>
     private static void MakeDirectoryIfNotExists()
     {
@@ -36,18 +35,17 @@ public static class FileCache
     }
 
     /// <summary>
-    /// Gets the current directory where LevelImposter cached files are stored.
-    /// Usually in a subdirectory within the LevelImposter folder beside the LevelImposter.dll.
+    ///     Gets the current directory where LevelImposter cached files are stored.
+    ///     Usually in a subdirectory within the LevelImposter folder beside the LevelImposter.dll.
     /// </summary>
     /// <returns>String path where LevelImposter map thumbnails is stored.</returns>
     private static string GetDirectory()
     {
-        var gameDir = System.Reflection.Assembly.GetAssembly(typeof(LevelImposter))?.Location ?? "/";
-        return Path.Combine(Path.GetDirectoryName(gameDir) ?? "/", "LevelImposter/.cache");
+        return FileAPI.GetPath(".cache");
     }
 
     /// <summary>
-    /// Deletes all cached files from the local filesystem
+    ///     Deletes all cached files from the local filesystem
     /// </summary>
     /// <param name="maxDirectorySize">Only clears cache if the directory size is greater than this many bytes</param>
     public static void Clear(long maxDirectorySize = 0)
@@ -76,7 +74,7 @@ public static class FileCache
     }
 
     /// <summary>
-    /// Gets the path where a specific cached file is stored.
+    ///     Gets the path where a specific cached file is stored.
     /// </summary>
     /// <param name="fileName">Name of the file</param>
     /// <returns>The path where a specific cached file is stored</returns>
@@ -86,7 +84,7 @@ public static class FileCache
     }
 
     /// <summary>
-    /// Checks the existance of a cached file based on ID
+    ///     Checks the existance of a cached file based on ID
     /// </summary>
     /// <param name="fileName">Name of the file</param>
     /// <returns>True if a file with the cooresponding ID exists</returns>

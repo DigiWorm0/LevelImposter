@@ -5,15 +5,15 @@ using LevelImposter.FileIO;
 namespace LevelImposter.Lobby;
 
 /// <summary>
-/// Manages downloading maps from the server to the client.
+///     Manages downloading maps from the server to the client.
 /// </summary>
 public class MapDownloadHelper(bool preventGameStart = false)
 {
     /// The current download state, or null if no download is active.
     public DownloadState? CurrentDownloadState { get; private set; }
-    
+
     /// <summary>
-    /// Checks if the specified map is currently being downloaded.
+    ///     Checks if the specified map is currently being downloaded.
     /// </summary>
     /// <param name="mapID">ID of the map to check</param>
     /// <returns>True if the map is being downloaded, false otherwise</returns>
@@ -24,13 +24,13 @@ public class MapDownloadHelper(bool preventGameStart = false)
     }
 
     /// <summary>
-    ///   Cancels the active map download, if any.
+    ///     Cancels the active map download, if any.
     /// </summary>
     public void CancelDownload()
     {
         if (CurrentDownloadState == null)
             return;
-        
+
         LILogger.Notify("Download cancelled.", false);
         CurrentDownloadState = null;
 
@@ -40,7 +40,7 @@ public class MapDownloadHelper(bool preventGameStart = false)
     }
 
     /// <summary>
-    /// Downloads a map with the specified ID.
+    ///     Downloads a map with the specified ID.
     /// </summary>
     /// <param name="mapID">ID of the map to download</param>
     /// <param name="onSuccess">Callback invoked on successful download with the downloaded map</param>
@@ -51,16 +51,16 @@ public class MapDownloadHelper(bool preventGameStart = false)
         Action<string> onError)
     {
         // Abort if already downloading this map
-        if (CurrentDownloadState != null && 
+        if (CurrentDownloadState != null &&
             CurrentDownloadState.MapID == mapID)
             return;
 
         // Cancel any existing download
         CancelDownload();
-        
+
         // Update state
         var downloadState = new DownloadState
-{
+        {
             MapID = mapID
         };
         CurrentDownloadState = downloadState;
@@ -68,7 +68,7 @@ public class MapDownloadHelper(bool preventGameStart = false)
         // Prevent Game Start
         if (preventGameStart)
             PlayersReadyCounter.MarkPlayerNotReady(PlayerControl.LocalPlayer);
-        
+
         // Log
         LILogger.Info($"Starting download for map ID [{mapID}]");
         LILogger.Notify("Downloading map, please wait...", false);
@@ -77,15 +77,16 @@ public class MapDownloadHelper(bool preventGameStart = false)
         MapFileCache.DownloadMap(
             mapID,
             progress => downloadState.Progress = progress,
-            (_) =>
+            _ =>
             {
                 // Check if we changed downloads
                 if (CurrentDownloadState?.ID != downloadState.ID)
                     return;
-                
+
                 // Load map from cache
                 var map = MapFileCache.Get(mapID.ToString());
-                if (map == null) {
+                if (map == null)
+                {
                     downloadState.Error = "Failed to load downloaded map from cache.";
                     LILogger.Error(downloadState.Error);
                     onError(downloadState.Error);
@@ -98,14 +99,13 @@ public class MapDownloadHelper(bool preventGameStart = false)
 
                 // Success
                 onSuccess(map);
-                
+
                 // Allow Game Start
                 if (preventGameStart)
                     PlayersReadyCounter.MarkPlayerReady(PlayerControl.LocalPlayer);
 
                 // Clear state
                 CurrentDownloadState = null;
-
             },
             error =>
             {
@@ -121,15 +121,15 @@ public class MapDownloadHelper(bool preventGameStart = false)
     }
 
     /// <summary>
-    ///   Represents the state of an active map download.
+    ///     Represents the state of an active map download.
     /// </summary>
     public class DownloadState
     {
         private static int _downloadIDCounter;
+        public string? Error;
 
         public int ID = _downloadIDCounter++;
-        public float Progress = 0;
         public Guid MapID = Guid.Empty;
-        public string? Error;
+        public float Progress;
     }
 }
