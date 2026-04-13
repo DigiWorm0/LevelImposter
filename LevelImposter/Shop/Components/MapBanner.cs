@@ -78,9 +78,14 @@ public class MapBanner(IntPtr intPtr) : MonoBehaviour(intPtr)
         }
         else if (map.mapTarget == MapTarget.Lobby)
         {
+            var isLobbyChanged = GameConfiguration.CurrentLobbyMap?.id != map.id;
+
             // Load Lobby Map
             GameConfiguration.SetLobbyMap(map);
-            LobbyMapBuilder.Rebuild();
+            GameConfigurationSync.SendGameConfigurationRPC();
+            if (isLobbyChanged)
+                LobbyMapBuilder.Rebuild();
+
             ConfigAPI.SetLobbyMapID(map.id);
             ShopManager.Instance?.CloseShop();
         }
@@ -89,6 +94,8 @@ public class MapBanner(IntPtr intPtr) : MonoBehaviour(intPtr)
             // Load LevelImposter Map
             GameConfiguration.SetMap(map);
             GameConfiguration.SetMapType(MapType.LevelImposter);
+            GameConfigurationSync.SendGameConfigurationRPC();
+
             ConfigAPI.SetLastMapID(map.id);
             ShopManager.Instance?.CloseShop();
         }

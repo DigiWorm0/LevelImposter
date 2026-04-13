@@ -64,7 +64,7 @@ public static class MapRandomizer
             }
 
             // Check if the map targets game (non-lobby maps)
-            else if (map.mapTarget != MapTarget.Game)
+            else if (map.mapTarget == MapTarget.Lobby)
             {
                 LILogger.Warn($"Map randomizer excluded map [{mapID}] because its a lobby map.");
                 blacklistMaps.Add(mapID);

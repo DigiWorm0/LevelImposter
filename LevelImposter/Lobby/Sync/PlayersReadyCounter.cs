@@ -12,7 +12,7 @@ public static class PlayersReadyCounter
     public static List<PlayerControl> NotReadyPlayers { get; } = new();
 
     /// <summary>
-    /// Sends an RPC indicating whether the local player is ready or still downloading
+    ///     Sends an RPC indicating whether the local player is ready or still downloading
     /// </summary>
     /// <param name="isReady">True if the player is ready, false if still downloading</param>
     public static void SendPlayerReadyRPC(bool isReady)
@@ -21,7 +21,7 @@ public static class PlayersReadyCounter
     }
 
     /// <summary>
-    /// Marks a player as ready
+    ///     Marks a player as ready
     /// </summary>
     /// <param name="player">The player to mark as ready</param>
     public static void MarkPlayerReady(PlayerControl player)
@@ -31,7 +31,7 @@ public static class PlayersReadyCounter
     }
 
     /// <summary>
-    ///   Marks a player as not ready
+    ///     Marks a player as not ready
     /// </summary>
     /// <param name="player">The player to mark as not ready</param>
     public static void MarkPlayerNotReady(PlayerControl player)
@@ -41,24 +41,10 @@ public static class PlayersReadyCounter
     }
 
     /// <summary>
-    ///     Gets the text to display above start button
+    ///     Removes any players who's PlayerControls were destroyed
     /// </summary>
-    /// <returns>A string with status text</returns>
-    public static string GetStartText()
+    public static void FixNullPlayers()
     {
-        // Check local download state
-        var mapDownloadState = GameConfigurationSync.GameMapDownloader.CurrentDownloadState;
-        if (mapDownloadState?.Error != null)
-            return $"ERROR: {mapDownloadState?.Error}";
-        if (mapDownloadState != null)
-            return $"DOWNLOADING MAP ({mapDownloadState.Progress * 100:F1}%)";
-
-        // Check other players
-        return NotReadyPlayers.Count switch
-        {
-            > 1 => $"WAITING ON <color=#1a95d8>{NotReadyPlayers.Count} players</color> TO DOWNLOAD MAP",
-            1 => $"WAITING ON <color=#1a95d8>{NotReadyPlayers[0].name}</color> TO DOWNLOAD MAP",
-            _ => string.Empty
-        };
+        NotReadyPlayers.RemoveAll(player => player == null);
     }
 }

@@ -8,15 +8,15 @@ using Reactor.Networking.Rpc;
 namespace LevelImposter.Lobby;
 
 /// <summary>
-/// Helps sync the <see cref="GameConfiguration"/> from the host to all clients. 
+///     Helps sync the <see cref="GameConfiguration" /> from the host to all clients.
 /// </summary>
 public static class GameConfigurationSync
 {
-    public static MapDownloadHelper GameMapDownloader { get; private set; } = new(true);
-    public static MapDownloadHelper LobbyMapDownloader { get; private set; } = new(false);
+    public static MapDownloadHelper GameMapDownloader { get; } = new(true);
+    public static MapDownloadHelper LobbyMapDownloader { get; } = new();
 
     /// <summary>
-    /// Sends the current game configuration (map IDs and settings) to all clients in the lobby.
+    ///     Sends the current game configuration (map IDs and settings) to all clients in the lobby.
     /// </summary>
     /// <exception cref="Exception">Thrown if the map IDs are not valid GUIDs.</exception>
     public static void SendGameConfigurationRPC()
@@ -37,8 +37,9 @@ public static class GameConfigurationSync
 
         // Transmit RPC
         Rpc<GameConfigurationRPC>.Instance.Send(
-            PlayerControl.LocalPlayer, 
-            new SerializedGameConfiguration {
+            PlayerControl.LocalPlayer,
+            new SerializedGameConfiguration
+            {
                 MapID = mapID,
                 LobbyMapID = lobbyMapID,
                 HideMapName = GameConfiguration.HideMapName
@@ -46,7 +47,7 @@ public static class GameConfigurationSync
     }
 
     /// <summary>
-    /// Called when a game configuration RPC is received from the host.
+    ///     Called when a game configuration RPC is received from the host.
     /// </summary>
     /// <param name="gameConfig">The received serialized game configuration.</param>
     public static void OnGameConfigurationRPC(SerializedGameConfiguration gameConfig)
@@ -63,7 +64,7 @@ public static class GameConfigurationSync
     }
 
     /// <summary>
-    /// Updates the lobby map based on the received game configuration.
+    ///     Updates the lobby map based on the received game configuration.
     /// </summary>
     /// <param name="gameConfig">The received serialized game configuration.</param>
     private static void UpdateLobbyMap(SerializedGameConfiguration gameConfig)
@@ -83,6 +84,7 @@ public static class GameConfigurationSync
         else if (TryGetMapLocally(mapIDStr, out var map))
         {
             GameConfiguration.SetLobbyMap(map);
+            LobbyMapBuilder.Rebuild();
         }
         // Download map if not found locally
         else
@@ -90,7 +92,11 @@ public static class GameConfigurationSync
             GameConfiguration.SetLobbyMap(null);
             LobbyMapDownloader.DownloadMap(
                 gameConfig.LobbyMapID,
-                map => GameConfiguration.SetLobbyMap(map),
+                map =>
+                {
+                    GameConfiguration.SetLobbyMap(map);
+                    LobbyMapBuilder.Rebuild();
+                },
 
                 // Don't allow players to be in the lobby without the active lobby map loaded
                 error => AmongUsClient.Instance.DisconnectWithReason($"Failed to download lobby map: {error}")
@@ -99,7 +105,7 @@ public static class GameConfigurationSync
     }
 
     /// <summary>
-    /// Updates the game map based on the received game configuration.
+    ///     Updates the game map based on the received game configuration.
     /// </summary>
     /// <param name="gameConfig">The received serialized game configuration.</param>
     private static void UpdateGameMap(SerializedGameConfiguration gameConfig)
@@ -127,14 +133,13 @@ public static class GameConfigurationSync
             GameMapDownloader.DownloadMap(
                 gameConfig.MapID,
                 map => GameConfiguration.SetMap(map, gameConfig.HideMapName),
-                _ => {}
+                _ => { }
             );
-            return;
         }
     }
 
     /// <summary>
-    /// Tries to get the map locally from filesystem or cache.
+    ///     Tries to get the map locally from filesystem or cache.
     /// </summary>
     /// <param name="mapID">The map ID to look for.</param>
     /// <param name="map">The found map, or null if not found.</param>

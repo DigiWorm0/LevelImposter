@@ -14,10 +14,11 @@ public static class LobbyMapBuilder
         new SpriteBuilder(MapTarget.Lobby),
         new ColliderBuilder(),
         new CustomTextBuilder(),
+        new LobbyMapPropertiesBuilder(),
 
         new DecBuilder(),
 
-        new AmbientSoundBuilder(),
+        new AmbientSoundBuilder(true),
         new DisplayBuilder(),
         new FloatBuilder(),
         new PlayerMoverBuilder(),
@@ -73,6 +74,9 @@ public static class LobbyMapBuilder
         lobbyBehaviour.GetComponent<Collider2D>().enabled = false;
         lobbyBehaviour.DropShipSound = null;
         lobbyBehaviour.MapTheme = null;
+
+        // Set Skybox Color
+        Camera.main?.backgroundColor = Color.black;
 
         // Remove All Children
         while (lobbyBehaviour.transform.childCount > 0)

@@ -8,7 +8,7 @@ using Reactor.Networking.Rpc;
 namespace LevelImposter.Networking;
 
 /// <summary>
-/// Represents a serialized version of <see cref="GameConfiguration"/> containing map IDs and settings.
+///     Represents a serialized version of <see cref="GameConfiguration" /> containing map IDs and settings.
 /// </summary>
 public struct SerializedGameConfiguration
 {
@@ -23,11 +23,11 @@ public struct SerializedGameConfiguration
 }
 
 [RegisterCustomRpc((uint)LIRpc.SyncGameConfiguration)]
-public class GameConfigurationRPC(LevelImposter plugin, uint id) : 
-PlayerCustomRpc<LevelImposter, SerializedGameConfiguration>(plugin, id)
+public class GameConfigurationRPC(LevelImposter plugin, uint id) :
+    PlayerCustomRpc<LevelImposter, SerializedGameConfiguration>(plugin, id)
 {
     public override RpcLocalHandling LocalHandling => RpcLocalHandling.None; // <-- MapSync is for other clients only
-    
+
     public override void Write(MessageWriter writer, SerializedGameConfiguration data)
     {
         writer.Write(data.MapID.ToByteArray());
@@ -40,7 +40,7 @@ PlayerCustomRpc<LevelImposter, SerializedGameConfiguration>(plugin, id)
         var gameMapID = ReadGUID(reader);
         var lobbyMapID = ReadGUID(reader);
         var isMapNameHidden = reader.ReadBoolean();
-        
+
         return new SerializedGameConfiguration
         {
             MapID = gameMapID,
@@ -56,7 +56,7 @@ PlayerCustomRpc<LevelImposter, SerializedGameConfiguration>(plugin, id)
     }
 
     /// <summary>
-    /// Reads a GUID from a byte array written in a message.
+    ///     Reads a GUID from a byte array written in a message.
     /// </summary>
     /// <param name="reader">The message reader.</param>
     /// <returns>>The GUID read from the reader.</returns>
