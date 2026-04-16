@@ -10,10 +10,10 @@ public class DummyBuilder : IElemBuilder
         if (elem.type != "util-dummy")
             return;
 
-        // ShipStatus
         var shipStatus = LIShipStatus.GetInstance().ShipStatus;
 
-        // Add Location
+        // Add location and save its index with the element id (see DummyPatch)
+        LIShipStatus.GetInstance().DummyIndex[elem.id] = shipStatus.DummyLocations.Length;
         shipStatus.DummyLocations = MapUtils.AddToArr(shipStatus.DummyLocations, obj.transform);
     }
 }

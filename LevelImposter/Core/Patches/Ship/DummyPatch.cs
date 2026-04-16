@@ -1,7 +1,6 @@
 ﻿using HarmonyLib;
 using LevelImposter.Shop;
 using System.Linq;
-using UnityEngine;
 
 namespace LevelImposter.Core;
 
@@ -10,7 +9,7 @@ namespace LevelImposter.Core;
 ///     the names of their corresponding elements in the editor.
 /// </summary>
 [HarmonyPatch(typeof(DummyBehaviour), nameof(DummyBehaviour.Start))]
-public static class DummyNamePatch
+public static class DummyPatch
 {
     public static void Postfix(DummyBehaviour __instance)
     {
@@ -22,21 +21,21 @@ public static class DummyNamePatch
         if(MapLoader.CurrentMap == null)
             return;
 
-        var shipStatus = LIShipStatus.GetInstance().ShipStatus;
+        // Since the game is in freeplay, removing the local player just leaves all the dummy PlayerControls
+        var dummyPlayers = PlayerControl.AllPlayerControls.ToArray().Where(p => p != PlayerControl.LocalPlayer).ToArray();
 
-        if (shipStatus == null)
-            return;
-
-        var locations = shipStatus.DummyLocations;
-        LIElement[] elements = MapLoader.CurrentMap.elements.Where(element => element.type == "util-dummy").ToArray();
-
-        // Loop through all dummy locations added by DummyBuilder
-        // and find which one corresponds to this dummy
-        for (int i = 0; i < locations.Length; i++)
+        // Finds a dummy element that has a corresponding location index (see DummyBuilder)
+        // which matches this DummyBehaviour's PlayerControl
+        foreach (var elem in MapLoader.CurrentMap.elements)
         {
-            // Only check for matching X and Y positions
-            if ((Vector2)__instance.transform.position == (Vector2)locations[i].position)
-                CustomizeDummy(__instance, elements[i]);
+            if(elem.type != "util-dummy")
+                continue;
+            if (!LIShipStatus.GetInstance().DummyIndex.TryGetValue(elem.id, out int index))
+                continue;
+            if (__instance.myPlayer != dummyPlayers[index])
+                continue;
+
+            CustomizeDummy(__instance, elem);
         }
     }
 

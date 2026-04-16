@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Il2CppInterop.Runtime.Attributes;
 using LevelImposter.Shop;
 using LevelImposter.Trigger;
@@ -29,6 +30,9 @@ public class LIShipStatus(IntPtr intPtr) : MonoBehaviour(intPtr)
     public static LIMap? CurrentMap => MapLoader.CurrentMap;
 
     public bool IsReady => !Builder.IsBuilding && !LoadingBar.IsVisible;
+
+    // Populated by DummyBuilder, used to customize dummies in DummyPatch
+    public Dictionary<Guid, int> DummyIndex { get; } = new();
 
     public ShipStatus? ShipStatus { get; private set; }
 
