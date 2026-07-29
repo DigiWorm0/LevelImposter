@@ -2,8 +2,8 @@
     <PropertyGroup>
         <Title>LevelImposter</Title>
         <VersionPrefix>0.21.3</VersionPrefix>
-        <VersionSuffix>dev</VersionSuffix>
-        
+        <VersionSuffix>dev5</VersionSuffix>
+
         <Description>Custom Among Us Mapping Studio</Description>
         <Authors>Digi</Authors>
         <RepositoryType>git</RepositoryType>
@@ -15,7 +15,7 @@
         <DebugType>embedded</DebugType>
         <Nullable>enable</Nullable>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-        
+
         <ContinuousIntegrationBuild Condition="'$(GITHUB_ACTIONS)' == 'true'">true</ContinuousIntegrationBuild>
     </PropertyGroup>
 

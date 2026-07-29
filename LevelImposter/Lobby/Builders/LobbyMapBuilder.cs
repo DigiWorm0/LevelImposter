@@ -48,13 +48,13 @@ public static class LobbyMapBuilder
     /// </summary>
     public static void Rebuild()
     {
-        ResetMap();
-        LIBaseShip.Instance?.SetMap(GameConfiguration.CurrentLobbyMap);
+        var currentMap = GameConfiguration.CurrentLobbyMap;
+        if (currentMap == null)
+            return;
 
-        if (GameConfiguration.CurrentLobbyMap != null)
-            BuildMap(GameConfiguration.CurrentLobbyMap);
-        else
-            BuildDropship();
+        ResetMap();
+        LIBaseShip.Instance?.SetMap(currentMap);
+        BuildMap(currentMap);
     }
 
     /// <summary>
@@ -99,22 +99,5 @@ public static class LobbyMapBuilder
             LILobbyBehaviour.GetInstance().transform);
 
         LILogger.Info($"Built lobby map from {map}");
-    }
-
-    /// <summary>
-    ///     Reloads the original lobby dropship map into the game.
-    /// </summary>
-    private static void BuildDropship()
-    {
-        LILogger.Info("Rebuilding original lobby dropship...");
-
-        var lobbyBehaviour = LILobbyBehaviour.GetInstance();
-        Object.Destroy(lobbyBehaviour.gameObject);
-
-        LobbyDropshipPrefab.Instantiate();
-
-        // TODO: Replay spawn animation
-
-        LILogger.Info("Rebuilt original lobby dropship");
     }
 }

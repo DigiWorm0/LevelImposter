@@ -8,6 +8,7 @@ namespace LevelImposter.Shop;
  *      with the Map Shop Button
  */
 [HarmonyPatch(typeof(MainMenuManager), nameof(MainMenuManager.Start))]
+[HarmonyPriority(Priority.First)]
 public static class ButtonPatch
 {
     public static void Postfix()

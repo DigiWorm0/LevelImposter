@@ -1,4 +1,5 @@
 ﻿using LevelImposter.AssetLoader;
+using LevelImposter.Lobby;
 using LevelImposter.Shop;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -15,7 +16,7 @@ public static class GameState
 
     // Scenes
     public static bool IsInFreeplay => AmongUsClient.Instance?.NetworkMode == NetworkModes.FreePlay;
-    public static bool IsInLobby => LobbyBehaviour.Instance != null;
+    public static bool IsInLobby => LobbyBehaviour.Instance != null || LILobbyBehaviour.IsInstance();
     public static bool IsInMainMenu => SceneManager.GetActiveScene().name == "MainMenu";
     public static bool IsInShop => ShopManager.Instance != null;
     public static bool IsInMeeting => MeetingHud.Instance != null;

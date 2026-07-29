@@ -3,9 +3,8 @@
 namespace LevelImposter.Lobby;
 
 /*
- *      Initializes a new Map Console in the Lobby
+ *      Appends the custom LevelImposter lobby logic to the current LobbyBehaviour
  */
-
 [HarmonyPatch(typeof(LobbyBehaviour), nameof(LobbyBehaviour.Start))]
 public static class AddLILobbyBehaviourPatch
 {

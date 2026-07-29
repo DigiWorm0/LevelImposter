@@ -1,6 +1,4 @@
-﻿using UnityEngine;
-
-namespace LevelImposter.Core;
+﻿namespace LevelImposter.Core;
 
 /// <summary>
 ///     A list of constants used within LevelImposter

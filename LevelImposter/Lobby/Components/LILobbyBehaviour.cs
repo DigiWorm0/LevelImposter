@@ -1,36 +1,31 @@
 ﻿using System;
 using LevelImposter.Builders.Lobby;
 using LevelImposter.Core;
-using LevelImposter.Shop;
-using UnityEngine;
 
 namespace LevelImposter.Lobby;
 
 public class LILobbyBehaviour(IntPtr intPtr) : LIBaseShip(intPtr)
 {
     private static LILobbyBehaviour? _instance;
-    
+
     private LobbyBehaviour? _lobbyBehaviour;
-    
+
     protected override void Awake()
     {
         base.Awake();
-        
+
         // Get LobbyBehaviour component
         _instance = this;
         _lobbyBehaviour = GetComponent<LobbyBehaviour>();
 
-        LobbyBehaviour.Instance = _lobbyBehaviour;  // <-- Jump start singleton assignment for GameState.IsInLobby
-        
         // Run initialization methods
-        LobbyDropshipPrefab.OnLobbyLoad();
         LobbyMapConsoleBuilder.Build();
-        
+
         // Build lobby map on startup
         if (GameConfiguration.CurrentLobbyMap != null)
             LobbyMapBuilder.Rebuild();
     }
-    
+
     /// <summary>
     ///     Gets the current LILobbyBehaviour instance or throws exception if not found
     /// </summary>
@@ -54,5 +49,15 @@ public class LILobbyBehaviour(IntPtr intPtr) : LIBaseShip(intPtr)
         if (lobbyBehaviour == null)
             throw new Exception("LobbyBehaviour component not found on LILobbyBehaviour!");
         return lobbyBehaviour;
+    }
+
+
+    /// <summary>
+    ///     Checks if the player is currently in a LevelImposter lobby.
+    /// </summary>
+    /// <returns>True if the player is in a LevelImposter lobby, false otherwise</returns>
+    public static bool IsInstance()
+    {
+        return _instance != null;
     }
 }
