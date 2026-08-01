@@ -1,7 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Runtime.InteropServices;
-using System.Text;
 using Il2CppInterop.Runtime.Attributes;
 using LevelImposter.Core;
 using UnityEngine;
@@ -11,10 +9,11 @@ namespace LevelImposter.AssetLoader;
 public static class DDSLoader
 {
     /// <summary>
-    /// Unity only supports reading the texture data starting from byte offset 128.
-    /// Data before this is the DDS header.
+    ///     Unity only supports reading the texture data starting from byte offset 128.
+    ///     Data before this is the DDS header.
     /// </summary>
     private const int DDS_TEXTURE_OFFSET = 128;
+
     private const int DDS_PIXEL_FORMAT_SIZE = 32;
 
     /// <summary>
@@ -23,7 +22,7 @@ public static class DDSLoader
     /// <param name="loadable">Loadable texture</param>
     /// <returns>A still UnityEngine.Texture2D containing the image data</returns>
     /// <exception cref="IOException">If the Stream fails to read image data</exception>
-    public static LoadedTexture Load(LoadableTexture loadable)
+    public static TextureResult Load(TextureInfo loadable)
     {
         // Rent buffers from the pool
         var imgData = loadable.DataStore.LoadToMemory();
@@ -36,7 +35,7 @@ public static class DDSLoader
         );
 
         // Return the created texture
-        return new LoadedTexture(texture);
+        return new TextureResult(texture);
     }
 
     /// <summary>
@@ -95,7 +94,7 @@ public static class DDSLoader
     private static Texture2D ImageDataToTexture2D(
         MemoryBlock textureData,
         string name = "CustomTexture",
-        LoadableTexture.TextureOptions? options = null)
+        TextureInfo.TextureOptions? options = null)
     {
         // Check the first 4 bytes for DDS magic number
         if (textureData.Data.Length < 4 ||
@@ -137,24 +136,24 @@ public static class DDSLoader
             hideFlags = HideFlags.HideAndDontSave,
             requestedMipmapLevel = 0
         };
-    
+
         // Make sure pointer is offset by 128 bytes to skip DDS header
         var textureDataPtr = IntPtr.Add(textureData.BasePointer, DDS_TEXTURE_OFFSET);
         var textureDataSize = textureData.Length - DDS_TEXTURE_OFFSET;
-        
+
         // Double-check before casting size to int (should never happen)
         if (textureDataSize > int.MaxValue)
             throw new Exception("DDS texture data is too large to load.");
-        
+
         // Load texture data from pointer
         texture.LoadRawTextureData(textureDataPtr, (int)textureDataSize);
 
         // Remove texture data from CPU memory
         texture.Apply(false, true);
-        
+
         // Register in GC
         GCHandler.Register(texture, options?.GCBehavior);
-        
+
         return texture;
     }
 }

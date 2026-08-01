@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace LevelImposter.AssetLoader;
 
-public class SpriteLoader : AsyncQueue<LoadableSprite, LoadedSprite>
+public class SpriteLoader : AsyncQueue<SpriteInfo, SpriteResult>
 {
     private SpriteLoader()
     {
@@ -11,10 +11,10 @@ public class SpriteLoader : AsyncQueue<LoadableSprite, LoadedSprite>
 
     public static SpriteLoader Instance { get; } = new();
 
-    protected override LoadedSprite Load(LoadableSprite loadable)
+    protected override SpriteResult Load(SpriteInfo loadable)
     {
         // Load the texture
-        var loadedTexture = TextureLoader.Instance.LoadImmediate(loadable.Texture);
+        var loadedTexture = TextureLoader.Instance.LoadImmediate(loadable.TextureInfo);
         var texture = loadedTexture.Texture;
 
         // Generate Sprite
@@ -36,6 +36,6 @@ public class SpriteLoader : AsyncQueue<LoadableSprite, LoadedSprite>
         GCHandler.Register(sprite, options.GCBehavior);
 
         // Return Loaded Sprite
-        return new LoadedSprite(sprite, loadedTexture);
+        return new SpriteResult(sprite, loadedTexture);
     }
 }

@@ -96,12 +96,12 @@ public class MinigameSprites(IntPtr intPtr) : MonoBehaviour(intPtr)
                     continue;
 
                 // Create Loadable Texture
-                var loadableTexture = new LoadableTexture(guid?.ToString() ?? "", mapAsset);
+                var loadableTexture = new TextureInfo(guid?.ToString() ?? "", mapAsset);
                 loadableTexture.Options.GCBehavior = GCBehavior.AlwaysDispose;
                 loadableTexture.Options.PixelArt = PixelArtMode;
 
                 // Create Loadable Sprite
-                var loadableSprite = new LoadableSprite(guid?.ToString() ?? "", loadableTexture);
+                var loadableSprite = new SpriteInfo(guid?.ToString() ?? "", loadableTexture);
                 loadableSprite.Options.GCBehavior = GCBehavior.AlwaysDispose;
                 loadableSprite.Options.Pivot = hasPivot ? pivot : null;
 

@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace LevelImposter.AssetLoader;
 
-public class AudioLoader : AsyncQueue<LoadableAudio, LoadedAudioClip>
+public class AudioLoader : AsyncQueue<AudioInfo, AudioResult>
 {
     private AudioLoader()
     {
@@ -31,16 +31,16 @@ public class AudioLoader : AsyncQueue<LoadableAudio, LoadedAudioClip>
             return;
 
         // Create LoadableAudio
-        var loadableAudio = new LoadableAudio(assetID?.ToString() ?? "", soundDataStore);
+        var loadableAudio = new AudioInfo(assetID?.ToString() ?? "", soundDataStore);
         loadableAudio.Options.GCBehavior = GCBehavior.DisposeOnMapUnload; // TODO: Make configurable for lobbies
 
         // Enqueue Loadable
         Instance.AddToQueue(loadableAudio, loadedAudioClip => onLoad(loadedAudioClip.AudioClip));
     }
 
-    protected override LoadedAudioClip Load(LoadableAudio loadable)
+    protected override AudioResult Load(AudioInfo loadable)
     {
         var audioClip = WAVLoader.Load(loadable.DataStore, loadable.ID);
-        return new LoadedAudioClip(audioClip);
+        return new AudioResult(audioClip);
     }
 }

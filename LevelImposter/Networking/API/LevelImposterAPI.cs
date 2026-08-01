@@ -1,12 +1,8 @@
 using System;
-using System.IO;
-using System.Text.Json;
 using System.Text.Json.Serialization;
 using Il2CppInterop.Runtime.Attributes;
 using LevelImposter.AssetLoader;
 using LevelImposter.Core;
-using Sentry.Protocol;
-using UnityEngine;
 
 namespace LevelImposter.Networking.API;
 
@@ -40,8 +36,9 @@ public static class LevelImposterAPI
                 onError?.Invoke("Invalid API Response");
 
             else if (result.Data.Version != API_VERSION)
-                onError?.Invoke($"You are running on an older version of LevelImposter {LevelImposter.DisplayVersion}. Update to get access to the API.");
-                
+                onError?.Invoke(
+                    $"You are running on an older version of LevelImposter {LevelImposter.DisplayVersion}. Update to get access to the API.");
+
             else if (!string.IsNullOrEmpty(result.Data.Error))
                 onError?.Invoke(result.Data.Error);
 
@@ -114,20 +111,13 @@ public static class LevelImposterAPI
         Action<string>? onError)
     {
         LILogger.Info($"Downloading map [{id}]...");
-        
-        GetMap(id, metadata => HTTPHandler.DownloadFile(
+
+        GetMap(id, metadata => FileDownloader.StartDownload(
             metadata.downloadURL,
             downloadPath,
             onProgress,
-            result =>
-            {
-                if (result.ErrorText != null)
-                    onError?.Invoke(result.ErrorText);
-                else if (result.Data == null)
-                    onError?.Invoke("Unknown error downloading map");
-                else
-                    onSuccess(result.Data);
-            }
+            result => onSuccess(result.Store),
+            onError
         ), null);
     }
 
@@ -145,46 +135,42 @@ public static class LevelImposterAPI
     {
         // Prepare download URL
         var downloadURL = $"{API_PATH}/map/{mapID}/thumbnail";
-        
+
         // Download Thumbnail from API
-        HTTPHandler.DownloadFile(
+        FileDownloader.StartDownload(
             downloadURL,
             downloadPath,
             null,
-            // On load, load the sprite from filesystem
-            (result) => {
-                if (result.ErrorText != null)
-                    onError?.Invoke(result.ErrorText);
-                else if (result.Data == null)
-                    onError?.Invoke("Unknown error downloading thumbnail");
-                else
-                    onSuccess?.Invoke(result.Data);
-            }
+            result => onSuccess(result.Store),
+            onError
         );
     }
 
     /// <summary>
-    ///    Generic callback wrapper for LevelImposter API responses
+    ///     Generic callback wrapper for LevelImposter API responses
     /// </summary>
     /// <typeparam name="T">Type of data being returned</typeparam>
     [Serializable]
     public class APIResponse<T>
     {
         /// <summary>
-        ///   API version of the response. Should match <c>LevelImposterAPI.API_VERSION</c>
+        ///     API version of the response. Should match <c>LevelImposterAPI.API_VERSION</c>
         /// </summary>
-        [JsonPropertyName("v")] public int Version { get; set; }
+        [JsonPropertyName("v")]
+        public int Version { get; set; }
 
         /// <summary>
-        ///   Error message, if any.
-        ///   If this is set, <c>data</c> will be null.
-        ///   If this is null or empty, <c>data</c> will be set.
+        ///     Error message, if any.
+        ///     If this is set, <c>data</c> will be null.
+        ///     If this is null or empty, <c>data</c> will be set.
         /// </summary>
-        [JsonPropertyName("error")] public string? Error { get; set; }
+        [JsonPropertyName("error")]
+        public string? Error { get; set; }
 
         /// <summary>
-        ///    Data returned from the API.
+        ///     Data returned from the API.
         /// </summary>
-        [JsonPropertyName("data")] public T? Data { get; set; }
+        [JsonPropertyName("data")]
+        public T? Data { get; set; }
     }
 }

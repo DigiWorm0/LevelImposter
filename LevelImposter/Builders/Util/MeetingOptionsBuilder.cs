@@ -41,7 +41,7 @@ internal class MeetingOptionsBuilder : IElemBuilder
             var loadable = spriteBuilder.GetLoadableFromID(elem.properties.meetingBackgroundID);
             if (loadable != null)
                 SpriteLoader.Instance.AddToQueue(
-                    (LoadableSprite)loadable,
+                    (SpriteInfo)loadable,
                     spriteData => LoadMeetingBackground(spriteData));
         }
 

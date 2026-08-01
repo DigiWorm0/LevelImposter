@@ -62,10 +62,10 @@ public static class PackagedResources
         using var resourceStream = OpenStream(name);
 
         // Create Loadables
-        var loadableTexture = LoadableTexture.FromMemory($"{name}-resource", resourceStream.ToIl2CppArray());
+        var loadableTexture = TextureInfo.FromMemory($"{name}-resource", resourceStream.ToIl2CppArray());
         loadableTexture.Options.GCBehavior = GCBehavior.NeverDispose;
 
-        var loadableSprite = LoadableSprite.FromLoadableTexture(loadableTexture);
+        var loadableSprite = SpriteInfo.FromLoadableTexture(loadableTexture);
         loadableSprite.Options.GCBehavior = GCBehavior.NeverDispose;
 
         // Load Sprite (Synchronously)

@@ -1,9 +1,9 @@
 using System;
 using System.IO;
 using System.Reflection;
-using System.Text.Json;
 using System.Text.Json.Serialization;
 using Il2CppInterop.Runtime.Attributes;
+using LevelImposter.AssetLoader;
 using LevelImposter.Core;
 using LevelImposter.FileIO;
 using UnityEngine;
@@ -17,7 +17,7 @@ public static class GitHubAPI
 {
     private const string API_PATH = "https://api.github.com/repos/DigiWorm0/LevelImposter/releases?per_page=1";
     private const string UPDATE_BLACKLIST_FLAG = "[NoAutoUpdate]";
-    
+
     private static readonly string UpdateWhitelistFlag = $"[AU={Application.version}]";
 
     /// <summary>
@@ -71,7 +71,7 @@ public static class GitHubAPI
         var isWhitelisted = release.Body?.Contains(UpdateWhitelistFlag) ?? false;
         var isBlacklisted = release.Body?.Contains(UPDATE_BLACKLIST_FLAG) ?? false;
         var hasReleaseAssets = release.Assets?.Length > 0;
-        
+
 
         // Set reason
         if (isCurrent)
@@ -119,20 +119,20 @@ public static class GitHubAPI
                 onError(errorMsg);
                 return;
             }
-        
+
             // Prepare paths
             var tempDLLPath = Path.GetTempFileName();
             var activeDLLPath = GetDLLDirectory();
             var oldDLLPath = activeDLLPath + ".old";
-            
+
             // Download DLL
             LILogger.Info($"Downloading DLL from {release}");
             var downloadURL = release.Assets?[0].BrowserDownloadURL ?? "";
-            HTTPHandler.DownloadFile(
+            FileDownloader.StartDownload(
                 downloadURL,
                 tempDLLPath,
                 null,
-                (_) =>
+                _ =>
                 {
                     LILogger.Info("Replacing old DLL with new DLL");
                     try
@@ -141,13 +141,13 @@ public static class GitHubAPI
                         if (File.Exists(oldDLLPath))
                             File.Delete(oldDLLPath);
                         File.Move(activeDLLPath, oldDLLPath);
-                        
+
                         // Move the temp DLL to active
                         File.Move(tempDLLPath, activeDLLPath);
-        
+
                         // Clear cache
                         FileCache.Clear();
-        
+
                         // Log success
                         LILogger.Info("Update complete");
                         onSuccess();
@@ -157,12 +157,12 @@ public static class GitHubAPI
                         LILogger.Error(e);
                         onError(e.Message);
                     }
-                });
+                }, onError);
         }, onError);
     }
 
     /// <summary>
-    /// Represents a single release on a GitHub repository.
+    ///     Represents a single release on a GitHub repository.
     /// </summary>
     [Serializable]
     public class GitHubRelease
@@ -178,15 +178,16 @@ public static class GitHubAPI
     }
 
     /// <summary>
-    ///   Represents a downloadable asset embedded in a GitHub release.
-    ///   Typically, this would either be the LevelImposter DLL or a ZIP file containing the complete BepInEx mod.
+    ///     Represents a downloadable asset embedded in a GitHub release.
+    ///     Typically, this would either be the LevelImposter DLL or a ZIP file containing the complete BepInEx mod.
     /// </summary>
     [Serializable]
     public class GitHubAsset
     {
         /// <summary>
-        ///  URL to download the asset from.
+        ///     URL to download the asset from.
         /// </summary>
-        [JsonPropertyName("browser_download_url")] public string? BrowserDownloadURL { get; set; }
+        [JsonPropertyName("browser_download_url")]
+        public string? BrowserDownloadURL { get; set; }
     }
 }

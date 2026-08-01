@@ -20,7 +20,7 @@ public static class ThumbnailCache
     {
         return FileCache.Exists($"{mapID}.png");
     }
-    
+
     /// <summary>
     ///     Gets the file path for a thumbnail in the local cache
     /// </summary>
@@ -41,7 +41,7 @@ public static class ThumbnailCache
         // Check if mapID is a valid GUID
         if (!Guid.TryParse(mapID, out _))
             return;
-        
+
         // Check if thumbnail exists
         if (!Exists(mapID))
         {
@@ -54,7 +54,7 @@ public static class ThumbnailCache
     }
 
     /// <summary>
-    /// Loads a thumbnail sprite from the local filesystem.
+    ///     Loads a thumbnail sprite from the local filesystem.
     /// </summary>
     /// <param name="mapID">Map ID for the thumbnail</param>
     /// <param name="callback">Callback on success</param>
@@ -62,23 +62,22 @@ public static class ThumbnailCache
     {
         // Read thumbnail from filesystem
         LILogger.Info($"Loading thumbnail for [{mapID}] from filesystem");
-        
+
         // Prepare LoadableTexture and LoadableSprite
         var id = $"{mapID}_thumb";
-        var loadableTexture = new LoadableTexture(id, new FileStore(GetPath(mapID)));
-        var loadableSprite = new LoadableSprite(id, loadableTexture);
+        var loadableTexture = new TextureInfo(id, new FileStore(GetPath(mapID)));
+        var loadableSprite = new SpriteInfo(id, loadableTexture);
 
         // Thumbnails are small enough to allow them to be always loaded
         loadableTexture.Options.GCBehavior = GCBehavior.NeverDispose;
         loadableSprite.Options.GCBehavior = GCBehavior.NeverDispose;
-        
+
         // Add to SpriteLoader queue
         SpriteLoader.Instance.AddToQueue(loadableSprite, loadedSprite => callback(loadedSprite));
-
     }
 
     /// <summary>
-    /// Downloads and caches a thumbnail from the LevelImposter API
+    ///     Downloads and caches a thumbnail from the LevelImposter API
     /// </summary>
     /// <param name="mapID">Map ID for the thumbnail</param>
     /// <param name="callback">Callback on success</param>

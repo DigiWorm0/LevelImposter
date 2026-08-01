@@ -1,7 +1,5 @@
-﻿using System.Buffers;
-using System.IO;
+﻿using System.IO;
 using Il2CppInterop.Runtime.Attributes;
-using Il2CppInterop.Runtime.InteropTypes.Arrays;
 using LevelImposter.Core;
 using UnityEngine;
 
@@ -15,11 +13,11 @@ public static class PNGLoader
     /// <param name="loadable">Texture options to apply</param>
     /// <returns>A still UnityEngine.Texture2D containing the image data</returns>
     /// <exception cref="IOException">If the Stream fails to read image data</exception>
-    public static LoadedTexture Load(LoadableTexture loadable)
+    public static TextureResult Load(TextureInfo loadable)
     {
         // Read all image data into memory
         var imgData = loadable.DataStore.LoadToMemory();
-        
+
         // Get Options
         var options = loadable.Options;
 
@@ -29,9 +27,9 @@ public static class PNGLoader
             loadable.ID,
             options
         );
-        
+
         // Return the loaded texture
-        return new LoadedTexture(texture);
+        return new TextureResult(texture);
     }
 
     /// <summary>
@@ -49,14 +47,14 @@ public static class PNGLoader
     private static Texture2D ImageDataToTexture2D(
         MemoryBlock imgData,
         string name = "CustomTexture",
-        LoadableTexture.TextureOptions? options = null)
+        TextureInfo.TextureOptions? options = null)
     {
         // Generate Texture
         Texture2D texture = new(1, 1, TextureFormat.RGBA32, false)
         {
             name = $"{name}_tex",
             wrapMode = TextureWrapMode.Clamp,
-            filterMode = (options?.PixelArt ?? false) ? FilterMode.Point : FilterMode.Bilinear,
+            filterMode = options?.PixelArt ?? false ? FilterMode.Point : FilterMode.Bilinear,
             hideFlags = HideFlags.HideAndDontSave,
             requestedMipmapLevel = 0
         };
@@ -64,7 +62,7 @@ public static class PNGLoader
 
         // Add to GC
         GCHandler.Register(texture, options?.GCBehavior);
-        
+
         // Return Texture
         return texture;
     }

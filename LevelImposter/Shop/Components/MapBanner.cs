@@ -262,8 +262,9 @@ public class MapBanner(IntPtr intPtr) : MonoBehaviour(intPtr)
 
     private void SetThumbnail(Sprite sprite)
     {
-        if (thumbnailRenderer.Value == null)
+        if (this == null)
             return; // <-- User tabbed away before thumbnail loaded
+
         thumbnailRenderer.Value.sprite = sprite;
     }
 }
