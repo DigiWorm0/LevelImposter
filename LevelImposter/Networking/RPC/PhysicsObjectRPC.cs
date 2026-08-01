@@ -1,9 +1,6 @@
 ﻿using System;
 using Hazel;
-using InnerNet;
 using LevelImposter.Core;
-using LevelImposter.Shop;
-using LevelImposter.Trigger;
 using Reactor.Networking.Attributes;
 using Reactor.Networking.Rpc;
 using UnityEngine;
@@ -22,10 +19,11 @@ public struct RPCPhysicsObjectPacket
 }
 
 [RegisterCustomRpc((uint)LIRpc.SyncPhysicsObject)]
-public class PhysicsObjectRPC(LevelImposter plugin, uint id) : PlayerCustomRpc<LevelImposter, RPCPhysicsObjectPacket>(plugin, id)
+public class PhysicsObjectRPC(LevelImposter plugin, uint id)
+    : PlayerCustomRpc<LevelImposter, RPCPhysicsObjectPacket>(plugin, id)
 {
     public override RpcLocalHandling LocalHandling => RpcLocalHandling.After;
-    
+
     public override void Write(MessageWriter writer, RPCPhysicsObjectPacket data)
     {
         writer.Write(data.ObjectID);
@@ -46,7 +44,7 @@ public class PhysicsObjectRPC(LevelImposter plugin, uint id) : PlayerCustomRpc<L
         var velocityX = reader.ReadSingle();
         var velocityY = reader.ReadSingle();
         var angularVelocity = reader.ReadSingle();
-        
+
         return new RPCPhysicsObjectPacket
         {
             ObjectID = objectID,
@@ -74,7 +72,7 @@ public class PhysicsObjectRPC(LevelImposter plugin, uint id) : PlayerCustomRpc<L
             data.Y,
             obj.Element?.z ?? 0
         );
-        obj.transform.position = MapUtils.ScaleZPositionByY(obj.transform.position);
+        obj.transform.position = obj.transform.position.ScaleZPositionByY();
         obj.transform.rotation = Quaternion.Euler(0, 0, data.Rotation);
 
         // Update velocity

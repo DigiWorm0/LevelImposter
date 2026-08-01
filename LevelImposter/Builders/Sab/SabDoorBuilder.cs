@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using LevelImposter.AssetLoader;
 using LevelImposter.Core;
 using LevelImposter.DB;
-using LevelImposter.Shop;
 using PowerTools;
 using UnityEngine;
 
@@ -13,9 +12,9 @@ public class SabDoorBuilder : IElemBuilder
 {
     private const string OPEN_SOUND_NAME = "doorOpen";
     private const string CLOSE_SOUND_NAME = "doorClose";
-    
+
     private static readonly Dictionary<Guid, PlainDoor> DoorDB = new();
-    
+
     private int _doorId;
     private List<Guid>? _specialDoorIDs;
 
@@ -119,24 +118,20 @@ public class SabDoorBuilder : IElemBuilder
         // Add to DB
         DoorDB.Add(elem.id, doorComponent);
         if (!isSpecialDoor)
-            shipStatus.AllDoors = MapUtils.AddToArr(shipStatus.AllDoors, doorComponent);
+            shipStatus.AllDoors = shipStatus.AllDoors.Add(doorComponent);
 
         // Load Sounds
-        var openSound = MapUtils.FindSound(elem.properties.sounds, OPEN_SOUND_NAME);
+        var openSound = elem.properties.sounds.FindSound(OPEN_SOUND_NAME);
         if (openSound != null)
-        {
             AudioLoader.LoadAsync(
                 openSound.dataID,
                 loadedSound => doorComponent.OpenSound = loadedSound);
-        }
 
-        var closeSound = MapUtils.FindSound(elem.properties.sounds, CLOSE_SOUND_NAME);
+        var closeSound = elem.properties.sounds.FindSound(CLOSE_SOUND_NAME);
         if (closeSound != null)
-        {
             AudioLoader.LoadAsync(
                 closeSound.dataID,
                 loadedSound => doorComponent.CloseSound = loadedSound);
-        }
 
         // SpriteAnim
         if (isSpriteAnim)
@@ -165,7 +160,7 @@ public class SabDoorBuilder : IElemBuilder
             consoleComponent.Image = spriteRenderer;
 
             // Colliders
-            MapUtils.CreateDefaultColliders(doorConsole, obj);
+            doorConsole.CreateDefaultColliders(obj);
         }
 
         // Set Default State

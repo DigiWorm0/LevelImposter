@@ -14,7 +14,7 @@ public class DummyBuilder : IElemBuilder
         var shipStatus = LIShipStatus.GetShip();
 
         // Add Location
-        shipStatus.DummyLocations = MapUtils.AddToArr(shipStatus.DummyLocations, obj.transform);
+        shipStatus.DummyLocations = shipStatus.DummyLocations.Add(obj.transform);
 
         // TODO: Customize each dummy location with name/outfit
     }

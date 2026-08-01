@@ -22,7 +22,7 @@ public class DecBuilder : IElemBuilder
             return;
 
         // Sprite
-        var spriteRenderer = MapUtils.CloneSprite(obj, prefab);
+        var spriteRenderer = obj.CloneSprite(prefab);
 
         // Fixes Pivot Offset Bug
         if (TypesToResetPivot.Contains(elem.type))

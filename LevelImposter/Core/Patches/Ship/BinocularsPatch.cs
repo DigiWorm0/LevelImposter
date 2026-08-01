@@ -20,7 +20,7 @@ public static class BinocularsPatch
         // Create a temporary room to prevent System.InvalidOperationException
         var tempRoom = __instance.gameObject.AddComponent<PlainShipRoom>();
         tempRoom.RoomId = SystemTypes.MeetingRoom;
-        ShipStatus.Instance.AllRooms = MapUtils.AddToArr(ShipStatus.Instance.AllRooms, tempRoom);
+        ShipStatus.Instance.AllRooms = ShipStatus.Instance.AllRooms.Add(tempRoom);
     }
 
     public static void Postfix(FungleSurveillanceMinigame __instance)
@@ -30,7 +30,7 @@ public static class BinocularsPatch
 
         // Remove the temporary room
         var arr = ShipStatus.Instance.AllRooms;
-        ShipStatus.Instance.AllRooms = MapUtils.RemoveFromArr(arr, arr.Count - 1);
+        ShipStatus.Instance.AllRooms = arr.Remove(arr.Count - 1);
 
         // Fix Security Camera Position
         var lastPos = BinocularsBuilder.LastBinocularsPos;

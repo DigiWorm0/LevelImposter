@@ -11,8 +11,6 @@ namespace LevelImposter.Core;
 
 public static class MapBuilder
 {
-    public static bool IsBuilding { get; private set; }
-
     private static readonly BuildRouter MapBuildRouter = new([
         new MapPropertiesBuilder(),
 
@@ -75,7 +73,9 @@ public static class MapBuilder
         new CustomTextBuilder(),
         new ColorBuilder()
     ]);
-    
+
+    public static bool IsBuilding { get; private set; }
+
 
     /// <summary>
     ///     Resets the map to a blank slate. Ran before any map elements are applied.
@@ -136,19 +136,19 @@ public static class MapBuilder
         }).Cast<ISystemType>());
 
         liShipStatus.Renames.Clear();
-        SystemDistributor.Reset();
+        SystemDistributionService.Reset();
     }
-    
+
     /// <summary>
-    /// Resets and rebuilds the active map based on
-    /// <see cref="GameConfiguration.CurrentMap"/>.
+    ///     Resets and rebuilds the active map based on
+    ///     <see cref="GameConfiguration.CurrentMap" />.
     /// </summary>
     /// <exception cref="Exception">If GameConfiguration.CurrentMap is null</exception>
     public static void RebuildMap()
     {
         if (GameConfiguration.CurrentMap == null)
             throw new Exception("CurrentMap is null");
-        
+
         ResetMap();
         LIBaseShip.Instance?.SetMap(GameConfiguration.CurrentMap);
         BuildMap(GameConfiguration.CurrentMap);
@@ -163,21 +163,21 @@ public static class MapBuilder
         // Check Asset DB
         if (!AssetDB.IsInit)
             throw new Exception("AssetDB is not initialized");
-        
+
         // START
         IsBuilding = true;
         LILogger.Info($"Building map from {map}...");
-        
+
         // Set GC Behavior
         GCHandler.SetDefaultBehavior(GCBehavior.DisposeOnMapUnload);
 
         // Show Loading Bar (Freeplay Only)
         if (GameState.IsInFreeplay)
             LoadingBar.Run();
-        
+
         // Rebuild the map
         MapBuildRouter.BuildMap(map.elements, LIShipStatus.GetInstance().transform);
-        
+
         // FINISH
         LILogger.Info($"Built map from {map}");
         IsBuilding = false;

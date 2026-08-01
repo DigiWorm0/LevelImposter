@@ -29,7 +29,7 @@ internal class UtilBuilder : IElemBuilder
         var prefabBtn = prefab.GetComponent<PassiveButton>();
 
         // Default Sprite
-        var spriteRenderer = MapUtils.CloneSprite(obj, prefab);
+        var spriteRenderer = obj.CloneSprite(prefab);
 
         // Console
         Action action;
@@ -75,6 +75,6 @@ internal class UtilBuilder : IElemBuilder
         btn.OnClick.AddListener(action);
 
         // Colliders
-        MapUtils.CreateDefaultColliders(obj, prefab);
+        obj.CreateDefaultColliders(prefab);
     }
 }

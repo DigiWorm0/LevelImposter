@@ -1,5 +1,4 @@
 ﻿using System;
-using Reactor.Networking.Attributes;
 using Random = UnityEngine.Random;
 
 namespace LevelImposter.Core;
@@ -7,7 +6,7 @@ namespace LevelImposter.Core;
 /// <summary>
 ///     A randomizer class that is synced across all clients
 /// </summary>
-public static class RandomizerSync
+public static class RandomizerSyncService
 {
     private static int _randomSeed;
 
@@ -36,7 +35,7 @@ public static class RandomizerSync
     }
 
     /// <summary>
-    /// Generates a new random seed based on the current time.
+    ///     Generates a new random seed based on the current time.
     /// </summary>
     /// <returns>A new random seed integer.</returns>
     public static int GenerateRandomSeed()
@@ -47,7 +46,7 @@ public static class RandomizerSync
     }
 
     /// <summary>
-    /// Sets the random seed to a specific value.
+    ///     Sets the random seed to a specific value.
     /// </summary>
     /// <param name="seed">The seed value to set.</param>
     public static void SetRandomSeed(int seed)

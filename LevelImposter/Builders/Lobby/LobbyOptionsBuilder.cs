@@ -19,17 +19,17 @@ public class LobbyOptionsBuilder : IElemBuilder
         var lobby = LILobbyBehaviour.GetLobbyBehaviour();
 
         // Ambient Sound
-        var ambientSound = MapUtils.FindSound(elem.properties.sounds, AMBIENT_SOUND_NAME);
+        var ambientSound = elem.properties.sounds.FindSound(AMBIENT_SOUND_NAME);
         if (ambientSound != null)
             lobby.DropShipSound = WAVLoader.Load(ambientSound, true) ?? lobby.DropShipSound;
 
         // Ambient Music
-        var ambientMusic = MapUtils.FindSound(elem.properties.sounds, AMBIENT_MUSIC_NAME);
+        var ambientMusic = elem.properties.sounds.FindSound(AMBIENT_MUSIC_NAME);
         if (ambientMusic != null)
             lobby.MapTheme = WAVLoader.Load(ambientMusic, true) ?? lobby.MapTheme;
 
         // Spawn-In Noise
-        var spawnInNoise = MapUtils.FindSound(elem.properties.sounds, SPAWN_IN_NOISE_NAME);
+        var spawnInNoise = elem.properties.sounds.FindSound(SPAWN_IN_NOISE_NAME);
         if (spawnInNoise != null)
             lobby.SpawnSound = WAVLoader.Load(spawnInNoise, true) ?? lobby.SpawnSound;
     }

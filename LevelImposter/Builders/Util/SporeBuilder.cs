@@ -27,7 +27,7 @@ public class SporeBuilder : IElemBuilder
         var prefabSpore = prefab.GetComponent<Mushroom>();
 
         // Sprite
-        var spriteRenderer = MapUtils.CloneSprite(obj, prefab, true);
+        var spriteRenderer = obj.CloneSprite(prefab, true);
         obj.layer = (int)Layer.Ship;
 
         // Screen Mask
@@ -42,7 +42,7 @@ public class SporeBuilder : IElemBuilder
             10.0f
         );
         screenMaskObj.transform.localScale = new Vector3(sporeRange, sporeRange, 1.2f);
-        var screenMaskRenderer = MapUtils.CloneSprite(screenMaskObj, screenMaskPrefab, true);
+        var screenMaskRenderer = screenMaskObj.CloneSprite(screenMaskPrefab, true);
 
         // Screen Graphic
         var screenGraphicPrefab = prefab.transform.FindChild("SporeScreenGraphic").gameObject;
@@ -55,7 +55,7 @@ public class SporeBuilder : IElemBuilder
             -10.0f
         );
         screenGraphicObj.transform.localScale = new Vector3(sporeRange, sporeRange, 1.2f);
-        var screenGraphicRenderer = MapUtils.CloneSprite(screenGraphicObj, screenGraphicPrefab, true);
+        var screenGraphicRenderer = screenGraphicObj.CloneSprite(screenGraphicPrefab, true);
 
         // Sprite Anim
         var spriteAnim = obj.GetComponent<SpriteAnim>();
@@ -70,7 +70,7 @@ public class SporeBuilder : IElemBuilder
             dummyAnimObj.transform.rotation = Quaternion.identity;
 
             // Clone animation
-            var dummySpriteRenderer = MapUtils.CloneSprite(dummyAnimObj, prefab, true);
+            var dummySpriteRenderer = dummyAnimObj.CloneSprite(prefab, true);
             spriteAnim = dummyAnimObj.GetComponent<SpriteAnim>();
 
             // Hide renderer

@@ -19,7 +19,7 @@ public class RandomTriggerHandle : ITriggerHandle
 
         // Get a random value
         // Seed is synced across all clients, so the same value is generated on all clients
-        var randVal = RandomizerSync.GetRandom(element.id, _randomOffset++);
+        var randVal = RandomizerSyncService.GetRandom(element.id, _randomOffset++);
 
         // Get the random chance (0 - 1)
         var randomChance = 1.0f / (element.properties.triggerCount ?? 2);

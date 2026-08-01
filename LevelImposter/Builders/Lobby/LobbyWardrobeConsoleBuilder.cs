@@ -1,4 +1,5 @@
-﻿using LevelImposter.Core;
+﻿using System;
+using LevelImposter.Core;
 using LevelImposter.Lobby;
 using UnityEngine;
 using UnityEngine.Events;
@@ -15,23 +16,22 @@ public class LobbyWardrobeConsoleBuilder : IElemBuilder
         // Load Prefab
         var prefab = LobbyDropshipPrefab.GetObjectFromPrefab("panel_Wardrobe/Console");
         var prefabConsole = prefab.GetComponent<OptionsConsole>();
-        
+
         // Build Console
         var console = gameObject.AddComponent<OptionsConsole>();
         console.CustomPosition = prefabConsole.CustomPosition;
         console.HostOnly = false;
         console.MenuPrefab = prefabConsole.MenuPrefab;
-        console.Outline = MapUtils.CloneSprite(gameObject, prefab.transform.parent.gameObject);
+        console.Outline = gameObject.CloneSprite(prefab.transform.parent.gameObject);
         console.CustomUseIcon = ImageNames.WardrobeButton;
-        
+
         // Button
         var button = gameObject.AddComponent<ButtonBehavior>();
         button.OnMouseOver = new UnityEvent();
         button.OnMouseOut = new UnityEvent();
-        button.OnClick.AddListener((System.Action)console.Use);
-        
+        button.OnClick.AddListener((Action)console.Use);
+
         // Colliders
-        MapUtils.CreateDefaultColliders(gameObject, prefab);
-        
+        gameObject.CreateDefaultColliders(prefab);
     }
 }

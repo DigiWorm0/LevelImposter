@@ -12,7 +12,7 @@ namespace LevelImposter.Builders;
 internal class DecontaminationBuilder : IElemBuilder
 {
     private const string DECONTAM_SOUND_NAME = "decontamSound";
-    
+
     private readonly Dictionary<Guid, LIElement> _deconElemDB = new();
     private readonly Dictionary<Guid, DeconSystem> _deconSystemDB = new();
 
@@ -38,11 +38,11 @@ internal class DecontaminationBuilder : IElemBuilder
         deconSystem.SpraySound = prefabBehaviour.SpraySound;
         deconSystem.RoomArea = obj.GetComponent<Collider2D>();
         deconSystem.Particles = new Il2CppReferenceArray<ParticleSystem>(0);
-        deconSystem.TargetSystem = SystemDistributor.GetNewDeconSystemType();
+        deconSystem.TargetSystem = SystemDistributionService.GetNewDeconSystemType();
         deconSystem.DeconTime = elem.properties.deconDuration ?? 3.0f;
 
         // Sound
-        var deconSound = MapUtils.FindSound(elem.properties.sounds, DECONTAM_SOUND_NAME);
+        var deconSound = elem.properties.sounds.FindSound(DECONTAM_SOUND_NAME);
         if (deconSound != null)
             deconSystem.SpraySound = WAVLoader.Load(deconSound);
 

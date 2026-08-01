@@ -1,5 +1,6 @@
 using System.Linq;
 using HarmonyLib;
+using Il2CppInterop.Runtime.InteropTypes.Arrays;
 using LevelImposter.Builders;
 using UnityEngine;
 
@@ -25,7 +26,7 @@ public static class TaskInitializePatch
                 __instance.Data = new byte[TaskConsoleBuilder.BreakerCount];
                 for (byte i = 0; i < TaskConsoleBuilder.BreakerCount; i++)
                     __instance.Data[i] = i;
-                __instance.Data = MapUtils.Shuffle(__instance.Data);
+                __instance.Data = __instance.Data.Shuffle();
                 __instance.MaxStep = TaskConsoleBuilder.BreakerCount;
                 break;
             case TaskTypes.CleanToilet:
@@ -35,10 +36,10 @@ public static class TaskInitializePatch
             case TaskTypes.PickUpTowels:
                 var pickupCount = TaskConsoleBuilder.TowelPickupCount ?? TaskConsoleBuilder.TowelCount / 2;
                 __instance.Data = new byte[pickupCount];
-                var tempData = new byte[TaskConsoleBuilder.TowelCount];
+                var tempData = new Il2CppStructArray<byte>(TaskConsoleBuilder.TowelCount);
                 for (byte i = 0; i < TaskConsoleBuilder.TowelCount; i++)
                     tempData[i] = i;
-                tempData = MapUtils.Shuffle(tempData);
+                tempData = tempData.Shuffle();
                 for (byte i = 0; i < __instance.Data.Count; i++)
                     __instance.Data[i] = tempData[i];
                 break;

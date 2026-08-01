@@ -30,7 +30,7 @@ public class SabConsoleBuilder : IElemBuilder
         var prefabConsole = prefab.GetComponent<Console>();
 
         // Default Sprite
-        var spriteRenderer = MapUtils.CloneSprite(obj, prefab);
+        var spriteRenderer = obj.CloneSprite(prefab);
 
         // Parent
         var systemType = RoomBuilder.GetParentOrDefault(elem);
@@ -61,7 +61,7 @@ public class SabConsoleBuilder : IElemBuilder
             console.ConsoleId = ConsoleIDPairs[elem.type];
 
         // Colliders
-        MapUtils.CreateDefaultColliders(obj, prefab);
+        obj.CreateDefaultColliders(prefab);
 
         // Button
         var origBtn = prefab.GetComponent<PassiveButton>();
@@ -78,7 +78,7 @@ public class SabConsoleBuilder : IElemBuilder
         // Arrow
         var arrow = MakeArrow(sabotageTask.transform, $"{elem.name} Arrow");
         if (arrow != null)
-            sabotageTask.Arrows = MapUtils.AddToArr(sabotageTask.Arrows, arrow);
+            sabotageTask.Arrows = sabotageTask.Arrows.Add(arrow);
     }
 
     /// <summary>

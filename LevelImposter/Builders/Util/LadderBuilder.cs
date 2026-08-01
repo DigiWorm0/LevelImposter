@@ -10,12 +10,13 @@ internal class LadderBuilder : IElemBuilder
     private const float DEFAULT_LADDER_OFFSET = -0.4f;
 
     private static readonly List<Ladder> AllLadders = [];
+
     private static readonly Dictionary<string, float> DefaultLadderHeights = new()
     {
         { "util-ladder1", 3.0f },
         { "util-ladder2", 1.5f }
     };
-    
+
     private byte _ladderID;
 
     public void OnPreBuild()
@@ -36,8 +37,8 @@ internal class LadderBuilder : IElemBuilder
         var bottomPrefab = prefab.transform.FindChild("LadderBottom").GetComponent<Ladder>();
 
         // Default Sprite
-        var spriteRenderer = MapUtils.CloneSprite(obj, prefab);
-        
+        var spriteRenderer = obj.CloneSprite(prefab);
+
         // Offset
         var heightOffset = elem.properties.ladderOffset ?? DEFAULT_LADDER_OFFSET;
 

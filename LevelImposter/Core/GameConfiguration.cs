@@ -1,4 +1,5 @@
 using AmongUs.GameOptions;
+using LevelImposter.Builders;
 using LevelImposter.Lobby;
 using LevelImposter.Shop;
 
@@ -7,30 +8,30 @@ namespace LevelImposter.Core;
 public static class GameConfiguration
 {
     /// <summary>
-    /// The selected map type from the game options (Skeld, Mira, LevelImposter, etc.).
+    ///     The selected map type from the game options (Skeld, Mira, LevelImposter, etc.).
     /// </summary>
     public static MapType CurrentMapType => GameState.IsInFreeplay
         ? (MapType)AmongUsClient.Instance.TutorialMapId
         : (MapType)GameOptionsManager.Instance.CurrentGameOptions.MapId;
-    
+
     /// <summary>
-    /// Represents the currently selected lobby map data.
+    ///     Represents the currently selected lobby map data.
     /// </summary>
     public static LIMap? CurrentLobbyMap { get; private set; }
-    
+
     /// <summary>
-    /// Represents the currently active map data.
+    ///     Represents the currently active map data.
     /// </summary>
     public static LIMap? CurrentMap { get; private set; }
-    
+
     /// <summary>
-    /// If this is true, the map name is shown as "Random" in the lobby UI.
-    /// Used if the current map is a randomized/fallback map.
+    ///     If this is true, the map name is shown as "Random" in the lobby UI.
+    ///     Used if the current map is a randomized/fallback map.
     /// </summary>
     public static bool HideMapName { get; private set; }
 
     /// <summary>
-    ///   Sets the currently active map to the provided map data.
+    ///     Sets the currently active map to the provided map data.
     /// </summary>
     /// <param name="map">LevelImposter map data or null to clear the map</param>
     /// <param name="hideMapName">If true, the map name is shown as "Random" in the lobby UI</param>
@@ -46,9 +47,9 @@ public static class GameConfiguration
         HideMapName = hideMapName;
         UpdateLobbyUI();
     }
-    
+
     /// <summary>
-    ///   Sets the currently selected lobby map data.
+    ///     Sets the currently selected lobby map data.
     /// </summary>
     /// <param name="map">LevelImposter map data or null to reset to dropship</param>
     public static void SetLobbyMap(LIMap? map)
@@ -57,13 +58,13 @@ public static class GameConfiguration
         // (Keeps cache if replaying the same map)
         if (CurrentLobbyMap?.id != map?.id)
             GCHandler.DisposeAll(GCBehavior.DisposeOnLobbyUnload);
-        
+
         // Update current lobby map
         CurrentLobbyMap = map;
     }
 
     /// <summary>
-    /// Sets the currently selected map type in the game options.
+    ///     Sets the currently selected map type in the game options.
     /// </summary>
     /// <param name="mapType">The map type to set</param>
     /// <param name="syncMapType">If true, syncs the map type to all clients</param>
@@ -77,7 +78,7 @@ public static class GameConfiguration
     }
 
     /// <summary>
-    /// Updates the lobby UI to reflect the current map state
+    ///     Updates the lobby UI to reflect the current map state
     /// </summary>
     /// <param name="sendNotification">If true, sends a notification to the lobby about the map change</param>
     /// <param name="preloadSprites">If true, preloads all map sprites</param>
@@ -96,7 +97,7 @@ public static class GameConfiguration
         if (preloadSprites)
         {
             // TODO: FIX ME!
-            MapUtils.PreloadAllMapSprites();
+            SpriteBuilder.PreloadAllMapSprites();
             LoadingBar.Run();
         }
 
@@ -104,12 +105,10 @@ public static class GameConfiguration
         if (CurrentMap != null &&
             CurrentMapType == MapType.LevelImposter &&
             sendNotification)
-        {
             DestroyableSingleton<HudManager>.Instance.Notifier.AddSettingsChangeMessage(
                 StringNames.GameMapName,
                 HideMapName ? "Random" : CurrentMap?.name,
                 false
             );
-        }
     }
 }

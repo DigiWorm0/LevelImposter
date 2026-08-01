@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace LevelImposter.Core;
 
-public static class SystemDistributor
+public static class SystemDistributionService
 {
     // Systems
     private static int _systemID = 1;
@@ -14,10 +14,10 @@ public static class SystemDistributor
         // Breaks task-fuel
         SystemTypes.LowerEngine,
         SystemTypes.UpperEngine,
-        
+
         // Reserved for their StringTypes
-        SystemTypes.Admin,      // <-- Admin Use Button
-        SystemTypes.Security,   // <-- Cams Use Button
+        SystemTypes.Admin, // <-- Admin Use Button
+        SystemTypes.Security // <-- Cams Use Button
     };
 
     private static int _deconID = _minDeconID;

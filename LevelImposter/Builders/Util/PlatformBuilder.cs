@@ -39,7 +39,7 @@ internal class PlatformBuilder : IElemBuilder
         var prefabBehaviour = prefab.GetComponent<MovingPlatformBehaviour>();
 
         // Default Sprite
-        var spriteRenderer = MapUtils.CloneSprite(obj, prefab);
+        var spriteRenderer = obj.CloneSprite(prefab);
 
         // Offsets
         var leftPos = obj.transform.localPosition;
@@ -63,10 +63,10 @@ internal class PlatformBuilder : IElemBuilder
 
         // Platform
         var movingPlatform = obj.AddComponent<MovingPlatformBehaviour>();
-        movingPlatform.LeftPosition = MapUtils.ScaleZPositionByY(leftPos);
-        movingPlatform.RightPosition = MapUtils.ScaleZPositionByY(rightPos);
-        movingPlatform.LeftUsePosition = MapUtils.ScaleZPositionByY(leftUsePos);
-        movingPlatform.RightUsePosition = MapUtils.ScaleZPositionByY(rightUsePos);
+        movingPlatform.LeftPosition = leftPos.ScaleZPositionByY();
+        movingPlatform.RightPosition = rightPos.ScaleZPositionByY();
+        movingPlatform.LeftUsePosition = leftUsePos.ScaleZPositionByY();
+        movingPlatform.RightUsePosition = rightUsePos.ScaleZPositionByY();
         movingPlatform.IsLeft = true;
         movingPlatform.MovingSound = prefabBehaviour.MovingSound;
         Platform = movingPlatform;
@@ -75,7 +75,7 @@ internal class PlatformBuilder : IElemBuilder
         shipStatus.Systems.Add(SystemTypes.GapRoom, movingPlatform.Cast<ISystemType>());
 
         // Sound
-        var moveSound = MapUtils.FindSound(elem.properties.sounds, MOVE_SOUND_NAME);
+        var moveSound = elem.properties.sounds.FindSound(MOVE_SOUND_NAME);
         if (moveSound != null)
             movingPlatform.MovingSound = WAVLoader.Load(moveSound);
 

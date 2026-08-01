@@ -7,14 +7,14 @@ namespace LevelImposter.Builders;
 internal class SabotageOptionsBuilder : IElemBuilder
 {
     private const string SABOTAGE_SOUND_NAME = "sabotageSound";
-    
+
     public static GameObject? TriggerObject { get; private set; }
-    
+
     public void OnPreBuild()
     {
         TriggerObject = null;
     }
-    
+
     public void OnBuild(LIElement elem, GameObject obj)
     {
         if (elem.type != "util-sabotages")
@@ -33,7 +33,7 @@ internal class SabotageOptionsBuilder : IElemBuilder
         TriggerObject = obj;
 
         // Sabotage Sound
-        var sabotageSound = MapUtils.FindSound(elem.properties.sounds, SABOTAGE_SOUND_NAME);
+        var sabotageSound = elem.properties.sounds.FindSound(SABOTAGE_SOUND_NAME);
         if (sabotageSound != null)
             shipStatus.SabotageSound = WAVLoader.Load(sabotageSound) ?? shipStatus.SabotageSound;
     }

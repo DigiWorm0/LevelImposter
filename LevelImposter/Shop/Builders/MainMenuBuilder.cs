@@ -41,7 +41,7 @@ public static class MainMenuBuilder
     private static Sprite GetIconSprite()
     {
         if (_menuIcon == null)
-            _menuIcon = MapUtils.LoadSpriteResource("MapIcon.png");
+            _menuIcon = PackagedResources.LoadSprite("MapIcon.png");
         if (_menuIcon == null)
             throw new Exception("The \"MapIcon.png\" resource was not found in assembly");
         return _menuIcon;

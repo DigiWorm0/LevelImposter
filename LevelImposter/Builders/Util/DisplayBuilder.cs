@@ -7,10 +7,9 @@ namespace LevelImposter.Builders;
 
 internal class DisplayBuilder : IElemBuilder
 {
-    private static readonly int MainTex = Shader.PropertyToID("_MainTex");
-    
     private const int DEFAULT_WIDTH = 330;
     private const int DEFAULT_HEIGHT = 220;
+    private static readonly int MainTex = Shader.PropertyToID("_MainTex");
 
     public void OnBuild(LIElement elem, GameObject obj)
     {
@@ -46,7 +45,7 @@ internal class DisplayBuilder : IElemBuilder
 
         // Mesh
         var meshFilter = obj.AddComponent<MeshFilter>();
-        meshFilter.mesh = MapUtils.Build2DMesh(width / 100.0f, height / 100.0f);
+        meshFilter.mesh = Build2DMesh(width / 100.0f, height / 100.0f);
         GCHandler.Register(meshFilter.mesh);
 
         var meshRenderer = obj.AddComponent<MeshRenderer>();
@@ -66,12 +65,37 @@ internal class DisplayBuilder : IElemBuilder
         GCHandler.Register(new DisposableRenderTex(renderTexture));
     }
 
+    private static Mesh Build2DMesh(float width, float height)
+    {
+        var mesh = new Mesh();
+        mesh.vertices = new Vector3[4]
+        {
+            new(-width / 2, -height / 2, 0),
+            new(width / 2, -height / 2, 0),
+            new(-width / 2, height / 2, 0),
+            new(width / 2, height / 2, 0)
+        };
+        mesh.triangles = new[] { 0, 2, 1, 2, 3, 1 };
+        mesh.uv = new Vector2[]
+        {
+            new(0, 0),
+            new(1, 0),
+            new(0, 1),
+            new(1, 1)
+        };
+        mesh.RecalculateNormals();
+        return mesh;
+    }
+
     /// <summary>
     ///     Destroy() doesn't release from memory
     ///     This replaces it with RenderTexture.ReleaseTemporary()
     /// </summary>
     private class DisposableRenderTex(RenderTexture tex) : IDisposable
     {
-        public void Dispose() => RenderTexture.ReleaseTemporary(tex);
+        public void Dispose()
+        {
+            RenderTexture.ReleaseTemporary(tex);
+        }
     }
 }

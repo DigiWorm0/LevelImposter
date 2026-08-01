@@ -4,7 +4,6 @@ using BepInEx.Unity.IL2CPP.Utils.Collections;
 using Il2CppInterop.Runtime.Attributes;
 using LevelImposter.Core;
 using UnityEngine;
-using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
 
 namespace LevelImposter.DB;
@@ -136,11 +135,11 @@ internal class AssetDB : MonoBehaviour
             while (shipPrefabs.Count <= mapCount)
                 shipPrefabs.Add(miraPrefab); // TODO: Use Own Ship AssetReference
             while (Constants.MapNames.Count <= mapCount)
-                Constants.MapNames = MapUtils.AddToArr(Constants.MapNames,
+                Constants.MapNames = Constants.MapNames.Add(
                     Constants.MapNames.Count == mapCount ? LIConstants.MAP_NAME : "");
 
             // Deserialize AssetDB
-            _serializedAssetDB = MapUtils.LoadJsonResource<SerializedAssetDB>("SerializedAssetDB.json");
+            _serializedAssetDB = PackagedResources.LoadJson<SerializedAssetDB>("SerializedAssetDB.json");
             if (_serializedAssetDB == null)
             {
                 LILogger.Warn("Serialized AssetDB was not found in Assembly resources");
@@ -159,7 +158,7 @@ internal class AssetDB : MonoBehaviour
             for (var i = 0; i < shipPrefabs.Count; i++)
             {
                 // Load AssetReference
-                AssetReference shipRef = shipPrefabs[i];
+                var shipRef = shipPrefabs[i];
                 while (true)
                 {
                     if (shipRef.Asset != null)

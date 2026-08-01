@@ -5,7 +5,6 @@ using System.Text.Json;
 using Il2CppInterop.Runtime.Attributes;
 using Il2CppInterop.Runtime.InteropTypes.Arrays;
 using LevelImposter.Core;
-using LevelImposter.Shop;
 
 namespace LevelImposter.FileIO;
 
@@ -109,7 +108,7 @@ public static class LegacyConverter
             // Add Sprite Data
             if (element.properties.spriteData != null)
             {
-                var spriteData = MapUtils.ParseBase64(element.properties.spriteData);
+                var spriteData = ParseBase64(element.properties.spriteData);
                 element.properties.spriteID = FindOrAddAsset(map.mapAssetDB, spriteData);
                 element.properties.spriteData = null;
             }
@@ -117,7 +116,7 @@ public static class LegacyConverter
             // Add Meeting Background
             if (element.properties.meetingBackground != null)
             {
-                var spriteData = MapUtils.ParseBase64(element.properties.meetingBackground);
+                var spriteData = ParseBase64(element.properties.meetingBackground);
                 element.properties.meetingBackgroundID = FindOrAddAsset(map.mapAssetDB, spriteData);
                 element.properties.spriteData = null;
             }
@@ -126,7 +125,7 @@ public static class LegacyConverter
             if (element.properties.minigames != null)
                 foreach (var minigame in element.properties.minigames)
                 {
-                    var spriteData = MapUtils.ParseBase64(minigame.spriteData ?? "");
+                    var spriteData = ParseBase64(minigame.spriteData ?? "");
                     if (spriteData != null)
                         minigame.spriteID = FindOrAddAsset(map.mapAssetDB, spriteData);
                     minigame.spriteData = null;
@@ -142,7 +141,7 @@ public static class LegacyConverter
                     }
                     else
                     {
-                        var soundData = MapUtils.ParseBase64(sound.data ?? "");
+                        var soundData = ParseBase64(sound.data ?? "");
                         if (soundData != null)
                             sound.dataID = FindOrAddAsset(map.mapAssetDB, soundData);
                     }
@@ -195,5 +194,11 @@ public static class LegacyConverter
 
         // Delete legacy file
         File.Move(legacyPath, $"{legacyPath}.bak");
+    }
+
+    private static byte[] ParseBase64(string base64)
+    {
+        var sub64 = base64.Substring(base64.IndexOf(",", StringComparison.Ordinal) + 1);
+        return Convert.FromBase64String(sub64);
     }
 }

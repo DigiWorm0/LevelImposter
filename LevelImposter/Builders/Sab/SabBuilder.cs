@@ -11,6 +11,7 @@ namespace LevelImposter.Builders;
 public class SabBuilder : IElemBuilder
 {
     private static readonly Dictionary<SystemTypes, SabotageTask> SabDB = new();
+
     private static readonly Dictionary<string, SystemTypes> SabSystems = new()
     {
         { "sab-reactorleft", SystemTypes.Reactor },
@@ -79,7 +80,7 @@ public class SabBuilder : IElemBuilder
             shipStatus.SystemNames = CollectionExtensions.AddItem(shipStatus.SystemNames, taskName).ToArray();
 
             // Add Task
-            shipStatus.SpecialTasks = MapUtils.AddToArr(shipStatus.SpecialTasks, task);
+            shipStatus.SpecialTasks = shipStatus.SpecialTasks.Add(task);
             SabDB.Add(roomSystem, task);
 
             // Sabotage System

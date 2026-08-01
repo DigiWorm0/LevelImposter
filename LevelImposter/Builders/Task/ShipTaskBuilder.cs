@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using LevelImposter.Core;
 using LevelImposter.DB;
-using LevelImposter.Shop;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
@@ -23,13 +22,22 @@ public class ShipTaskBuilder : IElemBuilder
     private NormalPlayerTask? _wiresTask;
 
     public static SystemTypes[] DivertSystems { get; private set; } = Array.Empty<SystemTypes>();
-    
+
     public void OnPreBuild()
     {
         _builtTypes.Clear();
         _taskParent = null;
         _wiresTask = null;
         DivertSystems = Array.Empty<SystemTypes>();
+    }
+
+    /// <summary>
+    ///     Performs final clean-up
+    /// </summary>
+    public void OnPostBuild()
+    {
+        if (_wiresTask != null)
+            _wiresTask.MaxStep = Math.Min(TaskConsoleBuilder.WiresCount, (byte)3);
     }
 
     /// <summary>
@@ -190,15 +198,6 @@ public class ShipTaskBuilder : IElemBuilder
             AddTaskToShip(elem, prefabLength, task);
         }
     }
-    
-    /// <summary>
-    ///     Performs final clean-up
-    /// </summary>
-    public void OnPostBuild()
-    {
-        if (_wiresTask != null)
-            _wiresTask.MaxStep = Math.Min(TaskConsoleBuilder.WiresCount, (byte)3);
-    }
 
     /// <summary>
     ///     Finds a list of elements of the specified type
@@ -239,13 +238,13 @@ public class ShipTaskBuilder : IElemBuilder
         switch (taskLength)
         {
             case TaskLength.Common:
-                shipStatus.CommonTasks = MapUtils.AddToArr(shipStatus.CommonTasks, task);
+                shipStatus.CommonTasks = shipStatus.CommonTasks.Add(task);
                 break;
             case TaskLength.Short:
-                shipStatus.ShortTasks = MapUtils.AddToArr(shipStatus.ShortTasks, task);
+                shipStatus.ShortTasks = shipStatus.ShortTasks.Add(task);
                 break;
             case TaskLength.Long:
-                shipStatus.LongTasks = MapUtils.AddToArr(shipStatus.LongTasks, task);
+                shipStatus.LongTasks = shipStatus.LongTasks.Add(task);
                 break;
             default:
                 throw new ArgumentOutOfRangeException($"Unknown task length: {taskLength}");

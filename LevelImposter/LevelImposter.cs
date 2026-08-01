@@ -1,3 +1,4 @@
+using System;
 using BepInEx;
 using BepInEx.Unity.IL2CPP;
 using HarmonyLib;
@@ -27,11 +28,11 @@ public partial class LevelImposter : BasePlugin
 
     public Harmony Harmony { get; } = new(ID);
 
-    
-    public static string DisplayVersion => Version.Contains('+') ? 
-        Version.Substring(0, Version.IndexOf("+", System.StringComparison.Ordinal)) : 
-        Version;
-    
+
+    public static string DisplayVersion => Version.Contains('+')
+        ? Version.Substring(0, Version.IndexOf("+", StringComparison.Ordinal))
+        : Version;
+
     public static bool IsDevBuild => Version.Contains("dev") || Version.Contains('+');
 
     public override void Load()
@@ -42,7 +43,7 @@ public partial class LevelImposter : BasePlugin
         ConfigAPI.Load();
         FileCache.Init();
         ModCompatibility.Init();
-        ImStuck.Init();
+        ImStuckService.Init();
 
         // IUsable Interface
         RegisterTypeOptions usableInterface = new()
@@ -96,7 +97,7 @@ public partial class LevelImposter : BasePlugin
 
         // Reactor Version Patch
         ReactorCredits.Register("LevelImposter", DisplayVersion, false, ReactorCredits.AlwaysShow);
-        
+
         // Patch Methods
         Harmony.PatchAll();
         LILogger.Msg("LevelImposter Initialized.");

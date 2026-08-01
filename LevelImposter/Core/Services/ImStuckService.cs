@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections;
-using BepInEx.Unity.IL2CPP.Utils.Collections;
 using Il2CppInterop.Runtime.Attributes;
 using LevelImposter.Networking;
-using Reactor.Networking.Attributes;
 using Reactor.Networking.Rpc;
 using Reactor.Utilities;
 using UnityEngine;
@@ -11,11 +9,12 @@ using UnityEngine;
 namespace LevelImposter.Core;
 
 /// <summary>
-/// Handles the "I'm Stuck" respawn functionality
+///     Handles the "I'm Stuck" respawn functionality
 /// </summary>
-public static class ImStuck
+public static class ImStuckService
 {
-    private static readonly KeyCode[] RespawnSeq = [
+    private static readonly KeyCode[] RespawnSeq =
+    [
         KeyCode.I,
         KeyCode.M,
         KeyCode.S,
@@ -32,7 +31,7 @@ public static class ImStuck
     }
 
     /// <summary>
-    /// Sends an RPC to reset the player
+    ///     Sends an RPC to reset the player
     /// </summary>
     private static void SendResetPlayerRPC()
     {

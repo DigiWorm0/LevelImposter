@@ -23,10 +23,10 @@ public static class LobbyThumbnailPatch
     {
         // If the default thumbnail is null, load it
         if (_defaultThumbnail == null)
-            _defaultThumbnail = MapUtils.LoadResourceFromAssetBundle<Sprite>("DefaultThumbnail");
+            _defaultThumbnail = PackagedResources.LoadFromBundle<Sprite>("DefaultThumbnail");
         if (_defaultThumbnail == null)
             throw new Exception("Error loading default thumbnail from asset bundle");
-        
+
         // If the thumbnail renderer is null, create it
         if (_thumbnailRenderer == null)
         {
@@ -35,7 +35,7 @@ public static class LobbyThumbnailPatch
             thumbnailRendererObj.transform.localPosition = MapImagePos;
             thumbnailRendererObj.transform.localScale = MapImageScale;
             thumbnailRendererObj.layer = (int)Layer.UI;
-            
+
             _thumbnailRenderer = thumbnailRendererObj.AddComponent<SpriteRenderer>();
             _thumbnailRenderer.sprite = _defaultThumbnail;
         }
@@ -43,7 +43,7 @@ public static class LobbyThumbnailPatch
         // Update thumbnail visibility
         _thumbnailRenderer.enabled = GameConfiguration.CurrentMapType == MapType.LevelImposter;
         __instance.MapImage.enabled = GameConfiguration.CurrentMapType != MapType.LevelImposter;
-        
+
         // Get Map ID
         var currentMapID = GameConfiguration.CurrentMap?.id;
         if (GameConfiguration.HideMapName ||
@@ -61,16 +61,14 @@ public static class LobbyThumbnailPatch
             !GameConfiguration.HideMapName &&
             GameConfiguration.CurrentMap != null &&
             GameConfiguration.CurrentMap.HasThumbnail)
-        {
             ThumbnailCache.Get(_activeThumbnailID, UpdateMapThumbnail);
-        }
     }
-    
+
     private static void UpdateMapThumbnail(Sprite? sprite)
     {
         if (_thumbnailRenderer == null || sprite == null)
             return;
-        
+
         _thumbnailRenderer.sprite = sprite;
     }
 }

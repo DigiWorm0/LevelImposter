@@ -9,12 +9,12 @@ namespace LevelImposter.Builders;
 public class EjectHandBuilder : IElemBuilder
 {
     public static List<SpriteRenderer> AllHands { get; } = [];
-    
+
     public void OnPreBuild()
     {
         AllHands.Clear();
     }
-    
+
     public void OnBuild(LIElement elem, GameObject obj)
     {
         if (elem.type != "util-ejecthand" &&
@@ -34,7 +34,7 @@ public class EjectHandBuilder : IElemBuilder
             throw new Exception("Failed to get Player Prefab from Skeld's Eject Controller");
 
         // Clone Sprite to Object
-        var hand = MapUtils.CloneSprite(obj, handPrefab?.gameObject);
+        var hand = obj.CloneSprite(handPrefab?.gameObject);
 
         // Update Sprite (Thumb or Hand)
         var isThumb = elem.type == "util-ejectthumb";

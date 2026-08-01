@@ -23,7 +23,7 @@ public class LobbySettingsConsoleBuilder : IElemBuilder
         console.CustomPosition = prefabConsole.CustomPosition;
         console.HostOnly = true;
         console.MenuPrefab = prefabConsole.MenuPrefab;
-        console.Outline = MapUtils.CloneSprite(gameObject, prefab);
+        console.Outline = gameObject.CloneSprite(prefab);
         console.CustomUseIcon = ImageNames.OptionsButton;
 
         // Button
@@ -34,6 +34,6 @@ public class LobbySettingsConsoleBuilder : IElemBuilder
         button.OnClick.AddListener((Action)console.Use);
 
         // Colliders
-        MapUtils.CreateDefaultColliders(gameObject, prefab);
+        gameObject.CreateDefaultColliders(prefab);
     }
 }

@@ -13,10 +13,10 @@ internal class VentBuilder : IElemBuilder
 {
     private const string OPEN_SOUND_NAME = "ventOpen";
     private const string MOVE_SOUND_NAME = "ventMove";
-    
+
     private readonly Dictionary<Guid, Vent> _ventComponentDb = new();
     private readonly Dictionary<int, LIElement> _ventElementDb = new();
-    
+
     private bool _hasVentSound;
     private int _ventID;
 
@@ -24,7 +24,7 @@ internal class VentBuilder : IElemBuilder
     {
         _ventComponentDb.Clear();
         _ventElementDb.Clear();
-        
+
         _hasVentSound = false;
         _ventID = 0;
     }
@@ -47,7 +47,7 @@ internal class VentBuilder : IElemBuilder
 
         // Default Sprite
         var isAnim = elem.type == "util-vent1" || elem.type == "util-vent3";
-        var spriteRenderer = MapUtils.CloneSprite(obj, prefab, isAnim);
+        var spriteRenderer = obj.CloneSprite(prefab, isAnim);
 
         // Console
         if (prefabConsole != null)
@@ -84,11 +84,11 @@ internal class VentBuilder : IElemBuilder
         {
             _hasVentSound = true;
 
-            var openSound = MapUtils.FindSound(elem.properties.sounds, OPEN_SOUND_NAME);
+            var openSound = elem.properties.sounds.FindSound(OPEN_SOUND_NAME);
             if (openSound != null)
                 shipStatus.VentEnterSound = WAVLoader.Load(openSound);
 
-            var moveSound = MapUtils.FindSound(elem.properties.sounds, MOVE_SOUND_NAME);
+            var moveSound = elem.properties.sounds.FindSound(MOVE_SOUND_NAME);
             if (moveSound != null)
             {
                 var moveSoundClip = WAVLoader.Load(moveSound);
@@ -98,7 +98,7 @@ internal class VentBuilder : IElemBuilder
         }
 
         // Colliders
-        MapUtils.CreateDefaultColliders(obj, prefab);
+        obj.CreateDefaultColliders(prefab);
 
         // DB
         _ventElementDb.Add(_ventID, elem);
@@ -191,7 +191,7 @@ internal class VentBuilder : IElemBuilder
         cleaningIndicatorSprite.sprite = cleaningClone.sprite;
         cleaningIndicatorSprite.material = cleaningClone.material;
         cleaningIndicator.active = false;
-        vent.CleaningIndicators = MapUtils.AddToArr(vent.CleaningIndicators, cleaningIndicator);
+        vent.CleaningIndicators = vent.CleaningIndicators.Add(cleaningIndicator);
 
         return arrowObj;
     }

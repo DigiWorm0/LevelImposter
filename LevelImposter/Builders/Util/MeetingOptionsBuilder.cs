@@ -1,7 +1,5 @@
-using System;
 using LevelImposter.AssetLoader;
 using LevelImposter.Core;
-using LevelImposter.Shop;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
@@ -11,9 +9,9 @@ internal class MeetingOptionsBuilder : IElemBuilder
 {
     private const string REPORT_SOUND_NAME = "meetingReportStinger";
     private const string BUTTON_SOUND_NAME = "meetingButtonStinger";
-    
+
     public static GameObject? TriggerObject { get; private set; }
-    
+
     public void OnPreBuild()
     {
         TriggerObject = null;
@@ -39,14 +37,12 @@ internal class MeetingOptionsBuilder : IElemBuilder
         // Meeting Background
         if (elem.properties.meetingBackgroundID != null)
         {
-            var spriteBuilder = new SpriteBuilder(MapTarget.Game);
+            var spriteBuilder = new SpriteBuilder();
             var loadable = spriteBuilder.GetLoadableFromID(elem.properties.meetingBackgroundID);
             if (loadable != null)
-            {
                 SpriteLoader.Instance.AddToQueue(
                     (LoadableSprite)loadable,
                     spriteData => LoadMeetingBackground(spriteData));
-            }
         }
 
         // Meeting Overlay
@@ -55,7 +51,7 @@ internal class MeetingOptionsBuilder : IElemBuilder
         meetingOverlay.gameObject.SetActive(false);
         shipStatus.EmergencyOverlay = meetingOverlay;
 
-        var buttonSound = MapUtils.FindSound(elem.properties.sounds, BUTTON_SOUND_NAME);
+        var buttonSound = elem.properties.sounds.FindSound(BUTTON_SOUND_NAME);
         if (buttonSound != null)
         {
             meetingOverlay.Stinger = WAVLoader.Load(buttonSound) ?? meetingOverlay.Stinger;
@@ -68,7 +64,7 @@ internal class MeetingOptionsBuilder : IElemBuilder
         reportOverlay.gameObject.SetActive(false);
         shipStatus.ReportOverlay = reportOverlay;
 
-        var reportSound = MapUtils.FindSound(elem.properties.sounds, REPORT_SOUND_NAME);
+        var reportSound = elem.properties.sounds.FindSound(REPORT_SOUND_NAME);
         if (reportSound != null)
         {
             reportOverlay.Stinger = WAVLoader.Load(reportSound) ?? reportOverlay.Stinger;

@@ -33,6 +33,6 @@ public class TriggerConsoleBuilder : IElemBuilder
         console.Init(elem);
 
         // Colliders
-        MapUtils.CreateDefaultColliders(obj, prefab);
+        obj.CreateDefaultColliders(prefab);
     }
 }

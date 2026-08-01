@@ -18,7 +18,7 @@ public class CamBuilder : IElemBuilder
         var prefabCam = prefab.GetComponent<SurvCamera>();
 
         // Sprite
-        MapUtils.CloneSprite(obj, prefab, true);
+        obj.CloneSprite(prefab, true);
 
         // Camera
         var survCam = obj.AddComponent<SurvCamera>();

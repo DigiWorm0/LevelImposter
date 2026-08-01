@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using LevelImposter.Core;
 using LevelImposter.Lobby;
 using UnityEngine;
@@ -15,9 +14,9 @@ public class LobbySpawnBuilder : IElemBuilder
     {
         if (elem.type != "util-lobbyspawn")
             return;
-        
+
         var lobbyBehaviour = LILobbyBehaviour.GetLobbyBehaviour();
-        lobbyBehaviour.SpawnPositions = MapUtils.AddToArr(lobbyBehaviour.SpawnPositions, obj.transform.position);
+        lobbyBehaviour.SpawnPositions = lobbyBehaviour.SpawnPositions.Add(obj.transform.position);
     }
 
     public void OnPostBuild()
@@ -26,7 +25,7 @@ public class LobbySpawnBuilder : IElemBuilder
         var lobbyBehaviour = LILobbyBehaviour.GetLobbyBehaviour();
         if (lobbyBehaviour.SpawnPositions.Length == 0)
             lobbyBehaviour.SpawnPositions = new[] { Vector2.zero };
-        
+
         // Replay the spawn animations for all players
         foreach (var playerControl in PlayerControl.AllPlayerControls)
             playerControl.StartCoroutine(

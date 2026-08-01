@@ -2,29 +2,27 @@
 using System.Collections.Generic;
 using System.Linq;
 using LevelImposter.Core;
-using LevelImposter.Lobby;
 using UnityEngine;
 
 namespace LevelImposter.Builders;
 
 public class RoomBuilder : IElemBuilder
 {
-    public int Priority => IElemBuilder.HIGH_PRIORITY; // <-- Run before other builders that may need room data
-    
     public static List<RoomData> RoomDB { get; } = [];
+    public int Priority => IElemBuilder.HIGH_PRIORITY; // <-- Run before other builders that may need room data
 
     public void OnPreBuild()
     {
         RoomDB.Clear();
     }
-    
+
     public void OnBuild(LIElement elem, GameObject obj)
     {
         if (elem.type != "util-room")
             return;
 
         // Pick a new System
-        var systemType = SystemDistributor.GetNewSystemType();
+        var systemType = SystemDistributionService.GetNewSystemType();
 
         // Options
         var isAdminVisible = elem.properties.isRoomAdminVisible ?? true;
@@ -52,7 +50,7 @@ public class RoomBuilder : IElemBuilder
             ShipRoom = shipRoom,
             Collider = shipRoom.roomArea
         });
-        
+
         // TODO: Add shiproom to lobby behaviour
     }
 
@@ -95,7 +93,7 @@ public class RoomBuilder : IElemBuilder
     {
         return RoomDB.FirstOrDefault(x => x.SystemType == systemType).ShipRoom;
     }
-    
+
     public readonly struct RoomData
     {
         public Guid ElementID { get; init; }

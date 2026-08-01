@@ -65,7 +65,7 @@ public class SabMixupBuilder : IElemBuilder
                     elem.properties.description);
 
             // Add Task
-            shipStatus.SpecialTasks = MapUtils.AddToArr(shipStatus.SpecialTasks, task);
+            shipStatus.SpecialTasks = shipStatus.SpecialTasks.Add(task);
         }
 
         // Screen Tint

@@ -54,7 +54,7 @@ public class LoadingBar(IntPtr intPtr) : MonoBehaviour(intPtr)
         // Create LoadingBar
         if (Instance == null)
             Instantiate(
-                MapUtils.LoadResourceFromAssetBundle<GameObject>("loadingbar"),
+                PackagedResources.LoadFromBundle<GameObject>("loadingbar"),
                 DestroyableSingleton<HudManager>.Instance.transform
             );
 
@@ -77,7 +77,7 @@ public class LoadingBar(IntPtr intPtr) : MonoBehaviour(intPtr)
     private IEnumerator CoLoadingScreen()
     {
         yield return null;
-        
+
         // Show Loading Screen
         Instance?.SetVisible(true);
 
@@ -85,10 +85,10 @@ public class LoadingBar(IntPtr intPtr) : MonoBehaviour(intPtr)
         while (_visible)
         {
             var queueSize = GameState.LoadingAssetsCount;
-            var downloadState = 
-            GameConfigurationSync.LobbyMapDownloader.CurrentDownloadState ?? 
-            GameConfigurationSync.GameMapDownloader.CurrentDownloadState;
-            
+            var downloadState =
+                GameConfigurationSync.LobbyMapDownloader.CurrentDownloadState ??
+                GameConfigurationSync.GameMapDownloader.CurrentDownloadState;
+
             // Approximate Progress
             if (queueSize > 0)
             {
@@ -100,14 +100,13 @@ public class LoadingBar(IntPtr intPtr) : MonoBehaviour(intPtr)
                 var progress = (float)loadedCount / _maxQueueSize;
 
                 // Update UI
-                Instance?.SetTitle(!GameConfiguration.HideMapName ? 
-                    $"<color=#1a95d8>{GameConfiguration.CurrentMap?.name ?? "???"}</color> by {GameConfiguration.CurrentMap?.authorName ?? "???"}" :
-                    "Loading...");
+                Instance?.SetTitle(!GameConfiguration.HideMapName
+                    ? $"<color=#1a95d8>{GameConfiguration.CurrentMap?.name ?? "???"}</color> by {GameConfiguration.CurrentMap?.authorName ?? "???"}"
+                    : "Loading...");
                 Instance?.SetProgress(progress);
                 Instance?.SetStatus(
                     $"{Math.Round(progress * 100)}% <size=1.2>({loadedCount}/{_maxQueueSize})</size>"
                 );
-                
             }
             else if (downloadState != null)
             {

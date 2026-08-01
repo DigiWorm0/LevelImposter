@@ -6,6 +6,8 @@ namespace LevelImposter.Builders;
 
 internal class FilterBuilder : IElemBuilder
 {
+    private static Sprite? _defaultSquare;
+
     public void OnBuild(LIElement elem, GameObject obj)
     {
         if (elem.type != "util-filter")
@@ -23,7 +25,7 @@ internal class FilterBuilder : IElemBuilder
         if (spriteRenderer == null)
         {
             spriteRenderer = obj.AddComponent<SpriteRenderer>();
-            spriteRenderer.sprite = MapUtils.GetDefaultSquare();
+            spriteRenderer.sprite = GetDefaultSquare();
             spriteRenderer.color = elem.properties.color?.ToUnity() ?? Color.white;
         }
 
@@ -51,5 +53,38 @@ internal class FilterBuilder : IElemBuilder
         // Set Layer
         obj.layer = (int)Layer.Ship;
         maskObj.layer = (int)Layer.Ship;
+    }
+
+    private static Sprite GetDefaultSquare()
+    {
+        if (_defaultSquare != null)
+            return _defaultSquare;
+
+        // Create Texture
+        var texture = new Texture2D(100, 100, TextureFormat.RGBA32, false)
+        {
+            wrapMode = TextureWrapMode.Clamp,
+            filterMode = FilterMode.Point,
+            hideFlags = HideFlags.HideAndDontSave,
+            requestedMipmapLevel = 0
+        };
+
+        // Fill Texture
+        for (var x = 0; x < 100; x++)
+        for (var y = 0; y < 100; y++)
+            texture.SetPixel(x, y, Color.white);
+        texture.Apply();
+
+        // Generate Sprite
+        _defaultSquare = Sprite.Create(
+            texture,
+            new Rect(0, 0, texture.width, texture.height),
+            new Vector2(0.5f, 0.5f),
+            100.0f,
+            0,
+            SpriteMeshType.FullRect
+        );
+
+        return _defaultSquare;
     }
 }

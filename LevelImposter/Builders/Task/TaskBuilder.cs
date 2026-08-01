@@ -27,7 +27,7 @@ public class TaskBuilder : IElemBuilder
             return;
 
         // Sprite
-        MapUtils.CloneSprite(obj, prefab);
+        obj.CloneSprite(prefab);
 
         // Console
         var console = _consoleBuilder.Build(elem, obj, prefab);
@@ -35,7 +35,7 @@ public class TaskBuilder : IElemBuilder
 
         // Button
         var prefabBtn = prefab.GetComponentInChildren<PassiveButton>();
-        var collider = MapUtils.CreateDefaultColliders(obj, prefab);
+        var collider = obj.CreateDefaultColliders(prefab);
         if (prefabBtn != null)
         {
             var btn = obj.AddComponent<PassiveButton>();

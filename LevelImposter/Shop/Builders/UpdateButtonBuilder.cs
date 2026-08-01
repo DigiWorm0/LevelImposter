@@ -1,6 +1,5 @@
 ﻿using System;
 using LevelImposter.Core;
-using LevelImposter.FileIO;
 using LevelImposter.Networking.API;
 using Twitch;
 using UnityEngine;
@@ -25,12 +24,12 @@ public static class UpdateButtonBuilder
         var versionShower = GameObject.FindObjectOfType<VersionShower>();
         if (versionShower == null)
             throw new Exception("Could not find VersionShower in scene");
-        
+
         // Find Button Prefab to Clone
         var buttonPrefab = GameObject.Find(BUTTON_PATH);
         if (buttonPrefab == null)
             throw new Exception($"Could not find button prefab at path: {BUTTON_PATH}");
-        
+
         // Create Button Object
         _btnObj = Object.Instantiate(buttonPrefab, versionShower.transform.parent);
         _btnObj.name = "button_LevelImposterUpdater";
@@ -88,7 +87,7 @@ public static class UpdateButtonBuilder
     private static Sprite GetSprite()
     {
         if (_btnSprite == null)
-            _btnSprite = MapUtils.LoadSpriteResource("UpdateButton.png");
+            _btnSprite = PackagedResources.LoadSprite("UpdateButton.png");
         if (_btnSprite == null)
             throw new Exception("The \"UpdateButton.png\" resource was not found in assembly");
         return _btnSprite;
@@ -97,7 +96,7 @@ public static class UpdateButtonBuilder
     private static Sprite GetHoverSprite()
     {
         if (_btnHoverSprite == null)
-            _btnHoverSprite = MapUtils.LoadSpriteResource("UpdateButtonHover.png");
+            _btnHoverSprite = PackagedResources.LoadSprite("UpdateButtonHover.png");
         if (_btnHoverSprite == null)
             throw new Exception("The \"UpdateButtonHover.png\" resource was not found in assembly");
         return _btnHoverSprite;
