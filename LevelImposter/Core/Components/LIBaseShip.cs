@@ -7,16 +7,16 @@ using UnityEngine;
 namespace LevelImposter.Core;
 
 /// <summary>
-/// Represents the base class for all custom ship implementations in LevelImposter.
-/// Extended by <see cref="LIShipStatus"/> and <see cref="LILobbyBehaviour"/>.
+///     Represents the base class for all custom ship implementations in LevelImposter.
+///     Extended by <see cref="LIShipStatus" /> and <see cref="LILobbyBehaviour" />.
 /// </summary>
 public class LIBaseShip(IntPtr intPtr) : MonoBehaviour(intPtr)
 {
-    // Singleton instance
-    public static LIBaseShip? Instance { get; private set; }
-    
     // Cached shader property IDs
     private static readonly int Mask = Shader.PropertyToID("_Mask");
+
+    // Singleton instance
+    public static LIBaseShip? Instance { get; private set; }
 
     // Subsystems
     [HideFromIl2Cpp] public LIMap? CurrentMap { get; private set; }
@@ -42,7 +42,8 @@ public class LIBaseShip(IntPtr intPtr) : MonoBehaviour(intPtr)
         if (Instance == this)
             Instance = null;
     }
-    
+
+    [HideFromIl2Cpp]
     public virtual void SetMap(LIMap? map)
     {
         CurrentMap = map;

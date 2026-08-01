@@ -1,23 +1,21 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using Il2CppInterop.Runtime.Attributes;
-using Il2CppInterop.Runtime.InteropTypes.Arrays;
 using Il2CppInterop.Runtime.InteropTypes.Fields;
-using Il2CppSystem.Collections.Generic;
 using LevelImposter.Core;
 using LevelImposter.DB;
 using LevelImposter.FileIO;
+using LevelImposter.Lobby;
 using LevelImposter.Networking.API;
 using LevelImposter.Shop.Transitions;
-using LevelImposter.Lobby;
-using TMPro;
 using UnityEngine;
 
 namespace LevelImposter.Shop;
 
 /// <summary>
-/// Represents the different tabs in the shop
+///     Represents the different tabs in the shop
 /// </summary>
 public enum ShopTab
 {
@@ -30,29 +28,32 @@ public enum ShopTab
 }
 
 /// <summary>
-/// Manages the shop UI and functionality
+///     Manages the shop UI and functionality
 /// </summary>
 public class ShopManager(IntPtr intPtr) : MonoBehaviour(intPtr)
 {
-    // Serialized Fields
-    public Il2CppReferenceField<SpriteRenderer> titleRenderer;
-    public Il2CppReferenceField<MapBanner> mapBannerPrefab;
-    public Il2CppReferenceField<GameObjectGrid> mapBannerGrid;
-    public Il2CppReferenceField<PassiveButton> exitButton;
-    public Il2CppReferenceField<PassiveButton> openMapsFolderButton;
-    public Il2CppReferenceField<LoadingOverlay> loadingOverlay;
-    
-    public static ShopManager? Instance { get; private set; }
-    
     private const string CONTROLLER_OVERLAY_ID = "LIShop";
-    
-    public LoadingOverlay LoadingOverlay => loadingOverlay.Value;
-    
+    private readonly Dictionary<ShopTab, LIMetadata[]> _cachedData = new();
+    private ShopTab _currentTab = ShopTab.None;
+
     /// If true, re-runs the map randomization when the shop is closed
     private bool _randomizeMapsOnClose;
-    private ShopTab _currentTab = ShopTab.None;
+
     private ShopTabButton[]? _shopTabButtons;
-    
+    public Il2CppReferenceField<PassiveButton> exitButton;
+    public Il2CppReferenceField<LoadingOverlay> loadingOverlay;
+    public Il2CppReferenceField<GameObjectGrid> mapBannerGrid;
+    public Il2CppReferenceField<MapBanner> mapBannerPrefab;
+
+    public Il2CppReferenceField<PassiveButton> openMapsFolderButton;
+
+    // Serialized Fields
+    public Il2CppReferenceField<SpriteRenderer> titleRenderer;
+
+    public static ShopManager? Instance { get; private set; }
+
+    public LoadingOverlay LoadingOverlay => loadingOverlay.Value;
+
     public void Awake()
     {
         Instance = this;
@@ -60,14 +61,16 @@ public class ShopManager(IntPtr intPtr) : MonoBehaviour(intPtr)
         openMapsFolderButton.Value.OnClick.AddListener((Action)OpenMapsFolder);
 
         _shopTabButtons = GetComponentsInChildren<ShopTabButton>(true);
-        
+
         ControllerManager.Instance.OpenOverlayMenu(CONTROLLER_OVERLAY_ID, null);
     }
+
     public void Start()
     {
         SetTab(ShopTab.DownloadedMaps);
         AddStarField();
     }
+
     public void Update()
     {
         if (Input.GetKeyUp(KeyCode.Escape))
@@ -80,7 +83,7 @@ public class ShopManager(IntPtr intPtr) : MonoBehaviour(intPtr)
     }
 
     /// <summary>
-    /// Opens the folder where maps are stored
+    ///     Opens the folder where maps are stored
     /// </summary>
     private static void OpenMapsFolder()
     {
@@ -92,16 +95,16 @@ public class ShopManager(IntPtr intPtr) : MonoBehaviour(intPtr)
     }
 
     /// <summary>
-    /// Closes the shop window
+    ///     Closes the shop window
     /// </summary>
     public void CloseShop()
     {
         if (LoadingOverlay.PreventClose)
             return;
-        
+
         if (_randomizeMapsOnClose && GameConfiguration.HideMapName)
             MapRandomizer.RandomizeMap(false);
-        
+
         DestroyableSingleton<TransitionFade>.Instance.DoTransitionFade(
             gameObject,
             null,
@@ -109,7 +112,7 @@ public class ShopManager(IntPtr intPtr) : MonoBehaviour(intPtr)
     }
 
     /// <summary>
-    /// Loads the specified tab in the shop
+    ///     Loads the specified tab in the shop
     /// </summary>
     /// <param name="tab">The tab to load</param>
     /// <param name="titleSprite">Optional title sprite to set</param>
@@ -118,7 +121,7 @@ public class ShopManager(IntPtr intPtr) : MonoBehaviour(intPtr)
         // Set Title Sprite
         if (titleSprite != null)
             titleRenderer.Value.sprite = titleSprite;
-        
+
         // Check if we're already on this tab
         if (_currentTab == tab)
             return;
@@ -126,6 +129,13 @@ public class ShopManager(IntPtr intPtr) : MonoBehaviour(intPtr)
 
         UpdateTabButtonState();
         mapBannerGrid.Value.DestroyAll();
+
+        // Check if this tab is cached
+        if (_cachedData.ContainsKey(tab))
+        {
+            SetMaps(_cachedData[tab]);
+            return;
+        }
 
         switch (_currentTab)
         {
@@ -169,35 +179,38 @@ public class ShopManager(IntPtr intPtr) : MonoBehaviour(intPtr)
     [HideFromIl2Cpp]
     private void OnWorkshopLoaded(LIMetadata[] maps, ShopTab targetTab)
     {
-        if (_currentTab != targetTab)
-            return;
-        
-        SetMaps(maps);
+        // Cache response
+        _cachedData[targetTab] = maps;
+
+        // Check if the user is still on this tab
+        if (_currentTab == targetTab)
+            SetMaps(maps);
     }
+
     [HideFromIl2Cpp]
     private void OnError(ShopTab tab, string message)
     {
         if (_currentTab != tab)
             return;
-        
+
         LoadingOverlay.ShowError("The impostor sabotaged comms!", message);
     }
 
     /// <summary>
-    /// Updates the visual state of the tab buttons
+    ///     Updates the visual state of the tab buttons
     /// </summary>
     private void UpdateTabButtonState()
     {
         if (_shopTabButtons == null)
             throw new InvalidOperationException("Shop tab buttons not initialized");
-        
+
         foreach (var tabButton in _shopTabButtons)
             tabButton.SetTabSelected(tabButton.TabType == _currentTab);
     }
 
-    
+
     /// <summary>
-    /// Sets the maps to display in the shop
+    ///     Sets the maps to display in the shop
     /// </summary>
     /// <param name="maps">The maps to display</param>
     [HideFromIl2Cpp]
@@ -205,10 +218,10 @@ public class ShopManager(IntPtr intPtr) : MonoBehaviour(intPtr)
     {
         // Hide Overlays
         LoadingOverlay.Hide();
-        
+
         // Clear Existing Banners
         mapBannerGrid.Value.DestroyAll();
-        
+
         // Add New Banners
         var delay = 0.0f;
         foreach (var map in maps)
@@ -216,7 +229,7 @@ public class ShopManager(IntPtr intPtr) : MonoBehaviour(intPtr)
             // Instantiate Map Banner
             var mapBanner = Instantiate(mapBannerPrefab.Value);
             mapBanner.SetMap(map);
-            
+
             // Animate In
             MatOpacityTransition.Run(new TransitionParams<float>
             {
@@ -234,9 +247,9 @@ public class ShopManager(IntPtr intPtr) : MonoBehaviour(intPtr)
     }
 
     /// <summary>
-    ///   Marks that maps should be re-randomized when the shop is closed.
-    ///   Should be called whenever the user adds/removes a map from their random pool
-    ///   or modifies a map's random probability.
+    ///     Marks that maps should be re-randomized when the shop is closed.
+    ///     Should be called whenever the user adds/removes a map from their random pool
+    ///     or modifies a map's random probability.
     /// </summary>
     public void RandomizeMapOnClose()
     {

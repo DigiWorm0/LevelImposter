@@ -48,10 +48,7 @@ public partial class LevelImposter : BasePlugin
         // IUsable Interface
         RegisterTypeOptions usableInterface = new()
         {
-            Interfaces = new Il2CppInterfaceCollection(new[]
-            {
-                typeof(IUsable)
-            })
+            Interfaces = new Il2CppInterfaceCollection([typeof(IUsable)])
         };
 
         // Inject MonoBehaviours
