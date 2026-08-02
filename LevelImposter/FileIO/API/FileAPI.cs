@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Reflection;
-using LevelImposter.Core;
+using LevelImposter.Core.Utils;
 
 namespace LevelImposter.FileIO.API;
 

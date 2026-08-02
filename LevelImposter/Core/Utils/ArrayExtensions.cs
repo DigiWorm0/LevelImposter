@@ -53,6 +53,15 @@ public static class ArrayExtensions
         return list.ToArray();
     }
 
+    /// <summary>
+    ///     Removes an element from an Il2CppReferenceArray by creating a copy and removing the element at the specified index.
+    ///     The array is not modified in-place.
+    ///     Instead, a new array is returned.
+    /// </summary>
+    /// <param name="arr">The original array.</param>
+    /// <param name="index">The index of the element to remove.</param>
+    /// <typeparam name="T">The type of the elements in the array.</typeparam>
+    /// <returns>A new Il2CppReferenceArray containing the original elements except for the removed element.</returns>
     public static Il2CppReferenceArray<T> Remove<T>(this Il2CppReferenceArray<T> arr, int index)
         where T : Il2CppObjectBase?
     {

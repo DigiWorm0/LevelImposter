@@ -2,6 +2,7 @@ using AmongUs.InnerNet.GameDataMessages;
 using HarmonyLib;
 using LevelImposter.Builders.Util;
 using LevelImposter.Core.Components;
+using LevelImposter.Core.Utils;
 
 namespace LevelImposter.Core.Patches.Ship;
 

@@ -1,8 +1,8 @@
 ﻿using System;
 using Hazel;
-using LevelImposter.Core;
 using LevelImposter.Core.Components;
 using LevelImposter.Core.Models;
+using LevelImposter.Core.Utils;
 using LevelImposter.Trigger;
 using Reactor.Networking.Attributes;
 using Reactor.Networking.Rpc;

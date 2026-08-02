@@ -3,7 +3,7 @@ using System.IO;
 using System.Reflection;
 using System.Text.Json.Serialization;
 using Il2CppInterop.Runtime.Attributes;
-using LevelImposter.Core;
+using LevelImposter.Core.Utils;
 using LevelImposter.FileIO.Cache;
 using UnityEngine;
 

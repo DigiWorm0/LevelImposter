@@ -2,8 +2,8 @@
 using System.Linq;
 using System.Text.Json.Serialization;
 using Il2CppInterop.Runtime.InteropTypes.Arrays;
-using LevelImposter.Core;
 using LevelImposter.Core.Models;
+using LevelImposter.Core.Utils;
 using LevelImposter.DB.Models;
 
 namespace LevelImposter.DB.Sub;

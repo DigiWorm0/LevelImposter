@@ -2,6 +2,7 @@ using HarmonyLib;
 using Hazel;
 using LevelImposter.Builders.Util;
 using LevelImposter.Core.Components;
+using LevelImposter.Core.Utils;
 using LevelImposter.Trigger;
 
 namespace LevelImposter.Core.Patches.Ship;

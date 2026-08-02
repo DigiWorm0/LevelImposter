@@ -2,8 +2,8 @@
 using LevelImposter.AssetLoader.Loadables;
 using LevelImposter.AssetLoader.Loaders;
 using LevelImposter.AssetLoader.Queue;
-using LevelImposter.Core;
 using LevelImposter.Core.GarbageCollection;
+using LevelImposter.Core.Utils;
 using UnityEngine;
 
 namespace LevelImposter.AssetLoader;

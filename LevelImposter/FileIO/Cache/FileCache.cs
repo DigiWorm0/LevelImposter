@@ -1,7 +1,7 @@
 using System;
 using System.IO;
 using System.Linq;
-using LevelImposter.Core;
+using LevelImposter.Core.Utils;
 using LevelImposter.FileIO.API;
 
 namespace LevelImposter.FileIO.Cache;

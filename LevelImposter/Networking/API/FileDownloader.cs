@@ -7,7 +7,7 @@ using System.Net.Http;
 using System.Net.Security;
 using System.Threading.Tasks;
 using LevelImposter.AssetLoader.Queue;
-using LevelImposter.Core;
+using LevelImposter.Core.Utils;
 using LevelImposter.FileIO.DataStores;
 using Reactor.Utilities;
 

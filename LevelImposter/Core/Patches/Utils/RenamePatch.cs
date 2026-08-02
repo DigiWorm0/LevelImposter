@@ -2,6 +2,7 @@ using HarmonyLib;
 using Il2CppSystem;
 using LevelImposter.Core.Components;
 using LevelImposter.Core.Models;
+using LevelImposter.Core.Utils;
 using ObjList = Il2CppInterop.Runtime.InteropTypes.Arrays.Il2CppReferenceArray<Il2CppSystem.Object>;
 
 namespace LevelImposter.Core.Patches.Utils;

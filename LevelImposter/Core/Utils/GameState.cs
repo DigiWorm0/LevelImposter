@@ -5,7 +5,7 @@ using LevelImposter.Shop.Components;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace LevelImposter.Core;
+namespace LevelImposter.Core.Utils;
 
 public static class GameState
 {

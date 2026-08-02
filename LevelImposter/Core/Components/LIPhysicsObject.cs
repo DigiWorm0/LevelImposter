@@ -5,6 +5,7 @@ using BepInEx.Unity.IL2CPP.Utils.Collections;
 using Il2CppInterop.Runtime.Attributes;
 using LevelImposter.Core.Models;
 using LevelImposter.Core.Services.Ship;
+using LevelImposter.Core.Utils;
 using LevelImposter.Networking.RPC;
 using LevelImposter.Trigger;
 using Reactor.Networking.Rpc;

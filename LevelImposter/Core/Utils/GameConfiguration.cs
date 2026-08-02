@@ -5,7 +5,7 @@ using LevelImposter.Core.Models;
 using LevelImposter.Lobby.Components;
 using LevelImposter.Shop.Components;
 
-namespace LevelImposter.Core;
+namespace LevelImposter.Core.Utils;
 
 public static class GameConfiguration
 {

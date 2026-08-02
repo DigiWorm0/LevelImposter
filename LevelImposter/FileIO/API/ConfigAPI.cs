@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
-using LevelImposter.Core;
+using LevelImposter.Core.Utils;
 
 namespace LevelImposter.FileIO.API;
 

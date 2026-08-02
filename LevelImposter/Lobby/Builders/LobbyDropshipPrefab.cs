@@ -1,5 +1,5 @@
 ﻿using System;
-using LevelImposter.Core;
+using LevelImposter.Core.Utils;
 using UnityEngine;
 using Object = UnityEngine.Object;
 

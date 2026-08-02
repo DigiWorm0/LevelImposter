@@ -1,7 +1,7 @@
 ﻿using System;
 using Hazel;
-using LevelImposter.Core;
 using LevelImposter.Core.Models;
+using LevelImposter.Core.Utils;
 using LevelImposter.Lobby.Sync;
 using Reactor.Networking.Attributes;
 using Reactor.Networking.Rpc;

@@ -1,6 +1,6 @@
 using System;
-using LevelImposter.Core;
 using LevelImposter.Core.Models;
+using LevelImposter.Core.Utils;
 using LevelImposter.FileIO.Cache;
 
 namespace LevelImposter.Lobby.Sync;
@@ -127,9 +127,9 @@ public class MapDownloadHelper(bool preventGameStart = false)
     public class DownloadState
     {
         private static int _downloadIDCounter;
-        public string? Error;
 
         public readonly int ID = _downloadIDCounter++;
+        public string? Error;
         public Guid MapID = Guid.Empty;
         public float Progress;
     }

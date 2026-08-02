@@ -1,7 +1,7 @@
 using System;
 using System.Collections;
 using System.Text.Json;
-using LevelImposter.Core;
+using LevelImposter.Core.Utils;
 using Reactor.Utilities;
 using UnityEngine.Networking;
 using FetchResult = LevelImposter.Networking.API.HTTPHandler.HTTPResult<string>;

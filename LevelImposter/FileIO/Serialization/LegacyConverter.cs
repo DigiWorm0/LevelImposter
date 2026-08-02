@@ -4,8 +4,8 @@ using System.IO;
 using System.Text.Json;
 using Il2CppInterop.Runtime.Attributes;
 using Il2CppInterop.Runtime.InteropTypes.Arrays;
-using LevelImposter.Core;
 using LevelImposter.Core.Models;
+using LevelImposter.Core.Utils;
 using LevelImposter.FileIO.API;
 using LevelImposter.FileIO.DataBlock;
 

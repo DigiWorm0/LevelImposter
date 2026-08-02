@@ -2,7 +2,7 @@ using System;
 using BepInEx.Logging;
 using UnityEngine;
 
-namespace LevelImposter.Core;
+namespace LevelImposter.Core.Utils;
 #pragma warning disable CS0162 // Uses constants, so ignore unreachable code warning
 
 /// <summary>

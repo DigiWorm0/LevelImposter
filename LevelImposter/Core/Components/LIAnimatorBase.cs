@@ -5,6 +5,7 @@ using BepInEx.Unity.IL2CPP.Utils.Collections;
 using Il2CppInterop.Runtime.Attributes;
 using Il2CppInterop.Runtime.InteropTypes.Fields;
 using LevelImposter.Core.Models;
+using LevelImposter.Core.Utils;
 using UnityEngine;
 
 namespace LevelImposter.Core.Components;

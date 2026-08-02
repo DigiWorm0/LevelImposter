@@ -2,6 +2,7 @@ using System.Linq;
 using HarmonyLib;
 using Hazel;
 using LevelImposter.Core.Components;
+using LevelImposter.Core.Utils;
 
 namespace LevelImposter.Core.Patches.Fixes;
 

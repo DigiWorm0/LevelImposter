@@ -3,8 +3,8 @@ using System.IO;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using LevelImposter.Core;
 using LevelImposter.Core.Models;
+using LevelImposter.Core.Utils;
 
 namespace LevelImposter.FileIO.Serialization;
 
