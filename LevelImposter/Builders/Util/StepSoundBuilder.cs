@@ -1,9 +1,10 @@
-using LevelImposter.AssetLoader;
+using LevelImposter.AssetLoader.Loaders;
 using LevelImposter.Core;
+using LevelImposter.Core.Models;
 using LevelImposter.DB;
 using UnityEngine;
 
-namespace LevelImposter.Builders;
+namespace LevelImposter.Builders.Util;
 
 internal class StepSoundBuilder : IElemBuilder
 {

@@ -1,7 +1,8 @@
 ﻿using System.Linq;
+using LevelImposter.Core.Models;
 using UnityEngine;
 
-namespace LevelImposter.Core;
+namespace LevelImposter.Core.Utils;
 
 public static class MapExtensions
 {

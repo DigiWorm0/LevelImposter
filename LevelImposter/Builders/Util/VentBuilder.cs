@@ -1,13 +1,15 @@
 using System;
 using System.Collections.Generic;
 using Il2CppInterop.Runtime.InteropTypes.Arrays;
-using LevelImposter.AssetLoader;
-using LevelImposter.Core;
+using LevelImposter.AssetLoader.Loaders;
+using LevelImposter.Core.Components;
+using LevelImposter.Core.Models;
+using LevelImposter.Core.Utils;
 using LevelImposter.DB;
 using UnityEngine;
 using UnityEngine.Events;
 
-namespace LevelImposter.Builders;
+namespace LevelImposter.Builders.Util;
 
 internal class VentBuilder : IElemBuilder
 {

@@ -4,8 +4,9 @@ using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using LevelImposter.Core;
+using LevelImposter.Core.Models;
 
-namespace LevelImposter.FileIO;
+namespace LevelImposter.FileIO.Serialization;
 
 public static class LISerializer
 {

@@ -1,7 +1,7 @@
 ﻿using System;
-using LevelImposter.Builders;
+using LevelImposter.Builders.Util;
 
-namespace LevelImposter.Core;
+namespace LevelImposter.Trigger.Values;
 
 public class ComparatorValue(Guid? value1ID, Guid? value2ID, ComparatorValue.Operation operation)
     : IBoolValue

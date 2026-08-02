@@ -1,20 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using LevelImposter.AssetLoader;
 using Object = UnityEngine.Object;
 
-namespace LevelImposter.Core;
+namespace LevelImposter.Core.GarbageCollection;
 
 /// <summary>
 ///     Handles garbage collection of disposable objects.
-///     Garbage collection is automatically triggered on lobby change or map unload depending on <see cref="GCBehavior"/> flags.
+///     Garbage collection is automatically triggered on lobby change or map unload depending on <see cref="GCBehavior" />
+///     flags.
 /// </summary>
 public static class GCHandler
 {
     private static readonly List<IGCDisposable> Disposables = [];
     private static GCBehavior _defaultBehavior = GCBehavior.AlwaysDispose;
-    
+
     /// <summary>
     ///     Changes default garbage collection behavior for registered objects
     /// </summary>
@@ -25,7 +25,7 @@ public static class GCHandler
     }
 
     /// <summary>
-    ///     Registers a new <see cref="IDisposable"/> object
+    ///     Registers a new <see cref="IDisposable" /> object
     /// </summary>
     /// <param name="disposable">IDisposable object to handle</param>
     /// <param name="behavior">Garbage collection behavior for this object</param>
@@ -54,7 +54,7 @@ public static class GCHandler
         var toDispose = Disposables
             .Where(d => (d.Behavior & behaviorFlag) != 0)
             .ToList();
-        
+
         // Dispose of each object
         LILogger.Info($"Disposing of {toDispose.Count} objects with behavior: {behaviorFlag}");
         foreach (var disposable in toDispose)
@@ -68,6 +68,7 @@ public static class GCHandler
                 LILogger.Warn("Error disposing 1 or more objects during GC");
                 LILogger.LogException(e);
             }
+
             Disposables.Remove(disposable);
         }
 
@@ -84,18 +85,29 @@ public static class GCHandler
         GC.Collect();
     }
 
-    private interface IGCDisposable {
+    private interface IGCDisposable
+    {
         public GCBehavior Behavior { get; }
         public void Dispose();
     }
+
     private class DisposableSystemObject(IDisposable obj, GCBehavior behavior) : IGCDisposable
     {
         public GCBehavior Behavior { get; } = behavior;
-        public void Dispose() => obj.Dispose();
+
+        public void Dispose()
+        {
+            obj.Dispose();
+        }
     }
+
     private class DisposableUnityObject(Object obj, GCBehavior behavior) : IGCDisposable
     {
         public GCBehavior Behavior { get; } = behavior;
-        public void Dispose() => Object.Destroy(obj);
+
+        public void Dispose()
+        {
+            Object.Destroy(obj);
+        }
     }
 }

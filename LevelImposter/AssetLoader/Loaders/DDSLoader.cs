@@ -1,10 +1,12 @@
 ﻿using System;
 using System.IO;
 using Il2CppInterop.Runtime.Attributes;
-using LevelImposter.Core;
+using LevelImposter.AssetLoader.Loadables;
+using LevelImposter.Core.GarbageCollection;
+using LevelImposter.FileIO.DataBlock;
 using UnityEngine;
 
-namespace LevelImposter.AssetLoader;
+namespace LevelImposter.AssetLoader.Loaders;
 
 public static class DDSLoader
 {

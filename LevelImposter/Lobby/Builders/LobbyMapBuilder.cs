@@ -1,11 +1,19 @@
 ﻿using Il2CppInterop.Runtime.InteropTypes.Arrays;
 using LevelImposter.Builders;
+using LevelImposter.Builders.Generic;
 using LevelImposter.Builders.Lobby;
+using LevelImposter.Builders.Other;
+using LevelImposter.Builders.Trigger;
+using LevelImposter.Builders.Util;
 using LevelImposter.Core;
+using LevelImposter.Core.Components;
+using LevelImposter.Core.GarbageCollection;
+using LevelImposter.Core.Models;
+using LevelImposter.Lobby.Components;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
-namespace LevelImposter.Lobby;
+namespace LevelImposter.Lobby.Builders;
 
 public static class LobbyMapBuilder
 {

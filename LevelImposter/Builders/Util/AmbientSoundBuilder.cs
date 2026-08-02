@@ -1,9 +1,11 @@
 using System;
 using LevelImposter.AssetLoader;
 using LevelImposter.Core;
+using LevelImposter.Core.Components;
+using LevelImposter.Core.Models;
 using UnityEngine;
 
-namespace LevelImposter.Builders;
+namespace LevelImposter.Builders.Util;
 
 internal class AmbientSoundBuilder(bool isLobby = false) : IElemBuilder
 {

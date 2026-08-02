@@ -1,9 +1,10 @@
 ﻿using System.Collections.Generic;
 using HarmonyLib;
-using LevelImposter.Builders;
+using LevelImposter.Builders.Util;
+using LevelImposter.Core.Components;
 using LevelImposter.Trigger;
 
-namespace LevelImposter.Core;
+namespace LevelImposter.Core.Patches.Triggers;
 
 /// <summary>
 ///     Calls the trigger when the sabotage is finished.

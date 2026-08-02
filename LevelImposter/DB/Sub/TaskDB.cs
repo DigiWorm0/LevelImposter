@@ -3,8 +3,10 @@ using System.Linq;
 using System.Text.Json.Serialization;
 using Il2CppInterop.Runtime.InteropTypes.Arrays;
 using LevelImposter.Core;
+using LevelImposter.Core.Models;
+using LevelImposter.DB.Models;
 
-namespace LevelImposter.DB;
+namespace LevelImposter.DB.Sub;
 
 /// <summary>
 ///     Database of PlayerTask objects

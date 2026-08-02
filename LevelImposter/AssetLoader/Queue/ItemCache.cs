@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
-using LevelImposter.Core;
 
-namespace LevelImposter.AssetLoader;
+namespace LevelImposter.AssetLoader.Queue;
 
 public class ItemCache<T> where T : ICachable
 {
@@ -17,10 +16,10 @@ public class ItemCache<T> where T : ICachable
     {
         if (!_cachedItems.TryGetValue(id, out var item))
             return default;
-        
+
         if (!item.IsExpired)
             return item;
-        
+
         _cachedItems.Remove(id);
         return default;
     }

@@ -1,8 +1,10 @@
 ﻿using System.Collections;
-using LevelImposter.Core;
+using LevelImposter.Core.Components;
+using LevelImposter.Core.Services.Ship;
+using LevelImposter.Core.Utils;
 using UnityEngine;
 
-namespace LevelImposter.Trigger;
+namespace LevelImposter.Trigger.Handles;
 
 public class ShowHideTriggerHandle : ITriggerHandle
 {

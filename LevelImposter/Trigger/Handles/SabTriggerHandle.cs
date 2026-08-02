@@ -1,4 +1,4 @@
-﻿namespace LevelImposter.Trigger;
+﻿namespace LevelImposter.Trigger.Handles;
 
 public class SabTriggerHandle : ITriggerHandle
 {

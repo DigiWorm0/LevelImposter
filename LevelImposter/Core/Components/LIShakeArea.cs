@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-namespace LevelImposter.Core;
+namespace LevelImposter.Core.Components;
 
 /// <summary>
 ///     Object that shakes the screen when players enter it's range

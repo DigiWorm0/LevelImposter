@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
-using LevelImposter.Networking;
+using LevelImposter.Networking.RPC;
 using Reactor.Networking.Rpc;
 
-namespace LevelImposter.Lobby;
+namespace LevelImposter.Lobby.Sync;
 
 /// <summary>
 ///     Handles the download state of all connected clients

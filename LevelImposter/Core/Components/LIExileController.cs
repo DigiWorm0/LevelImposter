@@ -2,11 +2,13 @@
 using BepInEx.Unity.IL2CPP.Utils.Collections;
 using Il2CppInterop.Runtime.Attributes;
 using Il2CppSystem.Collections;
-using LevelImposter.Builders;
+using LevelImposter.Builders.Util;
+using LevelImposter.Core.Patches.Fixes;
+using LevelImposter.Core.Services.Ship;
 using LevelImposter.Trigger;
 using UnityEngine;
 
-namespace LevelImposter.Core;
+namespace LevelImposter.Core.Components;
 
 /// <summary>
 ///     Exile Controller for LevelImposter maps.
@@ -186,14 +188,14 @@ public class LIExileController(IntPtr intPtr) : ExileController(intPtr)
     }
 
     /// <summary>
-    ///  Coroutine based on ExileController.HandleText but with customizable timings
+    ///     Coroutine based on ExileController.HandleText but with customizable timings
     /// </summary>
     [HideFromIl2Cpp]
     private System.Collections.IEnumerator CoHandleText()
     {
         // DO NOT REFERENCE this.completeString
         var exileString = ExileTextPatch.LastExileText;
-        
+
         yield return Effects.Wait(_preTextDuration);
         for (var t = 0f; t <= _textDuration; t += Time.deltaTime)
         {
@@ -205,13 +207,15 @@ public class LIExileController(IntPtr intPtr) : ExileController(intPtr)
                 if (exileString[num - 1] != ' ')
                     SoundManager.Instance.PlaySoundImmediate(TextSound, false, 0.8f);
             }
+
             yield return null;
         }
+
         Text.text = exileString;
     }
 
     /// <summary>
-    /// Based on ExileController.WrapUp but modified to avoid bugs with IL2CPP
+    ///     Based on ExileController.WrapUp but modified to avoid bugs with IL2CPP
     /// </summary>
     private void WrapUpAlt()
     {
@@ -221,17 +225,17 @@ public class LIExileController(IntPtr intPtr) : ExileController(intPtr)
             var playerObject = initData.networkedPlayer.Object;
             if (playerObject)
                 playerObject.Exiled();
-            
+
             initData.networkedPlayer.IsDead = true;
         }
-        
+
         // Re-enable Gameplay
-        if (DestroyableSingleton<TutorialManager>.InstanceExists || 
+        if (DestroyableSingleton<TutorialManager>.InstanceExists ||
             (GameManager.Instance != null && !GameManager.Instance.LogicFlow.IsGameOverDueToDeath()))
             ReEnableGameplay();
-        
+
         // Destroy Eject Controller
-        GameObject.Destroy(gameObject);
+        Destroy(gameObject);
     }
 
     /// <summary>

@@ -1,12 +1,17 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using LevelImposter.Builders.Util;
 using LevelImposter.Core;
+using LevelImposter.Core.Components;
+using LevelImposter.Core.Models;
+using LevelImposter.Core.Utils;
 using LevelImposter.DB;
+using LevelImposter.DB.Models;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
-namespace LevelImposter.Builders;
+namespace LevelImposter.Builders.Task;
 
 public class ShipTaskBuilder : IElemBuilder
 {

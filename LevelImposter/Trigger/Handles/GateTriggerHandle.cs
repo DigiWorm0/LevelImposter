@@ -1,7 +1,7 @@
-﻿using LevelImposter.Builders;
-using LevelImposter.Core;
+﻿using LevelImposter.Builders.Util;
+using LevelImposter.Core.Services.Ship;
 
-namespace LevelImposter.Trigger;
+namespace LevelImposter.Trigger.Handles;
 
 public class GateTriggerHandle : ITriggerHandle
 {
@@ -16,7 +16,7 @@ public class GateTriggerHandle : ITriggerHandle
         // Get Value
         var element = MapObjectDB.Get(signal.TargetObject);
         var valueObj = ValueBuilder.GetBoolOfID(element?.properties.triggerGateValueID);
-        var value = valueObj.GetValue(0);
+        var value = valueObj.GetValue();
 
         // Fire Trigger
         var triggerID = value ? ON_TRUE : ON_FALSE;

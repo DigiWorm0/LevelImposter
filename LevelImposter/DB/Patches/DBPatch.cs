@@ -1,7 +1,7 @@
 using HarmonyLib;
 using UnityEngine;
 
-namespace LevelImposter.DB;
+namespace LevelImposter.DB.Patches;
 
 /*
  *      Loads all ship prefabs

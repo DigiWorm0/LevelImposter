@@ -1,16 +1,17 @@
 ﻿using Hazel;
 using LevelImposter.Core;
-using LevelImposter.Lobby;
+using LevelImposter.Core.Models;
+using LevelImposter.Lobby.Sync;
 using Reactor.Networking.Attributes;
 using Reactor.Networking.Rpc;
 
-namespace LevelImposter.Networking;
+namespace LevelImposter.Networking.RPC;
 
 [RegisterCustomRpc((uint)LIRpc.ReadyToStart)]
 public class ReadyToStartRPC(LevelImposter plugin, uint id) : PlayerCustomRpc<LevelImposter, bool>(plugin, id)
 {
     public override RpcLocalHandling LocalHandling => RpcLocalHandling.After;
-    
+
     public override void Write(MessageWriter writer, bool isReady)
     {
         writer.Write(isReady);
@@ -25,11 +26,11 @@ public class ReadyToStartRPC(LevelImposter plugin, uint id) : PlayerCustomRpc<Le
     {
         // Log
         LILogger.Info($"[RPC] {player.name} {(isReady ? "is ready" : "is not ready")}");
-        
+
         // If the start countdown is running, reset it
         if (DestroyableSingleton<GameStartManager>.InstanceExists)
             DestroyableSingleton<GameStartManager>.Instance.ResetStartState();
-        
+
         // Add or Remove from PlayersReadyCounter
         if (isReady)
             PlayersReadyCounter.MarkPlayerReady(player);

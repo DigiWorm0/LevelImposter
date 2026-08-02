@@ -1,7 +1,8 @@
 ﻿using HarmonyLib;
+using LevelImposter.Core.Components;
 using PowerTools;
 
-namespace LevelImposter.Core;
+namespace LevelImposter.Core.Patches.Animations;
 
 /// <summary>
 ///     Toggles a GIF animation alongside the
@@ -72,7 +73,7 @@ public static class ExitVentPatch
         // GIF animation
         else if (animator != null)
             animator.PlayType("exitVent");
-                
+
         // Still image
         else
             return false;

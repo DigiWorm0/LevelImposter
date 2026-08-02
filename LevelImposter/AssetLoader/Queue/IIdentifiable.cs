@@ -1,4 +1,4 @@
-﻿namespace LevelImposter.AssetLoader;
+﻿namespace LevelImposter.AssetLoader.Queue;
 
 public interface IIdentifiable
 {

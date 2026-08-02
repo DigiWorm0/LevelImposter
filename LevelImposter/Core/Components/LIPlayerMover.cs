@@ -1,20 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
-using LevelImposter.Networking;
-using LevelImposter.Trigger;
-using Reactor.Networking.Attributes;
+using LevelImposter.Networking.RPC;
 using Reactor.Networking.Rpc;
 using UnityEngine;
 
-namespace LevelImposter.Core;
+namespace LevelImposter.Core.Components;
 
 /// <summary>
 ///     Object that fires a trigger when the player enters/exits it's range
 /// </summary>
 public class LIPlayerMover(IntPtr intPtr) : PlayerArea(intPtr)
 {
-    private uint _objectID;
     public static readonly Dictionary<uint, Transform> AllObjects = new();
+    private uint _objectID;
+
+    public new void OnDestroy()
+    {
+        base.OnDestroy();
+        AllObjects.Remove(_objectID);
+    }
 
     public void SetObjectID(uint objectID)
     {
@@ -22,17 +26,11 @@ public class LIPlayerMover(IntPtr intPtr) : PlayerArea(intPtr)
         AllObjects.Add(_objectID, transform);
     }
 
-    public new void OnDestroy()
-    {
-        base.OnDestroy();
-        AllObjects.Remove(_objectID);
-    }
-    
     public override void OnPlayerEnter(PlayerControl player)
     {
         if (!player.AmOwner)
             return;
-        
+
         player.transform.SetParent(transform);
         SyncLocalPlayer(player, _objectID);
     }
@@ -41,9 +39,9 @@ public class LIPlayerMover(IntPtr intPtr) : PlayerArea(intPtr)
     {
         if (!player.AmOwner)
             return;
-        
+
         player.transform.SetParent(ShipStatus.Instance.transform);
-        SyncLocalPlayer(player, 0);
+        SyncLocalPlayer(player);
     }
 
     private void SyncLocalPlayer(PlayerControl playerControl, uint targetID = 0)

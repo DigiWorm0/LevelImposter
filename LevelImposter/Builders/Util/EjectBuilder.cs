@@ -1,10 +1,11 @@
 using System;
-using LevelImposter.Core;
+using LevelImposter.Core.Components;
+using LevelImposter.Core.Models;
 using LevelImposter.DB;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
-namespace LevelImposter.Builders;
+namespace LevelImposter.Builders.Util;
 
 public class EjectBuilder : IElemBuilder
 {

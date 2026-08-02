@@ -1,4 +1,4 @@
-﻿namespace LevelImposter.Core;
+﻿namespace LevelImposter.Core.Models;
 
 /// <summary>
 ///     A list of constants used within LevelImposter

@@ -1,8 +1,10 @@
 ﻿using System.Collections.Generic;
 using LevelImposter.Core;
+using LevelImposter.Core.Components;
+using LevelImposter.Core.Models;
 using UnityEngine;
 
-namespace LevelImposter.Builders;
+namespace LevelImposter.Builders.Generic;
 
 /// <summary>
 ///     Replaces String in the Translation Controller with Custom Text

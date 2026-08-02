@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace LevelImposter.Core;
+namespace LevelImposter.Core.Utils;
 
 [Serializable]
 public class MissingShipException() : Exception(EXCEPTION_STRING)

@@ -1,7 +1,8 @@
 ﻿using System;
 using HarmonyLib;
+using LevelImposter.Core.Components;
 
-namespace LevelImposter.Core;
+namespace LevelImposter.Core.Patches.Fixes;
 
 /// <summary>
 ///     Removes the minimum task limit on <c>ShipStatus</c>.

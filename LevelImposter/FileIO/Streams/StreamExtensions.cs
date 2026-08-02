@@ -1,23 +1,25 @@
 ﻿using System;
 using System.IO;
 using System.Runtime.InteropServices;
+using LevelImposter.FileIO.DataBlock;
 
-namespace LevelImposter.Core;
+namespace LevelImposter.FileIO.Streams;
 
 /// <summary>
-/// A set of extension methods for <see cref="Stream"/>.
+///     A set of extension methods for <see cref="Stream" />.
 /// </summary>
 public static class StreamExtensions
 {
     /// <summary>
-    /// The buffer size to use when reading from streams.
-    /// This much memory will be allocated in managed memory during the read operation.
+    ///     The buffer size to use when reading from streams.
+    ///     This much memory will be allocated in managed memory during the read operation.
     /// </summary>
     private const int STREAM_BUFFER_SIZE = 1024 * 1024; // 1 MB
+
     private static readonly IntPtr ChunkBuffer = Marshal.AllocHGlobal(STREAM_BUFFER_SIZE);
 
     /// <summary>
-    ///   Reads a managed stream into a managed byte array.
+    ///     Reads a managed stream into a managed byte array.
     /// </summary>
     /// <param name="stream">The stream to read from.</param>
     /// <returns>A managed byte array containing the data.</returns>
@@ -44,10 +46,13 @@ public static class StreamExtensions
     }
 
     /// <summary>
-    ///   Reads a managed stream into an IL2CPP MemoryBlock.
+    ///     Reads a managed stream into an IL2CPP MemoryBlock.
     /// </summary>
     /// <param name="stream">The stream to read from.</param>
-    /// <param name="length">The length of data to read from the stream. Negative values will result in stream.Length being used.</param>
+    /// <param name="length">
+    ///     The length of data to read from the stream. Negative values will result in stream.Length being
+    ///     used.
+    /// </param>
     /// <returns>An IL2CPP MemoryBlock containing the data.</returns>
     public static unsafe MemoryBlock ToIl2CppArray(this Stream stream, long length = -1)
     {
@@ -80,7 +85,7 @@ public static class StreamExtensions
             // Increment Read Head
             totalRead += bytesRead;
         }
-        
+
         return memoryBlock;
     }
 }

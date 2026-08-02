@@ -2,9 +2,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using LevelImposter.Core;
+using LevelImposter.Core.Components;
 using Reactor.Utilities;
 
-namespace LevelImposter.AssetLoader;
+namespace LevelImposter.AssetLoader.Queue;
 
 /// <summary>
 ///     A queue that asynchronously loads items in the background using a coroutine.
@@ -16,12 +17,12 @@ public abstract class AsyncQueue<TInput, TOutput>
     where TOutput : ICachable
 {
     private const int MIN_FPS = 5;
-    
+
     private IEnumerator? _consumeQueueCoroutine;
 
     public int QueueSize => Queue.Count;
     public int CacheSize => Cache.Count;
-    
+
     protected Queue<QueuedItem> Queue { get; } = new();
     protected ItemCache<TOutput> Cache { get; } = new();
 
@@ -61,7 +62,7 @@ public abstract class AsyncQueue<TInput, TOutput>
     /// <para>
     ///     Should be implemented to define how to load an item from input data.
     ///     Do not call this method directly;
-    ///     Instead, use <see cref="AddToQueue"/> or <see cref="LoadImmediate"/>.
+    ///     Instead, use <see cref="AddToQueue" /> or <see cref="LoadImmediate" />.
     /// </para>
     /// <param name="inputData">Input data used to load item</param>
     /// <returns>Output data of the item</returns>
@@ -81,7 +82,6 @@ public abstract class AsyncQueue<TInput, TOutput>
             // Continuously load items until the lag limit is reached
             while (LagLimiter.ShouldContinue(MIN_FPS) && Queue.Count > 0)
                 ConsumeQueueOnce();
-
         }
 
         // Clear the coroutine
@@ -89,7 +89,7 @@ public abstract class AsyncQueue<TInput, TOutput>
     }
 
     /// <summary>
-    /// Loads a single item from the queue.
+    ///     Loads a single item from the queue.
     /// </summary>
     private void ConsumeQueueOnce()
     {
@@ -97,7 +97,7 @@ public abstract class AsyncQueue<TInput, TOutput>
         {
             // Get the next item in the queue
             var queuedItem = Queue.Dequeue();
-            
+
             // Load the item
             var output = LoadImmediate(queuedItem.InputData);
 
@@ -111,7 +111,7 @@ public abstract class AsyncQueue<TInput, TOutput>
     }
 
     /// <summary>
-    /// Loads an item immediately, checking the cache first.
+    ///     Loads an item immediately, checking the cache first.
     /// </summary>
     /// <param name="inputData">Loadable item data</param>
     /// <returns>Loaded item</returns>
@@ -121,7 +121,7 @@ public abstract class AsyncQueue<TInput, TOutput>
         var output = Cache.Get(inputData.ID);
         if (output != null)
             return output;
-        
+
         // Load the item
         output = Load(inputData);
 

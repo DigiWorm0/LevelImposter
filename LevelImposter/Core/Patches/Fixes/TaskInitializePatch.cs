@@ -1,10 +1,12 @@
 using System.Linq;
 using HarmonyLib;
 using Il2CppInterop.Runtime.InteropTypes.Arrays;
-using LevelImposter.Builders;
+using LevelImposter.Builders.Task;
+using LevelImposter.Core.Components;
+using LevelImposter.Core.Utils;
 using UnityEngine;
 
-namespace LevelImposter.Core;
+namespace LevelImposter.Core.Patches.Fixes;
 
 /// <summary>
 ///     Normally, tasks have hard-coded counts and limits.

@@ -3,9 +3,8 @@ using System.IO;
 using System.Reflection;
 using System.Text.Json.Serialization;
 using Il2CppInterop.Runtime.Attributes;
-using LevelImposter.AssetLoader;
 using LevelImposter.Core;
-using LevelImposter.FileIO;
+using LevelImposter.FileIO.Cache;
 using UnityEngine;
 
 namespace LevelImposter.Networking.API;

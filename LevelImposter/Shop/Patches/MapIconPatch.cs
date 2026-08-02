@@ -1,8 +1,10 @@
 using HarmonyLib;
-using LevelImposter.Core;
+using LevelImposter.Core.Models;
+using LevelImposter.Core.Utils;
+using LevelImposter.Shop.Builders;
 using UnityEngine;
 
-namespace LevelImposter.Shop;
+namespace LevelImposter.Shop.Patches;
 
 /*
  *      Creates and applies a custom map icon/button for the LevelImposter map in the map picker and lobby.

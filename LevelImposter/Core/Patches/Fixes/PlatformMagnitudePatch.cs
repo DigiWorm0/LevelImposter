@@ -1,6 +1,7 @@
 ﻿using HarmonyLib;
+using LevelImposter.Core.Components;
 
-namespace LevelImposter.Core;
+namespace LevelImposter.Core.Patches.Fixes;
 
 /// <summary>
 ///     Bypasses the magnitude maximum when calling <c>MovingPlatformBehaviour.Use</c>.

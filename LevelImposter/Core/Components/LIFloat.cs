@@ -1,7 +1,8 @@
 ﻿using System;
+using LevelImposter.Core.Services.Ship;
 using UnityEngine;
 
-namespace LevelImposter.Core;
+namespace LevelImposter.Core.Components;
 
 /// <summary>
 ///     Object that oscillates up and down

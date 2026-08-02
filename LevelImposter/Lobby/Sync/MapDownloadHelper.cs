@@ -1,8 +1,9 @@
 using System;
 using LevelImposter.Core;
-using LevelImposter.FileIO;
+using LevelImposter.Core.Models;
+using LevelImposter.FileIO.Cache;
 
-namespace LevelImposter.Lobby;
+namespace LevelImposter.Lobby.Sync;
 
 /// <summary>
 ///     Manages downloading maps from the server to the client.
@@ -128,7 +129,7 @@ public class MapDownloadHelper(bool preventGameStart = false)
         private static int _downloadIDCounter;
         public string? Error;
 
-        public int ID = _downloadIDCounter++;
+        public readonly int ID = _downloadIDCounter++;
         public Guid MapID = Guid.Empty;
         public float Progress;
     }

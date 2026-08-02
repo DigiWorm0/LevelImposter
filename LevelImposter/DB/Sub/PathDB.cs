@@ -1,6 +1,7 @@
 ﻿using System;
+using LevelImposter.DB.Models;
 
-namespace LevelImposter.DB;
+namespace LevelImposter.DB.Sub;
 
 /// <summary>
 ///     Database of string paths for Transforms

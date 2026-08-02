@@ -1,10 +1,11 @@
 ﻿using Il2CppSystem.Collections.Generic;
-using LevelImposter.Core;
+using LevelImposter.Core.Models;
+using LevelImposter.Core.Utils;
 using LevelImposter.DB;
 using PowerTools;
 using UnityEngine;
 
-namespace LevelImposter.Builders;
+namespace LevelImposter.Builders.Util;
 
 public class SporeBuilder : IElemBuilder
 {

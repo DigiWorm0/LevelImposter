@@ -1,7 +1,7 @@
 ﻿using System;
 using ByteArray = Il2CppInterop.Runtime.InteropTypes.Arrays.Il2CppStructArray<byte>;
 
-namespace LevelImposter.Core;
+namespace LevelImposter.FileIO.DataBlock;
 
 /// <summary>
 ///     Thin wrapper around Il2CppStructArray(byte).

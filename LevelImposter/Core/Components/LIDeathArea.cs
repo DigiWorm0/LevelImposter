@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Linq;
-using LevelImposter.Networking;
-using Reactor.Networking.Attributes;
+using LevelImposter.Networking.RPC;
 using Reactor.Networking.Rpc;
 
-namespace LevelImposter.Core;
+namespace LevelImposter.Core.Components;
 
 /// <summary>
 ///     Object that kills all players that enter its range

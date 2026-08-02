@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-namespace LevelImposter.Trigger;
+namespace LevelImposter.Trigger.Handles;
 
 public class DoorTriggerHandle : ITriggerHandle
 {

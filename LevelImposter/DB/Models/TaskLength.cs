@@ -1,4 +1,4 @@
-﻿namespace LevelImposter.DB;
+﻿namespace LevelImposter.DB.Models;
 
 public enum TaskLength
 {

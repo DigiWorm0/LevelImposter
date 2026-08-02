@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace LevelImposter.Core;
+namespace LevelImposter.Core.Models;
 
 [Serializable]
 public class LIColor

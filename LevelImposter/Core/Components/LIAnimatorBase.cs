@@ -4,9 +4,10 @@ using System.Collections.Generic;
 using BepInEx.Unity.IL2CPP.Utils.Collections;
 using Il2CppInterop.Runtime.Attributes;
 using Il2CppInterop.Runtime.InteropTypes.Fields;
+using LevelImposter.Core.Models;
 using UnityEngine;
 
-namespace LevelImposter.Core;
+namespace LevelImposter.Core.Components;
 
 /// <summary>
 ///     Base component to animate LI elements in-game.
@@ -16,20 +17,20 @@ public class LIAnimatorBase(IntPtr intPtr) : MonoBehaviour(intPtr)
 {
     private static readonly Dictionary<long, LIAnimatorBase> _allAnimators = new();
     private static long _nextAnimatorID = 1;
+    private Coroutine? _animationCoroutine;
+    private int _frameIndex;
 
     private bool _loopByDefault;
-    private int _frameIndex;
-    private Coroutine? _animationCoroutine;
     private SpriteRenderer? _spriteRenderer;
 
-    private long _animatorID => AnimatorID.Get();
-    private int _frameCount => GetFrameCount();
-    
     // This unique ID is maintained on instantiation
     public Il2CppValueField<long> AnimatorID;
 
+    private long _animatorID => AnimatorID.Get();
+    private int _frameCount => GetFrameCount();
+
     public bool IsAnimating { get; private set; }
-    
+
 
     public void Awake()
     {
@@ -68,7 +69,7 @@ public class LIAnimatorBase(IntPtr intPtr) : MonoBehaviour(intPtr)
             return;
         if (_frameCount == 1)
             _spriteRenderer.sprite = TryGetFrameSprite(0);
-        else 
+        else
             Play();
     }
 
@@ -116,7 +117,7 @@ public class LIAnimatorBase(IntPtr intPtr) : MonoBehaviour(intPtr)
             return;
         if (!IsReady())
             return;
-        
+
         _frameIndex = reversed ? _frameCount - 1 : 0;
         _spriteRenderer.sprite = TryGetFrameSprite(_frameIndex);
         _spriteRenderer.enabled = true;
@@ -133,7 +134,7 @@ public class LIAnimatorBase(IntPtr intPtr) : MonoBehaviour(intPtr)
     {
         if (_spriteRenderer == null)
             yield break;
-        
+
         // Flag Start
         IsAnimating = true;
         _spriteRenderer.enabled = true;
@@ -150,7 +151,7 @@ public class LIAnimatorBase(IntPtr intPtr) : MonoBehaviour(intPtr)
             // Wait for main thread
             while (!LagLimiter.ShouldContinue(60))
                 yield return null;
-            
+
             // Wait for readiness
             while (!IsReady())
                 yield return null;
@@ -176,7 +177,7 @@ public class LIAnimatorBase(IntPtr intPtr) : MonoBehaviour(intPtr)
     }
 
     /// <summary>
-    /// Tries to get the sprite for a given frame, returning null on error
+    ///     Tries to get the sprite for a given frame, returning null on error
     /// </summary>
     /// <param name="frame">Index of the frame, starting at 0</param>
     /// <returns>The sprite for the given frame, or null on error</returns>
@@ -192,9 +193,9 @@ public class LIAnimatorBase(IntPtr intPtr) : MonoBehaviour(intPtr)
             return null;
         }
     }
-    
+
     /// <summary>
-    /// Tries to get the delay for a given frame, returning 0.0f on error
+    ///     Tries to get the delay for a given frame, returning 0.0f on error
     /// </summary>
     /// <param name="frame">Index of the frame, starting at 0</param>
     /// <returns>The delay for the given frame in seconds, or 0.0f on error</returns>
@@ -212,7 +213,7 @@ public class LIAnimatorBase(IntPtr intPtr) : MonoBehaviour(intPtr)
     }
 
     /// <summary>
-    /// Checks if an animation is available and ready to play
+    ///     Checks if an animation is available and ready to play
     /// </summary>
     /// <returns>TRUE if the animation is ready</returns>
     /// <exception cref="NotImplementedException">Thrown if not implemented by subclass</exception>
@@ -231,7 +232,7 @@ public class LIAnimatorBase(IntPtr intPtr) : MonoBehaviour(intPtr)
     }
 
     /// <summary>
-    /// Gets the sprite for a given frame
+    ///     Gets the sprite for a given frame
     /// </summary>
     /// <param name="frame">Index of the frame, starting at 0</param>
     /// <returns>The sprite for the given frame</returns>
@@ -241,7 +242,7 @@ public class LIAnimatorBase(IntPtr intPtr) : MonoBehaviour(intPtr)
     }
 
     /// <summary>
-    /// Gets the delay for a given frame
+    ///     Gets the delay for a given frame
     /// </summary>
     /// <param name="frame">Index of the frame, starting at 0</param>
     /// <returns>The delay for the given frame in seconds</returns>
@@ -251,7 +252,7 @@ public class LIAnimatorBase(IntPtr intPtr) : MonoBehaviour(intPtr)
     }
 
     /// <summary>
-    /// Gets the total number of frames in the animation
+    ///     Gets the total number of frames in the animation
     /// </summary>
     /// <returns>The total number of frames</returns>
     protected virtual int GetFrameCount()

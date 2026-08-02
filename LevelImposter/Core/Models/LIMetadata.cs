@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Text.Json.Serialization;
 
-namespace LevelImposter.Core;
+namespace LevelImposter.Core.Models;
 
 [Serializable]
 public class LIMetadata
@@ -22,13 +22,14 @@ public class LIMetadata
     public MapTarget? mapTarget { get; set; }
 
     /// <summary>
-    /// True if the map has a thumbnail available
+    ///     True if the map has a thumbnail available
     /// </summary>
-    [JsonIgnore] public bool HasThumbnail => !string.IsNullOrEmpty(thumbnailURL);
+    [JsonIgnore]
+    public bool HasThumbnail => !string.IsNullOrEmpty(thumbnailURL);
 
     /// <summary>
-    /// True if the map has been uploaded to the workshop.
-    /// (Only maps with a valid GUID as ID are workshop maps)
+    ///     True if the map has been uploaded to the workshop.
+    ///     (Only maps with a valid GUID as ID are workshop maps)
     /// </summary>
     [JsonIgnore]
     public bool IsInWorkshop => Guid.TryParse(id, out _) && !string.IsNullOrEmpty(authorID);

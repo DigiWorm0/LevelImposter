@@ -1,8 +1,9 @@
-using LevelImposter.Core;
-using LevelImposter.Lobby;
+using LevelImposter.Core.Models;
+using LevelImposter.Core.Utils;
+using LevelImposter.Lobby.Components;
 using UnityEngine;
 
-namespace LevelImposter.Builders;
+namespace LevelImposter.Builders.Lobby;
 
 public class LobbySpawnBuilder : IElemBuilder
 {

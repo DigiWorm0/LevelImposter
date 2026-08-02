@@ -6,25 +6,26 @@ using Il2CppInterop.Runtime.Attributes;
 using Il2CppInterop.Runtime.InteropTypes.Fields;
 using UnityEngine;
 
-namespace LevelImposter.Shop;
+namespace LevelImposter.Shop.Components;
 
 public class ConnectionAnimation(IntPtr intPtr) : MonoBehaviour(intPtr)
 {
-    public Il2CppValueField<Vector3> startPosition;
-    public Il2CppValueField<Vector3> endPosition;
+    private readonly List<SpriteRenderer> _dots = [];
+
+    private bool _isReverse;
+    public Il2CppValueField<float> animationDuration;
     public Il2CppValueField<int> dotCount;
     public Il2CppReferenceField<SpriteRenderer> dotPrefab;
+    public Il2CppValueField<Vector3> endPosition;
     public Il2CppValueField<float> fadePercentage;
-    public Il2CppValueField<float> animationDuration;
-
-    private bool _isReverse = false;
-    private readonly List<SpriteRenderer> _dots = [];
+    public Il2CppValueField<Vector3> startPosition;
 
     public void Start()
     {
         for (var i = 0; i < dotCount; i++)
             _dots.Add(Instantiate(dotPrefab.Value, transform));
     }
+
     public void OnEnable()
     {
         StartCoroutine(CoAnimateDots().WrapToIl2Cpp());
@@ -43,8 +44,8 @@ public class ConnectionAnimation(IntPtr intPtr) : MonoBehaviour(intPtr)
             for (var i = 0; i < _dots.Count; i++)
             {
                 // Calculate progress with offset
-                var dotTimeOffset = t + (i * durationPerDot);
-                var progress = (dotTimeOffset % animationDuration) / animationDuration;
+                var dotTimeOffset = t + i * durationPerDot;
+                var progress = dotTimeOffset % animationDuration / animationDuration;
                 if (_isReverse)
                     progress = 1.0f - progress;
 
@@ -65,16 +66,15 @@ public class ConnectionAnimation(IntPtr intPtr) : MonoBehaviour(intPtr)
                     _dots[i].color.g,
                     _dots[i].color.b,
                     opacity);
-
             }
 
             // Wait a frame
             yield return null;
         }
     }
-    
+
     /// <summary>
-    /// Sets whether the animation is in reverse.
+    ///     Sets whether the animation is in reverse.
     /// </summary>
     /// <param name="isReverse">True to reverse the animation, false for normal direction.</param>
     public void SetReverse(bool isReverse)

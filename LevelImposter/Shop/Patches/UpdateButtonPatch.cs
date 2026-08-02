@@ -1,8 +1,9 @@
 using HarmonyLib;
 using LevelImposter.Core;
 using LevelImposter.Networking.API;
+using LevelImposter.Shop.Builders;
 
-namespace LevelImposter.Shop;
+namespace LevelImposter.Shop.Patches;
 
 /*
  *      Adds the update button to
@@ -16,13 +17,12 @@ public static class UpdateButtonPatch
         // Don't check for updates on dev builds
         if (LevelImposter.IsDevBuild)
             return;
-        
+
         // Check for updates
-        GitHubAPI.GetLatestRelease(release => {
+        GitHubAPI.GetLatestRelease(release =>
+        {
             if (!GitHubAPI.IsCurrent(release))
                 UpdateButtonBuilder.Build();
-        }, error => {
-            LILogger.Warn("Failed to check for updates: " + error);
-        });
+        }, error => { LILogger.Warn("Failed to check for updates: " + error); });
     }
 }

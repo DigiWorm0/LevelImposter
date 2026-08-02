@@ -1,9 +1,11 @@
 ﻿using System.Collections.Generic;
-using LevelImposter.Core;
+using LevelImposter.Core.GarbageCollection;
+using LevelImposter.Core.Models;
+using LevelImposter.Core.Utils;
 using LevelImposter.DB;
 using UnityEngine;
 
-namespace LevelImposter.Builders;
+namespace LevelImposter.Builders.Other;
 
 public class DecBuilder : IElemBuilder
 {

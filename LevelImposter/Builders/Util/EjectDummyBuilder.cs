@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using LevelImposter.Core;
+using LevelImposter.Builders.Generic;
+using LevelImposter.Core.Models;
+using LevelImposter.Core.Utils;
 using LevelImposter.DB;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
-namespace LevelImposter.Builders;
+namespace LevelImposter.Builders.Util;
 
 public class EjectDummyBuilder : IElemBuilder
 {
@@ -14,9 +16,9 @@ public class EjectDummyBuilder : IElemBuilder
         Floating,
         Standing
     }
-    
+
     public static List<PlayerDummy> PlayerDummies { get; } = [];
-    
+
     public void OnPreBuild()
     {
         PlayerDummies.Clear();

@@ -1,8 +1,9 @@
 using HarmonyLib;
-using LevelImposter.Builders;
+using LevelImposter.Builders.Util;
+using LevelImposter.Core.Components;
 using LevelImposter.Trigger;
 
-namespace LevelImposter.Core;
+namespace LevelImposter.Core.Patches.Triggers;
 
 /// <summary>
 ///     Calls "onButton" and "onReport" triggers when a meeting is called.

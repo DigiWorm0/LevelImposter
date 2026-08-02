@@ -5,14 +5,15 @@ using System.Linq;
 using Il2CppInterop.Runtime.Attributes;
 using Il2CppInterop.Runtime.InteropTypes.Fields;
 using LevelImposter.Core;
+using LevelImposter.Core.Models;
 using LevelImposter.DB;
-using LevelImposter.FileIO;
-using LevelImposter.Lobby;
+using LevelImposter.FileIO.API;
+using LevelImposter.Lobby.Sync;
 using LevelImposter.Networking.API;
 using LevelImposter.Shop.Transitions;
 using UnityEngine;
 
-namespace LevelImposter.Shop;
+namespace LevelImposter.Shop.Components;
 
 /// <summary>
 ///     Represents the different tabs in the shop

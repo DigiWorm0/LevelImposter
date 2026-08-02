@@ -1,11 +1,12 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
+using LevelImposter.FileIO.DataBlock;
+using LevelImposter.FileIO.Streams;
 
-namespace LevelImposter.Core;
+namespace LevelImposter.FileIO.DataStores;
 
 /// <summary>
-/// Represents an entire file as a data store.
-/// See <see cref="FileChunkStore"/> for chunked file access.
+///     Represents an entire file as a data store.
+///     See <see cref="FileChunkStore" /> for chunked file access.
 /// </summary>
 /// <param name="filePath">The path to the file.</param>
 public class FileStore(string filePath) : IDataStore
@@ -31,7 +32,7 @@ public class FileStore(string filePath) : IDataStore
     }
 
     /// <summary>
-    /// Opens a stream to read the entire file.
+    ///     Opens a stream to read the entire file.
     /// </summary>
     /// <returns>The file stream.</returns>
     public Stream OpenStream()

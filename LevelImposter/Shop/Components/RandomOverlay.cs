@@ -1,39 +1,40 @@
 using System;
 using Il2CppInterop.Runtime.InteropTypes.Fields;
-using LevelImposter.FileIO;
+using LevelImposter.FileIO.API;
 using LevelImposter.Shop.Transitions;
 using TMPro;
 using UnityEngine;
 
-namespace LevelImposter.Shop;
+namespace LevelImposter.Shop.Components;
 
 /// <summary>
 ///     Represents the overlay used on Map Banners to control the random weight of a map
 /// </summary>
 public class RandomOverlay(IntPtr intPtr) : MonoBehaviour(intPtr)
 {
-    // Serialized Fields
-    public Il2CppReferenceField<TextMeshPro> primaryText;
-    public Il2CppReferenceField<PassiveButton> plusButton;
-    public Il2CppReferenceField<PassiveButton> minusButton;
-    public Il2CppReferenceField<PassiveButton> doneButton;
-    public Il2CppReferenceField<GameObject> backgroundShadow;
-    public Il2CppReferenceField<ProgressBar> progressBar;
-    
     // Animation Constants
     private const float ANIMATION_DURATION = 0.14f;
     private const float BACKGROUND_ALPHA = 0.7f;
-    private readonly Vector3 OpenedSlideOffset = new Vector3(0, 0, -2.0f);
-    private readonly Vector3 ClosedSlideOffset = new Vector3(0, -0.5f, -2.0f);
 
-    private readonly Color ProgressGreen = new Color(0.38f, 0.80f, 0.32f);
-    private readonly Color ProgressYellow = new Color(0.80f, 0.76f, 0.15f);
-    private  readonly Color ProgressRed = new Color(0.81f, 0.22f, 0.22f);
-    
     private const float DELTA_WEIGHT = 0.1f;
-    
+    private readonly Vector3 ClosedSlideOffset = new(0, -0.5f, -2.0f);
+    private readonly Vector3 OpenedSlideOffset = new(0, 0, -2.0f);
+
+    private readonly Color ProgressGreen = new(0.38f, 0.80f, 0.32f);
+    private readonly Color ProgressRed = new(0.81f, 0.22f, 0.22f);
+    private readonly Color ProgressYellow = new(0.80f, 0.76f, 0.15f);
+
     private string? _mapID;
     private float _randomWeight;
+    public Il2CppReferenceField<GameObject> backgroundShadow;
+    public Il2CppReferenceField<PassiveButton> doneButton;
+    public Il2CppReferenceField<PassiveButton> minusButton;
+
+    public Il2CppReferenceField<PassiveButton> plusButton;
+
+    // Serialized Fields
+    public Il2CppReferenceField<TextMeshPro> primaryText;
+    public Il2CppReferenceField<ProgressBar> progressBar;
 
     public void Awake()
     {
@@ -41,21 +42,29 @@ public class RandomOverlay(IntPtr intPtr) : MonoBehaviour(intPtr)
         minusButton.Value.OnClick.AddListener((Action)OnMinusClick);
         doneButton.Value.OnClick.AddListener((Action)Close);
     }
-    
-    private void OnPlusClick() => ChangeMapWeight(DELTA_WEIGHT);
-    private void OnMinusClick() => ChangeMapWeight(-DELTA_WEIGHT);
+
+    private void OnPlusClick()
+    {
+        ChangeMapWeight(DELTA_WEIGHT);
+    }
+
+    private void OnMinusClick()
+    {
+        ChangeMapWeight(-DELTA_WEIGHT);
+    }
+
     private void ChangeMapWeight(float amount)
     {
         if (_mapID == null)
             throw new Exception("MapID is null");
-        
+
         _randomWeight = Mathf.Clamp(_randomWeight + amount, 0, 1);
         ConfigAPI.SetMapWeight(_mapID, _randomWeight);
         ShopManager.Instance?.RandomizeMapOnClose();
         UpdateText();
         UpdateProgressBar();
     }
-    
+
     public void SetMapID(string mapID)
     {
         _mapID = mapID;
@@ -63,7 +72,7 @@ public class RandomOverlay(IntPtr intPtr) : MonoBehaviour(intPtr)
         UpdateText();
         UpdateProgressBar();
     }
-    
+
     public void Open()
     {
         gameObject.SetActive(true);
@@ -83,7 +92,7 @@ public class RandomOverlay(IntPtr intPtr) : MonoBehaviour(intPtr)
         });
         SlideTransition.Run(new TransitionParams<Vector3>
         {
-            TargetObject =  gameObject,
+            TargetObject = gameObject,
             FromValue = ClosedSlideOffset,
             ToValue = OpenedSlideOffset,
             Curve = TransitionCurve.EaseInOut,
@@ -109,7 +118,7 @@ public class RandomOverlay(IntPtr intPtr) : MonoBehaviour(intPtr)
         });
         SlideTransition.Run(new TransitionParams<Vector3>
         {
-            TargetObject =  gameObject,
+            TargetObject = gameObject,
             FromValue = OpenedSlideOffset,
             ToValue = ClosedSlideOffset,
             Duration = ANIMATION_DURATION,
@@ -127,11 +136,11 @@ public class RandomOverlay(IntPtr intPtr) : MonoBehaviour(intPtr)
     private void UpdateProgressBar()
     {
         progressBar.Value.SetProgress(_randomWeight);
-        
+
         // Transition color from red (0% weight) to yellow (50% weight) to green (100% weight)
-        var color = _randomWeight < 0.5f ?
-            Color.Lerp(ProgressRed, ProgressYellow, _randomWeight * 2) :
-            Color.Lerp(ProgressYellow, ProgressGreen, (_randomWeight - 0.5f) * 2);
+        var color = _randomWeight < 0.5f
+            ? Color.Lerp(ProgressRed, ProgressYellow, _randomWeight * 2)
+            : Color.Lerp(ProgressYellow, ProgressGreen, (_randomWeight - 0.5f) * 2);
         progressBar.Value.SetColor(color);
     }
 }

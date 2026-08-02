@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace LevelImposter.Shop;
+namespace LevelImposter.Shop.Components;
 
 /// <summary>
 ///     Just a simple spinning object

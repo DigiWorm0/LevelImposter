@@ -1,10 +1,12 @@
 ﻿using System;
+using LevelImposter.FileIO.DataBlock;
+using LevelImposter.FileIO.Streams;
 
-namespace LevelImposter.Core;
+namespace LevelImposter.FileIO.DataStores;
 
 /// <summary>
-/// Represents a specific chunk (offset + length) of a file as a data store.
-/// A stream opened from this store will only allow access to the specified chunk.
+///     Represents a specific chunk (offset + length) of a file as a data store.
+///     A stream opened from this store will only allow access to the specified chunk.
 /// </summary>
 public class FileChunkStore(string filePath, long offset, long length) : IDataStore
 {
@@ -29,7 +31,7 @@ public class FileChunkStore(string filePath, long offset, long length) : IDataSt
     }
 
     /// <summary>
-    /// Opens a stream to read from the file chunk.
+    ///     Opens a stream to read from the file chunk.
     /// </summary>
     /// <returns>The file chunk stream.</returns>
     public FileChunkStream OpenStream()

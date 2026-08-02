@@ -1,12 +1,13 @@
-
 using HarmonyLib;
 using InnerNet;
-using LevelImposter.Lobby;
+using LevelImposter.Lobby.Sync;
 
 /*
  *      Remove player from PlayersReadyCounter
  *      if the player disconnects
  */
+namespace LevelImposter.Lobby.Patches;
+
 [HarmonyPatch(typeof(AmongUsClient), nameof(AmongUsClient.OnPlayerLeft))]
 public static class LobbyPlayerDisconnectPatch
 {

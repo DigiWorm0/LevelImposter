@@ -1,6 +1,7 @@
-﻿using LevelImposter.Core;
+﻿using LevelImposter.Core.Components;
+using LevelImposter.Core.Utils;
 
-namespace LevelImposter.Trigger;
+namespace LevelImposter.Trigger.Handles;
 
 public class SoundTriggerHandle : ITriggerHandle
 {

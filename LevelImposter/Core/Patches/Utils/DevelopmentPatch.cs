@@ -1,7 +1,7 @@
 using HarmonyLib;
-using Hazel.Udp;
+using LevelImposter.Core.Models;
 
-namespace LevelImposter.Core;
+namespace LevelImposter.Core.Patches.Utils;
 
 /// <summary>
 ///     Decreases the minimum player count to start the game.

@@ -1,4 +1,4 @@
-﻿namespace LevelImposter.Core;
+﻿namespace LevelImposter.Core.Models;
 
 public enum MapType
 {

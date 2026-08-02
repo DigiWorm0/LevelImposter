@@ -2,28 +2,29 @@ using System;
 using Il2CppInterop.Runtime.InteropTypes.Fields;
 using UnityEngine;
 
-namespace LevelImposter.Shop;
+namespace LevelImposter.Shop.Components;
 
 /// <summary>
 ///     Represents a flexible grid of positioned game objects
 /// </summary>
 public class GameObjectGrid(IntPtr intPtr) : MonoBehaviour(intPtr)
 {
+    private int _gameObjectCount;
+
+    private Scroller? _scroller;
+
     // Serialized Fields
     public Il2CppValueField<int> maxColumns;
     public Il2CppValueField<float> xSpacing;
     public Il2CppValueField<float> ySpacing;
 
-    private Scroller? _scroller;
-    private int _gameObjectCount;
-
     public void Awake()
     {
         _scroller = GetComponentInParent<Scroller>();
     }
-    
+
     /// <summary>
-    /// Adds a Transform to the grid
+    ///     Adds a Transform to the grid
     /// </summary>
     /// <param name="childTransform">The Transform to add</param>
     public void AddTransform(Transform childTransform)
@@ -32,7 +33,7 @@ public class GameObjectGrid(IntPtr intPtr) : MonoBehaviour(intPtr)
         var row = _gameObjectCount / maxColumns.Value;
         var column = _gameObjectCount % maxColumns.Value;
         _gameObjectCount++;
-        
+
         // Position GameObject
         childTransform.transform.SetParent(transform);
         childTransform.transform.localPosition = new Vector3(
@@ -47,7 +48,7 @@ public class GameObjectGrid(IntPtr intPtr) : MonoBehaviour(intPtr)
     }
 
     /// <summary>
-    /// Destroys all child GameObjects in the grid
+    ///     Destroys all child GameObjects in the grid
     /// </summary>
     public void DestroyAll()
     {
@@ -55,7 +56,7 @@ public class GameObjectGrid(IntPtr intPtr) : MonoBehaviour(intPtr)
             Destroy(transform.GetChild(i).gameObject);
 
         _gameObjectCount = 0;
-        
+
         // Reset Scroll Height
         if (_scroller != null)
             _scroller.ContentYBounds.max = 0;

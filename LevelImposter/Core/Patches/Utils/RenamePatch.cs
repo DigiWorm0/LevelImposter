@@ -1,9 +1,10 @@
 using HarmonyLib;
 using Il2CppSystem;
-using LevelImposter.Shop;
+using LevelImposter.Core.Components;
+using LevelImposter.Core.Models;
 using ObjList = Il2CppInterop.Runtime.InteropTypes.Arrays.Il2CppReferenceArray<Il2CppSystem.Object>;
 
-namespace LevelImposter.Core;
+namespace LevelImposter.Core.Patches.Utils;
 
 /// <summary>
 ///     Renames task names and other strings stored as <c>SystemTypes</c>.
@@ -54,7 +55,7 @@ public static class StringRenamePatch
             // Hide map name in lobby
             if (GameConfiguration.HideMapName && GameState.IsInLobby)
                 __result = LIConstants.MAP_NAME;
-            
+
             // Otherwise, get the current map name
             else
                 __result = GameConfiguration.CurrentMap?.name ?? LIConstants.MAP_NAME;

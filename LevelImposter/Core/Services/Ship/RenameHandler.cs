@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace LevelImposter.Core;
+namespace LevelImposter.Core.Services.Ship;
 
 /// <summary>
 ///     Handles all modified strings

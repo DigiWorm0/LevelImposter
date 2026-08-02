@@ -1,8 +1,11 @@
 ﻿using System;
 
-namespace LevelImposter.Core;
+namespace LevelImposter.Trigger.Values;
 
 public class DelegateBoolValue(Func<bool> getValue) : IBoolValue
 {
-    public bool GetValue(int depth) => getValue();
+    public bool GetValue(int depth)
+    {
+        return getValue();
+    }
 }

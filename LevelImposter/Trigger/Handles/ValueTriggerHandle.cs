@@ -1,8 +1,9 @@
 ﻿using System;
-using LevelImposter.Builders;
-using LevelImposter.Core;
+using LevelImposter.Builders.Util;
+using LevelImposter.Core.Services.Ship;
+using LevelImposter.Trigger.Values;
 
-namespace LevelImposter.Trigger;
+namespace LevelImposter.Trigger.Handles;
 
 public class ValueTriggerHandle : ITriggerHandle
 {

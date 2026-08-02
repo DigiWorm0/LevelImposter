@@ -3,7 +3,7 @@ using System.IO;
 using System.Reflection;
 using LevelImposter.Core;
 
-namespace LevelImposter.FileIO;
+namespace LevelImposter.FileIO.API;
 
 public class FileAPI
 {

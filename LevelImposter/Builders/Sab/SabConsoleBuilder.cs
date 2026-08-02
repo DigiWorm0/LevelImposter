@@ -1,10 +1,14 @@
 ﻿using System.Collections.Generic;
+using LevelImposter.Builders.Util;
 using LevelImposter.Core;
+using LevelImposter.Core.Components;
+using LevelImposter.Core.Models;
+using LevelImposter.Core.Utils;
 using LevelImposter.DB;
 using UnityEngine;
 using UnityEngine.Events;
 
-namespace LevelImposter.Builders;
+namespace LevelImposter.Builders.Sab;
 
 public class SabConsoleBuilder : IElemBuilder
 {

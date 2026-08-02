@@ -1,9 +1,10 @@
 using System.Collections.Generic;
 using Il2CppInterop.Runtime.InteropTypes.Arrays;
-using LevelImposter.Core;
+using LevelImposter.Builders.Util;
+using LevelImposter.Core.Models;
 using UnityEngine;
 
-namespace LevelImposter.Builders;
+namespace LevelImposter.Builders.Task;
 
 public class TaskConsoleBuilder : IElemBuilder
 {
@@ -69,6 +70,34 @@ public class TaskConsoleBuilder : IElemBuilder
         TowelPickupCount = null;
     }
 
+    public void OnPostBuild()
+    {
+        var keys = new string[_consoleIDIncrements.Keys.Count];
+        _consoleIDIncrements.Keys.CopyTo(keys, 0);
+
+        foreach (var key in keys)
+        {
+            var count = (byte)_consoleIDIncrements[key];
+            if (key == "task-breakers")
+                BreakerCount = count;
+            if (key == "task-toilet")
+                ToiletCount = count;
+            if (key == "task-towels")
+                TowelCount = count;
+            if (key == "task-fuel2")
+                FuelCount = count;
+            if (key == "task-waterwheel1")
+                WaterWheelCount = count;
+            if (key == "task-align1")
+                AlignEngineCount = count;
+            if (key == "task-records2")
+                RecordsCount = count;
+            if (key == "task-wires")
+                WiresCount = count;
+            _consoleIDIncrements[key] = 0;
+        }
+    }
+
     /// <summary>
     ///     Constructs a Console component for an LIElement, GameObject, and prefab
     /// </summary>
@@ -125,34 +154,6 @@ public class TaskConsoleBuilder : IElemBuilder
         console.usableDistance = elem.properties.range ?? 1.0f;
 
         return console;
-    }
-    
-    public void OnPostBuild()
-    {
-        var keys = new string[_consoleIDIncrements.Keys.Count];
-        _consoleIDIncrements.Keys.CopyTo(keys, 0);
-
-        foreach (var key in keys)
-        {
-            var count = (byte)_consoleIDIncrements[key];
-            if (key == "task-breakers")
-                BreakerCount = count;
-            if (key == "task-toilet")
-                ToiletCount = count;
-            if (key == "task-towels")
-                TowelCount = count;
-            if (key == "task-fuel2")
-                FuelCount = count;
-            if (key == "task-waterwheel1")
-                WaterWheelCount = count;
-            if (key == "task-align1")
-                AlignEngineCount = count;
-            if (key == "task-records2")
-                RecordsCount = count;
-            if (key == "task-wires")
-                WiresCount = count;
-            _consoleIDIncrements[key] = 0;
-        }
     }
 
 

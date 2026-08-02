@@ -3,7 +3,7 @@ using LevelImposter.Core;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
-namespace LevelImposter.Lobby;
+namespace LevelImposter.Lobby.Builders;
 
 /// <summary>
 ///     Stores and provides access to the lobby dropship as a prefab.

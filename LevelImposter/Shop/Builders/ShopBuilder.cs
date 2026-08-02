@@ -1,9 +1,10 @@
 ﻿using System;
 using LevelImposter.Core;
+using LevelImposter.Core.Utils;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
-namespace LevelImposter.Shop;
+namespace LevelImposter.Shop.Builders;
 
 public static class ShopBuilder
 {

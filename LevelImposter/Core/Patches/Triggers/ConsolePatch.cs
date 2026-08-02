@@ -1,10 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.Reflection;
 using HarmonyLib;
+using LevelImposter.Core.Components;
+using LevelImposter.Core.Patches.Utils;
+using LevelImposter.Core.Services.Ship;
 using LevelImposter.Trigger;
 using UnityEngine;
 
-namespace LevelImposter.Core;
+namespace LevelImposter.Core.Patches.Triggers;
 
 /// <summary>
 ///     Fires "onUse" triggers on a variety of console objects

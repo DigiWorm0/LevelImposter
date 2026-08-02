@@ -1,12 +1,16 @@
 using System.Collections.Generic;
 using System.Linq;
 using Il2CppInterop.Runtime.InteropTypes.Arrays;
+using LevelImposter.Builders.Util;
 using LevelImposter.Core;
+using LevelImposter.Core.Components;
+using LevelImposter.Core.Models;
+using LevelImposter.Core.Utils;
 using LevelImposter.DB;
 using UnityEngine;
 using CollectionExtensions = HarmonyLib.CollectionExtensions;
 
-namespace LevelImposter.Builders;
+namespace LevelImposter.Builders.Sab;
 
 public class SabBuilder : IElemBuilder
 {

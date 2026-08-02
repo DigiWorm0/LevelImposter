@@ -1,13 +1,13 @@
 ﻿using System;
 using Hazel;
-using InnerNet;
 using LevelImposter.Core;
-using LevelImposter.Shop;
+using LevelImposter.Core.Components;
+using LevelImposter.Core.Models;
 using LevelImposter.Trigger;
 using Reactor.Networking.Attributes;
 using Reactor.Networking.Rpc;
 
-namespace LevelImposter.Networking;
+namespace LevelImposter.Networking.RPC;
 
 public struct RPCTriggerPacket
 {
@@ -19,7 +19,7 @@ public struct RPCTriggerPacket
 public class TriggerRPC(LevelImposter plugin, uint id) : PlayerCustomRpc<LevelImposter, RPCTriggerPacket>(plugin, id)
 {
     public override RpcLocalHandling LocalHandling => RpcLocalHandling.After;
-    
+
     public override void Write(MessageWriter writer, RPCTriggerPacket data)
     {
         writer.Write(data.ElemIDString);
@@ -30,7 +30,7 @@ public class TriggerRPC(LevelImposter plugin, uint id) : PlayerCustomRpc<LevelIm
     {
         var elemIDString = reader.ReadString();
         var triggerID = reader.ReadString();
-        
+
         return new RPCTriggerPacket
         {
             ElemIDString = elemIDString,

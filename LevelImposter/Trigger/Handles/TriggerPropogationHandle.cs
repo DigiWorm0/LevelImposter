@@ -1,6 +1,6 @@
-﻿using LevelImposter.Core;
+﻿using LevelImposter.Core.Services.Ship;
 
-namespace LevelImposter.Trigger;
+namespace LevelImposter.Trigger.Handles;
 
 public class TriggerPropogationHandle : ITriggerHandle
 {

@@ -1,21 +1,15 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using System.IO.Compression;
-using System.Text;
 
-namespace LevelImposter.Core;
+namespace LevelImposter.FileIO.Streams;
 
 public class ZIPEntryStream : Stream
 {
-    public override bool CanRead => _baseStream.CanRead;
-    public override bool CanSeek => _baseStream.CanSeek;
-    public override bool CanWrite => _baseStream.CanWrite;
-    public override long Length => _zipArchiveEntry.Length; // Length is stored in the ZIP entry metadata
+    private readonly Stream _baseStream;
 
     private readonly ZipArchive _zipArchive;
     private readonly ZipArchiveEntry _zipArchiveEntry;
-    private readonly Stream _baseStream;
-    
+
     /// <summary>
     ///     Represents a stream to a specific entry within a ZIP file.
     /// </summary>
@@ -26,16 +20,21 @@ public class ZIPEntryStream : Stream
     {
         // Open the ZIP archive
         _zipArchive = ZipFile.OpenRead(zipFilePath);
-        
+
         // Get the specified entry
         var zipArchiveEntry = _zipArchive.GetEntry(zipEntryName);
         if (zipArchiveEntry == null)
             throw new FileNotFoundException($"ZIP entry '{zipEntryName}' not found in file '{zipFilePath}'");
         _zipArchiveEntry = zipArchiveEntry;
-        
+
         // Open the entry stream
         _baseStream = _zipArchiveEntry.Open();
     }
+
+    public override bool CanRead => _baseStream.CanRead;
+    public override bool CanSeek => _baseStream.CanSeek;
+    public override bool CanWrite => _baseStream.CanWrite;
+    public override long Length => _zipArchiveEntry.Length; // Length is stored in the ZIP entry metadata
 
     public override long Position
     {

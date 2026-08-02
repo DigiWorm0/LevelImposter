@@ -1,9 +1,9 @@
 using System;
-using System.Collections.Generic;
-using LevelImposter.Core;
+using LevelImposter.Core.Components;
+using LevelImposter.Core.Models;
 using UnityEngine;
 
-namespace LevelImposter.Builders;
+namespace LevelImposter.Builders.Util;
 
 internal class TeleLinkBuilder : IElemBuilder
 {
@@ -18,7 +18,7 @@ internal class TeleLinkBuilder : IElemBuilder
         var targetID = elem.properties.teleporter;
         if (targetID == null)
             return;
-        
+
         var targetTeleporterGameObject = LIBaseShip.Instance?.MapObjectDB.GetObject((Guid)targetID);
         var targetTeleporter = targetTeleporterGameObject?.GetComponent<LITeleporter>();
 

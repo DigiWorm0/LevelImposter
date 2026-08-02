@@ -1,7 +1,9 @@
 ﻿using System.IO;
-using LevelImposter.Core;
+using LevelImposter.AssetLoader.FileContainers;
+using LevelImposter.AssetLoader.Loadables;
+using LevelImposter.Core.GarbageCollection;
 
-namespace LevelImposter.AssetLoader;
+namespace LevelImposter.AssetLoader.Loaders;
 
 public static class GIFLoader
 {

@@ -1,7 +1,7 @@
 ﻿using System;
-using LevelImposter.Trigger;
+using LevelImposter.Core.Components;
 
-namespace LevelImposter.Core;
+namespace LevelImposter.Trigger.Values;
 
 public class BasicBoolValue(Guid id, bool value) : IBoolValue
 {

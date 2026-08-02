@@ -1,12 +1,12 @@
 ﻿using System;
-using LevelImposter.Core;
+using LevelImposter.Core.Utils;
 using LevelImposter.Networking.API;
 using Twitch;
 using UnityEngine;
 using UnityEngine.UI;
 using Object = UnityEngine.Object;
 
-namespace LevelImposter.Shop;
+namespace LevelImposter.Shop.Builders;
 
 public static class UpdateButtonBuilder
 {

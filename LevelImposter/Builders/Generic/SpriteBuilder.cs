@@ -1,10 +1,16 @@
 ﻿using System;
 using System.Linq;
 using LevelImposter.AssetLoader;
+using LevelImposter.AssetLoader.Loadables;
+using LevelImposter.AssetLoader.Loaders;
 using LevelImposter.Core;
+using LevelImposter.Core.Components;
+using LevelImposter.Core.GarbageCollection;
+using LevelImposter.Core.Models;
+using LevelImposter.Core.Utils;
 using UnityEngine;
 
-namespace LevelImposter.Builders;
+namespace LevelImposter.Builders.Generic;
 
 /// <summary>
 ///     Configures the SpriteRenderer on the GameObject

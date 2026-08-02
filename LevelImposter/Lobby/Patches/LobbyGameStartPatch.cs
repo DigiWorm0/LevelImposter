@@ -1,7 +1,9 @@
 ﻿using HarmonyLib;
 using LevelImposter.Core;
+using LevelImposter.Core.Models;
+using LevelImposter.Lobby.Sync;
 
-namespace LevelImposter.Lobby;
+namespace LevelImposter.Lobby.Patches;
 
 public static class PreventGameStartHelper
 {

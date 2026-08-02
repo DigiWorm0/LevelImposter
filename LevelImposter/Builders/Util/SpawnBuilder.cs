@@ -1,14 +1,16 @@
 using System.Collections.Generic;
 using LevelImposter.Core;
+using LevelImposter.Core.Components;
+using LevelImposter.Core.Models;
 using UnityEngine;
 
-namespace LevelImposter.Builders;
+namespace LevelImposter.Builders.Util;
 
 public class SpawnBuilder : IElemBuilder
 {
     private const float DEFAULT_SPAWN_RADIUS = 1.55f;
     private const int DUMMY_SPAWN_COUNT = 15;
-    
+
     private Vector2 _fallbackSpawn;
     private bool _hasInitialSpawn;
     private bool _hasMeetingSpawn;

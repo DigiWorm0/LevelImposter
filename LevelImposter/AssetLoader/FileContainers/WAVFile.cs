@@ -1,11 +1,9 @@
 using System;
 using System.IO;
-using System.Linq;
-using LevelImposter.Shop;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
-namespace LevelImposter.Core;
+namespace LevelImposter.AssetLoader.FileContainers;
 
 /// <summary>
 ///     Represents a WAV file.
@@ -55,7 +53,7 @@ public class WAVFile(string _name) : IDisposable
         var isWAV = new string(reader.ReadChars(4)) == "RIFF";
         if (!isWAV)
             throw new Exception("File is not a RIFF file");
-        
+
         // Chunk size
         var chunkSize = reader.ReadInt32();
         if (chunkSize != reader.BaseStream.Length - 8)
@@ -77,7 +75,7 @@ public class WAVFile(string _name) : IDisposable
         var blockName = new string(reader.ReadChars(4));
         if (string.IsNullOrEmpty(blockName))
             return false;
-        
+
         switch (blockName)
         {
             case "fmt ":
@@ -117,11 +115,11 @@ public class WAVFile(string _name) : IDisposable
         // Unused bytes
         SkipBytes(reader, chunkSize - 8);
     }
-    
+
     /// <summary>
-    /// Skips the specified number of bytes in the binary reader.
-    /// If the underlying stream supports seeking, it adjusts the position directly.
-    /// Otherwise, it reads and discards the bytes.
+    ///     Skips the specified number of bytes in the binary reader.
+    ///     If the underlying stream supports seeking, it adjusts the position directly.
+    ///     Otherwise, it reads and discards the bytes.
     /// </summary>
     /// <param name="reader">The binary reader to read from</param>
     /// <param name="byteCount">The number of bytes to skip</param>

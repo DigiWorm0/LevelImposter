@@ -1,9 +1,10 @@
 ﻿using System.Collections;
 using Il2CppInterop.Runtime.Attributes;
-using LevelImposter.Core;
+using LevelImposter.Core.Services.Ship;
+using LevelImposter.Core.Utils;
 using UnityEngine;
 
-namespace LevelImposter.Trigger;
+namespace LevelImposter.Trigger.Handles;
 
 public class TimerTriggerHandle : ITriggerHandle
 {

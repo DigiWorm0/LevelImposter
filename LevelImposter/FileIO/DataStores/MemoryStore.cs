@@ -1,10 +1,11 @@
 ﻿using System;
+using LevelImposter.FileIO.DataBlock;
 
-namespace LevelImposter.Core;
+namespace LevelImposter.FileIO.DataStores;
 
 /// <summary>
-/// Wrapper around an existing <see cref="MemoryBlock"/> to provide it as an <see cref="IDataStore"/>.
-/// Since the data is already in memory at construction time, it simply returns the existing block on load.
+///     Wrapper around an existing <see cref="MemoryBlock" /> to provide it as an <see cref="IDataStore" />.
+///     Since the data is already in memory at construction time, it simply returns the existing block on load.
 /// </summary>
 /// <param name="memoryBlock">The existing memory block.</param>
 public class MemoryStore(MemoryBlock memoryBlock) : IDataStore

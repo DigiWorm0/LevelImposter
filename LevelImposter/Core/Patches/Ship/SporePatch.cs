@@ -1,9 +1,10 @@
 using HarmonyLib;
 using Hazel;
-using LevelImposter.Builders;
+using LevelImposter.Builders.Util;
+using LevelImposter.Core.Components;
 using LevelImposter.Trigger;
 
-namespace LevelImposter.Core;
+namespace LevelImposter.Core.Patches.Ship;
 
 /// <summary>
 ///     Normally, spores are handled by

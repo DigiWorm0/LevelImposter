@@ -1,8 +1,10 @@
 ﻿using System;
-using LevelImposter.Builders;
+using LevelImposter.Builders.Generic;
+using LevelImposter.Core.GarbageCollection;
+using LevelImposter.Core.Services.Ship;
 using UnityEngine;
 
-namespace LevelImposter.Core;
+namespace LevelImposter.Core.Components;
 
 /// <summary>
 ///     Object that scrolls in a repeating pattern

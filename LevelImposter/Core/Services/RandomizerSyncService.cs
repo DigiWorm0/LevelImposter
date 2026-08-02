@@ -1,7 +1,7 @@
 ﻿using System;
 using Random = UnityEngine.Random;
 
-namespace LevelImposter.Core;
+namespace LevelImposter.Core.Services;
 
 /// <summary>
 ///     A randomizer class that is synced across all clients

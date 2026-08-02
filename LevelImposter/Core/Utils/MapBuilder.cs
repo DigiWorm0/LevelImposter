@@ -2,12 +2,23 @@
 using Il2CppInterop.Runtime.InteropTypes.Arrays;
 using Il2CppSystem.Collections.Generic;
 using LevelImposter.Builders;
+using LevelImposter.Builders.Generic;
+using LevelImposter.Builders.Minimap;
+using LevelImposter.Builders.Other;
+using LevelImposter.Builders.Sab;
+using LevelImposter.Builders.Task;
+using LevelImposter.Builders.Trigger;
+using LevelImposter.Builders.Util;
+using LevelImposter.Core.Components;
+using LevelImposter.Core.GarbageCollection;
+using LevelImposter.Core.Models;
+using LevelImposter.Core.Services;
 using LevelImposter.DB;
-using LevelImposter.Shop;
+using LevelImposter.Shop.Components;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
-namespace LevelImposter.Core;
+namespace LevelImposter.Core.Utils;
 
 public static class MapBuilder
 {

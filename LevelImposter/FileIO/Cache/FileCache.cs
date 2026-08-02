@@ -2,8 +2,9 @@ using System;
 using System.IO;
 using System.Linq;
 using LevelImposter.Core;
+using LevelImposter.FileIO.API;
 
-namespace LevelImposter.FileIO;
+namespace LevelImposter.FileIO.Cache;
 
 /// <summary>
 ///     API to manage cached files in the local filesystem

@@ -1,6 +1,7 @@
 using HarmonyLib;
+using LevelImposter.Core.Components;
 
-namespace LevelImposter.Core;
+namespace LevelImposter.Core.Patches.Fixes;
 
 /// <summary>
 ///     Fixes a bug when PoolablePlayer runs Awake

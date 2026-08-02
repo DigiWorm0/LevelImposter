@@ -1,7 +1,8 @@
-﻿using LevelImposter.Core;
+﻿using LevelImposter.AssetLoader.Queue;
+using LevelImposter.Core.GarbageCollection;
 using UnityEngine;
 
-namespace LevelImposter.AssetLoader;
+namespace LevelImposter.AssetLoader.Loadables;
 
 public readonly struct SpriteInfo(string id, TextureInfo tex) : IIdentifiable
 {

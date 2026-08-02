@@ -2,7 +2,7 @@
 using System.IO;
 using System.Text;
 
-namespace LevelImposter.Core;
+namespace LevelImposter.FileIO.Streams;
 
 /// <summary>
 ///     Represents a stream to a specific length and offset within a file.

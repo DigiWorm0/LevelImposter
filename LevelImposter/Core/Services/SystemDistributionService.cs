@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 
-namespace LevelImposter.Core;
+namespace LevelImposter.Core.Services;
 
 public static class SystemDistributionService
 {

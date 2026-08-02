@@ -1,8 +1,8 @@
 ﻿using HarmonyLib;
-using LevelImposter.Shop;
+using LevelImposter.Core.Components;
 using UnityEngine;
 
-namespace LevelImposter.Core;
+namespace LevelImposter.Core.Patches.Utils;
 
 /// <summary>
 ///     Runs a variety of initialization tasks after the game has started.

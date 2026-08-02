@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using LevelImposter.Core;
-using LevelImposter.FileIO;
+using LevelImposter.Core.Models;
+using LevelImposter.FileIO.API;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-namespace LevelImposter.Lobby;
+namespace LevelImposter.Lobby.Sync;
 
 public static class MapRandomizer
 {

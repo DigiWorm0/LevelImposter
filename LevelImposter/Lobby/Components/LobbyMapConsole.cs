@@ -1,20 +1,19 @@
 ﻿using System;
-using LevelImposter.Shop;
+using LevelImposter.Shop.Builders;
 using UnityEngine;
 
-namespace LevelImposter.Lobby;
+namespace LevelImposter.Lobby.Components;
 
 // Disable warnings since this indirectly inherits IUsable
 // ReSharper disable MemberCanBePrivate.Global
 // ReSharper disable MemberCanBeMadeStatic.Global
 #pragma warning disable CA1822
-
 public class LobbyMapConsole(IntPtr intPtr) : MonoBehaviour(intPtr)
 {
     private static readonly int OutlineProperty = Shader.PropertyToID("_Outline");
     private static readonly int OutlineColorProperty = Shader.PropertyToID("_OutlineColor");
     private static readonly int AddColorProperty = Shader.PropertyToID("_AddColor");
-    
+
     private readonly Color _highlightColor = Color.white;
 
     private SpriteRenderer? _spriteRenderer;
@@ -28,6 +27,7 @@ public class LobbyMapConsole(IntPtr intPtr) : MonoBehaviour(intPtr)
     {
         _spriteRenderer = GetComponent<SpriteRenderer>();
     }
+
     public void OnDestroy()
     {
         _spriteRenderer = null;
@@ -81,7 +81,7 @@ public class LobbyMapConsole(IntPtr intPtr) : MonoBehaviour(intPtr)
         CanUse(PlayerControl.LocalPlayer.Data, out var canUse, out _);
         if (!canUse)
             return;
-        
+
         DestroyableSingleton<TransitionFade>.Instance.DoTransitionFade(null, ShopBuilder.Build(), null);
     }
 }

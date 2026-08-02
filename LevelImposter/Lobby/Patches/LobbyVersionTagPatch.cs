@@ -1,7 +1,8 @@
 using HarmonyLib;
+using LevelImposter.Lobby.Components;
 using UnityEngine;
 
-namespace LevelImposter.Lobby;
+namespace LevelImposter.Lobby.Patches;
 
 /*
  *      Gives credit to map makers

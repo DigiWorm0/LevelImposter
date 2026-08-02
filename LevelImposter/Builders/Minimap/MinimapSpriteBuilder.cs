@@ -1,7 +1,8 @@
-﻿using LevelImposter.Core;
+﻿using LevelImposter.Core.Components;
+using LevelImposter.Core.Models;
 using UnityEngine;
 
-namespace LevelImposter.Builders;
+namespace LevelImposter.Builders.Minimap;
 
 public class MinimapSpriteBuilder : IElemBuilder
 {
@@ -11,7 +12,7 @@ public class MinimapSpriteBuilder : IElemBuilder
     {
         SabCount = 0;
     }
-    
+
     public void OnBuild(LIElement elem, GameObject obj)
     {
         if (elem.type != "util-minimapsprite")

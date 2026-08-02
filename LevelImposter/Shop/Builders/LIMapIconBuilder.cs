@@ -1,7 +1,8 @@
 ﻿using Il2CppSystem.Collections.Generic;
-using LevelImposter.Core;
+using LevelImposter.Core.Models;
+using LevelImposter.Core.Utils;
 
-namespace LevelImposter.Shop;
+namespace LevelImposter.Shop.Builders;
 
 public static class LIMapIconBuilder
 {

@@ -1,9 +1,10 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using BepInEx.Unity.IL2CPP.Utils.Collections;
+using LevelImposter.Core.Components;
 using UnityEngine;
 
-namespace LevelImposter.Core;
+namespace LevelImposter.Core.Utils;
 
 /// <summary>
 ///     Manages a singular coroutine across a set of GameObjects
@@ -27,7 +28,7 @@ public class GameObjectCoroutineManager
     {
         if (LIBaseShip.Instance == null)
             throw new MissingShipException();
-        
+
         Stop(gameObject);
         var objectID = GetObjectID(gameObject);
         var newCoroutine = LIBaseShip.Instance.StartCoroutine(

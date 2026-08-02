@@ -1,9 +1,11 @@
 using System.Collections.Generic;
-using LevelImposter.Core;
+using LevelImposter.Core.Components;
+using LevelImposter.Core.Models;
+using LevelImposter.Core.Utils;
 using LevelImposter.DB;
 using UnityEngine;
 
-namespace LevelImposter.Builders;
+namespace LevelImposter.Builders.Util;
 
 internal class LadderBuilder : IElemBuilder
 {

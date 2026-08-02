@@ -3,7 +3,7 @@ using Il2CppInterop.Runtime.InteropTypes;
 using Il2CppInterop.Runtime.InteropTypes.Arrays;
 using UnityEngine;
 
-namespace LevelImposter.Core;
+namespace LevelImposter.Core.Utils;
 
 public static class ArrayExtensions
 {

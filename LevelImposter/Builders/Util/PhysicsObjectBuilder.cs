@@ -1,12 +1,13 @@
-using LevelImposter.Core;
+using LevelImposter.Core.Components;
+using LevelImposter.Core.Models;
 using UnityEngine;
 
-namespace LevelImposter.Builders;
+namespace LevelImposter.Builders.Util;
 
 internal class PhysicsObjectBuilder : IElemBuilder
 {
     private bool _isCameraFixed;
-    
+
     public void OnPreBuild()
     {
         _isCameraFixed = false;

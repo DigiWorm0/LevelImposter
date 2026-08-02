@@ -112,6 +112,10 @@ public static class LILogger
     ///     Sends a message to notifications (if exists)
     /// </summary>
     /// <param name="data">String message to log</param>
+    /// <param name="isError">
+    ///     If true, will be displayed as an error message. If false, will be displayed as a non-error
+    ///     message.
+    /// </param>
     public static void Notify(string data, bool isError = true)
     {
         // Check HudManager exists

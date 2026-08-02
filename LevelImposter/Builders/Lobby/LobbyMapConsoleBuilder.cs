@@ -1,6 +1,8 @@
 ﻿using System;
-using LevelImposter.Core;
-using LevelImposter.Lobby;
+using LevelImposter.Core.Models;
+using LevelImposter.Core.Utils;
+using LevelImposter.Lobby.Builders;
+using LevelImposter.Lobby.Components;
 using UnityEngine;
 using UnityEngine.Events;
 

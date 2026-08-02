@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Il2CppInterop.Runtime.Attributes;
 using UnityEngine;
 
-namespace LevelImposter.Core;
+namespace LevelImposter.Core.Components;
 
 /// <summary>
 ///     Object that tracks the players that are inside it's range

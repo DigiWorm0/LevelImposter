@@ -1,9 +1,9 @@
 ﻿using System;
 
-namespace LevelImposter.Core;
+namespace LevelImposter.Core.GarbageCollection;
 
 /// <summary>
-/// Defines how and when an object should be garbage collected.
+///     Defines how and when an object should be garbage collected.
 /// </summary>
 [Flags]
 public enum GCBehavior

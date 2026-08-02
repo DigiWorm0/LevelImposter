@@ -1,19 +1,20 @@
 ﻿using System.Linq;
 using Il2CppSystem.Collections.Generic;
-using LevelImposter.Core;
+using LevelImposter.Core.Models;
 using UnityEngine;
 
-namespace LevelImposter.Builders;
+namespace LevelImposter.Builders.Generic;
 
 /// <summary>
 ///     Configures the Collider2D on the GameObject
 /// </summary>
 public class ColliderBuilder : IElemBuilder
 {
-    private static readonly string[] ShadowOnlyTypes = [
+    private static readonly string[] ShadowOnlyTypes =
+    [
         "util-onewaycollider"
     ];
-    
+
     public int Priority => IElemBuilder.HIGH_PRIORITY; // <-- Run before other builders that may need colliders
 
     public void OnBuild(LIElement elem, GameObject obj)

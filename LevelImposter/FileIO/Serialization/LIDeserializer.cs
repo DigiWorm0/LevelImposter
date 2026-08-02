@@ -3,20 +3,15 @@ using System.IO;
 using System.Text;
 using System.Text.Json;
 using LevelImposter.Core;
+using LevelImposter.Core.Models;
+using LevelImposter.FileIO.DataStores;
+using LevelImposter.FileIO.Streams;
 
-namespace LevelImposter.FileIO;
+namespace LevelImposter.FileIO.Serialization;
 
 public static class LIDeserializer
 {
     private const float JS_MAX_SAFE_INTEGER = 9007199254740991;
-
-    private enum MapFormat
-    {
-        Legacy,
-        LIM2,
-        LIM2_SIGNATURE,
-        LIM2_ZIP
-    }
 
     public static LIMap? DeserializeMap(Stream dataStream, bool spriteDB = true, string? filePath = null)
     {
@@ -24,7 +19,7 @@ public static class LIDeserializer
         {
             // Identify Format
             var mapFormat = IdentifyMapFormat(dataStream, filePath);
-            
+
             // Legacy Map
             if (mapFormat == MapFormat.Legacy)
             {
@@ -35,11 +30,11 @@ public static class LIDeserializer
                     LegacyConverter.UpdateMap(legacyMap);
                 return legacyMap;
             }
-            
+
             // Decompress ZIP
             if (mapFormat == MapFormat.LIM2_ZIP)
                 return LICompressedDeserializer.Deserialize(dataStream, spriteDB, filePath);
-            
+
             // LIM2 Signature Map
             if (mapFormat == MapFormat.LIM2_SIGNATURE)
                 dataStream.Position += 4;
@@ -120,7 +115,7 @@ public static class LIDeserializer
     }
 
     /// <summary>
-    /// Identifies the map format from a data stream
+    ///     Identifies the map format from a data stream
     /// </summary>
     /// <param name="dataStream">The raw file data stream</param>
     /// <param name="filePath">Optional file path for extension checking</param>
@@ -131,34 +126,34 @@ public static class LIDeserializer
         // Check for LIM2 Signature
         var firstFourBytes = new byte[4];
         var bytesRead = dataStream.Read(firstFourBytes, 0, 4);
-        if (bytesRead < 4) 
+        if (bytesRead < 4)
             throw new Exception("Failed to read map format signature");
-        
+
         dataStream.Position = 0;
         if (firstFourBytes[0] == 'L' &&
             firstFourBytes[1] == 'I' &&
             firstFourBytes[2] == 'M' &&
             firstFourBytes[3] == '2')
             return MapFormat.LIM2_SIGNATURE;
-        
+
         // Check for ZIP Signature
         if (firstFourBytes[0] == 0x50 &&
             firstFourBytes[1] == 0x4B &&
             firstFourBytes[2] == 0x03 &&
             firstFourBytes[3] == 0x04)
             return MapFormat.LIM2_ZIP;
-        
+
         // Check for Legacy
         var firstByte = (byte)dataStream.ReadByte();
         dataStream.Position = dataStream.Length - 1;
         var lastByte = (byte)dataStream.ReadByte();
         dataStream.Position = 0;
-        
+
         var fileExtension = Path.GetExtension(filePath ?? "");
         var isLegacy = firstByte == '{' && lastByte == '}' && fileExtension != "lim2";
         if (isLegacy)
             return MapFormat.Legacy;
-        
+
         // Default to LIM2
         return MapFormat.LIM2;
     }
@@ -176,5 +171,13 @@ public static class LIDeserializer
                 element.yScale = 1;
                 element.rotation = 0;
             }
+    }
+
+    private enum MapFormat
+    {
+        Legacy,
+        LIM2,
+        LIM2_SIGNATURE,
+        LIM2_ZIP
     }
 }

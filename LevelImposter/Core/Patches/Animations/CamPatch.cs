@@ -1,7 +1,8 @@
 ﻿using HarmonyLib;
+using LevelImposter.Core.Components;
 using PowerTools;
 
-namespace LevelImposter.Core;
+namespace LevelImposter.Core.Patches.Animations;
 
 /// <summary>
 ///     Toggles a GIF animation alongside the
@@ -22,13 +23,8 @@ public static class CamAnimationPatch
         var animator = __instance.GetComponent<LIAnimatorBase>();
         var clipAnim = on ? __instance.OnAnim : __instance.OffAnim;
         if (spriteAnim != null && clipAnim != null)
-        {
             spriteAnim.Play(clipAnim);
-        }
-        else if (animator != null)
-        {
-            animator.PlayType(on ? "camsActive" : "camsInactive");
-        }
+        else if (animator != null) animator.PlayType(on ? "camsActive" : "camsInactive");
 
         return false;
     }

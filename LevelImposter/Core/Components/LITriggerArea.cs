@@ -1,7 +1,7 @@
 ﻿using System;
 using LevelImposter.Trigger;
 
-namespace LevelImposter.Core;
+namespace LevelImposter.Core.Components;
 
 /// <summary>
 ///     Object that fires a trigger when the player enters/exits it's range

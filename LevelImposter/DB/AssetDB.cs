@@ -3,6 +3,10 @@ using System.Collections.Generic;
 using BepInEx.Unity.IL2CPP.Utils.Collections;
 using Il2CppInterop.Runtime.Attributes;
 using LevelImposter.Core;
+using LevelImposter.Core.Models;
+using LevelImposter.Core.Utils;
+using LevelImposter.DB.Models;
+using LevelImposter.DB.Sub;
 using UnityEngine;
 using UnityEngine.ResourceManagement.AsyncOperations;
 

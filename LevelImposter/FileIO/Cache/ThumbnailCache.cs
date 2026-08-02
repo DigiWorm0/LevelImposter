@@ -1,10 +1,13 @@
 using System;
 using LevelImposter.AssetLoader;
+using LevelImposter.AssetLoader.Loadables;
 using LevelImposter.Core;
+using LevelImposter.Core.GarbageCollection;
+using LevelImposter.FileIO.DataStores;
 using LevelImposter.Networking.API;
 using UnityEngine;
 
-namespace LevelImposter.FileIO;
+namespace LevelImposter.FileIO.Cache;
 
 /// <summary>
 ///     API to manage thumbnail files in the local filesystem

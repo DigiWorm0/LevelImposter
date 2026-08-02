@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using LevelImposter.DB.Sub;
 
-namespace LevelImposter.DB;
+namespace LevelImposter.DB.Models;
 
 [Serializable]
 public class SerializedAssetDB

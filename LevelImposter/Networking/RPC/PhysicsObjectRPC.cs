@@ -1,11 +1,14 @@
 ﻿using System;
 using Hazel;
 using LevelImposter.Core;
+using LevelImposter.Core.Components;
+using LevelImposter.Core.Models;
+using LevelImposter.Core.Utils;
 using Reactor.Networking.Attributes;
 using Reactor.Networking.Rpc;
 using UnityEngine;
 
-namespace LevelImposter.Networking;
+namespace LevelImposter.Networking.RPC;
 
 public struct RPCPhysicsObjectPacket
 {

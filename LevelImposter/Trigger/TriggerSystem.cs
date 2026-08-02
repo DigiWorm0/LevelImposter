@@ -2,8 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using LevelImposter.Core;
-using LevelImposter.Networking;
-using LevelImposter.Shop;
+using LevelImposter.Core.Components;
+using LevelImposter.Core.Services.Ship;
+using LevelImposter.Core.Utils;
+using LevelImposter.Networking.RPC;
+using LevelImposter.Trigger.Handles;
 using Reactor.Networking.Rpc;
 using UnityEngine;
 
@@ -37,7 +40,9 @@ public class TriggerSystem
     ];
 
     public static bool EnableLogging => LIBaseShip.Instance?.CurrentMap?.properties.triggerLogging ?? false;
-    public static bool DetectStackOverflow => LIBaseShip.Instance?.CurrentMap?.properties.triggerDetectStackOverflow ?? true;
+
+    public static bool DetectStackOverflow =>
+        LIBaseShip.Instance?.CurrentMap?.properties.triggerDetectStackOverflow ?? true;
 
     /// <summary>
     ///     Gets the global instance of the trigger system

@@ -1,32 +1,41 @@
-using Il2CppInterop.Runtime.Attributes;
-using LevelImposter.Core;
-using LevelImposter.Networking.API;
 using System;
 using System.IO;
+using Il2CppInterop.Runtime.Attributes;
+using LevelImposter.Core;
+using LevelImposter.Core.Models;
+using LevelImposter.FileIO.DataStores;
+using LevelImposter.FileIO.Serialization;
+using LevelImposter.Networking.API;
 
-namespace LevelImposter.FileIO;
+namespace LevelImposter.FileIO.Cache;
 
 /// <summary>
-/// API to manage cached map asset bundles in the local filesystem
+///     API to manage cached map asset bundles in the local filesystem
 /// </summary>
 public static class MapFileCache
 {
     /// <summary>
-    /// Checks if a map exists in the local map cache
+    ///     Checks if a map exists in the local map cache
     /// </summary>
     /// <param name="mapID">ID of the map to check</param>
     /// <returns><c>true</c> if the map exists in the cache, <c>false</c> otherwise</returns>
-    public static bool Exists(string mapID) => FileCache.Exists($"{mapID}.lim2");
+    public static bool Exists(string mapID)
+    {
+        return FileCache.Exists($"{mapID}.lim2");
+    }
 
     /// <summary>
-    /// Gets the path to a map file in the local map cache
+    ///     Gets the path to a map file in the local map cache
     /// </summary>
     /// <param name="mapID">ID of the map to find</param>
     /// <returns>The path to the map file</returns>
-    public static string GetPath(string mapID) => FileCache.GetPath($"{mapID}.lim2");
+    public static string GetPath(string mapID)
+    {
+        return FileCache.GetPath($"{mapID}.lim2");
+    }
 
     /// <summary>
-    /// Reads and parses a map file into a LIMap.
+    ///     Reads and parses a map file into a LIMap.
     /// </summary>
     /// <param name="mapID">Map ID to load</param>
     /// <param name="callback">Callback on success</param>
@@ -46,7 +55,7 @@ public static class MapFileCache
         var mapPath = GetPath(mapID);
         using var fileStream = File.OpenRead(mapPath);
         var mapData = LIDeserializer.DeserializeMap(fileStream, true, mapPath);
-        
+
         // Reassign map ID (just in case)
         if (mapData != null)
         {
@@ -57,9 +66,9 @@ public static class MapFileCache
         LILogger.Warn($"Failed to read map [{mapID}] from cache");
         return null;
     }
-    
+
     /// <summary>
-    /// Downloads a specific map from the LevelImposter API and saves it to the local cache.
+    ///     Downloads a specific map from the LevelImposter API and saves it to the local cache.
     /// </summary>
     /// <param name="id">ID of the map to download</param>
     /// <param name="onProgress">Callback on download progress</param>

@@ -1,6 +1,7 @@
-﻿using UnityEngine;
+﻿using LevelImposter.AssetLoader.Queue;
+using UnityEngine;
 
-namespace LevelImposter.AssetLoader;
+namespace LevelImposter.AssetLoader.Loadables;
 
 public class AudioResult(AudioClip audioClip) : ICachable
 {

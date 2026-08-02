@@ -1,7 +1,10 @@
 using System;
+using LevelImposter.Core.GarbageCollection;
+using LevelImposter.Core.Models;
+using LevelImposter.Core.Utils;
 using Reactor.Networking.Extensions;
 
-namespace LevelImposter.Core;
+namespace LevelImposter.Core.Components;
 
 /// <summary>
 ///     Component adds additional functionality added to AU's built-in ShipStatus.
@@ -16,7 +19,7 @@ public class LIShipStatus(IntPtr intPtr) : LIBaseShip(intPtr)
     protected override void Awake()
     {
         base.Awake();
-        
+
         // Update Instance
         _instance = this;
         ShipStatus = GetComponent<ShipStatus>();
@@ -27,7 +30,7 @@ public class LIShipStatus(IntPtr intPtr) : LIBaseShip(intPtr)
             MapBuilder.RebuildMap();
             return;
         }
-        
+
         // No map data found, disconnect
         LILogger.Error("LIShipStatus loaded without any map data!");
         AmongUsClient.Instance?.DisconnectWithReason("LevelImposter couldn't find any map data.");
@@ -36,7 +39,7 @@ public class LIShipStatus(IntPtr intPtr) : LIBaseShip(intPtr)
     protected override void OnDestroy()
     {
         base.OnDestroy();
-        
+
         // Wipe Cache (Freeplay Only)
         if (GameState.IsInFreeplay && LIConstants.FREEPLAY_FLUSH_CACHE)
             GCHandler.DisposeAll(GCBehavior.DisposeOnMapUnload);

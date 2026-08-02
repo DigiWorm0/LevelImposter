@@ -1,8 +1,9 @@
 using System;
 using System.Text.Json.Serialization;
 using Il2CppInterop.Runtime.Attributes;
-using LevelImposter.AssetLoader;
 using LevelImposter.Core;
+using LevelImposter.Core.Models;
+using LevelImposter.FileIO.DataStores;
 
 namespace LevelImposter.Networking.API;
 

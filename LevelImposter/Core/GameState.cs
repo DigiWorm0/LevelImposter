@@ -1,6 +1,7 @@
 ﻿using LevelImposter.AssetLoader;
-using LevelImposter.Lobby;
-using LevelImposter.Shop;
+using LevelImposter.Core.Models;
+using LevelImposter.Lobby.Components;
+using LevelImposter.Shop.Components;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 

@@ -1,4 +1,4 @@
-﻿namespace LevelImposter.Core;
+﻿namespace LevelImposter.Core.Models;
 // Among Us     0 - 65
 // TOR          60 - 73, 100 - 149
 // Las Monjas   60 - 69, 75 - 194

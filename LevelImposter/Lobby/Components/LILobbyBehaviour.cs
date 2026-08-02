@@ -1,8 +1,10 @@
 ﻿using System;
 using LevelImposter.Builders.Lobby;
 using LevelImposter.Core;
+using LevelImposter.Core.Components;
+using LevelImposter.Lobby.Builders;
 
-namespace LevelImposter.Lobby;
+namespace LevelImposter.Lobby.Components;
 
 public class LILobbyBehaviour(IntPtr intPtr) : LIBaseShip(intPtr)
 {

@@ -1,7 +1,8 @@
 using HarmonyLib;
-using LevelImposter.Shop;
+using LevelImposter.Core.Components;
+using LevelImposter.Core.Models;
 
-namespace LevelImposter.Core;
+namespace LevelImposter.Core.Patches.Ship;
 
 /// <summary>
 ///     Appends the <c>LIShipStatus</c> component to LevelImposter maps.

@@ -6,10 +6,13 @@ using System.Text.Json;
 using Il2CppInterop.Runtime;
 using Il2CppInterop.Runtime.InteropTypes;
 using LevelImposter.AssetLoader;
+using LevelImposter.AssetLoader.Loadables;
+using LevelImposter.Core.GarbageCollection;
+using LevelImposter.FileIO.Streams;
 using Reactor.Utilities;
 using UnityEngine;
 
-namespace LevelImposter.Core;
+namespace LevelImposter.Core.Utils;
 
 /// <summary>
 ///     Represents all the resources that are packaged within the plugin DLL.

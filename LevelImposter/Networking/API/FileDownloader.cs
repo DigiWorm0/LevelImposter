@@ -6,10 +6,12 @@ using System.Linq;
 using System.Net.Http;
 using System.Net.Security;
 using System.Threading.Tasks;
+using LevelImposter.AssetLoader.Queue;
 using LevelImposter.Core;
+using LevelImposter.FileIO.DataStores;
 using Reactor.Utilities;
 
-namespace LevelImposter.AssetLoader;
+namespace LevelImposter.Networking.API;
 
 public class FileDownloader
 {
@@ -203,4 +205,21 @@ public class FileDownloader
         // Return success
         return new DownloadResult(new FileStore(filePath));
     }
+}
+
+public readonly record struct DownloadInfo(
+    string DownloadURL,
+    string OutputFilePath,
+    Action<float>? OnProgress = null,
+    Action<DownloadResult>? OnComplete = null,
+    Action<string>? OnError = null
+) : IIdentifiable
+{
+    // Uniquely identified by output file path to prevent duplicate downloads to the same location
+    public string ID => OutputFilePath;
+}
+
+public readonly struct DownloadResult(FileStore store)
+{
+    public FileStore Store => store;
 }

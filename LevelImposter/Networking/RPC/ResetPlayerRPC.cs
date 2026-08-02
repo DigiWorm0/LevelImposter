@@ -1,10 +1,11 @@
 ﻿using Hazel;
 using LevelImposter.Core;
+using LevelImposter.Core.Models;
 using Reactor.Networking.Attributes;
 using Reactor.Networking.Rpc;
 using UnityEngine;
 
-namespace LevelImposter.Networking;
+namespace LevelImposter.Networking.RPC;
 
 [RegisterCustomRpc((uint)LIRpc.ResetPlayer)]
 public class ResetPlayerRPC(LevelImposter plugin, uint id) : PlayerCustomRpc<LevelImposter, bool>(plugin, id)

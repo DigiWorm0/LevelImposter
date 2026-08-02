@@ -1,7 +1,9 @@
 using AmongUs.GameOptions;
-using LevelImposter.Builders;
-using LevelImposter.Lobby;
-using LevelImposter.Shop;
+using LevelImposter.Builders.Generic;
+using LevelImposter.Core.GarbageCollection;
+using LevelImposter.Core.Models;
+using LevelImposter.Lobby.Components;
+using LevelImposter.Shop.Components;
 
 namespace LevelImposter.Core;
 
@@ -107,7 +109,7 @@ public static class GameConfiguration
             sendNotification)
             DestroyableSingleton<HudManager>.Instance.Notifier.AddSettingsChangeMessage(
                 StringNames.GameMapName,
-                HideMapName ? "Random" : CurrentMap?.name,
+                HideMapName ? "Random" : CurrentMap.name,
                 false
             );
     }

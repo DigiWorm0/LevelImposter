@@ -3,12 +3,13 @@ using System.Collections;
 using Il2CppInterop.Runtime.Attributes;
 using LevelImposter.AssetLoader;
 using LevelImposter.Core;
-using LevelImposter.Lobby;
+using LevelImposter.Core.Utils;
+using LevelImposter.Lobby.Sync;
 using Reactor.Utilities;
 using TMPro;
 using UnityEngine;
 
-namespace LevelImposter.Shop;
+namespace LevelImposter.Shop.Components;
 
 public class LoadingBar(IntPtr intPtr) : MonoBehaviour(intPtr)
 {

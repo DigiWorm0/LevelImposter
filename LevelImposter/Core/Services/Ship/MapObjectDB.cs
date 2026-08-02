@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using LevelImposter.Core.Components;
+using LevelImposter.Core.Models;
 using UnityEngine;
 
-namespace LevelImposter.Core;
+namespace LevelImposter.Core.Services.Ship;
 
 /// <summary>
 ///     Database of all map objects
@@ -34,9 +36,9 @@ public class MapObjectDB
     {
         return _guidToGameObject.GetValueOrDefault(guid);
     }
-    
+
     /// <summary>
-    /// Gets an element from the database by the looking up the GameObject's instance ID.
+    ///     Gets an element from the database by the looking up the GameObject's instance ID.
     /// </summary>
     /// <param name="gameObject">The GameObject to look up</param>
     /// <returns>The corresponding LIElement or null if not found</returns>
@@ -45,9 +47,9 @@ public class MapObjectDB
         var instanceID = gameObject.GetInstanceID();
         return _instanceIDToElement.GetValueOrDefault(instanceID);
     }
-    
+
     /// <summary>
-    ///    Gets an element from the database by the looking up the GameObject's instance ID.
+    ///     Gets an element from the database by the looking up the GameObject's instance ID.
     /// </summary>
     /// <param name="gameObject">The GameObject to look up</param>
     /// <returns>The corresponding LIElement or null if not found</returns>

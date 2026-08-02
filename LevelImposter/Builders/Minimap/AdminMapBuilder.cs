@@ -1,8 +1,10 @@
 ﻿using System.Collections.Generic;
-using LevelImposter.Core;
+using LevelImposter.Builders.Util;
+using LevelImposter.Core.Components;
+using LevelImposter.Core.Models;
 using UnityEngine;
 
-namespace LevelImposter.Builders;
+namespace LevelImposter.Builders.Minimap;
 
 public class AdminMapBuilder : IElemBuilder
 {

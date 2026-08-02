@@ -1,19 +1,17 @@
-﻿using System;
-using Hazel;
-using InnerNet;
+﻿using Hazel;
 using LevelImposter.Core;
-using LevelImposter.Shop;
-using LevelImposter.Trigger;
+using LevelImposter.Core.Components;
+using LevelImposter.Core.Models;
 using Reactor.Networking.Attributes;
 using Reactor.Networking.Rpc;
 
-namespace LevelImposter.Networking;
+namespace LevelImposter.Networking.RPC;
 
 [RegisterCustomRpc((uint)LIRpc.KillPlayer)]
 public class DeathAreaRPC(LevelImposter plugin, uint id) : PlayerCustomRpc<LevelImposter, bool>(plugin, id)
 {
     public override RpcLocalHandling LocalHandling => RpcLocalHandling.After;
-    
+
     public override void Write(MessageWriter writer, bool createDeadBody)
     {
         writer.Write(createDeadBody);
@@ -28,7 +26,7 @@ public class DeathAreaRPC(LevelImposter plugin, uint id) : PlayerCustomRpc<Level
     {
         if (player == null || player.Data.IsDead)
             return;
-        
+
         // Log
         LILogger.Info($"[RPC] Trigger killing {player.name}");
 

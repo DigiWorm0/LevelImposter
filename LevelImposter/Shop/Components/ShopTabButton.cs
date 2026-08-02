@@ -1,24 +1,20 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using Il2CppInterop.Runtime.InteropTypes.Fields;
-using LevelImposter.FileIO;
 using UnityEngine;
 
-namespace LevelImposter.Shop;
+namespace LevelImposter.Shop.Components;
 
 /// <summary>
 ///     Manages each of the tabs in the shop
 /// </summary>
 public class ShopTabButton(IntPtr ptr) : MonoBehaviour(ptr)
 {
+    private PassiveButton? _passiveButton;
     public Il2CppValueField<int> tab;
     public Il2CppReferenceField<Sprite> titleSprite;
 
     public ShopTab TabType => (ShopTab)tab.Value;
-    
-    private PassiveButton? _passiveButton;
-    
+
     public void Awake()
     {
         _passiveButton = GetComponent<PassiveButton>();
@@ -26,7 +22,7 @@ public class ShopTabButton(IntPtr ptr) : MonoBehaviour(ptr)
     }
 
     /// <summary>
-    /// Sets whether this tab is selected or not
+    ///     Sets whether this tab is selected or not
     /// </summary>
     /// <param name="isSelected">Whether the tab is selected</param>
     public void SetTabSelected(bool isSelected)
@@ -35,7 +31,7 @@ public class ShopTabButton(IntPtr ptr) : MonoBehaviour(ptr)
     }
 
     /// <summary>
-    /// Called when the button is clicked
+    ///     Called when the button is clicked
     /// </summary>
     private void OnButtonClick()
     {

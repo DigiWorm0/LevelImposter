@@ -1,12 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Text;
-using LevelImposter.Shop;
+using LevelImposter.Core;
+using LevelImposter.Core.GarbageCollection;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
-namespace LevelImposter.Core;
+namespace LevelImposter.AssetLoader.FileContainers;
 
 /// <summary>
 ///     Represents a GIF file.
@@ -33,6 +33,7 @@ public class GIFFile(string name) : IDisposable
     // LZW Decoder
     private static readonly ushort[][] _codeTable = new ushort[1 << 12][]; // Table of "code"s to color indexes
     private readonly Color _backgroundColor = Color.clear; // Background color
+    private GCBehavior? _gcBehavior;
 
     // Logical Screen Descriptor
     private Color[] _globalColorTable = DEFAULT_COLOR_TABLE; // Table of indexes to colors
@@ -41,7 +42,6 @@ public class GIFFile(string name) : IDisposable
 
     // Other Data
     private Color[]? _pixelBuffer; // Buffer of pixel colors
-    private GCBehavior? _gcBehavior;
 
     // GIF File
     public bool IsLoaded { get; private set; }
@@ -92,7 +92,7 @@ public class GIFFile(string name) : IDisposable
     public void Load(Stream dataStream, GCBehavior? gcBehavior = null)
     {
         using var reader = new BinaryReader(dataStream);
-        
+
         IsLoaded = false;
         _gcBehavior = gcBehavior;
         ReadHeader(reader);
@@ -389,8 +389,8 @@ public class GIFFile(string name) : IDisposable
         {
             // Read code at current byte/bit position
             var code = 0;
-            for (var i = 0; i < codeSize; i++) {
-
+            for (var i = 0; i < codeSize; i++)
+            {
                 // Get Bit
                 code |= ((byteBuffer[byteIndex] >> bitOffset) & 1) << i;
 
@@ -571,7 +571,7 @@ public class GIFFile(string name) : IDisposable
             // Apply Texture
             texture.SetPixels(_pixelBuffer);
             texture.Apply(false, true); // Remove from CPU memory
-            
+
             // Add to GC
             GCHandler.Register(texture, _gcBehavior);
 

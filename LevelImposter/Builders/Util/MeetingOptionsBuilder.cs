@@ -1,9 +1,15 @@
 using LevelImposter.AssetLoader;
+using LevelImposter.AssetLoader.Loadables;
+using LevelImposter.AssetLoader.Loaders;
+using LevelImposter.Builders.Generic;
 using LevelImposter.Core;
+using LevelImposter.Core.Components;
+using LevelImposter.Core.Models;
+using LevelImposter.Core.Utils;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
-namespace LevelImposter.Builders;
+namespace LevelImposter.Builders.Util;
 
 internal class MeetingOptionsBuilder : IElemBuilder
 {

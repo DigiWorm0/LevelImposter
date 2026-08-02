@@ -1,6 +1,6 @@
 using System;
 
-namespace LevelImposter.Core;
+namespace LevelImposter.Core.Models;
 
 [Serializable]
 public class LIMapProperties

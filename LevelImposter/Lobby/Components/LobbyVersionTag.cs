@@ -1,17 +1,17 @@
 using System;
 using System.Text;
 using LevelImposter.Core;
-using LevelImposter.Shop;
+using LevelImposter.Core.Models;
 using TMPro;
 using UnityEngine;
 
-namespace LevelImposter.Lobby;
+namespace LevelImposter.Lobby.Components;
 
 public class LobbyVersionTag(IntPtr intPtr) : MonoBehaviour(intPtr)
 {
-    private TMP_Text? _text;
     private static LobbyVersionTag? _instance;
-    
+    private TMP_Text? _text;
+
     public static bool IsInitialized => _instance != null;
 
     public void Awake()
@@ -30,7 +30,7 @@ public class LobbyVersionTag(IntPtr intPtr) : MonoBehaviour(intPtr)
         aspect.Alignment = AspectPosition.EdgeAlignments.LeftBottom;
         aspect.DistanceFromEdge = new Vector3(10.4f, -2.0f, -30.0f);
         aspect.AdjustPosition();
-        
+
         // Scale on Mobile
         if (GameState.IsMobile)
         {

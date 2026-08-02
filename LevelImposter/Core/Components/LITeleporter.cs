@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
+using LevelImposter.Core.Models;
+using LevelImposter.Core.Services.Ship;
 using UnityEngine;
 
-namespace LevelImposter.Core;
+namespace LevelImposter.Core.Components;
 
 /// <summary>
 ///     Object that teleports the player on contact

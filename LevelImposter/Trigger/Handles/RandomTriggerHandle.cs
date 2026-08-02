@@ -1,7 +1,8 @@
-﻿using LevelImposter.Core;
+﻿using LevelImposter.Core.Services;
+using LevelImposter.Core.Services.Ship;
 using UnityEngine;
 
-namespace LevelImposter.Trigger;
+namespace LevelImposter.Trigger.Handles;
 
 public class RandomTriggerHandle : ITriggerHandle
 {

@@ -1,6 +1,7 @@
 ﻿using HarmonyLib;
+using LevelImposter.Core.Components;
 
-namespace LevelImposter.Core;
+namespace LevelImposter.Core.Patches.Fixes;
 
 /// <summary>
 ///     Disable SFX during map loading sequence.

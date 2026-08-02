@@ -1,10 +1,12 @@
 using System;
 using HarmonyLib;
 using LevelImposter.Core;
-using LevelImposter.FileIO;
+using LevelImposter.Core.Models;
+using LevelImposter.Core.Utils;
+using LevelImposter.FileIO.Cache;
 using UnityEngine;
 
-namespace LevelImposter.Lobby;
+namespace LevelImposter.Lobby.Patches;
 
 /*
  *      Applies the thumbnail image on the right lobby window.

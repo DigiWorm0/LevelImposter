@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
-using Il2CppInterop.Runtime.InteropTypes.Arrays;
+using LevelImposter.FileIO.DataBlock;
+using LevelImposter.FileIO.DataStores;
 
-namespace LevelImposter.Core;
+namespace LevelImposter.Core.Models;
 
 public class MapAssetDB
 {
@@ -18,7 +18,7 @@ public class MapAssetDB
     {
         DB.Add(id, fileChunkStore);
     }
-    
+
     public void Add(Guid id, IDataStore streamable)
     {
         DB.Add(id, streamable);

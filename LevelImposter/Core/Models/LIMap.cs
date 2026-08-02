@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Text.Json.Serialization;
 
-namespace LevelImposter.Core;
+namespace LevelImposter.Core.Models;
 
 [Serializable]
 public class LIMap : LIMetadata

@@ -1,7 +1,7 @@
 ﻿using System;
-using LevelImposter.Core;
+using LevelImposter.Core.Components;
 
-namespace LevelImposter.Trigger;
+namespace LevelImposter.Trigger.Handles;
 
 public class DeathTriggerHandle : ITriggerHandle
 {

@@ -1,11 +1,12 @@
 ﻿using System;
 using Hazel;
 using LevelImposter.Core;
-using LevelImposter.Lobby;
+using LevelImposter.Core.Models;
+using LevelImposter.Lobby.Sync;
 using Reactor.Networking.Attributes;
 using Reactor.Networking.Rpc;
 
-namespace LevelImposter.Networking;
+namespace LevelImposter.Networking.RPC;
 
 /// <summary>
 ///     Represents a serialized version of <see cref="GameConfiguration" /> containing map IDs and settings.

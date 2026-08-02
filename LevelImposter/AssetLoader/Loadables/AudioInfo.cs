@@ -1,6 +1,8 @@
-﻿using LevelImposter.Core;
+﻿using LevelImposter.AssetLoader.Queue;
+using LevelImposter.Core.GarbageCollection;
+using LevelImposter.FileIO.DataStores;
 
-namespace LevelImposter.AssetLoader;
+namespace LevelImposter.AssetLoader.Loadables;
 
 public readonly struct AudioInfo(string id, IDataStore dataStore) : IIdentifiable
 {

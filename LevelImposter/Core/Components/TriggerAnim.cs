@@ -4,11 +4,13 @@ using System.Collections.Generic;
 using System.Linq;
 using BepInEx.Unity.IL2CPP.Utils.Collections;
 using Il2CppInterop.Runtime.Attributes;
+using LevelImposter.Core.Models;
+using LevelImposter.Core.Services.Ship;
 using LevelImposter.Trigger;
 using LibCpp2IL;
 using UnityEngine;
 
-namespace LevelImposter.Core;
+namespace LevelImposter.Core.Components;
 
 public class TriggerAnim(IntPtr intPtr) : MonoBehaviour(intPtr)
 {
@@ -214,7 +216,7 @@ public class TriggerAnim(IntPtr intPtr) : MonoBehaviour(intPtr)
     }
 
     /// <summary>
-    /// Sets the opacity of the target object
+    ///     Sets the opacity of the target object
     /// </summary>
     /// <param name="targetObject">Target object to edit opacity</param>
     /// <param name="opacity">Opacity value to set. 0 for transparent, 1 for opaque</param>
@@ -222,7 +224,7 @@ public class TriggerAnim(IntPtr intPtr) : MonoBehaviour(intPtr)
     {
         // Clamp Opacity between 0 and 1
         opacity = Mathf.Clamp01(opacity);
-        
+
         // Update all SpriteRenderers in children
         var renderers = targetObject.GetComponentsInChildren<SpriteRenderer>(true);
         foreach (var renderer in renderers)

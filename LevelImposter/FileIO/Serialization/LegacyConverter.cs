@@ -5,8 +5,11 @@ using System.Text.Json;
 using Il2CppInterop.Runtime.Attributes;
 using Il2CppInterop.Runtime.InteropTypes.Arrays;
 using LevelImposter.Core;
+using LevelImposter.Core.Models;
+using LevelImposter.FileIO.API;
+using LevelImposter.FileIO.DataBlock;
 
-namespace LevelImposter.FileIO;
+namespace LevelImposter.FileIO.Serialization;
 
 /// <summary>
 ///     Converts LIM to LIM2 files

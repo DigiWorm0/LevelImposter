@@ -1,8 +1,9 @@
-﻿using LevelImposter.Core;
+﻿using LevelImposter.Core.Components;
+using LevelImposter.Core.Models;
 using TMPro;
 using UnityEngine;
 
-namespace LevelImposter.Builders;
+namespace LevelImposter.Builders.Minimap;
 
 public class RoomNameBuilder : IElemBuilder
 {
@@ -12,7 +13,7 @@ public class RoomNameBuilder : IElemBuilder
     {
         _nameCount = 0;
     }
-    
+
     public void OnBuild(LIElement elem, GameObject obj)
     {
         if (elem.type != "util-room")

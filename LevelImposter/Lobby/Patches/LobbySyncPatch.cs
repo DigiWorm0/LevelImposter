@@ -1,9 +1,10 @@
 using HarmonyLib;
 using LevelImposter.Core;
-using LevelImposter.FileIO;
-using LevelImposter.Shop;
+using LevelImposter.Core.Models;
+using LevelImposter.FileIO.API;
+using LevelImposter.Lobby.Sync;
 
-namespace LevelImposter.Lobby;
+namespace LevelImposter.Lobby.Patches;
 
 /*
  *      Synchronizes a random seed
@@ -23,12 +24,13 @@ public static class ClientJoinSyncPatch
             GameConfigurationSync.SendGameConfigurationRPC();
             return;
         }
-        
+
         // Check if an existing map is loaded
         var isLISelected = GameConfiguration.CurrentMapType == MapType.LevelImposter;
         var isCustomMapLoaded = GameConfiguration.CurrentMap != null;
-        var isRandomized = GameConfiguration.HideMapName || !isLISelected;  // <-- If not LevelImposter, treat as randomized
-        
+        var isRandomized =
+            GameConfiguration.HideMapName || !isLISelected; // <-- If not LevelImposter, treat as randomized
+
         if (isCustomMapLoaded && !isRandomized)
             return; // <-- A proper custom map is already loaded
 
@@ -44,10 +46,10 @@ public static class ClientJoinSyncPatch
                 return;
             }
         }
-        
+
         // Otherwise, attempt to randomize map
         MapRandomizer.RandomizeMap(false);
-        
+
         // Fallback to Skeld if no map is loaded (and we're on LevelImposter)
         if (GameConfiguration.CurrentMap == null && isLISelected)
         {

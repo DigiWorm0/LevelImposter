@@ -1,4 +1,4 @@
-﻿namespace LevelImposter.Core;
+﻿namespace LevelImposter.Trigger.Values;
 
 public interface IBoolValue
 {

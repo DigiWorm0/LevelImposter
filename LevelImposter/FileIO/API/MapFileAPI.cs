@@ -2,9 +2,12 @@ using System;
 using System.IO;
 using System.Linq;
 using LevelImposter.Core;
+using LevelImposter.Core.Models;
+using LevelImposter.FileIO.DataStores;
+using LevelImposter.FileIO.Serialization;
 using LevelImposter.Networking.API;
 
-namespace LevelImposter.FileIO;
+namespace LevelImposter.FileIO.API;
 
 /// <summary>
 ///     API to manage LIM files in the local filesystem

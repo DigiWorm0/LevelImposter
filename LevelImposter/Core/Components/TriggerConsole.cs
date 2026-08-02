@@ -1,9 +1,10 @@
 ﻿using System;
 using Il2CppInterop.Runtime.Attributes;
+using LevelImposter.Core.Models;
 using LevelImposter.Trigger;
 using UnityEngine;
 
-namespace LevelImposter.Core;
+namespace LevelImposter.Core.Components;
 
 public class TriggerConsole(IntPtr intPtr) : MonoBehaviour(intPtr)
 {

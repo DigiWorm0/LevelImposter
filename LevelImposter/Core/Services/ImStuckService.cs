@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections;
 using Il2CppInterop.Runtime.Attributes;
-using LevelImposter.Networking;
+using LevelImposter.Networking.RPC;
 using Reactor.Networking.Rpc;
 using Reactor.Utilities;
 using UnityEngine;
 
-namespace LevelImposter.Core;
+namespace LevelImposter.Core.Services;
 
 /// <summary>
 ///     Handles the "I'm Stuck" respawn functionality

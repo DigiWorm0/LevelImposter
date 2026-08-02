@@ -1,7 +1,8 @@
 using HarmonyLib;
-using LevelImposter.Builders;
+using LevelImposter.Builders.Util;
+using LevelImposter.Core.Components;
 
-namespace LevelImposter.Core;
+namespace LevelImposter.Core.Patches.Utils;
 
 /// <summary>
 ///     Hides rooms from the RoomTracker that are hidden by the map.

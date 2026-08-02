@@ -1,8 +1,9 @@
 ﻿using System;
 using HarmonyLib;
+using LevelImposter.Core.Components;
 using UnityEngine.Events;
 
-namespace LevelImposter.Core;
+namespace LevelImposter.Core.Patches.ModCompatibility;
 
 /*
  *      Fixes instantiated vents
@@ -18,7 +19,8 @@ public static class VentPatch
     {
         if (!LIShipStatus.IsInstance())
             return;
-        if (!ModCompatibility.IsTOUEnabled && !ModCompatibility.IsTOREnabled && !ModCompatibility.IsReworkedEnabled)
+        if (!Core.Utils.ModCompatibility.IsTOUEnabled && !Core.Utils.ModCompatibility.IsTOREnabled &&
+            !Core.Utils.ModCompatibility.IsReworkedEnabled)
             return;
         if (_ventTotal == ShipStatus.Instance.AllVents.Count)
             return;

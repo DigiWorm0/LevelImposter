@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace LevelImposter.Core;
+namespace LevelImposter.Core.Components;
 
 /// <summary>
 ///     Allows Ladders to have a different cooldown

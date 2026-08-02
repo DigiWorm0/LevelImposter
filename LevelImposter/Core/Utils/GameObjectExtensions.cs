@@ -1,8 +1,9 @@
 ﻿using System;
+using LevelImposter.Core.Models;
 using PowerTools;
 using UnityEngine;
 
-namespace LevelImposter.Core;
+namespace LevelImposter.Core.Utils;
 
 public static class GameObjectExtensions
 {

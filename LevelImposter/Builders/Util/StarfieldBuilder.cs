@@ -1,8 +1,11 @@
+using LevelImposter.Builders.Generic;
 using LevelImposter.Core;
+using LevelImposter.Core.Components;
+using LevelImposter.Core.Models;
 using LevelImposter.DB;
 using UnityEngine;
 
-namespace LevelImposter.Builders;
+namespace LevelImposter.Builders.Util;
 
 internal class StarfieldBuilder : IElemBuilder
 {

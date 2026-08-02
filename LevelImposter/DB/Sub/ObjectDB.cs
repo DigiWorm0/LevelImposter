@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Text.Json.Serialization;
 using LevelImposter.Core;
+using LevelImposter.Core.Models;
+using LevelImposter.DB.Models;
 using UnityEngine;
 
-namespace LevelImposter.DB;
+namespace LevelImposter.DB.Sub;
 
 /// <summary>
 ///     Database of Among Us GameObjects

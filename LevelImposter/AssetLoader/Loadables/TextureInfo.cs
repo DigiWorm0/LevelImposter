@@ -1,6 +1,9 @@
-﻿using LevelImposter.Core;
+﻿using LevelImposter.AssetLoader.Queue;
+using LevelImposter.Core.GarbageCollection;
+using LevelImposter.FileIO.DataBlock;
+using LevelImposter.FileIO.DataStores;
 
-namespace LevelImposter.AssetLoader;
+namespace LevelImposter.AssetLoader.Loadables;
 
 public readonly struct TextureInfo(string id, IDataStore dataStore) : IIdentifiable
 {

@@ -1,6 +1,7 @@
 using HarmonyLib;
+using LevelImposter.Core.Components;
 
-namespace LevelImposter.Core;
+namespace LevelImposter.Core.Patches.Fixes;
 
 /// <summary>
 ///     Forces dummies to vote with the local player in custom freeplay maps.

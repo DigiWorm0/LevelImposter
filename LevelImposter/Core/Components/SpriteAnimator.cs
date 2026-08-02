@@ -2,10 +2,12 @@
 using System.Linq;
 using Il2CppInterop.Runtime.Attributes;
 using LevelImposter.AssetLoader;
-using LevelImposter.Builders;
+using LevelImposter.AssetLoader.Loadables;
+using LevelImposter.Builders.Generic;
+using LevelImposter.Core.Models;
 using UnityEngine;
 
-namespace LevelImposter.Core;
+namespace LevelImposter.Core.Components;
 
 /// <summary>
 ///     Component to animate LI's Sprite Animations in-game

@@ -2,16 +2,17 @@
 using System.IO;
 using System.IO.Compression;
 using System.Text.Json;
-using LevelImposter.Core;
+using LevelImposter.Core.Models;
+using LevelImposter.FileIO.DataStores;
 
-namespace LevelImposter.FileIO;
+namespace LevelImposter.FileIO.Serialization;
 
 public static class LICompressedDeserializer
 {
-    const string MAP_JSON_ENTRY = "map.json";
-    
+    private const string MAP_JSON_ENTRY = "map.json";
+
     /// <summary>
-    /// Deserializes a LIMap from a compressed stream.
+    ///     Deserializes a LIMap from a compressed stream.
     /// </summary>
     /// <param name="stream">Raw file stream of a ZIP-compressed LIMap file.</param>
     /// <param name="spriteDB">Whether to load the sprite database.</param>
@@ -32,11 +33,11 @@ public static class LICompressedDeserializer
             throw new InvalidDataException("Failed to deserialize map JSON data.");
         if (!spriteDB)
             return mapData;
-        
+
         // Check file path
         if (string.IsNullOrEmpty(filePath))
             throw new ArgumentException("File path must be provided to load sprite database from ZIP entries.");
-        
+
         // Load Asset DB
         mapData.mapAssetDB = new MapAssetDB();
         foreach (var zipEntry in zip.Entries)
@@ -44,13 +45,13 @@ public static class LICompressedDeserializer
             // Skip JSON
             if (zipEntry.Name == MAP_JSON_ENTRY)
                 continue;
-            
+
             // Check if name is a GUID
             if (!Guid.TryParse(zipEntry.Name, out var guid))
                 continue;
-            
+
             mapData.mapAssetDB.Add(guid, new ZIPEntryStore(filePath, zipEntry.Name));
-            
+
             // Copy to buffer
             // TODO: Stream directly without buffering entire file in memory
             // byte[] buffer;
@@ -64,7 +65,7 @@ public static class LICompressedDeserializer
             // // Add to Asset DB
             // mapData?.mapAssetDB?.Add(guid, new MemoryStreamable(buffer));
         }
-        
+
         return mapData;
     }
 }

@@ -1,14 +1,12 @@
-﻿using System;
-using Hazel;
-using InnerNet;
+﻿using Hazel;
 using LevelImposter.Core;
-using LevelImposter.Shop;
-using LevelImposter.Trigger;
+using LevelImposter.Core.Components;
+using LevelImposter.Core.Models;
 using Reactor.Networking.Attributes;
 using Reactor.Networking.Rpc;
 using UnityEngine;
 
-namespace LevelImposter.Networking;
+namespace LevelImposter.Networking.RPC;
 
 public struct RPCPlayerMoverPacket
 {
@@ -21,10 +19,11 @@ public struct RPCPlayerMoverPacket
 }
 
 [RegisterCustomRpc((uint)LIRpc.SyncPlayerMover)]
-public class PlayerMoverRPC(LevelImposter plugin, uint id) : PlayerCustomRpc<LevelImposter, RPCPlayerMoverPacket>(plugin, id)
+public class PlayerMoverRPC(LevelImposter plugin, uint id)
+    : PlayerCustomRpc<LevelImposter, RPCPlayerMoverPacket>(plugin, id)
 {
     public override RpcLocalHandling LocalHandling => RpcLocalHandling.After;
-    
+
     public override void Write(MessageWriter writer, RPCPlayerMoverPacket data)
     {
         writer.Write(data.ParentTransformID);
@@ -43,7 +42,7 @@ public class PlayerMoverRPC(LevelImposter plugin, uint id) : PlayerCustomRpc<Lev
         var rotation = reader.ReadSingle();
         var scaleX = reader.ReadSingle();
         var scaleY = reader.ReadSingle();
-        
+
         return new RPCPlayerMoverPacket
         {
             ParentTransformID = objectID,
@@ -59,7 +58,7 @@ public class PlayerMoverRPC(LevelImposter plugin, uint id) : PlayerCustomRpc<Lev
     {
         // Log
         LILogger.Debug($"[RPC] {playerControl.name} syncing to player mover ({data.ParentTransformID})");
-        
+
         // Find Player Mover
         if (LIPlayerMover.AllObjects.TryGetValue(data.ParentTransformID, out var parentTransform))
             // Set parent to player mover
@@ -67,7 +66,7 @@ public class PlayerMoverRPC(LevelImposter plugin, uint id) : PlayerCustomRpc<Lev
         else
             // No parent found, default to ship status
             playerControl.transform.SetParent(ShipStatus.Instance.transform);
-        
+
         // Apply transform
         playerControl.transform.localPosition = new Vector3(data.X, data.Y, 0);
         playerControl.transform.localRotation = Quaternion.Euler(0, 0, data.Rotation);

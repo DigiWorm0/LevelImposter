@@ -1,8 +1,10 @@
 using HarmonyLib;
-using LevelImposter.Builders;
+using LevelImposter.Builders.Util;
+using LevelImposter.Core.Components;
+using LevelImposter.Core.Utils;
 using UnityEngine;
 
-namespace LevelImposter.Core;
+namespace LevelImposter.Core.Patches.Ship;
 
 /// <summary>
 ///     Normally, binoculars (util-cams4) are handled by

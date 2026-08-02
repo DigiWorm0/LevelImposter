@@ -1,6 +1,6 @@
 ﻿using BepInEx.Unity.IL2CPP;
 
-namespace LevelImposter.Core;
+namespace LevelImposter.Core.Utils;
 
 public static class ModCompatibility
 {

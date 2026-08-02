@@ -1,17 +1,20 @@
 ﻿using System;
-using LevelImposter.Core;
+using LevelImposter.Builders.Generic;
+using LevelImposter.Core.Components;
+using LevelImposter.Core.Models;
+using LevelImposter.Core.Utils;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
-namespace LevelImposter.Builders;
+namespace LevelImposter.Builders.Minimap;
 
 public class MinimapBuilder : IElemBuilder
 {
     private const float DEFAULT_SCALE = 4.975f;
-    
-    public int Priority => IElemBuilder.HIGH_PRIORITY; // <-- Ensure other builders can modify the minimap after this
 
     private bool _isBuilt;
+
+    public int Priority => IElemBuilder.HIGH_PRIORITY; // <-- Ensure other builders can modify the minimap after this
 
     public void OnPreBuild()
     {
@@ -69,7 +72,7 @@ public class MinimapBuilder : IElemBuilder
     {
         if (_isBuilt)
             return;
-        
+
         // Apply a "default" minimap setup
         var mapBehaviour = GetMinimap();
         mapBehaviour.ColorControl.gameObject.SetActive(false);
@@ -92,7 +95,7 @@ public class MinimapBuilder : IElemBuilder
         var mapBehaviour = MapBehaviour.Instance;
         if (mapBehaviour != null)
             return mapBehaviour;
-        
+
         mapBehaviour = Object.Instantiate(
             shipStatus.MapPrefab,
             DestroyableSingleton<HudManager>.Instance.transform

@@ -4,7 +4,7 @@ using System.IO;
 using System.Text.Json;
 using LevelImposter.Core;
 
-namespace LevelImposter.FileIO;
+namespace LevelImposter.FileIO.API;
 
 /// <summary>
 ///     API to read and write from local config file

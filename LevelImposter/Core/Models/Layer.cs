@@ -1,4 +1,4 @@
-﻿namespace LevelImposter.Core;
+﻿namespace LevelImposter.Core.Models;
 
 internal enum Layer
 {

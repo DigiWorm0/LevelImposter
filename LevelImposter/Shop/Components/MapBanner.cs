@@ -4,13 +4,17 @@ using Il2CppInterop.Runtime.Attributes;
 using Il2CppInterop.Runtime.InteropTypes.Fields;
 using InnerNet;
 using LevelImposter.Core;
+using LevelImposter.Core.Models;
 using LevelImposter.DB;
-using LevelImposter.FileIO;
-using LevelImposter.Lobby;
+using LevelImposter.FileIO.API;
+using LevelImposter.FileIO.Cache;
+using LevelImposter.FileIO.DataStores;
+using LevelImposter.Lobby.Builders;
+using LevelImposter.Lobby.Sync;
 using TMPro;
 using UnityEngine;
 
-namespace LevelImposter.Shop;
+namespace LevelImposter.Shop.Components;
 
 public class MapBanner(IntPtr intPtr) : MonoBehaviour(intPtr)
 {

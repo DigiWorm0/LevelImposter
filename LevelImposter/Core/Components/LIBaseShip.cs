@@ -1,10 +1,12 @@
 ﻿using System;
 using Il2CppInterop.Runtime.Attributes;
-using LevelImposter.Lobby;
+using LevelImposter.Core.Models;
+using LevelImposter.Core.Services.Ship;
+using LevelImposter.Lobby.Components;
 using LevelImposter.Trigger;
 using UnityEngine;
 
-namespace LevelImposter.Core;
+namespace LevelImposter.Core.Components;
 
 /// <summary>
 ///     Represents the base class for all custom ship implementations in LevelImposter.

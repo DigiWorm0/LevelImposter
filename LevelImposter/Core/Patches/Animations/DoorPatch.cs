@@ -1,9 +1,10 @@
 ﻿using HarmonyLib;
+using LevelImposter.Core.Components;
 using LevelImposter.Trigger;
 using PowerTools;
 using UnityEngine;
 
-namespace LevelImposter.Core;
+namespace LevelImposter.Core.Patches.Animations;
 
 //// <summary>
 /// Toggles a GIF animation alongside the

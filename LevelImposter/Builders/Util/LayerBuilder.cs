@@ -1,8 +1,8 @@
 using System.Collections.Generic;
-using LevelImposter.Core;
+using LevelImposter.Core.Models;
 using UnityEngine;
 
-namespace LevelImposter.Builders;
+namespace LevelImposter.Builders.Util;
 
 internal class LayerBuilder : IElemBuilder
 {

@@ -2,10 +2,11 @@
 using System.Linq;
 using Il2CppInterop.Runtime.Attributes;
 using LevelImposter.AssetLoader;
+using LevelImposter.Core.Models;
 using UnityEngine;
 using UnityEngine.Audio;
 
-namespace LevelImposter.Core;
+namespace LevelImposter.Core.Components;
 
 /// <summary>
 ///     Allows controlled audio playback from a trigger input

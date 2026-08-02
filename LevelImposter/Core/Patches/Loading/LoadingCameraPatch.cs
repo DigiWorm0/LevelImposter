@@ -1,8 +1,7 @@
 ﻿using HarmonyLib;
-using LevelImposter.AssetLoader;
-using LevelImposter.Shop;
+using LevelImposter.Core.Components;
 
-namespace LevelImposter.Core;
+namespace LevelImposter.Core.Patches.Loading;
 
 /// <summary>
 ///     Disables camera movement while still in loading screen.

@@ -1,11 +1,14 @@
 using System;
 using LevelImposter.Core;
-using LevelImposter.FileIO;
-using LevelImposter.Networking;
+using LevelImposter.Core.Models;
+using LevelImposter.FileIO.API;
+using LevelImposter.FileIO.Cache;
+using LevelImposter.Lobby.Builders;
+using LevelImposter.Networking.RPC;
 using Reactor.Networking.Extensions;
 using Reactor.Networking.Rpc;
 
-namespace LevelImposter.Lobby;
+namespace LevelImposter.Lobby.Sync;
 
 /// <summary>
 ///     Helps sync the <see cref="GameConfiguration" /> from the host to all clients.

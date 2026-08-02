@@ -4,6 +4,9 @@ using System.Collections.Generic;
 using System.Linq;
 using Il2CppInterop.Runtime.Attributes;
 using LevelImposter.AssetLoader;
+using LevelImposter.AssetLoader.Loadables;
+using LevelImposter.Core.GarbageCollection;
+using LevelImposter.Core.Models;
 using LevelImposter.DB;
 using PowerTools;
 using QRCoder;
@@ -12,7 +15,7 @@ using Reactor.Utilities;
 using UnityEngine;
 using Object = Il2CppSystem.Object;
 
-namespace LevelImposter.Core;
+namespace LevelImposter.Core.Components;
 
 /// <summary>
 ///     Stores and applies any

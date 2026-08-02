@@ -1,27 +1,30 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Diagnostics;
+using System.Linq;
 using LevelImposter.Core;
+using LevelImposter.Core.Components;
+using LevelImposter.Core.Models;
+using LevelImposter.Core.Services.Ship;
 using UnityEngine;
 
 namespace LevelImposter.Builders;
 
 /// <summary>
-/// Routes the building of map elements through a stack of IElemBuilders
+///     Routes the building of map elements through a stack of IElemBuilders
 /// </summary>
 /// <param name="buildStack">The stack of builders to use when building elements</param>
 public class BuildRouter(IElemBuilder[] buildStack)
 {
     /// Time to warn the user (in ms) when an element is taking too long to load
     private const int WARN_MAX_BUILD_DURATION = 200;
-    
-    private static MapObjectDB MapObjectDB => LIBaseShip.Instance!.MapObjectDB;
-    
+
     private readonly Stopwatch _buildTimer = new();
-    
+
+    private static MapObjectDB MapObjectDB => LIBaseShip.Instance!.MapObjectDB;
+
     /// <summary>
-    /// Builds the provided LIElements into GameObjects under the specified parent transform.
+    ///     Builds the provided LIElements into GameObjects under the specified parent transform.
     /// </summary>
     /// <param name="elements">Elements to build</param>
     /// <param name="parentTransform">Parent transform for the built GameObjects</param>
@@ -30,48 +33,48 @@ public class BuildRouter(IElemBuilder[] buildStack)
         // Check for LIBaseShip instance
         if (LIBaseShip.Instance == null)
             throw new Exception("LIBaseShip instance not found!");
-        
+
         // Create GameObjects
         foreach (var element in elements)
         {
             var gameObject = CreateGameObject(element, parentTransform);
             MapObjectDB.AddObject(element, gameObject);
         }
-        
+
         // Apply Hierarchy
         // Only AFTER all GameObjects are created
         foreach (var element in elements)
             ApplyGameObjectHierarchy(element);
-        
+
         // Find all unique priority values (and sort them)
         var priorityValues = new SortedSet<int>();
         foreach (var builder in buildStack)
             priorityValues.Add(builder.Priority);
-        
+
         // Group builders by priority
         // Builders with equal priority are grouped together
         var groupedBuildersByPriority = priorityValues
-            .Reverse()      // <-- Higher priority first
+            .Reverse() // <-- Higher priority first
             .Select(buildPriority => buildStack
-            .Where(b => b.Priority == buildPriority)
-            .ToArray());
+                .Where(b => b.Priority == buildPriority)
+                .ToArray());
 
         // Run Pre-Build hooks
         foreach (var builder in buildStack)
             builder.OnPreBuild();
-        
+
         // Build elements by priority
         foreach (var builderGroup in groupedBuildersByPriority)
-            foreach (var element in elements)
-                BuildElement(builderGroup, element);
-        
+        foreach (var element in elements)
+            BuildElement(builderGroup, element);
+
         // Run Post-Build hooks
         foreach (var builder in buildStack)
             builder.OnPostBuild();
     }
-    
+
     /// <summary>
-    /// Builds a single LIElement using the provided stack of IElemBuilders.
+    ///     Builds a single LIElement using the provided stack of IElemBuilders.
     /// </summary>
     /// <param name="targetStack">The stack of builders to use for building the element</param>
     /// <param name="element">The LIElement to be built</param>
@@ -81,7 +84,7 @@ public class BuildRouter(IElemBuilder[] buildStack)
         {
             // Start debug timer
             _buildTimer.Restart();
-            
+
             // Check GameObject
             var gameObject = MapObjectDB.GetObject(element.id);
             if (gameObject == null)
@@ -104,7 +107,7 @@ public class BuildRouter(IElemBuilder[] buildStack)
     }
 
     /// <summary>
-    /// Creates a GameObject for the given LIElement and sets its parent transform.
+    ///     Creates a GameObject for the given LIElement and sets its parent transform.
     /// </summary>
     /// <param name="element">Element to create GameObject for</param>
     /// <param name="parentTransform">Parent transform to set for the new GameObject</param>
@@ -114,7 +117,7 @@ public class BuildRouter(IElemBuilder[] buildStack)
         // Create GameObject
         var gameObjectName = element.name.Replace("\\n", " ");
         var gameObject = new GameObject(gameObjectName);
-            
+
         // Set Transform
         gameObject.transform.SetParent(parentTransform);
 
@@ -123,8 +126,8 @@ public class BuildRouter(IElemBuilder[] buildStack)
     }
 
     /// <summary>
-    /// Sets the parent-child relationships of GameObjects based on the properties of their corresponding LIElements.
-    /// Requires all GameObjects in the map to be created beforehand.
+    ///     Sets the parent-child relationships of GameObjects based on the properties of their corresponding LIElements.
+    ///     Requires all GameObjects in the map to be created beforehand.
     /// </summary>
     /// <param name="element">Element to apply hierarchy to</param>
     private void ApplyGameObjectHierarchy(LIElement element)

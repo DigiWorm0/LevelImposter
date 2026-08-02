@@ -1,10 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using LevelImposter.Core;
+using LevelImposter.Core.Components;
 using LevelImposter.DB;
-using LevelImposter.Shop;
 using UnityEngine;
 
-namespace LevelImposter.Builders;
+namespace LevelImposter.Builders.Generic;
 
 /// <summary>
 ///     Configures the map properties
@@ -30,7 +31,7 @@ public class MapPropertiesBuilder : IElemBuilder
         // Get Map
         var map = GameConfiguration.CurrentMap;
         if (map == null)
-            throw new System.Exception("No map loaded in GameConfiguration!");
+            throw new Exception("No map loaded in GameConfiguration!");
 
         // Set Map Name
         shipStatus.name = map.name;
@@ -45,13 +46,13 @@ public class MapPropertiesBuilder : IElemBuilder
             return;
 
         if (!ExileIds.TryGetValue(map.properties.exileID, out var exileID))
-            throw new System.Exception($"Exile ID '{map.properties.exileID}' not found in EXILE_IDS!");
+            throw new Exception($"Exile ID '{map.properties.exileID}' not found in EXILE_IDS!");
 
         var prefabShip = AssetDB.GetObject(exileID);
         var prefabShipStatus = prefabShip?.GetComponent<ShipStatus>();
         if (prefabShipStatus == null)
-            throw new System.Exception($"Exile ShipStatus prefab for ID '{exileID}' not found!");
-        
+            throw new Exception($"Exile ShipStatus prefab for ID '{exileID}' not found!");
+
         shipStatus.ExileCutscenePrefab = prefabShipStatus.ExileCutscenePrefab;
     }
 }

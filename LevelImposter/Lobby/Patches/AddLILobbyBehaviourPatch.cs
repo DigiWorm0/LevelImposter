@@ -1,6 +1,7 @@
 ﻿using HarmonyLib;
+using LevelImposter.Lobby.Components;
 
-namespace LevelImposter.Lobby;
+namespace LevelImposter.Lobby.Patches;
 
 /*
  *      Appends the custom LevelImposter lobby logic to the current LobbyBehaviour

@@ -1,9 +1,9 @@
 ﻿using System;
 using LevelImposter.Core;
-using LevelImposter.Lobby;
+using LevelImposter.Lobby.Components;
 using UnityEngine;
 
-namespace LevelImposter.Builders;
+namespace LevelImposter.Builders.Generic;
 
 /// <summary>
 ///     Configures the lobby map properties

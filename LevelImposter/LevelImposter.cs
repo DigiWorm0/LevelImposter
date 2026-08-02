@@ -4,10 +4,14 @@ using BepInEx.Unity.IL2CPP;
 using HarmonyLib;
 using Il2CppInterop.Runtime.Injection;
 using LevelImposter.Core;
+using LevelImposter.Core.Components;
+using LevelImposter.Core.Services;
+using LevelImposter.Core.Utils;
 using LevelImposter.DB;
-using LevelImposter.FileIO;
-using LevelImposter.Lobby;
-using LevelImposter.Shop;
+using LevelImposter.FileIO.API;
+using LevelImposter.FileIO.Cache;
+using LevelImposter.Lobby.Components;
+using LevelImposter.Shop.Components;
 using Reactor.Networking;
 using Reactor.Networking.Attributes;
 using Reactor.Utilities;
@@ -76,7 +80,7 @@ public partial class LevelImposter : BasePlugin
 
         ClassInjector.RegisterTypeInIl2Cpp<AssetDB>();
 
-        ClassInjector.RegisterTypeInIl2Cpp<Shop.ProgressBar>();
+        ClassInjector.RegisterTypeInIl2Cpp<Shop.Components.ProgressBar>();
         ClassInjector.RegisterTypeInIl2Cpp<ConnectionAnimation>();
         ClassInjector.RegisterTypeInIl2Cpp<FloatingAnimation>();
         ClassInjector.RegisterTypeInIl2Cpp<PulseAnimation>();
