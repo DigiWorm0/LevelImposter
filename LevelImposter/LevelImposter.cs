@@ -3,7 +3,6 @@ using BepInEx;
 using BepInEx.Unity.IL2CPP;
 using HarmonyLib;
 using Il2CppInterop.Runtime.Injection;
-using LevelImposter.Core;
 using LevelImposter.Core.Components;
 using LevelImposter.Core.Services;
 using LevelImposter.Core.Utils;
