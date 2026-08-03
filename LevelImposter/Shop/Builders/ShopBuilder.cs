@@ -1,5 +1,4 @@
 ﻿using System;
-using LevelImposter.Core;
 using LevelImposter.Core.Utils;
 using UnityEngine;
 using Object = UnityEngine.Object;
@@ -9,7 +8,7 @@ namespace LevelImposter.Shop.Builders;
 public static class ShopBuilder
 {
     private static GameObject? _mapShopPrefab;
-    private static string MapShopPrefabName => GameState.IsMobile ? "Shop-Mobile" : "Shop-Mobile";
+    private static string MapShopPrefabName => GameState.IsMobile ? "Shop-Mobile" : "Shop";
 
     private static GameObject GetShopPrefab()
     {

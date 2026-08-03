@@ -16,9 +16,8 @@ public abstract class AsyncQueue<TInput, TOutput>
     where TInput : IIdentifiable
     where TOutput : ICachable
 {
-    private const int MIN_FPS = 5;
-
     private IEnumerator? _consumeQueueCoroutine;
+    private static int MinFPS => GameState.IsInMainMenu ? 60 : 5;
 
     public int QueueSize => Queue.Count;
     public int CacheSize => Cache.Count;
@@ -80,7 +79,7 @@ public abstract class AsyncQueue<TInput, TOutput>
             yield return null;
 
             // Continuously load items until the lag limit is reached
-            while (LagLimiter.ShouldContinue(MIN_FPS) && Queue.Count > 0)
+            while (LagLimiter.ShouldContinue(MinFPS) && Queue.Count > 0)
                 ConsumeQueueOnce();
         }
 

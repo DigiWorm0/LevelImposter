@@ -13,11 +13,11 @@ public static class TransitionHelper
     /// <param name="transitionParams">A struct containing all parameters for the transition</param>
     /// <param name="applyToTarget">A method that applies the value to the target object</param>
     /// <typeparam name="T">The type of value being transitioned (e.g. float, Vector3)</typeparam>
-    public static void RunTransition<T>(
+    public static IEnumerator RunTransition<T>(
         TransitionParams<T> transitionParams,
         Action<GameObject, T> applyToTarget)
     {
-        Coroutines.Start(CoRunTransition(transitionParams, applyToTarget));
+        return Coroutines.Start(CoRunTransition(transitionParams, applyToTarget));
     }
 
     private static IEnumerator CoRunTransition<T>(

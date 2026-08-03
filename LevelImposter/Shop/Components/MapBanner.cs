@@ -19,6 +19,8 @@ namespace LevelImposter.Shop.Components;
 public class MapBanner(IntPtr intPtr) : MonoBehaviour(intPtr)
 {
     private LIMetadata? _currentMap;
+    private Sprite? _defaultThumbnail;
+
     public Il2CppReferenceField<TextMeshPro> authorText;
     public Il2CppReferenceField<TextMeshPro> descriptionText;
 
@@ -42,6 +44,8 @@ public class MapBanner(IntPtr intPtr) : MonoBehaviour(intPtr)
         randomButton.Value.OnClick.AddListener((Action)OnRandomClick);
         externalButton.Value.OnClick.AddListener((Action)OnExternalClick);
         downloadButton.Value.OnClick.AddListener((Action)OnDownloadClick);
+
+        _defaultThumbnail = thumbnailRenderer.Value.sprite;
     }
 
     private void OnRandomClick()
@@ -258,17 +262,20 @@ public class MapBanner(IntPtr intPtr) : MonoBehaviour(intPtr)
     {
         if (_currentMap == null)
             throw new InvalidOperationException("Current map is null");
-        if (!_currentMap.HasThumbnail)
-            return;
 
-        ThumbnailCache.Get(_currentMap.id, SetThumbnail);
+        // Reset thumbnail
+        SetThumbnail(_defaultThumbnail);
+
+        // Load thumbnail in the background
+        if (_currentMap.HasThumbnail)
+            ThumbnailCache.Get(_currentMap.id, SetThumbnail);
     }
 
-    private void SetThumbnail(Sprite sprite)
+    private void SetThumbnail(Sprite? sprite)
     {
         if (this == null)
             return; // <-- User tabbed away before thumbnail loaded
 
-        thumbnailRenderer.Value.sprite = sprite;
+        thumbnailRenderer.Value.sprite = sprite ?? _defaultThumbnail;
     }
 }

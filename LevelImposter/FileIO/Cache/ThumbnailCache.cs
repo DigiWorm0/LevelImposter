@@ -64,7 +64,8 @@ public static class ThumbnailCache
     private static void LoadThumbnailSpriteFromFilesystem(string mapID, Action<Sprite> callback)
     {
         // Read thumbnail from filesystem
-        LILogger.Info($"Loading thumbnail for [{mapID}] from filesystem");
+        // TODO: Add verbose debug logging
+        // LILogger.Info($"Loading thumbnail for [{mapID}] from filesystem");
 
         // Prepare LoadableTexture and LoadableSprite
         var id = $"{mapID}_thumb";

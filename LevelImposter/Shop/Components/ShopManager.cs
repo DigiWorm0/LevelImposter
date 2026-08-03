@@ -12,6 +12,7 @@ using LevelImposter.FileIO.API;
 using LevelImposter.Lobby.Sync;
 using LevelImposter.Networking.API;
 using LevelImposter.Shop.Transitions;
+using LevelImposter.Shop.Utils;
 using UnityEngine;
 using AndroidActivity = LevelImposter.Core.Android.Activity;
 
@@ -36,7 +37,10 @@ public enum ShopTab
 public class ShopManager(IntPtr intPtr) : MonoBehaviour(intPtr)
 {
     private const string CONTROLLER_OVERLAY_ID = "LIShop";
+    private const int MAP_BANNER_POOL_SIZE = 50;
+
     private readonly Dictionary<ShopTab, LIMetadata[]> _cachedData = new();
+    private readonly MapBannerPool _mapBannerPool = new();
     private ShopTab _currentTab = ShopTab.None;
 
     /// If true, re-runs the map randomization when the shop is closed
@@ -70,6 +74,10 @@ public class ShopManager(IntPtr intPtr) : MonoBehaviour(intPtr)
 
     public void Start()
     {
+        _mapBannerPool.Initialize(
+            mapBannerPrefab.Value,
+            MAP_BANNER_POOL_SIZE);
+
         SetTab(ShopTab.DownloadedMaps);
         AddStarField();
     }
@@ -160,7 +168,7 @@ public class ShopManager(IntPtr intPtr) : MonoBehaviour(intPtr)
         _currentTab = tab;
 
         UpdateTabButtonState();
-        mapBannerGrid.Value.DestroyAll();
+        HideAllMaps();
 
         // Check if this tab is cached
         if (_cachedData.ContainsKey(tab))
@@ -226,6 +234,7 @@ public class ShopManager(IntPtr intPtr) : MonoBehaviour(intPtr)
             return;
 
         LoadingOverlay.ShowError("The impostor sabotaged comms!", message);
+        SetMaps([]);
     }
 
     /// <summary>
@@ -240,6 +249,11 @@ public class ShopManager(IntPtr intPtr) : MonoBehaviour(intPtr)
             tabButton.SetTabSelected(tabButton.TabType == _currentTab);
     }
 
+    private void HideAllMaps()
+    {
+        _mapBannerPool.ReturnAll();
+        mapBannerGrid.Value.Reset();
+    }
 
     /// <summary>
     ///     Sets the maps to display in the shop
@@ -250,31 +264,27 @@ public class ShopManager(IntPtr intPtr) : MonoBehaviour(intPtr)
     {
         // Hide Overlays
         LoadingOverlay.Hide();
-
-        // Clear Existing Banners
-        mapBannerGrid.Value.DestroyAll();
+        HideAllMaps();
 
         // Add New Banners
         var delay = 0.0f;
-        foreach (var map in maps)
+        for (var i = 0; i < maps.Length; i++)
         {
-            // Instantiate Map Banner
-            var mapBanner = Instantiate(mapBannerPrefab.Value);
-            mapBanner.SetMap(map);
+            // Get Map Banner from Pool
+            var poolItem = _mapBannerPool.Get();
+            poolItem.MapBanner.SetMap(maps[i]);
+            mapBannerGrid.Value.AddTransform(poolItem.MapBanner.transform);
 
             // Animate In
-            MatOpacityTransition.Run(new TransitionParams<float>
+            poolItem.TransitionCoroutine = MatOpacityTransition.Run(new TransitionParams<float>
             {
-                TargetObject = mapBanner.gameObject,
+                TargetObject = poolItem.MapBanner.gameObject,
                 FromValue = 0,
                 ToValue = 1,
                 StartDelay = delay,
                 Duration = 0.1f
             });
             delay += 0.05f;
-
-            // Add to Grid
-            mapBannerGrid.Value.AddTransform(mapBanner.transform);
         }
     }
 

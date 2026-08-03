@@ -24,6 +24,18 @@ public class GameObjectGrid(IntPtr intPtr) : MonoBehaviour(intPtr)
     }
 
     /// <summary>
+    ///     Resets all child GameObjects in the grid
+    /// </summary>
+    public void Reset()
+    {
+        _gameObjectCount = 0;
+
+        // Reset Scroll Height
+        if (_scroller != null)
+            _scroller.ContentYBounds.max = 0;
+    }
+
+    /// <summary>
     ///     Adds a Transform to the grid
     /// </summary>
     /// <param name="childTransform">The Transform to add</param>
@@ -45,20 +57,5 @@ public class GameObjectGrid(IntPtr intPtr) : MonoBehaviour(intPtr)
         // Set Scroll Height
         if (_scroller != null)
             _scroller.ContentYBounds.max = row * ySpacing.Value + ySpacing.Value;
-    }
-
-    /// <summary>
-    ///     Destroys all child GameObjects in the grid
-    /// </summary>
-    public void DestroyAll()
-    {
-        for (var i = transform.childCount - 1; i >= 0; i--)
-            Destroy(transform.GetChild(i).gameObject);
-
-        _gameObjectCount = 0;
-
-        // Reset Scroll Height
-        if (_scroller != null)
-            _scroller.ContentYBounds.max = 0;
     }
 }
