@@ -26,6 +26,7 @@ public class LobbyMapConsoleBuilder : IElemBuilder
     /// <param name="gameObject">The GameObject to build the console on, or null to create a new one</param>
     public static void Build(GameObject? gameObject = null)
     {
+        var isDefaultObject = gameObject == null;
         if (gameObject == null)
         {
             gameObject = new GameObject("panel_LevelImposter");
@@ -53,7 +54,9 @@ public class LobbyMapConsoleBuilder : IElemBuilder
         button.OnClick.AddListener((Action)console.Use);
 
         // Colliders
-        gameObject.CreateDefaultColliders(panelPrefab);
+        var colliders = gameObject.CreateDefaultColliders(panelPrefab);
+        if (isDefaultObject)
+            colliders.isTrigger = false;
 
         // Layer
         gameObject.layer = (int)Layer.ShortObjects;

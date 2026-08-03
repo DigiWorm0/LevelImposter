@@ -20,11 +20,6 @@ public class FileDownloader
     /// </summary>
     private const int DOWNLOAD_BUFFER_SIZE = 8192;
 
-    /// <summary>
-    ///     The amount of download threads to run at once.
-    /// </summary>
-    private const int MAX_DOWNLOAD_THREADS = 5;
-
     private IEnumerator? _consumeQueueCoroutine;
 
     private FileDownloader()
