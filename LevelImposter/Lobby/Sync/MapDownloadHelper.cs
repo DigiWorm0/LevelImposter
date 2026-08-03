@@ -37,7 +37,7 @@ public class MapDownloadHelper(bool preventGameStart = false)
 
         // Allow Game Start
         if (preventGameStart)
-            PlayersReadyCounter.MarkPlayerReady(PlayerControl.LocalPlayer);
+            PlayersReadyCounter.SendPlayerReadyRPC(true);
     }
 
     /// <summary>
@@ -68,7 +68,7 @@ public class MapDownloadHelper(bool preventGameStart = false)
 
         // Prevent Game Start
         if (preventGameStart)
-            PlayersReadyCounter.MarkPlayerNotReady(PlayerControl.LocalPlayer);
+            PlayersReadyCounter.SendPlayerReadyRPC(false);
 
         // Log
         LILogger.Info($"Starting download for map ID [{mapID}]");
@@ -103,7 +103,7 @@ public class MapDownloadHelper(bool preventGameStart = false)
 
                 // Allow Game Start
                 if (preventGameStart)
-                    PlayersReadyCounter.MarkPlayerReady(PlayerControl.LocalPlayer);
+                    PlayersReadyCounter.SendPlayerReadyRPC(true);
 
                 // Clear state
                 CurrentDownloadState = null;

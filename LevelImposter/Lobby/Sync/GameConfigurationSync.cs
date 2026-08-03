@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using LevelImposter.Core.Models;
 using LevelImposter.Core.Utils;
 using LevelImposter.FileIO.API;
@@ -7,6 +8,7 @@ using LevelImposter.Lobby.Builders;
 using LevelImposter.Networking.RPC;
 using Reactor.Networking.Extensions;
 using Reactor.Networking.Rpc;
+using Reactor.Utilities;
 
 namespace LevelImposter.Lobby.Sync;
 
@@ -24,10 +26,18 @@ public static class GameConfigurationSync
     /// <exception cref="Exception">Thrown if the map IDs are not valid GUIDs.</exception>
     public static void SendGameConfigurationRPC()
     {
-        if (!PlayerControl.LocalPlayer ||
-            !GameState.IsHost ||
+        if (!GameState.IsHost ||
             !GameState.IsInLobby)
             return;
+
+        Coroutines.Start(CoSendGameConfigurationRPC());
+    }
+
+    private static IEnumerator CoSendGameConfigurationRPC()
+    {
+        // Wait for local player
+        while (!PlayerControl.LocalPlayer)
+            yield return null;
 
         // Get IDs
         var mapIDStr = GameConfiguration.CurrentMap?.id ?? Guid.Empty.ToString();
@@ -46,7 +56,8 @@ public static class GameConfigurationSync
                 MapID = mapID,
                 LobbyMapID = lobbyMapID,
                 HideMapName = GameConfiguration.HideMapName
-            });
+            },
+            true);
     }
 
     /// <summary>
@@ -122,12 +133,17 @@ public static class GameConfigurationSync
         // This map is already loaded
         if (GameConfiguration.CurrentMap?.id == mapIDStr)
         {
-            // No action needed
+            // Ensures HideMapName is up-to-date
+            GameConfiguration.SetMap(
+                GameConfiguration.CurrentMap,
+                gameConfig.HideMapName);
         }
         // Try to get map locally
         else if (TryGetMapLocally(mapIDStr, out var map))
         {
-            GameConfiguration.SetMap(map, gameConfig.HideMapName);
+            GameConfiguration.SetMap(
+                map,
+                gameConfig.HideMapName);
         }
         // Download map if not found locally
         else

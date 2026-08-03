@@ -35,7 +35,13 @@ public static class ImStuckService
     /// </summary>
     private static void SendResetPlayerRPC()
     {
-        Rpc<ResetPlayerRPC>.Instance.Send(true, true);
+        if (!PlayerControl.LocalPlayer)
+            return;
+
+        Rpc<ResetPlayerRPC>.Instance.Send(
+            PlayerControl.LocalPlayer,
+            true,
+            true);
     }
 
     /// <summary>

@@ -1,6 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 using LevelImposter.Networking.RPC;
 using Reactor.Networking.Rpc;
+using Reactor.Utilities;
 
 namespace LevelImposter.Lobby.Sync;
 
@@ -9,6 +12,7 @@ namespace LevelImposter.Lobby.Sync;
 /// </summary>
 public static class PlayersReadyCounter
 {
+    private static bool _isLocalPlayerReady = true;
     public static List<PlayerControl> NotReadyPlayers { get; } = new();
 
     /// <summary>
@@ -17,7 +21,21 @@ public static class PlayersReadyCounter
     /// <param name="isReady">True if the player is ready, false if still downloading</param>
     public static void SendPlayerReadyRPC(bool isReady)
     {
-        Rpc<ReadyToStartRPC>.Instance.Send(isReady, true);
+        _isLocalPlayerReady = isReady;
+        Coroutines.Start(CoSendPlayerReadyRPC());
+    }
+
+    private static IEnumerator CoSendPlayerReadyRPC()
+    {
+        // Wait for local player
+        while (PlayerControl.LocalPlayer == null)
+            yield return null;
+
+        // Send RPC
+        Rpc<ReadyToStartRPC>.Instance.Send(
+            PlayerControl.LocalPlayer,
+            _isLocalPlayerReady,
+            true);
     }
 
     /// <summary>
@@ -26,8 +44,9 @@ public static class PlayersReadyCounter
     /// <param name="player">The player to mark as ready</param>
     public static void MarkPlayerReady(PlayerControl player)
     {
-        if (NotReadyPlayers.Contains(player))
-            NotReadyPlayers.Remove(player);
+        var arrayPlayer = NotReadyPlayers.Find(p => p.PlayerId == player.PlayerId);
+        if (arrayPlayer != null)
+            NotReadyPlayers.Remove(arrayPlayer);
     }
 
     /// <summary>
@@ -36,7 +55,7 @@ public static class PlayersReadyCounter
     /// <param name="player">The player to mark as not ready</param>
     public static void MarkPlayerNotReady(PlayerControl player)
     {
-        if (!NotReadyPlayers.Contains(player))
+        if (NotReadyPlayers.All(p => p.PlayerId != player.PlayerId))
             NotReadyPlayers.Add(player);
     }
 

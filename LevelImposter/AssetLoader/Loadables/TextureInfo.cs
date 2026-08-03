@@ -14,14 +14,14 @@ public readonly struct TextureInfo(string id, IDataStore dataStore) : IIdentifia
     public class TextureOptions
     {
         /// If true, the texture will use pixel art filtering (point filtering)
-        public bool PixelArt { get; set; } = false;
+        public bool PixelArt { get; set; }
 
         /// Changes how and when the texture is disposed of.
         /// <c>null</c>
         /// will use
         /// <see cref="GCHandler" />
         /// 's current default behavior.
-        public GCBehavior? GCBehavior { get; set; } = null;
+        public GCBehavior? GCBehavior { get; set; }
     }
 
     /// <summary>
