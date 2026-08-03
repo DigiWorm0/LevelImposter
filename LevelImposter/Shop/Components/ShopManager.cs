@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using Il2CppInterop.Runtime.Attributes;
 using Il2CppInterop.Runtime.InteropTypes.Fields;
+using LevelImposter.Core.Android;
 using LevelImposter.Core.Models;
 using LevelImposter.Core.Utils;
 using LevelImposter.DB;
@@ -12,6 +13,7 @@ using LevelImposter.Lobby.Sync;
 using LevelImposter.Networking.API;
 using LevelImposter.Shop.Transitions;
 using UnityEngine;
+using AndroidActivity = LevelImposter.Core.Android.Activity;
 
 namespace LevelImposter.Shop.Components;
 
@@ -87,6 +89,35 @@ public class ShopManager(IntPtr intPtr) : MonoBehaviour(intPtr)
     ///     Opens the folder where maps are stored
     /// </summary>
     private static void OpenMapsFolder()
+    {
+        if (GameState.IsMobile)
+            OpenMapsFolderMobile();
+        else
+            OpenMapsFolderDesktop();
+    }
+
+    private static void OpenMapsFolderMobile()
+    {
+        var activity = AndroidActivity.GetCurrent();
+
+        // Get the application package name (ex: dev.allofus.starlight)
+        var packageName = activity.GetPackageName();
+        if (string.IsNullOrWhiteSpace(packageName))
+            throw new InvalidOperationException("Couldn't determine the current package name.");
+
+        // Build rootURI based on Starlight's data directory
+        using var rootUri = DocumentsContract.BuildRootUri(
+            $"{packageName}.documents",
+            "star_data");
+
+        // Create intent to open directory
+        using var intent = new Intent("android.intent.action.VIEW");
+        intent.SetData(rootUri);
+        intent.AddFlags(0x00000001); // <-- FLAG_GRANT_READ_URI_PERMISSION
+        activity.StartActivity(intent);
+    }
+
+    private static void OpenMapsFolderDesktop()
     {
         Process.Start(new ProcessStartInfo
         {
