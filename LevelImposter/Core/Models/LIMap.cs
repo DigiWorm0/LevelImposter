@@ -13,11 +13,11 @@ public class LIMap : LIMetadata
     public LISpriteAtlas[] spriteAtlases { get; set; }
 
     [JsonIgnore]
-    public bool isLegacy
+    public bool IsLegacy
     {
         get => v < LIM_VERSION;
         set => v = value ? 1 : LIM_VERSION;
     }
 
-    [JsonIgnore] public MapAssetDB? mapAssetDB { get; set; }
+    [JsonIgnore] public MapAssetDB? MapAssetDB { get; set; }
 }

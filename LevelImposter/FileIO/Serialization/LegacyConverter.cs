@@ -57,14 +57,14 @@ public static class LegacyConverter
     /// <param name="map">Legacy Map Data</param>
     public static void UpdateMap(LIMap map)
     {
-        if (!map.isLegacy)
+        if (!map.IsLegacy)
             return;
 
         LILogger.Info($"Converting legacy map data [{map.id}]");
 
         // Update Properties
-        map.isLegacy = false;
-        map.mapAssetDB = new MapAssetDB();
+        map.IsLegacy = false;
+        map.MapAssetDB = new MapAssetDB();
 
         // SpriteDB
         foreach (var element in map.elements)
@@ -73,7 +73,7 @@ public static class LegacyConverter
             if (element.properties.spriteData != null)
             {
                 var spriteData = ParseBase64(element.properties.spriteData);
-                element.properties.spriteID = FindOrAddAsset(map.mapAssetDB, spriteData);
+                element.properties.spriteID = FindOrAddAsset(map.MapAssetDB, spriteData);
                 element.properties.spriteData = null;
             }
 
@@ -81,7 +81,7 @@ public static class LegacyConverter
             if (element.properties.meetingBackground != null)
             {
                 var spriteData = ParseBase64(element.properties.meetingBackground);
-                element.properties.meetingBackgroundID = FindOrAddAsset(map.mapAssetDB, spriteData);
+                element.properties.meetingBackgroundID = FindOrAddAsset(map.MapAssetDB, spriteData);
                 element.properties.spriteData = null;
             }
 
@@ -91,7 +91,7 @@ public static class LegacyConverter
                 {
                     var spriteData = ParseBase64(minigame.spriteData ?? "");
                     if (spriteData != null)
-                        minigame.spriteID = FindOrAddAsset(map.mapAssetDB, spriteData);
+                        minigame.spriteID = FindOrAddAsset(map.MapAssetDB, spriteData);
                     minigame.spriteData = null;
                 }
 
@@ -107,7 +107,7 @@ public static class LegacyConverter
                     {
                         var soundData = ParseBase64(sound.data ?? "");
                         if (soundData != null)
-                            sound.dataID = FindOrAddAsset(map.mapAssetDB, soundData);
+                            sound.dataID = FindOrAddAsset(map.MapAssetDB, soundData);
                     }
 
                     sound.data = null;

@@ -29,7 +29,7 @@ public class AudioLoader : AsyncQueue<AudioInfo, AudioResult>
 
         // Get Data Store from AssetDB
         var assetDB =
-            isLobby ? GameConfiguration.CurrentLobbyMap?.mapAssetDB : GameConfiguration.CurrentMap?.mapAssetDB;
+            isLobby ? GameConfiguration.CurrentLobbyMap?.MapAssetDB : GameConfiguration.CurrentMap?.MapAssetDB;
         var soundDataStore = assetDB?.Get(assetID);
         if (soundDataStore == null)
             return;

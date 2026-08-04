@@ -91,7 +91,7 @@ public class MinigameSprites(IntPtr intPtr) : MonoBehaviour(intPtr)
                 var hasPivot = PIVOTS.TryGetValue(minigameData.type, out var pivot);
 
                 // Get Sprite Stream
-                var mapAssetDB = GameConfiguration.CurrentMap?.mapAssetDB;
+                var mapAssetDB = GameConfiguration.CurrentMap?.MapAssetDB;
                 var guid = minigameData.spriteID;
                 var mapAsset = mapAssetDB?.Get(guid);
 

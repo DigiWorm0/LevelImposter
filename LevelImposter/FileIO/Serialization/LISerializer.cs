@@ -30,7 +30,7 @@ public static class LISerializer
             }
 
             // Update Legacy Format
-            if (mapData.isLegacy)
+            if (mapData.IsLegacy)
                 LegacyConverter.UpdateMap(mapData);
 
             // Map Data
@@ -40,10 +40,10 @@ public static class LISerializer
             stream.Write(mapJsonBytes);
 
             // SpriteDB
-            if (mapData.mapAssetDB == null)
+            if (mapData.MapAssetDB == null)
                 return;
 
-            foreach (var spriteAsset in mapData.mapAssetDB.DB)
+            foreach (var spriteAsset in mapData.MapAssetDB.DB)
             {
                 var data = spriteAsset.Value.LoadToMemory().Data;
                 var idBytes = Encoding.UTF8.GetBytes(spriteAsset.Key.ToString());

@@ -56,7 +56,7 @@ public static class LIDeserializer
                 return mapData;
 
             // Read SpriteDB
-            mapData.mapAssetDB = new MapAssetDB();
+            mapData.MapAssetDB = new MapAssetDB();
             while (dataStream.Position < dataStream.Length)
             {
                 // Read ID
@@ -88,13 +88,13 @@ public static class LIDeserializer
                 {
                     // Reading from a file, just save the File Stream offset
                     var fileChunk = new FileChunkStore(filePath, dataStream.Position, dataLength);
-                    mapData.mapAssetDB.Add(spriteID, fileChunk);
+                    mapData.MapAssetDB.Add(spriteID, fileChunk);
                     dataStream.Position += dataLength;
                 }
                 else
                 {
                     // Reading from a stream, save the raw data to memory
-                    mapData.mapAssetDB.Add(spriteID, dataStream.ToIl2CppArray(dataLength));
+                    mapData.MapAssetDB.Add(spriteID, dataStream.ToIl2CppArray(dataLength));
                 }
             }
 

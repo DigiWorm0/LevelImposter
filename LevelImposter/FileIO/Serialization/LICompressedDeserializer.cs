@@ -39,7 +39,7 @@ public static class LICompressedDeserializer
             throw new ArgumentException("File path must be provided to load sprite database from ZIP entries.");
 
         // Load Asset DB
-        mapData.mapAssetDB = new MapAssetDB();
+        mapData.MapAssetDB = new MapAssetDB();
         foreach (var zipEntry in zip.Entries)
         {
             // Skip JSON
@@ -51,7 +51,7 @@ public static class LICompressedDeserializer
                 continue;
 
             // Add to Asset DB
-            mapData.mapAssetDB.Add(
+            mapData.MapAssetDB.Add(
                 guid,
                 new ZIPEntryStore(filePath, zipEntry.Name)
             );

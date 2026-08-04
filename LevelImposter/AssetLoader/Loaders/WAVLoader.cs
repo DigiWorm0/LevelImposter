@@ -24,8 +24,8 @@ public static class WAVLoader
 
         // Get data from Map Asset DB
         var assetDB = isLobbyMap
-            ? GameConfiguration.CurrentLobbyMap?.mapAssetDB
-            : GameConfiguration.CurrentMap?.mapAssetDB;
+            ? GameConfiguration.CurrentLobbyMap?.MapAssetDB
+            : GameConfiguration.CurrentMap?.MapAssetDB;
 
         var soundDBElem = assetDB?.Get(soundData.dataID);
         if (soundDBElem == null)

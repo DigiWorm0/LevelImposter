@@ -23,7 +23,7 @@ public class SpriteBuilder(MapTarget mapTarget = MapTarget.Game) : IElemBuilder
     public static SpriteLoadEvent? OnSpriteLoad;
 
     private bool PixelArtMode => mapTarget.GetLoadedMap()?.properties.pixelArtMode ?? false;
-    private MapAssetDB? AssetDB => mapTarget.GetLoadedMap()?.mapAssetDB;
+    private MapAssetDB? AssetDB => mapTarget.GetLoadedMap()?.MapAssetDB;
 
     public int Priority =>
         IElemBuilder.HIGH_PRIORITY; // <-- Ensure `SpriteRenderer` is added before other builders that may need it
