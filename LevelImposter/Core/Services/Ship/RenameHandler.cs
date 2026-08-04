@@ -56,7 +56,7 @@ public class RenameHandler
     /// <returns>String to replace SystemType with</returns>
     public string? Get(SystemTypes system)
     {
-        return _systemRenames[system];
+        return _systemRenames.GetValueOrDefault(system);
     }
 
     /// <summary>
@@ -66,7 +66,7 @@ public class RenameHandler
     /// <returns>String to replace task with</returns>
     public string? Get(TaskTypes task)
     {
-        return _taskRenames[task];
+        return _taskRenames.GetValueOrDefault(task);
     }
 
     /// <summary>
@@ -76,7 +76,7 @@ public class RenameHandler
     /// <returns>String to replace text with</returns>
     public string? Get(StringNames stringNames)
     {
-        return _stringRenames[stringNames];
+        return _stringRenames.GetValueOrDefault(stringNames);
     }
 
 
