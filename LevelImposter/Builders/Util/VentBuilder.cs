@@ -40,7 +40,7 @@ internal class VentBuilder : IElemBuilder
         var shipStatus = LIShipStatus.GetShip();
 
         // Prefab
-        var prefab = AssetDB.GetObject(elem.type);
+        var prefab = PrefabDB.GetObject(elem.type);
         if (prefab == null)
             return;
         var prefabConsole = prefab.GetComponent<VentCleaningConsole>();

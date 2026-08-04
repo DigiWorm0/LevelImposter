@@ -50,20 +50,11 @@ public static class LICompressedDeserializer
             if (!Guid.TryParse(zipEntry.Name, out var guid))
                 continue;
 
-            mapData.mapAssetDB.Add(guid, new ZIPEntryStore(filePath, zipEntry.Name));
-
-            // Copy to buffer
-            // TODO: Stream directly without buffering entire file in memory
-            // byte[] buffer;
-            // using (var entryStream = zipEntry.Open())
-            // using (var ms = new MemoryStream())
-            // {
-            //     entryStream.CopyTo(ms);
-            //     buffer = ms.ToArray();
-            // }
-            //
-            // // Add to Asset DB
-            // mapData?.mapAssetDB?.Add(guid, new MemoryStreamable(buffer));
+            // Add to Asset DB
+            mapData.mapAssetDB.Add(
+                guid,
+                new ZIPEntryStore(filePath, zipEntry.Name)
+            );
         }
 
         return mapData;

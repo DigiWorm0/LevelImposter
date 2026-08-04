@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using LevelImposter.AssetLoader;
 using LevelImposter.Builders.Util;
-using LevelImposter.Core;
 using LevelImposter.Core.Components;
 using LevelImposter.Core.Models;
 using LevelImposter.Core.Utils;
@@ -60,7 +59,7 @@ public class SabDoorBuilder : IElemBuilder
         var isSpecialDoor = _specialDoorIDs.Contains(elem.id);
 
         // Prefab
-        var prefab = AssetDB.GetObject(elem.type);
+        var prefab = PrefabDB.GetObject(elem.type);
         if (prefab == null)
             return;
         var prefabRenderer = prefab.GetComponent<SpriteRenderer>();
@@ -149,7 +148,7 @@ public class SabDoorBuilder : IElemBuilder
         if (isManualDoor && isInteractable && !isSpecialDoor)
         {
             // Prefab
-            var prefab2 = AssetDB.GetObject($"sab-door-{doorType}"); // "sab-door-polus" or "sab-door-airship"
+            var prefab2 = PrefabDB.GetObject($"sab-door-{doorType}"); // "sab-door-polus" or "sab-door-airship"
             var prefab2Console = prefab2?.GetComponent<DoorConsole>();
 
             // Object

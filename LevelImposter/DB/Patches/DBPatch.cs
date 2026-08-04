@@ -15,6 +15,6 @@ public static class DBPatch
     {
         var dbObj = new GameObject("AssetDB");
         Object.DontDestroyOnLoad(dbObj);
-        dbObj.AddComponent<AssetDB>();
+        dbObj.AddComponent<PrefabDB>();
     }
 }

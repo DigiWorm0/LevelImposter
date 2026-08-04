@@ -22,7 +22,7 @@ public class SporeBuilder : IElemBuilder
             return;
 
         // Prefab
-        var prefab = AssetDB.GetObject(elem.type);
+        var prefab = PrefabDB.GetObject(elem.type);
         if (prefab == null)
             return;
         var prefabSpore = prefab.GetComponent<Mushroom>();

@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using BepInEx.Unity.IL2CPP.Utils.Collections;
 using Il2CppInterop.Runtime.Attributes;
-using LevelImposter.Core;
 using LevelImposter.Core.Models;
 using LevelImposter.Core.Utils;
 using LevelImposter.DB.Models;
@@ -17,7 +16,7 @@ namespace LevelImposter.DB;
 ///     sprites, minigames, and prefabs from other locations
 ///     within the Among Us game.
 /// </summary>
-internal class AssetDB : MonoBehaviour
+internal class PrefabDB : MonoBehaviour
 {
     private const string SUBMERGED_MAP_GUID = "Submerged";
     private readonly Stack<MapType> _loadedShips = new();
@@ -28,7 +27,7 @@ internal class AssetDB : MonoBehaviour
     private SoundDB? _soundDB;
 
     private TaskDB? _taskDB;
-    public static AssetDB? Instance { get; private set; }
+    public static PrefabDB? Instance { get; private set; }
     public static bool IsInit => Instance?._isInit == true;
 
     public string Status { get; private set; } = "Initializing";

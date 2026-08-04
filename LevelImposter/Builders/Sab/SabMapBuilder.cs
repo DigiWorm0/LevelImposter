@@ -187,7 +187,7 @@ public class SabMapBuilder : IElemBuilder
         // TODO: Move Assets to a SubDB
 
         // Polus
-        var polusShip = AssetDB.GetObject("ss-polus");
+        var polusShip = PrefabDB.GetObject("ss-polus");
         {
             var polusShipStatus = polusShip?.GetComponent<ShipStatus>();
             var polusOverlay = polusShipStatus?.MapPrefab.infectedOverlay;
@@ -202,7 +202,7 @@ public class SabMapBuilder : IElemBuilder
         }
 
         // Mira
-        var miraShip = AssetDB.GetObject("ss-mira");
+        var miraShip = PrefabDB.GetObject("ss-mira");
         {
             var miraShipStatus = miraShip?.GetComponent<ShipStatus>();
             var miraOverlay = miraShipStatus?.MapPrefab.infectedOverlay;
@@ -212,7 +212,7 @@ public class SabMapBuilder : IElemBuilder
         }
 
         // Fungle
-        var fungleShip = AssetDB.GetObject("ss-fungle");
+        var fungleShip = PrefabDB.GetObject("ss-fungle");
         {
             var fungleShipStatus = fungleShip?.GetComponent<ShipStatus>();
             var fungleOverlay = fungleShipStatus?.MapPrefab.infectedOverlay;

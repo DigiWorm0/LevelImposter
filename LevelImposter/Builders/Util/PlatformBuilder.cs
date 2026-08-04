@@ -1,5 +1,4 @@
 using LevelImposter.AssetLoader.Loaders;
-using LevelImposter.Core;
 using LevelImposter.Core.Components;
 using LevelImposter.Core.Models;
 using LevelImposter.Core.Utils;
@@ -36,7 +35,7 @@ internal class PlatformBuilder : IElemBuilder
         var shipStatus = LIShipStatus.GetInstance().ShipStatus;
 
         // Prefab
-        var prefab = AssetDB.GetObject(elem.type);
+        var prefab = PrefabDB.GetObject(elem.type);
         if (prefab == null)
             return;
         var prefabBehaviour = prefab.GetComponent<MovingPlatformBehaviour>();

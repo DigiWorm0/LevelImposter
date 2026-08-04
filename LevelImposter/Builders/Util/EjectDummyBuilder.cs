@@ -38,7 +38,7 @@ public class EjectDummyBuilder : IElemBuilder
         };
 
         // Get Eject Controller Prefab
-        var skeldPrefab = AssetDB.GetObject(type == PlayerDummyType.Floating ? "ss-skeld" : "ss-fungle");
+        var skeldPrefab = PrefabDB.GetObject(type == PlayerDummyType.Floating ? "ss-skeld" : "ss-fungle");
         var skeldShipStatus = skeldPrefab?.GetComponent<ShipStatus>();
         var skeldEjectController = skeldShipStatus?.ExileCutscenePrefab;
         if (!skeldEjectController)

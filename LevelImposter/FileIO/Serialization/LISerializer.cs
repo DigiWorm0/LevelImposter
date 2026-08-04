@@ -35,25 +35,28 @@ public static class LISerializer
 
             // Map Data
             var mapJsonBytes = JsonSerializer.SerializeToUtf8Bytes(mapData, _options);
+            stream.Write("LIM2"u8);
             stream.Write(BitConverter.GetBytes(mapJsonBytes.Length));
             stream.Write(mapJsonBytes);
 
             // SpriteDB
-            if (mapData.mapAssetDB != null)
-                foreach (var spriteAsset in mapData.mapAssetDB.DB)
-                {
-                    var data = spriteAsset.Value.LoadToMemory().Data;
-                    var idBytes = Encoding.UTF8.GetBytes(spriteAsset.Key.ToString());
+            if (mapData.mapAssetDB == null)
+                return;
 
-                    // Write Element
-                    stream.Write(idBytes);
-                    stream.Write(BitConverter.GetBytes(data.Length)); // <-- TODO: ** Improve memory usage here **
-                    stream.Write(data);
-                }
+            foreach (var spriteAsset in mapData.mapAssetDB.DB)
+            {
+                var data = spriteAsset.Value.LoadToMemory().Data;
+                var idBytes = Encoding.UTF8.GetBytes(spriteAsset.Key.ToString());
+
+                // Write Element
+                stream.Write(idBytes);
+                stream.Write(BitConverter.GetBytes(data.Length)); // <-- TODO: ** Improve memory usage here **
+                stream.Write(data);
+            }
         }
         catch (Exception ex)
         {
-            LILogger.Error(ex);
+            LILogger.Error($"Error serializing map data: {ex.Message}");
         }
     }
 }

@@ -28,7 +28,7 @@ public class EjectBuilder : IElemBuilder
         obj.transform.SetParent(container.transform);
 
         // Get Eject Controller Prefab
-        var skeldPrefab = AssetDB.GetObject("ss-skeld");
+        var skeldPrefab = PrefabDB.GetObject("ss-skeld");
         var skeldShipStatus = skeldPrefab?.GetComponent<ShipStatus>();
         var skeldEjectController = skeldShipStatus?.ExileCutscenePrefab;
         if (!skeldEjectController)

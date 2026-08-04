@@ -172,7 +172,7 @@ public static class MapBuilder
     private static void BuildMap(LIMap map)
     {
         // Check Asset DB
-        if (!AssetDB.IsInit)
+        if (!PrefabDB.IsInit)
             throw new Exception("AssetDB is not initialized");
 
         // START

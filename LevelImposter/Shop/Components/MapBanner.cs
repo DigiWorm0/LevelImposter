@@ -69,7 +69,7 @@ public class MapBanner(IntPtr intPtr) : MonoBehaviour(intPtr)
             throw new InvalidOperationException("Current map is null");
 
         // Check if AssetDB is initialized
-        if (!AssetDB.IsInit)
+        if (!PrefabDB.IsInit)
             throw new InvalidOperationException("AssetDB is not initialized");
 
         // Load map from filesystem

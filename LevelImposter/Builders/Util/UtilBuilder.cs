@@ -22,7 +22,7 @@ internal class UtilBuilder : IElemBuilder
             return;
 
         // Prefab
-        var prefab = AssetDB.GetObject(elem.type);
+        var prefab = PrefabDB.GetObject(elem.type);
         if (prefab == null)
             return;
         var prefabSystem = prefab.GetComponent<SystemConsole>();
@@ -49,7 +49,7 @@ internal class UtilBuilder : IElemBuilder
             // Always set minigame to polus cams
             if (elem.type == "util-cams2")
                 console.MinigamePrefab =
-                    AssetDB.GetObject("util-cams")?.GetComponent<SystemConsole>().MinigamePrefab;
+                    PrefabDB.GetObject("util-cams")?.GetComponent<SystemConsole>().MinigamePrefab;
 
             // Set object name for TOR Security Guard to find panel type
             if (elem.type.StartsWith("util-cams"))

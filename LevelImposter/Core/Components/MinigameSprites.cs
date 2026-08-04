@@ -236,7 +236,7 @@ public class MinigameSprites(IntPtr intPtr) : MonoBehaviour(intPtr)
                 return;
 
             // Get all sprite paths
-            var spritePaths = AssetDB.GetPaths(type);
+            var spritePaths = PrefabDB.GetPaths(type);
             if (spritePaths == null)
                 return;
 
@@ -331,7 +331,7 @@ public class MinigameSprites(IntPtr intPtr) : MonoBehaviour(intPtr)
 
             /* task-drill */
             case "task-drill_btn":
-                var buttonPaths = AssetDB.GetPaths(type);
+                var buttonPaths = PrefabDB.GetPaths(type);
                 if (buttonPaths == null)
                     throw new Exception("Could not find button paths for task-drill_btn");
 
@@ -470,7 +470,7 @@ public class MinigameSprites(IntPtr intPtr) : MonoBehaviour(intPtr)
             case "task-temp1_btndown":
             case "task-temp2_btndown":
                 var isDown = type.EndsWith("down");
-                var paths = AssetDB.GetPaths(type);
+                var paths = PrefabDB.GetPaths(type);
                 if (paths == null)
                     throw new Exception($"Could not find paths for {type}");
 

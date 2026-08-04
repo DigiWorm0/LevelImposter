@@ -15,7 +15,7 @@ internal class StarfieldBuilder : IElemBuilder
             return;
 
         // Prefab
-        var prefab = AssetDB.GetObject("dec-rock4");
+        var prefab = PrefabDB.GetObject("dec-rock4");
         if (prefab == null)
             return;
         var prefabRenderer = prefab.GetComponent<SpriteRenderer>();

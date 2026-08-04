@@ -306,6 +306,6 @@ public class ShopManager(IntPtr intPtr) : MonoBehaviour(intPtr)
         starGen.Length = 14;
         starGen.Width = 14;
         starGen.Direction = new Vector2(0, -2);
-        starRenderer.material = AssetDB.GetObject("starfield")?.GetComponent<MeshRenderer>().material;
+        starRenderer.material = PrefabDB.GetObject("starfield")?.GetComponent<MeshRenderer>().material;
     }
 }

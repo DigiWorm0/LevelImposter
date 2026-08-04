@@ -48,7 +48,7 @@ public class MapPropertiesBuilder : IElemBuilder
         if (!ExileIds.TryGetValue(map.properties.exileID, out var exileID))
             throw new Exception($"Exile ID '{map.properties.exileID}' not found in EXILE_IDS!");
 
-        var prefabShip = AssetDB.GetObject(exileID);
+        var prefabShip = PrefabDB.GetObject(exileID);
         var prefabShipStatus = prefabShip?.GetComponent<ShipStatus>();
         if (prefabShipStatus == null)
             throw new Exception($"Exile ShipStatus prefab for ID '{exileID}' not found!");

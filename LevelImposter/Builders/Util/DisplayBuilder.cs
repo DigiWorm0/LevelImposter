@@ -20,7 +20,7 @@ internal class DisplayBuilder : IElemBuilder
             return;
 
         // Prefab
-        var minigamePrefab = AssetDB.GetObject("util-cams")?.GetComponent<SystemConsole>().MinigamePrefab
+        var minigamePrefab = PrefabDB.GetObject("util-cams")?.GetComponent<SystemConsole>().MinigamePrefab
             .Cast<PlanetSurveillanceMinigame>();
         obj.layer = (int)Layer.Objects;
 

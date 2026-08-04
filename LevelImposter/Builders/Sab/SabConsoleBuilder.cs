@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using LevelImposter.Builders.Util;
-using LevelImposter.Core;
 using LevelImposter.Core.Components;
 using LevelImposter.Core.Models;
 using LevelImposter.Core.Utils;
@@ -28,7 +27,7 @@ public class SabConsoleBuilder : IElemBuilder
             return;
 
         // Prefab
-        var prefab = AssetDB.GetObject(elem.type);
+        var prefab = PrefabDB.GetObject(elem.type);
         if (prefab == null)
             return;
         var prefabConsole = prefab.GetComponent<Console>();
@@ -94,7 +93,7 @@ public class SabConsoleBuilder : IElemBuilder
     private static ArrowBehaviour? MakeArrow(Transform parent, string name)
     {
         // Prefab
-        var prefab = AssetDB.GetTask<PlayerTask>("sab-comms");
+        var prefab = PrefabDB.GetTask<PlayerTask>("sab-comms");
         if (prefab == null)
             return null;
         var prefabArrow = prefab.gameObject.transform.FindChild("Arrow").gameObject;

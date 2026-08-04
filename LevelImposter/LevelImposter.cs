@@ -77,7 +77,7 @@ public partial class LevelImposter : BasePlugin
         ClassInjector.RegisterTypeInIl2Cpp<LIExileController>();
         ClassInjector.RegisterTypeInIl2Cpp<LIPhysicsObject>();
 
-        ClassInjector.RegisterTypeInIl2Cpp<AssetDB>();
+        ClassInjector.RegisterTypeInIl2Cpp<PrefabDB>();
 
         ClassInjector.RegisterTypeInIl2Cpp<Shop.Components.ProgressBar>();
         ClassInjector.RegisterTypeInIl2Cpp<ConnectionAnimation>();

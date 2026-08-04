@@ -15,7 +15,7 @@ internal class FilterBuilder : IElemBuilder
             return;
 
         // Prefab
-        var sporePrefab = AssetDB.GetObject("util-spore");
+        var sporePrefab = PrefabDB.GetObject("util-spore");
         if (sporePrefab == null)
             return;
         var maskPrefab = sporePrefab.transform.FindChild("SporeScreenMask").gameObject;

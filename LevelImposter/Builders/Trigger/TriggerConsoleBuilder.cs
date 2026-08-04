@@ -1,5 +1,4 @@
-﻿using LevelImposter.Core;
-using LevelImposter.Core.Components;
+﻿using LevelImposter.Core.Components;
 using LevelImposter.Core.Models;
 using LevelImposter.Core.Utils;
 using LevelImposter.DB;
@@ -15,7 +14,7 @@ public class TriggerConsoleBuilder : IElemBuilder
             return;
 
         // Prefab
-        var prefab = AssetDB.GetObject("util-computer");
+        var prefab = PrefabDB.GetObject("util-computer");
         if (prefab == null)
             return;
         var prefabRenderer = prefab.GetComponent<SpriteRenderer>();

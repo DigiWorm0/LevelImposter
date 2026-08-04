@@ -23,7 +23,7 @@ public class EjectHandBuilder : IElemBuilder
             return;
 
         // Get Eject Controller Prefab
-        var polusPrefab = AssetDB.GetObject("ss-polus");
+        var polusPrefab = PrefabDB.GetObject("ss-polus");
         var polusShipStatus = polusPrefab?.GetComponent<ShipStatus>();
         var polusEjectController = polusShipStatus?.ExileCutscenePrefab?.TryCast<PbExileController>();
         if (!polusEjectController)

@@ -1,4 +1,3 @@
-using LevelImposter.Core;
 using LevelImposter.Core.Components;
 using LevelImposter.Core.Models;
 using LevelImposter.Core.Utils;
@@ -25,7 +24,7 @@ public class TaskBuilder : IElemBuilder
             return;
 
         // Prefab 
-        var prefab = AssetDB.GetObject(elem.type);
+        var prefab = PrefabDB.GetObject(elem.type);
         if (prefab == null)
             return;
 

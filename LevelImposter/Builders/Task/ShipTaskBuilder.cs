@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using LevelImposter.Builders.Util;
-using LevelImposter.Core;
 using LevelImposter.Core.Components;
 using LevelImposter.Core.Models;
 using LevelImposter.Core.Utils;
@@ -67,7 +66,7 @@ public class ShipTaskBuilder : IElemBuilder
         }
 
         // Values
-        var hasTask = AssetDB.HasTask(elem.type);
+        var hasTask = PrefabDB.HasTask(elem.type);
         var isDivert = elem.type == "task-divert1";
         var isNode = elem.type == "task-node";
         var isNodeSwitch = elem.type == "task-nodeswitch";
@@ -75,9 +74,9 @@ public class ShipTaskBuilder : IElemBuilder
         var isDownload = elem.type == "task-download";
 
         // Prefab
-        var prefabTask = hasTask ? AssetDB.GetTask<NormalPlayerTask>(elem.type) : null;
+        var prefabTask = hasTask ? PrefabDB.GetTask<NormalPlayerTask>(elem.type) : null;
         var prefabArrow = prefabTask?.Arrow?.gameObject;
-        var prefabLength = hasTask ? AssetDB.GetTaskLength(elem.type) : TaskLength.Common;
+        var prefabLength = hasTask ? PrefabDB.GetTaskLength(elem.type) : TaskLength.Common;
         var systemType = RoomBuilder.GetParentOrDefault(elem);
 
         // Rename

@@ -32,7 +32,7 @@ internal class LadderBuilder : IElemBuilder
             return;
 
         // Prefab
-        var prefab = AssetDB.GetObject(elem.type);
+        var prefab = PrefabDB.GetObject(elem.type);
         if (prefab == null)
             return;
         var topPrefab = prefab.transform.FindChild("LadderTop").GetComponent<Ladder>();

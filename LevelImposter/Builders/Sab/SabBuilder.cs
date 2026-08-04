@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Il2CppInterop.Runtime.InteropTypes.Arrays;
 using LevelImposter.Builders.Util;
-using LevelImposter.Core;
 using LevelImposter.Core.Components;
 using LevelImposter.Core.Models;
 using LevelImposter.Core.Utils;
@@ -53,7 +52,7 @@ public class SabBuilder : IElemBuilder
         }
 
         // Prefab
-        var prefabTask = AssetDB.GetTask<SabotageTask>(elem.type);
+        var prefabTask = PrefabDB.GetTask<SabotageTask>(elem.type);
         if (prefabTask == null)
             return;
 

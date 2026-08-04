@@ -13,7 +13,11 @@ public static class LIDeserializer
 {
     private const float JS_MAX_SAFE_INTEGER = 9007199254740991;
 
-    public static LIMap? DeserializeMap(Stream dataStream, bool spriteDB = true, string? filePath = null)
+    public static LIMap? DeserializeMap(
+        Stream dataStream,
+        bool spriteDB = true,
+        string? filePath = null
+    )
     {
         try
         {
@@ -22,14 +26,7 @@ public static class LIDeserializer
 
             // Legacy Map
             if (mapFormat == MapFormat.Legacy)
-            {
-                var legacyMap = JsonSerializer.Deserialize<LIMap>(dataStream);
-                if (legacyMap == null)
-                    LILogger.Error("Failed to deserialize legacy map data");
-                else
-                    LegacyConverter.UpdateMap(legacyMap);
-                return legacyMap;
-            }
+                return LegacyConverter.ConvertFile(dataStream, filePath);
 
             // Decompress ZIP
             if (mapFormat == MapFormat.LIM2_ZIP)
@@ -109,7 +106,7 @@ public static class LIDeserializer
         }
         catch (Exception e)
         {
-            LILogger.Error(e.Message);
+            LILogger.Error($"Error deserializing map data: {e.Message}");
             return null;
         }
     }
@@ -144,13 +141,13 @@ public static class LIDeserializer
             return MapFormat.LIM2_ZIP;
 
         // Check for Legacy
-        var firstByte = (byte)dataStream.ReadByte();
         dataStream.Position = dataStream.Length - 1;
         var lastByte = (byte)dataStream.ReadByte();
         dataStream.Position = 0;
 
-        var fileExtension = Path.GetExtension(filePath ?? "");
-        var isLegacy = firstByte == '{' && lastByte == '}' && fileExtension != "lim2";
+        var isLegacy = firstFourBytes[0] == '{' &&
+                       firstFourBytes[1] == '\"' &&
+                       lastByte == '}';
         if (isLegacy)
             return MapFormat.Legacy;
 

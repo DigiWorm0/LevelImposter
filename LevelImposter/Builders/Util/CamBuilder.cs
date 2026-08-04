@@ -13,7 +13,7 @@ public class CamBuilder : IElemBuilder
             return;
 
         // Prefab
-        var prefab = AssetDB.GetObject(elem.type);
+        var prefab = PrefabDB.GetObject(elem.type);
         if (prefab == null)
             return;
         var prefabCam = prefab.GetComponent<SurvCamera>();

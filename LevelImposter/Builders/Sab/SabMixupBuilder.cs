@@ -1,4 +1,3 @@
-using LevelImposter.Core;
 using LevelImposter.Core.Components;
 using LevelImposter.Core.Models;
 using LevelImposter.Core.Utils;
@@ -34,7 +33,7 @@ public class SabMixupBuilder : IElemBuilder
         var shipStatus = LIShipStatus.GetShip();
 
         // ShipStatus Prefab
-        var fungleShipStatus = AssetDB.GetObject("ss-fungle")?.GetComponent<FungleShipStatus>();
+        var fungleShipStatus = PrefabDB.GetObject("ss-fungle")?.GetComponent<FungleShipStatus>();
         if (fungleShipStatus == null)
             return;
         var prefabSystem = fungleShipStatus.specialSabotage;
@@ -48,7 +47,7 @@ public class SabMixupBuilder : IElemBuilder
         systemContainer.transform.SetParent(shipStatus.transform);
 
         // Prefab
-        var prefabTask = AssetDB.GetTask<MushroomMixupSabotageTask>(elem.type);
+        var prefabTask = PrefabDB.GetTask<MushroomMixupSabotageTask>(elem.type);
         if (prefabTask == null)
             return;
 

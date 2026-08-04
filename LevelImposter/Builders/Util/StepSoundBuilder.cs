@@ -45,7 +45,7 @@ internal class StepSoundBuilder : IElemBuilder
 
             // Preset
             if (sound.isPreset)
-                soundGroup.Clips[i] = AssetDB.GetSound(sound.presetID ?? "");
+                soundGroup.Clips[i] = PrefabDB.GetSound(sound.presetID ?? "");
             // WAVLoader
             else
                 soundGroup.Clips[i] = WAVLoader.Load(sound);

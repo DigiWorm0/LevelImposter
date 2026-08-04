@@ -31,7 +31,7 @@ internal class DecontaminationBuilder : IElemBuilder
             return;
 
         // Prefab
-        var prefab = AssetDB.GetObject(elem.type);
+        var prefab = PrefabDB.GetObject(elem.type);
         if (prefab == null)
             return;
         var prefabBehaviour = prefab.GetComponent<DeconSystem>();
