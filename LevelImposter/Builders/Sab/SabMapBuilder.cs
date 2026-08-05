@@ -167,7 +167,7 @@ public class SabMapBuilder : IElemBuilder
         };
     }
 
-    public void OnCleanup()
+    public void OnPostBuild()
     {
         if (_hasSabConsoles && !_hasSabButtons)
             LILogger.Warn("Map does not include sabotage buttons");
