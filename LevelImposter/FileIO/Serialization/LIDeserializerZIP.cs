@@ -7,7 +7,7 @@ using LevelImposter.FileIO.DataStores;
 
 namespace LevelImposter.FileIO.Serialization;
 
-public static class LICompressedDeserializer
+public static class LIDeserializerZIP
 {
     private const string MAP_JSON_ENTRY = "map.json";
 
@@ -18,13 +18,17 @@ public static class LICompressedDeserializer
     /// <param name="spriteDB">Whether to load the sprite database.</param>
     /// <param name="filePath">File path for loading SpriteDB</param>
     /// <returns>The deserialized LIMap object.</returns>
-    public static LIMap? Deserialize(Stream stream, bool spriteDB = true, string? filePath = null)
+    public static LIMap Deserialize(
+        Stream stream,
+        bool spriteDB = true,
+        string? filePath = null
+    )
     {
         // Open ZIP archive
         using var zip = new ZipArchive(stream, ZipArchiveMode.Read, false);
         var jsonEntry = zip.GetEntry(MAP_JSON_ENTRY);
         if (jsonEntry == null)
-            return null;
+            throw new InvalidDataException($"ZIP archive does not contain required entry '{MAP_JSON_ENTRY}'.");
 
         // Deserialize JSON
         using var jsonStream = jsonEntry.Open();

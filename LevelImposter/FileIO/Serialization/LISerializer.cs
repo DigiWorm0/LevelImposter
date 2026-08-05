@@ -22,16 +22,10 @@ public static class LISerializer
         try
         {
             // Create Options
-            if (_options == null)
+            _options ??= new JsonSerializerOptions
             {
-                _options = new JsonSerializerOptions();
-                _options.DefaultIgnoreCondition =
-                    JsonIgnoreCondition.WhenWritingNull;
-            }
-
-            // Update Legacy Format
-            if (mapData.IsLegacy)
-                LegacyConverter.UpdateMap(mapData);
+                DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
+            };
 
             // Map Data
             var mapJsonBytes = JsonSerializer.SerializeToUtf8Bytes(mapData, _options);
@@ -43,14 +37,15 @@ public static class LISerializer
             if (mapData.MapAssetDB == null)
                 return;
 
-            foreach (var spriteAsset in mapData.MapAssetDB.DB)
+            foreach (var mapAsset in mapData.MapAssetDB.DB)
             {
-                var data = spriteAsset.Value.LoadToMemory().Data;
-                var idBytes = Encoding.UTF8.GetBytes(spriteAsset.Key.ToString());
+                // Load Asset to Memory
+                var data = mapAsset.Value.LoadToManagedMemory();
+                var idBytes = Encoding.UTF8.GetBytes(mapAsset.Key.ToString());
 
-                // Write Element
+                // Write Asset to Stream
                 stream.Write(idBytes);
-                stream.Write(BitConverter.GetBytes(data.Length)); // <-- TODO: ** Improve memory usage here **
+                stream.Write(BitConverter.GetBytes(data.Length));
                 stream.Write(data);
             }
         }

@@ -11,7 +11,7 @@ namespace LevelImposter.FileIO.Serialization;
 /// <summary>
 ///     Converts LIM to LIM2 files
 /// </summary>
-public static class LegacyConverter
+public static class LIDeserializerLegacy
 {
     /// <summary>
     ///     Compares two byte arrays (Il2CppStructArray<byte>)
@@ -55,7 +55,7 @@ public static class LegacyConverter
     ///     Updates legacy map data to a LIM2 data
     /// </summary>
     /// <param name="map">Legacy Map Data</param>
-    public static void UpdateMap(LIMap map)
+    public static void MigrateMap(LIMap map)
     {
         if (!map.IsLegacy)
             return;
@@ -63,7 +63,6 @@ public static class LegacyConverter
         LILogger.Info($"Converting legacy map data [{map.id}]");
 
         // Update Properties
-        map.IsLegacy = false;
         map.MapAssetDB = new MapAssetDB();
 
         // SpriteDB
@@ -128,7 +127,7 @@ public static class LegacyConverter
     /// </param>
     /// <exception cref="FileNotFoundException">If the map file wasn't found</exception>
     /// <exception cref="FileLoadException">If the new map already exists</exception>
-    public static LIMap ConvertFile(
+    public static LIMap Deserialize(
         Stream dataStream,
         string? filePath = null)
     {
@@ -143,13 +142,13 @@ public static class LegacyConverter
             throw new FileLoadException($"Could not deserialize legacy map file @ {filePath}");
 
         // Update map
-        UpdateMap(mapFile);
+        MigrateMap(mapFile);
 
         // Legacy >>> .bak
         var backupPath = $"{filePath}.bak";
-        const int index = 0;
+        var index = 0;
         while (File.Exists(backupPath))
-            backupPath = $"{filePath}.bak.{index}";
+            backupPath = $"{filePath}.bak.{index++}";
 
         dataStream.Close();
         if (File.Exists(legacyPath))
