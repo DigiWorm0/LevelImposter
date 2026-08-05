@@ -21,9 +21,8 @@ public class LIPhysicsObject(IntPtr intPtr) : MonoBehaviour(intPtr)
     private const string TRIGGER_ID = "onCollision";
     private const int HOST_UPDATE_INTERVAL = 10; // s
 
-    public static readonly Dictionary<uint, LIPhysicsObject> AllObjects = new();
+    public static readonly Dictionary<uint, LIPhysicsObject?> AllObjects = new();
 
-    private static uint _objectCounter;
     private uint _objectID;
 
     [HideFromIl2Cpp] public LIElement? Element { get; private set; }
@@ -31,10 +30,6 @@ public class LIPhysicsObject(IntPtr intPtr) : MonoBehaviour(intPtr)
 
     public void Awake()
     {
-        _objectID = _objectCounter++;
-
-        AllObjects.Add(_objectID, this);
-
         Element = MapObjectDB.Get(gameObject);
         Rigidbody = GetComponent<Rigidbody2D>();
     }
@@ -42,12 +37,6 @@ public class LIPhysicsObject(IntPtr intPtr) : MonoBehaviour(intPtr)
     public void Start()
     {
         StartCoroutine(CoUpdatePosAsHost().WrapToIl2Cpp());
-    }
-
-    public void OnDestroy()
-    {
-        _objectCounter = 0;
-        AllObjects.Clear();
     }
 
     public void OnCollisionEnter2D(Collision2D other)
@@ -71,13 +60,23 @@ public class LIPhysicsObject(IntPtr intPtr) : MonoBehaviour(intPtr)
         }
     }
 
+    /// <summary>
+    ///     Assigns the net ID of this physics object and adds it to the list of global objects.
+    /// </summary>
+    /// <param name="id">The net ID to assign</param>
+    public void AssignID(uint id)
+    {
+        _objectID = id;
+        AllObjects[id] = this;
+    }
+
     [HideFromIl2Cpp]
     private IEnumerator CoUpdatePosAsHost()
     {
-        while (GameConfiguration.CurrentMap != null)
+        while (true)
         {
             yield return new WaitForSeconds(HOST_UPDATE_INTERVAL);
-            if (GameState.IsHost)
+            if (GameState.IsHost && isActiveAndEnabled)
                 UpdateObjectPosOverRPC();
         }
     }

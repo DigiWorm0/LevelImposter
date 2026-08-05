@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using LevelImposter.Core.Models;
 using LevelImposter.Core.Utils;
@@ -69,6 +70,9 @@ public class LobbySpawnBuilder : IElemBuilder
     /// <returns>A LobbySpawnPoint containing the target player's spawn point</returns>
     public static LobbySpawnPoint GetSpawnPoint(PlayerControl playerControl)
     {
+        if (SpawnPositions.Count == 0)
+            throw new Exception("Lobby spawn points have not yet been loaded");
+
         return SpawnPositions[playerControl.PlayerId % SpawnPositions.Count];
     }
 

@@ -1,5 +1,7 @@
 using LevelImposter.Core.Components;
+using LevelImposter.Core.GarbageCollection;
 using LevelImposter.Core.Models;
+using LevelImposter.Core.Utils;
 using UnityEngine;
 
 namespace LevelImposter.Builders.Util;
@@ -7,10 +9,22 @@ namespace LevelImposter.Builders.Util;
 internal class PhysicsObjectBuilder : IElemBuilder
 {
     private bool _isCameraFixed;
+    private uint _objectCounter;
 
     public void OnPreBuild()
     {
         _isCameraFixed = false;
+        _objectCounter = 0;
+
+        // Disable collision between physics objects & UI
+        Physics2D.IgnoreLayerCollision((int)Layer.Physics, (int)Layer.UI);
+
+        // List all enabled layers
+        for (var i = 0; i < 16; i++)
+        {
+            var isCollisionEnabled = !Physics2D.GetIgnoreLayerCollision((int)Layer.Physics, i);
+            LILogger.Info($"Physics on layer {i} ({(Layer)i}) is {(isCollisionEnabled ? "enabled" : "disabled")}");
+        }
     }
 
     public void OnBuild(LIElement elem, GameObject obj)
@@ -41,12 +55,14 @@ internal class PhysicsObjectBuilder : IElemBuilder
             friction = elem.properties.physicsFriction ?? 0.6f
         };
         rb.sharedMaterial = physicsMaterial;
+        GCHandler.Register(physicsMaterial);
 
         // Set Layer
         obj.layer = (int)Layer.Physics;
 
         // Add Physics Object Component
-        obj.AddComponent<LIPhysicsObject>();
+        var physicsObject = obj.AddComponent<LIPhysicsObject>();
+        physicsObject.AssignID(++_objectCounter);
 
         // Fix Camera
         if (_isCameraFixed)

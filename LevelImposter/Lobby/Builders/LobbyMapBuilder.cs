@@ -25,6 +25,7 @@ public static class LobbyMapBuilder
         new LobbyMapPropertiesBuilder(),
 
         new DecBuilder(),
+        new PhysicsObjectBuilder(),
 
         new AmbientSoundBuilder(true),
         new DisplayBuilder(),

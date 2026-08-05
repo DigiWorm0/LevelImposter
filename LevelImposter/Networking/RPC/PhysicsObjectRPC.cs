@@ -1,6 +1,5 @@
 ﻿using System;
 using Hazel;
-using LevelImposter.Core;
 using LevelImposter.Core.Components;
 using LevelImposter.Core.Models;
 using LevelImposter.Core.Utils;
@@ -67,6 +66,8 @@ public class PhysicsObjectRPC(LevelImposter plugin, uint id)
 
         // Get object
         if (!LIPhysicsObject.AllObjects.TryGetValue(data.ObjectID, out var obj))
+            return;
+        if (obj == null)
             return;
 
         // Update position
