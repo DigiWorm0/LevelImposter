@@ -31,7 +31,6 @@ public partial class LevelImposter : BasePlugin
 
     public Harmony Harmony { get; } = new(ID);
 
-
     public static string DisplayVersion => Version.Contains('+')
         ? Version.Substring(0, Version.IndexOf("+", StringComparison.Ordinal))
         : Version;

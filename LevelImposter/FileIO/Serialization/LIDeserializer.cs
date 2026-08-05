@@ -11,8 +11,6 @@ namespace LevelImposter.FileIO.Serialization;
 
 public static class LIDeserializer
 {
-    private const float JS_MAX_SAFE_INTEGER = 9007199254740991;
-
     public static LIMap? DeserializeMap(
         Stream dataStream,
         bool spriteDB = true,

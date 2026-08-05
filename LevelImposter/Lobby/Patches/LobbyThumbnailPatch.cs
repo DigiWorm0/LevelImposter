@@ -1,6 +1,5 @@
 using System;
 using HarmonyLib;
-using LevelImposter.Core;
 using LevelImposter.Core.Models;
 using LevelImposter.Core.Utils;
 using LevelImposter.FileIO.Cache;
@@ -33,7 +32,7 @@ public static class LobbyThumbnailPatch
         if (_thumbnailRenderer == null)
         {
             var thumbnailRendererObj = new GameObject("LI_MapThumbnailRenderer");
-            thumbnailRendererObj.transform.SetParent(__instance.MapImage.transform.parent);
+            thumbnailRendererObj.transform.SetParent(__instance.MapImage?.transform.parent);
             thumbnailRendererObj.transform.localPosition = MapImagePos;
             thumbnailRendererObj.transform.localScale = MapImageScale;
             thumbnailRendererObj.layer = (int)Layer.UI;
@@ -44,7 +43,8 @@ public static class LobbyThumbnailPatch
 
         // Update thumbnail visibility
         _thumbnailRenderer.enabled = GameConfiguration.CurrentMapType == MapType.LevelImposter;
-        __instance.MapImage.enabled = GameConfiguration.CurrentMapType != MapType.LevelImposter;
+        if (__instance.MapImage != null)
+            __instance.MapImage.enabled = GameConfiguration.CurrentMapType != MapType.LevelImposter;
 
         // Get Map ID
         var currentMapID = GameConfiguration.CurrentMap?.id;

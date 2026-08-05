@@ -25,8 +25,10 @@ public static class LIMapIconBuilder
     ///     Adds the LevelImposter map icon to the provided list if it is not already present.
     /// </summary>
     /// <param name="list">The list of MapIconByName to add to.</param>
-    public static void AddToList(List<MapIconByName> list)
+    public static void AddToList(List<MapIconByName>? list)
     {
+        list ??= new List<MapIconByName>();
+
         // Check if already added
         foreach (var icon in list)
             if ((MapType)icon.Name == MapType.LevelImposter)
