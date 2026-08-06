@@ -1,4 +1,5 @@
 ﻿using System;
+using LevelImposter.Core.Translations;
 using LevelImposter.Core.Utils;
 using LevelImposter.Networking.API;
 using Twitch;
@@ -109,18 +110,20 @@ public static class UpdateButtonBuilder
 
         var confirmButton = _popupComponent.transform.FindChild("ExitGame").gameObject;
         confirmButton.SetActive(false);
-        _popupComponent.Show("Updating...");
+        _popupComponent.Show(Translation.Get("main_menu.update.updating"));
         _btnObj.SetActive(false);
 
         GitHubAPI.UpdateMod(() =>
         {
             confirmButton.SetActive(true);
-            _popupComponent.Show("<color=green>Update complete!</color>\nPlease restart your game.");
+            _popupComponent.Show($"<color=green>{Translation.Get("main_menu.update_success.title")}</color>" +
+                                 $"\n{Translation.Get("main_menu.update_success.description")}");
         }, error =>
         {
             confirmButton.SetActive(true);
-            _popupComponent.Show(
-                $"<color=red>Update failed!</color>\n<size=1.5>{error}\n<i>(You may have to update manually)</i></size>");
+            _popupComponent.Show($"<color=red>{Translation.Get("main_menu.update_failed.title")}</color>" +
+                                 $"\n<size=1.5>{error}" +
+                                 $"\n<i>{Translation.Get("main_menu.update_failed.description")}</i></size>");
             _btnObj.SetActive(true);
         });
     }

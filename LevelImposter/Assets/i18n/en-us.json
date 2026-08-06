@@ -1,5 +1,17 @@
 {
   "main_menu.maps": "Maps",
+  "main_menu.update": "Update",
+  "main_menu.update.updating": "Updating...",
+  "main_menu.update_success.title": "Update complete!",
+  "main_menu.update_success.description": "Please restart your game.",
+  "main_menu.update_failed": "Auto-update to {0} is unavailable:\n{1}",
+  "main_menu.update_failed.title": "Update Failed",
+  "main_menu.update_failed.description": "(You may have to update manually)",
+  "main_menu.update_failed.already_up_to_date": "Already up to date",
+  "main_menu.update_failed.incorrect_version": "Incorrect Among Us version",
+  "main_menu.update_failed.disabled": "Auto-update to this version is disabled",
+  "main_menu.update_failed.no_release_assets": "No release assets found",
+  "main_menu.update_failed.unknown": "Unknown error",
   "shop.map.download": "Download",
   "shop.map.play": "Play",
   "shop.map.author": "by {0}",
@@ -31,5 +43,7 @@
   "loading.loading": "Loading...",
   "loading.map_by_author": "<color=#1a95d8>{0}</color> by {1}",
   "loading.downloading_map": "Downloading map...",
-  "loading.waiting_for_host": "Waiting for host..."
+  "loading.waiting_for_host": "Waiting for host...",
+  "lobby.random_custom_map": "Random Custom Map",
+  "lobby.map_by_author": "<color=#1a95d8>{0}</color> by {1}"
 }

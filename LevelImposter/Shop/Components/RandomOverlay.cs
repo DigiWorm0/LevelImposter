@@ -130,7 +130,7 @@ public class RandomOverlay(IntPtr intPtr) : MonoBehaviour(intPtr)
     private void UpdateText()
     {
         var randomWeightPercent = Mathf.RoundToInt(_randomWeight * 100);
-        primaryText.Value.SetText($"Weight: {randomWeightPercent}%");
+        primaryText.Value.SetText($"{randomWeightPercent}%");
     }
 
     private void UpdateProgressBar()

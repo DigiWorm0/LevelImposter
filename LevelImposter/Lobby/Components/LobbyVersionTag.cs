@@ -1,6 +1,7 @@
 using System;
 using System.Text;
 using LevelImposter.Core.Models;
+using LevelImposter.Core.Translations;
 using LevelImposter.Core.Utils;
 using TMPro;
 using UnityEngine;
@@ -68,15 +69,9 @@ public class LobbyVersionTag(IntPtr intPtr) : MonoBehaviour(intPtr)
 
         // Map Name
         versionTagBuilder.Append("<font=\"Barlow-Black SDF\" material=\"Barlow-Black Outline\">");
-        if (GameConfiguration.HideMapName)
-        {
-            versionTagBuilder.Append("Random Custom Map");
-        }
-        else
-        {
-            versionTagBuilder.Append($"<color=#1a95d8>{currentMap.name}</color>");
-            versionTagBuilder.Append($" by {currentMap.authorName}");
-        }
+        versionTagBuilder.Append(GameConfiguration.HideMapName
+            ? Translation.Get("lobby.random_custom_map")
+            : Translation.Get("lobby.map_by_author", currentMap.name, currentMap.authorName));
 
         versionTagBuilder.Append("</font>");
 

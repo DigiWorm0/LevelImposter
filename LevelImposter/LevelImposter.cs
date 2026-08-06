@@ -35,7 +35,7 @@ public partial class LevelImposter : BasePlugin
         ? Version.Substring(0, Version.IndexOf("+", StringComparison.Ordinal))
         : Version;
 
-    public static bool IsDevBuild => Version.Contains("dev") || Version.Contains('+');
+    public static bool IsDevBuild => Version.Contains("dev");
 
     public override void Load()
     {

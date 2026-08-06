@@ -1,5 +1,17 @@
 {
   "main_menu.maps": "Mapas",
+  "main_menu.update": "Actualizar",
+  "main_menu.update.updating": "Actualizando...",
+  "main_menu.update_success.title": "¡Actualización completada!",
+  "main_menu.update_success.description": "Por favor, reinicia tu juego.",
+  "main_menu.update_failed": "La actualización automática a {0} no está disponible:\n{1}",
+  "main_menu.update_failed.title": "Error al actualizar",
+  "main_menu.update_failed.description": "(Es posible que tengas que actualizar manualmente)",
+  "main_menu.update_failed.already_up_to_date": "Ya está actualizado",
+  "main_menu.update_failed.incorrect_version": "Versión del Among Us incorrecta",
+  "main_menu.update_failed.disabled": "La actualización automática a esta versión está desactivada",
+  "main_menu.update_failed.no_release_assets": "No se encontraron recursos de la versión",
+  "main_menu.update_failed.unknown": "Error desconocido",
   "shop.map.download": "Descargar",
   "shop.map.play": "Jugar",
   "shop.map.author": "de {0}",
@@ -31,5 +43,7 @@
   "loading.loading": "Cargando...",
   "loading.map_by_author": "<color=#1a95d8>{0}</color> de {1}",
   "loading.downloading_map": "Descargando mapa...",
-  "loading.waiting_for_host": "Esperando al anfitrión..."
+  "loading.waiting_for_host": "Esperando al anfitrión...",
+  "lobby.random_custom_map": "Mapa Personalizado Aleatorio",
+  "lobby.map_by_author": "<color=#1a95d8>{0}</color> de {1}"
 }

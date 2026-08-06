@@ -3,6 +3,7 @@ using System.IO;
 using System.Reflection;
 using System.Text.Json.Serialization;
 using Il2CppInterop.Runtime.Attributes;
+using LevelImposter.Core.Translations;
 using LevelImposter.Core.Utils;
 using LevelImposter.FileIO.Cache;
 using UnityEngine;
@@ -74,15 +75,15 @@ public static class GitHubAPI
 
         // Set reason
         if (isCurrent)
-            reason = "Already up-to-date";
+            reason = Translation.Get("main_menu.update_failed.already_up_to_date");
         else if (!isWhitelisted)
-            reason = "Incorrect Among Us version";
+            reason = Translation.Get("main_menu.update_failed.incorrect_version");
         else if (isBlacklisted)
-            reason = "Auto-update to this version is disabled";
+            reason = Translation.Get("main_menu.update_failed.disabled");
         else if (!hasReleaseAssets)
-            reason = "No release assets found";
+            reason = Translation.Get("main_menu.update_failed.no_release_assets");
         else
-            reason = "Unknown";
+            reason = Translation.Get("main_menu.update_failed.unknown");
 
         // Return result
         return !isCurrent && isWhitelisted && !isBlacklisted && hasReleaseAssets;
@@ -113,7 +114,7 @@ public static class GitHubAPI
             // Check if update is available
             if (!CanUpdateTo(release, out var reason))
             {
-                var errorMsg = $"Auto-update to {release} is unavailable:\n{reason}";
+                var errorMsg = Translation.Get("main_menu.update_failed", release, reason);
                 LILogger.Error(errorMsg);
                 onError(errorMsg);
                 return;
