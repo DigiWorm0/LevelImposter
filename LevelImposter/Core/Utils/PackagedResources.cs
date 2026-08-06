@@ -84,12 +84,20 @@ public static class PackagedResources
     /// <returns>The deserialized object or null if not found</returns>
     public static T? LoadJson<T>(string name) where T : class
     {
-        // Resource Stream >> JSON Text
-        using var resourceStream = OpenStream(name);
-        var jsonString = Encoding.UTF8.GetString(resourceStream.ToManagedArray());
+        try
+        {
+            // Resource Stream >> JSON Text
+            using var resourceStream = OpenStream(name);
+            var jsonString = Encoding.UTF8.GetString(resourceStream.ToManagedArray());
 
-        // Deserialize JSON
-        return JsonSerializer.Deserialize<T>(jsonString);
+            // Deserialize JSON
+            return JsonSerializer.Deserialize<T>(jsonString);
+        }
+        catch (Exception e)
+        {
+            LILogger.Error($"Failed to load JSON resource {name}: {e}");
+            return null;
+        }
     }
 
 

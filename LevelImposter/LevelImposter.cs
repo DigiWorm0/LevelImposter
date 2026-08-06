@@ -75,6 +75,7 @@ public partial class LevelImposter : BasePlugin
         ClassInjector.RegisterTypeInIl2Cpp<EditableLadderConsole>();
         ClassInjector.RegisterTypeInIl2Cpp<LIExileController>();
         ClassInjector.RegisterTypeInIl2Cpp<LIPhysicsObject>();
+        ClassInjector.RegisterTypeInIl2Cpp<LITextTranslatorTMP>();
 
         ClassInjector.RegisterTypeInIl2Cpp<PrefabDB>();
 

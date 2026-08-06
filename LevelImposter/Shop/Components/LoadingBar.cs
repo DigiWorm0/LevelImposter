@@ -3,6 +3,7 @@ using System.Collections;
 using Il2CppInterop.Runtime.Attributes;
 using LevelImposter.AssetLoader;
 using LevelImposter.Builders;
+using LevelImposter.Core.Translations;
 using LevelImposter.Core.Utils;
 using LevelImposter.Lobby.Sync;
 using Reactor.Utilities;
@@ -67,6 +68,11 @@ public class LoadingBar(IntPtr intPtr) : MonoBehaviour(intPtr)
         if (Instance._visible)
             return;
 
+        // Apply initial state
+        Instance.SetTitle(Translation.Get("loading.loading"));
+        Instance.SetProgress(1);
+        Instance.SetStatus(Translation.Get("loading.waiting_for_host"));
+
         // Start Coroutine
         Coroutines.Start(Instance.CoLoadingScreen());
     }
@@ -102,8 +108,12 @@ public class LoadingBar(IntPtr intPtr) : MonoBehaviour(intPtr)
 
                 // Update UI
                 Instance?.SetTitle(!GameConfiguration.HideMapName
-                    ? $"<color=#1a95d8>{GameConfiguration.CurrentMap?.name ?? "???"}</color> by {GameConfiguration.CurrentMap?.authorName ?? "???"}"
-                    : "Loading...");
+                    ? Translation.Get(
+                        "loading.map_by_author",
+                        GameConfiguration.CurrentMap?.name ?? "???",
+                        GameConfiguration.CurrentMap?.authorName ?? "???")
+                    : Translation.Get("loading.loading"));
+
                 Instance?.SetProgress(progress);
                 Instance?.SetStatus(
                     $"{Math.Round(progress * 100)}% <size=1.2>({loadedCount}/{_maxQueueSize})</size>"
@@ -111,13 +121,13 @@ public class LoadingBar(IntPtr intPtr) : MonoBehaviour(intPtr)
             }
             else if (downloadState != null)
             {
-                Instance?.SetTitle("Downloading map...");
+                Instance?.SetTitle(Translation.Get("loading.downloading_map"));
                 Instance?.SetProgress(downloadState.Progress);
                 Instance?.SetStatus($"{Math.Round(downloadState.Progress * 100)}%");
             }
             else
             {
-                Instance?.SetTitle("Waiting for host...");
+                Instance?.SetTitle(Translation.Get("loading.waiting_for_host"));
                 Instance?.SetProgress(1);
                 Instance?.SetStatus("");
             }

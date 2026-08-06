@@ -1,8 +1,7 @@
 ﻿using System;
+using LevelImposter.Core.Components;
 using LevelImposter.Core.Utils;
-using TMPro;
 using UnityEngine;
-using Object = UnityEngine.Object;
 
 namespace LevelImposter.Shop.Builders;
 
@@ -27,8 +26,7 @@ public static class MainMenuBuilder
 
         // Text
         var text = button.transform.Find(TEXT_PATH);
-        text.GetComponent<TMP_Text>().text = "Maps";
-        Object.Destroy(text.GetComponent<TextTranslatorTMP>());
+        LITextTranslatorTMP.AddTranslator(text.gameObject, "main_menu.maps");
 
         // Sprites
         foreach (var path in ICON_PATHS)

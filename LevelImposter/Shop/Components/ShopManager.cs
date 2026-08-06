@@ -6,6 +6,7 @@ using Il2CppInterop.Runtime.Attributes;
 using Il2CppInterop.Runtime.InteropTypes.Fields;
 using LevelImposter.Core.Android;
 using LevelImposter.Core.Models;
+using LevelImposter.Core.Translations;
 using LevelImposter.Core.Utils;
 using LevelImposter.DB;
 using LevelImposter.FileIO.API;
@@ -13,6 +14,7 @@ using LevelImposter.Lobby.Sync;
 using LevelImposter.Networking.API;
 using LevelImposter.Shop.Transitions;
 using LevelImposter.Shop.Utils;
+using TMPro;
 using UnityEngine;
 using AndroidActivity = LevelImposter.Core.Android.Activity;
 
@@ -51,11 +53,8 @@ public class ShopManager(IntPtr intPtr) : MonoBehaviour(intPtr)
     public Il2CppReferenceField<LoadingOverlay> loadingOverlay;
     public Il2CppReferenceField<GameObjectGrid> mapBannerGrid;
     public Il2CppReferenceField<MapBanner> mapBannerPrefab;
-
     public Il2CppReferenceField<PassiveButton> openMapsFolderButton;
-
-    // Serialized Fields
-    public Il2CppReferenceField<SpriteRenderer> titleRenderer;
+    public Il2CppReferenceField<TMP_Text> titleText;
 
     public static ShopManager? Instance { get; private set; }
 
@@ -156,11 +155,19 @@ public class ShopManager(IntPtr intPtr) : MonoBehaviour(intPtr)
     /// </summary>
     /// <param name="tab">The tab to load</param>
     /// <param name="titleSprite">Optional title sprite to set</param>
-    public void SetTab(ShopTab tab, Sprite? titleSprite = null)
+    public void SetTab(ShopTab tab)
     {
         // Set Title Sprite
-        if (titleSprite != null)
-            titleRenderer.Value.sprite = titleSprite;
+        titleText.Value.text = tab switch
+        {
+            ShopTab.DownloadedMaps => Translation.Get("shop.tabs.downloaded_maps"),
+            ShopTab.DownloadedLobbyMaps => Translation.Get("shop.tabs.lobby_maps"),
+            ShopTab.FeaturedWorkshopMaps => Translation.Get("shop.tabs.featured_maps"),
+            ShopTab.TopWorkshopMaps => Translation.Get("shop.tabs.top_maps"),
+            ShopTab.RecentWorkshopMaps => Translation.Get("shop.tabs.recent_maps"),
+            ShopTab.None => "",
+            _ => throw new ArgumentOutOfRangeException(nameof(tab), tab, null)
+        };
 
         // Check if we're already on this tab
         if (_currentTab == tab)

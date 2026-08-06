@@ -4,6 +4,7 @@ using Il2CppInterop.Runtime.Attributes;
 using Il2CppInterop.Runtime.InteropTypes.Fields;
 using InnerNet;
 using LevelImposter.Core.Models;
+using LevelImposter.Core.Translations;
 using LevelImposter.Core.Utils;
 using LevelImposter.DB;
 using LevelImposter.FileIO.API;
@@ -127,8 +128,9 @@ public class MapBanner(IntPtr intPtr) : MonoBehaviour(intPtr)
 
         // Update UI Overlay
         ShopManager.Instance?.LoadingOverlay.Show(true, true);
-        ShopManager.Instance?.LoadingOverlay.SetText($"Downloading {_currentMap.name}...",
-            "(Looking for download URL)");
+        ShopManager.Instance?.LoadingOverlay.SetText(
+            Translation.Get("shop.downloader.title", _currentMap.name),
+            Translation.Get("shop.downloader.looking_for_url"));
 
         // Start Download
         MapFileAPI.DownloadMap(
@@ -149,7 +151,7 @@ public class MapBanner(IntPtr intPtr) : MonoBehaviour(intPtr)
     private void OnMapDownloadProgress(float percent)
     {
         ShopManager.Instance?.LoadingOverlay.SetText(
-            $"Downloading {_currentMap?.name ?? "map"}...",
+            Translation.Get("shop.downloader.title", _currentMap?.name ?? "map"),
             $"{Mathf.RoundToInt(percent * 100)}%");
 
         ShopManager.Instance?.LoadingOverlay.SetProgress(percent);
@@ -157,7 +159,9 @@ public class MapBanner(IntPtr intPtr) : MonoBehaviour(intPtr)
 
     private void OnMapDownloadError(string error)
     {
-        ShopManager.Instance?.LoadingOverlay.ShowError("The impostor sabotaged the download!", error);
+        ShopManager.Instance?.LoadingOverlay.ShowError(
+            Translation.Get("shop.downloader.error"),
+            error);
     }
 
     /// <summary>
@@ -219,13 +223,13 @@ public class MapBanner(IntPtr intPtr) : MonoBehaviour(intPtr)
         titleText.Value.text = _currentMap.name;
         if (_currentMap.IsInWorkshop)
         {
-            authorText.Value.text = $"by {_currentMap.authorName}";
+            authorText.Value.text = Translation.Get("shop.map.author", _currentMap.authorName);
             descriptionText.Value.text = _currentMap.description;
         }
         else
         {
-            authorText.Value.text = "(Local Map)";
-            descriptionText.Value.text = "Upload this map to the workshop to play online";
+            authorText.Value.text = Translation.Get("shop.map.localmap");
+            descriptionText.Value.text = Translation.Get("shop.map.localmap.description");
         }
     }
 

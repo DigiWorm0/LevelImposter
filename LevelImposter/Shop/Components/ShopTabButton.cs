@@ -11,7 +11,6 @@ public class ShopTabButton(IntPtr ptr) : MonoBehaviour(ptr)
 {
     private PassiveButton? _passiveButton;
     public Il2CppValueField<int> tab;
-    public Il2CppReferenceField<Sprite> titleSprite;
 
     public ShopTab TabType => (ShopTab)tab.Value;
 
@@ -35,6 +34,6 @@ public class ShopTabButton(IntPtr ptr) : MonoBehaviour(ptr)
     /// </summary>
     private void OnButtonClick()
     {
-        ShopManager.Instance?.SetTab((ShopTab)tab.Value, titleSprite.Value);
+        ShopManager.Instance?.SetTab((ShopTab)tab.Value);
     }
 }

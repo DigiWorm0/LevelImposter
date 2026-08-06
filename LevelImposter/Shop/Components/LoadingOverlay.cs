@@ -1,5 +1,6 @@
 ﻿using System;
 using Il2CppInterop.Runtime.InteropTypes.Fields;
+using LevelImposter.Core.Translations;
 using TMPro;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -9,20 +10,7 @@ namespace LevelImposter.Shop.Components;
 public class LoadingOverlay(IntPtr intPtr) : MonoBehaviour(intPtr)
 {
     // Among Us themed loading texts
-    private readonly string[] _funLoadingTexts =
-    [
-        "Searching for habitable planets...",
-        "Scanning for planetary systems...",
-        "Searching dropship...",
-        "Calibrating engines...",
-        "Stabilizing reactor...",
-        "Aligning telescope...",
-        "Navigating asteroids...",
-        "Diverting power...",
-        "Doing card swipe...",
-        "Fueling engines...",
-        "Charting course..."
-    ];
+    private const int FUN_TEXT_COUNT = 11;
 
     public Il2CppReferenceField<PassiveButton> closeButton;
 
@@ -86,10 +74,12 @@ public class LoadingOverlay(IntPtr intPtr) : MonoBehaviour(intPtr)
         closeButton.Value.gameObject.SetActive(PreventClose);
     }
 
-    public void RandomizeText(string subtitle = "(Fetching maps)")
+    public void RandomizeText(string? subtitle = null)
     {
-        var randomIndex = Random.Range(0, _funLoadingTexts.Length);
-        SetText(_funLoadingTexts[randomIndex], subtitle);
+        var randomIndex = Random.Range(0, FUN_TEXT_COUNT);
+        SetText(
+            Translation.Get($"shop.loading.fun_text_{randomIndex}"),
+            subtitle ?? Translation.Get("shop.loading.fetching_maps"));
     }
 
     public void SetProgress(float? progress)
