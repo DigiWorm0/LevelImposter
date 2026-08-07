@@ -11,6 +11,7 @@ using LevelImposter.FileIO.API;
 using LevelImposter.FileIO.Cache;
 using LevelImposter.Lobby.Components;
 using LevelImposter.Shop.Components;
+using LevelImposter.Shop.Utils;
 using Reactor.Networking;
 using Reactor.Networking.Attributes;
 using Reactor.Utilities;
@@ -90,6 +91,7 @@ public partial class LevelImposter : BasePlugin
         ClassInjector.RegisterTypeInIl2Cpp<GameObjectGrid>();
         ClassInjector.RegisterTypeInIl2Cpp<ShopTabButton>();
         ClassInjector.RegisterTypeInIl2Cpp<ShopManager>();
+        ClassInjector.RegisterTypeInIl2Cpp<MapsFolderWatcher>();
         ClassInjector.RegisterTypeInIl2Cpp<Spinner>();
         ClassInjector.RegisterTypeInIl2Cpp<LoadingBar>();
         ClassInjector.RegisterTypeInIl2Cpp<LILobbyBehaviour>();

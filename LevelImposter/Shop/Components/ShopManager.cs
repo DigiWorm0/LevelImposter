@@ -1,10 +1,8 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using Il2CppInterop.Runtime.Attributes;
 using Il2CppInterop.Runtime.InteropTypes.Fields;
-using LevelImposter.Core.Android;
 using LevelImposter.Core.Models;
 using LevelImposter.Core.Translations;
 using LevelImposter.Core.Utils;
@@ -16,7 +14,6 @@ using LevelImposter.Shop.Transitions;
 using LevelImposter.Shop.Utils;
 using TMPro;
 using UnityEngine;
-using AndroidActivity = LevelImposter.Core.Android.Activity;
 
 namespace LevelImposter.Shop.Components;
 
@@ -43,7 +40,6 @@ public class ShopManager(IntPtr intPtr) : MonoBehaviour(intPtr)
 
     private readonly Dictionary<ShopTab, LIMetadata[]> _cachedData = new();
     private readonly MapBannerPool _mapBannerPool = new();
-    private ShopTab _currentTab = ShopTab.None;
 
     /// If true, re-runs the map randomization when the shop is closed
     private bool _randomizeMapsOnClose;
@@ -55,6 +51,7 @@ public class ShopManager(IntPtr intPtr) : MonoBehaviour(intPtr)
     public Il2CppReferenceField<MapBanner> mapBannerPrefab;
     public Il2CppReferenceField<PassiveButton> openMapsFolderButton;
     public Il2CppReferenceField<TMP_Text> titleText;
+    public ShopTab CurrentTab { get; private set; } = ShopTab.None;
 
     public static ShopManager? Instance { get; private set; }
 
@@ -64,9 +61,11 @@ public class ShopManager(IntPtr intPtr) : MonoBehaviour(intPtr)
     {
         Instance = this;
         exitButton.Value.OnClick.AddListener((Action)CloseShop);
-        openMapsFolderButton.Value.OnClick.AddListener((Action)OpenMapsFolder);
+        openMapsFolderButton.Value.OnClick.AddListener((Action)MapFileAPI.OpenInExplorer);
 
         _shopTabButtons = GetComponentsInChildren<ShopTabButton>(true);
+
+        gameObject.AddComponent<MapsFolderWatcher>();
 
         ControllerManager.Instance.OpenOverlayMenu(CONTROLLER_OVERLAY_ID, null);
     }
@@ -90,47 +89,6 @@ public class ShopManager(IntPtr intPtr) : MonoBehaviour(intPtr)
     public void OnDestroy()
     {
         ControllerManager.Instance.CloseOverlayMenu(CONTROLLER_OVERLAY_ID);
-    }
-
-    /// <summary>
-    ///     Opens the folder where maps are stored
-    /// </summary>
-    private static void OpenMapsFolder()
-    {
-        if (GameState.IsMobile)
-            OpenMapsFolderMobile();
-        else
-            OpenMapsFolderDesktop();
-    }
-
-    private static void OpenMapsFolderMobile()
-    {
-        var activity = AndroidActivity.GetCurrent();
-
-        // Get the application package name (ex: dev.allofus.starlight)
-        var packageName = activity.GetPackageName();
-        if (string.IsNullOrWhiteSpace(packageName))
-            throw new InvalidOperationException("Couldn't determine the current package name.");
-
-        // Build rootURI based on Starlight's data directory
-        using var rootUri = DocumentsContract.BuildRootUri(
-            $"{packageName}.documents",
-            "star_data");
-
-        // Create intent to open directory
-        using var intent = new Intent("android.intent.action.VIEW");
-        intent.SetData(rootUri);
-        intent.AddFlags(0x00000001); // <-- FLAG_GRANT_READ_URI_PERMISSION
-        activity.StartActivity(intent);
-    }
-
-    private static void OpenMapsFolderDesktop()
-    {
-        Process.Start(new ProcessStartInfo
-        {
-            FileName = MapFileAPI.GetDirectory(),
-            UseShellExecute = true
-        });
     }
 
     /// <summary>
@@ -170,21 +128,33 @@ public class ShopManager(IntPtr intPtr) : MonoBehaviour(intPtr)
         };
 
         // Check if we're already on this tab
-        if (_currentTab == tab)
+        if (CurrentTab == tab)
             return;
-        _currentTab = tab;
+        CurrentTab = tab;
 
         UpdateTabButtonState();
+        RefreshTab();
+    }
+
+    /// <summary>
+    ///     Refreshes the content on the current tab
+    /// </summary>
+    public void RefreshTab()
+    {
         HideAllMaps();
 
         // Check if this tab is cached
-        if (_cachedData.ContainsKey(tab))
+        if (_cachedData.TryGetValue(CurrentTab, out var cachedData))
         {
-            SetMaps(_cachedData[tab]);
+            SetMaps(cachedData);
             return;
         }
 
-        switch (_currentTab)
+        // Save a copy of current tab
+        // (Prevents content change if the tab changes mid-load)
+        var targetTab = CurrentTab;
+
+        switch (CurrentTab)
         {
             case ShopTab.DownloadedMaps:
                 var maps = MapFileAPI.GetAllMetadata()
@@ -201,20 +171,20 @@ public class ShopManager(IntPtr intPtr) : MonoBehaviour(intPtr)
             case ShopTab.FeaturedWorkshopMaps:
                 LoadingOverlay.Show();
                 LevelImposterAPI.GetFeatured(
-                    m => OnWorkshopLoaded(m, tab),
-                    error => OnError(tab, error));
+                    m => OnWorkshopLoaded(m, targetTab),
+                    error => OnError(targetTab, error));
                 break;
             case ShopTab.TopWorkshopMaps:
                 LoadingOverlay.Show();
                 LevelImposterAPI.GetTop(
-                    m => OnWorkshopLoaded(m, tab),
-                    error => OnError(tab, error));
+                    m => OnWorkshopLoaded(m, targetTab),
+                    error => OnError(targetTab, error));
                 break;
             case ShopTab.RecentWorkshopMaps:
                 LoadingOverlay.Show();
                 LevelImposterAPI.GetRecent(
-                    m => OnWorkshopLoaded(m, tab),
-                    error => OnError(tab, error));
+                    m => OnWorkshopLoaded(m, targetTab),
+                    error => OnError(targetTab, error));
                 break;
             case ShopTab.None:
                 break;
@@ -230,14 +200,14 @@ public class ShopManager(IntPtr intPtr) : MonoBehaviour(intPtr)
         _cachedData[targetTab] = maps;
 
         // Check if the user is still on this tab
-        if (_currentTab == targetTab)
+        if (CurrentTab == targetTab)
             SetMaps(maps);
     }
 
     [HideFromIl2Cpp]
     private void OnError(ShopTab tab, string message)
     {
-        if (_currentTab != tab)
+        if (CurrentTab != tab)
             return;
 
         LoadingOverlay.ShowError("The impostor sabotaged comms!", message);
@@ -253,7 +223,7 @@ public class ShopManager(IntPtr intPtr) : MonoBehaviour(intPtr)
             throw new InvalidOperationException("Shop tab buttons not initialized");
 
         foreach (var tabButton in _shopTabButtons)
-            tabButton.SetTabSelected(tabButton.TabType == _currentTab);
+            tabButton.SetTabSelected(tabButton.TabType == CurrentTab);
     }
 
     private void HideAllMaps()

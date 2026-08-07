@@ -35,6 +35,14 @@ public static class MapFileAPI
     }
 
     /// <summary>
+    ///     Attempts to open the LevelImposter maps folder in whatever file explorer the device has.
+    /// </summary>
+    public static void OpenInExplorer()
+    {
+        FileAPI.OpenInExplorer();
+    }
+
+    /// <summary>
     ///     Lists all map file IDs that are located in the LevelImposter folder.
     /// </summary>
     /// <returns>Array of map file IDs that are located in the LevelImpsoter folder.</returns>

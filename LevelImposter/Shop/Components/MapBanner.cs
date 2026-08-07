@@ -12,6 +12,7 @@ using LevelImposter.FileIO.Cache;
 using LevelImposter.FileIO.DataStores;
 using LevelImposter.Lobby.Builders;
 using LevelImposter.Lobby.Sync;
+using LevelImposter.Shop.Utils;
 using TMPro;
 using UnityEngine;
 
@@ -115,6 +116,7 @@ public class MapBanner(IntPtr intPtr) : MonoBehaviour(intPtr)
         if (_currentMap == null)
             throw new InvalidOperationException("Current map is null");
 
+        MapsFolderWatcher.IgnoreChanges();
         MapFileAPI.Delete(_currentMap.id);
         UpdateButtonState();
         ShopManager.Instance?.RandomizeMapOnClose();
@@ -143,6 +145,7 @@ public class MapBanner(IntPtr intPtr) : MonoBehaviour(intPtr)
     [HideFromIl2Cpp]
     private void OnMapDownloaded(FileStore _)
     {
+        MapsFolderWatcher.IgnoreChanges();
         ShopManager.Instance?.LoadingOverlay.Hide();
         ShopManager.Instance?.RandomizeMapOnClose();
         UpdateButtonState();
@@ -271,14 +274,25 @@ public class MapBanner(IntPtr intPtr) : MonoBehaviour(intPtr)
         SetThumbnail(_defaultThumbnail);
 
         // Load thumbnail in the background
+        var mapID = _currentMap.id;
         if (_currentMap.HasThumbnail)
-            ThumbnailCache.Get(_currentMap.id, SetThumbnail);
+            ThumbnailCache.Get(_currentMap.id, sprite => OnThumbnailLoad(sprite, mapID));
+    }
+
+    private void OnThumbnailLoad(Sprite? sprite, string mapID)
+    {
+        // Check if the map changed in the time it took for the thumbnail load
+        if (mapID != _currentMap?.id)
+            return;
+
+        SetThumbnail(sprite);
     }
 
     private void SetThumbnail(Sprite? sprite)
     {
+        // Check if this is destroyed
         if (this == null)
-            return; // <-- User tabbed away before thumbnail loaded
+            return;
 
         thumbnailRenderer.Value.sprite = sprite ?? _defaultThumbnail;
     }
