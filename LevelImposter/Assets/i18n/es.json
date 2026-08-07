@@ -1,6 +1,7 @@
 {
   "main_menu.maps": "Mapas",
   "main_menu.update": "Actualizar",
+  "main_menu.update.close": "Cerrar",
   "main_menu.update.updating": "Actualizando...",
   "main_menu.update_success.title": "¡Actualización completada!",
   "main_menu.update_success.description": "Por favor, reinicia tu juego.",

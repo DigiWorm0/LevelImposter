@@ -79,6 +79,7 @@ public partial class LevelImposter : BasePlugin
 
         ClassInjector.RegisterTypeInIl2Cpp<PrefabDB>();
 
+        ClassInjector.RegisterTypeInIl2Cpp<ModUpdater>();
         ClassInjector.RegisterTypeInIl2Cpp<Shop.Components.ProgressBar>();
         ClassInjector.RegisterTypeInIl2Cpp<ConnectionAnimation>();
         ClassInjector.RegisterTypeInIl2Cpp<FloatingAnimation>();

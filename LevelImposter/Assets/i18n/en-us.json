@@ -1,6 +1,7 @@
 {
   "main_menu.maps": "Maps",
   "main_menu.update": "Update",
+  "main_menu.update.close": "Close",
   "main_menu.update.updating": "Updating...",
   "main_menu.update_success.title": "Update complete!",
   "main_menu.update_success.description": "Please restart your game.",

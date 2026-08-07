@@ -2,7 +2,6 @@
     <PropertyGroup>
         <Title>LevelImposter</Title>
         <VersionPrefix>0.21.3</VersionPrefix>
-        <VersionSuffix>dev6</VersionSuffix>
 
         <Description>Custom Among Us Mapping Studio</Description>
         <Authors>Digi</Authors>

@@ -37,6 +37,10 @@ internal enum Layer
     ShortObjects,
     IlluminatedBlocking,
     Ghost,
+
+    /// <summary>
+    ///     Used by util-binocularscollider
+    /// </summary>
     UICollider,
     DrawShadows,
     KeyMapper,
