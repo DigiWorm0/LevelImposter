@@ -2,6 +2,7 @@ using HarmonyLib;
 using Il2CppSystem;
 using LevelImposter.Core.Components;
 using LevelImposter.Core.Models;
+using LevelImposter.Core.Translations;
 using LevelImposter.Core.Utils;
 using ObjList = Il2CppInterop.Runtime.InteropTypes.Arrays.Il2CppReferenceArray<Il2CppSystem.Object>;
 
@@ -55,11 +56,11 @@ public static class StringRenamePatch
         {
             // Hide map name in lobby
             if (GameConfiguration.HideMapName && GameState.IsInLobby)
-                __result = LIConstants.MAP_NAME;
+                __result = Translation.Get("lobby.random_custom_map");
 
             // Otherwise, get the current map name
             else
-                __result = GameConfiguration.CurrentMap?.name ?? LIConstants.MAP_NAME;
+                __result = GameState.MapName;
             return false;
         }
 

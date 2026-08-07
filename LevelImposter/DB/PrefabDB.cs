@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using BepInEx.Unity.IL2CPP.Utils.Collections;
 using Il2CppInterop.Runtime.Attributes;
 using LevelImposter.Core.Models;
+using LevelImposter.Core.Translations;
 using LevelImposter.Core.Utils;
 using LevelImposter.DB.Models;
 using LevelImposter.DB.Sub;
@@ -139,7 +140,7 @@ internal class PrefabDB : MonoBehaviour
                 shipPrefabs.Add(miraPrefab); // TODO: Use Own Ship AssetReference
             while (Constants.MapNames.Count <= mapCount)
                 Constants.MapNames = Constants.MapNames.Add(
-                    Constants.MapNames.Count == mapCount ? LIConstants.MAP_NAME : "");
+                    Constants.MapNames.Count == mapCount ? Translation.Get("lobby.random_custom_map") : "");
 
             // Deserialize AssetDB
             _serializedAssetDB = PackagedResources.LoadJson<SerializedAssetDB>("SerializedAssetDB.json");

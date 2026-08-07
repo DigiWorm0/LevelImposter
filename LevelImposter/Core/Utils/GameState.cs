@@ -1,7 +1,6 @@
 ﻿using LevelImposter.AssetLoader;
-using LevelImposter.Core.Models;
+using LevelImposter.Core.Translations;
 using LevelImposter.Lobby.Components;
-using LevelImposter.Shop.Components;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -13,15 +12,13 @@ public static class GameState
     public static bool IsMobile => Application.isMobilePlatform;
 
     // Map
-    public static string MapName => GameConfiguration.CurrentMap?.name ?? LIConstants.MAP_NAME;
+    public static string MapName => GameConfiguration.CurrentMap?.name ?? Translation.Get("lobby.random_custom_map");
 
     // Scenes
     public static bool IsInFreeplay => AmongUsClient.Instance?.NetworkMode == NetworkModes.FreePlay;
     public static bool IsInLobby => LobbyBehaviour.Instance != null || LILobbyBehaviour.IsInstance();
     public static bool IsInMainMenu => SceneManager.GetActiveScene().name == "MainMenu";
-    public static bool IsInShop => ShopManager.Instance != null;
     public static bool IsInMeeting => MeetingHud.Instance != null;
-    public static bool IsPlayerLoaded => PlayerControl.LocalPlayer != null;
 
     // Network
     public static bool IsHost => AmongUsClient.Instance?.AmHost ?? false;
