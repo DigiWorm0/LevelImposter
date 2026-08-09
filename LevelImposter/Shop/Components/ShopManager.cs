@@ -8,6 +8,7 @@ using LevelImposter.Core.Translations;
 using LevelImposter.Core.Utils;
 using LevelImposter.DB;
 using LevelImposter.FileIO.API;
+using LevelImposter.FileIO.Serialization;
 using LevelImposter.Lobby.Sync;
 using LevelImposter.Networking.API;
 using LevelImposter.Shop.Transitions;
@@ -112,7 +113,6 @@ public class ShopManager(IntPtr intPtr) : MonoBehaviour(intPtr)
     ///     Loads the specified tab in the shop
     /// </summary>
     /// <param name="tab">The tab to load</param>
-    /// <param name="titleSprite">Optional title sprite to set</param>
     public void SetTab(ShopTab tab)
     {
         // Set Title Sprite
@@ -141,6 +141,7 @@ public class ShopManager(IntPtr intPtr) : MonoBehaviour(intPtr)
     /// </summary>
     public void RefreshTab()
     {
+        // Hide all existing map banners
         HideAllMaps();
 
         // Check if this tab is cached
@@ -157,6 +158,7 @@ public class ShopManager(IntPtr intPtr) : MonoBehaviour(intPtr)
         switch (CurrentTab)
         {
             case ShopTab.DownloadedMaps:
+                LIDeserializerLegacy.ConvertAllLegacyMaps();
                 var maps = MapFileAPI.GetAllMetadata()
                     .Where(m => m.mapTarget != MapTarget.Lobby)
                     .ToArray();

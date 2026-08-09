@@ -4,6 +4,7 @@ using System.Text.Json;
 using Il2CppInterop.Runtime.InteropTypes.Arrays;
 using LevelImposter.Core.Models;
 using LevelImposter.Core.Utils;
+using LevelImposter.FileIO.API;
 using LevelImposter.FileIO.DataBlock;
 
 namespace LevelImposter.FileIO.Serialization;
@@ -50,12 +51,65 @@ public static class LIDeserializerLegacy
         return assetID;
     }
 
-#pragma warning disable CS0618 // Handles legacy properties
     /// <summary>
-    ///     Updates legacy map data to a LIM2 data
+    ///     Converts a legacy map file to a LIM2 file
     /// </summary>
-    /// <param name="map">Legacy Map Data</param>
-    public static void MigrateMap(LIMap map)
+    /// <param name="dataStream">The stream of map data to read from</param>
+    /// <param name="filePath">
+    ///     Optional file path to the map file.
+    ///     If provided, this will replace the legacy map file with a new LIM2 file.
+    /// </param>
+    /// <exception cref="FileNotFoundException">If the map file wasn't found</exception>
+    /// <exception cref="FileLoadException">If the new map already exists</exception>
+    public static LIMap Deserialize(
+        Stream dataStream,
+        string? filePath = null)
+    {
+        LILogger.Info($"Converting legacy map file @ {filePath}");
+
+        // Read legacy file
+        var mapFile = JsonSerializer.Deserialize<LIMap>(dataStream);
+        if (mapFile == null)
+            throw new FileLoadException($"Could not deserialize legacy map file @ {filePath}");
+
+        // Update map
+        MigrateMapData(mapFile);
+        if (filePath != null)
+        {
+            dataStream.Close();
+            MigrateMapFile(mapFile, filePath);
+        }
+
+        return mapFile;
+    }
+
+    /// <summary>
+    ///     Converts any LIM1 map files in the map directory to LIM2.
+    ///     This runs synchronously and may take a while if there are many legacy maps to convert.
+    /// </summary>
+    public static void ConvertAllLegacyMaps()
+    {
+        var legacyFilePaths = Directory.GetFiles(MapFileAPI.GetDirectory(), "*.lim");
+        foreach (var path in legacyFilePaths)
+            try
+            {
+                using var fileStream = File.OpenRead(path);
+                Deserialize(fileStream, path); // <-- Deserialize will automatically migrate map file
+            }
+            catch (Exception e)
+            {
+                LILogger.Warn($"Failed to convert legacy map file @ {path}: {e.Message}");
+            }
+    }
+
+    private static byte[] ParseBase64(string base64)
+    {
+        var sub64 = base64.Substring(base64.IndexOf(",", StringComparison.Ordinal) + 1);
+        return Convert.FromBase64String(sub64);
+    }
+
+#pragma warning disable CS0618 // Handles legacy properties
+    public static void MigrateMapData(LIMap map)
     {
         if (!map.IsLegacy)
             return;
@@ -115,61 +169,25 @@ public static class LIDeserializerLegacy
             // TODO: Search for duplicate entries
         }
     }
-#pragma warning restore CS0618
 
-    /// <summary>
-    ///     Converts a legacy map file to a LIM2 file
-    /// </summary>
-    /// <param name="dataStream">The stream of map data to read from</param>
-    /// <param name="filePath">
-    ///     Optional file path to the map file.
-    ///     If provided, this will replace the legacy map file with a new LIM2 file.
-    /// </param>
-    /// <exception cref="FileNotFoundException">If the map file wasn't found</exception>
-    /// <exception cref="FileLoadException">If the new map already exists</exception>
-    public static LIMap Deserialize(
-        Stream dataStream,
-        string? filePath = null)
+    private static void MigrateMapFile(LIMap mapData, string filePath)
     {
-        // Get paths
-        var legacyPath = filePath;
-        var newPath = Path.ChangeExtension(filePath, ".lim2");
-        LILogger.Info($"Converting legacy map file @ {filePath} ({newPath})");
-
-        // Read legacy file
-        var mapFile = JsonSerializer.Deserialize<LIMap>(dataStream);
-        if (mapFile == null)
-            throw new FileLoadException($"Could not deserialize legacy map file @ {filePath}");
-
-        // Update map
-        MigrateMap(mapFile);
-
         // Legacy >>> .bak
         var backupPath = $"{filePath}.bak";
         var index = 0;
         while (File.Exists(backupPath))
             backupPath = $"{filePath}.bak.{index++}";
 
-        dataStream.Close();
-        if (File.Exists(legacyPath))
-            File.Move(legacyPath, backupPath);
+        if (File.Exists(filePath))
+            File.Move(filePath, backupPath);
 
         // Updated >>> .lim2
+        var newPath = Path.ChangeExtension(filePath, ".lim2");
         if (File.Exists(newPath))
             File.Delete(newPath);
 
-        if (newPath != null)
-        {
-            using var outputFileStream = File.Create(newPath);
-            LISerializer.SerializeMap(mapFile, outputFileStream);
-        }
-
-        return mapFile;
+        using var outputFileStream = File.Create(newPath);
+        LISerializer.SerializeMap(mapData, outputFileStream);
     }
-
-    private static byte[] ParseBase64(string base64)
-    {
-        var sub64 = base64.Substring(base64.IndexOf(",", StringComparison.Ordinal) + 1);
-        return Convert.FromBase64String(sub64);
-    }
+#pragma warning restore CS0618
 }
