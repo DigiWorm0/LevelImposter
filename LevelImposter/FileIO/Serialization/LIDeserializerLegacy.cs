@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text.Json;
 using Il2CppInterop.Runtime.InteropTypes.Arrays;
 using LevelImposter.Core.Models;
@@ -14,6 +16,18 @@ namespace LevelImposter.FileIO.Serialization;
 /// </summary>
 public static class LIDeserializerLegacy
 {
+    private static readonly Dictionary<string, string> _legacySabToNewButton = new()
+    {
+        { "sab-reactorleft", "sab-btnreactor" },
+        // {"sab-reactorright", "sab-btnreactor"}, // <-- Redundant
+        { "sab-comms", "sab-btncomms" },
+        { "sab-doorv", "sab-btndoors" },
+        { "sab-doorh", "sab-btndoors" },
+        { "sab-oxygen1", "sab-btnoxygen" },
+        // {"sab-oxygen2", "sab-btnoxygen"}, // <-- Redundant
+        { "sab-electric", "sab-btnlights" }
+    };
+
     /// <summary>
     ///     Compares two byte arrays (Il2CppStructArray<byte>)
     /// </summary>
@@ -109,7 +123,7 @@ public static class LIDeserializerLegacy
     }
 
 #pragma warning disable CS0618 // Handles legacy properties
-    public static void MigrateMapData(LIMap map)
+    private static void MigrateMapData(LIMap map)
     {
         if (!map.IsLegacy)
             return;
@@ -165,6 +179,33 @@ public static class LIDeserializerLegacy
 
                     sound.data = null;
                 }
+
+            // Add Sabotage Buttons
+            if (_legacySabToNewButton.TryGetValue(element.type, out var newButtonType))
+            {
+                var mapContainsButton = map.elements.Any(e => e.type == newButtonType);
+                if (mapContainsButton)
+                    continue;
+
+                var elements = map.elements.ToList();
+                elements.Add(new LIElement
+                {
+                    id = Guid.NewGuid(),
+                    name = $"{element.name}_btn",
+                    type = newButtonType,
+                    x = element.x,
+                    y = element.y,
+                    z = 0,
+                    xScale = 1,
+                    yScale = 1,
+                    rotation = 0,
+                    properties = new LIProperties
+                    {
+                        parent = element.properties.parent
+                    }
+                });
+                map.elements = elements.ToArray();
+            }
 
             // TODO: Search for duplicate entries
         }
