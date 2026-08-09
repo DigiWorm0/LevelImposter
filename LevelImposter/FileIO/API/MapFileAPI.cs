@@ -124,7 +124,8 @@ public static class MapFileAPI
     {
         LILogger.Info($"Deleting [{mapID}] from filesystem");
         var mapPath = GetPath(mapID);
-        File.Delete(mapPath);
+        if (File.Exists(mapPath))
+            File.Delete(mapPath);
     }
 
     /// <summary>
@@ -149,6 +150,7 @@ public static class MapFileAPI
         Action<FileStore> onSuccess,
         Action<string>? onError = null)
     {
+        Init();
         LevelImposterAPI.DownloadMap(
             id,
             GetPath(id.ToString()),

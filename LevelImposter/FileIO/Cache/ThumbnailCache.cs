@@ -88,6 +88,7 @@ public static class ThumbnailCache
     private static void DownloadThumbnail(string mapID, Action<FileStore> callback)
     {
         LILogger.Info($"Downloading thumbnail for [{mapID}]");
+        FileCache.MakeDirectoryIfNotExists();
         LevelImposterAPI.DownloadThumbnail(mapID, GetPath(mapID), callback);
     }
 }

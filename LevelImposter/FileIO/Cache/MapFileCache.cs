@@ -80,6 +80,7 @@ public static class MapFileCache
         Action<FileStore> onSuccess,
         Action<string>? onError = null)
     {
+        FileCache.MakeDirectoryIfNotExists();
         LevelImposterAPI.DownloadMap(
             id,
             GetPath(id.ToString()),

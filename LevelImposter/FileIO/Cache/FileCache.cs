@@ -26,7 +26,7 @@ public static class FileCache
     /// <summary>
     ///     Makes the cache directory if it does not already exist
     /// </summary>
-    private static void MakeDirectoryIfNotExists()
+    public static void MakeDirectoryIfNotExists()
     {
         var directory = GetDirectory();
         if (Directory.Exists(directory))
