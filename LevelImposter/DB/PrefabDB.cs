@@ -158,7 +158,7 @@ internal class PrefabDB : MonoBehaviour
 
             // Ship References
             Status = "Loading ship references";
-            LILogger.Info("Loading AssetDB...");
+            LILogger.Info("Loading PrefabDB...");
             for (var i = 0; i < shipPrefabs.Count; i++)
             {
                 // Load AssetReference
