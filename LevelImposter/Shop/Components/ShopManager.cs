@@ -46,12 +46,14 @@ public class ShopManager(IntPtr intPtr) : MonoBehaviour(intPtr)
     private bool _randomizeMapsOnClose;
 
     private ShopTabButton[]? _shopTabButtons;
-    public Il2CppReferenceField<PassiveButton> exitButton;
-    public Il2CppReferenceField<LoadingOverlay> loadingOverlay;
-    public Il2CppReferenceField<GameObjectGrid> mapBannerGrid;
-    public Il2CppReferenceField<MapBanner> mapBannerPrefab;
-    public Il2CppReferenceField<PassiveButton> openMapsFolderButton;
-    public Il2CppReferenceField<TMP_Text> titleText;
+
+    public Il2CppReferenceField<PassiveButton> exitButton = null!;
+    public Il2CppReferenceField<LoadingOverlay> loadingOverlay = null!;
+    public Il2CppReferenceField<GameObjectGrid> mapBannerGrid = null!;
+    public Il2CppReferenceField<MapBanner> mapBannerPrefab = null!;
+    public Il2CppReferenceField<PassiveButton> openMapsFolderButton = null!;
+    public Il2CppReferenceField<TMP_Text> titleText = null!;
+
     public ShopTab CurrentTab { get; private set; } = ShopTab.None;
 
     public static ShopManager? Instance { get; private set; }

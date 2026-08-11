@@ -5,8 +5,8 @@ namespace LevelImposter.Core.Models;
 [Serializable]
 public class LIMinigameSprite
 {
-    public Guid id { get; set; }
-    public string type { get; set; }
+    public Guid id { get; set; } = Guid.NewGuid();
+    public string type { get; set; } = "";
     public Guid? spriteID { get; set; }
 
     // Legacy

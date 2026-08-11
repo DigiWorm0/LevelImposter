@@ -74,7 +74,7 @@ internal class PlatformBuilder : IElemBuilder
         Platform = movingPlatform;
 
         // ShipStatus
-        shipStatus.Systems.Add(SystemTypes.GapRoom, movingPlatform.Cast<ISystemType>());
+        shipStatus?.Systems.Add(SystemTypes.GapRoom, movingPlatform.Cast<ISystemType>());
 
         // Sound
         var moveSound = elem.properties.sounds.FindSound(MOVE_SOUND_NAME);

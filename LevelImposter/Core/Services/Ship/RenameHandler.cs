@@ -50,64 +50,39 @@ public class RenameHandler
     }
 
     /// <summary>
-    ///     Gets a SystemType to rename
+    ///     Attempts to get a renamed string from the database.
     /// </summary>
-    /// <param name="system">System to rename</param>
-    /// <returns>String to replace SystemType with</returns>
-    public string? Get(SystemTypes system)
+    /// <param name="stringNames">Value to lookup</param>
+    /// <param name="renamedString">The renamed string value</param>
+    /// <returns>True if the value was found, false otherwise</returns>
+    public bool TryGet(StringNames stringNames, out string? renamedString)
     {
-        return _systemRenames.GetValueOrDefault(system);
+        renamedString = null;
+        return _stringRenames.TryGetValue(stringNames, out renamedString);
     }
 
     /// <summary>
-    ///     Gets a TaskType to rename
+    ///     Attempts to get a renamed string from the database.
     /// </summary>
-    /// <param name="task">Task to rename</param>
-    /// <returns>String to replace task with</returns>
-    public string? Get(TaskTypes task)
+    /// <param name="stringNames">Value to lookup</param>
+    /// <param name="renamedString">The renamed string value</param>
+    /// <returns>True if the value was found, false otherwise</returns>
+    public bool TryGet(TaskTypes stringNames, out string? renamedString)
     {
-        return _taskRenames.GetValueOrDefault(task);
+        renamedString = null;
+        return _taskRenames.TryGetValue(stringNames, out renamedString);
     }
 
     /// <summary>
-    ///     Gets a StringName to rename
+    ///     Attempts to get a renamed string from the database.
     /// </summary>
-    /// <param name="stringNames">StringNames to rename</param>
-    /// <returns>String to replace text with</returns>
-    public string? Get(StringNames stringNames)
+    /// <param name="stringNames">Value to lookup</param>
+    /// <param name="renamedString">The renamed string value</param>
+    /// <returns>True if the value was found, false otherwise</returns>
+    public bool TryGet(SystemTypes stringNames, out string? renamedString)
     {
-        return _stringRenames.GetValueOrDefault(stringNames);
-    }
-
-
-    /// <summary>
-    ///     Checks if the system should be renamed
-    /// </summary>
-    /// <param name="system">System to rename</param>
-    /// <returns>True iff the system should be renamed</returns>
-    public bool Contains(SystemTypes system)
-    {
-        return _systemRenames.ContainsKey(system);
-    }
-
-    /// <summary>
-    ///     Checks if the task should be renamed
-    /// </summary>
-    /// <param name="task">Task to rename</param>
-    /// <returns>True iff the task should be renamed</returns>
-    public bool Contains(TaskTypes task)
-    {
-        return _taskRenames.ContainsKey(task);
-    }
-
-    /// <summary>
-    ///     Checks if the task should be renamed
-    /// </summary>
-    /// <param name="stringName">StringNames to rename</param>
-    /// <returns>True iff the task should be renamed</returns>
-    public bool Contains(StringNames stringName)
-    {
-        return _stringRenames.ContainsKey(stringName);
+        renamedString = null;
+        return _systemRenames.TryGetValue(stringNames, out renamedString);
     }
 
     /// <summary>

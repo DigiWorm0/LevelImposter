@@ -8,9 +8,9 @@ public class LIMap : LIMetadata
 {
     // LIM2
     [JsonIgnore] public const int LIM_VERSION = 3;
-    public LIElement[] elements { get; set; }
-    public LIMapProperties properties { get; set; }
-    public LISpriteAtlas[] spriteAtlases { get; set; }
+    public LIElement[] elements { get; set; } = [];
+    public LIMapProperties properties { get; set; } = new();
+    public LISpriteAtlas[] spriteAtlases { get; set; } = [];
 
     [JsonIgnore]
     public bool IsLegacy

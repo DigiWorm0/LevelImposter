@@ -8,10 +8,10 @@ namespace LevelImposter.Shop.Components;
 /// </summary>
 public class Spinner(IntPtr intPtr) : MonoBehaviour(intPtr)
 {
-    private readonly float _speed = -90f;
+    private const float SPINNER_SPEED = -90f;
 
     public void Update()
     {
-        transform.Rotate(0, 0, _speed * Time.deltaTime);
+        transform.Rotate(0, 0, SPINNER_SPEED * Time.deltaTime);
     }
 }

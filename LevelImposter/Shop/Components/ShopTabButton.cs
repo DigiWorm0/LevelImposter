@@ -10,7 +10,7 @@ namespace LevelImposter.Shop.Components;
 public class ShopTabButton(IntPtr ptr) : MonoBehaviour(ptr)
 {
     private PassiveButton? _passiveButton;
-    public Il2CppValueField<int> tab;
+    public Il2CppValueField<int> tab = null!;
 
     public ShopTab TabType => (ShopTab)tab.Value;
 

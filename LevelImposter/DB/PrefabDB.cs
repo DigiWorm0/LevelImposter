@@ -108,7 +108,7 @@ internal class PrefabDB : MonoBehaviour
     /// <returns>TaskLength or TaskLength.Short if task couldn't be found</returns>
     public static TaskLength GetTaskLength(string id)
     {
-        var serializedTask = Instance?._serializedAssetDB?.TaskDB.Find(elem => elem.ID == id);
+        var serializedTask = Instance?._serializedAssetDB?.TaskDB?.Find(elem => elem.ID == id);
         return serializedTask?.TaskType ?? TaskLength.Short;
     }
 

@@ -42,9 +42,11 @@ public class LIExileController(IntPtr intPtr) : ExileController(intPtr)
         exileVisorPosition = new Vector3(-0.148f, 0.647f, -0.002f);
 
         // Get Element Data
-        var element = MapObjectDB.Get(EjectBuilder.EjectController?.gameObject);
-        if (element == null)
-            throw new Exception("Failed to get LIElementData from EjectController");
+        var sourceGameObject = EjectBuilder.EjectController?.gameObject ??
+                               throw new Exception("Failed to get EjectBuilder.EjectController");
+
+        var element = MapObjectDB.Get(sourceGameObject) ??
+                      throw new Exception("Failed to get LIElementData from EjectController");
 
         // Get Element Properties
         _x = element.x;

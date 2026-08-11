@@ -16,11 +16,15 @@ public static class SystemRenamePatch
 {
     public static bool Prefix([HarmonyArgument(0)] SystemTypes systemType, ref string __result)
     {
-        if (!LIBaseShip.Instance?.Renames.Contains(systemType) ?? true)
-            return true;
+        // Handle Normal Cases
+        if (LIBaseShip.Instance?.Renames.TryGet(systemType, out var renamedString) ?? false)
+        {
+            // Get the string from the database
+            __result = renamedString ?? __result;
+            return false;
+        }
 
-        __result = LIBaseShip.Instance.Renames.Get(systemType) ?? __result;
-        return false;
+        return true;
     }
 }
 
@@ -32,11 +36,15 @@ public static class TaskRenamePatch
 {
     public static bool Prefix([HarmonyArgument(0)] TaskTypes taskType, ref string __result)
     {
-        if (!LIBaseShip.Instance?.Renames.Contains(taskType) ?? true)
-            return true;
+        // Handle Normal Cases
+        if (LIBaseShip.Instance?.Renames.TryGet(taskType, out var renamedString) ?? false)
+        {
+            // Get the string from the database
+            __result = renamedString ?? __result;
+            return false;
+        }
 
-        __result = LIBaseShip.Instance.Renames.Get(taskType) ?? __result;
-        return false;
+        return true;
     }
 }
 
@@ -65,16 +73,19 @@ public static class StringRenamePatch
         }
 
         // Handle Normal Cases
-        if (!LIBaseShip.Instance?.Renames.Contains(stringNames) ?? true)
-            return true;
+        if (LIBaseShip.Instance?.Renames.TryGet(stringNames, out var renamedString) ?? false)
+        {
+            // Apply the string from the database
+            __result = renamedString ?? __result;
 
-        // Get the string from the database
-        __result = LIBaseShip.Instance.Renames.Get(stringNames) ?? __result;
+            // Format parameters into string
+            // MUST BE Il2cppSystem.String.Format (not System.String.Format)
+            __result = String.Format(__result, objList);
 
-        // Format parameters into string
-        // MUST BE Il2cppSystem.String.Format (not System.String.Format)
-        __result = String.Format(__result, objList);
+            // Abort method
+            return false;
+        }
 
-        return false;
+        return true;
     }
 }

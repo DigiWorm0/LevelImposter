@@ -81,22 +81,25 @@ public class ShipTaskBuilder : IElemBuilder
 
         // Rename
         var renameHandler = LIBaseShip.Instance?.Renames;
+        if (renameHandler == null)
+            throw new Exception("Missing rename handler");
+
         if (prefabTask != null && !string.IsNullOrEmpty(elem.properties.description))
         {
-            renameHandler?.Add(prefabTask.TaskType, elem.properties.description);
+            renameHandler.Add(prefabTask.TaskType, elem.properties.description);
 
             // Rename Node Description
             if (isNode || isNodeSwitch)
-                renameHandler?.Add(StringNames.FixWeatherNode, elem.properties.description);
+                renameHandler.Add(StringNames.FixWeatherNode, elem.properties.description);
         }
 
         // Rename Node Room
         if (isNode)
         {
             var controlType = WeatherSwitchGame.ControlNames[console.ConsoleId];
-            var roomName = renameHandler?.Get(systemType);
+            renameHandler.TryGet(systemType, out var roomName);
             if (roomName != null)
-                renameHandler?.Add(controlType, roomName);
+                renameHandler.Add(controlType, roomName);
         }
 
         // Built List

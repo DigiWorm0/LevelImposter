@@ -13,12 +13,12 @@ public class ConnectionAnimation(IntPtr intPtr) : MonoBehaviour(intPtr)
     private readonly List<SpriteRenderer> _dots = [];
 
     private bool _isReverse;
-    public Il2CppValueField<float> animationDuration;
-    public Il2CppValueField<int> dotCount;
-    public Il2CppReferenceField<SpriteRenderer> dotPrefab;
-    public Il2CppValueField<Vector3> endPosition;
-    public Il2CppValueField<float> fadePercentage;
-    public Il2CppValueField<Vector3> startPosition;
+    public Il2CppValueField<float> animationDuration = null!;
+    public Il2CppValueField<int> dotCount = null!;
+    public Il2CppReferenceField<SpriteRenderer> dotPrefab = null!;
+    public Il2CppValueField<Vector3> endPosition = null!;
+    public Il2CppValueField<float> fadePercentage = null!;
+    public Il2CppValueField<Vector3> startPosition = null!;
 
     public void Start()
     {

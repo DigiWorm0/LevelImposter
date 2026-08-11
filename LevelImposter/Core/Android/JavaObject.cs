@@ -55,9 +55,9 @@ public class JavaObject : IDisposable
     ///     A new JavaObject wrapping the result of the method call.
     ///     The JavaObject.BaseObject will be null if the result is void.
     /// </returns>
-    public JavaObject CallReturn(string method, params Il2CppObject[] args)
+    public JavaObject CallReturn(string method, params Il2CppObject?[] args)
     {
-        var argsArray = new Il2CppReferenceArray<Il2CppObject>(args);
+        var argsArray = new Il2CppReferenceArray<Il2CppObject?>(args);
         var outputObject = JavaCallMethods<AndroidJavaObject>.CallReturn?.Invoke(
             BaseObject,
             [method, argsArray]
@@ -70,9 +70,9 @@ public class JavaObject : IDisposable
     /// </summary>
     /// <param name="method">Name of the method</param>
     /// <param name="args">Optional arguments to pass into the method</param>
-    public void Call(string method, params Il2CppObject[] args)
+    public void Call(string method, params Il2CppObject?[] args)
     {
-        var argsArray = new Il2CppReferenceArray<Il2CppObject>(args);
+        var argsArray = new Il2CppReferenceArray<Il2CppObject?>(args);
         JavaCallMethods<AndroidJavaObject>.Call?.Invoke(
             BaseObject,
             [method, argsArray]

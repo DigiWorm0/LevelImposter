@@ -1,8 +1,8 @@
 using HarmonyLib;
-using LevelImposter.Core.Models;
 
 namespace LevelImposter.Core.Patches.Utils;
 
+#if DEBUG
 /// <summary>
 ///     Decreases the minimum player count to start the game.
 /// </summary>
@@ -11,8 +11,7 @@ public static class MinPlayerPatch
 {
     public static void Postfix(GameStartManager __instance)
     {
-        if (LIConstants.IS_DEVELOPMENT_BUILD)
-            __instance.MinPlayers = 1;
+        __instance.MinPlayers = 1;
     }
 }
 
@@ -24,6 +23,7 @@ public static class EndGamePatch
 {
     public static bool Prefix()
     {
-        return !LIConstants.IS_DEVELOPMENT_BUILD;
+        return false;
     }
 }
+#endif

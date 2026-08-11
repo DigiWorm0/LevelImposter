@@ -12,15 +12,14 @@ public class LoadingOverlay(IntPtr intPtr) : MonoBehaviour(intPtr)
     // Among Us themed loading texts
     private const int FUN_TEXT_COUNT = 11;
 
-    public Il2CppReferenceField<PassiveButton> closeButton;
-
     // Serialized fields
-    public Il2CppReferenceField<ConnectionAnimation> connectionAnimation;
-    public Il2CppReferenceField<TextMeshPro> descriptionText;
-    public Il2CppReferenceField<GameObject> errorAnimation;
-    public Il2CppReferenceField<GameObject> fullBackground;
-    public Il2CppReferenceField<ProgressBar> progressBar;
-    public Il2CppReferenceField<TextMeshPro> titleText;
+    public Il2CppReferenceField<PassiveButton> closeButton = null!;
+    public Il2CppReferenceField<ConnectionAnimation> connectionAnimation = null!;
+    public Il2CppReferenceField<TextMeshPro> descriptionText = null!;
+    public Il2CppReferenceField<GameObject> errorAnimation = null!;
+    public Il2CppReferenceField<GameObject> fullBackground = null!;
+    public Il2CppReferenceField<ProgressBar> progressBar = null!;
+    public Il2CppReferenceField<TextMeshPro> titleText = null!;
 
     public bool PreventClose => fullBackground.Value.active && gameObject.activeSelf;
 

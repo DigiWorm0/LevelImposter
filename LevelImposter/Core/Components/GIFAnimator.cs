@@ -22,7 +22,7 @@ public class GIFAnimator(IntPtr intPtr) : LIAnimatorBase(intPtr)
         "util-cam"
     ];
 
-    private Sprite?[] _frameSprites = Array.Empty<Sprite>();
+    private Sprite[] _frameSprites = Array.Empty<Sprite>();
     private GIFFile? _gifFile;
     private string _id = string.Empty;
 

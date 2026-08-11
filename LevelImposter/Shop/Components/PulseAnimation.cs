@@ -7,9 +7,9 @@ namespace LevelImposter.Shop.Components;
 public class PulseAnimation(IntPtr intPtr) : MonoBehaviour(intPtr)
 {
     private SpriteRenderer? _spriteRenderer;
-    public Il2CppValueField<float> maxOpacity;
-    public Il2CppValueField<float> minOpacity;
-    public Il2CppValueField<float> pulseSpeed;
+    public Il2CppValueField<float> maxOpacity = null!;
+    public Il2CppValueField<float> minOpacity = null!;
+    public Il2CppValueField<float> pulseSpeed = null!;
 
     public void Awake()
     {

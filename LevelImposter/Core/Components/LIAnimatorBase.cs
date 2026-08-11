@@ -16,19 +16,19 @@ namespace LevelImposter.Core.Components;
 /// </summary>
 public class LIAnimatorBase(IntPtr intPtr) : MonoBehaviour(intPtr)
 {
-    private static readonly Dictionary<long, LIAnimatorBase> _allAnimators = new();
+    private static readonly Dictionary<long, LIAnimatorBase> AllAnimators = new();
     private static long _nextAnimatorID = 1;
+
     private Coroutine? _animationCoroutine;
     private int _frameIndex;
-
     private bool _loopByDefault;
     private SpriteRenderer? _spriteRenderer;
 
     // This unique ID is maintained on instantiation
-    public Il2CppValueField<long> AnimatorID;
+    public Il2CppValueField<long> AnimatorIDHandle = null!;
 
-    private long _animatorID => AnimatorID.Get();
-    private int _frameCount => GetFrameCount();
+    private long AnimatorID => AnimatorIDHandle.Get();
+    private int FrameCount => GetFrameCount();
 
     public bool IsAnimating { get; private set; }
 
@@ -36,20 +36,20 @@ public class LIAnimatorBase(IntPtr intPtr) : MonoBehaviour(intPtr)
     public void Awake()
     {
         // Check if object was cloned
-        if (_animatorID != 0)
+        if (AnimatorID != 0)
         {
-            var objectExists = _allAnimators.TryGetValue(_animatorID, out var originalObject);
+            var objectExists = AllAnimators.TryGetValue(AnimatorID, out var originalObject);
             if (objectExists && originalObject != null) OnClone(originalObject);
         }
 
         // Update Object ID
-        AnimatorID.Set(_nextAnimatorID++);
-        _allAnimators.Add(_animatorID, this);
+        AnimatorIDHandle.Set(_nextAnimatorID++);
+        AllAnimators.Add(AnimatorID, this);
     }
 
     public void OnDestroy()
     {
-        _allAnimators.Remove(_animatorID);
+        AllAnimators.Remove(AnimatorID);
 
         _spriteRenderer = null;
         _animationCoroutine = null;
@@ -68,7 +68,7 @@ public class LIAnimatorBase(IntPtr intPtr) : MonoBehaviour(intPtr)
         // AutoPlay
         if (!IsReady())
             return;
-        if (_frameCount == 1)
+        if (FrameCount == 1)
             _spriteRenderer.sprite = TryGetFrameSprite(0);
         else
             Play();
@@ -119,7 +119,7 @@ public class LIAnimatorBase(IntPtr intPtr) : MonoBehaviour(intPtr)
         if (!IsReady())
             return;
 
-        _frameIndex = reversed ? _frameCount - 1 : 0;
+        _frameIndex = reversed ? FrameCount - 1 : 0;
         _spriteRenderer.sprite = TryGetFrameSprite(_frameIndex);
         _spriteRenderer.enabled = true;
     }
@@ -142,8 +142,8 @@ public class LIAnimatorBase(IntPtr intPtr) : MonoBehaviour(intPtr)
 
         // Reset frame
         if (reverse && _frameIndex == 0)
-            _frameIndex = _frameCount - 1;
-        else if (!reverse && _frameIndex == _frameCount - 1)
+            _frameIndex = FrameCount - 1;
+        else if (!reverse && _frameIndex == FrameCount - 1)
             _frameIndex = 0;
 
         // Loop
@@ -167,9 +167,9 @@ public class LIAnimatorBase(IntPtr intPtr) : MonoBehaviour(intPtr)
             _frameIndex = reverse ? _frameIndex - 1 : _frameIndex + 1;
 
             // Keep frame in bounds
-            var isOutOfBounds = _frameIndex < 0 || _frameIndex >= _frameCount;
-            if (_frameCount > 0) // <-- Prevent division by zero
-                _frameIndex = (_frameIndex + _frameCount) % _frameCount;
+            var isOutOfBounds = _frameIndex < 0 || _frameIndex >= FrameCount;
+            if (FrameCount > 0) // <-- Prevent division by zero
+                _frameIndex = (_frameIndex + FrameCount) % FrameCount;
 
             // Stop if out of bounds
             if (isOutOfBounds && !repeat)

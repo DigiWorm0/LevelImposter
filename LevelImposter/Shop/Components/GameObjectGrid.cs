@@ -14,9 +14,9 @@ public class GameObjectGrid(IntPtr intPtr) : MonoBehaviour(intPtr)
     private Scroller? _scroller;
 
     // Serialized Fields
-    public Il2CppValueField<int> maxColumns;
-    public Il2CppValueField<float> xSpacing;
-    public Il2CppValueField<float> ySpacing;
+    public Il2CppValueField<int> maxColumns = null!;
+    public Il2CppValueField<float> xSpacing = null!;
+    public Il2CppValueField<float> ySpacing = null!;
 
     public void Awake()
     {

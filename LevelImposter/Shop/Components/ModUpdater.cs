@@ -12,10 +12,10 @@ namespace LevelImposter.Shop.Components;
 
 public class ModUpdater(IntPtr intPtr) : MonoBehaviour(intPtr)
 {
-    public Il2CppReferenceField<PassiveButton> closePopupButton;
-    public Il2CppReferenceField<GenericPopup> popup;
-    public Il2CppReferenceField<PassiveButton> updateButton;
-    public Il2CppReferenceField<TMP_Text> updateButtonVersionText;
+    public Il2CppReferenceField<PassiveButton> closePopupButton = null!;
+    public Il2CppReferenceField<GenericPopup> popup = null!;
+    public Il2CppReferenceField<PassiveButton> updateButton = null!;
+    public Il2CppReferenceField<TMP_Text> updateButtonVersionText = null!;
 
     private void Awake()
     {

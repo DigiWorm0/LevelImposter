@@ -7,8 +7,8 @@ namespace LevelImposter.Shop.Components;
 public class FloatingAnimation(IntPtr intPtr) : MonoBehaviour(intPtr)
 {
     private Vector3 _initialPosition;
-    public Il2CppValueField<float> floatAmplitude;
-    public Il2CppValueField<float> floatSpeed;
+    public Il2CppValueField<float> floatAmplitude = null!;
+    public Il2CppValueField<float> floatSpeed = null!;
 
     public void Start()
     {

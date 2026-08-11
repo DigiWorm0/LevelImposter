@@ -24,9 +24,9 @@ public class JavaClass(string className) : IDisposable
     ///     A new JavaObject wrapping the result of the static method call.
     ///     The JavaObject.BaseObject will be null if the result is void.
     /// </returns>
-    public JavaObject CallStaticReturn(string methodName, params Il2CppObject[] args)
+    public JavaObject CallStaticReturn(string methodName, params Il2CppObject?[] args)
     {
-        var argsArray = new Il2CppReferenceArray<Il2CppObject>(args);
+        var argsArray = new Il2CppReferenceArray<Il2CppObject?>(args);
         var outputObject = JavaCallMethods<AndroidJavaClass>.CallStaticReturn?.Invoke(
             BaseClass,
             [methodName, argsArray]
@@ -40,9 +40,9 @@ public class JavaClass(string className) : IDisposable
     /// </summary>
     /// <param name="methodName">Name of the static method to call</param>
     /// <param name="args">Optional arguments to pass into the static method</param>
-    public void CallStatic(string methodName, params Il2CppObject[] args)
+    public void CallStatic(string methodName, params Il2CppObject?[] args)
     {
-        var argsArray = new Il2CppReferenceArray<Il2CppObject>(args);
+        var argsArray = new Il2CppReferenceArray<Il2CppObject?>(args);
         JavaCallMethods<AndroidJavaClass>.CallStatic?.Invoke(
             BaseClass,
             [methodName, argsArray]

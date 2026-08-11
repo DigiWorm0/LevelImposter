@@ -107,11 +107,13 @@ public class LoadingBar(IntPtr intPtr) : MonoBehaviour(intPtr)
                 var progress = (float)loadedCount / _maxQueueSize;
 
                 // Update UI
+                var currentMap = GameConfiguration.CurrentMap ??
+                                 GameConfiguration.CurrentLobbyMap;
                 Instance?.SetTitle(!GameConfiguration.HideMapName
                     ? Translation.Get(
                         "loading.map_by_author",
-                        GameConfiguration.CurrentMap?.name ?? "???",
-                        GameConfiguration.CurrentMap?.authorName ?? "???")
+                        currentMap?.name ?? "???",
+                        currentMap?.authorName ?? "???")
                     : Translation.Get("loading.loading"));
 
                 Instance?.SetProgress(progress);

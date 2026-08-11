@@ -12,8 +12,8 @@ public class ProgressBar(IntPtr intPtr) : MonoBehaviour(intPtr)
     private float _progress;
 
     // Serialized fields
-    public Il2CppReferenceField<SpriteRenderer> progressBarBackground;
-    public Il2CppReferenceField<SpriteRenderer> progressBarFill;
+    public Il2CppReferenceField<SpriteRenderer> progressBarBackground = null!;
+    public Il2CppReferenceField<SpriteRenderer> progressBarFill = null!;
 
     public void Update()
     {

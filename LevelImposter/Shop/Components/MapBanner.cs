@@ -12,7 +12,6 @@ using LevelImposter.FileIO.Cache;
 using LevelImposter.FileIO.DataStores;
 using LevelImposter.Lobby.Builders;
 using LevelImposter.Lobby.Sync;
-using LevelImposter.Shop.Utils;
 using TMPro;
 using UnityEngine;
 
@@ -23,21 +22,16 @@ public class MapBanner(IntPtr intPtr) : MonoBehaviour(intPtr)
     private LIMetadata? _currentMap;
     private Sprite? _defaultThumbnail;
 
-    public Il2CppReferenceField<TextMeshPro> authorText;
-    public Il2CppReferenceField<TextMeshPro> descriptionText;
-
-    public Il2CppReferenceField<PassiveButton> downloadButton;
-    public Il2CppReferenceField<PassiveButton> externalButton;
-    public Il2CppReferenceField<PassiveButton> playButton;
-
-    public Il2CppReferenceField<PassiveButton> randomButton;
-
-    // Serialized Fields
-    public Il2CppReferenceField<RandomOverlay> randomOverlay;
-    public Il2CppReferenceField<SpriteRenderer> thumbnailRenderer;
-
-    public Il2CppReferenceField<TextMeshPro> titleText;
-    public Il2CppReferenceField<PassiveButton> trashButton;
+    public Il2CppReferenceField<TextMeshPro> authorText = null!;
+    public Il2CppReferenceField<TextMeshPro> descriptionText = null!;
+    public Il2CppReferenceField<PassiveButton> downloadButton = null!;
+    public Il2CppReferenceField<PassiveButton> externalButton = null!;
+    public Il2CppReferenceField<PassiveButton> playButton = null!;
+    public Il2CppReferenceField<PassiveButton> randomButton = null!;
+    public Il2CppReferenceField<RandomOverlay> randomOverlay = null!;
+    public Il2CppReferenceField<SpriteRenderer> thumbnailRenderer = null!;
+    public Il2CppReferenceField<TextMeshPro> titleText = null!;
+    public Il2CppReferenceField<PassiveButton> trashButton = null!;
 
     public void Awake()
     {

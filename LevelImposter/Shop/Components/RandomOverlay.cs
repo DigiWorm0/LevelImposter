@@ -26,15 +26,13 @@ public class RandomOverlay(IntPtr intPtr) : MonoBehaviour(intPtr)
 
     private string? _mapID;
     private float _randomWeight;
-    public Il2CppReferenceField<GameObject> backgroundShadow;
-    public Il2CppReferenceField<PassiveButton> doneButton;
-    public Il2CppReferenceField<PassiveButton> minusButton;
 
-    public Il2CppReferenceField<PassiveButton> plusButton;
-
-    // Serialized Fields
-    public Il2CppReferenceField<TextMeshPro> primaryText;
-    public Il2CppReferenceField<ProgressBar> progressBar;
+    public Il2CppReferenceField<GameObject> backgroundShadow = null!;
+    public Il2CppReferenceField<PassiveButton> doneButton = null!;
+    public Il2CppReferenceField<PassiveButton> minusButton = null!;
+    public Il2CppReferenceField<PassiveButton> plusButton = null!;
+    public Il2CppReferenceField<TextMeshPro> primaryText = null!;
+    public Il2CppReferenceField<ProgressBar> progressBar = null!;
 
     public void Awake()
     {
