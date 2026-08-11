@@ -1,6 +1,3 @@
-> ## ⚠️ WARNING:
-> LevelImposter is still in **early beta**. If you run into any bugs or issues, don\'t hesitate to report them in our [Discord](https://discord.gg/9jJEBQ4qJs).
-
 <p align="center">
   <a href="https://levelimposter.net/">
   <img align="center" src="https://i.imgur.com/EfeQJh4.png">
@@ -57,11 +54,10 @@ Custom Among Us Mapping Studio
 | Mod | Support | Notes |
 |:-:|:-:|:-:|
 | [BetterCrewLink](https://github.com/OhMyGuus/BetterCrewLink) | ✅ | No wall detection |
-| [The Other Roles](https://github.com/TheOtherRolesAU/TheOtherRoles) | ✅ |  |
-| [Town of Us-R](https://github.com/eDonnes124/Town-Of-Us-R) | ✅ |  |
-| [Town of Us Reworked](https://github.com/AlchlcDvl/TownOfUsReworked) | ⚠️ | Mod is in early beta |
+| [The Other Roles](https://github.com/TheOtherRolesAU/TheOtherRoles) | ❌ | Not updated to the latest Among Us |
+| [Town of Us Mira](https://github.com/AU-Avengers/TOU-Mira) | ⚠️ | Not fully tested |
 | [Stellar Roles](https://github.com/Mr-Fluuff/StellarRolesAU) | ✅ |  |
-| [Submerged](https://github.com/SubmergedAmongUs/Submerged) | ⚠️ | Some minor visual bugs |
+| [Submerged](https://github.com/SubmergedAmongUs/Submerged) | ❌ | Not updated to the latest Among Us |
 
 Don\'t see a compatible mod here? Create a [Pull Request](https://github.com/DigiWorm0/LevelImposter/pulls)!
 
@@ -91,8 +87,7 @@ For more information or guides on making your own map, view our [documentation](
 1. Create a fork of the correct repository\
 [Among Us Mod](https://github.com/DigiWorm0/LevelImposter) (DigiWorm0/LevelImposter)\
 [Web Editor](https://github.com/DigiWorm0/LevelImposter-Editor) (DigiWorm0/LevelImposter-Editor)\
-[Main Website](https://github.com/DigiWorm0/LevelImposter-Web) (DigiWorm0/LevelImposter-Web)\
-[Documentation](https://github.com/DigiWorm0/LevelImposter-Docs) (DigiWorm0/LevelImposter-Docs)
+[Main Website](https://github.com/DigiWorm0/LevelImposter-Web) (DigiWorm0/LevelImposter-Web)
 
 2. Create a feature branch
 ```
@@ -114,16 +109,14 @@ git push feature/cool-feature
 ## Credits
 
 ### Contributors
-[Digi#0069](https://github.com/DigiWorm0) - Lead Developer\
-[PAF_huier_cn#8777](https://github.com/MC-AS-Huier) - Simplified Chinese Translation\
-[PalmForest#1404](https://github.com/RealPalmForest) - Russian Translation\
+[Digi](https://github.com/DigiWorm0) - Lead Developer\
+[PAF_huier_cn](https://github.com/MC-AS-Huier) - Simplified Chinese Translation\
+[PalmForest](https://github.com/RealPalmForest) - Russian Translation\
 [miniduikboot](https://github.com/miniduikboot) - Owns/Maintains Modded Servers
 
 ### Dependencies
-[Firebase](https://firebase.google.com/) - API Database and Servers\
 [Reactor](https://docs.reactor.gg/) - Among Us Mod RPCs and Interop\
-[BepInEx](https://github.com/BepInEx/BepInEx) - Unity Modding Framework\
-[ImageSharp](https://github.com/SixLabors/ImageSharp) - External Image Processor
+[BepInEx](https://github.com/BepInEx/BepInEx) - Unity Modding Framework
 
 ### License
 This software is distributed under the GNU GPLv3 License

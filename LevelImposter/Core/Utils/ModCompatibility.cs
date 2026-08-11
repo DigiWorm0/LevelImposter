@@ -6,6 +6,7 @@ public static class ModCompatibility
 {
     public static bool IsVentCompatibilityEnabled { get; private set; }
     public static bool IsLobbyUICompatibilityEnabled { get; private set; }
+    public static bool IsStellarCompatibilityEnabled { get; private set; }
 
     public static void Init()
     {
@@ -14,12 +15,15 @@ public static class ModCompatibility
 
         IsLobbyUICompatibilityEnabled = IsPlugin("auavengers.tou.mira");
 
+        IsStellarCompatibilityEnabled = IsPlugin("me.fluff.stellarroles");
+
         if (IsPlugin("Submerged"))
             LILogger.Warn("LevelImposter detected Submerged installed, currently unsupported");
 
-        LILogger.Info($"Mod Compatibility: " +
-                      $"Vents {IsVentCompatibilityEnabled} " +
-                      $"LobbyUI {IsLobbyUICompatibilityEnabled}");
+        LILogger.Info($"Mod Compatibility:\n" +
+                      $"Vents {IsVentCompatibilityEnabled}\n" +
+                      $"LobbyUI {IsLobbyUICompatibilityEnabled}\n" +
+                      $"Stellar {IsStellarCompatibilityEnabled}");
     }
 
     private static bool IsPlugin(string guid)

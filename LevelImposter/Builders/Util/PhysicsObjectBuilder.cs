@@ -1,7 +1,6 @@
 using LevelImposter.Core.Components;
 using LevelImposter.Core.GarbageCollection;
 using LevelImposter.Core.Models;
-using LevelImposter.Core.Utils;
 using UnityEngine;
 
 namespace LevelImposter.Builders.Util;
@@ -18,13 +17,6 @@ internal class PhysicsObjectBuilder : IElemBuilder
 
         // Disable collision between physics objects & UI
         Physics2D.IgnoreLayerCollision((int)Layer.Physics, (int)Layer.UI);
-
-        // List all enabled layers
-        for (var i = 0; i < 16; i++)
-        {
-            var isCollisionEnabled = !Physics2D.GetIgnoreLayerCollision((int)Layer.Physics, i);
-            LILogger.Info($"Physics on layer {i} ({(Layer)i}) is {(isCollisionEnabled ? "enabled" : "disabled")}");
-        }
     }
 
     public void OnBuild(LIElement elem, GameObject obj)

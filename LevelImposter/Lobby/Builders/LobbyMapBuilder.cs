@@ -90,6 +90,13 @@ public static class LobbyMapBuilder
         // Remove All Children
         while (lobbyBehaviour.transform.childCount > 0)
             Object.DestroyImmediate(lobbyBehaviour.transform.GetChild(0).gameObject);
+
+        // Remove StellarLobby
+        if (ModCompatibility.IsStellarCompatibilityEnabled)
+        {
+            Object.Destroy(GameObject.Find("StellarLobby(Clone)"));
+            Object.Destroy(GameObject.Find("LeftEngine(Clone)"));
+        }
     }
 
     /// <summary>
