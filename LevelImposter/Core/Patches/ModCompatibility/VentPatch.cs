@@ -20,8 +20,7 @@ public static class VentPatch
     {
         if (!LIShipStatus.IsInstance())
             return;
-        if (!Core.Utils.ModCompatibility.IsTOUEnabled && !Core.Utils.ModCompatibility.IsTOREnabled &&
-            !Core.Utils.ModCompatibility.IsReworkedEnabled)
+        if (!Core.Utils.ModCompatibility.IsVentCompatibilityEnabled)
             return;
         if (_ventTotal == ShipStatus.Instance.AllVents.Count)
             return;

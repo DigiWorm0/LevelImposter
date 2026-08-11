@@ -75,6 +75,7 @@ public class ShopManager(IntPtr intPtr) : MonoBehaviour(intPtr)
     {
         _mapBannerPool.Initialize(
             mapBannerPrefab.Value,
+            transform,
             MAP_BANNER_POOL_SIZE);
 
         SetTab(ShopTab.DownloadedMaps);

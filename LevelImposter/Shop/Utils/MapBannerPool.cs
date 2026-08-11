@@ -2,26 +2,32 @@
 using System.Collections;
 using LevelImposter.Shop.Components;
 using Reactor.Utilities;
+using UnityEngine;
 using Object = UnityEngine.Object;
 
 namespace LevelImposter.Shop.Utils;
 
-public class MapBannerPoolItem
+public record MapBannerPoolItem(MapBanner MapBanner)
 {
-    public MapBanner MapBanner;
     public IEnumerator? TransitionCoroutine;
 }
 
 public class MapBannerPool : ObjectPool<MapBannerPoolItem>
 {
+    private Transform? _container;
     private MapBanner? _prefab;
 
     public void Initialize(
         MapBanner prefab,
+        Transform parent,
         int capacity
     )
     {
         _prefab = prefab;
+
+        _container = new GameObject("MapBannerPool").transform;
+        _container.parent = parent;
+
         AppendCapacity(capacity);
     }
 
@@ -46,12 +52,9 @@ public class MapBannerPool : ObjectPool<MapBannerPoolItem>
             throw new NullReferenceException(
                 "MapBannerPool prefab is null. Please set the prefab before initializing the pool.");
 
-        var mapBanner = Object.Instantiate(_prefab);
+        var mapBanner = Object.Instantiate(_prefab, _container);
         mapBanner.gameObject.SetActive(false);
 
-        return new MapBannerPoolItem
-        {
-            MapBanner = mapBanner
-        };
+        return new MapBannerPoolItem(mapBanner);
     }
 }

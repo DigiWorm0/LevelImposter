@@ -4,11 +4,10 @@ using System.IO;
 using BepInEx.Unity.IL2CPP.Utils.Collections;
 using Il2CppInterop.Runtime.Attributes;
 using LevelImposter.FileIO.API;
-using LevelImposter.Shop.Components;
 using Reactor.Utilities;
 using UnityEngine;
 
-namespace LevelImposter.Shop.Utils;
+namespace LevelImposter.Shop.Components;
 
 public class MapsFolderWatcher(IntPtr intPtr) : MonoBehaviour(intPtr)
 {

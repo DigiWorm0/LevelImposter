@@ -21,11 +21,7 @@ using Reactor.Utilities;
 namespace LevelImposter;
 
 [BepInAutoPlugin(ID, "LevelImposter")]
-[BepInDependency(ModCompatibility.REACTOR_ID)]
-[BepInDependency(ModCompatibility.SUBMERGED_GUID, BepInDependency.DependencyFlags.SoftDependency)]
-[BepInDependency(ModCompatibility.TOU_GUID, BepInDependency.DependencyFlags.SoftDependency)]
-[BepInDependency(ModCompatibility.TOR_GUID, BepInDependency.DependencyFlags.SoftDependency)]
-[BepInDependency(ModCompatibility.REW_GUID, BepInDependency.DependencyFlags.SoftDependency)]
+[BepInDependency("gg.reactor.api")]
 [ReactorModFlags(ModFlags.RequireOnAllClients)]
 [BepInProcess("Among Us.exe")]
 public partial class LevelImposter : BasePlugin
@@ -47,10 +43,12 @@ public partial class LevelImposter : BasePlugin
         MapFileAPI.Init();
         ConfigAPI.Load();
         FileCache.Init();
-        ModCompatibility.Init();
         ImStuckService.Init();
         LobbyUIService.Init();
         SpriteBuilder.Init();
+
+        // Load Mod Compatibility
+        IL2CPPChainloader.Instance.Finished += ModCompatibility.Init;
 
         // IUsable Interface
         RegisterTypeOptions usableInterface = new()
@@ -103,7 +101,12 @@ public partial class LevelImposter : BasePlugin
         ClassInjector.RegisterTypeInIl2Cpp<LobbyMapConsole>(usableInterface);
 
         // Reactor Version Patch
-        ReactorCredits.Register("LevelImposter", DisplayVersion, false, ReactorCredits.AlwaysShow);
+        ReactorCredits.Register(
+            "LevelImposter",
+            DisplayVersion,
+            false,
+            ReactorCredits.AlwaysShow
+        );
 
         // Patch Methods
         Harmony.PatchAll();
