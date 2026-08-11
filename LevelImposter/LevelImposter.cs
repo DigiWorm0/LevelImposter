@@ -3,6 +3,7 @@ using BepInEx;
 using BepInEx.Unity.IL2CPP;
 using HarmonyLib;
 using Il2CppInterop.Runtime.Injection;
+using LevelImposter.Builders.Generic;
 using LevelImposter.Core.Components;
 using LevelImposter.Core.Services;
 using LevelImposter.Core.Utils;
@@ -10,6 +11,7 @@ using LevelImposter.DB;
 using LevelImposter.FileIO.API;
 using LevelImposter.FileIO.Cache;
 using LevelImposter.Lobby.Components;
+using LevelImposter.Lobby.Utils;
 using LevelImposter.Shop.Components;
 using LevelImposter.Shop.Utils;
 using Reactor.Networking;
@@ -40,13 +42,15 @@ public partial class LevelImposter : BasePlugin
 
     public override void Load()
     {
-        // Init Subsystems
+        // Init Global Subsystems
         LILogger.Init();
         MapFileAPI.Init();
         ConfigAPI.Load();
         FileCache.Init();
         ModCompatibility.Init();
         ImStuckService.Init();
+        LobbyUIService.Init();
+        SpriteBuilder.Init();
 
         // IUsable Interface
         RegisterTypeOptions usableInterface = new()

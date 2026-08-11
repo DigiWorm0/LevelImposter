@@ -21,6 +21,15 @@ public static class GameConfigurationSync
     public static MapDownloadHelper LobbyMapDownloader { get; } = new();
 
     /// <summary>
+    ///     Cancels any active map downloads.
+    /// </summary>
+    public static void CancelAllDownloads()
+    {
+        GameMapDownloader.CancelDownload();
+        LobbyMapDownloader.CancelDownload();
+    }
+
+    /// <summary>
     ///     Sends the current game configuration (map IDs and settings) to all clients in the lobby.
     /// </summary>
     /// <exception cref="Exception">Thrown if the map IDs are not valid GUIDs.</exception>
@@ -109,7 +118,8 @@ public static class GameConfigurationSync
                 map =>
                 {
                     GameConfiguration.SetLobbyMap(map);
-                    LobbyMapBuilder.Rebuild();
+                    if (GameState.IsInLobby)
+                        LobbyMapBuilder.Rebuild();
                 },
 
                 // Don't allow players to be in the lobby without the active lobby map loaded

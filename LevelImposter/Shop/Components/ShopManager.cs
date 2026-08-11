@@ -89,6 +89,7 @@ public class ShopManager(IntPtr intPtr) : MonoBehaviour(intPtr)
 
     public void OnDestroy()
     {
+        Instance = null;
         ControllerManager.Instance.CloseOverlayMenu(CONTROLLER_OVERLAY_ID);
     }
 

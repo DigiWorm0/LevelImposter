@@ -30,6 +30,7 @@ public class FileDownloader
 
     private Queue<DownloadInfo> DownloadQueue { get; } = new();
     private List<DownloadInfo> ActiveDownloads { get; } = [];
+    private List<DownloadEvents> DownloadSubscribers { get; } = [];
 
     /// <summary>
     ///     Downloads a file asynchronously from the given URL and saves it to the specified file path using dotnet HttpClient.
@@ -46,7 +47,17 @@ public class FileDownloader
         Action<DownloadResult>? onComplete = null,
         Action<string>? onError = null)
     {
-        Instance.AddToQueue(new DownloadInfo(url, filePath, onProgress, onComplete, onError));
+        // Add to queue
+        var download = new DownloadInfo(url, filePath);
+        Instance.AddToQueue(download);
+
+        // Subscribe to events
+        Instance.DownloadSubscribers.Add(new DownloadEvents(
+            download.ID,
+            onProgress,
+            onComplete,
+            onError
+        ));
     }
 
     /// <summary>
@@ -81,6 +92,11 @@ public class FileDownloader
         _consumeQueueCoroutine = null;
     }
 
+    private List<DownloadEvents> GetSubscribers(string id)
+    {
+        return DownloadSubscribers.FindAll(s => s.ID == id);
+    }
+
     private IEnumerator CoDownload(DownloadInfo downloadInfo)
     {
         // Print download info
@@ -89,35 +105,41 @@ public class FileDownloader
 
         // Start the task on a background thread
         var progress = 0f;
-        using var task = DownloadFileAsync(
+        var task = DownloadFileAsync(
             downloadInfo.DownloadURL,
             downloadInfo.OutputFilePath,
-            v => progress = v);
+            v => progress = v); // <-- Do not use "using" - causes issues w/ GC
 
         // Wait for the task to complete
+        List<DownloadEvents> subscribers;
         while (!task.IsCompleted)
         {
             // Report progress
-            downloadInfo.OnProgress?.Invoke(progress);
+            subscribers = GetSubscribers(downloadInfo.ID);
+            subscribers.ForEach(s => s.OnProgress?.Invoke(progress));
             yield return null;
         }
 
+        subscribers = GetSubscribers(downloadInfo.ID);
         if (task.IsFaulted)
         {
             // Check for errors
-            LILogger.Error(
-                $"Error downloading file {downloadInfo.DownloadURL} >> {downloadInfo.OutputFilePath}:\n{task.Exception}");
-            downloadInfo.OnError?.Invoke(task.Exception?.Message ?? "Unknown error");
+            var exception = task.Exception ?? new Exception("Unknown download error");
+            LILogger.Error($"Error downloading file {downloadInfo.DownloadURL} >> {downloadInfo.OutputFilePath}");
+            LILogger.LogException(exception);
+            subscribers.ForEach(s => s.OnError?.Invoke(exception.Message));
         }
         else
         {
             // Log completion
             LILogger.Info($"DONE: {downloadInfo.OutputFilePath}");
-            downloadInfo.OnComplete?.Invoke(task.Result);
+            subscribers.ForEach(s => s.OnComplete?.Invoke(task.Result));
         }
 
         // Remove from active downloads
         ActiveDownloads.Remove(downloadInfo);
+        DownloadSubscribers.RemoveAll(s => s.ID == downloadInfo.ID);
+        task.Dispose();
     }
 
 
@@ -202,12 +224,16 @@ public class FileDownloader
     }
 }
 
+public readonly record struct DownloadEvents(
+    string ID,
+    Action<float>? OnProgress,
+    Action<DownloadResult>? OnComplete,
+    Action<string>? OnError
+);
+
 public readonly record struct DownloadInfo(
     string DownloadURL,
-    string OutputFilePath,
-    Action<float>? OnProgress = null,
-    Action<DownloadResult>? OnComplete = null,
-    Action<string>? OnError = null
+    string OutputFilePath
 ) : IIdentifiable
 {
     // Uniquely identified by output file path to prevent duplicate downloads to the same location

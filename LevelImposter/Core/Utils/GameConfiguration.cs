@@ -1,14 +1,13 @@
 using AmongUs.GameOptions;
-using LevelImposter.Builders.Generic;
 using LevelImposter.Core.GarbageCollection;
 using LevelImposter.Core.Models;
-using LevelImposter.Lobby.Components;
-using LevelImposter.Shop.Components;
 
 namespace LevelImposter.Core.Utils;
 
 public static class GameConfiguration
 {
+    public delegate void MapChangeHandler();
+
     /// <summary>
     ///     The selected map type from the game options (Skeld, Mira, LevelImposter, etc.).
     /// </summary>
@@ -33,6 +32,11 @@ public static class GameConfiguration
     public static bool HideMapName { get; private set; }
 
     /// <summary>
+    ///     Event that is called when the map changes
+    /// </summary>
+    public static event MapChangeHandler? OnMapChange;
+
+    /// <summary>
     ///     Sets the currently active map to the provided map data.
     /// </summary>
     /// <param name="map">LevelImposter map data or null to clear the map</param>
@@ -47,7 +51,9 @@ public static class GameConfiguration
         // Update current map
         CurrentMap = map;
         HideMapName = hideMapName;
-        UpdateLobbyUI();
+
+        // Emit event
+        OnMapChange?.Invoke();
     }
 
     /// <summary>
@@ -77,40 +83,5 @@ public static class GameConfiguration
         GameOptionsManager.Instance.GameHostOptions = GameOptionsManager.Instance.CurrentGameOptions;
         if (syncMapType)
             GameManager.Instance.LogicOptions.SyncOptions();
-    }
-
-    /// <summary>
-    ///     Updates the lobby UI to reflect the current map state
-    /// </summary>
-    /// <param name="sendNotification">If true, sends a notification to the lobby about the map change</param>
-    /// <param name="preloadSprites">If true, preloads all map sprites</param>
-    private static void UpdateLobbyUI(
-        bool sendNotification = true,
-        bool preloadSprites = true)
-    {
-        // Check if we're in the lobby
-        if (!GameState.IsInLobby)
-            return;
-
-        // Update version tag
-        LobbyVersionTag.UpdateText();
-
-        // Preload all sprites
-        if (preloadSprites)
-        {
-            // TODO: FIX ME!
-            SpriteBuilder.PreloadAllMapSprites();
-            LoadingBar.Run();
-        }
-
-        // Send map change message
-        if (CurrentMap != null &&
-            CurrentMapType == MapType.LevelImposter &&
-            sendNotification)
-            DestroyableSingleton<HudManager>.Instance.Notifier.AddSettingsChangeMessage(
-                StringNames.GameMapName,
-                HideMapName ? "Random" : CurrentMap.name,
-                false
-            );
     }
 }

@@ -3,11 +3,11 @@ using System.Linq;
 using LevelImposter.AssetLoader;
 using LevelImposter.AssetLoader.Loadables;
 using LevelImposter.AssetLoader.Loaders;
-using LevelImposter.Core;
 using LevelImposter.Core.Components;
 using LevelImposter.Core.GarbageCollection;
 using LevelImposter.Core.Models;
 using LevelImposter.Core.Utils;
+using LevelImposter.Shop.Components;
 using UnityEngine;
 
 namespace LevelImposter.Builders.Generic;
@@ -197,5 +197,16 @@ public class SpriteBuilder(MapTarget mapTarget = MapTarget.Game) : IElemBuilder
         foreach (var elem in map.elements)
             if (elem.properties.spriteID != null)
                 spriteBuilder.LoadSprite(elem, _ => { });
+
+        // Show Loading Bar UI
+        LoadingBar.Run();
+    }
+
+    /// <summary>
+    ///     Attaches global event listeners
+    /// </summary>
+    public static void Init()
+    {
+        GameConfiguration.OnMapChange += PreloadAllMapSprites;
     }
 }

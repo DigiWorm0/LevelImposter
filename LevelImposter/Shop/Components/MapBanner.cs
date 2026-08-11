@@ -145,6 +145,9 @@ public class MapBanner(IntPtr intPtr) : MonoBehaviour(intPtr)
     [HideFromIl2Cpp]
     private void OnMapDownloaded(FileStore _)
     {
+        if (this == null)
+            return;
+
         MapsFolderWatcher.IgnoreChanges();
         ShopManager.Instance?.LoadingOverlay.Hide();
         ShopManager.Instance?.RandomizeMapOnClose();
@@ -153,8 +156,11 @@ public class MapBanner(IntPtr intPtr) : MonoBehaviour(intPtr)
 
     private void OnMapDownloadProgress(float percent)
     {
+        if (this == null)
+            return;
+
         ShopManager.Instance?.LoadingOverlay.SetText(
-            Translation.Get("shop.downloader.title", _currentMap?.name ?? "map"),
+            Translation.Get("shop.downloader.title", _currentMap?.name ?? "???"),
             $"{Mathf.RoundToInt(percent * 100)}%");
 
         ShopManager.Instance?.LoadingOverlay.SetProgress(percent);
@@ -162,6 +168,9 @@ public class MapBanner(IntPtr intPtr) : MonoBehaviour(intPtr)
 
     private void OnMapDownloadError(string error)
     {
+        if (this == null)
+            return;
+
         ShopManager.Instance?.LoadingOverlay.ShowError(
             Translation.Get("shop.downloader.error"),
             error);
