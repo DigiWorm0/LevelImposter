@@ -30,7 +30,7 @@ public class FileDownloader
 
     private Queue<DownloadInfo> DownloadQueue { get; } = new();
     private List<DownloadInfo> ActiveDownloads { get; } = [];
-    private List<DownloadEvents> DownloadSubscribers { get; } = [];
+    private List<DownloadEvents> ActiveSubscriptions { get; } = [];
 
     /// <summary>
     ///     Downloads a file asynchronously from the given URL and saves it to the specified file path using dotnet HttpClient.
@@ -52,7 +52,7 @@ public class FileDownloader
         Instance.AddToQueue(download);
 
         // Subscribe to events
-        Instance.DownloadSubscribers.Add(new DownloadEvents(
+        Instance.ActiveSubscriptions.Add(new DownloadEvents(
             download.ID,
             onProgress,
             onComplete,
@@ -94,7 +94,7 @@ public class FileDownloader
 
     private List<DownloadEvents> GetSubscribers(string id)
     {
-        return DownloadSubscribers.FindAll(s => s.ID == id);
+        return ActiveSubscriptions.FindAll(s => s.ID == id);
     }
 
     private IEnumerator CoDownload(DownloadInfo downloadInfo)
@@ -138,7 +138,7 @@ public class FileDownloader
 
         // Remove from active downloads
         ActiveDownloads.Remove(downloadInfo);
-        DownloadSubscribers.RemoveAll(s => s.ID == downloadInfo.ID);
+        ActiveSubscriptions.RemoveAll(s => s.ID == downloadInfo.ID);
         task.Dispose();
     }
 
@@ -155,22 +155,6 @@ public class FileDownloader
         Action<float>? onProgress)
     {
         var handler = new HttpClientHandler();
-        handler.ServerCertificateCustomValidationCallback = (request, cert, _, errors) =>
-        {
-            // HACK: Bypass SSL error for LevelImposter API on mobile
-            // This is due to an issue where root certificates are inaccessible at runtime with HttpClient on some mobile platforms
-            if (cert?.Subject == "CN=storage.googleapis.com" &&
-                request.RequestUri?.Host == "storage.googleapis.com" &&
-                GameState.IsMobile)
-                return true;
-
-            if (cert?.Subject == "CN=levelimposter.net" &&
-                request.RequestUri?.Host == "api.levelimposter.net" &&
-                GameState.IsMobile)
-                return true;
-
-            return errors == SslPolicyErrors.None;
-        };
 
         using var httpClient = new HttpClient(handler);
         using var response = await httpClient.GetAsync(url, HttpCompletionOption.ResponseHeadersRead);
