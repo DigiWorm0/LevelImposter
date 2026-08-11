@@ -5,14 +5,21 @@ namespace LevelImposter.Core.Utils;
 public static class ModCompatibility
 {
     public static bool IsVentCompatibilityEnabled { get; private set; }
+    public static bool IsLobbyUICompatibilityEnabled { get; private set; }
 
     public static void Init()
     {
         IsVentCompatibilityEnabled = IsPlugin("me.eisbison.theotherroles") ||
                                      IsPlugin("auavengers.tou.mira");
 
+        IsLobbyUICompatibilityEnabled = IsPlugin("auavengers.tou.mira");
+
         if (IsPlugin("Submerged"))
             LILogger.Warn("LevelImposter detected Submerged installed, currently unsupported");
+
+        LILogger.Info($"Mod Compatibility: " +
+                      $"Vents {IsVentCompatibilityEnabled} " +
+                      $"LobbyUI {IsLobbyUICompatibilityEnabled}");
     }
 
     private static bool IsPlugin(string guid)

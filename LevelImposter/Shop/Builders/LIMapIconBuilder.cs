@@ -1,12 +1,14 @@
 ﻿using Il2CppSystem.Collections.Generic;
 using LevelImposter.Core.Models;
 using LevelImposter.Core.Utils;
+using UnityEngine;
 
 namespace LevelImposter.Shop.Builders;
 
 public static class LIMapIconBuilder
 {
     private static MapIconByName? _mapIcon;
+    private static Sprite? _dummySprite;
 
     public static MapIconByName Get()
     {
