@@ -41,6 +41,10 @@ public static class LobbyThumbnailPatch
             _thumbnailRenderer = thumbnailRendererObj.AddComponent<SpriteRenderer>();
             _thumbnailRenderer.sprite = _defaultThumbnail;
 
+            // Force Refresh Thumbnail
+            _activeThumbnailID = null;
+
+            // TOU-Mira Compatibility
             if (ModCompatibility.IsLobbyUICompatibilityEnabled)
             {
                 thumbnailRendererObj.transform.localPosition = new Vector3(-2.0f, -2.55f, -3.2f);
