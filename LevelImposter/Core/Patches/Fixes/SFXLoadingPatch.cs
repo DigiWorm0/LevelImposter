@@ -1,6 +1,8 @@
 ﻿using HarmonyLib;
+using LevelImposter.Core.Components;
+using LevelImposter.Core.Utils;
 
-namespace LevelImposter.Core;
+namespace LevelImposter.Core.Patches.Fixes;
 
 /// <summary>
 ///     Disable SFX during map loading sequence.
@@ -12,7 +14,7 @@ public class SFXLoadingPatch
     {
         if (!LIShipStatus.IsInstance())
             return true;
-        if (LIShipStatus.GetInstance().IsReady)
+        if (!GameState.IsLoadingCustomMap)
             return true;
 
         // Prevent SFX from playing

@@ -1,12 +1,12 @@
 using System.Collections.Generic;
-using LevelImposter.Core;
+using LevelImposter.Core.Models;
 using UnityEngine;
 
-namespace LevelImposter.Builders;
+namespace LevelImposter.Builders.Util;
 
 internal class LayerBuilder : IElemBuilder
 {
-    private readonly Dictionary<string, Layer> _typeLayers = new()
+    private static readonly Dictionary<string, Layer> TypeLayers = new()
     {
         { "util-ghostcollider", Layer.Default },
         { "util-binocularscollider", Layer.UICollider }
@@ -14,9 +14,9 @@ internal class LayerBuilder : IElemBuilder
 
     public void OnBuild(LIElement elem, GameObject obj)
     {
-        if (!_typeLayers.ContainsKey(elem.type))
+        if (!TypeLayers.TryGetValue(elem.type, out var layer))
             return;
 
-        obj.layer = (int)_typeLayers[elem.type];
+        obj.layer = (int)layer;
     }
 }

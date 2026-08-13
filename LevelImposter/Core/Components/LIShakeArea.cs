@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-namespace LevelImposter.Core;
+namespace LevelImposter.Core.Components;
 
 /// <summary>
 ///     Object that shakes the screen when players enter it's range
@@ -29,7 +29,7 @@ public class LIShakeArea(IntPtr intPtr) : PlayerArea(intPtr)
 
     private void SetShakeEnabled(bool enabled)
     {
-        var camera = Camera.main.GetComponent<FollowerCamera>();
+        var camera = Camera.main?.GetComponent<FollowerCamera>();
         if (camera != null)
         {
             camera.shakeAmount = enabled ? _shakeAmount : 0.0f;

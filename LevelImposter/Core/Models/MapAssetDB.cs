@@ -1,24 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
-using Il2CppInterop.Runtime.InteropTypes.Arrays;
+using LevelImposter.Core.Utils;
+using LevelImposter.FileIO.DataBlock;
+using LevelImposter.FileIO.DataStores;
 
-namespace LevelImposter.Core;
+namespace LevelImposter.Core.Models;
 
 public class MapAssetDB
 {
     public Dictionary<Guid, IDataStore> DB { get; } = new();
 
-    public void Add(Guid id, byte[] rawData)
+    public void Add(Guid id, MemoryBlock memoryBlock)
     {
-        DB.Add(id, new MemoryStore(rawData));
+        DB.Add(id, new MemoryStore(memoryBlock));
     }
 
     public void Add(Guid id, FileChunkStore fileChunkStore)
     {
         DB.Add(id, fileChunkStore);
     }
-    
+
     public void Add(Guid id, IDataStore streamable)
     {
         DB.Add(id, streamable);

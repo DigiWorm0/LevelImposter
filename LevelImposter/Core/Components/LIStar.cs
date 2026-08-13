@@ -1,31 +1,40 @@
 ﻿using System;
 using Il2CppInterop.Runtime.Attributes;
+using LevelImposter.Core.Models;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-namespace LevelImposter.Core;
+namespace LevelImposter.Core.Components;
 
 /// <summary>
 ///     Object that flies across screen and respawns when it hits the edge
 /// </summary>
 public class LIStar(IntPtr intPtr) : MonoBehaviour(intPtr)
 {
+    private float _currentSize = 1.0f;
     private float _currentSpeed;
 
     private float _height = 10;
+    private Vector3 _initialScale;
     private float _length = 10;
+    private float _maxSize = 100.0f;
     private float _maxSpeed = 2;
+
+    private float _minSize = 100.0f;
     private float _minSpeed = 2;
+    private bool _scaleSpeedBySize = true;
 
     public void Start()
     {
+        _initialScale = transform.localScale;
         Respawn(true);
     }
 
     public void Update()
     {
+        var sizeScalingFactor = _scaleSpeedBySize ? _currentSize : 1.0f;
         transform.localPosition -= new Vector3(
-            _currentSpeed * Time.deltaTime,
+            _currentSpeed * Time.deltaTime * sizeScalingFactor,
             0,
             0
         );
@@ -44,6 +53,9 @@ public class LIStar(IntPtr intPtr) : MonoBehaviour(intPtr)
         _length = elem.properties.starfieldLength ?? _length;
         _minSpeed = elem.properties.starfieldMinSpeed ?? _minSpeed;
         _maxSpeed = elem.properties.starfieldMaxSpeed ?? _maxSpeed;
+        _minSize = elem.properties.starfieldMinSize ?? _minSize;
+        _maxSize = elem.properties.starfieldMaxSize ?? _maxSize;
+        _scaleSpeedBySize = elem.properties.starfieldScaleSpeedBySize ?? _scaleSpeedBySize;
     }
 
     /// <summary>
@@ -53,10 +65,13 @@ public class LIStar(IntPtr intPtr) : MonoBehaviour(intPtr)
     private void Respawn(bool isInitial)
     {
         _currentSpeed = Random.Range(_minSpeed, _maxSpeed);
+        _currentSize = Random.Range(_minSize, _maxSize) * 0.01f;
+
         transform.localPosition = new Vector3(
             isInitial ? Random.Range(-_length, 0) : 0,
             Random.Range(-_height / 2, _height / 2),
             0
         );
+        transform.localScale = _initialScale * _currentSize;
     }
 }

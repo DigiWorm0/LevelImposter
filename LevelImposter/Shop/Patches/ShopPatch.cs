@@ -1,8 +1,9 @@
 ﻿using HarmonyLib;
-using LevelImposter.Core;
+using LevelImposter.Core.Utils;
+using LevelImposter.Shop.Builders;
 using UnityEngine;
 
-namespace LevelImposter.Shop;
+namespace LevelImposter.Shop.Patches;
 
 /*
  *      Replaces the Inventory

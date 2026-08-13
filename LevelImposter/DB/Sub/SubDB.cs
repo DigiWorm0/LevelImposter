@@ -1,7 +1,8 @@
 ﻿using System.Collections.Generic;
-using LevelImposter.Core;
+using LevelImposter.Core.Models;
+using LevelImposter.DB.Models;
 
-namespace LevelImposter.DB;
+namespace LevelImposter.DB.Sub;
 
 /// <summary>
 ///     A miniature DB designed to search and

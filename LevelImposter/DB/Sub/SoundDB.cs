@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Text.Json.Serialization;
-using LevelImposter.Core;
+using LevelImposter.Core.Models;
+using LevelImposter.Core.Utils;
+using LevelImposter.DB.Models;
 using UnityEngine;
 
-namespace LevelImposter.DB;
+namespace LevelImposter.DB.Sub;
 
 /// <summary>
 ///     Database of Among Us AudioClips
@@ -12,7 +14,7 @@ public class SoundDB(SerializedAssetDB serializedDB) : SubDB<AudioClip>(serializ
 {
     public override void LoadShip(ShipStatus shipStatus, MapType mapType)
     {
-        DB.SoundDB.ForEach(elem =>
+        DB.SoundDB?.ForEach(elem =>
         {
             if (elem.MapType != mapType)
                 return;
@@ -68,9 +70,9 @@ public class SoundDB(SerializedAssetDB serializedDB) : SubDB<AudioClip>(serializ
     [Serializable]
     public class DBElement
     {
-        public string ID { get; set; }
-        public string Path { get; set; }
-        public string Name { get; set; }
+        public string ID { get; set; } = "";
+        public string Path { get; set; } = "";
+        public string Name { get; set; } = "";
         public int Map { get; set; }
 
         [JsonIgnore] public MapType MapType => (MapType)Map;

@@ -1,34 +1,38 @@
-﻿using LevelImposter.Shop;
+﻿using LevelImposter.AssetLoader;
+using LevelImposter.Core.Translations;
+using LevelImposter.Lobby.Components;
+using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace LevelImposter.Core;
+namespace LevelImposter.Core.Utils;
 
 public static class GameState
 {
-    // Map State
-    public static MapType SelectedMapType => IsInFreeplay
-        ? (MapType)AmongUsClient.Instance.TutorialMapId
-        : (MapType)GameOptionsManager.Instance.CurrentGameOptions.MapId;
+    // Hardware
+    public static bool IsMobile => Application.isMobilePlatform;
 
-    public static bool IsCustomMapSelected => SelectedMapType == MapType.LevelImposter;
-    public static bool IsCustomMapLoaded => MapLoader.CurrentMap != null;
-    public static bool IsInCustomMap => LIShipStatus.GetInstanceOrNull() != null;
-    public static bool IsFallbackMap => MapLoader.IsFallback;
-
-    public static string MapName => MapLoader.CurrentMap?.name ?? LIConstants.MAP_NAME;
+    // Map
+    public static string MapName => GameConfiguration.CurrentMap?.name ?? Translation.Get("lobby.random_custom_map");
 
     // Scenes
     public static bool IsInFreeplay => AmongUsClient.Instance?.NetworkMode == NetworkModes.FreePlay;
-    public static bool IsInLobby => LobbyBehaviour.Instance != null;
+    public static bool IsInLobby => LobbyBehaviour.Instance != null || LILobbyBehaviour.IsInstance();
     public static bool IsInMainMenu => SceneManager.GetActiveScene().name == "MainMenu";
-    public static bool IsInShop => ShopManager.Instance != null;
     public static bool IsInMeeting => MeetingHud.Instance != null;
-    public static bool IsPlayerLoaded => PlayerControl.LocalPlayer != null;
 
     // Network
     public static bool IsHost => AmongUsClient.Instance?.AmHost ?? false;
-    
+
     // Player State
-    public static bool IsLocalPlayerImpostor => PlayerControl.LocalPlayer?.Data?.Role.TeamType == RoleTeamTypes.Impostor;
+    public static bool IsLocalPlayerImpostor =>
+        PlayerControl.LocalPlayer?.Data?.Role.TeamType == RoleTeamTypes.Impostor;
+
     public static bool IsLocalPlayerDead => PlayerControl.LocalPlayer?.Data?.IsDead ?? true;
+
+    // Loading State
+    public static int LoadingAssetsCount => TextureLoader.Instance.QueueSize +
+                                            SpriteLoader.Instance.QueueSize +
+                                            AudioLoader.Instance.QueueSize;
+
+    public static bool IsLoadingCustomMap => LoadingAssetsCount > 0;
 }

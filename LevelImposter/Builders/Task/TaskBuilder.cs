@@ -1,14 +1,22 @@
-using LevelImposter.Core;
+using LevelImposter.Core.Components;
+using LevelImposter.Core.Models;
+using LevelImposter.Core.Utils;
 using LevelImposter.DB;
 using UnityEngine;
 using UnityEngine.Events;
 
-namespace LevelImposter.Builders;
+namespace LevelImposter.Builders.Task;
 
 public class TaskBuilder : IElemBuilder
 {
     private readonly TaskConsoleBuilder _consoleBuilder = new();
     private readonly ShipTaskBuilder _shipBuilder = new();
+
+    public void OnPreBuild()
+    {
+        _consoleBuilder.OnPreBuild();
+        _shipBuilder.OnPreBuild();
+    }
 
     public void OnBuild(LIElement elem, GameObject obj)
     {
@@ -16,12 +24,12 @@ public class TaskBuilder : IElemBuilder
             return;
 
         // Prefab 
-        var prefab = AssetDB.GetObject(elem.type);
+        var prefab = PrefabDB.GetObject(elem.type);
         if (prefab == null)
             return;
 
         // Sprite
-        MapUtils.CloneSprite(obj, prefab);
+        obj.CloneSprite(prefab);
 
         // Console
         var console = _consoleBuilder.Build(elem, obj, prefab);
@@ -29,7 +37,7 @@ public class TaskBuilder : IElemBuilder
 
         // Button
         var prefabBtn = prefab.GetComponentInChildren<PassiveButton>();
-        var collider = MapUtils.CreateDefaultColliders(obj, prefab);
+        var collider = obj.CreateDefaultColliders(prefab);
         if (prefabBtn != null)
         {
             var btn = obj.AddComponent<PassiveButton>();
@@ -45,7 +53,7 @@ public class TaskBuilder : IElemBuilder
         if (isMedscan)
         {
             // ShipStatus
-            var shipStatus = LIShipStatus.GetInstance().ShipStatus;
+            var shipStatus = LIShipStatus.GetShip();
 
             // MedScanner
             if (shipStatus.MedScanner != null)
@@ -55,9 +63,9 @@ public class TaskBuilder : IElemBuilder
         }
     }
 
-    public void OnCleanup()
+    public void OnPostBuild()
     {
-        _consoleBuilder.OnCleanup();
-        _shipBuilder.OnCleanup();
+        _consoleBuilder.OnPostBuild();
+        _shipBuilder.OnPostBuild();
     }
 }

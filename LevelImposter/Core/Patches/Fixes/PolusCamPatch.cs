@@ -1,7 +1,8 @@
 ﻿using HarmonyLib;
+using LevelImposter.Core.Components;
 using UnityEngine;
 
-namespace LevelImposter.Core;
+namespace LevelImposter.Core.Patches.Fixes;
 
 /// <summary>
 ///     Applies <c>SurvCamera.CamSize</c> to <c>PlanetSurveillanceMinigame.Camera</c>.

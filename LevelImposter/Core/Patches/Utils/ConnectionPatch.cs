@@ -1,7 +1,8 @@
 using HarmonyLib;
 using Hazel.Udp;
+using LevelImposter.Core.Models;
 
-namespace LevelImposter.Core;
+namespace LevelImposter.Core.Patches.Utils;
 
 /// <summary>
 ///     Increases the max timeout for the low level connection to the server.

@@ -1,6 +1,7 @@
 ﻿using HarmonyLib;
+using LevelImposter.Core.Components;
 
-namespace LevelImposter.Core;
+namespace LevelImposter.Core.Patches.Animations;
 
 /// <summary>
 ///     Modifies the surveillance camera panel (util-cams*)

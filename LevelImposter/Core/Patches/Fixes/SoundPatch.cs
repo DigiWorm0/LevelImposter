@@ -1,8 +1,9 @@
 ﻿using System;
 using HarmonyLib;
+using LevelImposter.Core.Components;
 using UnityEngine;
 
-namespace LevelImposter.Core;
+namespace LevelImposter.Core.Patches.Fixes;
 
 /// <summary>
 ///     Makes ambient sounds play under the "Music" channel instead of "SFX" channel.

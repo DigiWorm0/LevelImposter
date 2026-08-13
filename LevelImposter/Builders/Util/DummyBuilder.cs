@@ -1,7 +1,9 @@
-﻿using LevelImposter.Core;
+using LevelImposter.Core.Components;
+using LevelImposter.Core.Models;
+using LevelImposter.Core.Utils;
 using UnityEngine;
 
-namespace LevelImposter.Builders;
+namespace LevelImposter.Builders.Util;
 
 public class DummyBuilder : IElemBuilder
 {
@@ -10,10 +12,12 @@ public class DummyBuilder : IElemBuilder
         if (elem.type != "util-dummy")
             return;
 
-        var shipStatus = LIShipStatus.GetInstance().ShipStatus;
+        // ShipStatus
+        var shipStatus = LIShipStatus.GetShip();
 
-        // Add location and save its index with the element id (see DummyPatch)
-        LIShipStatus.GetInstance().DummyIndex[elem.id] = shipStatus.DummyLocations.Length;
-        shipStatus.DummyLocations = MapUtils.AddToArr(shipStatus.DummyLocations, obj.transform);
+        // Add Location
+        shipStatus.DummyLocations = shipStatus.DummyLocations.Add(obj.transform);
+
+        // TODO: Customize each dummy location with name/outfit
     }
 }

@@ -1,8 +1,10 @@
 ﻿using System.Collections.Generic;
-using LevelImposter.Core;
+using LevelImposter.Core.Components;
+using LevelImposter.Core.Models;
+using LevelImposter.Core.Utils;
 using UnityEngine;
 
-namespace LevelImposter.Builders;
+namespace LevelImposter.Builders.Generic;
 
 /// <summary>
 ///     Replaces String in the Translation Controller with Custom Text
@@ -77,9 +79,6 @@ public class CustomTextBuilder : IElemBuilder
         if (customText == null || customText.Count <= 0)
             return;
 
-        // ShipStatus
-        var shipStatus = LIShipStatus.GetInstance();
-
         // Replace Custom Text
         foreach (var (textID, text) in customText)
         {
@@ -96,7 +95,7 @@ public class CustomTextBuilder : IElemBuilder
             }
 
             // Replace Text
-            shipStatus.Renames.Add(stringName, text);
+            LIBaseShip.Instance?.Renames.Add(stringName, text);
             LILogger.Debug($"Custom Text '{stringName}' >>> '{text}'");
         }
     }

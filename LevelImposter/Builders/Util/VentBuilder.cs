@@ -1,23 +1,35 @@
 using System;
 using System.Collections.Generic;
 using Il2CppInterop.Runtime.InteropTypes.Arrays;
-using LevelImposter.AssetLoader;
-using LevelImposter.Core;
+using LevelImposter.AssetLoader.Loaders;
+using LevelImposter.Core.Components;
+using LevelImposter.Core.Models;
+using LevelImposter.Core.Utils;
 using LevelImposter.DB;
 using UnityEngine;
 using UnityEngine.Events;
 
-namespace LevelImposter.Builders;
+namespace LevelImposter.Builders.Util;
 
 internal class VentBuilder : IElemBuilder
 {
     private const string OPEN_SOUND_NAME = "ventOpen";
     private const string MOVE_SOUND_NAME = "ventMove";
-    private readonly Dictionary<Guid, Vent> _ventComponentDb = new();
 
+    private readonly Dictionary<Guid, Vent> _ventComponentDb = new();
     private readonly Dictionary<int, LIElement> _ventElementDb = new();
+
     private bool _hasVentSound;
     private int _ventID;
+
+    public void OnPreBuild()
+    {
+        _ventComponentDb.Clear();
+        _ventElementDb.Clear();
+
+        _hasVentSound = false;
+        _ventID = 0;
+    }
 
     public void OnBuild(LIElement elem, GameObject obj)
     {
@@ -25,10 +37,10 @@ internal class VentBuilder : IElemBuilder
             return;
 
         // ShipStatus
-        var shipStatus = LIShipStatus.GetInstance().ShipStatus;
+        var shipStatus = LIShipStatus.GetShip();
 
         // Prefab
-        var prefab = AssetDB.GetObject(elem.type);
+        var prefab = PrefabDB.GetObject(elem.type);
         if (prefab == null)
             return;
         var prefabConsole = prefab.GetComponent<VentCleaningConsole>();
@@ -37,7 +49,7 @@ internal class VentBuilder : IElemBuilder
 
         // Default Sprite
         var isAnim = elem.type == "util-vent1" || elem.type == "util-vent3";
-        var spriteRenderer = MapUtils.CloneSprite(obj, prefab, isAnim);
+        var spriteRenderer = obj.CloneSprite(prefab, isAnim);
 
         // Console
         if (prefabConsole != null)
@@ -74,20 +86,21 @@ internal class VentBuilder : IElemBuilder
         {
             _hasVentSound = true;
 
-            var openSound = MapUtils.FindSound(elem.properties.sounds, OPEN_SOUND_NAME);
+            var openSound = elem.properties.sounds.FindSound(OPEN_SOUND_NAME);
             if (openSound != null)
                 shipStatus.VentEnterSound = WAVLoader.Load(openSound);
 
-            var moveSound = MapUtils.FindSound(elem.properties.sounds, MOVE_SOUND_NAME);
+            var moveSound = elem.properties.sounds.FindSound(MOVE_SOUND_NAME);
             if (moveSound != null)
-                shipStatus.VentMoveSounds = new Il2CppReferenceArray<AudioClip>(new[]
-                {
-                    WAVLoader.Load(moveSound)
-                });
+            {
+                var moveSoundClip = WAVLoader.Load(moveSound);
+                if (moveSoundClip != null)
+                    shipStatus.VentMoveSounds = new Il2CppReferenceArray<AudioClip>([moveSoundClip]);
+            }
         }
 
         // Colliders
-        MapUtils.CreateDefaultColliders(obj, prefab);
+        obj.CreateDefaultColliders(prefab);
 
         // DB
         _ventElementDb.Add(_ventID, elem);
@@ -95,12 +108,8 @@ internal class VentBuilder : IElemBuilder
         _ventID++;
     }
 
-    public void OnCleanup()
+    public void OnPostBuild()
     {
-        // TODO: Move this to OnPostBuild
-        _ventID = 0;
-        _hasVentSound = false;
-
         foreach (var currentVent in _ventElementDb)
         {
             var ventComponent = GetVentComponent(currentVent.Value.id);
@@ -122,9 +131,7 @@ internal class VentBuilder : IElemBuilder
     /// <returns>Vent component or null if not found</returns>
     private Vent? GetVentComponent(Guid id)
     {
-        var exists = _ventComponentDb.TryGetValue(id, out var ventComponent);
-        if (!exists)
-            return null;
+        _ventComponentDb.TryGetValue(id, out var ventComponent);
         return ventComponent;
     }
 
@@ -134,7 +141,7 @@ internal class VentBuilder : IElemBuilder
     /// <param name="arrowPrefab">Prefab to steal from</param>
     /// <param name="vent">Vent target</param>
     /// <param name="dir">Direction to point arrow</param>
-    private GameObject GenerateArrow(GameObject arrowPrefab, Vent vent, int dir)
+    private static GameObject GenerateArrow(GameObject arrowPrefab, Vent vent, int dir)
     {
         var cleaningClone = arrowPrefab.transform.FindChild("CleaningIndicator").GetComponent<SpriteRenderer>();
         var arrowCloneSprite = arrowPrefab.GetComponent<SpriteRenderer>();
@@ -162,7 +169,6 @@ internal class VentBuilder : IElemBuilder
         {
             0 => vent.ClickRight,
             1 => vent.ClickLeft,
-            2 => vent.ClickCenter,
             _ => vent.ClickCenter
         };
         arrowBtn.OnClick.AddListener(action);
@@ -187,7 +193,7 @@ internal class VentBuilder : IElemBuilder
         cleaningIndicatorSprite.sprite = cleaningClone.sprite;
         cleaningIndicatorSprite.material = cleaningClone.material;
         cleaningIndicator.active = false;
-        vent.CleaningIndicators = MapUtils.AddToArr(vent.CleaningIndicators, cleaningIndicator);
+        vent.CleaningIndicators = vent.CleaningIndicators.Add(cleaningIndicator);
 
         return arrowObj;
     }

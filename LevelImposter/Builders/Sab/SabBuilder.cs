@@ -1,16 +1,21 @@
 using System.Collections.Generic;
 using System.Linq;
 using Il2CppInterop.Runtime.InteropTypes.Arrays;
-using LevelImposter.Core;
+using LevelImposter.Builders.Util;
+using LevelImposter.Core.Components;
+using LevelImposter.Core.Models;
+using LevelImposter.Core.Utils;
 using LevelImposter.DB;
 using UnityEngine;
 using CollectionExtensions = HarmonyLib.CollectionExtensions;
 
-namespace LevelImposter.Builders;
+namespace LevelImposter.Builders.Sab;
 
 public class SabBuilder : IElemBuilder
 {
-    private static readonly Dictionary<string, SystemTypes> SAB_SYSTEMS = new()
+    private static readonly Dictionary<SystemTypes, SabotageTask> SabDB = new();
+
+    private static readonly Dictionary<string, SystemTypes> SabSystems = new()
     {
         { "sab-reactorleft", SystemTypes.Reactor },
         { "sab-reactorright", SystemTypes.Reactor },
@@ -20,12 +25,12 @@ public class SabBuilder : IElemBuilder
         { "sab-btnoxygen", SystemTypes.LifeSupp }
     };
 
-    private static readonly Dictionary<SystemTypes, SabotageTask> _sabDB = new();
     private GameObject? _sabContainer;
 
-    public SabBuilder()
+    public void OnPreBuild()
     {
-        _sabDB.Clear();
+        SabDB.Clear();
+        _sabContainer = null;
     }
 
     public void OnBuild(LIElement elem, GameObject obj)
@@ -36,7 +41,7 @@ public class SabBuilder : IElemBuilder
             return;
 
         // ShipStatus
-        var shipStatus = LIShipStatus.GetInstance().ShipStatus;
+        var shipStatus = LIShipStatus.GetShip();
 
         // Container
         if (_sabContainer == null)
@@ -47,7 +52,7 @@ public class SabBuilder : IElemBuilder
         }
 
         // Prefab
-        var prefabTask = AssetDB.GetTask<SabotageTask>(elem.type);
+        var prefabTask = PrefabDB.GetTask<SabotageTask>(elem.type);
         if (prefabTask == null)
             return;
 
@@ -55,7 +60,7 @@ public class SabBuilder : IElemBuilder
         var roomSystem = RoomBuilder.GetParentOrDefault(elem);
 
         // Task
-        if (!_sabDB.ContainsKey(roomSystem))
+        if (!SabDB.ContainsKey(roomSystem))
         {
             // Sabotage Task
             LILogger.Debug($" + Adding sabotage for {elem}...");
@@ -71,22 +76,22 @@ public class SabBuilder : IElemBuilder
 
             // Rename Task
             if (!string.IsNullOrEmpty(elem.properties.description))
-                LIShipStatus.GetInstanceOrNull()?.Renames.Add(task.TaskType, elem.properties.description);
+                LIBaseShip.Instance?.Renames.Add(task.TaskType, elem.properties.description);
 
             // Add To Quick Chat
             var taskName = TranslationController.Instance.GetTaskName(task.TaskType);
             shipStatus.SystemNames = CollectionExtensions.AddItem(shipStatus.SystemNames, taskName).ToArray();
 
             // Add Task
-            shipStatus.SpecialTasks = MapUtils.AddToArr(shipStatus.SpecialTasks, task);
-            _sabDB.Add(roomSystem, task);
+            shipStatus.SpecialTasks = shipStatus.SpecialTasks.Add(task);
+            SabDB.Add(roomSystem, task);
 
             // Sabotage System
             var sabDuration = elem.properties.sabDuration;
             if (sabDuration == null)
                 return;
 
-            var hasSabSystem = SAB_SYSTEMS.TryGetValue(elem.type, out var sabSystemType);
+            var hasSabSystem = SabSystems.TryGetValue(elem.type, out var sabSystemType);
             if (!hasSabSystem)
                 return;
 
@@ -95,12 +100,13 @@ public class SabBuilder : IElemBuilder
             var sabSystem = shipStatus.Systems[SystemTypes.Sabotage].Cast<SabotageSystemType>();
             sabSystem.specials.Remove(oldSystem);
 
-            // Add New System
-            if (sabSystemType == SystemTypes.Reactor)
-                shipStatus.Systems[sabSystemType] =
-                    new ReactorSystemType((float)sabDuration, sabSystemType).Cast<ISystemType>();
-            if (sabSystemType == SystemTypes.LifeSupp)
-                shipStatus.Systems[sabSystemType] = new LifeSuppSystemType((float)sabDuration).Cast<ISystemType>();
+            shipStatus.Systems[sabSystemType] = sabSystemType switch
+            {
+                // Add New System
+                SystemTypes.Reactor => new ReactorSystemType((float)sabDuration, sabSystemType).Cast<ISystemType>(),
+                SystemTypes.LifeSupp => new LifeSuppSystemType((float)sabDuration).Cast<ISystemType>(),
+                _ => shipStatus.Systems[sabSystemType]
+            };
             sabSystem.specials.Add(shipStatus.Systems[sabSystemType].Cast<IActivatable>());
         }
     }
@@ -113,6 +119,6 @@ public class SabBuilder : IElemBuilder
     /// <returns>TRUE if found</returns>
     public static bool TryGetSabotage(SystemTypes systemType, out SabotageTask? sabotageTask)
     {
-        return _sabDB.TryGetValue(systemType, out sabotageTask);
+        return SabDB.TryGetValue(systemType, out sabotageTask);
     }
 }

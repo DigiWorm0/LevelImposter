@@ -1,27 +1,28 @@
 ﻿using System;
-using LevelImposter.Core;
+using LevelImposter.Core.Utils;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
-namespace LevelImposter.Shop;
+namespace LevelImposter.Shop.Builders;
 
 public static class ShopBuilder
 {
     private static GameObject? _mapShopPrefab;
+    private static string MapShopPrefabName => GameState.IsMobile ? "Shop-Mobile" : "Shop";
 
     private static GameObject GetShopPrefab()
     {
         if (_mapShopPrefab == null)
-            _mapShopPrefab = MapUtils.LoadAssetBundle<GameObject>("shop");
+            _mapShopPrefab = PackagedResources.LoadFromBundle<GameObject>(MapShopPrefabName);
         if (_mapShopPrefab == null)
-            throw new Exception("The \"shop\" asset bundle was not found in assembly");
+            throw new Exception("The shop asset bundle was not found in assembly");
         return _mapShopPrefab;
     }
 
-    public static void Build()
+    public static GameObject Build()
     {
-        var mapShop = Object.Instantiate(GetShopPrefab());
-        mapShop.transform.SetParent(Camera.main.transform, false);
+        var mapShop = Object.Instantiate(GetShopPrefab(), Camera.main?.transform, false);
         mapShop.transform.localPosition = new Vector3(0, 0, -990.0f);
+        return mapShop;
     }
 }

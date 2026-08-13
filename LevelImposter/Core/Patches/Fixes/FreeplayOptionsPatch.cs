@@ -1,7 +1,9 @@
 using System;
 using HarmonyLib;
+using LevelImposter.Core.Components;
+using LevelImposter.Core.Utils;
 
-namespace LevelImposter.Core;
+namespace LevelImposter.Core.Patches.Fixes;
 
 /// <summary>
 ///     Changes the freeplay settings on LI maps.

@@ -3,11 +3,15 @@ using System.Collections;
 using System.Collections.Generic;
 using BepInEx.Unity.IL2CPP.Utils.Collections;
 using Il2CppInterop.Runtime.Attributes;
+using LevelImposter.Core.Models;
+using LevelImposter.Core.Services.Ship;
+using LevelImposter.Core.Utils;
+using LevelImposter.Networking.RPC;
 using LevelImposter.Trigger;
-using Reactor.Networking.Attributes;
+using Reactor.Networking.Rpc;
 using UnityEngine;
 
-namespace LevelImposter.Core;
+namespace LevelImposter.Core.Components;
 
 /// <summary>
 ///     Object w/ Rigidbody2D that has physics
@@ -17,30 +21,22 @@ public class LIPhysicsObject(IntPtr intPtr) : MonoBehaviour(intPtr)
     private const string TRIGGER_ID = "onCollision";
     private const int HOST_UPDATE_INTERVAL = 10; // s
 
-    private static uint _objectCounter;
-    private static readonly Dictionary<uint, LIPhysicsObject> _allObjects = new();
-    private MapObjectData? _liObject;
+    public static readonly Dictionary<uint, LIPhysicsObject?> AllObjects = new();
 
     private uint _objectID;
-    private Rigidbody2D? _rb;
+
+    [HideFromIl2Cpp] public LIElement? Element { get; private set; }
+    [HideFromIl2Cpp] public Rigidbody2D? Rigidbody { get; private set; }
 
     public void Awake()
     {
-        _rb = GetComponent<Rigidbody2D>();
-        _objectID = _objectCounter++;
-        _allObjects.Add(_objectID, this);
-        _liObject = gameObject.GetLIData();
+        Element = MapObjectDB.Get(gameObject);
+        Rigidbody = GetComponent<Rigidbody2D>();
     }
 
     public void Start()
     {
         StartCoroutine(CoUpdatePosAsHost().WrapToIl2Cpp());
-    }
-
-    public void OnDestroy()
-    {
-        _objectCounter = 0;
-        _allObjects.Clear();
     }
 
     public void OnCollisionEnter2D(Collision2D other)
@@ -64,65 +60,41 @@ public class LIPhysicsObject(IntPtr intPtr) : MonoBehaviour(intPtr)
         }
     }
 
+    /// <summary>
+    ///     Assigns the net ID of this physics object and adds it to the list of global objects.
+    /// </summary>
+    /// <param name="id">The net ID to assign</param>
+    public void AssignID(uint id)
+    {
+        _objectID = id;
+        AllObjects[id] = this;
+    }
+
     [HideFromIl2Cpp]
     private IEnumerator CoUpdatePosAsHost()
     {
-        while (GameState.IsCustomMapLoaded)
+        while (true)
         {
             yield return new WaitForSeconds(HOST_UPDATE_INTERVAL);
-            if (GameState.IsHost)
+            if (GameState.IsHost && isActiveAndEnabled)
                 UpdateObjectPosOverRPC();
         }
     }
 
     private void UpdateObjectPosOverRPC()
     {
-        if (_rb == null)
+        if (Rigidbody == null)
             throw new Exception("Rigidbody2D is null");
-        RPCUpdateObjectPos(
-            PlayerControl.LocalPlayer,
-            _objectID,
-            transform.position.x,
-            transform.position.y,
-            transform.rotation.eulerAngles.z,
-            _rb.velocity.x,
-            _rb.velocity.y,
-            _rb.angularVelocity
-        );
-    }
 
-    [MethodRpc((uint)LIRpc.UpdateObjectPos)]
-    private static void RPCUpdateObjectPos(
-        PlayerControl playerControl,
-        uint objectID,
-        float x,
-        float y,
-        float rotation,
-        float velocityX,
-        float velocityY,
-        float angularVelocity
-    )
-    {
-        // Log
-        LILogger.Debug($"[RPC] {playerControl.name} updated physics object {objectID}");
-
-        // Get object
-        if (!_allObjects.TryGetValue(objectID, out var obj))
-            return;
-
-        // Update position
-        obj.transform.position = new Vector3(
-            x,
-            y,
-            obj._liObject?.Element.z ?? 0
-        );
-        obj.transform.position = MapUtils.ScaleZPositionByY(obj.transform.position);
-        obj.transform.rotation = Quaternion.Euler(0, 0, rotation);
-
-        // Update velocity
-        if (obj._rb == null)
-            throw new Exception("Rigidbody2D is null");
-        obj._rb.velocity = new Vector2(velocityX, velocityY);
-        obj._rb.angularVelocity = angularVelocity;
+        Rpc<PhysicsObjectRPC>.Instance.Send(PlayerControl.LocalPlayer, new RPCPhysicsObjectPacket
+        {
+            ObjectID = _objectID,
+            X = transform.position.x,
+            Y = transform.position.y,
+            Rotation = transform.rotation.eulerAngles.z,
+            VelocityX = Rigidbody.velocity.x,
+            VelocityY = Rigidbody.velocity.y,
+            AngularVelocity = Rigidbody.angularVelocity
+        }, true);
     }
 }

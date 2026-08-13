@@ -1,15 +1,23 @@
 ﻿using System.Collections.Generic;
-using LevelImposter.Core;
+using LevelImposter.Builders.Util;
+using LevelImposter.Core.Components;
+using LevelImposter.Core.Models;
 using UnityEngine;
 
-namespace LevelImposter.Builders;
+namespace LevelImposter.Builders.Minimap;
 
 public class AdminMapBuilder : IElemBuilder
 {
-    public const float ICON_OFFSET = -0.25f;
+    private const float ICON_OFFSET = -0.25f;
 
-    private readonly List<CounterArea> _counterAreaDB = new();
+    private readonly List<CounterArea> _counterAreaDB = [];
     private PoolableBehavior? _poolPrefab;
+
+    public void OnPreBuild()
+    {
+        _counterAreaDB.Clear();
+        _poolPrefab = null;
+    }
 
     public void OnBuild(LIElement elem, GameObject obj)
     {
@@ -54,7 +62,7 @@ public class AdminMapBuilder : IElemBuilder
         mapCountOverlay.CountAreas = _counterAreaDB.ToArray();
     }
 
-    public void OnCleanup()
+    public void OnPostBuild()
     {
         var mapBehaviour = MinimapBuilder.GetMinimap();
         var mapCountOverlay = mapBehaviour.countOverlay;

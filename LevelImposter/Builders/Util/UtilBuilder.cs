@@ -1,10 +1,11 @@
 using System;
-using LevelImposter.Core;
+using LevelImposter.Core.Models;
+using LevelImposter.Core.Utils;
 using LevelImposter.DB;
 using UnityEngine;
 using UnityEngine.Events;
 
-namespace LevelImposter.Builders;
+namespace LevelImposter.Builders.Util;
 
 internal class UtilBuilder : IElemBuilder
 {
@@ -21,16 +22,15 @@ internal class UtilBuilder : IElemBuilder
             return;
 
         // Prefab
-        var prefab = AssetDB.GetObject(elem.type);
+        var prefab = PrefabDB.GetObject(elem.type);
         if (prefab == null)
             return;
-        var prefabRenderer = prefab.GetComponent<SpriteRenderer>();
         var prefabSystem = prefab.GetComponent<SystemConsole>();
         var prefabMap = prefab.GetComponent<MapConsole>();
         var prefabBtn = prefab.GetComponent<PassiveButton>();
 
         // Default Sprite
-        var spriteRenderer = MapUtils.CloneSprite(obj, prefab);
+        var spriteRenderer = obj.CloneSprite(prefab);
 
         // Console
         Action action;
@@ -49,7 +49,7 @@ internal class UtilBuilder : IElemBuilder
             // Always set minigame to polus cams
             if (elem.type == "util-cams2")
                 console.MinigamePrefab =
-                    AssetDB.GetObject("util-cams")?.GetComponent<SystemConsole>().MinigamePrefab;
+                    PrefabDB.GetObject("util-cams")?.GetComponent<SystemConsole>().MinigamePrefab;
 
             // Set object name for TOR Security Guard to find panel type
             if (elem.type.StartsWith("util-cams"))
@@ -76,6 +76,6 @@ internal class UtilBuilder : IElemBuilder
         btn.OnClick.AddListener(action);
 
         // Colliders
-        MapUtils.CreateDefaultColliders(obj, prefab);
+        obj.CreateDefaultColliders(prefab);
     }
 }

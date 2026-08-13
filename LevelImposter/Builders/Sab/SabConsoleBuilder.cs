@@ -1,14 +1,17 @@
 ﻿using System.Collections.Generic;
-using LevelImposter.Core;
+using LevelImposter.Builders.Util;
+using LevelImposter.Core.Components;
+using LevelImposter.Core.Models;
+using LevelImposter.Core.Utils;
 using LevelImposter.DB;
 using UnityEngine;
 using UnityEngine.Events;
 
-namespace LevelImposter.Builders;
+namespace LevelImposter.Builders.Sab;
 
 public class SabConsoleBuilder : IElemBuilder
 {
-    public static readonly Dictionary<string, int> CONSOLE_ID_PAIRS = new()
+    private static readonly Dictionary<string, int> ConsoleIDPairs = new()
     {
         { "sab-electric", 0 },
         { "sab-reactorleft", 0 },
@@ -24,13 +27,13 @@ public class SabConsoleBuilder : IElemBuilder
             return;
 
         // Prefab
-        var prefab = AssetDB.GetObject(elem.type);
+        var prefab = PrefabDB.GetObject(elem.type);
         if (prefab == null)
             return;
         var prefabConsole = prefab.GetComponent<Console>();
 
         // Default Sprite
-        var spriteRenderer = MapUtils.CloneSprite(obj, prefab);
+        var spriteRenderer = obj.CloneSprite(prefab);
 
         // Parent
         var systemType = RoomBuilder.GetParentOrDefault(elem);
@@ -42,7 +45,7 @@ public class SabConsoleBuilder : IElemBuilder
         }
 
         if (!string.IsNullOrEmpty(elem.properties.description))
-            LIShipStatus.GetInstanceOrNull()?.Renames.Add(sabotageTask.TaskType, elem.properties.description);
+            LIBaseShip.Instance?.Renames.Add(sabotageTask.TaskType, elem.properties.description);
 
         // Console
         var console = obj.AddComponent<Console>();
@@ -57,11 +60,11 @@ public class SabConsoleBuilder : IElemBuilder
         console.GhostsIgnored = true;
         console.checkWalls = elem.properties.checkCollision ?? false;
 
-        if (CONSOLE_ID_PAIRS.ContainsKey(elem.type))
-            console.ConsoleId = CONSOLE_ID_PAIRS[elem.type];
+        if (ConsoleIDPairs.ContainsKey(elem.type))
+            console.ConsoleId = ConsoleIDPairs[elem.type];
 
         // Colliders
-        MapUtils.CreateDefaultColliders(obj, prefab);
+        obj.CreateDefaultColliders(prefab);
 
         // Button
         var origBtn = prefab.GetComponent<PassiveButton>();
@@ -78,7 +81,7 @@ public class SabConsoleBuilder : IElemBuilder
         // Arrow
         var arrow = MakeArrow(sabotageTask.transform, $"{elem.name} Arrow");
         if (arrow != null)
-            sabotageTask.Arrows = MapUtils.AddToArr(sabotageTask.Arrows, arrow);
+            sabotageTask.Arrows = sabotageTask.Arrows.Add(arrow);
     }
 
     /// <summary>
@@ -87,10 +90,10 @@ public class SabConsoleBuilder : IElemBuilder
     /// <param name="parent">Parent object to attatch to</param>
     /// <param name="name">Name of the arrows</param>
     /// <returns>ArrowBehaviour to append to SabotageTask</returns>
-    private ArrowBehaviour? MakeArrow(Transform parent, string name)
+    private static ArrowBehaviour? MakeArrow(Transform parent, string name)
     {
         // Prefab
-        var prefab = AssetDB.GetTask<PlayerTask>("sab-comms");
+        var prefab = PrefabDB.GetTask<PlayerTask>("sab-comms");
         if (prefab == null)
             return null;
         var prefabArrow = prefab.gameObject.transform.FindChild("Arrow").gameObject;

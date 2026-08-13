@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using LevelImposter.Core;
+using LevelImposter.Builders.Generic;
+using LevelImposter.Core.Models;
+using LevelImposter.Core.Utils;
 using LevelImposter.DB;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
-namespace LevelImposter.Builders;
+namespace LevelImposter.Builders.Util;
 
 public class EjectDummyBuilder : IElemBuilder
 {
@@ -15,12 +17,12 @@ public class EjectDummyBuilder : IElemBuilder
         Standing
     }
 
-    public EjectDummyBuilder()
+    public static List<PlayerDummy> PlayerDummies { get; } = [];
+
+    public void OnPreBuild()
     {
         PlayerDummies.Clear();
     }
-
-    public static List<PlayerDummy> PlayerDummies { get; } = new();
 
     public void OnBuild(LIElement elem, GameObject obj)
     {
@@ -36,7 +38,7 @@ public class EjectDummyBuilder : IElemBuilder
         };
 
         // Get Eject Controller Prefab
-        var skeldPrefab = AssetDB.GetObject(type == PlayerDummyType.Floating ? "ss-skeld" : "ss-fungle");
+        var skeldPrefab = PrefabDB.GetObject(type == PlayerDummyType.Floating ? "ss-skeld" : "ss-fungle");
         var skeldShipStatus = skeldPrefab?.GetComponent<ShipStatus>();
         var skeldEjectController = skeldShipStatus?.ExileCutscenePrefab;
         if (!skeldEjectController)
@@ -77,9 +79,9 @@ public class EjectDummyBuilder : IElemBuilder
         player.gameObject.SetActive(false);
     }
 
-    public readonly struct PlayerDummy(PoolablePlayer _poolablePlayer, PlayerDummyType _type)
+    public readonly struct PlayerDummy(PoolablePlayer poolablePlayer, PlayerDummyType type)
     {
-        public PoolablePlayer PoolablePlayer => _poolablePlayer;
-        public PlayerDummyType Type => _type;
+        public PoolablePlayer PoolablePlayer => poolablePlayer;
+        public PlayerDummyType Type => type;
     }
 }

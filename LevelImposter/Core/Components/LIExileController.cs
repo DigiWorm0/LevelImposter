@@ -2,11 +2,13 @@
 using BepInEx.Unity.IL2CPP.Utils.Collections;
 using Il2CppInterop.Runtime.Attributes;
 using Il2CppSystem.Collections;
-using LevelImposter.Builders;
+using LevelImposter.Builders.Util;
+using LevelImposter.Core.Patches.Fixes;
+using LevelImposter.Core.Services.Ship;
 using LevelImposter.Trigger;
 using UnityEngine;
 
-namespace LevelImposter.Core;
+namespace LevelImposter.Core.Components;
 
 /// <summary>
 ///     Exile Controller for LevelImposter maps.
@@ -40,19 +42,21 @@ public class LIExileController(IntPtr intPtr) : ExileController(intPtr)
         exileVisorPosition = new Vector3(-0.148f, 0.647f, -0.002f);
 
         // Get Element Data
-        var elementData = EjectBuilder.EjectController?.gameObject.GetLIData();
-        if (elementData == null)
-            throw new Exception("Failed to get LIElementData from EjectController");
+        var sourceGameObject = EjectBuilder.EjectController?.gameObject ??
+                               throw new Exception("Failed to get EjectBuilder.EjectController");
+
+        var element = MapObjectDB.Get(sourceGameObject) ??
+                      throw new Exception("Failed to get LIElementData from EjectController");
 
         // Get Element Properties
-        _x = elementData.Element.x;
-        _y = elementData.Element.y;
-        _preTextDuration = elementData.Properties.ejectPreTextDuration ?? 2.0f;
-        _textDuration = elementData.Properties.ejectTextDuration ?? 2.0f;
-        _postTextDuration = elementData.Properties.ejectPostTextDuration ?? 2.0f;
-        _cameraXOffset = elementData.Properties.camXOffset ?? 0.0f;
-        _cameraYOffset = elementData.Properties.camYOffset ?? 0.0f;
-        _cameraZoom = elementData.Properties.camZoom ?? 3.0f;
+        _x = element.x;
+        _y = element.y;
+        _preTextDuration = element.properties.ejectPreTextDuration ?? 2.0f;
+        _textDuration = element.properties.ejectTextDuration ?? 2.0f;
+        _postTextDuration = element.properties.ejectPostTextDuration ?? 2.0f;
+        _cameraXOffset = element.properties.camXOffset ?? 0.0f;
+        _cameraYOffset = element.properties.camYOffset ?? 0.0f;
+        _cameraZoom = element.properties.camZoom ?? 3.0f;
 
         // Set Base Duration (Just in case)
         Duration = _preTextDuration + _textDuration + _postTextDuration + DURATION_OFFSET;
@@ -186,14 +190,14 @@ public class LIExileController(IntPtr intPtr) : ExileController(intPtr)
     }
 
     /// <summary>
-    ///  Coroutine based on ExileController.HandleText but with customizable timings
+    ///     Coroutine based on ExileController.HandleText but with customizable timings
     /// </summary>
     [HideFromIl2Cpp]
     private System.Collections.IEnumerator CoHandleText()
     {
         // DO NOT REFERENCE this.completeString
         var exileString = ExileTextPatch.LastExileText;
-        
+
         yield return Effects.Wait(_preTextDuration);
         for (var t = 0f; t <= _textDuration; t += Time.deltaTime)
         {
@@ -205,13 +209,15 @@ public class LIExileController(IntPtr intPtr) : ExileController(intPtr)
                 if (exileString[num - 1] != ' ')
                     SoundManager.Instance.PlaySoundImmediate(TextSound, false, 0.8f);
             }
+
             yield return null;
         }
+
         Text.text = exileString;
     }
 
     /// <summary>
-    /// Based on ExileController.WrapUp but modified to avoid bugs with IL2CPP
+    ///     Based on ExileController.WrapUp but modified to avoid bugs with IL2CPP
     /// </summary>
     private void WrapUpAlt()
     {
@@ -221,17 +227,17 @@ public class LIExileController(IntPtr intPtr) : ExileController(intPtr)
             var playerObject = initData.networkedPlayer.Object;
             if (playerObject)
                 playerObject.Exiled();
-            
+
             initData.networkedPlayer.IsDead = true;
         }
-        
+
         // Re-enable Gameplay
-        if (DestroyableSingleton<TutorialManager>.InstanceExists || 
+        if (DestroyableSingleton<TutorialManager>.InstanceExists ||
             (GameManager.Instance != null && !GameManager.Instance.LogicFlow.IsGameOverDueToDeath()))
             ReEnableGameplay();
-        
+
         // Destroy Eject Controller
-        GameObject.Destroy(gameObject);
+        Destroy(gameObject);
     }
 
     /// <summary>

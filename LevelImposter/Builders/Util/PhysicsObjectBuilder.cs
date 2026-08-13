@@ -1,11 +1,23 @@
-using LevelImposter.Core;
+using LevelImposter.Core.Components;
+using LevelImposter.Core.GarbageCollection;
+using LevelImposter.Core.Models;
 using UnityEngine;
 
-namespace LevelImposter.Builders;
+namespace LevelImposter.Builders.Util;
 
 internal class PhysicsObjectBuilder : IElemBuilder
 {
     private bool _isCameraFixed;
+    private uint _objectCounter;
+
+    public void OnPreBuild()
+    {
+        _isCameraFixed = false;
+        _objectCounter = 0;
+
+        // Disable collision between physics objects & UI
+        Physics2D.IgnoreLayerCollision((int)Layer.Physics, (int)Layer.UI);
+    }
 
     public void OnBuild(LIElement elem, GameObject obj)
     {
@@ -35,12 +47,14 @@ internal class PhysicsObjectBuilder : IElemBuilder
             friction = elem.properties.physicsFriction ?? 0.6f
         };
         rb.sharedMaterial = physicsMaterial;
+        GCHandler.Register(physicsMaterial);
 
         // Set Layer
         obj.layer = (int)Layer.Physics;
 
         // Add Physics Object Component
-        obj.AddComponent<LIPhysicsObject>();
+        var physicsObject = obj.AddComponent<LIPhysicsObject>();
+        physicsObject.AssignID(++_objectCounter);
 
         // Fix Camera
         if (_isCameraFixed)

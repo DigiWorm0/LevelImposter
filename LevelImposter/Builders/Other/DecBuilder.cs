@@ -1,16 +1,15 @@
 ﻿using System.Collections.Generic;
-using LevelImposter.Core;
+using LevelImposter.Core.GarbageCollection;
+using LevelImposter.Core.Models;
+using LevelImposter.Core.Utils;
 using LevelImposter.DB;
 using UnityEngine;
 
-namespace LevelImposter.Builders;
+namespace LevelImposter.Builders.Other;
 
 public class DecBuilder : IElemBuilder
 {
-    private static readonly List<string> _fixTypes = new()
-    {
-        "room-dropship"
-    };
+    private static readonly List<string> TypesToResetPivot = ["room-dropship"];
 
     public void OnBuild(LIElement elem, GameObject obj)
     {
@@ -20,15 +19,15 @@ public class DecBuilder : IElemBuilder
             return;
 
         // Prefab
-        var prefab = AssetDB.GetObject(elem.type);
+        var prefab = PrefabDB.GetObject(elem.type);
         if (prefab == null)
             return;
 
         // Sprite
-        var spriteRenderer = MapUtils.CloneSprite(obj, prefab);
+        var spriteRenderer = obj.CloneSprite(prefab);
 
         // Fixes Pivot Offset Bug
-        if (_fixTypes.Contains(elem.type))
+        if (TypesToResetPivot.Contains(elem.type))
         {
             var sprite = Sprite.Create(
                 spriteRenderer.sprite.texture,

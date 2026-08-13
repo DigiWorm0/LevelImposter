@@ -1,7 +1,8 @@
-﻿using LevelImposter.Core;
+﻿using LevelImposter.Core.Components;
+using LevelImposter.Core.Models;
 using UnityEngine;
 
-namespace LevelImposter.Builders;
+namespace LevelImposter.Builders.Trigger;
 
 public class TriggerDeathBuilder : IElemBuilder
 {

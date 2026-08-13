@@ -1,9 +1,10 @@
-using LevelImposter.AssetLoader;
-using LevelImposter.Core;
+using LevelImposter.AssetLoader.Loaders;
+using LevelImposter.Core.Models;
+using LevelImposter.Core.Utils;
 using LevelImposter.DB;
 using UnityEngine;
 
-namespace LevelImposter.Builders;
+namespace LevelImposter.Builders.Util;
 
 internal class StepSoundBuilder : IElemBuilder
 {
@@ -44,7 +45,7 @@ internal class StepSoundBuilder : IElemBuilder
 
             // Preset
             if (sound.isPreset)
-                soundGroup.Clips[i] = AssetDB.GetSound(sound.presetID ?? "");
+                soundGroup.Clips[i] = PrefabDB.GetSound(sound.presetID ?? "");
             // WAVLoader
             else
                 soundGroup.Clips[i] = WAVLoader.Load(sound);

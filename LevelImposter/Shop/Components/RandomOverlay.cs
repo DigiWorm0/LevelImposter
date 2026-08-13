@@ -1,98 +1,144 @@
 using System;
+using Il2CppInterop.Runtime.InteropTypes.Fields;
+using LevelImposter.FileIO.API;
+using LevelImposter.Shop.Transitions;
 using TMPro;
 using UnityEngine;
 
-namespace LevelImposter.Shop;
+namespace LevelImposter.Shop.Components;
 
 /// <summary>
 ///     Represents the overlay used on Map Banners to control the random weight of a map
 /// </summary>
 public class RandomOverlay(IntPtr intPtr) : MonoBehaviour(intPtr)
 {
+    // Animation Constants
+    private const float ANIMATION_DURATION = 0.14f;
+    private const float BACKGROUND_ALPHA = 0.7f;
+
     private const float DELTA_WEIGHT = 0.1f;
-    private PassiveButton? _exitButton;
+    private readonly Vector3 ClosedSlideOffset = new(0, -0.5f, -2.0f);
+    private readonly Vector3 OpenedSlideOffset = new(0, 0, -2.0f);
+
+    private readonly Color ProgressGreen = new(0.38f, 0.80f, 0.32f);
+    private readonly Color ProgressRed = new(0.81f, 0.22f, 0.22f);
+    private readonly Color ProgressYellow = new(0.80f, 0.76f, 0.15f);
 
     private string? _mapID;
-    private PassiveButton? _minusButton;
-    private PassiveButton? _plusButton;
     private float _randomWeight;
-    private TMP_Text? _text;
+
+    public Il2CppReferenceField<GameObject> backgroundShadow = null!;
+    public Il2CppReferenceField<PassiveButton> doneButton = null!;
+    public Il2CppReferenceField<PassiveButton> minusButton = null!;
+    public Il2CppReferenceField<PassiveButton> plusButton = null!;
+    public Il2CppReferenceField<TextMeshPro> primaryText = null!;
+    public Il2CppReferenceField<ProgressBar> progressBar = null!;
 
     public void Awake()
     {
-        _text = transform.Find("Text")?.GetComponent<TMP_Text>();
-        _plusButton = transform.Find("PlusButton")?.GetComponent<PassiveButton>();
-        _minusButton = transform.Find("MinusButton")?.GetComponent<PassiveButton>();
-        _exitButton = transform.Find("ExitButton")?.GetComponent<PassiveButton>();
+        plusButton.Value.OnClick.AddListener((Action)OnPlusClick);
+        minusButton.Value.OnClick.AddListener((Action)OnMinusClick);
+        doneButton.Value.OnClick.AddListener((Action)Close);
     }
 
-    public void Start()
+    private void OnPlusClick()
     {
-        // Buttons
-        _plusButton?.OnClick.AddListener((Action)OnPlus);
-        _minusButton?.OnClick.AddListener((Action)OnMinus);
-        _exitButton?.OnClick.AddListener((Action)OnExit);
+        ChangeMapWeight(DELTA_WEIGHT);
     }
 
-    public void OnDestroy()
+    private void OnMinusClick()
     {
-        _mapID = null;
-        _randomWeight = 0;
-        _text = null;
-        _plusButton = null;
-        _minusButton = null;
-        _exitButton = null;
+        ChangeMapWeight(-DELTA_WEIGHT);
     }
 
-    /// <summary>
-    ///     Opens the overlay for the specified map
-    /// </summary>
-    /// <param name="mapID">ID of e map to open the overlay for</param>
-    public void Open(string mapID)
+    private void ChangeMapWeight(float amount)
+    {
+        if (_mapID == null)
+            throw new Exception("MapID is null");
+
+        _randomWeight = Mathf.Clamp(_randomWeight + amount, 0, 1);
+        ConfigAPI.SetMapWeight(_mapID, _randomWeight);
+        ShopManager.Instance?.RandomizeMapOnClose();
+        UpdateText();
+        UpdateProgressBar();
+    }
+
+    public void SetMapID(string mapID)
     {
         _mapID = mapID;
         _randomWeight = ConfigAPI.GetMapWeight(_mapID);
-        gameObject.SetActive(true);
         UpdateText();
+        UpdateProgressBar();
     }
 
-    /// <summary>
-    ///     Updates the text of the overlay
-    /// </summary>
+    public void Open()
+    {
+        gameObject.SetActive(true);
+        SpriteOpacityTransition.Run(new TransitionParams<float>
+        {
+            TargetObject = backgroundShadow.Value,
+            FromValue = 0,
+            ToValue = BACKGROUND_ALPHA,
+            Duration = ANIMATION_DURATION
+        });
+        MatOpacityTransition.Run(new TransitionParams<float>
+        {
+            TargetObject = gameObject,
+            FromValue = 0,
+            ToValue = 1,
+            Duration = ANIMATION_DURATION
+        });
+        SlideTransition.Run(new TransitionParams<Vector3>
+        {
+            TargetObject = gameObject,
+            FromValue = ClosedSlideOffset,
+            ToValue = OpenedSlideOffset,
+            Curve = TransitionCurve.EaseInOut,
+            Duration = ANIMATION_DURATION
+        });
+    }
+
+    public void Close()
+    {
+        SpriteOpacityTransition.Run(new TransitionParams<float>
+        {
+            TargetObject = backgroundShadow.Value,
+            FromValue = BACKGROUND_ALPHA,
+            ToValue = 0,
+            Duration = ANIMATION_DURATION
+        });
+        MatOpacityTransition.Run(new TransitionParams<float>
+        {
+            TargetObject = gameObject,
+            FromValue = 1,
+            ToValue = 0,
+            Duration = ANIMATION_DURATION
+        });
+        SlideTransition.Run(new TransitionParams<Vector3>
+        {
+            TargetObject = gameObject,
+            FromValue = OpenedSlideOffset,
+            ToValue = ClosedSlideOffset,
+            Duration = ANIMATION_DURATION,
+            Curve = TransitionCurve.EaseInOut,
+            OnComplete = () => gameObject.SetActive(false)
+        });
+    }
+
     private void UpdateText()
     {
         var randomWeightPercent = Mathf.RoundToInt(_randomWeight * 100);
-        _text?.SetText($"<b>Weight: {randomWeightPercent}%</b>");
+        primaryText.Value.SetText($"{randomWeightPercent}%");
     }
 
-    /// <summary>
-    ///     Fired on plus button click
-    /// </summary>
-    private void OnPlus()
+    private void UpdateProgressBar()
     {
-        _randomWeight = Mathf.Clamp(_randomWeight + DELTA_WEIGHT, 0, 1);
-        ConfigAPI.SetMapWeight(_mapID ?? "", _randomWeight);
-        ShopManager.RegenerateFallbackMap();
-        UpdateText();
-    }
+        progressBar.Value.SetProgress(_randomWeight);
 
-    /// <summary>
-    ///     Fired on minus button click
-    /// </summary>
-    private void OnMinus()
-    {
-        _randomWeight = Mathf.Clamp(_randomWeight - DELTA_WEIGHT, 0, 1);
-        ConfigAPI.SetMapWeight(_mapID ?? "", _randomWeight);
-        ShopManager.RegenerateFallbackMap();
-        UpdateText();
-    }
-
-    /// <summary>
-    ///     Fired on exit button click
-    /// </summary>
-    private void OnExit()
-    {
-        ConfigAPI.Save();
-        gameObject.SetActive(false);
+        // Transition color from red (0% weight) to yellow (50% weight) to green (100% weight)
+        var color = _randomWeight < 0.5f
+            ? Color.Lerp(ProgressRed, ProgressYellow, _randomWeight * 2)
+            : Color.Lerp(ProgressYellow, ProgressGreen, (_randomWeight - 0.5f) * 2);
+        progressBar.Value.SetColor(color);
     }
 }

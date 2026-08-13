@@ -1,8 +1,10 @@
 using AmongUs.InnerNet.GameDataMessages;
 using HarmonyLib;
-using LevelImposter.Builders;
+using LevelImposter.Builders.Util;
+using LevelImposter.Core.Components;
+using LevelImposter.Core.Utils;
 
-namespace LevelImposter.Core;
+namespace LevelImposter.Core.Patches.Ship;
 
 /// <summary>
 ///     Normally, moving platforms are handled by
@@ -12,7 +14,9 @@ namespace LevelImposter.Core;
 [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.HandleRpc))]
 public static class PlatformPatchHandle
 {
-    public static bool Prefix([HarmonyArgument(0)] byte callId, PlayerControl __instance)
+    public static bool Prefix(
+        [HarmonyArgument(0)] byte callId,
+        PlayerControl __instance)
     {
         if (!LIShipStatus.IsInstance())
             return true;

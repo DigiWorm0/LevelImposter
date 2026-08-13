@@ -1,20 +1,22 @@
-using LevelImposter.AssetLoader;
+using LevelImposter.AssetLoader.Loaders;
 using LevelImposter.Core;
+using LevelImposter.Core.Components;
+using LevelImposter.Core.Models;
+using LevelImposter.Core.Utils;
 using UnityEngine;
 
-namespace LevelImposter.Builders;
+namespace LevelImposter.Builders.Util;
 
 internal class SabotageOptionsBuilder : IElemBuilder
 {
-    public const string SABOTAGE_SOUND_NAME = "sabotageSound";
+    private const string SABOTAGE_SOUND_NAME = "sabotageSound";
 
+    public static GameObject? TriggerObject { get; private set; }
 
-    public SabotageOptionsBuilder()
+    public void OnPreBuild()
     {
         TriggerObject = null;
     }
-
-    public static GameObject? TriggerObject { get; private set; }
 
     public void OnBuild(LIElement elem, GameObject obj)
     {
@@ -22,7 +24,7 @@ internal class SabotageOptionsBuilder : IElemBuilder
             return;
 
         // ShipStatus
-        var shipStatus = LIShipStatus.GetInstance().ShipStatus;
+        var shipStatus = LIShipStatus.GetShip();
 
         // Singleton
         if (TriggerObject != null)
@@ -34,7 +36,7 @@ internal class SabotageOptionsBuilder : IElemBuilder
         TriggerObject = obj;
 
         // Sabotage Sound
-        var sabotageSound = MapUtils.FindSound(elem.properties.sounds, SABOTAGE_SOUND_NAME);
+        var sabotageSound = elem.properties.sounds.FindSound(SABOTAGE_SOUND_NAME);
         if (sabotageSound != null)
             shipStatus.SabotageSound = WAVLoader.Load(sabotageSound) ?? shipStatus.SabotageSound;
     }

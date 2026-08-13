@@ -1,12 +1,18 @@
-﻿using LevelImposter.Core;
+﻿using LevelImposter.Core.Components;
+using LevelImposter.Core.Models;
 using TMPro;
 using UnityEngine;
 
-namespace LevelImposter.Builders;
+namespace LevelImposter.Builders.Minimap;
 
 public class RoomNameBuilder : IElemBuilder
 {
     private int _nameCount;
+
+    public void OnPreBuild()
+    {
+        _nameCount = 0;
+    }
 
     public void OnBuild(LIElement elem, GameObject obj)
     {
@@ -53,7 +59,7 @@ public class RoomNameBuilder : IElemBuilder
         rectTransform.sizeDelta = new Vector2(10, 0);
     }
 
-    public void OnCleanup()
+    public void OnPostBuild()
     {
         var mapBehaviour = MinimapBuilder.GetMinimap();
         var roomNames = mapBehaviour.transform.GetChild(mapBehaviour.transform.childCount - 1);

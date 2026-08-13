@@ -1,0 +1,37 @@
+﻿using System;
+using LevelImposter.Builders.Util;
+using LevelImposter.Core.Services.Ship;
+using LevelImposter.Trigger.Values;
+
+namespace LevelImposter.Trigger.Handles;
+
+public class ValueTriggerHandle : ITriggerHandle
+{
+    public void OnTrigger(TriggerSignal signal)
+    {
+        if (signal.TriggerID != "setValueTrue" &&
+            signal.TriggerID != "setValueFalse" &&
+            signal.TriggerID != "toggleValue")
+            return;
+
+        // Get Element Data
+        var element = MapObjectDB.Get(signal.TargetObject);
+
+        // Get Value
+        var valueObj = (BasicBoolValue)ValueBuilder.GetBoolOfID(element?.id);
+        if (valueObj == null)
+            throw new Exception("Value object is not a BasicBoolValue");
+
+        // Run Operation
+        var newValue = signal.TriggerID switch
+        {
+            "setValueTrue" => true,
+            "setValueFalse" => false,
+            "toggleValue" => !valueObj.GetValue(0),
+            _ => throw new Exception("Invalid trigger ID")
+        };
+
+        // Set Value
+        valueObj.SetValue(newValue, signal);
+    }
+}

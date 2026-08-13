@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Text.Json.Serialization;
-using LevelImposter.Core;
+using LevelImposter.Core.Models;
+using LevelImposter.Core.Utils;
+using LevelImposter.DB.Models;
 using UnityEngine;
 
-namespace LevelImposter.DB;
+namespace LevelImposter.DB.Sub;
 
 /// <summary>
 ///     Database of Among Us GameObjects
@@ -12,7 +14,7 @@ public class ObjectDB(SerializedAssetDB serializedDB) : SubDB<GameObject>(serial
 {
     public override void LoadShip(ShipStatus shipStatus, MapType mapType)
     {
-        DB.ObjectDB.ForEach(elem =>
+        DB.ObjectDB?.ForEach(elem =>
         {
             if (mapType != elem.MapType)
                 return;
@@ -32,8 +34,8 @@ public class ObjectDB(SerializedAssetDB serializedDB) : SubDB<GameObject>(serial
     [Serializable]
     public class DBElement
     {
-        public string ID { get; set; }
-        public string Path { get; set; }
+        public string ID { get; set; } = "";
+        public string Path { get; set; } = "";
         public int Map { get; set; }
 
         [JsonIgnore] public MapType MapType => (MapType)Map;

@@ -1,9 +1,10 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using BepInEx.Unity.IL2CPP.Utils.Collections;
+using LevelImposter.Core.Components;
 using UnityEngine;
 
-namespace LevelImposter.Core;
+namespace LevelImposter.Core.Utils;
 
 /// <summary>
 ///     Manages a singular coroutine across a set of GameObjects
@@ -25,9 +26,12 @@ public class GameObjectCoroutineManager
     /// <param name="coroutine">The coroutine to run</param>
     public void Start(GameObject gameObject, IEnumerator coroutine)
     {
+        if (LIBaseShip.Instance == null)
+            throw new MissingShipException();
+
         Stop(gameObject);
         var objectID = GetObjectID(gameObject);
-        var newCoroutine = LIShipStatus.GetInstance().StartCoroutine(
+        var newCoroutine = LIBaseShip.Instance.StartCoroutine(
             CoRunCoroutine(objectID, coroutine).WrapToIl2Cpp()
         );
         _activeCoroutines[objectID] = newCoroutine;
@@ -42,7 +46,7 @@ public class GameObjectCoroutineManager
         var objectID = GetObjectID(gameObject);
         if (_activeCoroutines.ContainsKey(objectID))
         {
-            LIShipStatus.GetInstance().StopCoroutine(_activeCoroutines[objectID]);
+            LIBaseShip.Instance?.StopCoroutine(_activeCoroutines[objectID]);
             _activeCoroutines.Remove(objectID);
         }
     }

@@ -1,8 +1,10 @@
 using System.Linq;
 using HarmonyLib;
 using Hazel;
+using LevelImposter.Core.Components;
+using LevelImposter.Core.Utils;
 
-namespace LevelImposter.Core;
+namespace LevelImposter.Core.Patches.Fixes;
 
 /// <summary>
 ///     Increases the maximum door ID from 31 to 63

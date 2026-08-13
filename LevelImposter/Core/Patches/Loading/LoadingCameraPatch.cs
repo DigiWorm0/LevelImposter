@@ -1,8 +1,8 @@
 ﻿using HarmonyLib;
-using LevelImposter.AssetLoader;
-using LevelImposter.Shop;
+using LevelImposter.Core.Components;
+using LevelImposter.Core.Utils;
 
-namespace LevelImposter.Core;
+namespace LevelImposter.Core.Patches.Loading;
 
 /// <summary>
 ///     Disables camera movement while still in loading screen.
@@ -15,7 +15,7 @@ public static class LoadingCameraPatch
         if (!LIShipStatus.IsInstance())
             return true;
 
-        if (!MapLoader.IsLoading)
+        if (!GameState.IsLoadingCustomMap)
             return true;
 
         __instance.centerPosition = __instance.transform.position;

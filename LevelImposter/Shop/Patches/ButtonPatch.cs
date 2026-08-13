@@ -1,6 +1,7 @@
 ﻿using HarmonyLib;
+using LevelImposter.Shop.Builders;
 
-namespace LevelImposter.Shop;
+namespace LevelImposter.Shop.Patches;
 
 /*
  *      Replaces the Inventory
@@ -8,6 +9,7 @@ namespace LevelImposter.Shop;
  *      with the Map Shop Button
  */
 [HarmonyPatch(typeof(MainMenuManager), nameof(MainMenuManager.Start))]
+[HarmonyPriority(Priority.First)]
 public static class ButtonPatch
 {
     public static void Postfix()

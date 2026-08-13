@@ -1,17 +1,16 @@
 using HarmonyLib;
-using LevelImposter.Shop;
+using LevelImposter.Core.Utils;
 
-namespace LevelImposter.Core
+namespace LevelImposter.Core.Patches.Utils;
+
+/// <summary>
+///     Unloads the map from memory after disconnecting from a game.
+/// </summary>
+[HarmonyPatch(typeof(AmongUsClient), nameof(AmongUsClient.ExitGame))]
+public static class ExitGamePatch
 {
-    /// <summary>
-    /// Unloads the map from memory after disconnecting from a game.
-    /// </summary>
-    [HarmonyPatch(typeof(AmongUsClient), nameof(AmongUsClient.ExitGame))]
-    public static class ExitGamePatch
+    public static void Postfix()
     {
-        public static void Postfix()
-        {
-            MapLoader.UnloadMap();
-        }
+        GameConfiguration.SetMap(null);
     }
 }

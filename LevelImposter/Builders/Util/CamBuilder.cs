@@ -1,8 +1,9 @@
-﻿using LevelImposter.Core;
+﻿using LevelImposter.Core.Models;
+using LevelImposter.Core.Utils;
 using LevelImposter.DB;
 using UnityEngine;
 
-namespace LevelImposter.Builders;
+namespace LevelImposter.Builders.Util;
 
 public class CamBuilder : IElemBuilder
 {
@@ -12,13 +13,13 @@ public class CamBuilder : IElemBuilder
             return;
 
         // Prefab
-        var prefab = AssetDB.GetObject(elem.type);
+        var prefab = PrefabDB.GetObject(elem.type);
         if (prefab == null)
             return;
         var prefabCam = prefab.GetComponent<SurvCamera>();
 
         // Sprite
-        MapUtils.CloneSprite(obj, prefab, true);
+        obj.CloneSprite(prefab, true);
 
         // Camera
         var survCam = obj.AddComponent<SurvCamera>();

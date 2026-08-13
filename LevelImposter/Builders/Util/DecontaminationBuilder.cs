@@ -1,20 +1,29 @@
 using System;
 using System.Collections.Generic;
 using Il2CppInterop.Runtime.InteropTypes.Arrays;
-using LevelImposter.AssetLoader;
-using LevelImposter.Core;
+using LevelImposter.AssetLoader.Loaders;
+using LevelImposter.Builders.Sab;
+using LevelImposter.Core.Models;
+using LevelImposter.Core.Services;
+using LevelImposter.Core.Utils;
 using LevelImposter.DB;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace LevelImposter.Builders;
+namespace LevelImposter.Builders.Util;
 
 internal class DecontaminationBuilder : IElemBuilder
 {
     private const string DECONTAM_SOUND_NAME = "decontamSound";
-    private readonly Dictionary<Guid, LIElement> _deconElemDB = new();
 
+    private readonly Dictionary<Guid, LIElement> _deconElemDB = new();
     private readonly Dictionary<Guid, DeconSystem> _deconSystemDB = new();
+
+    public void OnPreBuild()
+    {
+        _deconElemDB.Clear();
+        _deconSystemDB.Clear();
+    }
 
     public void OnBuild(LIElement elem, GameObject obj)
     {
@@ -22,7 +31,7 @@ internal class DecontaminationBuilder : IElemBuilder
             return;
 
         // Prefab
-        var prefab = AssetDB.GetObject(elem.type);
+        var prefab = PrefabDB.GetObject(elem.type);
         if (prefab == null)
             return;
         var prefabBehaviour = prefab.GetComponent<DeconSystem>();
@@ -32,11 +41,11 @@ internal class DecontaminationBuilder : IElemBuilder
         deconSystem.SpraySound = prefabBehaviour.SpraySound;
         deconSystem.RoomArea = obj.GetComponent<Collider2D>();
         deconSystem.Particles = new Il2CppReferenceArray<ParticleSystem>(0);
-        deconSystem.TargetSystem = SystemDistributor.GetNewDeconSystemType();
+        deconSystem.TargetSystem = SystemDistributionService.GetNewDeconSystemType();
         deconSystem.DeconTime = elem.properties.deconDuration ?? 3.0f;
 
         // Sound
-        var deconSound = MapUtils.FindSound(elem.properties.sounds, DECONTAM_SOUND_NAME);
+        var deconSound = elem.properties.sounds.FindSound(DECONTAM_SOUND_NAME);
         if (deconSound != null)
             deconSystem.SpraySound = WAVLoader.Load(deconSound);
 
@@ -48,7 +57,7 @@ internal class DecontaminationBuilder : IElemBuilder
             deconSystem.RoomArea.isTrigger = true;
     }
 
-    public void OnCleanup()
+    public void OnPostBuild()
     {
         // TODO: Move this to OnPostBuild
         // Assign Doors
@@ -81,7 +90,8 @@ internal class DecontaminationBuilder : IElemBuilder
     /// <param name="deconSystem">Associated decontamination system</param>
     /// <param name="door">Door object to append to</param>
     /// <param name="isUpper"><c>true</c> if the door is the upper one</param>
-    private void AddDoorConsole(DeconSystem deconSystem, PlainDoor door, bool isUpper, bool isInner)
+    /// <param name="isInner"><c>true</c> if the console is on the inner side of the door</param>
+    private static void AddDoorConsole(DeconSystem deconSystem, PlainDoor door, bool isUpper, bool isInner)
     {
         // GameObject
         var doorConsole = new GameObject("DoorConsole");

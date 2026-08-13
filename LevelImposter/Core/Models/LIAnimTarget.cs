@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace LevelImposter.Core;
+namespace LevelImposter.Core.Models;
 
 [Serializable]
 public class LIAnimTarget
 {
     public Guid id { get; set; }
-    public Dictionary<string, LIAnimProperty> properties { get; set; }
+    public Dictionary<string, LIAnimProperty> properties { get; set; } = new();
 }

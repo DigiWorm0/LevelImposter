@@ -1,8 +1,12 @@
 using HarmonyLib;
 using Il2CppSystem;
+using LevelImposter.Core.Components;
+using LevelImposter.Core.Models;
+using LevelImposter.Core.Translations;
+using LevelImposter.Core.Utils;
 using ObjList = Il2CppInterop.Runtime.InteropTypes.Arrays.Il2CppReferenceArray<Il2CppSystem.Object>;
 
-namespace LevelImposter.Core;
+namespace LevelImposter.Core.Patches.Utils;
 
 /// <summary>
 ///     Renames task names and other strings stored as <c>SystemTypes</c>.
@@ -12,11 +16,15 @@ public static class SystemRenamePatch
 {
     public static bool Prefix([HarmonyArgument(0)] SystemTypes systemType, ref string __result)
     {
-        if (!LIShipStatus.IsInstance() || !LIShipStatus.GetInstance().Renames.Contains(systemType))
-            return true;
+        // Handle Normal Cases
+        if (LIBaseShip.Instance?.Renames.TryGet(systemType, out var renamedString) ?? false)
+        {
+            // Get the string from the database
+            __result = renamedString ?? __result;
+            return false;
+        }
 
-        __result = LIShipStatus.GetInstance().Renames.Get(systemType) ?? __result;
-        return false;
+        return true;
     }
 }
 
@@ -28,11 +36,15 @@ public static class TaskRenamePatch
 {
     public static bool Prefix([HarmonyArgument(0)] TaskTypes taskType, ref string __result)
     {
-        if (!LIShipStatus.IsInstance() || !LIShipStatus.GetInstance().Renames.Contains(taskType))
-            return true;
+        // Handle Normal Cases
+        if (LIBaseShip.Instance?.Renames.TryGet(taskType, out var renamedString) ?? false)
+        {
+            // Get the string from the database
+            __result = renamedString ?? __result;
+            return false;
+        }
 
-        __result = LIShipStatus.GetInstance().Renames.Get(taskType);
-        return false;
+        return true;
     }
 }
 
@@ -50,21 +62,30 @@ public static class StringRenamePatch
         // Handle Special Cases
         if (stringNames == LIConstants.MAP_STRING_NAME)
         {
-            __result = GameState.MapName;
+            // Hide map name in lobby
+            if (GameConfiguration.HideMapName && GameState.IsInLobby)
+                __result = Translation.Get("lobby.random_custom_map");
+
+            // Otherwise, get the current map name
+            else
+                __result = GameState.MapName;
             return false;
         }
 
         // Handle Normal Cases
-        if (!LIShipStatus.IsInstance() || !LIShipStatus.GetInstance().Renames.Contains(stringNames))
-            return true;
+        if (LIBaseShip.Instance?.Renames.TryGet(stringNames, out var renamedString) ?? false)
+        {
+            // Apply the string from the database
+            __result = renamedString ?? __result;
 
-        // Get the string from the database
-        __result = LIShipStatus.GetInstance().Renames.Get(stringNames);
+            // Format parameters into string
+            // MUST BE Il2cppSystem.String.Format (not System.String.Format)
+            __result = String.Format(__result, objList);
 
-        // Format parameters into string
-        // MUST BE Il2cppSystem.String.Format (not System.String.Format)
-        __result = String.Format(__result, objList);
+            // Abort method
+            return false;
+        }
 
-        return false;
+        return true;
     }
 }

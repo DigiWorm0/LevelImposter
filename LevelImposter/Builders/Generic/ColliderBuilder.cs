@@ -1,21 +1,23 @@
 ﻿using System.Linq;
 using Il2CppSystem.Collections.Generic;
-using LevelImposter.Core;
+using LevelImposter.Core.Models;
 using UnityEngine;
 
-namespace LevelImposter.Builders;
+namespace LevelImposter.Builders.Generic;
 
 /// <summary>
 ///     Configures the Collider2D on the GameObject
 /// </summary>
 public class ColliderBuilder : IElemBuilder
 {
-    private static readonly string[] SHADOW_ONLY_TYPES =
-    {
+    private static readonly string[] ShadowOnlyTypes =
+    [
         "util-onewaycollider"
-    };
+    ];
 
-    public void OnPreBuild(LIElement elem, GameObject obj)
+    public int Priority => IElemBuilder.HIGH_PRIORITY; // <-- Run before other builders that may need colliders
+
+    public void OnBuild(LIElement elem, GameObject obj)
     {
         if (elem.properties.colliders == null)
             return;
@@ -38,7 +40,7 @@ public class ColliderBuilder : IElemBuilder
             }
 
             // Shadow Only
-            if (SHADOW_ONLY_TYPES.Contains(elem.type))
+            if (ShadowOnlyTypes.Contains(elem.type))
                 continue;
 
             // PolygonCollider2D
@@ -53,6 +55,7 @@ public class ColliderBuilder : IElemBuilder
             {
                 var collider = obj.AddComponent<EdgeCollider2D>();
                 collider.SetPoints(GetPoints(colliderData));
+                collider.edgeRadius = 0.05f; // <-- Matches default in-game edge radius
             }
         }
     }

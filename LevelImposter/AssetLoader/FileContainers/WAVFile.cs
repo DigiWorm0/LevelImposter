@@ -1,18 +1,15 @@
 using System;
 using System.IO;
-using LevelImposter.Shop;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
-namespace LevelImposter.Core;
+namespace LevelImposter.AssetLoader.FileContainers;
 
 /// <summary>
 ///     Represents a WAV file.
 /// </summary>
 public class WAVFile(string _name) : IDisposable
 {
-    private const string CLIP_NAME = "WAVFile";
-
     private short _channelCount;
     private AudioClip? _clip;
     private float[]? _data;
@@ -26,53 +23,6 @@ public class WAVFile(string _name) : IDisposable
             Object.Destroy(_clip);
         _clip = null;
         _data = null;
-    }
-
-    public static AudioClip? LoadSound(LISound? soundData)
-    {
-        // Get Sound Data
-        if (soundData == null)
-            return null;
-
-        // Get Asset DB
-        var mapAssetDB = MapLoader.CurrentMap?.mapAssetDB;
-        if (mapAssetDB == null)
-            return null;
-
-        // Get Sound Stream
-        var soundDBElem = mapAssetDB.Get(soundData.dataID);
-        if (soundDBElem == null)
-            return null;
-
-        // Get Sound Data
-        using var stream = soundDBElem.OpenStream();
-        return LoadStream(stream);
-    }
-
-    /// <summary>
-    ///     Loads a WAV file from the given base64 string and adds to map's GC list
-    /// </summary>
-    /// <param name="dataStream">Data stream to load from</param>
-    /// <returns>A Unity AudioClip</returns>
-    public static AudioClip? LoadStream(Stream dataStream)
-    {
-        try
-        {
-            // Load File
-            var wavFile = new WAVFile(CLIP_NAME);
-            wavFile.Load(dataStream);
-
-            // Add to GC list
-            GCHandler.Register(wavFile);
-
-            // Return clip
-            return wavFile.GetClip();
-        }
-        catch (Exception e)
-        {
-            LILogger.Warn(e);
-            return null;
-        }
     }
 
     /// <summary>
@@ -125,7 +75,7 @@ public class WAVFile(string _name) : IDisposable
         var blockName = new string(reader.ReadChars(4));
         if (string.IsNullOrEmpty(blockName))
             return false;
-        
+
         switch (blockName)
         {
             case "fmt ":
@@ -165,11 +115,11 @@ public class WAVFile(string _name) : IDisposable
         // Unused bytes
         SkipBytes(reader, chunkSize - 8);
     }
-    
+
     /// <summary>
-    /// Skips the specified number of bytes in the binary reader.
-    /// If the underlying stream supports seeking, it adjusts the position directly.
-    /// Otherwise, it reads and discards the bytes.
+    ///     Skips the specified number of bytes in the binary reader.
+    ///     If the underlying stream supports seeking, it adjusts the position directly.
+    ///     Otherwise, it reads and discards the bytes.
     /// </summary>
     /// <param name="reader">The binary reader to read from</param>
     /// <param name="byteCount">The number of bytes to skip</param>

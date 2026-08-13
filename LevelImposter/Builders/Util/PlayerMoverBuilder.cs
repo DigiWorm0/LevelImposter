@@ -1,12 +1,18 @@
-﻿using LevelImposter.Core;
+﻿using LevelImposter.Core.Components;
+using LevelImposter.Core.Models;
 using UnityEngine;
 
-namespace LevelImposter.Builders;
+namespace LevelImposter.Builders.Util;
 
 public class PlayerMoverBuilder : IElemBuilder
 {
     private uint _playerMoverCounter = 1;
-    
+
+    public void OnPreBuild()
+    {
+        _playerMoverCounter = 1;
+    }
+
     public void OnBuild(LIElement elem, GameObject obj)
     {
         if (elem.type != "util-playermover")

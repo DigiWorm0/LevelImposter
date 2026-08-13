@@ -1,15 +1,20 @@
 using System;
 using System.Collections.Generic;
-using LevelImposter.Core;
+using LevelImposter.Builders.Generic;
+using LevelImposter.Builders.Minimap;
+using LevelImposter.Builders.Util;
+using LevelImposter.Core.Components;
+using LevelImposter.Core.Models;
+using LevelImposter.Core.Utils;
 using LevelImposter.DB;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
-namespace LevelImposter.Builders;
+namespace LevelImposter.Builders.Sab;
 
 public class SabMapBuilder : IElemBuilder
 {
-    private static readonly Dictionary<SystemTypes, MapRoom> _mapRoomDB = new();
+    private static readonly Dictionary<SystemTypes, MapRoom> MapRoomDB = new();
     private Material? _btnMat;
 
     private Sprite? _commsBtnSprite;
@@ -22,9 +27,9 @@ public class SabMapBuilder : IElemBuilder
     private Sprite? _oxygenBtnSprite;
     private Sprite? _reactorBtnSprite;
 
-    public SabMapBuilder()
+    public void OnPreBuild()
     {
-        _mapRoomDB.Clear();
+        MapRoomDB.Clear();
     }
 
     public void OnBuild(LIElement elem, GameObject obj)
@@ -33,7 +38,7 @@ public class SabMapBuilder : IElemBuilder
             return;
 
         // ShipStatus
-        var shipStatus = LIShipStatus.GetInstance().ShipStatus;
+        var shipStatus = LIShipStatus.GetShip();
 
         _hasSabConsoles = true;
 
@@ -63,9 +68,9 @@ public class SabMapBuilder : IElemBuilder
 
         // Map Room
         MapRoom mapRoom;
-        if (_mapRoomDB.ContainsKey(systemType))
+        if (MapRoomDB.ContainsKey(systemType))
         {
-            mapRoom = _mapRoomDB[systemType];
+            mapRoom = MapRoomDB[systemType];
         }
         else
         {
@@ -77,10 +82,10 @@ public class SabMapBuilder : IElemBuilder
             mapRoom.Parent = infectedOverlay;
             mapRoom.room = systemType;
 
-            _mapRoomDB.Add(systemType, mapRoom);
+            MapRoomDB.Add(systemType, mapRoom);
 
-            var rooms = new MapRoom[_mapRoomDB.Count];
-            _mapRoomDB.Values.CopyTo(rooms, 0);
+            var rooms = new MapRoom[MapRoomDB.Count];
+            MapRoomDB.Values.CopyTo(rooms, 0);
             infectedOverlay.rooms = rooms;
         }
 
@@ -162,7 +167,7 @@ public class SabMapBuilder : IElemBuilder
         };
     }
 
-    public void OnCleanup()
+    public void OnPostBuild()
     {
         if (_hasSabConsoles && !_hasSabButtons)
             LILogger.Warn("Map does not include sabotage buttons");
@@ -170,7 +175,7 @@ public class SabMapBuilder : IElemBuilder
         var mapBehaviour = MinimapBuilder.GetMinimap();
         var infectedOverlay = mapBehaviour.infectedOverlay;
 
-        while (infectedOverlay.transform.childCount > _mapRoomDB.Count + MinimapSpriteBuilder.SabCount)
+        while (infectedOverlay.transform.childCount > MapRoomDB.Count + MinimapSpriteBuilder.SabCount)
             Object.DestroyImmediate(infectedOverlay.transform.GetChild(0).gameObject);
     }
 
@@ -182,7 +187,7 @@ public class SabMapBuilder : IElemBuilder
         // TODO: Move Assets to a SubDB
 
         // Polus
-        var polusShip = AssetDB.GetObject("ss-polus");
+        var polusShip = PrefabDB.GetObject("ss-polus");
         {
             var polusShipStatus = polusShip?.GetComponent<ShipStatus>();
             var polusOverlay = polusShipStatus?.MapPrefab.infectedOverlay;
@@ -197,7 +202,7 @@ public class SabMapBuilder : IElemBuilder
         }
 
         // Mira
-        var miraShip = AssetDB.GetObject("ss-mira");
+        var miraShip = PrefabDB.GetObject("ss-mira");
         {
             var miraShipStatus = miraShip?.GetComponent<ShipStatus>();
             var miraOverlay = miraShipStatus?.MapPrefab.infectedOverlay;
@@ -207,7 +212,7 @@ public class SabMapBuilder : IElemBuilder
         }
 
         // Fungle
-        var fungleShip = AssetDB.GetObject("ss-fungle");
+        var fungleShip = PrefabDB.GetObject("ss-fungle");
         {
             var fungleShipStatus = fungleShip?.GetComponent<ShipStatus>();
             var fungleOverlay = fungleShipStatus?.MapPrefab.infectedOverlay;
@@ -224,7 +229,7 @@ public class SabMapBuilder : IElemBuilder
     /// <param name="parent">Parent object name</param>
     /// <param name="child">Child object name</param>
     /// <returns>Sprite attatched to SpriteRenderer</returns>
-    private Sprite GetSprite(InfectedOverlay overlay, string parent, string child)
+    private static Sprite GetSprite(InfectedOverlay overlay, string parent, string child)
     {
         return overlay.transform.Find(parent).Find(child).GetComponent<SpriteRenderer>().sprite;
     }

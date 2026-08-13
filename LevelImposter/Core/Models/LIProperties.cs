@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace LevelImposter.Core;
+namespace LevelImposter.Core.Models;
 
 [Serializable]
 public class LIProperties
@@ -143,6 +143,9 @@ public class LIProperties
     public float? starfieldMaxSpeed { get; set; }
     public float? starfieldHeight { get; set; }
     public float? starfieldLength { get; set; }
+    public float? starfieldMinSize { get; set; }
+    public float? starfieldMaxSize { get; set; }
+    public bool? starfieldScaleSpeedBySize { get; set; }
 
     // Floating
     public float? floatingHeight { get; set; }

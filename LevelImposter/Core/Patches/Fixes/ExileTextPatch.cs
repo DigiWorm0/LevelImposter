@@ -1,6 +1,7 @@
 ﻿using HarmonyLib;
+using LevelImposter.Core.Components;
 
-namespace LevelImposter.Core;
+namespace LevelImposter.Core.Patches.Fixes;
 
 /// <summary>
 ///     Fixes a bug where the ExileController.completeString would reference
@@ -10,7 +11,7 @@ namespace LevelImposter.Core;
 public class ExileTextPatch
 {
     public static string LastExileText { get; private set; } = string.Empty;
-    
+
     public static void Postfix(ExileController __instance)
     {
         if (!LIShipStatus.IsInstance())

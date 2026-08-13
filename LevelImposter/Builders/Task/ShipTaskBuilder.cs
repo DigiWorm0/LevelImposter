@@ -1,16 +1,20 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using LevelImposter.Core;
+using LevelImposter.Builders.Util;
+using LevelImposter.Core.Components;
+using LevelImposter.Core.Models;
+using LevelImposter.Core.Utils;
 using LevelImposter.DB;
+using LevelImposter.DB.Models;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
-namespace LevelImposter.Builders;
+namespace LevelImposter.Builders.Task;
 
 public class ShipTaskBuilder : IElemBuilder
 {
-    private static readonly Dictionary<string, TaskLength> TASK_LENGTHS = new()
+    private static readonly Dictionary<string, TaskLength> TaskLengths = new()
     {
         { "Short", TaskLength.Short },
         { "Long", TaskLength.Long },
@@ -23,14 +27,21 @@ public class ShipTaskBuilder : IElemBuilder
 
     public static SystemTypes[] DivertSystems { get; private set; } = Array.Empty<SystemTypes>();
 
+    public void OnPreBuild()
+    {
+        _builtTypes.Clear();
+        _taskParent = null;
+        _wiresTask = null;
+        DivertSystems = Array.Empty<SystemTypes>();
+    }
+
     /// <summary>
     ///     Performs final clean-up
     /// </summary>
-    public void OnCleanup()
+    public void OnPostBuild()
     {
         if (_wiresTask != null)
             _wiresTask.MaxStep = Math.Min(TaskConsoleBuilder.WiresCount, (byte)3);
-        _wiresTask = null;
     }
 
     /// <summary>
@@ -55,7 +66,7 @@ public class ShipTaskBuilder : IElemBuilder
         }
 
         // Values
-        var hasTask = AssetDB.HasTask(elem.type);
+        var hasTask = PrefabDB.HasTask(elem.type);
         var isDivert = elem.type == "task-divert1";
         var isNode = elem.type == "task-node";
         var isNodeSwitch = elem.type == "task-nodeswitch";
@@ -63,13 +74,16 @@ public class ShipTaskBuilder : IElemBuilder
         var isDownload = elem.type == "task-download";
 
         // Prefab
-        var prefabTask = hasTask ? AssetDB.GetTask<NormalPlayerTask>(elem.type) : null;
+        var prefabTask = hasTask ? PrefabDB.GetTask<NormalPlayerTask>(elem.type) : null;
         var prefabArrow = prefabTask?.Arrow?.gameObject;
-        var prefabLength = hasTask ? AssetDB.GetTaskLength(elem.type) : TaskLength.Common;
+        var prefabLength = hasTask ? PrefabDB.GetTaskLength(elem.type) : TaskLength.Common;
         var systemType = RoomBuilder.GetParentOrDefault(elem);
 
         // Rename
-        var renameHandler = LIShipStatus.GetInstance().Renames;
+        var renameHandler = LIBaseShip.Instance?.Renames;
+        if (renameHandler == null)
+            throw new Exception("Missing rename handler");
+
         if (prefabTask != null && !string.IsNullOrEmpty(elem.properties.description))
         {
             renameHandler.Add(prefabTask.TaskType, elem.properties.description);
@@ -83,7 +97,7 @@ public class ShipTaskBuilder : IElemBuilder
         if (isNode)
         {
             var controlType = WeatherSwitchGame.ControlNames[console.ConsoleId];
-            var roomName = renameHandler.Get(systemType);
+            renameHandler.TryGet(systemType, out var roomName);
             if (roomName != null)
                 renameHandler.Add(controlType, roomName);
         }
@@ -198,15 +212,15 @@ public class ShipTaskBuilder : IElemBuilder
     /// <param name="type">Type to search for</param>
     /// <returns>List of all elements in the map of the cooresponding type</returns>
     /// <exception cref="Exception">If there is no LIMap loaded/loading</exception>
-    public static List<LIElement> FindElementsOfType(string type)
+    private static List<LIElement> FindElementsOfType(string type)
     {
         // Check Map
-        var instance = LIShipStatus.GetInstance();
-        if (LIShipStatus.CurrentMap == null)
+        var currentMap = GameConfiguration.CurrentMap;
+        if (currentMap == null)
             throw new Exception("Current map is unavailable");
 
         // Find Elements
-        return LIShipStatus.CurrentMap.elements.Where(mapElem => mapElem.type == type).ToList();
+        return currentMap.elements.Where(mapElem => mapElem.type == type).ToList();
     }
 
     /// <summary>
@@ -227,17 +241,17 @@ public class ShipTaskBuilder : IElemBuilder
 
         // TaskLength
         var taskLengthProp = elem.properties.taskLength;
-        var taskLength = taskLengthProp != null ? TASK_LENGTHS[taskLengthProp] : prefabLength;
+        var taskLength = taskLengthProp != null ? TaskLengths[taskLengthProp] : prefabLength;
         switch (taskLength)
         {
             case TaskLength.Common:
-                shipStatus.CommonTasks = MapUtils.AddToArr(shipStatus.CommonTasks, task);
+                shipStatus.CommonTasks = shipStatus.CommonTasks.Add(task);
                 break;
             case TaskLength.Short:
-                shipStatus.ShortTasks = MapUtils.AddToArr(shipStatus.ShortTasks, task);
+                shipStatus.ShortTasks = shipStatus.ShortTasks.Add(task);
                 break;
             case TaskLength.Long:
-                shipStatus.LongTasks = MapUtils.AddToArr(shipStatus.LongTasks, task);
+                shipStatus.LongTasks = shipStatus.LongTasks.Add(task);
                 break;
             default:
                 throw new ArgumentOutOfRangeException($"Unknown task length: {taskLength}");

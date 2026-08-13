@@ -1,15 +1,27 @@
-﻿using LevelImposter.Core;
+﻿using System;
+using LevelImposter.Builders.Generic;
+using LevelImposter.Core.Components;
+using LevelImposter.Core.Models;
+using LevelImposter.Core.Utils;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
-namespace LevelImposter.Builders;
+namespace LevelImposter.Builders.Minimap;
 
 public class MinimapBuilder : IElemBuilder
 {
-    public const float DEFAULT_SCALE = 4.975f;
+    private const float DEFAULT_SCALE = 4.975f;
 
     private bool _isBuilt;
 
-    public void OnPreBuild(LIElement elem, GameObject obj)
+    public int Priority => IElemBuilder.HIGH_PRIORITY; // <-- Ensure other builders can modify the minimap after this
+
+    public void OnPreBuild()
+    {
+        _isBuilt = false;
+    }
+
+    public void OnBuild(LIElement elem, GameObject obj)
     {
         if (elem.type != "util-minimap")
             return;
@@ -19,10 +31,7 @@ public class MinimapBuilder : IElemBuilder
 
         // Check Singleton
         if (_isBuilt)
-        {
-            LILogger.Warn("Only 1 minimap object should be used per map");
-            return;
-        }
+            throw new Exception("Only 1 minimap object should be used per map");
 
         // Minimap
         var mapBehaviour = GetMinimap();
@@ -59,17 +68,16 @@ public class MinimapBuilder : IElemBuilder
         _isBuilt = true;
     }
 
-    public void OnCleanup()
+    public void OnPostBuild()
     {
-        if (!_isBuilt)
-        {
-            var mapBehaviour = GetMinimap();
-            mapBehaviour.ColorControl.gameObject.SetActive(false);
-            mapBehaviour.transform.FindChild("HereIndicatorParent").gameObject.SetActive(false);
-            mapBehaviour.transform.FindChild("RoomNames").gameObject.SetActive(false);
-        }
+        if (_isBuilt)
+            return;
 
-        _isBuilt = false;
+        // Apply a "default" minimap setup
+        var mapBehaviour = GetMinimap();
+        mapBehaviour.ColorControl.gameObject.SetActive(false);
+        mapBehaviour.transform.FindChild("HereIndicatorParent").gameObject.SetActive(false);
+        mapBehaviour.transform.FindChild("RoomNames").gameObject.SetActive(false);
     }
 
     /// <summary>
@@ -85,15 +93,14 @@ public class MinimapBuilder : IElemBuilder
 
         // Minimap Prefab
         var mapBehaviour = MapBehaviour.Instance;
-        if (mapBehaviour == null)
-        {
-            mapBehaviour = Object.Instantiate(
-                shipStatus.MapPrefab,
-                DestroyableSingleton<HudManager>.Instance.transform
-            );
-            mapBehaviour.gameObject.SetActive(false);
-        }
+        if (mapBehaviour != null)
+            return mapBehaviour;
 
+        mapBehaviour = Object.Instantiate(
+            shipStatus.MapPrefab,
+            DestroyableSingleton<HudManager>.Instance.transform
+        );
+        mapBehaviour.gameObject.SetActive(false);
         return mapBehaviour;
     }
 }

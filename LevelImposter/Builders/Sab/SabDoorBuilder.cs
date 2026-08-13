@@ -1,24 +1,31 @@
 ﻿using System;
 using System.Collections.Generic;
 using LevelImposter.AssetLoader;
-using LevelImposter.Core;
+using LevelImposter.Builders.Util;
+using LevelImposter.Core.Components;
+using LevelImposter.Core.Models;
+using LevelImposter.Core.Utils;
 using LevelImposter.DB;
 using PowerTools;
 using UnityEngine;
 
-namespace LevelImposter.Builders;
+namespace LevelImposter.Builders.Sab;
 
 public class SabDoorBuilder : IElemBuilder
 {
     private const string OPEN_SOUND_NAME = "doorOpen";
     private const string CLOSE_SOUND_NAME = "doorClose";
-    private static readonly Dictionary<Guid, PlainDoor> _doorDB = new();
+
+    private static readonly Dictionary<Guid, PlainDoor> DoorDB = new();
+
     private int _doorId;
     private List<Guid>? _specialDoorIDs;
 
-    public SabDoorBuilder()
+    public void OnPreBuild()
     {
-        _doorDB.Clear();
+        DoorDB.Clear();
+        _doorId = 0;
+        _specialDoorIDs?.Clear();
     }
 
     public void OnBuild(LIElement elem, GameObject obj)
@@ -35,8 +42,8 @@ public class SabDoorBuilder : IElemBuilder
         // Special Doors
         if (_specialDoorIDs == null)
         {
-            _specialDoorIDs = new List<Guid>();
-            var mapElems = LIShipStatus.CurrentMap?.elements;
+            _specialDoorIDs = [];
+            var mapElems = GameConfiguration.CurrentMap?.elements;
             if (mapElems == null)
                 throw new MissingShipException();
 
@@ -52,7 +59,7 @@ public class SabDoorBuilder : IElemBuilder
         var isSpecialDoor = _specialDoorIDs.Contains(elem.id);
 
         // Prefab
-        var prefab = AssetDB.GetObject(elem.type);
+        var prefab = PrefabDB.GetObject(elem.type);
         if (prefab == null)
             return;
         var prefabRenderer = prefab.GetComponent<SpriteRenderer>();
@@ -92,7 +99,7 @@ public class SabDoorBuilder : IElemBuilder
         // Door
         var doorType = elem.properties.doorType;
         var isManualDoor = doorType == "polus" || doorType == "airship";
-        PlainDoor? doorComponent = null;
+        PlainDoor? doorComponent;
         if (isManualDoor || isSpecialDoor)
         {
             doorComponent = obj.AddComponent<PlainDoor>();
@@ -112,26 +119,22 @@ public class SabDoorBuilder : IElemBuilder
         doorComponent.CloseSound = prefabDoor.CloseSound;
 
         // Add to DB
-        _doorDB.Add(elem.id, doorComponent);
+        DoorDB.Add(elem.id, doorComponent);
         if (!isSpecialDoor)
-            shipStatus.AllDoors = MapUtils.AddToArr(shipStatus.AllDoors, doorComponent);
+            shipStatus.AllDoors = shipStatus.AllDoors.Add(doorComponent);
 
         // Load Sounds
-        var openSound = MapUtils.FindSound(elem.properties.sounds, OPEN_SOUND_NAME);
+        var openSound = elem.properties.sounds.FindSound(OPEN_SOUND_NAME);
         if (openSound != null)
-        {
             AudioLoader.LoadAsync(
                 openSound.dataID,
                 loadedSound => doorComponent.OpenSound = loadedSound);
-        }
 
-        var closeSound = MapUtils.FindSound(elem.properties.sounds, CLOSE_SOUND_NAME);
+        var closeSound = elem.properties.sounds.FindSound(CLOSE_SOUND_NAME);
         if (closeSound != null)
-        {
             AudioLoader.LoadAsync(
                 closeSound.dataID,
                 loadedSound => doorComponent.CloseSound = loadedSound);
-        }
 
         // SpriteAnim
         if (isSpriteAnim)
@@ -145,7 +148,7 @@ public class SabDoorBuilder : IElemBuilder
         if (isManualDoor && isInteractable && !isSpecialDoor)
         {
             // Prefab
-            var prefab2 = AssetDB.GetObject($"sab-door-{doorType}"); // "sab-door-polus" or "sab-door-airship"
+            var prefab2 = PrefabDB.GetObject($"sab-door-{doorType}"); // "sab-door-polus" or "sab-door-airship"
             var prefab2Console = prefab2?.GetComponent<DoorConsole>();
 
             // Object
@@ -160,7 +163,7 @@ public class SabDoorBuilder : IElemBuilder
             consoleComponent.Image = spriteRenderer;
 
             // Colliders
-            MapUtils.CreateDefaultColliders(doorConsole, obj);
+            doorConsole.CreateDefaultColliders(obj);
         }
 
         // Set Default State
@@ -177,6 +180,6 @@ public class SabDoorBuilder : IElemBuilder
     /// <returns><c>PlainDoor</c> component of the object or <c>null</c> if not found</returns>
     public static PlainDoor? GetDoor(Guid elementID)
     {
-        return _doorDB.GetValueOrDefault(elementID);
+        return DoorDB.GetValueOrDefault(elementID);
     }
 }

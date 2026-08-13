@@ -1,31 +1,31 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using LevelImposter.Core;
+using LevelImposter.Core.Components;
+using LevelImposter.Core.Models;
+using LevelImposter.Core.Services;
+using LevelImposter.Core.Utils;
 using UnityEngine;
 
-namespace LevelImposter.Builders;
+namespace LevelImposter.Builders.Util;
 
 public class RoomBuilder : IElemBuilder
 {
-    public RoomBuilder()
+    public static List<RoomData> RoomDB { get; } = [];
+    public int Priority => IElemBuilder.HIGH_PRIORITY; // <-- Run before other builders that may need room data
+
+    public void OnPreBuild()
     {
         RoomDB.Clear();
     }
 
-    public static List<RoomData> RoomDB { get; } = new();
-
-    public void OnPreBuild(LIElement elem, GameObject obj)
+    public void OnBuild(LIElement elem, GameObject obj)
     {
         if (elem.type != "util-room")
             return;
 
-        // ShipStatus
-        if (!LIShipStatus.IsInstance())
-            throw new MissingShipException();
-
         // Pick a new System
-        var systemType = SystemDistributor.GetNewSystemType();
+        var systemType = SystemDistributionService.GetNewSystemType();
 
         // Options
         var isAdminVisible = elem.properties.isRoomAdminVisible ?? true;
@@ -43,25 +43,24 @@ public class RoomBuilder : IElemBuilder
             LILogger.Warn($"{shipRoom.name} is missing a collider");
 
         // Rename Room Name
-        LIShipStatus.GetInstanceOrNull()?.Renames.Add(systemType, obj.name);
+        LIBaseShip.Instance?.Renames.Add(systemType, obj.name);
 
         // Add to DB
         RoomDB.Add(new RoomData
         {
-            elementID = elem.id,
-            isUIVisible = isUIVisible,
-            shipRoom = shipRoom,
-            collider = shipRoom.roomArea
+            ElementID = elem.id,
+            IsUIVisible = isUIVisible,
+            ShipRoom = shipRoom,
+            Collider = shipRoom.roomArea
         });
+
+        // TODO: Add shiproom to lobby behaviour
     }
 
-    public void OnCleanup()
+    public void OnPostBuild()
     {
-        if (!LIShipStatus.IsInstance())
-            throw new MissingShipException();
-
         // Add Default Room Name
-        LIShipStatus.GetInstanceOrNull()?.Renames.Add((SystemTypes)0, "Default Room");
+        LIBaseShip.Instance?.Renames.Add((SystemTypes)0, "Default Room");
     }
 
     /// <summary>
@@ -71,7 +70,7 @@ public class RoomBuilder : IElemBuilder
     /// <returns>Associated SystemTypes value</returns>
     public static SystemTypes GetSystem(Guid id)
     {
-        return RoomDB.FirstOrDefault(x => x.elementID == id).systemType ?? 0;
+        return RoomDB.FirstOrDefault(x => x.ElementID == id).SystemType ?? 0;
     }
 
     /// <summary>
@@ -95,25 +94,15 @@ public class RoomBuilder : IElemBuilder
     /// <returns>Associated PlainShipRoom component or <c>null</c> if none found</returns>
     public static PlainShipRoom? GetShipRoom(SystemTypes systemType)
     {
-        return RoomDB.FirstOrDefault(x => x.systemType == systemType).shipRoom;
+        return RoomDB.FirstOrDefault(x => x.SystemType == systemType).ShipRoom;
     }
 
-    /// <summary>
-    ///     Gets whether the UI is visible for a specific SystemTypes value.
-    /// </summary>
-    /// <param name="systemType">Room ID to check</param>
-    /// <returns>True if the UI is visible, false otherwise</returns>
-    public static bool GetUIVisible(SystemTypes systemType)
+    public readonly struct RoomData
     {
-        return RoomDB.FirstOrDefault(x => x.systemType == systemType).isUIVisible;
-    }
-
-    public struct RoomData
-    {
-        public Guid elementID { get; set; }
-        public bool isUIVisible { get; set; }
-        public PlainShipRoom? shipRoom { get; set; }
-        public Collider2D? collider { get; set; }
-        public SystemTypes? systemType => shipRoom?.RoomId;
+        public Guid ElementID { get; init; }
+        public bool IsUIVisible { get; init; }
+        public PlainShipRoom? ShipRoom { get; init; }
+        public Collider2D? Collider { get; init; }
+        public SystemTypes? SystemType => ShipRoom?.RoomId;
     }
 }

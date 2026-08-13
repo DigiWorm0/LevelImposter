@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Linq;
-using Reactor.Networking.Attributes;
+using LevelImposter.Networking.RPC;
+using Reactor.Networking.Rpc;
 
-namespace LevelImposter.Core;
+namespace LevelImposter.Core.Components;
 
 /// <summary>
-///     Object that kills all players that enter it's range
+///     Object that kills all players that enter its range
 /// </summary>
 public class LIDeathArea(IntPtr intPtr) : PlayerArea(intPtr)
 {
@@ -35,30 +36,11 @@ public class LIDeathArea(IntPtr intPtr) : PlayerArea(intPtr)
                 continue;
 
             // Fire RPC to kill player
-            RPCTriggerDeath(player, _createDeadBody);
+            Rpc<DeathAreaRPC>.Instance.Send(player, _createDeadBody, true);
         }
     }
 
-    [MethodRpc((uint)LIRpc.KillPlayer)]
-    public static void RPCTriggerDeath(PlayerControl player, bool createDeadBody)
-    {
-        if (player == null || player.Data.IsDead)
-            return;
-        LILogger.Info($"[RPC] Trigger killing {player.name}");
-
-        // Kill Player
-        player.Die(DeathReason.Kill, false);
-
-        // Play Kill Sound (if I'm the Player)
-        if (player.AmOwner)
-            PlayKillSound();
-
-        // Create Dead Body
-        if (createDeadBody)
-            CreateDeadBody(player);
-    }
-
-    private static void CreateDeadBody(PlayerControl player)
+    public static void CreateDeadBody(PlayerControl player)
     {
         // Create/Disable Dead Body
         var deadBodyPrefab = GameManager.Instance.deadBodyPrefab.First();
@@ -81,7 +63,7 @@ public class LIDeathArea(IntPtr intPtr) : PlayerArea(intPtr)
         deadBody.enabled = true;
     }
 
-    private static void PlayKillSound()
+    public static void PlayKillSFX()
     {
         var killSFX = PlayerControl.LocalPlayer.KillSfx;
         SoundManager.Instance.PlaySound(killSFX, false, 0.8f);

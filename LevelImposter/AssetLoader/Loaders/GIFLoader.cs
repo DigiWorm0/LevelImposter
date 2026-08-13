@@ -1,8 +1,9 @@
 ﻿using System.IO;
-using LevelImposter.Core;
-using UnityEngine;
+using LevelImposter.AssetLoader.FileContainers;
+using LevelImposter.AssetLoader.Loadables;
+using LevelImposter.Core.GarbageCollection;
 
-namespace LevelImposter.AssetLoader;
+namespace LevelImposter.AssetLoader.Loaders;
 
 public static class GIFLoader
 {
@@ -11,25 +12,24 @@ public static class GIFLoader
     /// </summary>
     /// <param name="loadable">Loadable sprite object</param>
     /// <returns>A fully-loaded GIFFile containing the image data</returns>
-    public static LoadedGIFTexture Load(LoadableTexture loadable)
+    public static GifTextureResult Load(TextureInfo loadable)
     {
-        // Get whether to add to GC
-        var addToGC = loadable.Options?.AddToGC ?? true;
-        
         // Create new file
         var gifFile = new GIFFile(loadable.ID);
-        if (addToGC)
-            GCHandler.Register(gifFile);
+        GCHandler.Register(gifFile, loadable.Options.GCBehavior);
+
+        // Load data into managed memory
+        var imgData = loadable.DataStore.LoadToManagedMemory();
 
         // Load the GIF file from the stream
-        using var imgStream = loadable.DataStore.OpenStream();
-        gifFile.Load(imgStream, addToGC);
-        
+        using var imgStream = new MemoryStream(imgData);
+        gifFile.Load(imgStream, loadable.Options.GCBehavior);
+
         // Return the GIF file
-        return new LoadedGIFTexture(gifFile);
+        return new GifTextureResult(gifFile);
     }
 
-    public class LoadedGIFTexture(GIFFile gifFile) : LoadedTexture(gifFile.GetFrameTexture(0))
+    public class GifTextureResult(GIFFile gifFile) : TextureResult(gifFile.GetFrameTexture(0))
     {
         public GIFFile GIFFile => gifFile;
     }

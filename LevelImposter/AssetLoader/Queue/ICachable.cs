@@ -1,6 +1,6 @@
-﻿namespace LevelImposter.AssetLoader;
+﻿namespace LevelImposter.AssetLoader.Queue;
 
 public interface ICachable
 {
-    public string ID { get; }
+    public bool IsExpired { get; }
 }

@@ -1,0 +1,234 @@
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text.Json;
+using Il2CppInterop.Runtime.InteropTypes.Arrays;
+using LevelImposter.Core.Models;
+using LevelImposter.Core.Utils;
+using LevelImposter.FileIO.API;
+using LevelImposter.FileIO.DataBlock;
+
+namespace LevelImposter.FileIO.Serialization;
+
+/// <summary>
+///     Converts LIM to LIM2 files
+/// </summary>
+public static class LIDeserializerLegacy
+{
+    private static readonly Dictionary<string, string> _legacySabToNewButton = new()
+    {
+        { "sab-reactorleft", "sab-btnreactor" },
+        // {"sab-reactorright", "sab-btnreactor"}, // <-- Redundant
+        { "sab-comms", "sab-btncomms" },
+        { "sab-doorv", "sab-btndoors" },
+        { "sab-doorh", "sab-btndoors" },
+        { "sab-oxygen1", "sab-btnoxygen" },
+        // {"sab-oxygen2", "sab-btnoxygen"}, // <-- Redundant
+        { "sab-electric", "sab-btnlights" }
+    };
+
+    /// <summary>
+    ///     Compares two byte arrays (Il2CppStructArray<byte>)
+    /// </summary>
+    /// <param name="data1">The first byte array</param>
+    /// <param name="data2">The second byte array</param>
+    /// <returns>True if the byte arrays match, false otherwise.</returns>
+    private static bool CompareData(Il2CppStructArray<byte>? data1, Il2CppStructArray<byte>? data2)
+    {
+        if (data1 == null || data2 == null)
+            return false;
+        if (data1.Length != data2.Length)
+            return false;
+        for (var i = 0; i < data1.Length; i++)
+            if (data1[i] != data2[i])
+                return false;
+        return true;
+    }
+
+    /// <summary>
+    ///     Finds asset data in the assetDB or adds it if it doesn't exist
+    /// </summary>
+    /// <param name="assetDB">AssetDB to search or add</param>
+    /// <param name="data">Data to search for or add</param>
+    /// <returns>The resulting asset ID</returns>
+    private static Guid FindOrAddAsset(MapAssetDB assetDB, Il2CppStructArray<byte> data)
+    {
+        // Find Asset
+        foreach (var asset in assetDB.DB)
+            if (CompareData(asset.Value.LoadToMemory().Data, data))
+                return asset.Key;
+
+        // Create Asset
+        var assetID = Guid.NewGuid();
+        assetDB.Add(assetID, new MemoryBlock(data));
+        return assetID;
+    }
+
+    /// <summary>
+    ///     Converts a legacy map file to a LIM2 file
+    /// </summary>
+    /// <param name="dataStream">The stream of map data to read from</param>
+    /// <param name="filePath">
+    ///     Optional file path to the map file.
+    ///     If provided, this will replace the legacy map file with a new LIM2 file.
+    /// </param>
+    /// <exception cref="FileNotFoundException">If the map file wasn't found</exception>
+    /// <exception cref="FileLoadException">If the new map already exists</exception>
+    public static LIMap Deserialize(
+        Stream dataStream,
+        string? filePath = null)
+    {
+        LILogger.Info($"Converting legacy map file @ {filePath}");
+
+        // Read legacy file
+        var mapFile = JsonSerializer.Deserialize<LIMap>(dataStream);
+        if (mapFile == null)
+            throw new FileLoadException($"Could not deserialize legacy map file @ {filePath}");
+
+        // Update map
+        MigrateMapData(mapFile);
+        if (filePath != null)
+        {
+            dataStream.Close();
+            MigrateMapFile(mapFile, filePath);
+        }
+
+        return mapFile;
+    }
+
+    /// <summary>
+    ///     Converts any LIM1 map files in the map directory to LIM2.
+    ///     This runs synchronously and may take a while if there are many legacy maps to convert.
+    /// </summary>
+    public static void ConvertAllLegacyMaps()
+    {
+        var legacyFilePaths = Directory.GetFiles(MapFileAPI.GetDirectory(), "*.lim");
+        foreach (var path in legacyFilePaths)
+            try
+            {
+                using var fileStream = File.OpenRead(path);
+                Deserialize(fileStream, path); // <-- Deserialize will automatically migrate map file
+            }
+            catch (Exception e)
+            {
+                LILogger.Warn($"Failed to convert legacy map file @ {path}: {e.Message}");
+            }
+    }
+
+    private static byte[] ParseBase64(string base64)
+    {
+        var sub64 = base64.Substring(base64.IndexOf(",", StringComparison.Ordinal) + 1);
+        return Convert.FromBase64String(sub64);
+    }
+
+#pragma warning disable CS0618 // Handles legacy properties
+    private static void MigrateMapData(LIMap map)
+    {
+        if (!map.IsLegacy)
+            return;
+
+        LILogger.Info($"Converting legacy map data [{map.id}]");
+
+        // Update Properties
+        map.MapAssetDB = new MapAssetDB();
+
+        // SpriteDB
+        foreach (var element in map.elements)
+        {
+            // Add Sprite Data
+            if (element.properties.spriteData != null)
+            {
+                var spriteData = ParseBase64(element.properties.spriteData);
+                element.properties.spriteID = FindOrAddAsset(map.MapAssetDB, spriteData);
+                element.properties.spriteData = null;
+            }
+
+            // Add Meeting Background
+            if (element.properties.meetingBackground != null)
+            {
+                var spriteData = ParseBase64(element.properties.meetingBackground);
+                element.properties.meetingBackgroundID = FindOrAddAsset(map.MapAssetDB, spriteData);
+                element.properties.spriteData = null;
+            }
+
+            // Add Minigame Data
+            if (element.properties.minigames != null)
+                foreach (var minigame in element.properties.minigames)
+                {
+                    var spriteData = ParseBase64(minigame.spriteData ?? "");
+                    if (spriteData != null)
+                        minigame.spriteID = FindOrAddAsset(map.MapAssetDB, spriteData);
+                    minigame.spriteData = null;
+                }
+
+            // Add Sound Data
+            if (element.properties.sounds != null)
+                foreach (var sound in element.properties.sounds)
+                {
+                    if (sound.isPreset)
+                    {
+                        sound.presetID = sound.data;
+                    }
+                    else
+                    {
+                        var soundData = ParseBase64(sound.data ?? "");
+                        if (soundData != null)
+                            sound.dataID = FindOrAddAsset(map.MapAssetDB, soundData);
+                    }
+
+                    sound.data = null;
+                }
+
+            // Add Sabotage Buttons
+            if (_legacySabToNewButton.TryGetValue(element.type, out var newButtonType))
+            {
+                var mapContainsButton = map.elements.Any(e => e.type == newButtonType);
+                if (mapContainsButton)
+                    continue;
+
+                var elements = map.elements.ToList();
+                elements.Add(new LIElement
+                {
+                    id = Guid.NewGuid(),
+                    name = $"{element.name}_btn",
+                    type = newButtonType,
+                    x = element.x,
+                    y = element.y,
+                    z = 0,
+                    xScale = 1,
+                    yScale = 1,
+                    rotation = 0,
+                    properties = new LIProperties
+                    {
+                        parent = element.properties.parent
+                    }
+                });
+                map.elements = elements.ToArray();
+            }
+
+            // TODO: Search for duplicate entries
+        }
+    }
+
+    private static void MigrateMapFile(LIMap mapData, string filePath)
+    {
+        // Legacy >>> .bak
+        var backupPath = $"{filePath}.bak";
+        var index = 0;
+        while (File.Exists(backupPath))
+            backupPath = $"{filePath}.bak.{index++}";
+
+        if (File.Exists(filePath))
+            File.Move(filePath, backupPath);
+
+        // Updated >>> .lim2
+        var newPath = Path.ChangeExtension(filePath, ".lim2");
+        if (File.Exists(newPath))
+            File.Delete(newPath);
+
+        using var outputFileStream = File.Create(newPath);
+        LISerializer.SerializeMap(mapData, outputFileStream);
+    }
+#pragma warning restore CS0618
+}

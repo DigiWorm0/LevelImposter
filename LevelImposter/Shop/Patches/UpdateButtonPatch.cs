@@ -1,7 +1,8 @@
 using HarmonyLib;
-using LevelImposter.Core;
+using LevelImposter.Core.Utils;
+using UnityEngine;
 
-namespace LevelImposter.Shop;
+namespace LevelImposter.Shop.Patches;
 
 /*
  *      Adds the update button to
@@ -12,10 +13,8 @@ public static class UpdateButtonPatch
 {
     public static void Postfix()
     {
-        GitHubAPI.GetLatestRelease(release =>
-        {
-            if (!GitHubAPI.IsCurrent(release))
-                UpdateButtonBuilder.Build();
-        }, error => { LILogger.Warn("Failed to check for updates: " + error); });
+        // Initialize Mod Updater
+        var prefab = PackagedResources.LoadFromBundle<GameObject>("ModUpdater");
+        Object.Instantiate(prefab);
     }
 }

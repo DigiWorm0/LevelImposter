@@ -1,7 +1,8 @@
 using HarmonyLib;
+using LevelImposter.Core.Components;
 using UnityEngine;
 
-namespace LevelImposter.Core;
+namespace LevelImposter.Core.Patches.Utils;
 
 /// <summary>
 ///     Loads all minigame sprites when a minigame is started.
@@ -32,8 +33,6 @@ public static class MinigamePatch
         minigameSprites?.LoadMinigame(__instance);
     }
 }
-
-
 
 /// <summary>
 ///     When a minigame is closed, clear the last console.

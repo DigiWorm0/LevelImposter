@@ -1,11 +1,13 @@
 using System;
 using LevelImposter.AssetLoader;
-using LevelImposter.Core;
+using LevelImposter.Core.Components;
+using LevelImposter.Core.Models;
+using LevelImposter.Core.Utils;
 using UnityEngine;
 
-namespace LevelImposter.Builders;
+namespace LevelImposter.Builders.Util;
 
-internal class AmbientSoundBuilder : IElemBuilder
+internal class AmbientSoundBuilder(bool isLobby = false) : IElemBuilder
 {
     private const string AMBIENT_SOUND_TYPE = "util-sound1";
     private const string TRIGGER_SOUND_TYPE = "util-triggersound";
@@ -41,7 +43,7 @@ internal class AmbientSoundBuilder : IElemBuilder
             LILogger.Warn($"{elem.name} missing audio data");
             return;
         }
-        
+
         var soundData = elem.properties.sounds[0];
         if (soundData.dataID == null)
         {
@@ -55,16 +57,17 @@ internal class AmbientSoundBuilder : IElemBuilder
             var ambientPlayer = obj.AddComponent<AmbientSoundPlayer>();
             ambientPlayer.HitAreas = colliders;
             ambientPlayer.MaxVolume = soundData?.volume ?? 1f;
-            
+
             // Load asynchronously
             AudioLoader.LoadAsync(
                 soundData?.dataID ?? Guid.Empty,
-                clip => ambientPlayer.AmbientSound = clip);
+                clip => ambientPlayer.AmbientSound = clip,
+                isLobby);
         }
         else if (isTrigger)
         {
             var triggerPlayer = obj.AddComponent<TriggerSoundPlayer>();
-            triggerPlayer.Init(soundData, colliders);
+            triggerPlayer.Init(soundData, colliders, isLobby);
         }
     }
 }

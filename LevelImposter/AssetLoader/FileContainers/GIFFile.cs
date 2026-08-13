@@ -1,12 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Text;
-using LevelImposter.Shop;
+using LevelImposter.Core.GarbageCollection;
+using LevelImposter.Core.Utils;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
-namespace LevelImposter.Core;
+namespace LevelImposter.AssetLoader.FileContainers;
 
 /// <summary>
 ///     Represents a GIF file.
@@ -24,7 +24,7 @@ public class GIFFile(string name) : IDisposable
         RestoreToPrevious = 3
     }
 
-    private static readonly Color[] DEFAULT_COLOR_TABLE =
+    private static readonly Color[] DefaultColorTable =
     {
         new(0, 0, 0, 0),
         new(1, 1, 1, 1)
@@ -33,22 +33,22 @@ public class GIFFile(string name) : IDisposable
     // LZW Decoder
     private static readonly ushort[][] _codeTable = new ushort[1 << 12][]; // Table of "code"s to color indexes
     private readonly Color _backgroundColor = Color.clear; // Background color
+    private GCBehavior? _gcBehavior;
 
     // Logical Screen Descriptor
-    private Color[] _globalColorTable = DEFAULT_COLOR_TABLE; // Table of indexes to colors
+    private Color[] _globalColorTable = DefaultColorTable; // Table of indexes to colors
     private int _globalColorTableSize; // Size of the global color table
     private bool _hasGlobalColorTable; // True if there is a global color table
 
     // Other Data
     private Color[]? _pixelBuffer; // Buffer of pixel colors
-    private bool _addToGC = true;
 
     // GIF File
     public bool IsLoaded { get; private set; }
     public string Name { get; private set; } = name;
 
     // Graphic Control Extension
-    private GIFGraphicsControl? _lastGraphicsControl { get; set; }
+    private GIFGraphicsControl? LastGraphicsControl { get; set; }
 
     // Image Descriptor
     public ushort Width { get; private set; }
@@ -70,49 +70,31 @@ public class GIFFile(string name) : IDisposable
     }
 
     /// <summary>
-    ///     Checks if the given stream is a GIF file. Keeps the stream open.
+    ///     Checks if the given data is a GIF file.
     /// </summary>
-    /// <param name="dataStream">Stream of raw image data</param>
-    /// <returns>True if the Stream is a GIF file. False otherwise</returns>
-    public static bool IsGIF(Stream dataStream)
+    /// <param name="data">MemoryBlock of raw GIF data</param>
+    /// <returns>True if the data is a GIF file. False otherwise</returns>
+    public static bool IsGIF(byte[] data)
     {
-        if (!dataStream.CanSeek)
-            throw new Exception("Stream must be seekable to check for GIF format");
-        
-        using var reader = new BinaryReader(dataStream, Encoding.ASCII, true);
-        try
-        {
-            // Read Header
-            var header = reader.ReadBytes(6);
-            if (header.Length != 6)
-                return false;
-            reader.BaseStream.Position = 0;
-
-            // Check Header
-            return header[0] == 'G' &&
-                   header[1] == 'I' &&
-                   header[2] == 'F' &&
-                   header[3] == '8' &&
-                   (header[4] == '7' || header[4] == '9') &&
-                   header[5] == 'a';
-        }
-        catch
-        {
-            return false;
-        }
+        return data[0] == 'G' &&
+               data[1] == 'I' &&
+               data[2] == 'F' &&
+               data[3] == '8' &&
+               (data[4] == '7' || data[4] == '9') &&
+               data[5] == 'a';
     }
 
     /// <summary>
     ///     Loads the GIF file from a given stream.
     /// </summary>
     /// <param name="dataStream">Stream of raw GIF data</param>
-    /// <param name="addToGC">Whether to handle texture garbage collection automatically</param>
-    public void Load(Stream dataStream, bool addToGC = true)
+    /// <param name="gcBehavior">Garbage collection behavior for the loaded textures</param>
+    public void Load(Stream dataStream, GCBehavior? gcBehavior = null)
     {
         using var reader = new BinaryReader(dataStream);
-        
+
         IsLoaded = false;
-        _addToGC = addToGC;
+        _gcBehavior = gcBehavior;
         ReadHeader(reader);
         ReadDescriptor(reader);
         ReadGlobalColorTable(reader);
@@ -264,7 +246,7 @@ public class GIFFile(string name) : IDisposable
                     throw new Exception("Invalid block terminator " + blockTerminator);
 
                 // GIFGraphicsControl
-                _lastGraphicsControl = new GIFGraphicsControl
+                LastGraphicsControl = new GIFGraphicsControl
                 {
                     Delay = delay,
                     DisposalMethod = disposalMethod,
@@ -348,8 +330,7 @@ public class GIFFile(string name) : IDisposable
             var subBlockSize = reader.ReadByte(); // Read Sub Block
             if (subBlockSize == 0) // End of Image Data
                 break;
-            reader.Read(byteData, (int)bytePosition, subBlockSize);
-            bytePosition += subBlockSize;
+            bytePosition += reader.Read(byteData, (int)bytePosition, subBlockSize);
         }
 
         // Decode LZW
@@ -358,7 +339,7 @@ public class GIFFile(string name) : IDisposable
         // GIFFrame
         var frame = new GIFFrame
         {
-            GraphicsControl = _lastGraphicsControl,
+            GraphicsControl = LastGraphicsControl,
             HasLocalColorTable = hasLocalColorTable,
             LocalColorTable = localColorTable,
             InterlaceFlag = interlaceFlag,
@@ -373,7 +354,7 @@ public class GIFFile(string name) : IDisposable
         };
         Frames.Add(frame);
 
-        _lastGraphicsControl = null;
+        LastGraphicsControl = null;
     }
 
     /// <summary>
@@ -384,8 +365,9 @@ public class GIFFile(string name) : IDisposable
     /// <param name="minCodeSize">Minimum code size in bits</param>
     /// <param name="expectedSize">Expected size of the final index stream</param>
     /// <returns>List of color indices</returns>
-    private List<ushort> DecodeLZW(byte[] byteBuffer, byte minCodeSize, int expectedSize)
+    private static List<ushort> DecodeLZW(byte[] byteBuffer, byte minCodeSize, int expectedSize)
     {
+        // Initialize LZW Variables
         var clearCode = 1 << minCodeSize; // Code used to clear the code table
         var endOfInformationCode = clearCode + 1; // Code used to signal the end of the image data
 
@@ -400,14 +382,25 @@ public class GIFFile(string name) : IDisposable
             _codeTable[k] = k < clearCode ? new[] { k } : new ushort[0];
 
         // Decode LZW
-        var i = 0;
-        while (i + codeSize < byteBuffer.Length * 8)
+        var bitOffset = 0;
+        var byteIndex = 0;
+        while (byteIndex * 8 + bitOffset + codeSize < byteBuffer.Length * 8)
         {
-            // Read Code
+            // Read code at current byte/bit position
             var code = 0;
-            for (var j = 0; j < codeSize; j++)
-                code |= GetBit(byteBuffer, i + j) ? 1 << j : 0;
-            i += codeSize;
+            for (var i = 0; i < codeSize; i++)
+            {
+                // Get Bit
+                code |= ((byteBuffer[byteIndex] >> bitOffset) & 1) << i;
+
+                // Increment position
+                bitOffset++;
+                if (bitOffset == 8)
+                {
+                    bitOffset = 0;
+                    byteIndex++;
+                }
+            }
 
             // Special Codes
             if (code == clearCode)
@@ -481,22 +474,9 @@ public class GIFFile(string name) : IDisposable
 
         // Free Memory
         for (var k = endOfInformationCode + 1; k < _codeTable.Length; k++)
-            _codeTable[k] = null;
+            _codeTable[k] = [];
 
         return indexStream;
-    }
-
-    /// <summary>
-    ///     Gets a bit from a byte array.
-    /// </summary>
-    /// <param name="arr">Array of raw byte data</param>
-    /// <param name="index">Offset in bits</param>
-    /// <returns><c>true</c> if the bit is a 1, <c>false</c> otherwise</returns>
-    private bool GetBit(byte[] arr, int index)
-    {
-        var byteIndex = index / 8;
-        var bitIndex = index % 8;
-        return (arr[byteIndex] & (1 << bitIndex)) != 0;
     }
 
     /// <summary>
@@ -547,7 +527,7 @@ public class GIFFile(string name) : IDisposable
             }
 
             // Create frame texture
-            var pixelArtMode = MapLoader.CurrentMap?.properties.pixelArtMode == true;
+            var pixelArtMode = GameConfiguration.CurrentMap?.properties.pixelArtMode == true;
             var texture = new Texture2D(Width, Height, TextureFormat.RGBA32, false)
             {
                 wrapMode = TextureWrapMode.Clamp,
@@ -580,7 +560,7 @@ public class GIFFile(string name) : IDisposable
                 var pixelIndex = (Height - 1 - (y + newY)) * Width + x + newX;
 
                 // Set pixel color
-                var color = colorTable[colorIndex];
+                var color = colorTable?[colorIndex] ?? Color.clear;
                 _pixelBuffer[pixelIndex] = color;
             }
 
@@ -590,10 +570,9 @@ public class GIFFile(string name) : IDisposable
             // Apply Texture
             texture.SetPixels(_pixelBuffer);
             texture.Apply(false, true); // Remove from CPU memory
-            
+
             // Add to GC
-            if (_addToGC)
-                GCHandler.Register(texture);
+            GCHandler.Register(texture, _gcBehavior);
 
             // Handle frame disposal
             switch (frame.DisposalMethod)
@@ -631,8 +610,8 @@ public class GIFFile(string name) : IDisposable
         if (frameIndex >= Frames.Count - 1)
         {
             _pixelBuffer = null;
-            _lastGraphicsControl = null;
-            _globalColorTable = DEFAULT_COLOR_TABLE;
+            LastGraphicsControl = null;
+            _globalColorTable = DefaultColorTable;
         }
     }
 
@@ -641,10 +620,10 @@ public class GIFFile(string name) : IDisposable
     /// </summary>
     public class GIFGraphicsControl
     {
-        public float Delay { get; set; } // seconds
-        public FrameDisposalMethod DisposalMethod { get; set; }
-        public bool TransparentColorFlag { get; set; }
-        public int TransparentColorIndex { get; set; }
+        public float Delay { get; init; } // seconds
+        public FrameDisposalMethod DisposalMethod { get; init; }
+        public bool TransparentColorFlag { get; init; }
+        public int TransparentColorIndex { get; init; }
     }
 
     /// <summary>
@@ -653,7 +632,7 @@ public class GIFFile(string name) : IDisposable
     public class GIFFrame
     {
         // Graphic Control Extension
-        public GIFGraphicsControl? GraphicsControl { get; set; }
+        public GIFGraphicsControl? GraphicsControl { get; init; }
 
         public float Delay => GraphicsControl?.Delay ?? 0;
 
@@ -663,15 +642,15 @@ public class GIFFile(string name) : IDisposable
         public bool IsRendered => RenderedTexture != null;
 
         // Image Descriptor
-        public Color[]? LocalColorTable { get; set; }
-        public bool HasLocalColorTable { get; set; }
-        public bool InterlaceFlag { get; set; }
-        public bool SortFlag { get; set; }
+        public Color[]? LocalColorTable { get; init; }
+        public bool HasLocalColorTable { get; init; }
+        public bool InterlaceFlag { get; init; }
+        public bool SortFlag { get; init; }
 
-        public int LeftPosition { get; set; }
-        public int TopPosition { get; set; }
-        public int Width { get; set; }
-        public int Height { get; set; }
+        public int LeftPosition { get; init; }
+        public int TopPosition { get; init; }
+        public int Width { get; init; }
+        public int Height { get; init; }
 
         public List<ushort>? IndexStream { get; set; }
         public Texture2D? RenderedTexture { get; set; }

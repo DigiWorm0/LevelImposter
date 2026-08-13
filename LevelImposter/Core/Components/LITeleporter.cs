@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
+using LevelImposter.Core.Models;
+using LevelImposter.Core.Services.Ship;
 using UnityEngine;
 
-namespace LevelImposter.Core;
+namespace LevelImposter.Core.Components;
 
 /// <summary>
 ///     Object that teleports the player on contact
@@ -18,9 +20,9 @@ public class LITeleporter(IntPtr intPtr) : MonoBehaviour(intPtr)
 
     public void Awake()
     {
-        _element = gameObject.GetLIData().Element;
-        _preserveOffset = _element.properties.preserveOffset ?? true;
-        _clientSide = _element.properties.triggerClientSide ?? false;
+        _element = MapObjectDB.Get(gameObject);
+        _preserveOffset = _element?.properties.preserveOffset ?? true;
+        _clientSide = _element?.properties.triggerClientSide ?? false;
     }
 
     public void OnDestroy()

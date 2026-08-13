@@ -1,37 +1,37 @@
-﻿using System.Buffers;
-using System.IO;
+﻿using System.IO;
 using Il2CppInterop.Runtime.Attributes;
-using LevelImposter.Core;
+using LevelImposter.AssetLoader.Loadables;
+using LevelImposter.Core.GarbageCollection;
+using LevelImposter.FileIO.DataBlock;
 using UnityEngine;
 
-namespace LevelImposter.AssetLoader;
+namespace LevelImposter.AssetLoader.Loaders;
 
 public static class PNGLoader
 {
     /// <summary>
     ///     Loads a PNG/JPG image from a stream.
     /// </summary>
-    /// <param name="imgStream">Raw PNG/JPG file stream</param>
     /// <param name="loadable">Texture options to apply</param>
     /// <returns>A still UnityEngine.Texture2D containing the image data</returns>
     /// <exception cref="IOException">If the Stream fails to read image data</exception>
-    public static LoadedTexture Load(LoadableTexture loadable)
+    public static TextureResult Load(TextureInfo loadable)
     {
         // Read all image data into memory
-        using var imgData = loadable.DataStore.LoadToMemory();
-        
+        var imgData = loadable.DataStore.LoadToMemory();
+
         // Get Options
         var options = loadable.Options;
 
         // Create Texture
         var texture = ImageDataToTexture2D(
-            imgData.Get(),
+            imgData,
             loadable.ID,
             options
         );
-        
+
         // Return the loaded texture
-        return new LoadedTexture(texture);
+        return new TextureResult(texture);
     }
 
     /// <summary>
@@ -47,28 +47,24 @@ public static class PNGLoader
     /// <returns>A Unity Texture2D containing the resulting image data</returns>
     [HideFromIl2Cpp]
     private static Texture2D ImageDataToTexture2D(
-        byte[] imgData,
+        MemoryBlock imgData,
         string name = "CustomTexture",
-        LoadableTexture.TextureOptions? options = null)
+        TextureInfo.TextureOptions? options = null)
     {
         // Generate Texture
         Texture2D texture = new(1, 1, TextureFormat.RGBA32, false)
         {
             name = $"{name}_tex",
             wrapMode = TextureWrapMode.Clamp,
-            filterMode = (options?.PixelArt ?? false) ? FilterMode.Point : FilterMode.Bilinear,
+            filterMode = options?.PixelArt ?? false ? FilterMode.Point : FilterMode.Bilinear,
             hideFlags = HideFlags.HideAndDontSave,
             requestedMipmapLevel = 0
         };
-        texture.LoadImage(imgData);
-
-        // Remove from CPU Memory
-        texture.Apply(false, true);
+        texture.LoadImage(imgData.Data, true);
 
         // Add to GC
-        if (options?.AddToGC ?? true)
-            GCHandler.Register(texture);
-        
+        GCHandler.Register(texture, options?.GCBehavior);
+
         // Return Texture
         return texture;
     }

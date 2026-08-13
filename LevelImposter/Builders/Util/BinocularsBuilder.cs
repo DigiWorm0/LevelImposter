@@ -1,17 +1,24 @@
-using LevelImposter.Core;
+using LevelImposter.Core.Models;
 using UnityEngine;
 
-namespace LevelImposter.Builders;
+namespace LevelImposter.Builders.Util;
 
 internal class BinocularsBuilder : IElemBuilder
 {
-    public static float OrthographicSize = 3f;
-    public static Vector2 LastBinocularsPos = Vector2.zero;
-    public static Vector3 CameraOffset = Vector2.zero;
+    public static float OrthographicSize;
+    public static Vector2 LastBinocularsPos;
+    public static Vector3 CameraOffset;
+
+    public void OnPreBuild()
+    {
+        OrthographicSize = 3f;
+        LastBinocularsPos = Vector2.zero;
+        CameraOffset = Vector2.zero;
+    }
 
     public void OnBuild(LIElement elem, GameObject obj)
     {
-        if (!(elem.type == "util-cams4"))
+        if (elem.type != "util-cams4")
             return;
 
         // Building is done by UtilBuilder, this handles Binoculars properties

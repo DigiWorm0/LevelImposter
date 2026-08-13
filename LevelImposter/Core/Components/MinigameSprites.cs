@@ -1,16 +1,22 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Il2CppInterop.Runtime.Attributes;
 using LevelImposter.AssetLoader;
+using LevelImposter.AssetLoader.Loadables;
+using LevelImposter.Core.GarbageCollection;
+using LevelImposter.Core.Models;
+using LevelImposter.Core.Utils;
 using LevelImposter.DB;
-using LevelImposter.Shop;
 using PowerTools;
 using QRCoder;
 using QRCoder.Unity;
+using Reactor.Utilities;
 using UnityEngine;
 using Object = Il2CppSystem.Object;
 
-namespace LevelImposter.Core;
+namespace LevelImposter.Core.Components;
 
 /// <summary>
 ///     Stores and applies any
@@ -44,8 +50,8 @@ public class MinigameSprites(IntPtr intPtr) : MonoBehaviour(intPtr)
 
     private LIMinigameSprite[]? _minigameDataArr;
     private LIMinigameProps? _minigameProps;
-    
-    private static bool PixelArtMode => MapLoader.CurrentMap?.properties.pixelArtMode ?? false;
+
+    private static bool PixelArtMode => GameConfiguration.CurrentMap?.properties.pixelArtMode ?? false;
 
     public void OnDestroy()
     {
@@ -85,7 +91,7 @@ public class MinigameSprites(IntPtr intPtr) : MonoBehaviour(intPtr)
                 var hasPivot = PIVOTS.TryGetValue(minigameData.type, out var pivot);
 
                 // Get Sprite Stream
-                var mapAssetDB = MapLoader.CurrentMap?.mapAssetDB;
+                var mapAssetDB = GameConfiguration.CurrentMap?.MapAssetDB;
                 var guid = minigameData.spriteID;
                 var mapAsset = mapAssetDB?.Get(guid);
 
@@ -94,15 +100,14 @@ public class MinigameSprites(IntPtr intPtr) : MonoBehaviour(intPtr)
                     continue;
 
                 // Create Loadable Texture
-                var loadableTexture = new LoadableTexture(guid?.ToString() ?? "", mapAsset);
+                var loadableTexture = new TextureInfo(guid?.ToString() ?? "", mapAsset);
+                loadableTexture.Options.GCBehavior = GCBehavior.AlwaysDispose;
                 loadableTexture.Options.PixelArt = PixelArtMode;
-                
-                // Create Loadable Sprite
-                var loadableSprite = new LoadableSprite(guid?.ToString() ?? "", loadableTexture);
 
-                // Apply Options
-                if (hasPivot)
-                    loadableSprite.Options.Pivot = pivot;
+                // Create Loadable Sprite
+                var loadableSprite = new SpriteInfo(guid?.ToString() ?? "", loadableTexture);
+                loadableSprite.Options.GCBehavior = GCBehavior.AlwaysDispose;
+                loadableSprite.Options.Pivot = hasPivot ? pivot : null;
 
                 // Add to Queue
                 SpriteLoader.Instance.AddToQueue(
@@ -191,7 +196,7 @@ public class MinigameSprites(IntPtr intPtr) : MonoBehaviour(intPtr)
         var isBoardingPass = !string.IsNullOrEmpty(_minigameProps?.qrCodeText);
         if (isBoardingPass)
             // Wait for 2 frames for Start() to finish
-            MapUtils.WaitForFrames(2, () =>
+            WaitForFrames(2, () =>
             {
                 // Generate a QR Code
                 var qrCodeGenerator = new QRCodeGenerator();
@@ -231,7 +236,7 @@ public class MinigameSprites(IntPtr intPtr) : MonoBehaviour(intPtr)
                 return;
 
             // Get all sprite paths
-            var spritePaths = AssetDB.GetPaths(type);
+            var spritePaths = PrefabDB.GetPaths(type);
             if (spritePaths == null)
                 return;
 
@@ -239,7 +244,7 @@ public class MinigameSprites(IntPtr intPtr) : MonoBehaviour(intPtr)
             foreach (var path in spritePaths)
             {
                 LILogger.Info($"Loading minigame sprite {type} at '{path}'");
-                var spriteObjs = MapUtils.GetTransforms(path, minigame.transform);
+                var spriteObjs = GetTransforms(path, minigame.transform);
                 if (spriteObjs.Count <= 0)
                 {
                     LILogger.Warn($"Could not find {type} at '{path}'");
@@ -326,7 +331,7 @@ public class MinigameSprites(IntPtr intPtr) : MonoBehaviour(intPtr)
 
             /* task-drill */
             case "task-drill_btn":
-                var buttonPaths = AssetDB.GetPaths(type);
+                var buttonPaths = PrefabDB.GetPaths(type);
                 if (buttonPaths == null)
                     throw new Exception("Could not find button paths for task-drill_btn");
 
@@ -403,8 +408,7 @@ public class MinigameSprites(IntPtr intPtr) : MonoBehaviour(intPtr)
 
                 // Update the prefab
                 if (leafMinigame1.LeafPrefab.Parent != leafMinigame1.transform)
-                    leafMinigame1.LeafPrefab =
-                        MapUtils.ReplacePrefab(leafMinigame1.LeafPrefab, leafMinigame1.transform);
+                    leafMinigame1.LeafPrefab = ReplacePrefab(leafMinigame1.LeafPrefab, leafMinigame1.transform);
                 leafMinigame1.LeafPrefab.Images[leafIndex] = sprite;
                 return false;
 
@@ -466,7 +470,7 @@ public class MinigameSprites(IntPtr intPtr) : MonoBehaviour(intPtr)
             case "task-temp1_btndown":
             case "task-temp2_btndown":
                 var isDown = type.EndsWith("down");
-                var paths = AssetDB.GetPaths(type);
+                var paths = PrefabDB.GetPaths(type);
                 if (paths == null)
                     throw new Exception($"Could not find paths for {type}");
 
@@ -589,17 +593,16 @@ public class MinigameSprites(IntPtr intPtr) : MonoBehaviour(intPtr)
                 if (type == "util-computer_folder")
                 {
                     oldSprite = computerMinigame.RootFolderPrefab.GetComponentInChildren<SpriteRenderer>().sprite;
-                    computerMinigame.RootFolderPrefab =
-                        MapUtils.ReplacePrefab(computerMinigame.RootFolderPrefab, minigame.transform);
+                    computerMinigame.RootFolderPrefab = ReplacePrefab(
+                        computerMinigame.RootFolderPrefab,
+                        minigame.transform);
                     computerMinigame.RootFolderPrefab.GetComponentInChildren<SpriteRenderer>().sprite = sprite;
                 }
                 else
                 {
                     oldSprite = computerMinigame.TaskPrefab.GetComponentInChildren<SpriteRenderer>().sprite;
-                    computerMinigame.RoleButton =
-                        MapUtils.ReplacePrefab(computerMinigame.RoleButton, minigame.transform);
-                    computerMinigame.TaskPrefab =
-                        MapUtils.ReplacePrefab(computerMinigame.TaskPrefab, minigame.transform);
+                    computerMinigame.RoleButton = ReplacePrefab(computerMinigame.RoleButton, minigame.transform);
+                    computerMinigame.TaskPrefab = ReplacePrefab(computerMinigame.TaskPrefab, minigame.transform);
                     computerMinigame.RoleButton.GetComponentInChildren<SpriteRenderer>().sprite = sprite;
                     computerMinigame.TaskPrefab.GetComponentInChildren<SpriteRenderer>().sprite = sprite;
                 }
@@ -617,6 +620,57 @@ public class MinigameSprites(IntPtr intPtr) : MonoBehaviour(intPtr)
     }
 
     /// <summary>
+    ///     Replaces a prefab with a new, mutable copy
+    /// </summary>
+    /// <param name="oldPrefab">Old, immutable prefab</param>
+    /// <param name="parent">Parent (Must be destroyed on finish)</param>
+    /// <returns>New, mutable prefab</returns>
+    public static T ReplacePrefab<T>(T oldPrefab, Transform parent) where T : Component
+    {
+        var inactiveParent = new GameObject();
+        inactiveParent.SetActive(false);
+        inactiveParent.transform.SetParent(parent);
+
+        var newPrefab = Instantiate(oldPrefab, inactiveParent.transform);
+        newPrefab.name = oldPrefab.name;
+        return newPrefab;
+    }
+
+    /// <summary>
+    ///     Traverses a transform hierarchy and returns a list of transforms that match the given path.
+    ///     <c>Transform.Find("path/to/transform");</c> would perform this. However, it only returns 1 transform per path.
+    /// </summary>
+    /// <param name="path">The path to search for.  The path is a string of transform names separated by forward slashes.</param>
+    /// <param name="parent">The transform to start the search from.</param>
+    /// <returns>A list of transforms that match the given path.</returns>
+    private static List<Transform> GetTransforms(string path, Transform parent)
+    {
+        var pathParts = path.Split('/');
+
+        // Abort Recursion
+        if (pathParts.Length == 0)
+            return new List<Transform>();
+        if (pathParts.Length == 1)
+        {
+            List<Transform> transforms = new();
+            for (var i = 0; i < parent.childCount; i++)
+                if (parent.GetChild(i).name == pathParts[0])
+                    transforms.Add(parent.GetChild(i));
+            return transforms;
+        }
+
+        // Continue Recursion
+        var firstPart = pathParts[0];
+        var remainingPath = string.Join("/", pathParts.Skip(1).ToArray());
+        var firstPartTransforms = GetTransforms(firstPart, parent);
+        var results = new List<Transform>();
+        foreach (var firstPartTransform in firstPartTransforms)
+            results.AddRange(GetTransforms(remainingPath, firstPartTransform));
+
+        return results;
+    }
+
+    /// <summary>
     ///     Runs an update function on an entire object pool
     /// </summary>
     /// <typeparam name="T">Type to cast PoolableBehaviour to</typeparam>
@@ -630,5 +684,22 @@ public class MinigameSprites(IntPtr intPtr) : MonoBehaviour(intPtr)
         foreach (var child in objectPool.inactiveChildren)
             onUpdate(child.Cast<T>());
         onUpdate(objectPool.Prefab.Cast<T>());
+    }
+
+
+    /// <summary>
+    ///     Waits for a specific amount of frames, then calls Action
+    /// </summary>
+    /// <param name="frames">Amount of frames to wait</param>
+    /// <param name="onFinish">Action to perform on completion</param>
+    private static void WaitForFrames(int frames, Action onFinish)
+    {
+        Coroutines.Start(CoWaitForFrames(frames, onFinish));
+    }
+
+    private static IEnumerator CoWaitForFrames(int frames, Action onFinish)
+    {
+        for (var i = 0; i < frames; i++)
+            yield return null;
     }
 }

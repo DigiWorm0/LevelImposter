@@ -1,19 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
-using LevelImposter.Core;
+using LevelImposter.Core.Models;
+using LevelImposter.Core.Utils;
 using LevelImposter.DB;
 using UnityEngine;
 
-namespace LevelImposter.Builders;
+namespace LevelImposter.Builders.Util;
 
 public class EjectHandBuilder : IElemBuilder
 {
-    public EjectHandBuilder()
+    public static List<SpriteRenderer> AllHands { get; } = [];
+
+    public void OnPreBuild()
     {
         AllHands.Clear();
     }
-
-    public static List<SpriteRenderer> AllHands { get; } = new();
 
     public void OnBuild(LIElement elem, GameObject obj)
     {
@@ -22,7 +23,7 @@ public class EjectHandBuilder : IElemBuilder
             return;
 
         // Get Eject Controller Prefab
-        var polusPrefab = AssetDB.GetObject("ss-polus");
+        var polusPrefab = PrefabDB.GetObject("ss-polus");
         var polusShipStatus = polusPrefab?.GetComponent<ShipStatus>();
         var polusEjectController = polusShipStatus?.ExileCutscenePrefab?.TryCast<PbExileController>();
         if (!polusEjectController)
@@ -34,7 +35,7 @@ public class EjectHandBuilder : IElemBuilder
             throw new Exception("Failed to get Player Prefab from Skeld's Eject Controller");
 
         // Clone Sprite to Object
-        var hand = MapUtils.CloneSprite(obj, handPrefab?.gameObject);
+        var hand = obj.CloneSprite(handPrefab?.gameObject);
 
         // Update Sprite (Thumb or Hand)
         var isThumb = elem.type == "util-ejectthumb";

@@ -1,7 +1,8 @@
 using HarmonyLib;
-using LevelImposter.Builders;
+using LevelImposter.Builders.Sab;
+using LevelImposter.Core.Components;
 
-namespace LevelImposter.Core;
+namespace LevelImposter.Core.Patches.Ship;
 
 /// <summary>
 ///     Normally, mushroom mixup is handled by

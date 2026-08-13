@@ -1,7 +1,8 @@
 using HarmonyLib;
-using LevelImposter.Builders;
+using LevelImposter.Builders.Util;
+using LevelImposter.Core.Components;
 
-namespace LevelImposter.Core;
+namespace LevelImposter.Core.Patches.Utils;
 
 /// <summary>
 ///     Hides rooms from the RoomTracker that are hidden by the map.
@@ -18,8 +19,8 @@ public static class RoomUIPatch
 
         // Remove room colliders
         foreach (var roomData in RoomBuilder.RoomDB)
-            if (!roomData.isUIVisible && roomData.shipRoom != null)
-                roomData.shipRoom.roomArea = null;
+            if (!roomData.IsUIVisible && roomData.ShipRoom != null)
+                roomData.ShipRoom.roomArea = null;
     }
 
     public static void Postfix()
@@ -29,7 +30,7 @@ public static class RoomUIPatch
 
         // Add room colliders
         foreach (var roomData in RoomBuilder.RoomDB)
-            if (!roomData.isUIVisible && roomData.shipRoom != null)
-                roomData.shipRoom.roomArea = roomData.collider;
+            if (!roomData.IsUIVisible && roomData.ShipRoom != null)
+                roomData.ShipRoom.roomArea = roomData.Collider;
     }
 }

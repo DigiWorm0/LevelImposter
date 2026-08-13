@@ -1,8 +1,11 @@
-using LevelImposter.Core;
+using LevelImposter.Builders.Generic;
+using LevelImposter.Core.Components;
+using LevelImposter.Core.Models;
+using LevelImposter.Core.Utils;
 using LevelImposter.DB;
 using UnityEngine;
 
-namespace LevelImposter.Builders;
+namespace LevelImposter.Builders.Util;
 
 internal class StarfieldBuilder : IElemBuilder
 {
@@ -12,7 +15,7 @@ internal class StarfieldBuilder : IElemBuilder
             return;
 
         // Prefab
-        var prefab = AssetDB.GetObject("dec-rock4");
+        var prefab = PrefabDB.GetObject("dec-rock4");
         if (prefab == null)
             return;
         var prefabRenderer = prefab.GetComponent<SpriteRenderer>();

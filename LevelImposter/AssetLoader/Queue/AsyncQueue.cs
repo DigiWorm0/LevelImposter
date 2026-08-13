@@ -1,25 +1,27 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using LevelImposter.Core;
+using LevelImposter.Core.Components;
+using LevelImposter.Core.Utils;
 using Reactor.Utilities;
 
-namespace LevelImposter.AssetLoader;
+namespace LevelImposter.AssetLoader.Queue;
 
 /// <summary>
 ///     A queue that asynchronously loads items in the background using a coroutine.
 /// </summary>
 /// <typeparam name="TInput">Type used for input values (must be ICachable)</typeparam>
 /// <typeparam name="TOutput">Type used for output values (must be ICachable)</typeparam>
-public abstract class AsyncQueue<TInput, TOutput> where TInput : ICachable
+public abstract class AsyncQueue<TInput, TOutput>
+    where TInput : IIdentifiable
+    where TOutput : ICachable
 {
-    private const int MIN_FPS = 5;
-    
     private IEnumerator? _consumeQueueCoroutine;
+    private static int MinFPS => GameState.IsInMainMenu ? 60 : 5;
 
     public int QueueSize => Queue.Count;
     public int CacheSize => Cache.Count;
-    
+
     protected Queue<QueuedItem> Queue { get; } = new();
     protected ItemCache<TOutput> Cache { get; } = new();
 
@@ -38,22 +40,29 @@ public abstract class AsyncQueue<TInput, TOutput> where TInput : ICachable
     }
 
     /// <summary>
-    ///     Clears the queue and cache.
+    ///     Clears any cached items.
     /// </summary>
-    public void Clear()
+    public void ClearCache()
     {
-        Queue.Clear();
         Cache.Clear();
     }
 
     /// <summary>
-    ///     Called when an item is loaded.
-    ///     <para>
-    ///         Should be implemented to define how to load an item from input data.
-    ///         Do not call this method directly;
-    ///         Instead, use <see cref="AddToQueue"/> or <see cref="LoadImmediate"/>.
-    ///     </para>
+    ///     Clears any items in the queue.
     /// </summary>
+    public void ClearQueue()
+    {
+        Queue.Clear();
+    }
+
+    /// <summary>
+    ///     Called when an item is loaded.
+    /// </summary>
+    /// <para>
+    ///     Should be implemented to define how to load an item from input data.
+    ///     Do not call this method directly;
+    ///     Instead, use <see cref="AddToQueue" /> or <see cref="LoadImmediate" />.
+    /// </para>
     /// <param name="inputData">Input data used to load item</param>
     /// <returns>Output data of the item</returns>
     protected abstract TOutput Load(TInput inputData);
@@ -70,9 +79,8 @@ public abstract class AsyncQueue<TInput, TOutput> where TInput : ICachable
             yield return null;
 
             // Continuously load items until the lag limit is reached
-            while (LagLimiter.ShouldContinue(MIN_FPS) && Queue.Count > 0)
+            while (LagLimiter.ShouldContinue(MinFPS) && Queue.Count > 0)
                 ConsumeQueueOnce();
-
         }
 
         // Clear the coroutine
@@ -80,7 +88,7 @@ public abstract class AsyncQueue<TInput, TOutput> where TInput : ICachable
     }
 
     /// <summary>
-    /// Loads a single item from the queue.
+    ///     Loads a single item from the queue.
     /// </summary>
     private void ConsumeQueueOnce()
     {
@@ -88,7 +96,7 @@ public abstract class AsyncQueue<TInput, TOutput> where TInput : ICachable
         {
             // Get the next item in the queue
             var queuedItem = Queue.Dequeue();
-            
+
             // Load the item
             var output = LoadImmediate(queuedItem.InputData);
 
@@ -102,17 +110,17 @@ public abstract class AsyncQueue<TInput, TOutput> where TInput : ICachable
     }
 
     /// <summary>
-    /// Loads an item immediately, checking the cache first.
+    ///     Loads an item immediately, checking the cache first.
     /// </summary>
     /// <param name="inputData">Loadable item data</param>
     /// <returns>Loaded item</returns>
-    protected TOutput LoadImmediate(TInput inputData)
+    public TOutput LoadImmediate(TInput inputData)
     {
         // Check if item is in cache
         var output = Cache.Get(inputData.ID);
         if (output != null)
             return output;
-        
+
         // Load the item
         output = Load(inputData);
 

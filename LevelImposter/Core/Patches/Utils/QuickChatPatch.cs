@@ -1,8 +1,10 @@
 using System.Linq;
 using AmongUs.QuickChat;
 using HarmonyLib;
+using LevelImposter.Core.Components;
+using LevelImposter.Core.Models;
 
-namespace LevelImposter.Core;
+namespace LevelImposter.Core.Patches.Utils;
 
 /// <summary>
 ///     Renames task names and other strings stored as <c>SystemTypes</c>.

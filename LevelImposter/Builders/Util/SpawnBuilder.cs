@@ -1,17 +1,26 @@
 using System.Collections.Generic;
-using LevelImposter.Core;
+using LevelImposter.Core.Components;
+using LevelImposter.Core.Models;
+using LevelImposter.Core.Utils;
 using UnityEngine;
 
-namespace LevelImposter.Builders;
+namespace LevelImposter.Builders.Util;
 
 public class SpawnBuilder : IElemBuilder
 {
     private const float DEFAULT_SPAWN_RADIUS = 1.55f;
     private const int DUMMY_SPAWN_COUNT = 15;
-    private Vector2 _fallbackSpawn;
 
+    private Vector2 _fallbackSpawn;
     private bool _hasInitialSpawn;
     private bool _hasMeetingSpawn;
+
+    public void OnPreBuild()
+    {
+        _hasInitialSpawn = false;
+        _hasMeetingSpawn = false;
+        _fallbackSpawn = Vector2.zero;
+    }
 
     public void OnBuild(LIElement elem, GameObject obj)
     {
@@ -19,7 +28,7 @@ public class SpawnBuilder : IElemBuilder
             return;
 
         // ShipStatus
-        var shipStatus = LIShipStatus.GetInstance().ShipStatus;
+        var shipStatus = LIShipStatus.GetShip();
 
         // Set Spawn Radius
         shipStatus.SpawnRadius = elem.properties.range ?? DEFAULT_SPAWN_RADIUS;
@@ -63,10 +72,10 @@ public class SpawnBuilder : IElemBuilder
         }
     }
 
-    public void OnCleanup()
+    public void OnPostBuild()
     {
         // ShipStatus
-        var shipStatus = LIShipStatus.GetInstance().ShipStatus;
+        var shipStatus = LIShipStatus.GetShip();
 
         if (!_hasMeetingSpawn)
         {

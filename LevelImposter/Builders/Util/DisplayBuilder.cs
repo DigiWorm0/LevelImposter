@@ -1,26 +1,26 @@
 using System;
-using LevelImposter.Core;
+using LevelImposter.Core.Components;
+using LevelImposter.Core.GarbageCollection;
+using LevelImposter.Core.Models;
+using LevelImposter.Core.Utils;
 using LevelImposter.DB;
-using LevelImposter.Shop;
 using UnityEngine;
 
-namespace LevelImposter.Builders;
+namespace LevelImposter.Builders.Util;
 
 internal class DisplayBuilder : IElemBuilder
 {
     private const int DEFAULT_WIDTH = 330;
     private const int DEFAULT_HEIGHT = 220;
+    private static readonly int MainTex = Shader.PropertyToID("_MainTex");
 
     public void OnBuild(LIElement elem, GameObject obj)
     {
         if (elem.type != "util-display")
             return;
 
-        // ShipStatus
-        var shipStatus = LIShipStatus.GetInstance().ShipStatus;
-
         // Prefab
-        var minigamePrefab = AssetDB.GetObject("util-cams")?.GetComponent<SystemConsole>().MinigamePrefab
+        var minigamePrefab = PrefabDB.GetObject("util-cams")?.GetComponent<SystemConsole>().MinigamePrefab
             .Cast<PlanetSurveillanceMinigame>();
         obj.layer = (int)Layer.Objects;
 
@@ -31,7 +31,7 @@ internal class DisplayBuilder : IElemBuilder
         // Camera
         var cameraObject = new GameObject("DisplayCamera");
         cameraObject.layer = (int)Layer.UI;
-        cameraObject.transform.parent = shipStatus.transform;
+        cameraObject.transform.parent = LIBaseShip.Instance?.transform;
         cameraObject.transform.position = new Vector3(
             (elem.properties.camXOffset ?? 0) + obj.transform.position.x,
             (elem.properties.camYOffset ?? 0) + obj.transform.position.y,
@@ -48,14 +48,14 @@ internal class DisplayBuilder : IElemBuilder
 
         // Mesh
         var meshFilter = obj.AddComponent<MeshFilter>();
-        meshFilter.mesh = MapUtils.Build2DMesh(width / 100.0f, height / 100.0f);
+        meshFilter.mesh = Build2DMesh(width / 100.0f, height / 100.0f);
         GCHandler.Register(meshFilter.mesh);
 
         var meshRenderer = obj.AddComponent<MeshRenderer>();
         meshRenderer.sharedMaterial = minigamePrefab?.DefaultMaterial;
 
         // Render Texture
-        var pixelArtMode = MapLoader.CurrentMap?.properties.pixelArtMode ?? false;
+        var pixelArtMode = GameConfiguration.CurrentMap?.properties.pixelArtMode ?? false;
         var renderTexture = RenderTexture.GetTemporary(
             width,
             height,
@@ -64,15 +64,37 @@ internal class DisplayBuilder : IElemBuilder
         );
         renderTexture.filterMode = pixelArtMode ? FilterMode.Point : FilterMode.Bilinear;
         camera.targetTexture = renderTexture;
-        meshRenderer.material.SetTexture("_MainTex", renderTexture);
+        meshRenderer.material.SetTexture(MainTex, renderTexture);
         GCHandler.Register(new DisposableRenderTex(renderTexture));
+    }
+
+    private static Mesh Build2DMesh(float width, float height)
+    {
+        var mesh = new Mesh();
+        mesh.vertices = new Vector3[4]
+        {
+            new(-width / 2, -height / 2, 0),
+            new(width / 2, -height / 2, 0),
+            new(-width / 2, height / 2, 0),
+            new(width / 2, height / 2, 0)
+        };
+        mesh.triangles = new[] { 0, 2, 1, 2, 3, 1 };
+        mesh.uv = new Vector2[]
+        {
+            new(0, 0),
+            new(1, 0),
+            new(0, 1),
+            new(1, 1)
+        };
+        mesh.RecalculateNormals();
+        return mesh;
     }
 
     /// <summary>
     ///     Destroy() doesn't release from memory
     ///     This replaces it with RenderTexture.ReleaseTemporary()
     /// </summary>
-    public class DisposableRenderTex(RenderTexture tex) : IDisposable
+    private class DisposableRenderTex(RenderTexture tex) : IDisposable
     {
         public void Dispose()
         {

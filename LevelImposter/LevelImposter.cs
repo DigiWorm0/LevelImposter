@@ -1,22 +1,27 @@
+using System;
 using BepInEx;
 using BepInEx.Unity.IL2CPP;
 using HarmonyLib;
 using Il2CppInterop.Runtime.Injection;
-using LevelImposter.Core;
+using LevelImposter.Builders.Generic;
+using LevelImposter.Core.Components;
+using LevelImposter.Core.Services;
+using LevelImposter.Core.Utils;
 using LevelImposter.DB;
-using LevelImposter.Shop;
+using LevelImposter.FileIO.API;
+using LevelImposter.FileIO.Cache;
+using LevelImposter.Lobby.Components;
+using LevelImposter.Lobby.Utils;
+using LevelImposter.Shop.Components;
+using LevelImposter.Shop.Utils;
 using Reactor.Networking;
 using Reactor.Networking.Attributes;
-using UnityEngine;
+using Reactor.Utilities;
 
 namespace LevelImposter;
 
 [BepInAutoPlugin(ID, "LevelImposter")]
-[BepInDependency(ModCompatibility.REACTOR_ID)]
-[BepInDependency(ModCompatibility.SUBMERGED_GUID, BepInDependency.DependencyFlags.SoftDependency)]
-[BepInDependency(ModCompatibility.TOU_GUID, BepInDependency.DependencyFlags.SoftDependency)]
-[BepInDependency(ModCompatibility.TOR_GUID, BepInDependency.DependencyFlags.SoftDependency)]
-[BepInDependency(ModCompatibility.REW_GUID, BepInDependency.DependencyFlags.SoftDependency)]
+[BepInDependency("gg.reactor.api")]
 [ReactorModFlags(ModFlags.RequireOnAllClients)]
 [BepInProcess("Among Us.exe")]
 public partial class LevelImposter : BasePlugin
@@ -25,27 +30,34 @@ public partial class LevelImposter : BasePlugin
 
     public Harmony Harmony { get; } = new(ID);
 
-    public static string DisplayVersion { get; } =
-        Version.Contains('+') ? Version.Substring(0, Version.IndexOf('+')) : Version;
+    public static string DisplayVersion => Version.Contains('+')
+        ? Version.Substring(0, Version.IndexOf("+", StringComparison.Ordinal))
+        : Version;
+
+    public static bool IsDevBuild => Version.Contains("dev");
 
     public override void Load()
     {
-        // Init Subsystems
+        // Init Global Subsystems
         LILogger.Init();
         MapFileAPI.Init();
+        ConfigAPI.Load();
         FileCache.Init();
-        ModCompatibility.Init();
+        ImStuckService.Init();
+        LobbyUIService.Init();
+        SpriteBuilder.Init();
+
+        // Load Mod Compatibility
+        IL2CPPChainloader.Instance.Finished += ModCompatibility.Init;
 
         // IUsable Interface
         RegisterTypeOptions usableInterface = new()
         {
-            Interfaces = new Il2CppInterfaceCollection(new[]
-            {
-                typeof(IUsable)
-            })
+            Interfaces = new Il2CppInterfaceCollection([typeof(IUsable)])
         };
 
         // Inject MonoBehaviours
+        ClassInjector.RegisterTypeInIl2Cpp<LIBaseShip>();
         ClassInjector.RegisterTypeInIl2Cpp<LIShipStatus>();
         ClassInjector.RegisterTypeInIl2Cpp<LIStar>();
         ClassInjector.RegisterTypeInIl2Cpp<LIFloat>();
@@ -63,22 +75,38 @@ public partial class LevelImposter : BasePlugin
         ClassInjector.RegisterTypeInIl2Cpp<TriggerSoundPlayer>();
         ClassInjector.RegisterTypeInIl2Cpp<LIPlayerMover>();
         ClassInjector.RegisterTypeInIl2Cpp<TriggerConsole>(usableInterface);
-        ClassInjector.RegisterTypeInIl2Cpp<MapObjectData>();
         ClassInjector.RegisterTypeInIl2Cpp<EditableLadderConsole>();
         ClassInjector.RegisterTypeInIl2Cpp<LIExileController>();
         ClassInjector.RegisterTypeInIl2Cpp<LIPhysicsObject>();
+        ClassInjector.RegisterTypeInIl2Cpp<LITextTranslatorTMP>();
 
-        ClassInjector.RegisterTypeInIl2Cpp<AssetDB>();
+        ClassInjector.RegisterTypeInIl2Cpp<PrefabDB>();
 
-        ClassInjector.RegisterTypeInIl2Cpp<HTTPHandler>();
+        ClassInjector.RegisterTypeInIl2Cpp<ModUpdater>();
+        ClassInjector.RegisterTypeInIl2Cpp<Shop.Components.ProgressBar>();
+        ClassInjector.RegisterTypeInIl2Cpp<ConnectionAnimation>();
+        ClassInjector.RegisterTypeInIl2Cpp<FloatingAnimation>();
+        ClassInjector.RegisterTypeInIl2Cpp<PulseAnimation>();
+        ClassInjector.RegisterTypeInIl2Cpp<LoadingOverlay>();
         ClassInjector.RegisterTypeInIl2Cpp<RandomOverlay>();
         ClassInjector.RegisterTypeInIl2Cpp<MapBanner>();
+        ClassInjector.RegisterTypeInIl2Cpp<GameObjectGrid>();
+        ClassInjector.RegisterTypeInIl2Cpp<ShopTabButton>();
         ClassInjector.RegisterTypeInIl2Cpp<ShopManager>();
-        ClassInjector.RegisterTypeInIl2Cpp<ShopTabs>();
+        ClassInjector.RegisterTypeInIl2Cpp<MapsFolderWatcher>();
         ClassInjector.RegisterTypeInIl2Cpp<Spinner>();
         ClassInjector.RegisterTypeInIl2Cpp<LoadingBar>();
+        ClassInjector.RegisterTypeInIl2Cpp<LILobbyBehaviour>();
         ClassInjector.RegisterTypeInIl2Cpp<LobbyVersionTag>();
-        ClassInjector.RegisterTypeInIl2Cpp<LobbyConsole>(usableInterface);
+        ClassInjector.RegisterTypeInIl2Cpp<LobbyMapConsole>(usableInterface);
+
+        // Reactor Version Patch
+        ReactorCredits.Register(
+            "LevelImposter",
+            DisplayVersion,
+            false,
+            ReactorCredits.AlwaysShow
+        );
 
         // Patch Methods
         Harmony.PatchAll();

@@ -1,10 +1,9 @@
 ﻿using System;
-using LevelImposter.Core;
-using TMPro;
+using LevelImposter.Core.Components;
+using LevelImposter.Core.Utils;
 using UnityEngine;
-using Object = UnityEngine.Object;
 
-namespace LevelImposter.Shop;
+namespace LevelImposter.Shop.Builders;
 
 public static class MainMenuBuilder
 {
@@ -27,8 +26,7 @@ public static class MainMenuBuilder
 
         // Text
         var text = button.transform.Find(TEXT_PATH);
-        text.GetComponent<TMP_Text>().text = "Maps";
-        Object.Destroy(text.GetComponent<TextTranslatorTMP>());
+        LITextTranslatorTMP.AddTranslator(text.gameObject, "main_menu.maps");
 
         // Sprites
         foreach (var path in ICON_PATHS)
@@ -41,7 +39,7 @@ public static class MainMenuBuilder
     private static Sprite GetIconSprite()
     {
         if (_menuIcon == null)
-            _menuIcon = MapUtils.LoadSpriteResource("MapIcon.png");
+            _menuIcon = PackagedResources.LoadSprite("MapIcon.png");
         if (_menuIcon == null)
             throw new Exception("The \"MapIcon.png\" resource was not found in assembly");
         return _menuIcon;

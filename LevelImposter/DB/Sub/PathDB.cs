@@ -1,6 +1,7 @@
 ﻿using System;
+using LevelImposter.DB.Models;
 
-namespace LevelImposter.DB;
+namespace LevelImposter.DB.Sub;
 
 /// <summary>
 ///     Database of string paths for Transforms
@@ -9,13 +10,13 @@ public class PathDB(SerializedAssetDB serializedDB) : SubDB<string[]>(serialized
 {
     public override void Load()
     {
-        DB.PathDB.ForEach(elem => { Add(elem.ID, elem.Paths); });
+        DB.PathDB?.ForEach(elem => { Add(elem.ID, elem.Paths); });
     }
 
     [Serializable]
     public class DBElement
     {
-        public string ID { get; set; }
-        public string[] Paths { get; set; }
+        public string ID { get; set; } = "";
+        public string[] Paths { get; set; } = [];
     }
 }

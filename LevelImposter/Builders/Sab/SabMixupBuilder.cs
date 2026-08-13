@@ -1,14 +1,21 @@
-using LevelImposter.Core;
+using LevelImposter.Core.Components;
+using LevelImposter.Core.Models;
+using LevelImposter.Core.Utils;
 using LevelImposter.DB;
 using UnityEngine;
 
-namespace LevelImposter.Builders;
+namespace LevelImposter.Builders.Sab;
 
 public class SabMixupBuilder : IElemBuilder
 {
     private const SystemTypes MIXUP_TYPE = SystemTypes.MushroomMixupSabotage;
 
     public static MushroomMixupSabotageSystem? SabotageSystem { get; private set; }
+
+    public void OnPreBuild()
+    {
+        SabotageSystem = null;
+    }
 
     public void OnBuild(LIElement elem, GameObject obj)
     {
@@ -23,10 +30,10 @@ public class SabMixupBuilder : IElemBuilder
         }
 
         // ShipStatus
-        var shipStatus = LIShipStatus.GetInstance()?.ShipStatus;
+        var shipStatus = LIShipStatus.GetShip();
 
         // ShipStatus Prefab
-        var fungleShipStatus = AssetDB.GetObject("ss-fungle")?.GetComponent<FungleShipStatus>();
+        var fungleShipStatus = PrefabDB.GetObject("ss-fungle")?.GetComponent<FungleShipStatus>();
         if (fungleShipStatus == null)
             return;
         var prefabSystem = fungleShipStatus.specialSabotage;
@@ -40,7 +47,7 @@ public class SabMixupBuilder : IElemBuilder
         systemContainer.transform.SetParent(shipStatus.transform);
 
         // Prefab
-        var prefabTask = AssetDB.GetTask<MushroomMixupSabotageTask>(elem.type);
+        var prefabTask = PrefabDB.GetTask<MushroomMixupSabotageTask>(elem.type);
         if (prefabTask == null)
             return;
 
@@ -55,11 +62,12 @@ public class SabMixupBuilder : IElemBuilder
 
             // Rename Task
             if (!string.IsNullOrEmpty(elem.properties.description))
-                LIShipStatus.GetInstanceOrNull()?.Renames
-                    .Add(StringNames.MushroomMixupSabotage, elem.properties.description);
+                LIBaseShip.Instance?.Renames.Add(
+                    StringNames.MushroomMixupSabotage,
+                    elem.properties.description);
 
             // Add Task
-            shipStatus.SpecialTasks = MapUtils.AddToArr(shipStatus.SpecialTasks, task);
+            shipStatus.SpecialTasks = shipStatus.SpecialTasks.Add(task);
         }
 
         // Screen Tint

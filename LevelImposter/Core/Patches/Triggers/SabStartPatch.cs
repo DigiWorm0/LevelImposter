@@ -1,10 +1,12 @@
 ﻿using System.Collections.Generic;
 using HarmonyLib;
-using LevelImposter.Builders;
+using LevelImposter.Builders.Util;
+using LevelImposter.Core.Components;
+using LevelImposter.Core.Utils;
 using LevelImposter.Trigger;
 using UnityEngine;
 
-namespace LevelImposter.Core;
+namespace LevelImposter.Core.Patches.Triggers;
 
 /// <summary>
 ///     Normally, sabotages have hard-coded indices in ShipStatus.

@@ -1,16 +1,17 @@
-﻿using LevelImposter.Core;
+﻿using LevelImposter.Core.Components;
+using LevelImposter.Core.Models;
 using UnityEngine;
 
-namespace LevelImposter.Builders;
+namespace LevelImposter.Builders.Minimap;
 
 public class MinimapSpriteBuilder : IElemBuilder
 {
-    public MinimapSpriteBuilder()
+    public static int SabCount { get; private set; }
+
+    public void OnPreBuild()
     {
         SabCount = 0;
     }
-
-    public static int SabCount { get; private set; }
 
     public void OnBuild(LIElement elem, GameObject obj)
     {

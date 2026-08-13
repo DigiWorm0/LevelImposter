@@ -1,8 +1,10 @@
-﻿using LevelImposter.Core;
+﻿using LevelImposter.Core.Components;
+using LevelImposter.Core.Models;
+using LevelImposter.Core.Utils;
 using LevelImposter.DB;
 using UnityEngine;
 
-namespace LevelImposter.Builders;
+namespace LevelImposter.Builders.Trigger;
 
 public class TriggerConsoleBuilder : IElemBuilder
 {
@@ -12,7 +14,7 @@ public class TriggerConsoleBuilder : IElemBuilder
             return;
 
         // Prefab
-        var prefab = AssetDB.GetObject("util-computer");
+        var prefab = PrefabDB.GetObject("util-computer");
         if (prefab == null)
             return;
         var prefabRenderer = prefab.GetComponent<SpriteRenderer>();
@@ -33,6 +35,6 @@ public class TriggerConsoleBuilder : IElemBuilder
         console.Init(elem);
 
         // Colliders
-        MapUtils.CreateDefaultColliders(obj, prefab);
+        obj.CreateDefaultColliders(prefab);
     }
 }

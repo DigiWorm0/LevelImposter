@@ -2,12 +2,15 @@ using System;
 using System.Collections;
 using Il2CppInterop.Runtime.Attributes;
 using LevelImposter.AssetLoader;
-using LevelImposter.Core;
+using LevelImposter.Builders;
+using LevelImposter.Core.Translations;
+using LevelImposter.Core.Utils;
+using LevelImposter.Lobby.Sync;
 using Reactor.Utilities;
 using TMPro;
 using UnityEngine;
 
-namespace LevelImposter.Shop;
+namespace LevelImposter.Shop.Components;
 
 public class LoadingBar(IntPtr intPtr) : MonoBehaviour(intPtr)
 {
@@ -53,7 +56,7 @@ public class LoadingBar(IntPtr intPtr) : MonoBehaviour(intPtr)
         // Create LoadingBar
         if (Instance == null)
             Instantiate(
-                MapUtils.LoadAssetBundle<GameObject>("loadingbar"),
+                PackagedResources.LoadFromBundle<GameObject>("loadingbar"),
                 DestroyableSingleton<HudManager>.Instance.transform
             );
 
@@ -64,6 +67,11 @@ public class LoadingBar(IntPtr intPtr) : MonoBehaviour(intPtr)
         // Check if visible
         if (Instance._visible)
             return;
+
+        // Apply initial state
+        Instance.SetTitle(Translation.Get("loading.loading"));
+        Instance.SetProgress(1);
+        Instance.SetStatus(Translation.Get("loading.waiting_for_host"));
 
         // Start Coroutine
         Coroutines.Start(Instance.CoLoadingScreen());
@@ -77,28 +85,17 @@ public class LoadingBar(IntPtr intPtr) : MonoBehaviour(intPtr)
     {
         yield return null;
 
-        // Objects
-        var isFreeplay = GameState.IsInFreeplay;
-        var currentMap = MapLoader.CurrentMap;
-        var isFallback = MapLoader.IsFallback;
-
-        // Show Loading Screen
-        LILogger.Info($"Showing loading screen (Freeplay={isFreeplay})");
-
-        // Set Map Name
-        var mapName = "Loading...";
-        if (currentMap != null && !isFallback)
-            mapName = $"<color=#1a95d8>{currentMap.name}</color> by {currentMap.authorName}";
-        Instance?.SetMapName(mapName);
-
         // Show Loading Screen
         Instance?.SetVisible(true);
 
         // Update Progress
         while (_visible)
         {
-            var queueSize = MapLoader.QueueSize;
-            
+            var queueSize = GameState.LoadingAssetsCount;
+            var downloadState =
+                GameConfigurationSync.LobbyMapDownloader.CurrentDownloadState ??
+                GameConfigurationSync.GameMapDownloader.CurrentDownloadState;
+
             // Approximate Progress
             if (queueSize > 0)
             {
@@ -110,21 +107,37 @@ public class LoadingBar(IntPtr intPtr) : MonoBehaviour(intPtr)
                 var progress = (float)loadedCount / _maxQueueSize;
 
                 // Update UI
+                var currentMap = GameConfiguration.CurrentMap ??
+                                 GameConfiguration.CurrentLobbyMap;
+                Instance?.SetTitle(!GameConfiguration.HideMapName
+                    ? Translation.Get(
+                        "loading.map_by_author",
+                        currentMap?.name ?? "???",
+                        currentMap?.authorName ?? "???")
+                    : Translation.Get("loading.loading"));
+
                 Instance?.SetProgress(progress);
                 Instance?.SetStatus(
                     $"{Math.Round(progress * 100)}% <size=1.2>({loadedCount}/{_maxQueueSize})</size>"
                 );
             }
+            else if (downloadState != null)
+            {
+                Instance?.SetTitle(Translation.Get("loading.downloading_map"));
+                Instance?.SetProgress(downloadState.Progress);
+                Instance?.SetStatus($"{Math.Round(downloadState.Progress * 100)}%");
+            }
             else
             {
+                Instance?.SetTitle(Translation.Get("loading.waiting_for_host"));
                 Instance?.SetProgress(1);
-                Instance?.SetStatus("waiting for host");
+                Instance?.SetStatus("");
             }
 
             // Check if done
             var isSpritesLoading = SpriteLoader.Instance.QueueSize > 0;
-            var isDownloading = MapSync.IsDownloadingMap;
-            var isBuilding = LIShipStatus.GetInstanceOrNull()?.Builder.IsBuilding ?? false;
+            var isDownloading = downloadState != null;
+            var isBuilding = MapBuilder.IsBuilding;
             if (!isSpritesLoading && !isDownloading && !isBuilding)
                 break;
 
@@ -142,7 +155,7 @@ public class LoadingBar(IntPtr intPtr) : MonoBehaviour(intPtr)
     ///     Sets the name of the map being loaded
     /// </summary>
     /// <param name="mapName">Name of the map</param>
-    public void SetMapName(string mapName)
+    public void SetTitle(string mapName)
     {
         _mapText?.SetText($"<font=\"Barlow-Black SDF\" material=\"Barlow-Black Outline\">{mapName}</font>");
     }

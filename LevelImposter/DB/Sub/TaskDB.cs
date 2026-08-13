@@ -2,9 +2,11 @@
 using System.Linq;
 using System.Text.Json.Serialization;
 using Il2CppInterop.Runtime.InteropTypes.Arrays;
-using LevelImposter.Core;
+using LevelImposter.Core.Models;
+using LevelImposter.Core.Utils;
+using LevelImposter.DB.Models;
 
-namespace LevelImposter.DB;
+namespace LevelImposter.DB.Sub;
 
 /// <summary>
 ///     Database of PlayerTask objects
@@ -13,7 +15,7 @@ public class TaskDB(SerializedAssetDB serializedDB) : SubDB<PlayerTask>(serializ
 {
     public override void LoadShip(ShipStatus shipStatus, MapType mapType)
     {
-        DB.TaskDB.ForEach(elem =>
+        DB.TaskDB?.ForEach(elem =>
         {
             if (elem.MapType != mapType)
                 return;
@@ -42,8 +44,8 @@ public class TaskDB(SerializedAssetDB serializedDB) : SubDB<PlayerTask>(serializ
     [Serializable]
     public class DBElement
     {
-        public string ID { get; set; }
-        public string Name { get; set; }
+        public string ID { get; set; } = "";
+        public string Name { get; set; } = "";
         public int Map { get; set; }
         public int Type { get; set; }
 

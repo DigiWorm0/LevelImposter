@@ -1,7 +1,9 @@
 using HarmonyLib;
-using LevelImposter.Shop;
+using LevelImposter.Core.Components;
+using LevelImposter.Core.Models;
+using LevelImposter.Core.Utils;
 
-namespace LevelImposter.Core;
+namespace LevelImposter.Core.Patches.Ship;
 
 /// <summary>
 ///     Appends the <c>LIShipStatus</c> component to LevelImposter maps.
@@ -13,9 +15,9 @@ public static class ShipStatusPatch
     {
         //UnityToMapGenerator.GenerateMap(__instance);
 
-        if (GameState.IsCustomMapSelected)
+        if (GameConfiguration.CurrentMapType == MapType.LevelImposter)
             __instance.gameObject.AddComponent<LIShipStatus>();
-        else if (!MapLoader.IsFallback)
+        else if (!GameConfiguration.HideMapName)
             LILogger.Msg("Another mod has changed the current map state");
     }
 }

@@ -1,25 +1,27 @@
 ﻿using System;
 using System.Collections.Generic;
-using LevelImposter.Core;
+using LevelImposter.Core.Models;
+using LevelImposter.Core.Utils;
+using LevelImposter.Trigger.Values;
 using UnityEngine;
 
-namespace LevelImposter.Builders;
+namespace LevelImposter.Builders.Util;
 
 public class ValueBuilder : IElemBuilder
 {
-    public ValueBuilder()
+    private static Dictionary<Guid, IBoolValue> AllBoolValues { get; } = new();
+
+    private static Dictionary<string, IBoolValue> PresetBoolValues { get; } = new()
+    {
+        { "isImposter", new DelegateBoolValue(() => GameState.IsLocalPlayerImpostor) },
+        { "isInMeeting", new DelegateBoolValue(() => GameState.IsInMeeting) },
+        { "isDead", new DelegateBoolValue(() => GameState.IsLocalPlayerDead) }
+    };
+
+    public void OnPreBuild()
     {
         AllBoolValues.Clear();
     }
-
-    public static Dictionary<Guid, IBoolValue> AllBoolValues { get; } = new();
-    
-    private static Dictionary<string, IBoolValue> PresetBoolValues { get; } = new()
-    {
-        {"isImposter", new DelegateBoolValue(() => GameState.IsLocalPlayerImpostor)},
-        {"isInMeeting", new DelegateBoolValue(() => GameState.IsInMeeting)},
-        {"isDead", new DelegateBoolValue(() => GameState.IsLocalPlayerDead)}
-    };
 
     public void OnBuild(LIElement elem, GameObject obj)
     {
@@ -38,7 +40,7 @@ public class ValueBuilder : IElemBuilder
                 var preset = elem.properties.valuePresetType ?? "";
                 if (!PresetBoolValues.TryGetValue(preset, out var value))
                     throw new Exception($"Invalid value preset: {preset}");
-                
+
                 AllBoolValues.Add(elem.id, value);
                 break;
             case "util-valuecomparator":

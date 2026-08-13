@@ -1,7 +1,8 @@
 ﻿using System;
+using LevelImposter.Core.Services.Ship;
 using UnityEngine;
 
-namespace LevelImposter.Core;
+namespace LevelImposter.Core.Components;
 
 /// <summary>
 ///     Object that oscillates up and down
@@ -16,13 +17,13 @@ public class LIFloat(IntPtr intPtr) : MonoBehaviour(intPtr)
     public void Awake()
     {
         // Get LI data
-        var objectData = gameObject.GetLIData();
-        if (objectData == null)
+        var element = MapObjectDB.Get(gameObject);
+        if (element == null)
             throw new Exception("LIFloat is missing LI data");
 
-        _height = objectData.Element.properties.floatingHeight ?? _height;
-        _speed = objectData.Element.properties.floatingSpeed ?? _speed;
-        _yScale = objectData.Element.yScale;
+        _height = element.properties.floatingHeight ?? _height;
+        _speed = element.properties.floatingSpeed ?? _speed;
+        _yScale = element.yScale;
     }
 
     public void Update()
