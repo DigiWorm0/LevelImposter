@@ -26,6 +26,14 @@ public class GIFAnimator(IntPtr intPtr) : LIAnimatorBase(intPtr)
     private GIFFile? _gifFile;
     private string _id = string.Empty;
 
+    public new void OnDestroy()
+    {
+        base.OnDestroy();
+        foreach (var sprite in _frameSprites)
+            if (sprite != null)
+                Destroy(sprite);
+    }
+
     [HideFromIl2Cpp]
     public void Init(LIElement element, GIFFile gifFile)
     {
