@@ -1,5 +1,8 @@
 ﻿using HarmonyLib;
-using LevelImposter.Shop;
+using LevelImposter.Builders.Util;
+using LevelImposter.Core.Components;
+using LevelImposter.Core.Models;
+using LevelImposter.Core.Utils;
 using System.Linq;
 
 namespace LevelImposter.Core;
@@ -18,7 +21,7 @@ public static class DummyPatch
             return;
         if (!GameState.IsInFreeplay)
             return;
-        if(MapLoader.CurrentMap == null)
+        if(LIShipStatus.GetInstance().CurrentMap is null)
             return;
 
         // Since the game is in freeplay, removing the local player just leaves all the dummy PlayerControls
@@ -26,11 +29,11 @@ public static class DummyPatch
 
         // Finds a dummy element that has a corresponding location index (see DummyBuilder)
         // which matches this DummyBehaviour's PlayerControl
-        foreach (var elem in MapLoader.CurrentMap.elements)
+        foreach (var elem in LIShipStatus.GetInstance().CurrentMap!.elements)
         {
             if(elem.type != "util-dummy")
                 continue;
-            if (!LIShipStatus.GetInstance().DummyIndex.TryGetValue(elem.id, out int index))
+            if (!DummyBuilder.DummyIndex.TryGetValue(elem.id, out int index))
                 continue;
             if (__instance.myPlayer != dummyPlayers[index])
                 continue;
