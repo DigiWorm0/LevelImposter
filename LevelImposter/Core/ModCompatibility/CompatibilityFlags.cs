@@ -1,8 +1,9 @@
 ﻿using BepInEx.Unity.IL2CPP;
+using LevelImposter.Core.Utils;
 
-namespace LevelImposter.Core.Utils;
+namespace LevelImposter.Core.ModCompatibility;
 
-public static class ModCompatibility
+public static class CompatibilityFlags
 {
     public static bool IsVentCompatibilityEnabled { get; private set; }
     public static bool IsLobbyUICompatibilityEnabled { get; private set; }

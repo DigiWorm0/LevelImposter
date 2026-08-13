@@ -1,5 +1,6 @@
 using System;
 using HarmonyLib;
+using LevelImposter.Core.ModCompatibility;
 using LevelImposter.Core.Models;
 using LevelImposter.Core.Utils;
 using LevelImposter.FileIO.Cache;
@@ -45,7 +46,7 @@ public static class LobbyThumbnailPatch
             _activeThumbnailID = null;
 
             // TOU-Mira Compatibility
-            if (ModCompatibility.IsLobbyUICompatibilityEnabled)
+            if (CompatibilityFlags.IsLobbyUICompatibilityEnabled)
             {
                 thumbnailRendererObj.transform.localPosition = new Vector3(-2.0f, -2.55f, -3.2f);
                 thumbnailRendererObj.transform.localScale = new Vector3(0.75f, 0.75f, 1.0f);

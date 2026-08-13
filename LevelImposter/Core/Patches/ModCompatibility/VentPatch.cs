@@ -1,6 +1,7 @@
 ﻿using System;
 using HarmonyLib;
 using LevelImposter.Core.Components;
+using LevelImposter.Core.ModCompatibility;
 using LevelImposter.Core.Utils;
 using UnityEngine.Events;
 
@@ -20,7 +21,7 @@ public static class VentPatch
     {
         if (!LIShipStatus.IsInstance())
             return;
-        if (!Core.Utils.ModCompatibility.IsVentCompatibilityEnabled)
+        if (!CompatibilityFlags.IsVentCompatibilityEnabled)
             return;
         if (_ventTotal == ShipStatus.Instance.AllVents.Count)
             return;
