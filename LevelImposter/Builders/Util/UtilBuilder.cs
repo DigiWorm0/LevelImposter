@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using LevelImposter.Core.Models;
 using LevelImposter.Core.Utils;
 using LevelImposter.DB;
@@ -10,6 +11,12 @@ namespace LevelImposter.Builders.Util;
 internal class UtilBuilder : IElemBuilder
 {
     private const string CAM_PANEL_NAME = "Surv_Panel";
+    public static List<SystemConsole> AllEmergencyButtons { get; } = [];
+
+    public void OnPreBuild()
+    {
+        AllEmergencyButtons.Clear();
+    }
 
     public void OnBuild(LIElement elem, GameObject obj)
     {
@@ -17,7 +24,6 @@ internal class UtilBuilder : IElemBuilder
               elem.type.StartsWith("util-cams") ||
               elem.type == "util-admin" ||
               elem.type == "util-vitals" ||
-              elem.type.StartsWith("util-button") ||
               elem.type == "util-computer"))
             return;
 
@@ -54,6 +60,9 @@ internal class UtilBuilder : IElemBuilder
             // Set object name for TOR Security Guard to find panel type
             if (elem.type.StartsWith("util-cams"))
                 obj.name = CAM_PANEL_NAME;
+
+            if (elem.type.StartsWith("util-button"))
+                AllEmergencyButtons.Add(console);
         }
         else
         {

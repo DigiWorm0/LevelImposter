@@ -22,6 +22,9 @@ public class MinimumTaskPatch
 
         // Update Game Options
         var currentOptions = GameOptionsManager.Instance.currentNormalGameOptions;
+        if (currentOptions == null)
+            return; // <-- Other gamemodes (ex: Hide & Seek)
+
         currentOptions.NumShortTasks = Math.Min(currentOptions.NumShortTasks, shortTaskCount);
         currentOptions.NumLongTasks = Math.Min(currentOptions.NumLongTasks, longTaskCount);
         currentOptions.NumCommonTasks = Math.Min(currentOptions.NumCommonTasks, commonTaskCount);

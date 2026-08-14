@@ -621,6 +621,7 @@ public class GIFFile(string name)
             SpriteMeshType.FullRect
         );
         sprite.name = $"{Name}_sprite_{index}";
+        sprite.hideFlags = HideFlags.DontUnloadUnusedAsset;
 
         GCHandler.Register(sprite, _gcBehavior);
     }
@@ -649,7 +650,7 @@ public class GIFFile(string name)
         public FrameDisposalMethod DisposalMethod =>
             GraphicsControl?.DisposalMethod ?? FrameDisposalMethod.DoNotDispose;
 
-        public bool IsRendered => RenderedSprite != null;
+        public bool IsRendered => IndexStream == null;
 
         // Image Descriptor
         public Color[]? LocalColorTable { get; init; }
