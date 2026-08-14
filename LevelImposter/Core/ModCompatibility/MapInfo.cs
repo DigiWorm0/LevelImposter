@@ -14,9 +14,10 @@ namespace LevelImposter.Core.ModCompatibility;
 public static class MapInfo
 {
     /// <summary>
-    ///     The current map ID. Null means no map is loaded.
+    ///     The current map ID.
+    ///     If no map is currently loaded, this is null.
     ///     <remarks>
-    ///         Having a defined map ID does not mean the player is playing on a LevelImposter map.
+    ///         Having a defined map ID does not mean the player is on a LevelImposter map.
     ///         It only means that map data is loaded and available.
     ///         LevelImposter tries to always have a randomized fallback map loaded for mods that include map randomization.
     ///     </remarks>

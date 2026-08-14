@@ -58,10 +58,10 @@ internal class AmbientSoundBuilder(bool isLobby = false) : IElemBuilder
             ambientPlayer.HitAreas = colliders;
             ambientPlayer.MaxVolume = soundData?.volume ?? 1f;
 
-            // Load asynchronously
-            AudioLoader.LoadAsync(
+            // Load synchronously
+            // Note: Don't load async, this ensures that AmbientSound is defined on Start()
+            ambientPlayer.AmbientSound = AudioLoader.LoadSync(
                 soundData?.dataID ?? Guid.Empty,
-                clip => ambientPlayer.AmbientSound = clip,
                 isLobby);
         }
         else if (isTrigger)
