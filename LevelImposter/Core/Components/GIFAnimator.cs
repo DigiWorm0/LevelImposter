@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using Il2CppInterop.Runtime.Attributes;
 using LevelImposter.AssetLoader.FileContainers;
-using LevelImposter.Core.GarbageCollection;
 using LevelImposter.Core.Models;
 using UnityEngine;
 
@@ -22,17 +21,8 @@ public class GIFAnimator(IntPtr intPtr) : LIAnimatorBase(intPtr)
         "util-cam"
     ];
 
-    private Sprite[] _frameSprites = Array.Empty<Sprite>();
     private GIFFile? _gifFile;
     private string _id = string.Empty;
-
-    public new void OnDestroy()
-    {
-        base.OnDestroy();
-        foreach (var sprite in _frameSprites)
-            if (sprite != null)
-                Destroy(sprite);
-    }
 
     [HideFromIl2Cpp]
     public void Init(LIElement element, GIFFile gifFile)
@@ -42,7 +32,6 @@ public class GIFAnimator(IntPtr intPtr) : LIAnimatorBase(intPtr)
 
         _id = element.id.ToString();
         _gifFile = gifFile;
-        _frameSprites = new Sprite[_gifFile.Frames.Count];
 
         // Initialize base
         Init(element);
@@ -81,35 +70,7 @@ public class GIFAnimator(IntPtr intPtr) : LIAnimatorBase(intPtr)
 
     protected override Sprite GetFrameSprite(int frameIndex)
     {
-        // Check to see if we have the sprite cached
-        if (_frameSprites.Length > frameIndex && _frameSprites[frameIndex] != null)
-            return _frameSprites[frameIndex];
-
-        // Load the texture for the frame
-        var texture = _gifFile?.GetFrameTexture(frameIndex);
-        if (texture == null)
-            throw new Exception("GIF frame sprite not found");
-
-        // Create the sprite
-        var sprite = Sprite.Create(
-            texture,
-            new Rect(0, 0, texture.width, texture.height),
-            new Vector2(0.5f, 0.5f),
-            100.0f,
-            0,
-            SpriteMeshType.FullRect
-        );
-
-        // Set Sprite Flags
-        sprite.name = $"{_id}_gif_{frameIndex}";
-        sprite.hideFlags = HideFlags.DontUnloadUnusedAsset;
-
-        // Register in GC
-        GCHandler.Register(sprite);
-
-        // Cache the sprite
-        _frameSprites[frameIndex] = sprite;
-        return sprite;
+        return _gifFile?.GetFrameSprite(frameIndex) ?? throw new Exception("GIF data not initialized");
     }
 
     protected override float GetFrameDelay(int frameIndex)

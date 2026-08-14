@@ -1,17 +1,17 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using Il2CppInterop.Runtime.InteropTypes.Arrays;
 using LevelImposter.Core.GarbageCollection;
 using LevelImposter.Core.Utils;
 using UnityEngine;
-using Object = UnityEngine.Object;
 
 namespace LevelImposter.AssetLoader.FileContainers;
 
 /// <summary>
 ///     Represents a GIF file.
 /// </summary>
-public class GIFFile(string name) : IDisposable
+public class GIFFile(string name)
 {
     /// <summary>
     ///     The disposal method for a GIF frame.
@@ -31,7 +31,7 @@ public class GIFFile(string name) : IDisposable
     };
 
     // LZW Decoder
-    private static readonly ushort[][] _codeTable = new ushort[1 << 12][]; // Table of "code"s to color indexes
+    private static readonly ushort[][] CodeTable = new ushort[1 << 12][]; // Table of "code"s to color indexes
     private readonly Color _backgroundColor = Color.clear; // Background color
     private GCBehavior? _gcBehavior;
 
@@ -45,7 +45,8 @@ public class GIFFile(string name) : IDisposable
 
     // GIF File
     public bool IsLoaded { get; private set; }
-    public string Name { get; private set; } = name;
+    public string Name { get; } = name;
+    public Texture2D DefaultTexture => GetFrameSprite(0).texture;
 
     // Graphic Control Extension
     private GIFGraphicsControl? LastGraphicsControl { get; set; }
@@ -54,20 +55,6 @@ public class GIFFile(string name) : IDisposable
     public ushort Width { get; private set; }
     public ushort Height { get; private set; }
     public List<GIFFrame> Frames { get; private set; } = new();
-
-    /// <summary>
-    ///     Destroys the GIF file and frees up memory.
-    /// </summary>
-    public void Dispose()
-    {
-        _pixelBuffer = null;
-        foreach (var frame in Frames)
-        {
-            if (frame.RenderedTexture != null)
-                Object.Destroy(frame.RenderedTexture);
-            frame.IndexStream = null;
-        }
-    }
 
     /// <summary>
     ///     Checks if the given data is a GIF file.
@@ -107,11 +94,11 @@ public class GIFFile(string name) : IDisposable
     }
 
     /// <summary>
-    ///     Gets the texture of a frame. Renders the frame if it hasn't been rendered yet.
+    ///     Gets the sprite of a frame. Renders the frame if it hasn't been rendered yet.
     /// </summary>
     /// <param name="frameIndex">Index of the frame</param>
     /// <returns>The texture of the frame</returns>
-    public Texture2D GetFrameTexture(int frameIndex)
+    public Sprite GetFrameSprite(int frameIndex)
     {
         if (!IsLoaded)
             throw new Exception("GIF file is not loaded");
@@ -121,9 +108,8 @@ public class GIFFile(string name) : IDisposable
         var frame = Frames[frameIndex];
         if (!frame.IsRendered)
             RenderFrame(frameIndex);
-        if (frame.RenderedTexture == null)
-            throw new Exception("Frame sprite is null");
-        return frame.RenderedTexture;
+
+        return frame.RenderedSprite ?? throw new Exception("Frame sprite is null");
     }
 
     /// <summary>
@@ -168,7 +154,7 @@ public class GIFFile(string name) : IDisposable
 
         Width = width;
         Height = height;
-        Frames = new List<GIFFrame>();
+        Frames = [];
     }
 
     /// <summary>
@@ -379,7 +365,7 @@ public class GIFFile(string name) : IDisposable
 
         // Initialize Code Table
         for (ushort k = 0; k < codeTableIndex; k++)
-            _codeTable[k] = k < clearCode ? new[] { k } : new ushort[0];
+            CodeTable[k] = k < clearCode ? new[] { k } : new ushort[0];
 
         // Decode LZW
         var bitOffset = 0;
@@ -419,7 +405,7 @@ public class GIFFile(string name) : IDisposable
             if (previousCode == -1)
             {
                 // Initial Code
-                indexStream.AddRange(_codeTable[code]);
+                indexStream.AddRange(CodeTable[code]);
                 previousCode = code;
                 continue;
             }
@@ -428,8 +414,8 @@ public class GIFFile(string name) : IDisposable
             if (code < codeTableIndex)
             {
                 // Get New Code
-                var currentCodeArray = _codeTable[code];
-                var previousCodeArray = _codeTable[previousCode];
+                var currentCodeArray = CodeTable[code];
+                var previousCodeArray = CodeTable[previousCode];
                 var newCode = new ushort[previousCodeArray.Length + 1];
                 previousCodeArray.CopyTo(newCode, 0);
                 newCode[newCode.Length - 1] = currentCodeArray[0];
@@ -438,13 +424,13 @@ public class GIFFile(string name) : IDisposable
                 indexStream.AddRange(currentCodeArray);
 
                 // Add to Code Table
-                if (codeTableIndex < _codeTable.Length)
-                    _codeTable[codeTableIndex] = newCode;
+                if (codeTableIndex < CodeTable.Length)
+                    CodeTable[codeTableIndex] = newCode;
             }
             else
             {
                 // Get New Code
-                var previousCodeArray = _codeTable[previousCode];
+                var previousCodeArray = CodeTable[previousCode];
                 var newCode = new ushort[previousCodeArray.Length + 1];
                 previousCodeArray.CopyTo(newCode, 0);
                 newCode[newCode.Length - 1] = previousCodeArray[0];
@@ -453,8 +439,8 @@ public class GIFFile(string name) : IDisposable
                 indexStream.AddRange(newCode);
 
                 // Add to Code Table
-                if (codeTableIndex < _codeTable.Length)
-                    _codeTable[codeTableIndex] = newCode;
+                if (codeTableIndex < CodeTable.Length)
+                    CodeTable[codeTableIndex] = newCode;
             }
 
             // Increase Code Table Index
@@ -473,8 +459,8 @@ public class GIFFile(string name) : IDisposable
             indexStream.Add(0);
 
         // Free Memory
-        for (var k = endOfInformationCode + 1; k < _codeTable.Length; k++)
-            _codeTable[k] = [];
+        for (var k = endOfInformationCode + 1; k < CodeTable.Length; k++)
+            CodeTable[k] = [];
 
         return indexStream;
     }
@@ -526,16 +512,6 @@ public class GIFFile(string name) : IDisposable
                 _pixelBuffer.CopyTo(tempBuffer, 0);
             }
 
-            // Create frame texture
-            var pixelArtMode = GameConfiguration.CurrentMap?.properties.pixelArtMode == true;
-            var texture = new Texture2D(Width, Height, TextureFormat.RGBA32, false)
-            {
-                wrapMode = TextureWrapMode.Clamp,
-                filterMode = pixelArtMode ? FilterMode.Point : FilterMode.Bilinear,
-                hideFlags = HideFlags.HideAndDontSave,
-                requestedMipmapLevel = 0
-            };
-
             // Get frame data
             var colorTable = frame.HasLocalColorTable ? frame.LocalColorTable : _globalColorTable;
             var x = frame.LeftPosition;
@@ -567,12 +543,10 @@ public class GIFFile(string name) : IDisposable
             // Free memory
             frame.IndexStream = null;
 
-            // Apply Texture
-            texture.SetPixels(_pixelBuffer);
-            texture.Apply(false, true); // Remove from CPU memory
-
-            // Add to GC
-            GCHandler.Register(texture, _gcBehavior);
+            // Create frame sprite
+            RenderFrame(i, _pixelBuffer, out var texture, out var sprite);
+            frame.RenderedTexture = texture;
+            frame.RenderedSprite = sprite;
 
             // Handle frame disposal
             switch (frame.DisposalMethod)
@@ -598,12 +572,10 @@ public class GIFFile(string name) : IDisposable
                     break;
                 case FrameDisposalMethod.NoDisposal:
                 case FrameDisposalMethod.DoNotDispose:
+                default:
                     // Do nothing
                     break;
             }
-
-            // Apply to frame
-            frame.RenderedTexture = texture;
         }
 
         // If last frame, free memory
@@ -613,6 +585,44 @@ public class GIFFile(string name) : IDisposable
             LastGraphicsControl = null;
             _globalColorTable = DefaultColorTable;
         }
+    }
+
+    private void RenderFrame(
+        int index,
+        Il2CppStructArray<Color> pixels,
+        out Texture2D texture,
+        out Sprite sprite)
+    {
+        var pixelArtMode = GameConfiguration.CurrentMap?.properties.pixelArtMode ?? false;
+        texture = new Texture2D(
+            Width,
+            Height,
+            TextureFormat.RGBA32,
+            false)
+        {
+            name = $"{Name}_texture_{index}",
+            wrapMode = TextureWrapMode.Clamp,
+            filterMode = pixelArtMode ? FilterMode.Point : FilterMode.Bilinear,
+            hideFlags = HideFlags.HideAndDontSave,
+            requestedMipmapLevel = 0
+        };
+
+        texture.SetPixels(pixels);
+        texture.Apply(false, true);
+
+        GCHandler.Register(texture, _gcBehavior);
+
+        sprite = Sprite.Create(
+            texture,
+            new Rect(0, 0, Width, Height),
+            new Vector2(0.5f, 0.5f),
+            100.0f,
+            0,
+            SpriteMeshType.FullRect
+        );
+        sprite.name = $"{Name}_sprite_{index}";
+
+        GCHandler.Register(sprite, _gcBehavior);
     }
 
     /// <summary>
@@ -639,7 +649,7 @@ public class GIFFile(string name) : IDisposable
         public FrameDisposalMethod DisposalMethod =>
             GraphicsControl?.DisposalMethod ?? FrameDisposalMethod.DoNotDispose;
 
-        public bool IsRendered => RenderedTexture != null;
+        public bool IsRendered => RenderedSprite != null;
 
         // Image Descriptor
         public Color[]? LocalColorTable { get; init; }
@@ -653,6 +663,8 @@ public class GIFFile(string name) : IDisposable
         public int Height { get; init; }
 
         public List<ushort>? IndexStream { get; set; }
+
         public Texture2D? RenderedTexture { get; set; }
+        public Sprite? RenderedSprite { get; set; }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using LevelImposter.AssetLoader.Loadables;
+using LevelImposter.AssetLoader.Loaders;
 using LevelImposter.AssetLoader.Queue;
 using LevelImposter.Core.GarbageCollection;
 using UnityEngine;
@@ -18,6 +19,13 @@ public class SpriteLoader : AsyncQueue<SpriteInfo, SpriteResult>
         // Load the texture
         var loadedTexture = TextureLoader.Instance.LoadImmediate(loadable.TextureInfo);
         var texture = loadedTexture.Texture;
+
+        // If this is a GIF, we can save time/memory by using the Sprite that the GIFLoader already generated for us.
+        if (loadedTexture is GIFLoader.GifTextureResult gifResult)
+        {
+            var firstFrameSprite = gifResult.GIFFile.GetFrameSprite(0);
+            return new SpriteResult(firstFrameSprite, loadedTexture);
+        }
 
         // Generate Sprite
         var options = loadable.Options;
