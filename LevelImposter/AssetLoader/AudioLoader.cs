@@ -4,6 +4,7 @@ using LevelImposter.AssetLoader.Loaders;
 using LevelImposter.AssetLoader.Queue;
 using LevelImposter.Core.GarbageCollection;
 using LevelImposter.Core.Utils;
+using LevelImposter.Test;
 using UnityEngine;
 
 namespace LevelImposter.AssetLoader;
@@ -73,6 +74,8 @@ public class AudioLoader : AsyncQueue<AudioInfo, AudioResult>
 
     protected override AudioResult Load(AudioInfo loadable)
     {
+        using var _ = Profiler.Measure("AudioLoader.Load", loadable.ID);
+
         var audioClip = WAVLoader.Load(loadable.DataStore, loadable.ID);
         return new AudioResult(audioClip);
     }

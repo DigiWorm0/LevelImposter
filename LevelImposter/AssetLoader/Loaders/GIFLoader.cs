@@ -2,6 +2,7 @@
 using LevelImposter.AssetLoader.FileContainers;
 using LevelImposter.AssetLoader.Loadables;
 using LevelImposter.Core.GarbageCollection;
+using LevelImposter.Test;
 
 namespace LevelImposter.AssetLoader.Loaders;
 
@@ -14,6 +15,8 @@ public static class GIFLoader
     /// <returns>A fully-loaded GIFFile containing the image data</returns>
     public static GifTextureResult Load(TextureInfo loadable)
     {
+        using var _ = Profiler.Measure("GIFLoader.Load", loadable.ID);
+
         // Create new file
         var gifFile = new GIFFile(loadable.ID);
         GCHandler.Register(gifFile, loadable.Options.GCBehavior);

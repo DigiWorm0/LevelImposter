@@ -6,6 +6,7 @@ using LevelImposter.Core.Components;
 using LevelImposter.Core.Models;
 using LevelImposter.Core.Services.Ship;
 using LevelImposter.Core.Utils;
+using LevelImposter.Test;
 using UnityEngine;
 
 namespace LevelImposter.Builders;
@@ -61,7 +62,13 @@ public class BuildRouter(IElemBuilder[] buildStack)
 
         // Run Pre-Build hooks
         foreach (var builder in buildStack)
+        {
+            using var _ = Profiler.Measure(
+                "OnPreBuild",
+                builder.GetType().ToString());
+
             builder.OnPreBuild();
+        }
 
         // Build elements by priority
         foreach (var builderGroup in groupedBuildersByPriority)
@@ -70,7 +77,13 @@ public class BuildRouter(IElemBuilder[] buildStack)
 
         // Run Post-Build hooks
         foreach (var builder in buildStack)
+        {
+            using var _ = Profiler.Measure(
+                "OnPostBuild",
+                builder.GetType().ToString());
+
             builder.OnPostBuild();
+        }
     }
 
     /// <summary>
@@ -92,7 +105,14 @@ public class BuildRouter(IElemBuilder[] buildStack)
 
             // Run through build stack
             foreach (var builder in targetStack)
+            {
+#if PROFILING
+                using var _ = Profiler.Measure(
+                    $"OnBuild.{builder.GetType()}",
+                    element.id.ToString());
+#endif
                 builder.OnBuild(element, gameObject);
+            }
 
             // Stop debug timer
             _buildTimer.Stop();

@@ -4,6 +4,7 @@ using System.IO;
 using Il2CppInterop.Runtime;
 using LevelImposter.Core.GarbageCollection;
 using LevelImposter.Core.Utils;
+using LevelImposter.Test;
 using UnityEngine;
 using ByteArray = Il2CppInterop.Runtime.InteropTypes.Arrays.Il2CppStructArray<byte>;
 
@@ -98,6 +99,11 @@ public class GIFFile(string name) : IDisposable
     /// <param name="gcBehavior">Garbage collection behavior for the loaded textures</param>
     public void Load(Stream dataStream, GCBehavior? gcBehavior = null)
     {
+#if PROFILING
+        using var _ = Profiler.Measure(
+            "GIFFile.Load",
+            Name);
+#endif
         using var reader = new BinaryReader(dataStream);
 
         IsLoaded = false;

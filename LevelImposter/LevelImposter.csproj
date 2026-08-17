@@ -17,6 +17,10 @@
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 
         <ContinuousIntegrationBuild Condition="'$(GITHUB_ACTIONS)' == 'true'">true</ContinuousIntegrationBuild>
+
+        <Configurations>Debug;Release;Profiling</Configurations>
+
+        <Platforms>AnyCPU</Platforms>
     </PropertyGroup>
 
     <PropertyGroup>
@@ -40,6 +44,10 @@
     <ItemGroup>
         <None Include="..\.editorconfig" Link=".editorconfig"/>
     </ItemGroup>
+
+    <PropertyGroup Condition="'$(Configuration)' == 'Profiling'">
+        <DefineConstants>$(DefineConstants);PROFILING</DefineConstants>
+    </PropertyGroup>
 
     <Target Name="Copy" AfterTargets="Build" Condition="'$(AmongUs)' != ''">
         <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(AmongUs)/BepInEx/plugins/" UseSymboliclinksIfPossible="true"/>

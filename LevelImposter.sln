@@ -18,6 +18,7 @@ Global
 		Debug|x86 = Debug|x86
 		Release|Any CPU = Release|Any CPU
 		Release|x86 = Release|x86
+		Profiling|Any CPU = Profiling|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{11FBC798-BAF5-4EE5-9511-BE6DB0592F99}.BuildMod|Any CPU.ActiveCfg = Release|Any CPU
@@ -30,6 +31,8 @@ Global
 		{11FBC798-BAF5-4EE5-9511-BE6DB0592F99}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{11FBC798-BAF5-4EE5-9511-BE6DB0592F99}.Release|Any CPU.Build.0 = Release|Any CPU
 		{11FBC798-BAF5-4EE5-9511-BE6DB0592F99}.Release|x86.ActiveCfg = Release|Any CPU
+		{11FBC798-BAF5-4EE5-9511-BE6DB0592F99}.Profiling|Any CPU.ActiveCfg = Profiling|Any CPU
+		{11FBC798-BAF5-4EE5-9511-BE6DB0592F99}.Profiling|Any CPU.Build.0 = Profiling|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

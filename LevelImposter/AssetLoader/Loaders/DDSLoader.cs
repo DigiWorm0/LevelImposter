@@ -4,6 +4,7 @@ using Il2CppInterop.Runtime.Attributes;
 using LevelImposter.AssetLoader.Loadables;
 using LevelImposter.Core.GarbageCollection;
 using LevelImposter.FileIO.DataBlock;
+using LevelImposter.Test;
 using UnityEngine;
 
 namespace LevelImposter.AssetLoader.Loaders;
@@ -26,6 +27,8 @@ public static class DDSLoader
     /// <exception cref="IOException">If the Stream fails to read image data</exception>
     public static TextureResult Load(TextureInfo loadable)
     {
+        using var _ = Profiler.Measure("DDSLoader.Load", loadable.ID);
+
         // Rent buffers from the pool
         var imgData = loadable.DataStore.LoadToMemory();
 

@@ -2,6 +2,7 @@
 using LevelImposter.AssetLoader.Loaders;
 using LevelImposter.AssetLoader.Queue;
 using LevelImposter.Core.GarbageCollection;
+using LevelImposter.Test;
 using UnityEngine;
 
 namespace LevelImposter.AssetLoader;
@@ -16,6 +17,8 @@ public class SpriteLoader : AsyncQueue<SpriteInfo, SpriteResult>
 
     protected override SpriteResult Load(SpriteInfo loadable)
     {
+        using var _ = Profiler.Measure("SpriteLoader.Load", loadable.ID);
+
         // Load the texture
         var loadedTexture = TextureLoader.Instance.LoadImmediate(loadable.TextureInfo);
         var texture = loadedTexture.Texture;
