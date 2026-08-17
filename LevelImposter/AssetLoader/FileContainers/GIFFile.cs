@@ -1,17 +1,18 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using Il2CppInterop.Runtime.InteropTypes.Arrays;
+using Il2CppInterop.Runtime;
 using LevelImposter.Core.GarbageCollection;
 using LevelImposter.Core.Utils;
 using UnityEngine;
+using ByteArray = Il2CppInterop.Runtime.InteropTypes.Arrays.Il2CppStructArray<byte>;
 
 namespace LevelImposter.AssetLoader.FileContainers;
 
 /// <summary>
 ///     Represents a GIF file.
 /// </summary>
-public class GIFFile(string name)
+public class GIFFile(string name) : IDisposable
 {
     /// <summary>
     ///     The disposal method for a GIF frame.
@@ -24,24 +25,27 @@ public class GIFFile(string name)
         RestoreToPrevious = 3
     }
 
-    private static readonly Color[] DefaultColorTable =
+    private static readonly ColorData[] DefaultColorTable =
     {
-        new(0, 0, 0, 0),
-        new(1, 1, 1, 1)
+        new([0, 0, 0, 0]),
+        new([255, 255, 255, 255])
     };
 
     // LZW Decoder
     private static readonly ushort[][] CodeTable = new ushort[1 << 12][]; // Table of "code"s to color indexes
-    private readonly Color _backgroundColor = Color.clear; // Background color
+
+    // Other Data
+    private readonly ColorData _backgroundColor = ColorData.Clear; // Background color
     private GCBehavior? _gcBehavior;
 
     // Logical Screen Descriptor
-    private Color[] _globalColorTable = DefaultColorTable; // Table of indexes to colors
+    private ColorData[] _globalColorTable = DefaultColorTable; // Table of indexes to colors
     private int _globalColorTableSize; // Size of the global color table
     private bool _hasGlobalColorTable; // True if there is a global color table
 
-    // Other Data
-    private Color[]? _pixelBuffer; // Buffer of pixel colors
+    // Memory
+    private ByteArray? _pixelBuffer;
+    private IntPtr _pixelBufferHandle = IntPtr.Zero;
 
     // GIF File
     public bool IsLoaded { get; private set; }
@@ -54,7 +58,23 @@ public class GIFFile(string name)
     // Image Descriptor
     public ushort Width { get; private set; }
     public ushort Height { get; private set; }
-    public List<GIFFrame> Frames { get; private set; } = new();
+    public List<GIFFrame> Frames { get; private set; } = [];
+
+    public void Dispose()
+    {
+        GC.SuppressFinalize(this);
+        FreeMemory();
+    }
+
+    private void FreeMemory()
+    {
+        if (_pixelBufferHandle == IntPtr.Zero)
+            return;
+
+        IL2CPP.il2cpp_gchandle_free(_pixelBufferHandle);
+        _pixelBufferHandle = IntPtr.Zero;
+        _pixelBuffer = null;
+    }
 
     /// <summary>
     ///     Checks if the given data is a GIF file.
@@ -89,7 +109,6 @@ public class GIFFile(string name)
         {
         }
 
-        _pixelBuffer = null;
         IsLoaded = true;
     }
 
@@ -167,17 +186,15 @@ public class GIFFile(string name)
             return;
 
         // Global Color Table
-        var globalColorTable = new Color[_globalColorTableSize];
+        _globalColorTable = new ColorData[_globalColorTableSize];
         for (var i = 0; i < _globalColorTableSize; i++)
         {
             var r = reader.ReadByte();
             var g = reader.ReadByte();
             var b = reader.ReadByte();
 
-            globalColorTable[i] = new Color(r / 255f, g / 255f, b / 255f);
+            _globalColorTable[i] = new ColorData([r, g, b, 255]);
         }
-
-        _globalColorTable = globalColorTable;
     }
 
     /// <summary>
@@ -280,7 +297,7 @@ public class GIFFile(string name)
             throw new NotImplementedException("Interlaced GIFs are not implemented");
 
         // Local Color Table
-        var localColorTable = new Color[localColorTableSize];
+        var localColorTable = new ColorData[localColorTableSize];
         if (hasLocalColorTable)
             for (var i = 0; i < localColorTableSize; i++)
             {
@@ -288,8 +305,7 @@ public class GIFFile(string name)
                 var g = reader.ReadByte();
                 var b = reader.ReadByte();
 
-                var color = new Color(r / 255f, g / 255f, b / 255f);
-                localColorTable[i] = color;
+                localColorTable[i] = new ColorData([r, g, b, 255]);
             }
 
         // Image Data
@@ -488,9 +504,11 @@ public class GIFFile(string name)
         // Create pixel buffer
         if (_pixelBuffer == null)
         {
-            _pixelBuffer = new Color[Width * Height];
-            for (var i = 0; i < _pixelBuffer.Length; i++)
-                _pixelBuffer[i] = _backgroundColor;
+            _pixelBuffer = new ByteArray(Width * Height * 4);
+            _pixelBufferHandle = IL2CPP.il2cpp_gchandle_new(_pixelBuffer.Pointer, false);
+
+            for (var o = 0; o < _pixelBuffer.Length; o += 4)
+                _backgroundColor.PushToArr(_pixelBuffer, o);
         }
 
         // Render all frames up to the target frame
@@ -505,10 +523,10 @@ public class GIFFile(string name)
             var graphicsControl = frame.GraphicsControl;
 
             // Create temp pixel buffer
-            Color[]? tempBuffer = null;
+            ByteArray? tempBuffer = null;
             if (frame.DisposalMethod == FrameDisposalMethod.RestoreToPrevious)
             {
-                tempBuffer = new Color[_pixelBuffer.Length];
+                tempBuffer = new ByteArray(_pixelBuffer.Length);
                 _pixelBuffer.CopyTo(tempBuffer, 0);
             }
 
@@ -536,8 +554,8 @@ public class GIFFile(string name)
                 var pixelIndex = (Height - 1 - (y + newY)) * Width + x + newX;
 
                 // Set pixel color
-                var color = colorTable?[colorIndex] ?? Color.clear;
-                _pixelBuffer[pixelIndex] = color;
+                var color = colorTable?[colorIndex] ?? ColorData.Clear;
+                color.PushToArr(_pixelBuffer, pixelIndex * 4);
             }
 
             // Free memory
@@ -552,9 +570,9 @@ public class GIFFile(string name)
             switch (frame.DisposalMethod)
             {
                 case FrameDisposalMethod.RestoreToPrevious:
-                    // Restore previous buffer
-                    if (tempBuffer != null)
-                        _pixelBuffer = tempBuffer;
+                    if (tempBuffer == null)
+                        throw new Exception("Temp buffer is null when restoring to previous frame");
+                    tempBuffer.CopyTo(_pixelBuffer, 0);
                     break;
                 case FrameDisposalMethod.RestoreToBackgroundColor:
                     // Fill pixel buffer with background color
@@ -566,7 +584,7 @@ public class GIFFile(string name)
                         var pixelIndex = (Height - 1 - (y + newY)) * Width + x + newX;
 
                         // Set pixel color
-                        _pixelBuffer[pixelIndex] = _backgroundColor;
+                        _backgroundColor.PushToArr(_pixelBuffer, pixelIndex * 4);
                     }
 
                     break;
@@ -578,18 +596,14 @@ public class GIFFile(string name)
             }
         }
 
-        // If last frame, free memory
+        // If this is the last frame, free the pixel buffer
         if (frameIndex >= Frames.Count - 1)
-        {
-            _pixelBuffer = null;
-            LastGraphicsControl = null;
-            _globalColorTable = DefaultColorTable;
-        }
+            FreeMemory();
     }
 
     private void RenderFrame(
         int index,
-        Il2CppStructArray<Color> pixels,
+        ByteArray pixels,
         out Texture2D texture,
         out Sprite sprite)
     {
@@ -607,7 +621,7 @@ public class GIFFile(string name)
             requestedMipmapLevel = 0
         };
 
-        texture.SetPixels(pixels);
+        texture.LoadRawTextureData(pixels);
         texture.Apply(false, true);
 
         GCHandler.Register(texture, _gcBehavior);
@@ -653,7 +667,7 @@ public class GIFFile(string name)
         public bool IsRendered => IndexStream == null;
 
         // Image Descriptor
-        public Color[]? LocalColorTable { get; init; }
+        public ColorData[]? LocalColorTable { get; init; }
         public bool HasLocalColorTable { get; init; }
         public bool InterlaceFlag { get; init; }
         public bool SortFlag { get; init; }
@@ -667,5 +681,18 @@ public class GIFFile(string name)
 
         public Texture2D? RenderedTexture { get; set; }
         public Sprite? RenderedSprite { get; set; }
+    }
+
+    public readonly struct ColorData(byte[] data)
+    {
+        public static ColorData Clear = new([0, 0, 0, 0]);
+
+        public void PushToArr(ByteArray arr, int offset)
+        {
+            arr[offset] = data[0];
+            arr[offset + 1] = data[1];
+            arr[offset + 2] = data[2];
+            arr[offset + 3] = data[3];
+        }
     }
 }

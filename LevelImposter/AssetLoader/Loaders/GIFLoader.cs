@@ -1,6 +1,7 @@
 ﻿using System.IO;
 using LevelImposter.AssetLoader.FileContainers;
 using LevelImposter.AssetLoader.Loadables;
+using LevelImposter.Core.GarbageCollection;
 
 namespace LevelImposter.AssetLoader.Loaders;
 
@@ -15,6 +16,7 @@ public static class GIFLoader
     {
         // Create new file
         var gifFile = new GIFFile(loadable.ID);
+        GCHandler.Register(gifFile, loadable.Options.GCBehavior);
 
         // Load data into managed memory
         var imgData = loadable.DataStore.LoadToManagedMemory();
