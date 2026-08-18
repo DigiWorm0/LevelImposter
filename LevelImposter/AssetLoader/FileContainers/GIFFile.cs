@@ -4,16 +4,16 @@ using System.IO;
 using Il2CppInterop.Runtime;
 using LevelImposter.Core.GarbageCollection;
 using LevelImposter.Core.Utils;
+using LevelImposter.FileIO.DataBlock;
 using LevelImposter.Test;
 using UnityEngine;
-using ByteArray = Il2CppInterop.Runtime.InteropTypes.Arrays.Il2CppStructArray<byte>;
 
 namespace LevelImposter.AssetLoader.FileContainers;
 
 /// <summary>
 ///     Represents a GIF file.
 /// </summary>
-public class GIFFile(string name) : IDisposable
+public class GIFFile(string name)
 {
     /// <summary>
     ///     The disposal method for a GIF frame.
@@ -35,6 +35,10 @@ public class GIFFile(string name) : IDisposable
     // LZW Decoder
     private static readonly ushort[][] CodeTable = new ushort[1 << 12][]; // Table of "code"s to color indexes
 
+    // Memory
+    private static MemoryBlock? _outputBuffer;
+    private static IntPtr _outputBufferHandle = IntPtr.Zero;
+
     // Other Data
     private readonly ColorData _backgroundColor = ColorData.Clear; // Background color
     private GCBehavior? _gcBehavior;
@@ -43,10 +47,6 @@ public class GIFFile(string name) : IDisposable
     private ColorData[] _globalColorTable = DefaultColorTable; // Table of indexes to colors
     private int _globalColorTableSize; // Size of the global color table
     private bool _hasGlobalColorTable; // True if there is a global color table
-    private ByteArray? _outputBuffer;
-    private IntPtr _outputBufferHandle = IntPtr.Zero;
-
-    // Memory
     private uint[]? _pixelBuffer;
 
     // GIF File
@@ -62,20 +62,14 @@ public class GIFFile(string name) : IDisposable
     public ushort Height { get; private set; }
     public List<GIFFrame> Frames { get; private set; } = [];
 
-    public void Dispose()
+    private static MemoryBlock ResizeOutputBuffer(int newSize)
     {
-        GC.SuppressFinalize(this);
-        FreeMemory();
-    }
+        if (_outputBufferHandle != IntPtr.Zero)
+            IL2CPP.il2cpp_gchandle_free(_outputBufferHandle);
 
-    private void FreeMemory()
-    {
-        if (_outputBufferHandle == IntPtr.Zero)
-            return;
-
-        IL2CPP.il2cpp_gchandle_free(_outputBufferHandle);
-        _outputBufferHandle = IntPtr.Zero;
-        _outputBuffer = null;
+        _outputBuffer = new MemoryBlock(newSize);
+        _outputBufferHandle = IL2CPP.il2cpp_gchandle_new(_outputBuffer.Data.Pointer, false);
+        return _outputBuffer;
     }
 
     /// <summary>
@@ -606,8 +600,8 @@ public class GIFFile(string name) : IDisposable
         }
 
         // If this is the last frame, free the pixel buffer
-        // if (frameIndex >= Frames.Count - 1)
-        //     FreeMemory();
+        if (frameIndex >= Frames.Count - 1)
+            _pixelBuffer = null;
     }
 
     private void RenderFrame(
@@ -632,11 +626,9 @@ public class GIFFile(string name) : IDisposable
 
 
         // Create output buffer
-        if (_outputBuffer == null)
-        {
-            _outputBuffer = new ByteArray(Width * Height * 4);
-            _outputBufferHandle = IL2CPP.il2cpp_gchandle_new(_outputBuffer.Pointer, false);
-        }
+        var minOutputBufferSize = Width * Height * 4;
+        if (_outputBuffer == null || _outputBuffer.Length < minOutputBufferSize)
+            _outputBuffer = ResizeOutputBuffer(minOutputBufferSize);
 
         // Copy pixel data into output buffer
         for (var i = 0; i < pixelBuffer.Length; i++)
@@ -651,7 +643,7 @@ public class GIFFile(string name) : IDisposable
         }
 
         // Load Texture Data
-        texture.LoadRawTextureData(_outputBuffer);
+        texture.LoadRawTextureData(_outputBuffer.BasePointer, Width * Height * 4);
         texture.Apply(false, true);
 
         GCHandler.Register(texture, _gcBehavior);
