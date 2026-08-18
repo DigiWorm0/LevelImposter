@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using LevelImposter.Core.GarbageCollection;
 using LevelImposter.Core.Utils;
-using LevelImposter.FileIO.DataBlock;
-using LevelImposter.Test;
 using UnityEngine;
 
 namespace LevelImposter.AssetLoader.FileContainers;
@@ -33,9 +31,6 @@ public class GIFFile(string name)
 
     // LZW Decoder
     private static readonly ushort[][] CodeTable = new ushort[1 << 12][]; // Table of "code"s to color indexes
-
-    // Memory
-    private static MemoryBlock? _outputBuffer;
 
     // Other Data
     private readonly ColorData _backgroundColor = ColorData.Clear; // Background color
@@ -596,7 +591,7 @@ public class GIFFile(string name)
             _pixelBuffer = null;
     }
 
-    private void GenerateSpriteFromBuffer(
+    private unsafe void GenerateSpriteFromBuffer(
         string name,
         out Texture2D texture,
         out Sprite sprite)
@@ -614,14 +609,16 @@ public class GIFFile(string name)
             hideFlags = HideFlags.HideAndDontSave,
             requestedMipmapLevel = 0
         };
-
-        // Load Texture Data
-        PushToOutputBuffer();
-        texture.LoadRawTextureData(_outputBuffer!.BasePointer, Width * Height * 4);
-        texture.Apply(false, true);
-
         GCHandler.Register(texture, _gcBehavior);
 
+        // Load Texture Data
+        fixed (uint* pArray = _pixelBuffer)
+        {
+            texture.LoadRawTextureData((IntPtr)pArray, Width * Height * 4);
+            texture.Apply(false, true);
+        }
+
+        // Create Sprite
         sprite = Sprite.Create(
             texture,
             new Rect(0, 0, Width, Height),
@@ -634,32 +631,6 @@ public class GIFFile(string name)
         sprite.hideFlags = HideFlags.DontUnloadUnusedAsset;
 
         GCHandler.Register(sprite, _gcBehavior);
-    }
-
-    /// <summary>
-    ///     Pushes the contents of _pixelBuffer to _outputBuffer.
-    ///     Doing this manually would be extremely resource-intensive.
-    ///     As an optimization, we use Buffer.MemoryCopy on the raw pointers instead.
-    /// </summary>
-    private unsafe void PushToOutputBuffer()
-    {
-        if (_pixelBuffer == null)
-            throw new NullReferenceException("Pixel buffer is null");
-
-        // Resize output buffer
-        var minOutputBufferSize = Width * Height * 4;
-        if (_outputBuffer == null || _outputBuffer.Length < minOutputBufferSize)
-            _outputBuffer = new MemoryBlock(minOutputBufferSize);
-
-        // Push pixels to output buffer
-        fixed (uint* srcPtr = _pixelBuffer)
-        {
-            Buffer.MemoryCopy(
-                srcPtr,
-                (void*)_outputBuffer.BasePointer,
-                _outputBuffer.Length,
-                _pixelBuffer.Length * 4);
-        }
     }
 
     /// <summary>
