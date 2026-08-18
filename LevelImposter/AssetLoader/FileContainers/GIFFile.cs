@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using Il2CppInterop.Runtime;
 using LevelImposter.Core.GarbageCollection;
 using LevelImposter.Core.Utils;
 using LevelImposter.FileIO.DataBlock;
@@ -37,7 +36,6 @@ public class GIFFile(string name)
 
     // Memory
     private static MemoryBlock? _outputBuffer;
-    private static IntPtr _outputBufferHandle = IntPtr.Zero;
 
     // Other Data
     private readonly ColorData _backgroundColor = ColorData.Clear; // Background color
@@ -61,16 +59,6 @@ public class GIFFile(string name)
     public ushort Width { get; private set; }
     public ushort Height { get; private set; }
     public List<GIFFrame> Frames { get; private set; } = [];
-
-    private static MemoryBlock ResizeOutputBuffer(int newSize)
-    {
-        if (_outputBufferHandle != IntPtr.Zero)
-            IL2CPP.il2cpp_gchandle_free(_outputBufferHandle);
-
-        _outputBuffer = new MemoryBlock(newSize);
-        _outputBufferHandle = IL2CPP.il2cpp_gchandle_new(_outputBuffer.Data.Pointer, false);
-        return _outputBuffer;
-    }
 
     /// <summary>
     ///     Checks if the given data is a GIF file.
@@ -569,7 +557,11 @@ public class GIFFile(string name)
             frame.IndexStream = null;
 
             // Create frame sprite
-            RenderFrame(i, _pixelBuffer, out var texture, out var sprite);
+            GenerateSpriteFromBuffer(
+                $"{Name}[{i}]",
+                out var texture,
+                out var sprite
+            );
             frame.RenderedTexture = texture;
             frame.RenderedSprite = sprite;
 
@@ -604,9 +596,8 @@ public class GIFFile(string name)
             _pixelBuffer = null;
     }
 
-    private void RenderFrame(
-        int index,
-        uint[] pixelBuffer,
+    private void GenerateSpriteFromBuffer(
+        string name,
         out Texture2D texture,
         out Sprite sprite)
     {
@@ -617,33 +608,16 @@ public class GIFFile(string name)
             TextureFormat.RGBA32,
             false)
         {
-            name = $"{Name}_texture_{index}",
+            name = $"{name}_tex",
             wrapMode = TextureWrapMode.Clamp,
             filterMode = pixelArtMode ? FilterMode.Point : FilterMode.Bilinear,
             hideFlags = HideFlags.HideAndDontSave,
             requestedMipmapLevel = 0
         };
 
-
-        // Create output buffer
-        var minOutputBufferSize = Width * Height * 4;
-        if (_outputBuffer == null || _outputBuffer.Length < minOutputBufferSize)
-            _outputBuffer = ResizeOutputBuffer(minOutputBufferSize);
-
-        // Copy pixel data into output buffer
-        for (var i = 0; i < pixelBuffer.Length; i++)
-        {
-            var value = pixelBuffer[i];
-            var offset = i * 4;
-
-            _outputBuffer[offset] = (byte)value;
-            _outputBuffer[offset + 1] = (byte)(value >> 8);
-            _outputBuffer[offset + 2] = (byte)(value >> 16);
-            _outputBuffer[offset + 3] = (byte)(value >> 24);
-        }
-
         // Load Texture Data
-        texture.LoadRawTextureData(_outputBuffer.BasePointer, Width * Height * 4);
+        PushToOutputBuffer();
+        texture.LoadRawTextureData(_outputBuffer!.BasePointer, Width * Height * 4);
         texture.Apply(false, true);
 
         GCHandler.Register(texture, _gcBehavior);
@@ -656,10 +630,36 @@ public class GIFFile(string name)
             0,
             SpriteMeshType.FullRect
         );
-        sprite.name = $"{Name}_sprite_{index}";
+        sprite.name = $"{name}_sprite";
         sprite.hideFlags = HideFlags.DontUnloadUnusedAsset;
 
         GCHandler.Register(sprite, _gcBehavior);
+    }
+
+    /// <summary>
+    ///     Pushes the contents of _pixelBuffer to _outputBuffer.
+    ///     Doing this manually would be extremely resource-intensive.
+    ///     As an optimization, we use Buffer.MemoryCopy on the raw pointers instead.
+    /// </summary>
+    private unsafe void PushToOutputBuffer()
+    {
+        if (_pixelBuffer == null)
+            throw new NullReferenceException("Pixel buffer is null");
+
+        // Resize output buffer
+        var minOutputBufferSize = Width * Height * 4;
+        if (_outputBuffer == null || _outputBuffer.Length < minOutputBufferSize)
+            _outputBuffer = new MemoryBlock(minOutputBufferSize);
+
+        // Push pixels to output buffer
+        fixed (uint* srcPtr = _pixelBuffer)
+        {
+            Buffer.MemoryCopy(
+                srcPtr,
+                (void*)_outputBuffer.BasePointer,
+                _outputBuffer.Length,
+                _pixelBuffer.Length * 4);
+        }
     }
 
     /// <summary>
