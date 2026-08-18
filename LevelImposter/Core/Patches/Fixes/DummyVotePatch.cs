@@ -37,7 +37,7 @@ public static class DummyVotePatch
                 return false;
 
             // Vote for the same player as the local player
-            MeetingHud.Instance.CmdCastVote(playerData.PlayerId, localPlayerState.VotedFor);
+            MeetingHud.Instance.CmdCastVote(playerData.PlayerId, localPlayerState.VotedForId);
             __instance.voted = true;
         }
 

@@ -66,7 +66,7 @@ public class MinigameSprites(IntPtr intPtr) : MonoBehaviour(intPtr)
     [HideFromIl2Cpp]
     public void Init(LIElement elem)
     {
-        _minigameDataArr = elem.properties.minigames ?? new LIMinigameSprite[0];
+        _minigameDataArr = elem.properties.minigames ?? [];
         _minigameProps = elem.properties.minigameProps ?? new LIMinigameProps();
     }
 
