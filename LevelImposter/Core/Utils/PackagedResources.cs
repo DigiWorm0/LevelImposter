@@ -5,7 +5,6 @@ using System.Text;
 using System.Text.Json;
 using Il2CppInterop.Runtime;
 using Il2CppInterop.Runtime.InteropTypes;
-using LevelImposter.AssetLoader;
 using LevelImposter.AssetLoader.Loadables;
 using LevelImposter.Core.GarbageCollection;
 using LevelImposter.FileIO.Streams;
@@ -72,7 +71,9 @@ public static class PackagedResources
         loadableSprite.Options.GCBehavior = GCBehavior.NeverDispose;
 
         // Load Sprite (Synchronously)
-        return SpriteLoader.Instance.LoadImmediate(loadableSprite);
+
+        return null; // TODO: FIX ME!
+        // return SpriteLoader.Instance.LoadImmediate(loadableSprite);
     }
 
     /// <summary>

@@ -3,6 +3,7 @@ using BepInEx;
 using BepInEx.Unity.IL2CPP;
 using HarmonyLib;
 using Il2CppInterop.Runtime.Injection;
+using LevelImposter.AssetLoader;
 using LevelImposter.Builders.Generic;
 using LevelImposter.Core.Components;
 using LevelImposter.Core.ModCompatibility;
@@ -57,6 +58,7 @@ public partial class LevelImposter : BasePlugin
         };
 
         // Inject MonoBehaviours
+        ClassInjector.RegisterTypeInIl2Cpp<UnityThreadQueue>();
         ClassInjector.RegisterTypeInIl2Cpp<LIBaseShip>();
         ClassInjector.RegisterTypeInIl2Cpp<LIShipStatus>();
         ClassInjector.RegisterTypeInIl2Cpp<LIStar>();
@@ -99,6 +101,9 @@ public partial class LevelImposter : BasePlugin
         ClassInjector.RegisterTypeInIl2Cpp<LILobbyBehaviour>();
         ClassInjector.RegisterTypeInIl2Cpp<LobbyVersionTag>();
         ClassInjector.RegisterTypeInIl2Cpp<LobbyMapConsole>(usableInterface);
+
+        // Global Components
+        AddComponent<UnityThreadQueue>();
 
         // Reactor Version Patch
         ReactorCredits.Register(

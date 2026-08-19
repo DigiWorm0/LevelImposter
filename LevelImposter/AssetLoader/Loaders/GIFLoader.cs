@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System.Threading.Tasks;
 using LevelImposter.AssetLoader.FileContainers;
 using LevelImposter.AssetLoader.Loadables;
 using LevelImposter.Test;
@@ -7,12 +8,7 @@ namespace LevelImposter.AssetLoader.Loaders;
 
 public static class GIFLoader
 {
-    /// <summary>
-    ///     Loads a GIF image from a stream.
-    /// </summary>
-    /// <param name="loadable">Loadable sprite object</param>
-    /// <returns>A fully-loaded GIFFile containing the image data</returns>
-    public static GifTextureResult Load(TextureInfo loadable)
+    public static async Task<GifTextureResult> Load(TextureInfo loadable)
     {
         using var _ = Profiler.Measure("GIFLoader.Load", loadable.ID);
 
@@ -25,6 +21,9 @@ public static class GIFLoader
         // Load the GIF file from the stream
         using var imgStream = new MemoryStream(imgData);
         gifFile.Load(imgStream, loadable.Options.GCBehavior);
+
+        // Load the 1st frame
+        await UnityThreadQueue.Run(() => gifFile.RenderFrame(0));
 
         // Return the GIF file
         return new GifTextureResult(gifFile);

@@ -2,7 +2,6 @@ using LevelImposter.AssetLoader;
 using LevelImposter.AssetLoader.Loadables;
 using LevelImposter.AssetLoader.Loaders;
 using LevelImposter.Builders.Generic;
-using LevelImposter.Core;
 using LevelImposter.Core.Components;
 using LevelImposter.Core.Models;
 using LevelImposter.Core.Utils;
@@ -46,7 +45,7 @@ internal class MeetingOptionsBuilder : IElemBuilder
             var spriteBuilder = new SpriteBuilder();
             var loadable = spriteBuilder.GetLoadableFromID(elem.properties.meetingBackgroundID);
             if (loadable != null)
-                SpriteLoader.Instance.AddToQueue(
+                SpriteLoader.Instance.Load(
                     (SpriteInfo)loadable,
                     spriteData => LoadMeetingBackground(spriteData));
         }

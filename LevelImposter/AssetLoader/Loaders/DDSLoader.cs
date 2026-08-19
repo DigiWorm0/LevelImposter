@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Threading.Tasks;
 using Il2CppInterop.Runtime.Attributes;
 using LevelImposter.AssetLoader.Loadables;
 using LevelImposter.Core.GarbageCollection;
@@ -25,19 +26,16 @@ public static class DDSLoader
     /// <param name="loadable">Loadable texture</param>
     /// <returns>A still UnityEngine.Texture2D containing the image data</returns>
     /// <exception cref="IOException">If the Stream fails to read image data</exception>
-    public static TextureResult Load(TextureInfo loadable)
+    public static async Task<TextureResult> Load(TextureInfo loadable)
     {
         using var _ = Profiler.Measure("DDSLoader.Load", loadable.ID);
 
-        // Rent buffers from the pool
-        var imgData = loadable.DataStore.LoadToMemory();
-
         // Create Texture
-        var texture = ImageDataToTexture2D(
-            imgData,
+        var texture = await UnityThreadQueue.Run(() => ImageDataToTexture2D(
+            loadable.DataStore.LoadToMemory(),
             loadable.ID,
             loadable.Options
-        );
+        ));
 
         // Return the created texture
         return new TextureResult(texture);
@@ -101,6 +99,8 @@ public static class DDSLoader
         string name = "CustomTexture",
         TextureInfo.TextureOptions? options = null)
     {
+        UnityThreadQueue.AssertMainThread("DDSLoader.ImageDataToTexture2D");
+
         // Check the first 4 bytes for DDS magic number
         if (textureData.Data.Length < 4 ||
             textureData.Data[0] != 'D' ||

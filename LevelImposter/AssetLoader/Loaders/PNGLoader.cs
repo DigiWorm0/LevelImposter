@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System.Threading.Tasks;
 using Il2CppInterop.Runtime.Attributes;
 using LevelImposter.AssetLoader.Loadables;
 using LevelImposter.Core.GarbageCollection;
@@ -16,22 +17,16 @@ public static class PNGLoader
     /// <param name="loadable">Texture options to apply</param>
     /// <returns>A still UnityEngine.Texture2D containing the image data</returns>
     /// <exception cref="IOException">If the Stream fails to read image data</exception>
-    public static TextureResult Load(TextureInfo loadable)
+    public static async Task<TextureResult> Load(TextureInfo loadable)
     {
         using var _ = Profiler.Measure("PNGLoader.Load", loadable.ID);
 
-        // Read all image data into memory
-        var imgData = loadable.DataStore.LoadToMemory();
-
-        // Get Options
-        var options = loadable.Options;
-
         // Create Texture
-        var texture = ImageDataToTexture2D(
-            imgData,
+        var texture = await UnityThreadQueue.Run(() => ImageDataToTexture2D(
+            loadable.DataStore.LoadToMemory(),
             loadable.ID,
-            options
-        );
+            loadable.Options
+        ));
 
         // Return the loaded texture
         return new TextureResult(texture);

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Runtime.InteropServices;
+using LevelImposter.AssetLoader;
 using LevelImposter.FileIO.DataBlock;
 
 namespace LevelImposter.FileIO.Streams;
@@ -56,6 +57,8 @@ public static class StreamExtensions
     /// <returns>An IL2CPP MemoryBlock containing the data.</returns>
     public static unsafe MemoryBlock ToIl2CppArray(this Stream stream, long length = -1)
     {
+        UnityThreadQueue.AssertMainThread("StreamExtensions.ToIl2CppArray");
+
         // Validate length
         if (length < 0)
             length = stream.Length;

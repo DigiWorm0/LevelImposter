@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Collections.Concurrent;
 using System.IO;
 using LevelImposter.FileIO.API;
 
@@ -9,7 +9,7 @@ public static class Profiler
 {
     private const string OUTPUT_FILE = "LevelImposter_Profiler.csv";
 
-    public static readonly List<ProfilerResult> AllResults = [];
+    public static readonly ConcurrentBag<ProfilerResult> AllResults = [];
 
     private static readonly IProfilerType ProfilerType =
 #if PROFILING

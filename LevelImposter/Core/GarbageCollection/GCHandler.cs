@@ -32,7 +32,10 @@ public static class GCHandler
     /// <param name="behavior">Garbage collection behavior for this object</param>
     public static void Register(IDisposable disposable, GCBehavior? behavior = null)
     {
-        Disposables.Add(new DisposableSystemObject(disposable, behavior ?? _defaultBehavior));
+        lock (Disposables)
+        {
+            Disposables.Add(new DisposableSystemObject(disposable, behavior ?? _defaultBehavior));
+        }
     }
 
     /// <summary>
@@ -42,7 +45,10 @@ public static class GCHandler
     /// <param name="behavior">Garbage collection behavior for this object</param>
     public static void Register(Object obj, GCBehavior? behavior = null)
     {
-        Disposables.Add(new DisposableUnityObject(obj, behavior ?? _defaultBehavior));
+        lock (Disposables)
+        {
+            Disposables.Add(new DisposableUnityObject(obj, behavior ?? _defaultBehavior));
+        }
     }
 
     /// <summary>
@@ -51,36 +57,30 @@ public static class GCHandler
     /// <param name="behaviorFlag">Behavior flag to match for disposal</param>
     public static void DisposeAll(GCBehavior behaviorFlag = GCBehavior.AlwaysDispose)
     {
-        // Filter Disposables
-        var toDispose = Disposables
-            .Where(d => (d.Behavior & behaviorFlag) != 0)
-            .ToList();
-
-        // Dispose of each object
-        LILogger.Info($"Disposing of {toDispose.Count} objects with behavior: {behaviorFlag}");
-        foreach (var disposable in toDispose)
+        lock (Disposables)
         {
-            try
-            {
-                disposable.Dispose();
-            }
-            catch (Exception e)
-            {
-                LILogger.Warn("Error disposing 1 or more objects during GC");
-                LILogger.LogException(e);
-            }
+            // Filter Disposables
+            var toDispose = Disposables
+                .Where(d => (d.Behavior & behaviorFlag) != 0)
+                .ToList();
 
-            Disposables.Remove(disposable);
+            // Dispose of each object
+            LILogger.Info($"Disposing of {toDispose.Count} objects with behavior: {behaviorFlag}");
+            foreach (var disposable in toDispose)
+            {
+                try
+                {
+                    disposable.Dispose();
+                }
+                catch (Exception e)
+                {
+                    LILogger.Warn("Error disposing 1 or more objects during GC");
+                    LILogger.LogException(e);
+                }
+
+                Disposables.Remove(disposable);
+            }
         }
-
-        // Invalidate all AssetLoader caches
-        // TODO: Selective cache clearing based on disposed objects
-        // LILogger.Info($"{TextureLoader.Instance.CacheSize} cached textures");
-        // LILogger.Info($"{SpriteLoader.Instance.CacheSize} cached sprites");
-        // LILogger.Info($"{AudioLoader.Instance.CacheSize} cached audio clips");
-        // TextureLoader.Instance.ClearCache();
-        // SpriteLoader.Instance.ClearCache();
-        // AudioLoader.Instance.ClearCache();
 
         // Force a garbage collection cycle
         GC.Collect();

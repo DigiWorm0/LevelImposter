@@ -77,7 +77,7 @@ public static class ThumbnailCache
         loadableSprite.Options.GCBehavior = GCBehavior.NeverDispose;
 
         // Add to SpriteLoader queue
-        SpriteLoader.Instance.AddToQueue(loadableSprite, loadedSprite => callback(loadedSprite));
+        SpriteLoader.Instance.Load(loadableSprite, loadedSprite => callback(loadedSprite));
     }
 
     /// <summary>

@@ -110,7 +110,7 @@ public class MinigameSprites(IntPtr intPtr) : MonoBehaviour(intPtr)
                 loadableSprite.Options.Pivot = hasPivot ? pivot : null;
 
                 // Add to Queue
-                SpriteLoader.Instance.AddToQueue(
+                SpriteLoader.Instance.Load(
                     loadableSprite,
                     sprite => { LoadMinigameSprite(minigame, minigameData.type, sprite); }
                 );

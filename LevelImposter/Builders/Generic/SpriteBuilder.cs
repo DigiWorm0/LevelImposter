@@ -95,7 +95,7 @@ public class SpriteBuilder(MapTarget mapTarget = MapTarget.Game) : IElemBuilder
             return;
 
         // Add to queue
-        SpriteLoader.Instance.AddToQueue((SpriteInfo)loadableSprite, onLoad);
+        SpriteLoader.Instance.Load((SpriteInfo)loadableSprite, onLoad);
     }
 
     /// <summary>

@@ -30,7 +30,7 @@ public class GIFFile(string name)
     };
 
     // LZW Decoder
-    private static readonly ushort[][] CodeTable = new ushort[1 << 12][]; // Table of "code"s to color indexes
+    // private static readonly ushort[][] CodeTable = new ushort[1 << 12][]; // Table of "code"s to color indexes
 
     // Other Data
     private readonly ColorData _backgroundColor = ColorData.Clear; // Background color
@@ -364,8 +364,9 @@ public class GIFFile(string name)
         var indexStream = new List<ushort>(expectedSize); // The index stream
 
         // Initialize Code Table
+        var codeTable = new ushort[1 << 12][];
         for (ushort k = 0; k < codeTableIndex; k++)
-            CodeTable[k] = k < clearCode ? new[] { k } : new ushort[0];
+            codeTable[k] = k < clearCode ? [k] : [];
 
         // Decode LZW
         var bitOffset = 0;
@@ -405,7 +406,7 @@ public class GIFFile(string name)
             if (previousCode == -1)
             {
                 // Initial Code
-                indexStream.AddRange(CodeTable[code]);
+                indexStream.AddRange(codeTable[code]);
                 previousCode = code;
                 continue;
             }
@@ -414,8 +415,8 @@ public class GIFFile(string name)
             if (code < codeTableIndex)
             {
                 // Get New Code
-                var currentCodeArray = CodeTable[code];
-                var previousCodeArray = CodeTable[previousCode];
+                var currentCodeArray = codeTable[code];
+                var previousCodeArray = codeTable[previousCode];
                 var newCode = new ushort[previousCodeArray.Length + 1];
                 previousCodeArray.CopyTo(newCode, 0);
                 newCode[newCode.Length - 1] = currentCodeArray[0];
@@ -424,13 +425,13 @@ public class GIFFile(string name)
                 indexStream.AddRange(currentCodeArray);
 
                 // Add to Code Table
-                if (codeTableIndex < CodeTable.Length)
-                    CodeTable[codeTableIndex] = newCode;
+                if (codeTableIndex < codeTable.Length)
+                    codeTable[codeTableIndex] = newCode;
             }
             else
             {
                 // Get New Code
-                var previousCodeArray = CodeTable[previousCode];
+                var previousCodeArray = codeTable[previousCode];
                 var newCode = new ushort[previousCodeArray.Length + 1];
                 previousCodeArray.CopyTo(newCode, 0);
                 newCode[newCode.Length - 1] = previousCodeArray[0];
@@ -439,8 +440,8 @@ public class GIFFile(string name)
                 indexStream.AddRange(newCode);
 
                 // Add to Code Table
-                if (codeTableIndex < CodeTable.Length)
-                    CodeTable[codeTableIndex] = newCode;
+                if (codeTableIndex < codeTable.Length)
+                    codeTable[codeTableIndex] = newCode;
             }
 
             // Increase Code Table Index
@@ -459,8 +460,8 @@ public class GIFFile(string name)
             indexStream.Add(0);
 
         // Free Memory
-        for (var k = endOfInformationCode + 1; k < CodeTable.Length; k++)
-            CodeTable[k] = [];
+        for (var k = endOfInformationCode + 1; k < codeTable.Length; k++)
+            codeTable[k] = [];
 
         return indexStream;
     }
@@ -596,6 +597,8 @@ public class GIFFile(string name)
         out Texture2D texture,
         out Sprite sprite)
     {
+        UnityThreadQueue.AssertMainThread("GIFFile.GenerateSpriteFromBuffer");
+
         var pixelArtMode = GameConfiguration.CurrentMap?.properties.pixelArtMode ?? false;
         texture = new Texture2D(
             Width,

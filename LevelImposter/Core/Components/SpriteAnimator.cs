@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Linq;
 using Il2CppInterop.Runtime.Attributes;
-using LevelImposter.AssetLoader;
-using LevelImposter.AssetLoader.Loadables;
 using LevelImposter.Builders.Generic;
 using LevelImposter.Core.Models;
 using LevelImposter.Core.Utils;
@@ -53,7 +51,9 @@ public class SpriteAnimator(IntPtr intPtr) : LIAnimatorBase(intPtr)
             throw new Exception("Animation sprite loadable not found");
 
         // Load and return the sprite
-        return SpriteLoader.Instance.LoadImmediate((SpriteInfo)loadableSprite).Sprite;
+        // return SpriteLoader.Instance.LoadImmediate((SpriteInfo)loadableSprite).Sprite;
+        // TODO: FIX ME
+        return null;
     }
 
     protected override float GetFrameDelay(int frameIndex)

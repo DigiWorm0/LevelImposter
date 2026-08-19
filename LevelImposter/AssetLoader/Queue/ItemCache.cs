@@ -9,23 +9,32 @@ public class ItemCache<T> where T : ICachable
 
     public void Add(string id, T asset)
     {
-        _cachedItems[id] = asset;
+        lock (_cachedItems)
+        {
+            _cachedItems[id] = asset;
+        }
     }
 
     public T? Get(string id)
     {
-        if (!_cachedItems.TryGetValue(id, out var item))
+        lock (_cachedItems)
+        {
+            if (!_cachedItems.TryGetValue(id, out var item))
+                return default;
+
+            if (!item.IsExpired)
+                return item;
+
+            _cachedItems.Remove(id);
             return default;
-
-        if (!item.IsExpired)
-            return item;
-
-        _cachedItems.Remove(id);
-        return default;
+        }
     }
 
     public void Clear()
     {
-        _cachedItems.Clear();
+        lock (_cachedItems)
+        {
+            _cachedItems.Clear();
+        }
     }
 }

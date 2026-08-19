@@ -1,4 +1,5 @@
-﻿using LevelImposter.AssetLoader.Loadables;
+﻿using System.Threading.Tasks;
+using LevelImposter.AssetLoader.Loadables;
 using LevelImposter.AssetLoader.Loaders;
 using LevelImposter.AssetLoader.Queue;
 using LevelImposter.Core.GarbageCollection;
@@ -7,7 +8,7 @@ using UnityEngine;
 
 namespace LevelImposter.AssetLoader;
 
-public class SpriteLoader : AsyncQueue<SpriteInfo, SpriteResult>
+public class SpriteLoader : AssetLoader<SpriteInfo, SpriteResult>
 {
     private SpriteLoader()
     {
@@ -15,13 +16,20 @@ public class SpriteLoader : AsyncQueue<SpriteInfo, SpriteResult>
 
     public static SpriteLoader Instance { get; } = new();
 
-    protected override SpriteResult Load(SpriteInfo loadable)
+    protected override async Task<SpriteResult> LoadAsset(SpriteInfo loadable)
     {
         using var _ = Profiler.Measure("SpriteLoader.Load", loadable.ID);
 
         // Load the texture
-        var loadedTexture = TextureLoader.Instance.LoadImmediate(loadable.TextureInfo);
-        var texture = loadedTexture.Texture;
+        var loadedTexture = await TextureLoader.Instance.Load(loadable.TextureInfo);
+
+        // Generate Sprite
+        return await UnityThreadQueue.Run(() => BuildSprite(loadable, loadedTexture));
+    }
+
+    private static SpriteResult BuildSprite(SpriteInfo loadable, TextureResult loadedTexture)
+    {
+        UnityThreadQueue.AssertMainThread("SpriteLoader.BuildSprite");
 
         // If this is a GIF, we can save time/memory by using the Sprite that the GIFLoader already generated for us.
         if (loadedTexture is GIFLoader.GifTextureResult gifResult)
@@ -30,8 +38,9 @@ public class SpriteLoader : AsyncQueue<SpriteInfo, SpriteResult>
             return new SpriteResult(firstFrameSprite, loadedTexture);
         }
 
-        // Generate Sprite
         var options = loadable.Options;
+        var texture = loadedTexture.Texture;
+
         var sprite = Sprite.Create(
             texture,
             options.Frame ?? new Rect(0, 0, texture.width, texture.height),

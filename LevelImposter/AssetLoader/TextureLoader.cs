@@ -1,4 +1,5 @@
-﻿using LevelImposter.AssetLoader.FileContainers;
+﻿using System.Threading.Tasks;
+using LevelImposter.AssetLoader.FileContainers;
 using LevelImposter.AssetLoader.Loadables;
 using LevelImposter.AssetLoader.Loaders;
 using LevelImposter.AssetLoader.Queue;
@@ -8,7 +9,7 @@ using LevelImposter.Test;
 
 namespace LevelImposter.AssetLoader;
 
-public class TextureLoader : AsyncQueue<TextureInfo, TextureResult>
+public class TextureLoader : AssetLoader<TextureInfo, TextureResult>
 {
     /// <summary>
     ///     How many bytes to read from the start of the file
@@ -22,7 +23,7 @@ public class TextureLoader : AsyncQueue<TextureInfo, TextureResult>
 
     public static TextureLoader Instance { get; } = new();
 
-    protected override TextureResult Load(TextureInfo loadable)
+    protected override async Task<TextureResult> LoadAsset(TextureInfo loadable)
     {
         using var _ = Profiler.Measure("TextureLoader.Load", loadable.ID);
 
@@ -35,9 +36,9 @@ public class TextureLoader : AsyncQueue<TextureInfo, TextureResult>
         // Load the sprite
         var loadedTexture = fileType switch
         {
-            FileType.DDS => DDSLoader.Load(loadable),
-            FileType.GIF => GIFLoader.Load(loadable),
-            _ => PNGLoader.Load(loadable)
+            FileType.DDS => await DDSLoader.Load(loadable),
+            FileType.GIF => await GIFLoader.Load(loadable),
+            _ => await PNGLoader.Load(loadable)
         };
 
         // Return the loaded sprite
