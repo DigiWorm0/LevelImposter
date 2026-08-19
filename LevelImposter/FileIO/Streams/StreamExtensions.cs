@@ -91,4 +91,29 @@ public static class StreamExtensions
 
         return memoryBlock;
     }
+
+    /// <summary>
+    ///     Polyfill for Stream.ReadExactly, which is not available in .NET Standard 2.1.
+    /// </summary>
+    /// <param name="stream">The stream to read from</param>
+    /// <param name="buffer">The buffer to write to</param>
+    /// <param name="offset">The offset in the buffer to start writing to</param>
+    /// <param name="count">The number of bytes to read</param>
+    /// <exception cref="EndOfStreamException">Thrown if the stream ends before reading the requested number of bytes</exception>
+    public static void ReadExactly(
+        this Stream stream,
+        byte[] buffer,
+        int offset,
+        int count)
+    {
+        var totalRead = 0;
+        while (totalRead < count)
+        {
+            var read = stream.Read(buffer, offset + totalRead, count - totalRead);
+            if (read == 0)
+                throw new EndOfStreamException(
+                    $"End of stream reached. Did not read {count} bytes (read {totalRead} bytes instead).");
+            totalRead += read;
+        }
+    }
 }

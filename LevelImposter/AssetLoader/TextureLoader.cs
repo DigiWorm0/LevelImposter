@@ -36,9 +36,10 @@ public class TextureLoader : AssetLoader<TextureInfo, TextureResult>
         // Load the sprite
         var loadedTexture = fileType switch
         {
+            FileType.PNG => await PNGLoader.Load(loadable),
             FileType.DDS => await DDSLoader.Load(loadable),
             FileType.GIF => await GIFLoader.Load(loadable),
-            _ => await PNGLoader.Load(loadable)
+            _ => await UnityImageLoader.Load(loadable)
         };
 
         // Return the loaded sprite
@@ -56,6 +57,8 @@ public class TextureLoader : AssetLoader<TextureInfo, TextureResult>
         // Peek at the start of the data
         var signature = loadable.DataStore.Peek(FILE_TYPE_BUFFER_SIZE);
 
+        if (PNGFile.IsPNG(signature))
+            return FileType.PNG;
         if (GIFFile.IsGIF(signature))
             return FileType.GIF;
         if (DDSLoader.IsDDS(signature))
@@ -70,6 +73,7 @@ public class TextureLoader : AssetLoader<TextureInfo, TextureResult>
     private enum FileType
     {
         GIF,
-        DDS
+        DDS,
+        PNG
     }
 }
