@@ -100,6 +100,9 @@ public partial class LevelImposter : BasePlugin
         ClassInjector.RegisterTypeInIl2Cpp<LobbyVersionTag>();
         ClassInjector.RegisterTypeInIl2Cpp<LobbyMapConsole>(usableInterface);
 
+        // Global Components
+        AddComponent<PrefabDB>();
+
         // Reactor Version Patch
         ReactorCredits.Register(
             "LevelImposter",

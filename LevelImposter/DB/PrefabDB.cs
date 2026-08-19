@@ -31,16 +31,8 @@ internal class PrefabDB : MonoBehaviour
     public static PrefabDB? Instance { get; private set; }
     public static bool IsInit => Instance?._isInit == true;
 
-    public string Status { get; private set; } = "Initializing";
-
     public void Awake()
     {
-        if (Instance != null)
-        {
-            Destroy(gameObject);
-            return;
-        }
-
         Instance = this;
     }
 
@@ -131,79 +123,76 @@ internal class PrefabDB : MonoBehaviour
     [HideFromIl2Cpp]
     private IEnumerator CoLoadAssets()
     {
+        while (AmongUsClient.Instance == null)
+            yield return null;
+
+        // Add Ship Prefab
+        var shipPrefabs = AmongUsClient.Instance.ShipPrefabs;
+        var miraPrefab = shipPrefabs[(int)MapType.Mira];
+        var mapCount = (int)MapType.LevelImposter;
+        while (shipPrefabs.Count <= mapCount)
+            shipPrefabs.Add(miraPrefab); // TODO: Use Own Ship AssetReference
+        while (Constants.MapNames.Count <= mapCount)
+            Constants.MapNames = Constants.MapNames.Add(
+                Constants.MapNames.Count == mapCount ? Translation.Get("lobby.random_custom_map") : "");
+
+        // Deserialize AssetDB
+        _serializedAssetDB = PackagedResources.LoadJson<SerializedAssetDB>("SerializedAssetDB.json");
+        if (_serializedAssetDB == null)
         {
-            // Add Ship Prefab
-            var shipPrefabs = AmongUsClient.Instance.ShipPrefabs;
-            var miraPrefab = shipPrefabs[(int)MapType.Mira];
-            var mapCount = (int)MapType.LevelImposter;
-            while (shipPrefabs.Count <= mapCount)
-                shipPrefabs.Add(miraPrefab); // TODO: Use Own Ship AssetReference
-            while (Constants.MapNames.Count <= mapCount)
-                Constants.MapNames = Constants.MapNames.Add(
-                    Constants.MapNames.Count == mapCount ? Translation.Get("lobby.random_custom_map") : "");
-
-            // Deserialize AssetDB
-            _serializedAssetDB = PackagedResources.LoadJson<SerializedAssetDB>("SerializedAssetDB.json");
-            if (_serializedAssetDB == null)
-            {
-                LILogger.Warn("Serialized AssetDB was not found in Assembly resources");
-                yield break;
-            }
-
-            // Sub-DBs
-            _objectDB = new ObjectDB(_serializedAssetDB);
-            _taskDB = new TaskDB(_serializedAssetDB);
-            _soundDB = new SoundDB(_serializedAssetDB);
-            _pathDB = new PathDB(_serializedAssetDB);
-
-            // Ship References
-            Status = "Loading ship references";
-            LILogger.Info("Loading PrefabDB...");
-            for (var i = 0; i < shipPrefabs.Count; i++)
-            {
-                // Load AssetReference
-                var shipRef = shipPrefabs[i];
-                while (true)
-                {
-                    if (shipRef.Asset != null)
-                        break;
-                    if (shipRef.AssetGUID == SUBMERGED_MAP_GUID)
-                        break;
-                    AsyncOperationHandle op = shipRef.LoadAssetAsync<GameObject>();
-                    if (!op.IsValid())
-                    {
-                        LILogger.Warn(
-                            $"Could not import [{shipRef.AssetGUID}] due to invalid Async Operation. Trying again in 5 seconds...");
-                        yield return new WaitForSeconds(5);
-                        continue;
-                    }
-
-                    yield return op;
-                    if (op.Status != AsyncOperationStatus.Succeeded)
-                        LILogger.Warn(
-                            $"Could not import [{shipRef.AssetGUID}] due to failed Async Operation. Ignoring...");
-                }
-
-                // Import GameObject
-                if (shipRef.Asset != null)
-                {
-                    var shipPrefab = shipRef.Asset.Cast<GameObject>();
-                    LoadShip(shipPrefab);
-                    yield return null;
-                }
-                else
-                {
-                    LILogger.Warn($"Could not import [{shipRef.AssetGUID}]. Ignoring...");
-                }
-            }
-
-            Status = "Finalizing";
-            _objectDB.Load();
-            _taskDB.Load();
-            _soundDB.Load();
-            _pathDB.Load();
-            _isInit = true;
+            LILogger.Warn("Serialized AssetDB was not found in Assembly resources");
+            yield break;
         }
+
+        // Sub-DBs
+        _objectDB = new ObjectDB(_serializedAssetDB);
+        _taskDB = new TaskDB(_serializedAssetDB);
+        _soundDB = new SoundDB(_serializedAssetDB);
+        _pathDB = new PathDB(_serializedAssetDB);
+
+        // Ship References
+        LILogger.Info("Loading PrefabDB...");
+        foreach (var shipRef in shipPrefabs)
+        {
+            while (true)
+            {
+                if (shipRef.Asset != null)
+                    break;
+                if (shipRef.AssetGUID == SUBMERGED_MAP_GUID)
+                    break;
+                var op = shipRef.LoadAssetAsync<GameObject>();
+                if (!op.IsValid())
+                {
+                    LILogger.Warn(
+                        $"Could not import [{shipRef.AssetGUID}] due to invalid Async Operation. Trying again in 5 seconds...");
+                    yield return new WaitForSeconds(5);
+                    continue;
+                }
+
+                yield return op;
+                if (op.Status != AsyncOperationStatus.Succeeded)
+                    LILogger.Warn(
+                        $"Could not import [{shipRef.AssetGUID}] due to failed Async Operation. Ignoring...");
+            }
+
+            // Import GameObject
+            if (shipRef.Asset != null)
+            {
+                var shipPrefab = shipRef.Asset.Cast<GameObject>();
+                LoadShip(shipPrefab);
+                yield return null;
+            }
+            else
+            {
+                LILogger.Warn($"Could not import [{shipRef.AssetGUID}]. Ignoring...");
+            }
+        }
+
+        _objectDB.Load();
+        _taskDB.Load();
+        _soundDB.Load();
+        _pathDB.Load();
+        _isInit = true;
     }
 
     /// <summary>
@@ -212,7 +201,6 @@ internal class PrefabDB : MonoBehaviour
     /// <param name="prefab">Ship prefab to load</param>
     private void LoadShip(GameObject prefab)
     {
-        Status = $"Loading \"{prefab.name}\"";
         var shipStatus = prefab.GetComponent<ShipStatus>();
         var mapType = prefab.name switch
         {

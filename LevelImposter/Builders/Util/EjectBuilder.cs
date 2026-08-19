@@ -37,6 +37,7 @@ public class EjectBuilder : IElemBuilder
         // Copy Components from Skeld's Prefab
         var impostorText = Object.Instantiate(skeldEjectController?.ImpostorText, obj.transform);
         var text = Object.Instantiate(skeldEjectController?.Text, obj.transform);
+        var judgeText = Object.Instantiate(skeldEjectController?.judgeText, obj.transform);
         var player = Object.Instantiate(skeldEjectController?.Player, obj.transform);
 
         // TODO: Hide Player
@@ -45,6 +46,7 @@ public class EjectBuilder : IElemBuilder
         EjectController = obj.AddComponent<LIExileController>();
         EjectController.ImpostorText = impostorText;
         EjectController.Text = text;
+        EjectController.judgeText = judgeText;
         EjectController.Player = player;
         EjectController.TextSound = skeldEjectController?.TextSound;
 
