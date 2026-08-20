@@ -31,6 +31,7 @@ public static class LobbyMapBuilder
         new AmbientSoundBuilder(true),
         new DisplayBuilder(),
         new FloatBuilder(),
+        new ScrollBuilder(),
         new PlayerMoverBuilder(),
         new RoomBuilder(),
         new StarfieldBuilder(),
