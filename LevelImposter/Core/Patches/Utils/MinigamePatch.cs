@@ -1,3 +1,4 @@
+using System;
 using HarmonyLib;
 using LevelImposter.Core.Components;
 using UnityEngine;
@@ -37,11 +38,11 @@ public static class MinigamePatch
 /// <summary>
 ///     When a minigame is closed, clear the last console.
 /// </summary>
-// [HarmonyPatch(typeof(Minigame), nameof(Minigame.Close), new Type[0])]
-// public static class MinigameClosePatch
-// {
-//     public static void Postfix()
-//     {
-//         MinigamePatch.LastConsole = null;
-//     }
-// }
+[HarmonyPatch(typeof(Minigame), nameof(Minigame.Close), [])]
+public static class MinigameClosePatch
+{
+    public static void Postfix()
+    {
+        MinigamePatch.LastConsole = null;
+    }
+}
