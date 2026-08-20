@@ -7,6 +7,7 @@ using LevelImposter.Builders.Trigger;
 using LevelImposter.Builders.Util;
 using LevelImposter.Core.Components;
 using LevelImposter.Core.GarbageCollection;
+using LevelImposter.Core.ModCompatibility;
 using LevelImposter.Core.Models;
 using LevelImposter.Core.Utils;
 using LevelImposter.Lobby.Components;
@@ -30,6 +31,7 @@ public static class LobbyMapBuilder
         new AmbientSoundBuilder(true),
         new DisplayBuilder(),
         new FloatBuilder(),
+        new ScrollBuilder(),
         new PlayerMoverBuilder(),
         new RoomBuilder(),
         new StarfieldBuilder(),
@@ -92,7 +94,7 @@ public static class LobbyMapBuilder
             Object.DestroyImmediate(lobbyBehaviour.transform.GetChild(0).gameObject);
 
         // Remove StellarLobby
-        if (ModCompatibility.IsStellarCompatibilityEnabled)
+        if (CompatibilityFlags.IsStellarCompatibilityEnabled)
         {
             Object.Destroy(GameObject.Find("StellarLobby(Clone)"));
             Object.Destroy(GameObject.Find("LeftEngine(Clone)"));

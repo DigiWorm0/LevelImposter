@@ -30,7 +30,7 @@ public class TaskDB(SerializedAssetDB serializedDB) : SubDB<PlayerTask>(serializ
             };
 
             // Task
-            var task = taskArr.FirstOrDefault(e => { return e.name == elem.Name; });
+            var task = taskArr.FirstOrDefault(e => e.name == elem.Name);
             if (task == null)
             {
                 LILogger.Warn($"TaskDB could not find {elem.ID} in {shipStatus.name}");

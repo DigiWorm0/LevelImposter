@@ -4,6 +4,7 @@ using LevelImposter.Core.GarbageCollection;
 using LevelImposter.Core.Models;
 using LevelImposter.Core.Utils;
 using LevelImposter.FileIO.DataStores;
+using LevelImposter.Test;
 using UnityEngine;
 
 namespace LevelImposter.AssetLoader.Loaders;
@@ -67,6 +68,8 @@ public static class WAVLoader
         string name,
         GCBehavior? gcBehavior = null)
     {
+        using var _ = Profiler.Measure("WAVLoader.Load", name);
+
         // Create a new WAV file
         var wavFile = new WAVFile(name);
         GCHandler.Register(wavFile, gcBehavior);

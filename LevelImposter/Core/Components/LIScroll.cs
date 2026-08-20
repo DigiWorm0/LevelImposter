@@ -1,6 +1,5 @@
 ﻿using System;
 using LevelImposter.Builders.Generic;
-using LevelImposter.Core.GarbageCollection;
 using LevelImposter.Core.Services.Ship;
 using UnityEngine;
 
@@ -29,8 +28,6 @@ public class LIScroll(IntPtr intPtr) : MonoBehaviour(intPtr)
         _ySpeed = element.properties.scrollingYSpeed ?? _ySpeed;
 
         // Set Layer
-        //gameObject.layer = (int)Layer.Ship;
-
 
         // Replace SpriteRenderer with MeshRenderer because
         // Unity doesn't support scrolling textures on sprites
@@ -53,7 +50,7 @@ public class LIScroll(IntPtr intPtr) : MonoBehaviour(intPtr)
 
     public void OnDestroy()
     {
-        _mat = null;
+        Destroy(_mat);
     }
 
     /// <summary>
@@ -66,19 +63,16 @@ public class LIScroll(IntPtr intPtr) : MonoBehaviour(intPtr)
         var spriteRenderer = GetComponent<SpriteRenderer>();
         var tex = spriteRenderer.sprite.texture;
 
-        _mat = spriteRenderer.material;
-
         // Texture Wrapping
         tex.wrapMode = TextureWrapMode.Repeat;
 
         // Create Material
-        _mat = new Material(Shader.Find("Unlit/Transparent"))
+        _mat ??= new Material(Shader.Find("Unlit/Transparent"))
         {
             name = $"{gameObject.name}_scrollmat",
             mainTexture = tex,
             hideFlags = HideFlags.HideAndDontSave
         };
         spriteRenderer.material = _mat;
-        GCHandler.Register(_mat);
     }
 }

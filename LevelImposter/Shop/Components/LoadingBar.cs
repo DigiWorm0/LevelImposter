@@ -25,13 +25,6 @@ public class LoadingBar(IntPtr intPtr) : MonoBehaviour(intPtr)
 
     public void Awake()
     {
-        // Singleton
-        if (Instance != null)
-        {
-            Destroy(gameObject);
-            return;
-        }
-
         Instance = this;
 
         _loadingBar = transform.Find("BarMask").Find("Bar").gameObject;
@@ -60,31 +53,28 @@ public class LoadingBar(IntPtr intPtr) : MonoBehaviour(intPtr)
                 DestroyableSingleton<HudManager>.Instance.transform
             );
 
-        // Check if asset bundle loaded
         if (Instance == null)
-            throw new Exception("Failed to load LoadingBar asset bundle!");
+            throw new Exception("Failed to create LoadingBar instance");
 
         // Check if visible
-        if (Instance._visible)
-            return;
+        if (!IsVisible)
+        {
+            // Apply initial state
+            Instance.SetTitle(Translation.Get("loading.loading"));
+            Instance.SetProgress(1);
+            Instance.SetStatus(Translation.Get("loading.waiting_for_host"));
 
-        // Apply initial state
-        Instance.SetTitle(Translation.Get("loading.loading"));
-        Instance.SetProgress(1);
-        Instance.SetStatus(Translation.Get("loading.waiting_for_host"));
-
-        // Start Coroutine
-        Coroutines.Start(Instance.CoLoadingScreen());
+            // Start Coroutine
+            Coroutines.Start(Instance.CoLoadingScreen());
+        }
     }
 
     /// <summary>
-    ///     Coroutine that displayes the loading screen until map is built
+    ///     Coroutine that displays the loading screen until map is built
     /// </summary>
     [HideFromIl2Cpp]
     private IEnumerator CoLoadingScreen()
     {
-        yield return null;
-
         // Show Loading Screen
         Instance?.SetVisible(true);
 
@@ -189,11 +179,9 @@ public class LoadingBar(IntPtr intPtr) : MonoBehaviour(intPtr)
     {
         // Me
         gameObject.SetActive(visible);
+        _visible = visible;
 
         // Running Bean
         DestroyableSingleton<HudManager>.Instance.GameLoadAnimation.SetActive(visible);
-
-        // Set
-        _visible = visible;
     }
 }

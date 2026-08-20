@@ -3,6 +3,7 @@ using Il2CppInterop.Runtime.Attributes;
 using LevelImposter.AssetLoader.Loadables;
 using LevelImposter.Core.GarbageCollection;
 using LevelImposter.FileIO.DataBlock;
+using LevelImposter.Test;
 using UnityEngine;
 
 namespace LevelImposter.AssetLoader.Loaders;
@@ -17,6 +18,8 @@ public static class PNGLoader
     /// <exception cref="IOException">If the Stream fails to read image data</exception>
     public static TextureResult Load(TextureInfo loadable)
     {
+        using var _ = Profiler.Measure("PNGLoader.Load", loadable.ID);
+
         // Read all image data into memory
         var imgData = loadable.DataStore.LoadToMemory();
 

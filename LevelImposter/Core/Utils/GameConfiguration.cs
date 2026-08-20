@@ -1,5 +1,6 @@
 using AmongUs.GameOptions;
 using LevelImposter.Core.GarbageCollection;
+using LevelImposter.Core.ModCompatibility;
 using LevelImposter.Core.Models;
 
 namespace LevelImposter.Core.Utils;
@@ -53,6 +54,7 @@ public static class GameConfiguration
         HideMapName = hideMapName;
 
         // Emit event
+        MapInfo.OnMapChange();
         OnMapChange?.Invoke();
     }
 

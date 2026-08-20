@@ -23,7 +23,7 @@ public static class FreeplayOptionsPatch
         var gameManager = GameManager.Instance;
         var gameOptions = gameManager.LogicOptions.TryCast<LogicOptionsNormal>();
         if (gameOptions == null)
-            throw new Exception("Failed to cast game options to NormalGameOptionsV07");
+            throw new Exception("Failed to cast game options to LogicOptionsNormal");
 
         gameOptions.GameOptions.NumEmergencyMeetings = 5;
         gameOptions.GameOptions.DiscussionTime = 0;

@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <Title>LevelImposter</Title>
-        <VersionPrefix>1.0.1</VersionPrefix>
+        <VersionPrefix>1.0.2</VersionPrefix>
 
         <Description>Custom Among Us Mapping Studio</Description>
         <Authors>Digi</Authors>
@@ -16,11 +16,15 @@
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 
         <ContinuousIntegrationBuild Condition="'$(GITHUB_ACTIONS)' == 'true'">true</ContinuousIntegrationBuild>
+
+        <Configurations>Debug;Release;Profiling</Configurations>
+
+        <Platforms>AnyCPU</Platforms>
     </PropertyGroup>
 
     <PropertyGroup>
         <AmongUs>C:\Program Files (x86)\Steam\steamapps\common\Among Us</AmongUs>
-        <GameVersion>2026.3.31</GameVersion>
+        <GameVersion>2026.8.18</GameVersion>
     </PropertyGroup>
 
     <ItemGroup>
@@ -39,6 +43,10 @@
     <ItemGroup>
         <None Include="..\.editorconfig" Link=".editorconfig"/>
     </ItemGroup>
+
+    <PropertyGroup Condition="'$(Configuration)' == 'Profiling'">
+        <DefineConstants>$(DefineConstants);PROFILING</DefineConstants>
+    </PropertyGroup>
 
     <Target Name="Copy" AfterTargets="Build" Condition="'$(AmongUs)' != ''">
         <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(AmongUs)/BepInEx/plugins/" UseSymboliclinksIfPossible="true"/>

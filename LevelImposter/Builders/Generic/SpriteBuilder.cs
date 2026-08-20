@@ -183,6 +183,10 @@ public class SpriteBuilder(MapTarget mapTarget = MapTarget.Game) : IElemBuilder
     /// </summary>
     public static void PreloadAllMapSprites()
     {
+        // Only run in the lobby
+        if (!GameState.IsInLobby)
+            return;
+        
         // Get current map
         var map = GameConfiguration.CurrentMap;
         if (map == null)

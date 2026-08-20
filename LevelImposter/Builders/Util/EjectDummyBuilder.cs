@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using LevelImposter.Builders.Generic;
 using LevelImposter.Core.Models;
@@ -38,14 +38,14 @@ public class EjectDummyBuilder : IElemBuilder
         };
 
         // Get Eject Controller Prefab
-        var skeldPrefab = PrefabDB.GetObject(type == PlayerDummyType.Floating ? "ss-skeld" : "ss-fungle");
-        var skeldShipStatus = skeldPrefab?.GetComponent<ShipStatus>();
-        var skeldEjectController = skeldShipStatus?.ExileCutscenePrefab;
-        if (!skeldEjectController)
+        var shipPrefab = PrefabDB.GetObject(type == PlayerDummyType.Floating ? "ss-skeld" : "ss-fungle");
+        var shipStatusPrefab = shipPrefab?.GetComponent<ShipStatus>();
+        var ejectControllerPrefab = shipStatusPrefab?.ExileCutscenePrefab;
+        if (!ejectControllerPrefab)
             throw new Exception("Failed to get Eject Controller from Skeld's ShipStatus");
 
         // Get Player Prefab
-        var playerPrefab = skeldEjectController?.Player;
+        var playerPrefab = ejectControllerPrefab?.Player;
         if (!playerPrefab)
             throw new Exception("Failed to get Player Prefab from Skeld's Eject Controller");
 

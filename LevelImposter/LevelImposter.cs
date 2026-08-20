@@ -5,6 +5,7 @@ using HarmonyLib;
 using Il2CppInterop.Runtime.Injection;
 using LevelImposter.Builders.Generic;
 using LevelImposter.Core.Components;
+using LevelImposter.Core.ModCompatibility;
 using LevelImposter.Core.Services;
 using LevelImposter.Core.Utils;
 using LevelImposter.DB;
@@ -13,7 +14,6 @@ using LevelImposter.FileIO.Cache;
 using LevelImposter.Lobby.Components;
 using LevelImposter.Lobby.Utils;
 using LevelImposter.Shop.Components;
-using LevelImposter.Shop.Utils;
 using Reactor.Networking;
 using Reactor.Networking.Attributes;
 using Reactor.Utilities;
@@ -48,7 +48,7 @@ public partial class LevelImposter : BasePlugin
         SpriteBuilder.Init();
 
         // Load Mod Compatibility
-        IL2CPPChainloader.Instance.Finished += ModCompatibility.Init;
+        IL2CPPChainloader.Instance.Finished += CompatibilityFlags.Init;
 
         // IUsable Interface
         RegisterTypeOptions usableInterface = new()
@@ -99,6 +99,9 @@ public partial class LevelImposter : BasePlugin
         ClassInjector.RegisterTypeInIl2Cpp<LILobbyBehaviour>();
         ClassInjector.RegisterTypeInIl2Cpp<LobbyVersionTag>();
         ClassInjector.RegisterTypeInIl2Cpp<LobbyMapConsole>(usableInterface);
+
+        // Global Components
+        AddComponent<PrefabDB>();
 
         // Reactor Version Patch
         ReactorCredits.Register(

@@ -4,6 +4,7 @@ using LevelImposter.AssetLoader.Loaders;
 using LevelImposter.AssetLoader.Queue;
 using LevelImposter.Core.Utils;
 using LevelImposter.FileIO.DataBlock;
+using LevelImposter.Test;
 
 namespace LevelImposter.AssetLoader;
 
@@ -23,6 +24,8 @@ public class TextureLoader : AsyncQueue<TextureInfo, TextureResult>
 
     protected override TextureResult Load(TextureInfo loadable)
     {
+        using var _ = Profiler.Measure("TextureLoader.Load", loadable.ID);
+
         // Log
         LILogger.Info($"Loading texture [{loadable.ID}]...");
 
