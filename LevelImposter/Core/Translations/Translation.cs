@@ -11,7 +11,8 @@ public static class Translation
     {
         { SupportedLangs.English, new LanguageFile("en-us") },
         { SupportedLangs.Latam, new LanguageFile("es") },
-        { SupportedLangs.Spanish, new LanguageFile("es") }
+        { SupportedLangs.Spanish, new LanguageFile("es") },
+        { SupportedLangs.Japanese, new LanguageFile("ja") }
     };
 
     private static LanguageFile? _currentLanguage;
