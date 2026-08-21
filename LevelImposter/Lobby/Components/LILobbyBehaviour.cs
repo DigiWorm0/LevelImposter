@@ -12,6 +12,8 @@ public class LILobbyBehaviour(IntPtr intPtr) : LIBaseShip(intPtr)
 
     private LobbyBehaviour? _lobbyBehaviour;
 
+    public IStepWatcher[] AllStepWatchers { get; private set; } = [];
+
     protected override void Awake()
     {
         base.Awake();
@@ -26,6 +28,14 @@ public class LILobbyBehaviour(IntPtr intPtr) : LIBaseShip(intPtr)
         // Build lobby map on startup
         if (GameConfiguration.CurrentLobbyMap != null)
             LobbyMapBuilder.Rebuild();
+    }
+
+    protected override void Start()
+    {
+        base.Start();
+
+        // Get components in children
+        AllStepWatchers = GetComponentsInChildren<IStepWatcher>(true);
     }
 
     /// <summary>
