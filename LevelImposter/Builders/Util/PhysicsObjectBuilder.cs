@@ -29,7 +29,6 @@ internal class PhysicsObjectBuilder : IElemBuilder
         rb.mass = elem.properties.physicsMass ?? 10.0f;
         rb.drag = elem.properties.physicsDrag ?? 100.0f;
         rb.angularDrag = elem.properties.physicsAngularDrag ?? 100.0f;
-        rb.freezeRotation = elem.properties.physicsFreezeRotation ?? false;
         rb.gravityScale = 0;
 
         // Add Constraints
@@ -38,6 +37,8 @@ internal class PhysicsObjectBuilder : IElemBuilder
             constraints |= RigidbodyConstraints2D.FreezePositionX;
         if (elem.properties.physicsFreezeY ?? false)
             constraints |= RigidbodyConstraints2D.FreezePositionY;
+        if (elem.properties.physicsFreezeRotation ?? false)
+            constraints |= RigidbodyConstraints2D.FreezeRotation;
         rb.constraints = constraints;
 
         // Create Physics Material
