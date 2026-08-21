@@ -25,7 +25,7 @@ public class SabDoorBuilder : IElemBuilder
     {
         DoorDB.Clear();
         _doorId = 0;
-        _specialDoorIDs?.Clear();
+        _specialDoorIDs = null;
     }
 
     public void OnBuild(LIElement elem, GameObject obj)
