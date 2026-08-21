@@ -14,4 +14,10 @@ public class Activity(JavaObject? baseObject) : JavaObject(baseObject)
     {
         Call("startActivity", intent);
     }
+
+    public string GetPackageName()
+    {
+        using var packageName = CallReturn("getPackageName");
+        return packageName.ToString() ?? "";
+    }
 }

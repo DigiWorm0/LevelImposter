@@ -4,8 +4,8 @@ public static class DocumentsContract
 {
     private static readonly JavaClass ClassRef = new("android.provider.DocumentsContract");
 
-    public static Uri BuildDocumentUri(string authority, string documentId)
+    public static Uri BuildRootUri(string authority, string rootID)
     {
-        return new Uri(ClassRef.CallStaticReturn("buildDocumentUri", authority, documentId));
+        return new Uri(ClassRef.CallStaticReturn("buildRootUri", authority, rootID));
     }
 }

@@ -8,10 +8,8 @@ using AndroidActivity = LevelImposter.Core.Android.Activity;
 
 namespace LevelImposter.FileIO.API;
 
-public static class FileAPI
+public class FileAPI
 {
-    private const string LEVELIMPOSTER_FOLDER_NAME = "LevelImposter";
-
     private static string GetAssemblyDataPath()
     {
         var assembly = Assembly.GetAssembly(typeof(LevelImposter));
@@ -34,7 +32,7 @@ public static class FileAPI
     public static string GetPath(string subfolderName = "")
     {
         var dataDirectory = GameState.IsMobile ? GetStarlightDataPath() : GetAssemblyDataPath();
-        return Path.Combine(dataDirectory, LEVELIMPOSTER_FOLDER_NAME, subfolderName);
+        return Path.Combine(dataDirectory, "LevelImposter", subfolderName);
     }
 
     /// <summary>
@@ -46,26 +44,29 @@ public static class FileAPI
     public static void OpenInExplorer(string subfolderName = "")
     {
         if (GameState.IsMobile)
-            OpenInExplorer_Mobile(subfolderName);
+            OpenInExplorer_Mobile();
         else
-            OpenInExplorer_Desktop(subfolderName);
+            OpenInExplorer_Desktop();
     }
 
-    private static void OpenInExplorer_Mobile(string subfolderName = "")
+    private static void OpenInExplorer_Mobile()
     {
         var activity = AndroidActivity.GetCurrent();
 
+        // Get the application package name (ex: dev.allofus.starlight)
+        var packageName = activity.GetPackageName();
+        if (string.IsNullOrWhiteSpace(packageName))
+            throw new InvalidOperationException("Couldn't determine the current package name.");
+
         // Build rootURI based on Starlight's data directory
-        using var rootUri = DocumentsContract.BuildDocumentUri(
-            "com.android.externalstorage.documents",
-            $"primary:Documents/StarlightData/{LEVELIMPOSTER_FOLDER_NAME}/{subfolderName}");
+        using var rootUri = DocumentsContract.BuildRootUri(
+            $"{packageName}.documents",
+            "star_data");
 
         // Create intent to open directory
-        using var intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
-        intent.AddCategory(Intent.CATEGORY_OPENABLE);
-        intent.SetType("*/*");
-        intent.PutExtra("android.provider.extra.INITIAL_URI", rootUri);
-        intent.AddFlags(0x00000001); // FLAG_GRANT_READ_URI_PERMISSION
+        using var intent = new Intent("android.intent.action.VIEW");
+        intent.SetData(rootUri);
+        intent.AddFlags(0x00000001); // <-- FLAG_GRANT_READ_URI_PERMISSION
         activity.StartActivity(intent);
     }
 
