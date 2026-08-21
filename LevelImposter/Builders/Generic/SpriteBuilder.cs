@@ -135,7 +135,9 @@ public class SpriteBuilder(MapTarget mapTarget = MapTarget.Game) : IElemBuilder
         }
 
         // Create LoadableTexture
-        var loadableTexture = new TextureInfo(spriteID.ToString() ?? "", asset);
+        var loadableTexture = new TextureInfo(
+            $"{spriteID}_{mapTarget}", // <-- Ensures different IDs for different map targets
+            asset);
         loadableTexture.Options.GCBehavior = mapTarget.GetGCBehavior();
         loadableTexture.Options.PixelArt = PixelArtMode;
 
@@ -161,12 +163,12 @@ public class SpriteBuilder(MapTarget mapTarget = MapTarget.Game) : IElemBuilder
         }
 
         // Create LoadableTexture
-        var loadableTexture = new TextureInfo(baseAssetID.ToString(), baseAsset);
+        var loadableTexture = new TextureInfo($"{baseAssetID}_{mapTarget}", baseAsset);
         loadableTexture.Options.GCBehavior = mapTarget.GetGCBehavior();
         loadableTexture.Options.PixelArt = PixelArtMode;
 
         // Create LoadableSprite
-        var loadableSprite = new SpriteInfo(spriteAtlas.id.ToString(), loadableTexture);
+        var loadableSprite = new SpriteInfo($"{spriteAtlas.id}_{mapTarget}", loadableTexture);
         loadableSprite.Options.GCBehavior = mapTarget.GetGCBehavior();
         loadableSprite.Options.Frame = new Rect(
             spriteAtlas.x,
@@ -186,7 +188,7 @@ public class SpriteBuilder(MapTarget mapTarget = MapTarget.Game) : IElemBuilder
         // Only run in the lobby
         if (!GameState.IsInLobby)
             return;
-        
+
         // Get current map
         var map = GameConfiguration.CurrentMap;
         if (map == null)

@@ -206,7 +206,7 @@ public class MinigameSprites(IntPtr intPtr) : MonoBehaviour(intPtr)
                 );
                 // Create Texture
                 var texture = new UnityQRCode(qrCode).GetGraphic(1);
-                GCHandler.Register(texture);
+                GCHandler.Register(texture, GCBehavior.AlwaysDispose);
 
                 // Create Sprite
                 var sprite = Sprite.Create(
@@ -214,7 +214,7 @@ public class MinigameSprites(IntPtr intPtr) : MonoBehaviour(intPtr)
                     new Rect(0f, 0f, texture.width, texture.height),
                     new Vector2(0.5f, 0.5f)
                 );
-                GCHandler.Register(sprite);
+                GCHandler.Register(sprite, GCBehavior.AlwaysDispose);
 
                 // Apply Sprite
                 minigame.Cast<BoardPassGame>().renderer.sprite = sprite;

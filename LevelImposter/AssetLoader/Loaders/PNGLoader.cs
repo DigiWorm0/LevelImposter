@@ -23,14 +23,11 @@ public static class PNGLoader
         // Read all image data into memory
         var imgData = loadable.DataStore.LoadToMemory();
 
-        // Get Options
-        var options = loadable.Options;
-
         // Create Texture
         var texture = ImageDataToTexture2D(
             imgData,
             loadable.ID,
-            options
+            loadable.Options
         );
 
         // Return the loaded texture
