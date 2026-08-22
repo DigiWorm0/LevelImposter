@@ -4,7 +4,7 @@ public class MeetingTriggerHandle : ITriggerHandle
 {
     public void OnTrigger(TriggerSignal signal)
     {
-        if (signal.TriggerID != "callMeeting")
+        if (signal.EventType != "callMeeting")
             return;
 
         PlayerControl.LocalPlayer.CmdReportDeadBody(null);

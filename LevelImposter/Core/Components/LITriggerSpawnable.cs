@@ -59,7 +59,7 @@ public class LITriggerSpawnable(IntPtr intPtr) : MonoBehaviour(intPtr)
 
         if (_triggerTarget != null)
         {
-            TriggerSignal signal = new(_triggerTarget, _triggerID, PlayerControl.LocalPlayer);
+            var signal = TriggerSignal.NewEvent(_triggerTarget, _triggerID, PlayerControl.LocalPlayer);
             TriggerSystem.GetInstance().FireTrigger(signal);
         }
     }

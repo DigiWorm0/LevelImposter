@@ -7,7 +7,7 @@ public class DeathTriggerHandle : ITriggerHandle
 {
     public void OnTrigger(TriggerSignal signal)
     {
-        if (signal.TriggerID != "killArea")
+        if (signal.EventType != "killArea")
             return;
 
         // Get LIDeathArea

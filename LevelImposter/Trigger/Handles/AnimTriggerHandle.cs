@@ -9,9 +9,9 @@ public class AnimTriggerHandle : ITriggerHandle
 
     public void OnTrigger(TriggerSignal signal)
     {
-        if (signal.TriggerID != "playAnim" &&
-            signal.TriggerID != "stopAnim" &&
-            signal.TriggerID != "pauseAnim")
+        if (signal.EventType != "playAnim" &&
+            signal.EventType != "stopAnim" &&
+            signal.EventType != "pauseAnim")
             return;
 
         // Get Component
@@ -19,11 +19,11 @@ public class AnimTriggerHandle : ITriggerHandle
             return;
 
         // Handle
-        if (signal.TriggerID == "playAnim")
+        if (signal.EventType == "playAnim")
             animator.Play(signal);
-        else if (signal.TriggerID == "stopAnim")
+        else if (signal.EventType == "stopAnim")
             animator.Stop();
-        else if (signal.TriggerID == "pauseAnim")
+        else if (signal.EventType == "pauseAnim")
             animator.Pause();
     }
 }

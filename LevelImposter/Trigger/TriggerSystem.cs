@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using LevelImposter.Core;
 using LevelImposter.Core.Components;
 using LevelImposter.Core.Services.Ship;
 using LevelImposter.Core.Utils;
@@ -88,7 +87,7 @@ public class TriggerSystem
         Rpc<TriggerRPC>.Instance.Send(signal.SourcePlayer, new RPCTriggerPacket
         {
             ElemIDString = element.id.ToString(),
-            TriggerID = signal.TriggerID
+            TriggerID = signal.EventType
         }, true);
     }
 
@@ -106,7 +105,7 @@ public class TriggerSystem
         if (DetectStackOverflow && signal.StackSize > MAX_STACK_SIZE)
         {
             LILogger.Warn(
-                $"{objectName} >>> {signal.TriggerID} detected an infinite trigger loop and aborted");
+                $"{objectName} >>> {signal.EventType} detected an infinite trigger loop and aborted");
             LILogger.Info("If you need an infinite loop, enable the loop option on a trigger timer");
             return;
         }
@@ -116,7 +115,7 @@ public class TriggerSystem
         {
             var whitespace = string.Concat(Enumerable.Repeat("| ", signal.StackSize - 1)) + "+ ";
             LILogger.Info(
-                $"{whitespace}{objectName} >>> {signal.TriggerID} ({playerName})");
+                $"{whitespace}{objectName} >>> {signal.EventType} ({playerName})");
         }
 
         // Check Validity
@@ -131,7 +130,7 @@ public class TriggerSystem
         }
         catch (Exception e)
         {
-            LILogger.Error($"Error while handling trigger {objectName} >>> {signal.TriggerID}");
+            LILogger.Error($"Error while handling trigger {objectName} >>> {signal.EventType}");
             LILogger.Error(e);
         }
     }

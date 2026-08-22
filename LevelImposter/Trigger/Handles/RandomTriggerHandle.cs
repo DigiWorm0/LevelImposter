@@ -10,7 +10,7 @@ public class RandomTriggerHandle : ITriggerHandle
 
     public void OnTrigger(TriggerSignal signal)
     {
-        if (signal.TriggerID != "random")
+        if (signal.EventType != "random")
             return;
 
         // Get source element
@@ -32,10 +32,9 @@ public class RandomTriggerHandle : ITriggerHandle
         var targetID = "onRandom " + (triggerIndex + 1);
 
         // Create & Fire Trigger
-        TriggerSignal newSignal = new(
+        var newSignal = signal.Propagate(
             signal.TargetObject,
-            targetID,
-            signal
+            targetID
         );
         TriggerSystem.GetInstance().FireTrigger(newSignal);
     }

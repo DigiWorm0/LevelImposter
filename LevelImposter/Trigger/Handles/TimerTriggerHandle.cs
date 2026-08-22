@@ -12,23 +12,23 @@ public class TimerTriggerHandle : ITriggerHandle
 
     public void OnTrigger(TriggerSignal signal)
     {
-        if (signal.TriggerID != "startTimer" &&
-            signal.TriggerID != "stopTimer")
+        if (signal.EventType != "startTimer" &&
+            signal.EventType != "stopTimer")
             return;
 
         // Start timer
-        if (signal.TriggerID == "startTimer")
+        if (signal.EventType == "startTimer")
             _timerManager.Start(signal.TargetObject, CoTimerTrigger(signal));
 
         // Stop timer
-        else if (signal.TriggerID == "stopTimer") _timerManager.Stop(signal.TargetObject);
+        else if (signal.EventType == "stopTimer") _timerManager.Stop(signal.TargetObject);
     }
 
 
     /// <summary>
     ///     Coroutine to run timer trigger. Fires onStart on the start and onFinish on completion.
     /// </summary>
-    /// <param name="duration">Duration of the timer in seconds</param>
+    /// <param name="signal">The originating trigger signal</param>
     [HideFromIl2Cpp]
     private IEnumerator CoTimerTrigger(TriggerSignal signal)
     {
@@ -40,8 +40,8 @@ public class TimerTriggerHandle : ITriggerHandle
         var isLoop = element?.properties.triggerLoop ?? false;
 
         // Create Triggers
-        var startTrigger = new TriggerSignal(signal.TargetObject, "onStart", signal);
-        var endTrigger = new TriggerSignal(signal.TargetObject, "onFinish", signal);
+        var startTrigger = signal.Propagate(signal.TargetObject, "onStart");
+        var endTrigger = signal.Propagate(signal.TargetObject, "onFinish");
 
         // Loop Timer
         do

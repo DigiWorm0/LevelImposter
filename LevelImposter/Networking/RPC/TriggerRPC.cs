@@ -60,7 +60,7 @@ public class TriggerRPC(LevelImposter plugin, uint id) : PlayerCustomRpc<LevelIm
         }
 
         // Create & Fire Trigger
-        TriggerSignal signal = new(gameObject, data.TriggerID, orginPlayer);
+        var signal = TriggerSignal.NewEvent(gameObject, data.TriggerID, orginPlayer);
         TriggerSystem.GetInstance().FireTrigger(signal);
     }
 }

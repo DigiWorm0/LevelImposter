@@ -97,7 +97,7 @@ public class TriggerConsole(IntPtr intPtr) : MonoBehaviour(intPtr)
         if (!canUse)
             return;
 
-        TriggerSignal signal = new(gameObject, TRIGGER_ID, PlayerControl.LocalPlayer);
+        var signal = TriggerSignal.NewEvent(gameObject, TRIGGER_ID, PlayerControl.LocalPlayer);
         if (_isClientSide)
             TriggerSystem.GetInstance().FireTrigger(signal);
         else

@@ -9,9 +9,9 @@ public class ValueTriggerHandle : ITriggerHandle
 {
     public void OnTrigger(TriggerSignal signal)
     {
-        if (signal.TriggerID != "setValueTrue" &&
-            signal.TriggerID != "setValueFalse" &&
-            signal.TriggerID != "toggleValue")
+        if (signal.EventType != "setValueTrue" &&
+            signal.EventType != "setValueFalse" &&
+            signal.EventType != "toggleValue")
             return;
 
         // Get Element Data
@@ -23,7 +23,7 @@ public class ValueTriggerHandle : ITriggerHandle
             throw new Exception("Value object is not a BasicBoolValue");
 
         // Run Operation
-        var newValue = signal.TriggerID switch
+        var newValue = signal.EventType switch
         {
             "setValueTrue" => true,
             "setValueFalse" => false,

@@ -60,7 +60,7 @@ public static class DoorPatch
         if (_hasStateChanged)
         {
             var triggerID = open ? "onOpen" : "onClose";
-            TriggerSignal signal = new(__instance.gameObject, triggerID, PlayerControl.LocalPlayer);
+            var signal = TriggerSignal.NewEvent(__instance.gameObject, triggerID, PlayerControl.LocalPlayer);
             TriggerSystem.GetInstance().FireTrigger(signal);
         }
     }

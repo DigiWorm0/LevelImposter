@@ -32,7 +32,9 @@ public static class SabEndPatch
         var triggerName = _taskTriggerPairs[task.TaskType];
         if (SabotageOptionsBuilder.TriggerObject != null)
         {
-            TriggerSignal signal = new(SabotageOptionsBuilder.TriggerObject, triggerName,
+            var signal = TriggerSignal.NewEvent(
+                SabotageOptionsBuilder.TriggerObject,
+                triggerName,
                 PlayerControl.LocalPlayer);
             TriggerSystem.GetInstance().FireTrigger(signal);
         }

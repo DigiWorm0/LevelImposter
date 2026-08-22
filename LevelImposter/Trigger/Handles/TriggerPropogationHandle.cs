@@ -1,4 +1,6 @@
-﻿using LevelImposter.Core.Services.Ship;
+﻿using System.Collections.Generic;
+using System.Text.Json;
+using LevelImposter.Core.Services.Ship;
 
 namespace LevelImposter.Trigger.Handles;
 
@@ -18,24 +20,25 @@ public class TriggerPropogationHandle : ITriggerHandle
         foreach (var trigger in triggers)
         {
             // Check if the trigger has the triggerID
-            if (trigger.id != signal.TriggerID)
+            if (trigger.EventType != signal.EventType)
                 continue;
 
             // Check if the trigger should propogate
-            if (trigger.elemID == null || trigger.triggerID == null)
+            if (trigger.TargetID == null || trigger.TargetEventType == null)
                 continue;
 
             // Get Object
-            var targetObject = TriggerSystem.FindObject(trigger.elemID);
+            var targetObject = TriggerSystem.FindObject(trigger.TargetID);
             if (targetObject == null)
                 continue;
 
             // Create & Run Trigger
-            TriggerSignal newSignal = new(
-                targetObject,
-                trigger.triggerID,
-                signal
-            );
+            var newSignal = signal.Propagate(targetObject, trigger.TargetEventType);
+
+            var properties = trigger.Properties ?? new Dictionary<string, JsonElement>();
+            foreach (var prop in properties)
+                newSignal.Properties[prop.Key] = prop.Value;
+            
             TriggerSystem.GetInstance().FireTrigger(newSignal);
             return;
         }

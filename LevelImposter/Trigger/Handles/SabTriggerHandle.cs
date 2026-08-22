@@ -11,7 +11,7 @@ public class SabTriggerHandle : ITriggerHandle
             return;
 
         // Handle sabotage triggers
-        switch (signal.TriggerID)
+        switch (signal.EventType)
         {
             case "startOxygen":
                 ShipStatus.Instance.RpcUpdateSystem(SystemTypes.LifeSupp, 128);

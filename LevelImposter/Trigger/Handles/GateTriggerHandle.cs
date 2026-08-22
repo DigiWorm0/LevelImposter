@@ -10,7 +10,7 @@ public class GateTriggerHandle : ITriggerHandle
 
     public void OnTrigger(TriggerSignal signal)
     {
-        if (signal.TriggerID != "triggerGate")
+        if (signal.EventType != "triggerGate")
             return;
 
         // Get Value
@@ -20,7 +20,7 @@ public class GateTriggerHandle : ITriggerHandle
 
         // Fire Trigger
         var triggerID = value ? ON_TRUE : ON_FALSE;
-        TriggerSignal newSignal = new(signal.TargetObject, triggerID, signal);
+        var newSignal = signal.Propagate(signal.TargetObject, triggerID);
         TriggerSystem.GetInstance().FireTrigger(newSignal);
     }
 }

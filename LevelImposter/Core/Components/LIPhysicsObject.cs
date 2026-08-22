@@ -42,7 +42,7 @@ public class LIPhysicsObject(IntPtr intPtr) : MonoBehaviour(intPtr)
     public void OnCollisionEnter2D(Collision2D other)
     {
         // Trigger
-        var triggerSignal = new TriggerSignal(gameObject, TRIGGER_ID, PlayerControl.LocalPlayer);
+        var triggerSignal = TriggerSignal.NewEvent(gameObject, TRIGGER_ID, PlayerControl.LocalPlayer);
         TriggerSystem.GetInstance().FireTrigger(triggerSignal);
 
         try

@@ -7,9 +7,9 @@ public class DoorTriggerHandle : ITriggerHandle
 {
     public void OnTrigger(TriggerSignal signal)
     {
-        if (signal.TriggerID == "open")
+        if (signal.EventType == "open")
             SetDoorOpen(signal.TargetObject, true);
-        else if (signal.TriggerID == "close")
+        else if (signal.EventType == "close")
             SetDoorOpen(signal.TargetObject, false);
     }
 

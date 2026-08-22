@@ -52,7 +52,7 @@ public static class SporeTriggerHandle
         if (!LIShipStatus.IsInstance())
             return;
 
-        TriggerSignal signal = new(__instance.gameObject, "onActivate", PlayerControl.LocalPlayer);
+        var signal = TriggerSignal.NewEvent(__instance.gameObject, "onActivate", PlayerControl.LocalPlayer);
         TriggerSystem.GetInstance().FireTrigger(signal);
     }
 }

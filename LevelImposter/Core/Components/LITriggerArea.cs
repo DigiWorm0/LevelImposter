@@ -28,7 +28,7 @@ public class LITriggerArea(IntPtr intPtr) : PlayerArea(intPtr)
         var triggerClientSided = player.AmOwner && _isClientSide;
         if (triggerClientSided || triggerServerSided)
         {
-            TriggerSignal signal = new(gameObject, ENTER_TRIGGER_ID, player);
+            var signal = TriggerSignal.NewEvent(gameObject, ENTER_TRIGGER_ID, player);
             TriggerSystem.GetInstance().FireTrigger(signal);
         }
     }
@@ -39,7 +39,7 @@ public class LITriggerArea(IntPtr intPtr) : PlayerArea(intPtr)
         var triggerClientSided = player.AmOwner && _isClientSide;
         if (triggerClientSided || triggerServerSided)
         {
-            TriggerSignal signal = new(gameObject, EXIT_TRIGGER_ID, player);
+            var signal = TriggerSignal.NewEvent(gameObject, EXIT_TRIGGER_ID, player);
             TriggerSystem.GetInstance().FireTrigger(signal);
         }
     }

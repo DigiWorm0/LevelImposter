@@ -7,7 +7,7 @@ public class TeleportTriggerHandle : ITriggerHandle
 {
     public void OnTrigger(TriggerSignal signal)
     {
-        if (signal.TriggerID != "teleportonce")
+        if (signal.EventType != "teleportonce")
             return;
 
         // Get Teleporter

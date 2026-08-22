@@ -1,4 +1,5 @@
 ﻿using System;
+using Il2CppInterop.Runtime.Attributes;
 using LevelImposter.Builders.Lobby;
 using LevelImposter.Core.Components;
 using LevelImposter.Core.Utils;
@@ -12,7 +13,7 @@ public class LILobbyBehaviour(IntPtr intPtr) : LIBaseShip(intPtr)
 
     private LobbyBehaviour? _lobbyBehaviour;
 
-    public IStepWatcher[] AllStepWatchers { get; private set; } = [];
+    [HideFromIl2Cpp] public IStepWatcher[] AllStepWatchers { get; private set; } = [];
 
     protected override void Awake()
     {

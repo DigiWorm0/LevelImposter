@@ -242,7 +242,7 @@ public class TriggerAnim(IntPtr intPtr) : MonoBehaviour(intPtr)
         if (_t >= _duration || _t <= 0)
         {
             _t = 0;
-            TriggerSignal signal = new(gameObject, "onStart", _sourceSignal);
+            var signal = _sourceSignal!.Propagate(gameObject, "onStart");
             TriggerSystem.GetInstance().FireTrigger(signal);
         }
 
@@ -256,7 +256,7 @@ public class TriggerAnim(IntPtr intPtr) : MonoBehaviour(intPtr)
             if (_t >= _duration)
             {
                 // Signal End
-                TriggerSignal loopSignal = new(gameObject, "onFinish", _sourceSignal);
+                var loopSignal = _sourceSignal!.Propagate(gameObject, "onFinish");
                 TriggerSystem.GetInstance().FireTrigger(loopSignal);
 
                 // Break if not looping

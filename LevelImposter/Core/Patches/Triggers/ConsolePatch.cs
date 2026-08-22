@@ -48,7 +48,7 @@ public class ConsolePatch
 
         // Create Trigger
         var isClientSide = element.properties.triggerClientSide ?? true;
-        TriggerSignal signal = new(__instance.gameObject, "onUse", PlayerControl.LocalPlayer);
+        var signal = TriggerSignal.NewEvent(__instance.gameObject, "onUse", PlayerControl.LocalPlayer);
 
         // Fire Trigger
         if (isClientSide)

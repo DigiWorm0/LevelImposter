@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using System.Text.Json;
+using UnityEngine;
 
 namespace LevelImposter.Trigger;
 
@@ -7,40 +9,59 @@ namespace LevelImposter.Trigger;
 /// </summary>
 public class TriggerSignal
 {
-    /// <summary>
-    ///     Constructs a trigger signal from a player
-    /// </summary>
-    /// <param name="targetObject">The object to trigger</param>
-    /// <param name="triggerID">The trigger ID</param>
-    /// <param name="sourcePlayer">The player that triggered the object</param>
-    public TriggerSignal(GameObject targetObject, string triggerID, PlayerControl? sourcePlayer)
+    protected TriggerSignal(
+        GameObject targetObject,
+        string eventType,
+        int stackSize,
+        PlayerControl? sourcePlayer,
+        TriggerSignal? sourceTrigger)
     {
         TargetObject = targetObject;
-        TriggerID = triggerID;
-        StackSize = 1;
+        EventType = eventType;
+        StackSize = stackSize;
         SourcePlayer = sourcePlayer;
-    }
-
-    /// <summary>
-    ///     Constructs a trigger signal that propogated from another trigger
-    /// </summary>
-    /// <param name="targetObject">The object to trigger</param>
-    /// <param name="triggerID">The trigger ID</param>
-    /// <param name="sourceTrigger">The original trigger that ran this trigger</param>
-    public TriggerSignal(GameObject targetObject, string triggerID, TriggerSignal? sourceTrigger)
-    {
-        TargetObject = targetObject;
-        TriggerID = triggerID;
-        StackSize = (sourceTrigger?.StackSize ?? 0) + 1;
-        SourcePlayer = sourceTrigger?.SourcePlayer;
         SourceTrigger = sourceTrigger;
     }
 
     public GameObject TargetObject { get; private set; }
-    public string TriggerID { get; private set; }
+    public string EventType { get; private set; }
     public int StackSize { get; }
 
     // Options
     public PlayerControl? SourcePlayer { get; }
     public TriggerSignal? SourceTrigger { get; private set; }
+    public Dictionary<string, JsonElement> Properties { get; } = new();
+
+    /// <summary>
+    ///     Creates a new trigger signal based on a specific event.
+    /// </summary>
+    /// <param name="targetObject">The object to target</param>
+    /// <param name="eventType">The type of event to trigger</param>
+    /// <param name="sourcePlayer">The player who caused the event to occur</param>
+    /// <returns></returns>
+    public static TriggerSignal NewEvent(GameObject targetObject, string eventType, PlayerControl? sourcePlayer)
+    {
+        return new TriggerSignal(
+            targetObject,
+            eventType,
+            1,
+            sourcePlayer,
+            null);
+    }
+
+    /// <summary>
+    ///     Creates a new TriggerSignal that propagated from this signal.
+    /// </summary>
+    /// <param name="newObject">The new object to target</param>
+    /// <param name="eventType">The new event to trigger</param>
+    /// <returns>A new TriggerSignal that has this signal as its source.</returns>
+    public TriggerSignal Propagate(GameObject newObject, string eventType)
+    {
+        return new TriggerSignal(
+            newObject,
+            eventType,
+            StackSize + 1,
+            SourcePlayer,
+            this);
+    }
 }

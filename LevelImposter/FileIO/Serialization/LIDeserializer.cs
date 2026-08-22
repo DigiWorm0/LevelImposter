@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Text.Json;
 using LevelImposter.Core.Models;
 using LevelImposter.Core.Utils;
 
@@ -94,8 +96,9 @@ public static class LIDeserializer
 
     private static void MigrateMap(LIMap map)
     {
-        // Fix Layer Transforms
         foreach (var element in map.elements)
+        {
+            // Fix Layer Transforms
             if (element.type == "util-layer" && map.v < 3)
             {
                 element.x = 0;
@@ -105,6 +108,19 @@ public static class LIDeserializer
                 element.yScale = 1;
                 element.rotation = 0;
             }
+
+            // Fix Trigger Fade
+            if (element.properties.triggerFadeTime != null)
+            {
+                foreach (var trigger in element.properties.triggers ?? [])
+                    trigger.Properties = new Dictionary<string, JsonElement>
+                    {
+                        { "fadeTime", JsonSerializer.SerializeToElement(element.properties.triggerFadeTime.Value) }
+                    };
+
+                element.properties.triggerFadeTime = null;
+            }
+        }
     }
 
     private enum MapFormat

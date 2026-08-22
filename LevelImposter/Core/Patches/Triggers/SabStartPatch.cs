@@ -59,7 +59,9 @@ public static class SabStartPatch
                 // Fire Trigger
                 if (SabotageOptionsBuilder.TriggerObject != null)
                 {
-                    TriggerSignal signal = new(SabotageOptionsBuilder.TriggerObject, triggerName,
+                    var signal = TriggerSignal.NewEvent(
+                        SabotageOptionsBuilder.TriggerObject,
+                        triggerName,
                         PlayerControl.LocalPlayer);
                     TriggerSystem.GetInstance().FireTrigger(signal);
                 }

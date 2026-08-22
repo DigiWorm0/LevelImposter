@@ -147,7 +147,7 @@ public class LIExileController(IntPtr intPtr) : ExileController(intPtr)
         // Trigger Eject
         var isEjectingPlayer = initData?.outfit != null;
         var triggerID = isEjectingPlayer ? ON_EJECT_TRIGGER_ID : ON_SKIP_TRIGGER_ID;
-        TriggerSignal ejectSignal = new(baseController, triggerID, playerControl);
+        var ejectSignal = TriggerSignal.NewEvent(baseController, triggerID, playerControl);
         TriggerSystem.GetInstance().FireTrigger(ejectSignal);
 
 
@@ -182,7 +182,7 @@ public class LIExileController(IntPtr intPtr) : ExileController(intPtr)
         ejectCamera.enabled = false;
 
         // Trigger Finish
-        TriggerSignal finishSignal = new(baseController, ON_FINISH_TRIGGER_ID, playerControl);
+        var finishSignal = TriggerSignal.NewEvent(baseController, ON_FINISH_TRIGGER_ID, playerControl);
         TriggerSystem.GetInstance().FireTrigger(finishSignal);
 
         // Wrap Up Base

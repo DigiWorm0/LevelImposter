@@ -26,7 +26,7 @@ public class BasicBoolValue(Guid id, bool value) : IBoolValue
             return;
 
         // Fire Trigger
-        var signal = new TriggerSignal(targetObj, "onChange", sourceSignal);
+        var signal = sourceSignal.Propagate(targetObj, "onChange");
         TriggerSystem.GetInstance().FireTrigger(signal);
     }
 }

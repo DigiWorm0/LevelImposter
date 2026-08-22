@@ -28,7 +28,7 @@ public static class MeetingPatch
         // Call trigger
         if (triggerObj != null)
         {
-            TriggerSignal signal = new(triggerObj, triggerID, reporter);
+            var signal = TriggerSignal.NewEvent(triggerObj, triggerID, reporter);
             TriggerSystem.GetInstance().FireTrigger(signal);
         }
     }

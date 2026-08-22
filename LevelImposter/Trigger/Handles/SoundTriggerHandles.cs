@@ -7,16 +7,16 @@ public class SoundTriggerHandle : ITriggerHandle
 {
     public void OnTrigger(TriggerSignal signal)
     {
-        if (signal.TriggerID != "playonce" &&
-            signal.TriggerID != "playloop" &&
-            signal.TriggerID != "stop")
+        if (signal.EventType != "playonce" &&
+            signal.EventType != "playloop" &&
+            signal.EventType != "stop")
             return;
 
         // Get Component
         var triggerSound = signal.TargetObject.GetComponentOrThrow<TriggerSoundPlayer>();
 
         // Run Sounds
-        switch (signal.TriggerID)
+        switch (signal.EventType)
         {
             case "playonce":
                 triggerSound.Play(false);

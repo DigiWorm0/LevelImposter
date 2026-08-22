@@ -12,7 +12,7 @@ public class ShowHideTriggerHandle : ITriggerHandle
 
     public void OnTrigger(TriggerSignal signal)
     {
-        var triggerID = signal.TriggerID;
+        var triggerID = signal.EventType;
 
         // Show/Hide the object
         if (triggerID == "show")
@@ -61,8 +61,8 @@ public class ShowHideTriggerHandle : ITriggerHandle
         }
 
         // Get the object data
-        var element = MapObjectDB.Get(signal.TargetObject);
-        var triggerFadeTime = element?.properties.triggerFadeTime ?? 0;
+        var element = MapObjectDB.Get(signal.SourceTrigger?.TargetObject ?? fadeObject);
+        var triggerFadeTime = signal.Properties.GetValueOrNullStruct("fadeTime")?.GetSingle() ?? 0;
 
         // Get colors
         var spriteColor = spriteRenderers[0].color;
