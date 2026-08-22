@@ -25,6 +25,7 @@ public class LIBaseShip(IntPtr intPtr) : MonoBehaviour(intPtr)
     [HideFromIl2Cpp] public TriggerSystem TriggerSystem { get; } = new();
     [HideFromIl2Cpp] public RenameHandler Renames { get; } = new();
     [HideFromIl2Cpp] public MapObjectDB MapObjectDB { get; } = new();
+    [HideFromIl2Cpp] public PrefabContainer Prefabs { get; } = new();
 
     protected virtual void Awake()
     {

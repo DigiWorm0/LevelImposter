@@ -22,7 +22,6 @@ public class ShipTaskBuilder : IElemBuilder
     };
 
     private readonly List<string> _builtTypes = [];
-    private GameObject? _taskParent;
     private NormalPlayerTask? _wiresTask;
 
     public static SystemTypes[] DivertSystems { get; private set; } = Array.Empty<SystemTypes>();
@@ -30,7 +29,6 @@ public class ShipTaskBuilder : IElemBuilder
     public void OnPreBuild()
     {
         _builtTypes.Clear();
-        _taskParent = null;
         _wiresTask = null;
         DivertSystems = Array.Empty<SystemTypes>();
     }
@@ -53,17 +51,7 @@ public class ShipTaskBuilder : IElemBuilder
     /// <exception cref="Exception"></exception>
     public void Build(LIElement elem, Console console)
     {
-        // ShipStatus
-        var shipStatus = LIShipStatus.GetInstance().ShipStatus;
-        if (shipStatus == null)
-            throw new MissingShipException();
-
-        // Task Container
-        if (_taskParent == null)
-        {
-            _taskParent = new GameObject("Tasks");
-            _taskParent.transform.SetParent(shipStatus.transform);
-        }
+        var prefabContainer = LIShipStatus.GetInstance().Prefabs.Container;
 
         // Values
         var hasTask = PrefabDB.HasTask(elem.type);
@@ -127,7 +115,7 @@ public class ShipTaskBuilder : IElemBuilder
                 DivertSystems[i] = divertSystem;
 
                 GameObject taskContainer = new(elem.name);
-                taskContainer.transform.SetParent(_taskParent.transform);
+                taskContainer.transform.SetParent(prefabContainer);
 
                 var task = taskContainer.AddComponent<DivertPowerTask>();
                 task.StartAt = systemType;
@@ -158,7 +146,7 @@ public class ShipTaskBuilder : IElemBuilder
                 throw new Exception("Task prefab is null");
 
             GameObject taskContainer = new(elem.name);
-            taskContainer.transform.SetParent(_taskParent.transform);
+            taskContainer.transform.SetParent(prefabContainer);
 
             var task = taskContainer.AddComponent(prefabTask.GetIl2CppType()).Cast<NormalPlayerTask>();
             task.StartAt = systemType;

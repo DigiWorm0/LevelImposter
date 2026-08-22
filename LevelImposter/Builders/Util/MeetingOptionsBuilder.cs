@@ -2,7 +2,6 @@ using LevelImposter.AssetLoader;
 using LevelImposter.AssetLoader.Loadables;
 using LevelImposter.AssetLoader.Loaders;
 using LevelImposter.Builders.Generic;
-using LevelImposter.Core;
 using LevelImposter.Core.Components;
 using LevelImposter.Core.Models;
 using LevelImposter.Core.Utils;
@@ -30,6 +29,7 @@ internal class MeetingOptionsBuilder : IElemBuilder
 
         // ShipStatus
         var shipStatus = LIShipStatus.GetShip();
+        var prefabContainer = LIShipStatus.GetInstance().Prefabs.Container;
 
         // Singleton
         if (TriggerObject != null)
@@ -52,9 +52,7 @@ internal class MeetingOptionsBuilder : IElemBuilder
         }
 
         // Meeting Overlay
-        shipStatus.EmergencyOverlay.gameObject.SetActive(false);
-        var meetingOverlay = Object.Instantiate(shipStatus.EmergencyOverlay, shipStatus.transform);
-        meetingOverlay.gameObject.SetActive(false);
+        var meetingOverlay = Object.Instantiate(shipStatus.EmergencyOverlay, prefabContainer);
         shipStatus.EmergencyOverlay = meetingOverlay;
 
         var buttonSound = elem.properties.sounds.FindSound(BUTTON_SOUND_NAME);
@@ -65,9 +63,7 @@ internal class MeetingOptionsBuilder : IElemBuilder
         }
 
         // Report Overlay
-        shipStatus.ReportOverlay.gameObject.SetActive(false);
-        var reportOverlay = Object.Instantiate(shipStatus.ReportOverlay, shipStatus.transform);
-        reportOverlay.gameObject.SetActive(false);
+        var reportOverlay = Object.Instantiate(shipStatus.ReportOverlay, prefabContainer);
         shipStatus.ReportOverlay = reportOverlay;
 
         var reportSound = elem.properties.sounds.FindSound(REPORT_SOUND_NAME);

@@ -80,9 +80,6 @@ public static class PlatformResetPatch
         if (!LIShipStatus.IsInstance())
             return;
 
-        LILogger.Info("Meeting Called!");
-
-        // Reset Platform
         PlatformBuilder.Platform?.MeetingCalled();
     }
 }

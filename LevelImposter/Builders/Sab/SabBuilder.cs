@@ -25,12 +25,9 @@ public class SabBuilder : IElemBuilder
         { "sab-btnoxygen", SystemTypes.LifeSupp }
     };
 
-    private GameObject? _sabContainer;
-
     public void OnPreBuild()
     {
         SabDB.Clear();
-        _sabContainer = null;
     }
 
     public void OnBuild(LIElement elem, GameObject obj)
@@ -42,14 +39,7 @@ public class SabBuilder : IElemBuilder
 
         // ShipStatus
         var shipStatus = LIShipStatus.GetShip();
-
-        // Container
-        if (_sabContainer == null)
-        {
-            _sabContainer = new GameObject("Sabotages");
-            _sabContainer.transform.SetParent(shipStatus.transform);
-            _sabContainer.SetActive(false);
-        }
+        var prefabContainer = LIShipStatus.GetInstance().Prefabs.Container;
 
         // Prefab
         var prefabTask = PrefabDB.GetTask<SabotageTask>(elem.type);
@@ -65,7 +55,7 @@ public class SabBuilder : IElemBuilder
             // Sabotage Task
             LILogger.Debug($" + Adding sabotage for {elem}...");
             var sabContainer = new GameObject(elem.name);
-            sabContainer.transform.SetParent(_sabContainer.transform);
+            sabContainer.transform.SetParent(prefabContainer);
 
             // Create Task
             var task = sabContainer.AddComponent(prefabTask.GetIl2CppType()).Cast<SabotageTask>();
