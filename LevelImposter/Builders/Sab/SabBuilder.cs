@@ -1,6 +1,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using Il2CppInterop.Runtime.InteropTypes.Arrays;
+using LevelImposter.Build;
+using LevelImposter.Build.Attributes;
 using LevelImposter.Builders.Util;
 using LevelImposter.Core.Components;
 using LevelImposter.Core.Models;
@@ -11,7 +13,7 @@ using CollectionExtensions = HarmonyLib.CollectionExtensions;
 
 namespace LevelImposter.Builders.Sab;
 
-public class SabBuilder : IElemBuilder
+internal static class SabBuilder
 {
     private static readonly Dictionary<SystemTypes, SabotageTask> SabDB = new();
 
@@ -25,37 +27,41 @@ public class SabBuilder : IElemBuilder
         { "sab-btnoxygen", SystemTypes.LifeSupp }
     };
 
-    public void OnPreBuild()
+    [MapBuilder(Priority = Priority.FIRST)]
+    public static void Reset()
     {
         SabDB.Clear();
     }
 
-    public void OnBuild(LIElement elem, GameObject obj)
+    [ElementBuilder(
+        Target = MapTarget.Game,
+        ElementTypes =
+        [
+            "sab-reactorleft",
+            "sab-reactorright",
+            "sab-oxygen1",
+            "sab-oxygen2",
+            "sab-electric",
+            "sab-comms"
+        ])
+    ]
+    public static void Build(LIBaseShip baseShip, ShipStatus shipStatus, LIElement element)
     {
-        if (!elem.type.StartsWith("sab-") ||
-            elem.type.StartsWith("sab-btn") ||
-            elem.type.StartsWith("sab-door"))
-            return;
-
-        // ShipStatus
-        var shipStatus = LIShipStatus.GetShip();
-        var prefabContainer = LIShipStatus.GetInstance().Prefabs.Container;
-
         // Prefab
-        var prefabTask = PrefabDB.GetTask<SabotageTask>(elem.type);
+        var prefabTask = PrefabDB.GetTask<SabotageTask>(element.type);
         if (prefabTask == null)
             return;
 
         // System
-        var roomSystem = RoomBuilder.GetParentOrDefault(elem);
+        var roomSystem = RoomBuilder.GetParentOrDefault(element);
 
         // Task
         if (!SabDB.ContainsKey(roomSystem))
         {
             // Sabotage Task
-            LILogger.Debug($" + Adding sabotage for {elem}...");
-            var sabContainer = new GameObject(elem.name);
-            sabContainer.transform.SetParent(prefabContainer);
+            LILogger.Debug($" + Adding sabotage for {element}...");
+            var sabContainer = new GameObject(element.name);
+            sabContainer.transform.SetParent(baseShip.Prefabs.Container);
 
             // Create Task
             var task = sabContainer.AddComponent(prefabTask.GetIl2CppType()).Cast<SabotageTask>();
@@ -65,8 +71,8 @@ public class SabBuilder : IElemBuilder
             task.Arrows = new Il2CppReferenceArray<ArrowBehaviour>(0);
 
             // Rename Task
-            if (!string.IsNullOrEmpty(elem.properties.description))
-                LIBaseShip.Instance?.Renames.Add(task.TaskType, elem.properties.description);
+            if (!string.IsNullOrEmpty(element.properties.description))
+                LIBaseShip.Instance?.Renames.Add(task.TaskType, element.properties.description);
 
             // Add To Quick Chat
             var taskName = TranslationController.Instance.GetTaskName(task.TaskType);
@@ -77,11 +83,11 @@ public class SabBuilder : IElemBuilder
             SabDB.Add(roomSystem, task);
 
             // Sabotage System
-            var sabDuration = elem.properties.sabDuration;
+            var sabDuration = element.properties.sabDuration;
             if (sabDuration == null)
                 return;
 
-            var hasSabSystem = SabSystems.TryGetValue(elem.type, out var sabSystemType);
+            var hasSabSystem = SabSystems.TryGetValue(element.type, out var sabSystemType);
             if (!hasSabSystem)
                 return;
 

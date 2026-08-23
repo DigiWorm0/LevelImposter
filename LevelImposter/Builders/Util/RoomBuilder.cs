@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using LevelImposter.Build;
+using LevelImposter.Build.Attributes;
 using LevelImposter.Core.Components;
 using LevelImposter.Core.Models;
 using LevelImposter.Core.Services;
@@ -9,32 +11,33 @@ using UnityEngine;
 
 namespace LevelImposter.Builders.Util;
 
-public class RoomBuilder : IElemBuilder
+internal static class RoomBuilder
 {
     public static List<RoomData> RoomDB { get; } = [];
-    public int Priority => IElemBuilder.HIGH_PRIORITY; // <-- Run before other builders that may need room data
 
-    public void OnPreBuild()
+    [MapBuilder(Priority = Priority.FIRST)]
+    public static void Reset()
     {
         RoomDB.Clear();
     }
 
-    public void OnBuild(LIElement elem, GameObject obj)
+    [ElementBuilder(
+        Priority = Priority.FIRST,
+        ElementTypes = ["util-room"]
+    )]
+    public static void Build(LIElement element, GameObject gameObject)
     {
-        if (elem.type != "util-room")
-            return;
-
         // Pick a new System
         var systemType = SystemDistributionService.GetNewSystemType();
 
         // Options
-        var isAdminVisible = elem.properties.isRoomAdminVisible ?? true;
-        var isUIVisible = elem.properties.isRoomUIVisible ?? true;
+        var isAdminVisible = element.properties.isRoomAdminVisible ?? true;
+        var isUIVisible = element.properties.isRoomUIVisible ?? true;
 
         // Create ShipRoom
-        var shipRoom = obj.AddComponent<PlainShipRoom>();
+        var shipRoom = gameObject.AddComponent<PlainShipRoom>();
         shipRoom.RoomId = systemType;
-        shipRoom.roomArea = obj.GetComponentInChildren<Collider2D>();
+        shipRoom.roomArea = gameObject.GetComponentInChildren<Collider2D>();
 
         // Fix Collider
         if (shipRoom.roomArea != null)
@@ -43,12 +46,12 @@ public class RoomBuilder : IElemBuilder
             LILogger.Warn($"{shipRoom.name} is missing a collider");
 
         // Rename Room Name
-        LIBaseShip.Instance?.Renames.Add(systemType, obj.name);
+        LIBaseShip.Instance?.Renames.Add(systemType, gameObject.name);
 
         // Add to DB
         RoomDB.Add(new RoomData
         {
-            ElementID = elem.id,
+            ElementID = element.id,
             IsUIVisible = isUIVisible,
             ShipRoom = shipRoom,
             Collider = shipRoom.roomArea
@@ -57,9 +60,9 @@ public class RoomBuilder : IElemBuilder
         // TODO: Add shiproom to lobby behaviour
     }
 
-    public void OnPostBuild()
+    [MapBuilder]
+    public static void AddDefaultRoom()
     {
-        // Add Default Room Name
         LIBaseShip.Instance?.Renames.Add((SystemTypes)0, "Default Room");
     }
 

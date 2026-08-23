@@ -1,9 +1,10 @@
 using System;
 using System.Collections.Generic;
+using LevelImposter.Build;
+using LevelImposter.Build.Attributes;
 using LevelImposter.Builders.Generic;
 using LevelImposter.Builders.Minimap;
 using LevelImposter.Builders.Util;
-using LevelImposter.Core.Components;
 using LevelImposter.Core.Models;
 using LevelImposter.Core.Utils;
 using LevelImposter.DB;
@@ -12,40 +13,55 @@ using Object = UnityEngine.Object;
 
 namespace LevelImposter.Builders.Sab;
 
-public class SabMapBuilder : IElemBuilder
+internal static class SabMapBuilder
 {
     private static readonly Dictionary<SystemTypes, MapRoom> MapRoomDB = new();
-    private Material? _btnMat;
+    private static Material? _btnMat;
 
-    private Sprite? _commsBtnSprite;
-    private Sprite? _doorsBtnSprite;
-    private bool _hasSabButtons;
+    private static Sprite? _commsBtnSprite;
+    private static Sprite? _doorsBtnSprite;
+    private static bool _hasSabButtons;
 
-    private bool _hasSabConsoles;
-    private Sprite? _lightsBtnSprite;
-    private Sprite? _mixupBtnSprite;
-    private Sprite? _oxygenBtnSprite;
-    private Sprite? _reactorBtnSprite;
+    private static bool _hasSabConsoles;
+    private static Sprite? _lightsBtnSprite;
+    private static Sprite? _mixupBtnSprite;
+    private static Sprite? _oxygenBtnSprite;
+    private static Sprite? _reactorBtnSprite;
 
-    public void OnPreBuild()
+    [MapBuilder(Priority = Priority.FIRST)]
+    public static void Reset()
     {
         MapRoomDB.Clear();
     }
 
-    public void OnBuild(LIElement elem, GameObject obj)
+    [MapBuilder(Priority = Priority.LAST)]
+    public static void CleanupInfectedOverlay()
     {
-        if (!elem.type.StartsWith("sab-") || elem.type.StartsWith("sab-door"))
-            return;
+        // TODO: Re-implement sabotage button check
+        // if (_hasSabConsoles && !_hasSabButtons)
+        //     LILogger.Warn("Map does not include sabotage buttons");
 
-        // ShipStatus
-        var shipStatus = LIShipStatus.GetShip();
+        var mapBehaviour = MinimapBuilder.GetMinimap();
+        var infectedOverlay = mapBehaviour.infectedOverlay;
 
-        _hasSabConsoles = true;
+        while (infectedOverlay.transform.childCount > MapRoomDB.Count + MinimapSpriteBuilder.SabCount)
+            Object.DestroyImmediate(infectedOverlay.transform.GetChild(0).gameObject);
+    }
 
-        if (!elem.type.StartsWith("sab-btn"))
-            return;
-        _hasSabButtons = true;
-
+    [ElementBuilder(
+        Target = MapTarget.Game,
+        ElementTypes =
+        [
+            "sab-btnreactor",
+            "sab-btnoxygen",
+            "sab-btnlights",
+            "sab-btncomms",
+            "sab-btndoors",
+            "sab-btnmixup"
+        ])
+    ]
+    public static void Build(ShipStatus shipStatus, LIElement elem, GameObject obj)
+    {
         // Assets
         var mapBehaviour = MinimapBuilder.GetMinimap();
         var infectedOverlay = mapBehaviour.infectedOverlay;
@@ -167,22 +183,10 @@ public class SabMapBuilder : IElemBuilder
         };
     }
 
-    public void OnPostBuild()
-    {
-        if (_hasSabConsoles && !_hasSabButtons)
-            LILogger.Warn("Map does not include sabotage buttons");
-
-        var mapBehaviour = MinimapBuilder.GetMinimap();
-        var infectedOverlay = mapBehaviour.infectedOverlay;
-
-        while (infectedOverlay.transform.childCount > MapRoomDB.Count + MinimapSpriteBuilder.SabCount)
-            Object.DestroyImmediate(infectedOverlay.transform.GetChild(0).gameObject);
-    }
-
     /// <summary>
     ///     Collects all necessary sprites and assets for map
     /// </summary>
-    private void GetAllAssets()
+    private static void GetAllAssets()
     {
         // TODO: Move Assets to a SubDB
 

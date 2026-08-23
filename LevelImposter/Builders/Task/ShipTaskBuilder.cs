@@ -12,7 +12,7 @@ using Object = UnityEngine.Object;
 
 namespace LevelImposter.Builders.Task;
 
-public class ShipTaskBuilder : IElemBuilder
+public class ShipTaskBuilder
 {
     private static readonly Dictionary<string, TaskLength> TaskLengths = new()
     {
@@ -22,36 +22,12 @@ public class ShipTaskBuilder : IElemBuilder
     };
 
     private readonly List<string> _builtTypes = [];
-    private NormalPlayerTask? _wiresTask;
 
     public static SystemTypes[] DivertSystems { get; private set; } = Array.Empty<SystemTypes>();
 
-    public void OnPreBuild()
+    public void BuildTask(LIBaseShip baseShip, LIElement elem, Console console)
     {
-        _builtTypes.Clear();
-        _wiresTask = null;
-        DivertSystems = Array.Empty<SystemTypes>();
-    }
-
-    /// <summary>
-    ///     Performs final clean-up
-    /// </summary>
-    public void OnPostBuild()
-    {
-        if (_wiresTask != null)
-            _wiresTask.MaxStep = Math.Min(TaskConsoleBuilder.WiresCount, (byte)3);
-    }
-
-    /// <summary>
-    ///     Builds a NormalPlayerTask from a LIElement
-    ///     and Console then adds it to ShipStatus
-    /// </summary>
-    /// <param name="elem">LIElement representing the task</param>
-    /// <param name="console">Console the task is from</param>
-    /// <exception cref="Exception"></exception>
-    public void Build(LIElement elem, Console console)
-    {
-        var prefabContainer = LIShipStatus.GetInstance().Prefabs.Container;
+        var prefabContainer = baseShip.Prefabs.Container;
 
         // Values
         var hasTask = PrefabDB.HasTask(elem.type);
@@ -187,8 +163,9 @@ public class ShipTaskBuilder : IElemBuilder
                     downloadTask.EndAt = RoomBuilder.GetParentOrDefault(uploadTargets[0]);
             }
 
-            if (isWires)
-                _wiresTask = task;
+            // TODO: FIX ME
+            // if (isWires)
+            //     _wiresTask = task;
 
             AddTaskToShip(elem, prefabLength, task);
         }

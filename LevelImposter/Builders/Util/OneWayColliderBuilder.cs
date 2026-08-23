@@ -1,29 +1,28 @@
+using LevelImposter.Build.Attributes;
 using LevelImposter.Core.Models;
 using LevelImposter.Core.Utils;
 using UnityEngine;
 
 namespace LevelImposter.Builders.Util;
 
-internal class OneWayColliderBuilder : IElemBuilder
+internal static class OneWayColliderBuilder
 {
-    public void OnBuild(LIElement elem, GameObject obj)
+    [ElementBuilder(ElementTypes = ["util-onewaycollider"])]
+    public static void Build(LIElement element, GameObject gameObject)
     {
-        if (elem.type != "util-onewaycollider")
-            return;
-
         // Room Component
-        var systemType = RoomBuilder.GetParentOrDefault(elem);
+        var systemType = RoomBuilder.GetParentOrDefault(element);
         var shipRoom = RoomBuilder.GetShipRoom(systemType);
         if (shipRoom == null)
         {
-            LILogger.Warn($"{elem.name} has no room attatched.");
+            LILogger.Warn($"{element.name} has no room attached.");
             return;
         }
 
         // Iterate through shadow children
-        for (var i = 0; i < obj.transform.childCount; i++)
+        for (var i = 0; i < gameObject.transform.childCount; i++)
         {
-            var child = obj.transform.GetChild(i);
+            var child = gameObject.transform.GetChild(i);
             var isShadow = child.gameObject.layer == (int)Layer.Shadow;
 
             // Add Component to Shadows
@@ -32,7 +31,7 @@ internal class OneWayColliderBuilder : IElemBuilder
 
             var shadowComponent = child.gameObject.AddComponent<OneWayShadows>();
             shadowComponent.RoomCollider = shipRoom.roomArea;
-            shadowComponent.IgnoreImpostor = elem.properties.isImposterIgnored ?? false;
+            shadowComponent.IgnoreImpostor = element.properties.isImposterIgnored ?? false;
         }
     }
 }

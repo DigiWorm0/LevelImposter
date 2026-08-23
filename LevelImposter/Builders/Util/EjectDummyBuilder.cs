@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using LevelImposter.Build;
+using LevelImposter.Build.Attributes;
 using LevelImposter.Builders.Generic;
 using LevelImposter.Core.Models;
 using LevelImposter.Core.Utils;
@@ -9,7 +11,7 @@ using Object = UnityEngine.Object;
 
 namespace LevelImposter.Builders.Util;
 
-public class EjectDummyBuilder : IElemBuilder
+internal static class EjectDummyBuilder
 {
     public enum PlayerDummyType
     {
@@ -19,16 +21,15 @@ public class EjectDummyBuilder : IElemBuilder
 
     public static List<PlayerDummy> PlayerDummies { get; } = [];
 
-    public void OnPreBuild()
+    [MapBuilder(Priority = Priority.FIRST)]
+    public static void Reset()
     {
         PlayerDummies.Clear();
     }
 
-    public void OnBuild(LIElement elem, GameObject obj)
+    [ElementBuilder(ElementTypes = ["util-ejectdummy", "util-ejectdummy2"])]
+    public static void Build(LIElement elem, GameObject obj)
     {
-        if (!elem.type.StartsWith("util-ejectdummy"))
-            return;
-
         // Get Type
         var type = elem.type switch
         {

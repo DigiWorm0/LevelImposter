@@ -1,5 +1,6 @@
 using System;
 using LevelImposter.AssetLoader;
+using LevelImposter.Build.Attributes;
 using LevelImposter.Core.Components;
 using LevelImposter.Core.Models;
 using LevelImposter.Core.Utils;
@@ -7,54 +8,47 @@ using UnityEngine;
 
 namespace LevelImposter.Builders.Util;
 
-internal class AmbientSoundBuilder(bool isLobby = false) : IElemBuilder
+internal static class AmbientSoundBuilder
 {
     private const string AMBIENT_SOUND_TYPE = "util-sound1";
     private const string TRIGGER_SOUND_TYPE = "util-triggersound";
 
-    public void OnBuild(LIElement elem, GameObject obj)
+    [ElementBuilder(ElementTypes = [AMBIENT_SOUND_TYPE, TRIGGER_SOUND_TYPE])]
+    public static void Build(LIMap map, LIElement element, GameObject gameObject)
     {
-        var isAmbient = elem.type == AMBIENT_SOUND_TYPE;
-        var isTrigger = elem.type == TRIGGER_SOUND_TYPE;
-        if (!isAmbient && !isTrigger)
-            return;
+        var isAmbient = element.type == AMBIENT_SOUND_TYPE;
+        var isTrigger = element.type == TRIGGER_SOUND_TYPE;
 
         // Colliders
-        Collider2D[] colliders = obj.GetComponentsInChildren<Collider2D>();
+        Collider2D[] colliders = gameObject.GetComponentsInChildren<Collider2D>();
         foreach (var collider in colliders)
             collider.isTrigger = true;
 
         // AudioClip
-        if (elem.properties.sounds == null)
+        if (element.properties.sounds == null)
         {
-            LILogger.Warn($"{elem.name} missing audio listing");
+            LILogger.Warn($"{element.name} missing audio listing");
             return;
         }
 
-        if (elem.properties.sounds.Length <= 0)
+        if (element.properties.sounds.Length <= 0)
         {
-            LILogger.Warn($"{elem.name} missing audio elements");
+            LILogger.Warn($"{element.name} missing audio elements");
             return;
         }
 
-        // Sound Data
-        if (elem.properties.sounds.Length == 0)
-        {
-            LILogger.Warn($"{elem.name} missing audio data");
-            return;
-        }
-
-        var soundData = elem.properties.sounds[0];
+        var soundData = element.properties.sounds[0];
         if (soundData.dataID == null)
         {
-            LILogger.Warn($"{elem.name} missing audio data ID");
+            LILogger.Warn($"{element.name} missing audio data ID");
             return;
         }
 
         // Sound Player
+        var isLobby = map.mapTarget == MapTarget.Lobby;
         if (isAmbient)
         {
-            var ambientPlayer = obj.AddComponent<AmbientSoundPlayer>();
+            var ambientPlayer = gameObject.AddComponent<AmbientSoundPlayer>();
             ambientPlayer.HitAreas = colliders;
             ambientPlayer.MaxVolume = soundData?.volume ?? 1f;
 
@@ -66,7 +60,7 @@ internal class AmbientSoundBuilder(bool isLobby = false) : IElemBuilder
         }
         else if (isTrigger)
         {
-            var triggerPlayer = obj.AddComponent<TriggerSoundPlayer>();
+            var triggerPlayer = gameObject.AddComponent<TriggerSoundPlayer>();
             triggerPlayer.Init(soundData, colliders, isLobby);
         }
     }

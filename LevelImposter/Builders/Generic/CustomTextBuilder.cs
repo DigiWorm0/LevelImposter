@@ -1,17 +1,17 @@
 ﻿using System.Collections.Generic;
+using LevelImposter.Build.Attributes;
 using LevelImposter.Core.Components;
 using LevelImposter.Core.Models;
 using LevelImposter.Core.Utils;
-using UnityEngine;
 
 namespace LevelImposter.Builders.Generic;
 
 /// <summary>
 ///     Replaces String in the Translation Controller with Custom Text
 /// </summary>
-public class CustomTextBuilder : IElemBuilder
+internal static class CustomTextBuilder
 {
-    private readonly Dictionary<string, StringNames> _customTextDB = new()
+    private static readonly Dictionary<string, StringNames> CustomTextDB = new()
     {
         { "MedHello", StringNames.MedHello },
         { "SamplesPress", StringNames.SamplesPress },
@@ -72,10 +72,11 @@ public class CustomTextBuilder : IElemBuilder
         { "PickAnomaly", StringNames.PickAnomaly }
     };
 
-    public void OnBuild(LIElement elem, GameObject obj)
+    [ElementBuilder]
+    public static void AddCustomText(LIElement element)
     {
         // Get Custom Text
-        var customText = elem.properties.customText;
+        var customText = element.properties.customText;
         if (customText == null || customText.Count <= 0)
             return;
 
@@ -87,7 +88,7 @@ public class CustomTextBuilder : IElemBuilder
                 continue;
 
             // Find String Name
-            var hasTextID = _customTextDB.TryGetValue(textID, out var stringName);
+            var hasTextID = CustomTextDB.TryGetValue(textID, out var stringName);
             if (!hasTextID)
             {
                 LILogger.Warn($"Unknown custom text '{textID}'");

@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using LevelImposter.Build;
+using LevelImposter.Build.Attributes;
 using LevelImposter.Core.Models;
 using LevelImposter.Core.Utils;
 using LevelImposter.Lobby.Components;
@@ -8,33 +10,35 @@ using UnityEngine;
 
 namespace LevelImposter.Builders.Lobby;
 
-public class LobbySpawnBuilder : IElemBuilder
+internal static class LobbySpawnBuilder
 {
-    public static readonly List<LobbySpawnPoint> SpawnPositions = [];
+    private static readonly List<LobbySpawnPoint> SpawnPositions = [];
 
-    public void OnPreBuild()
+    [MapBuilder(Priority = Priority.FIRST)]
+    public static void Reset()
     {
         SpawnPositions.Clear();
     }
 
-    public void OnBuild(LIElement elem, GameObject obj)
+    [ElementBuilder(
+        Target = MapTarget.Lobby,
+        ElementTypes = ["util-lobbyspawn"]
+    )]
+    public static void Build(LobbyBehaviour lobbyBehaviour, GameObject gameObject)
     {
-        if (elem.type != "util-lobbyspawn")
-            return;
-
         // Add to local list
         SpawnPositions.Add(new LobbySpawnPoint
         {
-            IsFlipped = obj.transform.localScale.x < 0,
-            Position = obj.transform.position
+            IsFlipped = gameObject.transform.localScale.x < 0,
+            Position = gameObject.transform.position
         });
 
         // Add to Lobby Behavior list
-        var lobbyBehaviour = LILobbyBehaviour.GetLobbyBehaviour();
-        lobbyBehaviour.SpawnPositions = lobbyBehaviour.SpawnPositions.Add(obj.transform.position);
+        lobbyBehaviour.SpawnPositions = lobbyBehaviour.SpawnPositions.Add(gameObject.transform.position);
     }
 
-    public void OnPostBuild()
+    [MapBuilder(Priority = Priority.LAST)]
+    public static void OnPostBuild()
     {
         // Check if no spawn positions were added
         var lobbyBehaviour = LILobbyBehaviour.GetLobbyBehaviour();

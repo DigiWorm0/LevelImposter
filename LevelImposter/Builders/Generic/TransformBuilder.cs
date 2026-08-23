@@ -1,4 +1,6 @@
-﻿using LevelImposter.Core.Models;
+﻿using LevelImposter.Build;
+using LevelImposter.Build.Attributes;
+using LevelImposter.Core.Models;
 using LevelImposter.Core.Utils;
 using UnityEngine;
 
@@ -7,21 +9,20 @@ namespace LevelImposter.Builders.Generic;
 /// <summary>
 ///     Configures the Transform on the GameObject
 /// </summary>
-public class TransformBuilder : IElemBuilder
+public static class TransformBuilder
 {
-    public int Priority => IElemBuilder.HIGH_PRIORITY; // <-- Run before other builders that may need transforms
-
-    public void OnBuild(LIElement elem, GameObject obj)
+    [ElementBuilder(Priority = Priority.FIRST)]
+    public static void ApplyObjectTransform(LIElement element, GameObject gameObject)
     {
-        obj.layer = (int)Layer.Ship;
-        obj.transform.localPosition = new Vector3(elem.x, elem.y, elem.z);
-        obj.transform.localRotation = Quaternion.Euler(0, 0, elem.rotation);
-        obj.transform.localScale = new Vector3(elem.xScale, elem.yScale, 1.0f);
+        gameObject.layer = (int)Layer.Ship;
+        gameObject.transform.localPosition = new Vector3(element.x, element.y, element.z);
+        gameObject.transform.localRotation = Quaternion.Euler(0, 0, element.rotation);
+        gameObject.transform.localScale = new Vector3(element.xScale, element.yScale, 1.0f);
 
         // Scale Z position by Y if not a util-layer
         // Layers will mess up the Z position
-        obj.transform.position = elem.type != "util-layer"
-            ? obj.transform.position.ScaleZPositionByY()
-            : new Vector3(obj.transform.position.x, obj.transform.position.y, 0.0f);
+        gameObject.transform.position = element.type != "util-layer"
+            ? gameObject.transform.position.ScaleZPositionByY()
+            : new Vector3(gameObject.transform.position.x, gameObject.transform.position.y, 0.0f);
     }
 }

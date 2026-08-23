@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using LevelImposter.Build.Attributes;
 using LevelImposter.Builders.Util;
 using LevelImposter.Core.Components;
 using LevelImposter.Core.Models;
@@ -9,7 +10,7 @@ using UnityEngine.Events;
 
 namespace LevelImposter.Builders.Sab;
 
-public class SabConsoleBuilder : IElemBuilder
+internal static class SabConsoleBuilder
 {
     private static readonly Dictionary<string, int> ConsoleIDPairs = new()
     {
@@ -21,11 +22,20 @@ public class SabConsoleBuilder : IElemBuilder
         { "sab-comms", 0 }
     };
 
-    public void OnBuild(LIElement elem, GameObject obj)
+    [ElementBuilder(
+        Target = MapTarget.Game,
+        ElementTypes =
+        [
+            "sab-reactorleft",
+            "sab-reactorright",
+            "sab-oxygen1",
+            "sab-oxygen2",
+            "sab-electric",
+            "sab-comms"
+        ])
+    ]
+    public static void Build(LIElement elem, GameObject obj)
     {
-        if (!elem.type.StartsWith("sab-") || elem.type.StartsWith("sab-btn") || elem.type.StartsWith("sab-door"))
-            return;
-
         // Prefab
         var prefab = PrefabDB.GetObject(elem.type);
         if (prefab == null)

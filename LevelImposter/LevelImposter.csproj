@@ -44,6 +44,10 @@
         <None Include="..\.editorconfig" Link=".editorconfig"/>
     </ItemGroup>
 
+    <ItemGroup>
+        <Folder Include="Build\"/>
+    </ItemGroup>
+
     <PropertyGroup Condition="'$(Configuration)' == 'Profiling'">
         <DefineConstants>$(DefineConstants);PROFILING</DefineConstants>
     </PropertyGroup>

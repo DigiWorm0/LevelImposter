@@ -1,4 +1,6 @@
 ﻿using Il2CppSystem.Collections.Generic;
+using LevelImposter.Build;
+using LevelImposter.Build.Attributes;
 using LevelImposter.Core.Models;
 using LevelImposter.Core.Utils;
 using LevelImposter.DB;
@@ -7,35 +9,37 @@ using UnityEngine;
 
 namespace LevelImposter.Builders.Util;
 
-public class SporeBuilder : IElemBuilder
+internal static class SporeBuilder
 {
     public static List<Mushroom> Mushrooms { get; } = new();
 
-    public void OnPreBuild()
+    [MapBuilder(Priority = Priority.FIRST)]
+    public static void Reset()
     {
         Mushrooms.Clear();
     }
 
-    public void OnBuild(LIElement elem, GameObject obj)
+    [ElementBuilder(
+        Target = MapTarget.Game,
+        ElementTypes = ["util-spore"]
+    )]
+    public static void Build(LIElement element, GameObject gameObject)
     {
-        if (elem.type != "util-spore")
-            return;
-
         // Prefab
-        var prefab = PrefabDB.GetObject(elem.type);
+        var prefab = PrefabDB.GetObject(element.type);
         if (prefab == null)
             return;
         var prefabSpore = prefab.GetComponent<Mushroom>();
 
         // Sprite
-        var spriteRenderer = obj.CloneSprite(prefab, true);
-        obj.layer = (int)Layer.Ship;
+        var spriteRenderer = gameObject.CloneSprite(prefab, true);
+        gameObject.layer = (int)Layer.Ship;
 
         // Screen Mask
-        var sporeRange = (elem.properties.sporeRange ?? 3.7f) * 0.65f;
+        var sporeRange = (element.properties.sporeRange ?? 3.7f) * 0.65f;
         var screenMaskPrefab = prefab.transform.FindChild("SporeScreenMask").gameObject;
         var screenMaskObj = new GameObject("ScreenMask");
-        screenMaskObj.transform.parent = obj.transform;
+        screenMaskObj.transform.parent = gameObject.transform;
         screenMaskObj.transform.localPosition = Vector3.zero;
         screenMaskObj.transform.position = new Vector3(
             screenMaskObj.transform.position.x,
@@ -48,7 +52,7 @@ public class SporeBuilder : IElemBuilder
         // Screen Graphic
         var screenGraphicPrefab = prefab.transform.FindChild("SporeScreenGraphic").gameObject;
         var screenGraphicObj = new GameObject("ScreenGraphic");
-        screenGraphicObj.transform.parent = obj.transform;
+        screenGraphicObj.transform.parent = gameObject.transform;
         screenGraphicObj.transform.localPosition = Vector3.zero;
         screenGraphicObj.transform.position = new Vector3(
             screenGraphicObj.transform.position.x,
@@ -59,13 +63,13 @@ public class SporeBuilder : IElemBuilder
         var screenGraphicRenderer = screenGraphicObj.CloneSprite(screenGraphicPrefab, true);
 
         // Sprite Anim
-        var spriteAnim = obj.GetComponent<SpriteAnim>();
+        var spriteAnim = gameObject.GetComponent<SpriteAnim>();
         if (spriteAnim == null)
         {
             // Using a custom sprite
             // Create a dummy animator to prevent null reference exceptions
             var dummyAnimObj = new GameObject("DummyAnim");
-            dummyAnimObj.transform.parent = obj.transform;
+            dummyAnimObj.transform.parent = gameObject.transform;
             dummyAnimObj.transform.localPosition = Vector3.zero;
             dummyAnimObj.transform.localScale = Vector3.one;
             dummyAnimObj.transform.rotation = Quaternion.identity;
@@ -83,16 +87,16 @@ public class SporeBuilder : IElemBuilder
         }
 
         // Set Color
-        screenGraphicRenderer.color = elem.properties.gasColor?.ToUnity() ??
+        screenGraphicRenderer.color = element.properties.gasColor?.ToUnity() ??
                                       screenGraphicPrefab.GetComponent<SpriteRenderer>().color;
 
         // Collider
-        var collider = obj.AddComponent<CircleCollider2D>();
-        collider.radius = elem.properties.range ?? 0.25f;
+        var collider = gameObject.AddComponent<CircleCollider2D>();
+        collider.radius = element.properties.range ?? 0.25f;
         collider.isTrigger = true;
 
         // Mushroom
-        var mushroom = obj.AddComponent<Mushroom>();
+        var mushroom = gameObject.AddComponent<Mushroom>();
         mushroom.id = Mushrooms.Count;
         mushroom.mushroomCollider = collider;
         mushroom.mushroom = spriteRenderer;
@@ -109,8 +113,8 @@ public class SporeBuilder : IElemBuilder
         mushroom.sporeCloudDisappear = prefabSpore.sporeCloudDisappear;
         mushroom.spawnSound = prefabSpore.spawnSound;
         mushroom.activateSporeSound = prefabSpore.activateSporeSound;
-        mushroom.secondsBetweenSporeReleases = elem.properties.sporeCooldown ?? 17.0f;
-        mushroom.secondsSporeIsActive = elem.properties.sporeDuration ?? 5.0f;
+        mushroom.secondsBetweenSporeReleases = element.properties.sporeCooldown ?? 17.0f;
+        mushroom.secondsSporeIsActive = element.properties.sporeDuration ?? 5.0f;
 
 
         mushroom.Awake(); // Fire again to fix animation states

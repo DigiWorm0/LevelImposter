@@ -1,5 +1,7 @@
 ﻿using System.Linq;
 using Il2CppSystem.Collections.Generic;
+using LevelImposter.Build;
+using LevelImposter.Build.Attributes;
 using LevelImposter.Core.Models;
 using UnityEngine;
 
@@ -8,28 +10,29 @@ namespace LevelImposter.Builders.Generic;
 /// <summary>
 ///     Configures the Collider2D on the GameObject
 /// </summary>
-public class ColliderBuilder : IElemBuilder
+internal static class ColliderBuilder
 {
     private static readonly string[] ShadowOnlyTypes =
     [
         "util-onewaycollider"
     ];
 
-    public int Priority => IElemBuilder.HIGH_PRIORITY; // <-- Run before other builders that may need colliders
-
-    public void OnBuild(LIElement elem, GameObject obj)
+    [ElementBuilder(Priority = Priority.FIRST)]
+    public static void BuildColliders(
+        LIElement element,
+        GameObject gameObject)
     {
-        if (elem.properties.colliders == null)
+        if (element.properties.colliders == null)
             return;
 
         // Iterate through colliders
-        foreach (var colliderData in elem.properties.colliders)
+        foreach (var colliderData in element.properties.colliders)
         {
             // Shadow Object
             if (colliderData.blocksLight)
             {
                 GameObject shadowObj = new("Shadow " + colliderData.id);
-                shadowObj.transform.SetParent(obj.transform);
+                shadowObj.transform.SetParent(gameObject.transform);
                 shadowObj.transform.localPosition = Vector3.zero;
                 shadowObj.transform.localRotation = Quaternion.Euler(Vector3.zero);
                 shadowObj.transform.localScale = Vector3.one;
@@ -40,27 +43,27 @@ public class ColliderBuilder : IElemBuilder
             }
 
             // Shadow Only
-            if (ShadowOnlyTypes.Contains(elem.type))
+            if (ShadowOnlyTypes.Contains(element.type))
                 continue;
 
             // PolygonCollider2D
             if (colliderData.isSolid)
             {
-                var collider = obj.AddComponent<PolygonCollider2D>();
+                var collider = gameObject.AddComponent<PolygonCollider2D>();
                 collider.pathCount = 1;
                 collider.SetPath(0, GetPoints(colliderData));
             }
             // EdgeCollider2D
             else
             {
-                var collider = obj.AddComponent<EdgeCollider2D>();
+                var collider = gameObject.AddComponent<EdgeCollider2D>();
                 collider.SetPoints(GetPoints(colliderData));
                 collider.edgeRadius = 0.05f; // <-- Matches default in-game edge radius
             }
         }
     }
 
-    private List<Vector2> GetPoints(LICollider collider, bool wrap = false)
+    private static List<Vector2> GetPoints(LICollider collider, bool wrap = false)
     {
         var list = new List<Vector2>(collider.points.Length);
         foreach (var point in collider.points)

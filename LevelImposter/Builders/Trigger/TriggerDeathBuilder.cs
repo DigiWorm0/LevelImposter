@@ -1,23 +1,22 @@
-﻿using LevelImposter.Core.Components;
+﻿using LevelImposter.Build.Attributes;
+using LevelImposter.Core.Components;
 using LevelImposter.Core.Models;
 using UnityEngine;
 
 namespace LevelImposter.Builders.Trigger;
 
-public class TriggerDeathBuilder : IElemBuilder
+public static class TriggerDeathBuilder
 {
-    public void OnBuild(LIElement elem, GameObject obj)
+    [ElementBuilder(ElementTypes = ["util-triggerdeath"])]
+    public static void Build(LIElement element, GameObject gameObject)
     {
-        if (elem.type != "util-triggerdeath")
-            return;
-
         // Colliders
-        Collider2D[] colliders = obj.GetComponentsInChildren<Collider2D>();
+        Collider2D[] colliders = gameObject.GetComponentsInChildren<Collider2D>();
         foreach (var collider in colliders)
             collider.isTrigger = true;
 
         // Trigger Area
-        var deathArea = obj.AddComponent<LIDeathArea>();
-        deathArea.SetCreateDeadBody(elem.properties.createDeadBody ?? true);
+        var deathArea = gameObject.AddComponent<LIDeathArea>();
+        deathArea.SetCreateDeadBody(element.properties.createDeadBody ?? true);
     }
 }

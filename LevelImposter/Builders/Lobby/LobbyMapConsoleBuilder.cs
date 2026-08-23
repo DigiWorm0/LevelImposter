@@ -1,4 +1,5 @@
 ﻿using System;
+using LevelImposter.Build.Attributes;
 using LevelImposter.Core.Models;
 using LevelImposter.Core.Utils;
 using LevelImposter.Lobby.Builders;
@@ -8,22 +9,18 @@ using UnityEngine.Events;
 
 namespace LevelImposter.Builders.Lobby;
 
-public class LobbyMapConsoleBuilder : IElemBuilder
+internal class LobbyMapConsoleBuilder
 {
     private static Sprite? _defaultConsoleSprite;
-
-    public void OnBuild(LIElement elem, GameObject gameObject)
-    {
-        if (elem.type != "util-lobbymaps")
-            return;
-
-        Build(gameObject);
-    }
 
     /// <summary>
     ///     Builds a Lobby Map Console at the specified GameObject or creates a new one if null
     /// </summary>
     /// <param name="gameObject">The GameObject to build the console on, or null to create a new one</param>
+    [ElementBuilder(
+        Target = MapTarget.Lobby,
+        ElementTypes = ["util-lobbymaps"]
+    )]
     public static void Build(GameObject? gameObject = null)
     {
         var isDefaultObject = gameObject == null;

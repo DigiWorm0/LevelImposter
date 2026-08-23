@@ -1,6 +1,8 @@
 using LevelImposter.AssetLoader;
 using LevelImposter.AssetLoader.Loadables;
 using LevelImposter.AssetLoader.Loaders;
+using LevelImposter.Build;
+using LevelImposter.Build.Attributes;
 using LevelImposter.Builders.Generic;
 using LevelImposter.Core.Components;
 using LevelImposter.Core.Models;
@@ -10,23 +12,22 @@ using Object = UnityEngine.Object;
 
 namespace LevelImposter.Builders.Util;
 
-internal class MeetingOptionsBuilder : IElemBuilder
+internal static class MeetingOptionsBuilder
 {
     private const string REPORT_SOUND_NAME = "meetingReportStinger";
     private const string BUTTON_SOUND_NAME = "meetingButtonStinger";
 
     public static GameObject? TriggerObject { get; private set; }
 
-    public void OnPreBuild()
+    [MapBuilder(Priority = Priority.LAST)]
+    public static void Reset()
     {
         TriggerObject = null;
     }
 
-    public void OnBuild(LIElement elem, GameObject obj)
+    [ElementBuilder(ElementTypes = ["util-meeting"])]
+    public static void Build(LIMap map, LIElement element, GameObject gameObject)
     {
-        if (elem.type != "util-meeting")
-            return;
-
         // ShipStatus
         var shipStatus = LIShipStatus.GetShip();
         var prefabContainer = LIShipStatus.GetInstance().Prefabs.Container;
@@ -38,13 +39,12 @@ internal class MeetingOptionsBuilder : IElemBuilder
             return;
         }
 
-        TriggerObject = obj;
+        TriggerObject = gameObject;
 
         // Meeting Background
-        if (elem.properties.meetingBackgroundID != null)
+        if (element.properties.meetingBackgroundID != null)
         {
-            var spriteBuilder = new SpriteBuilder();
-            var loadable = spriteBuilder.GetLoadableFromID(elem.properties.meetingBackgroundID);
+            var loadable = SpriteBuilder.GetLoadableFromID(element.properties.meetingBackgroundID, map);
             if (loadable != null)
                 SpriteLoader.Instance.AddToQueue(
                     (SpriteInfo)loadable,
@@ -55,7 +55,7 @@ internal class MeetingOptionsBuilder : IElemBuilder
         var meetingOverlay = Object.Instantiate(shipStatus.EmergencyOverlay, prefabContainer);
         shipStatus.EmergencyOverlay = meetingOverlay;
 
-        var buttonSound = elem.properties.sounds.FindSound(BUTTON_SOUND_NAME);
+        var buttonSound = element.properties.sounds.FindSound(BUTTON_SOUND_NAME);
         if (buttonSound != null)
         {
             meetingOverlay.Stinger = WAVLoader.Load(buttonSound) ?? meetingOverlay.Stinger;
@@ -66,7 +66,7 @@ internal class MeetingOptionsBuilder : IElemBuilder
         var reportOverlay = Object.Instantiate(shipStatus.ReportOverlay, prefabContainer);
         shipStatus.ReportOverlay = reportOverlay;
 
-        var reportSound = elem.properties.sounds.FindSound(REPORT_SOUND_NAME);
+        var reportSound = element.properties.sounds.FindSound(REPORT_SOUND_NAME);
         if (reportSound != null)
         {
             reportOverlay.Stinger = WAVLoader.Load(reportSound) ?? reportOverlay.Stinger;

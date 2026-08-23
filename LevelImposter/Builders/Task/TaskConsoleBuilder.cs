@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace LevelImposter.Builders.Task;
 
-public class TaskConsoleBuilder : IElemBuilder
+internal class TaskConsoleBuilder
 {
     private static readonly Dictionary<string, int> ConsoleIDPairs = new()
     {
@@ -46,9 +46,9 @@ public class TaskConsoleBuilder : IElemBuilder
         { "task-hoist", 0 }
     };
 
-    private readonly Dictionary<string, int> _consoleIDIncrements = new(ConsoleIDIncrements);
+    private static readonly Dictionary<string, int> _consoleIDIncrements = new(ConsoleIDIncrements);
 
-    private int _consoleID;
+    private static int _consoleID;
 
     public static byte BreakerCount { get; private set; }
     public static byte ToiletCount { get; private set; }
@@ -60,7 +60,7 @@ public class TaskConsoleBuilder : IElemBuilder
     public static byte WiresCount { get; private set; }
     public static byte? TowelPickupCount { get; private set; }
 
-    public void OnPreBuild()
+    public void Reset()
     {
         _consoleIDIncrements.Clear();
         foreach (var pair in ConsoleIDIncrements)
@@ -162,7 +162,7 @@ public class TaskConsoleBuilder : IElemBuilder
     /// </summary>
     /// <param name="type">LIElement Type</param>
     /// <returns>int representing the Console ID to apply</returns>
-    private int GetConsoleID(string type)
+    private static int GetConsoleID(string type)
     {
         var isTowels = type.StartsWith("task-towels");
 

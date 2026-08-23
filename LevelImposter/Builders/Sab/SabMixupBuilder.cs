@@ -1,3 +1,5 @@
+using LevelImposter.Build;
+using LevelImposter.Build.Attributes;
 using LevelImposter.Core.Components;
 using LevelImposter.Core.Models;
 using LevelImposter.Core.Utils;
@@ -6,22 +8,24 @@ using UnityEngine;
 
 namespace LevelImposter.Builders.Sab;
 
-public class SabMixupBuilder : IElemBuilder
+internal static class SabMixupBuilder
 {
     private const SystemTypes MIXUP_TYPE = SystemTypes.MushroomMixupSabotage;
 
     public static MushroomMixupSabotageSystem? SabotageSystem { get; private set; }
 
-    public void OnPreBuild()
+    [MapBuilder(Priority = Priority.FIRST)]
+    public static void Reset()
     {
         SabotageSystem = null;
     }
 
-    public void OnBuild(LIElement elem, GameObject obj)
+    [ElementBuilder(
+        Target = MapTarget.Game,
+        ElementTypes = ["sab-btnmixup"]
+    )]
+    public static void Build(ShipStatus shipStatus, LIElement element, GameObject gameObject)
     {
-        if (elem.type != "sab-btnmixup")
-            return;
-
         // Check Already Exists
         if (SabotageSystem != null)
         {
@@ -29,11 +33,11 @@ public class SabMixupBuilder : IElemBuilder
             return;
         }
 
-        // ShipStatus
-        var shipStatus = LIShipStatus.GetShip();
-
         // ShipStatus Prefab
-        var fungleShipStatus = PrefabDB.GetObject("ss-fungle")?.GetComponent<FungleShipStatus>();
+        var fungleShipStatus = PrefabDB
+            .GetObject("ss-fungle")?
+            .GetComponent<FungleShipStatus>();
+
         if (fungleShipStatus == null)
             return;
         var prefabSystem = fungleShipStatus.specialSabotage;
@@ -47,12 +51,12 @@ public class SabMixupBuilder : IElemBuilder
         systemContainer.transform.SetParent(shipStatus.transform);
 
         // Prefab
-        var prefabTask = PrefabDB.GetTask<MushroomMixupSabotageTask>(elem.type);
+        var prefabTask = PrefabDB.GetTask<MushroomMixupSabotageTask>(element.type);
         if (prefabTask == null)
             return;
 
         // Create Task
-        LILogger.Debug($" + Adding sabotage for {elem}...");
+        LILogger.Debug($" + Adding sabotage for {element}...");
         var task = taskContainer.AddComponent<MushroomMixupSabotageTask>();
         {
             // Properties
@@ -61,10 +65,10 @@ public class SabMixupBuilder : IElemBuilder
             task.MinigamePrefab = prefabTask.MinigamePrefab;
 
             // Rename Task
-            if (!string.IsNullOrEmpty(elem.properties.description))
+            if (!string.IsNullOrEmpty(element.properties.description))
                 LIBaseShip.Instance?.Renames.Add(
                     StringNames.MushroomMixupSabotage,
-                    elem.properties.description);
+                    element.properties.description);
 
             // Add Task
             shipStatus.SpecialTasks = shipStatus.SpecialTasks.Add(task);
@@ -108,7 +112,7 @@ public class SabMixupBuilder : IElemBuilder
             SabotageSystem.visorIds = prefabSystem.visorIds;
             SabotageSystem.petEmptyChance = prefabSystem.petEmptyChance;
             SabotageSystem.petIds = prefabSystem.petIds;
-            SabotageSystem.secondsForAutoHeal = elem.properties.sabDuration ?? 10;
+            SabotageSystem.secondsForAutoHeal = element.properties.sabDuration ?? 10;
             SabotageSystem.screenTint = screenTintObj.GetComponent<MushroomMixupScreenTint>();
             SabotageSystem.playerAnimationPrefab = prefabSystem.playerAnimationPrefab;
             SabotageSystem.activateSfx = prefabSystem.activateSfx;

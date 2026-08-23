@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using LevelImposter.Build;
+using LevelImposter.Build.Attributes;
 using LevelImposter.Core.Models;
 using LevelImposter.Core.Utils;
 using LevelImposter.DB;
@@ -7,21 +9,21 @@ using UnityEngine;
 
 namespace LevelImposter.Builders.Util;
 
-public class EjectHandBuilder : IElemBuilder
+internal static class EjectHandBuilder
 {
+    private const string EJECT_HAND_TYPE = "util-ejecthand";
+    private const string EJECT_THUMB_TYPE = "util-ejectthumb";
     public static List<SpriteRenderer> AllHands { get; } = [];
 
-    public void OnPreBuild()
+    [MapBuilder(Priority = Priority.FIRST)]
+    public static void Reset()
     {
         AllHands.Clear();
     }
 
-    public void OnBuild(LIElement elem, GameObject obj)
+    [ElementBuilder(ElementTypes = [EJECT_HAND_TYPE, EJECT_THUMB_TYPE])]
+    public static void OnBuild(LIElement element, GameObject gameObject)
     {
-        if (elem.type != "util-ejecthand" &&
-            elem.type != "util-ejectthumb")
-            return;
-
         // Get Eject Controller Prefab
         var polusPrefab = PrefabDB.GetObject("ss-polus");
         var polusShipStatus = polusPrefab?.GetComponent<ShipStatus>();
@@ -35,16 +37,16 @@ public class EjectHandBuilder : IElemBuilder
             throw new Exception("Failed to get Player Prefab from Skeld's Eject Controller");
 
         // Clone Sprite to Object
-        var hand = obj.CloneSprite(handPrefab?.gameObject);
+        var hand = gameObject.CloneSprite(handPrefab?.gameObject);
 
         // Update Sprite (Thumb or Hand)
-        var isThumb = elem.type == "util-ejectthumb";
+        var isThumb = element.type == EJECT_THUMB_TYPE;
         hand.sprite = isThumb ? polusEjectController?.GoodHand : polusEjectController?.BadHand;
 
         // Add to Hands
         AllHands.Add(hand);
 
         // Hide Object By Default
-        obj.SetActive(false);
+        gameObject.SetActive(false);
     }
 }

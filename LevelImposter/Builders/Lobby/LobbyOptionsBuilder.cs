@@ -1,37 +1,38 @@
 ﻿using LevelImposter.AssetLoader.Loaders;
+using LevelImposter.Build.Attributes;
 using LevelImposter.Core.Models;
 using LevelImposter.Core.Utils;
-using LevelImposter.Lobby.Components;
-using UnityEngine;
 
 namespace LevelImposter.Builders.Lobby;
 
-public class LobbyOptionsBuilder : IElemBuilder
+internal static class LobbyOptionsBuilder
 {
     private const string AMBIENT_SOUND_NAME = "lobbyAmbientNoise";
     private const string AMBIENT_MUSIC_NAME = "lobbyMusic";
     private const string SPAWN_IN_NOISE_NAME = "lobbySpawnInNoise";
 
-    public void OnBuild(LIElement elem, GameObject gameObject)
+    [ElementBuilder(
+        Target = MapTarget.Lobby,
+        ElementTypes = ["util-lobbyoptions"]
+    )]
+    public static void Build(LobbyBehaviour lobbyBehaviour, LIElement element)
     {
-        if (elem.type != "util-lobbyoptions")
+        if (element.type != "util-lobbyoptions")
             return;
 
-        var lobby = LILobbyBehaviour.GetLobbyBehaviour();
-
         // Ambient Sound
-        var ambientSound = elem.properties.sounds.FindSound(AMBIENT_SOUND_NAME);
+        var ambientSound = element.properties.sounds.FindSound(AMBIENT_SOUND_NAME);
         if (ambientSound != null)
-            lobby.DropShipSound = WAVLoader.Load(ambientSound, true) ?? lobby.DropShipSound;
+            lobbyBehaviour.DropShipSound = WAVLoader.Load(ambientSound, true) ?? lobbyBehaviour.DropShipSound;
 
         // Ambient Music
-        var ambientMusic = elem.properties.sounds.FindSound(AMBIENT_MUSIC_NAME);
+        var ambientMusic = element.properties.sounds.FindSound(AMBIENT_MUSIC_NAME);
         if (ambientMusic != null)
-            lobby.MapTheme = WAVLoader.Load(ambientMusic, true) ?? lobby.MapTheme;
+            lobbyBehaviour.MapTheme = WAVLoader.Load(ambientMusic, true) ?? lobbyBehaviour.MapTheme;
 
         // Spawn-In Noise
-        var spawnInNoise = elem.properties.sounds.FindSound(SPAWN_IN_NOISE_NAME);
+        var spawnInNoise = element.properties.sounds.FindSound(SPAWN_IN_NOISE_NAME);
         if (spawnInNoise != null)
-            lobby.SpawnSound = WAVLoader.Load(spawnInNoise, true) ?? lobby.SpawnSound;
+            lobbyBehaviour.SpawnSound = WAVLoader.Load(spawnInNoise, true) ?? lobbyBehaviour.SpawnSound;
     }
 }

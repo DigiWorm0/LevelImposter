@@ -1,31 +1,30 @@
 using LevelImposter.AssetLoader.Loaders;
-using LevelImposter.Core;
-using LevelImposter.Core.Components;
+using LevelImposter.Build;
+using LevelImposter.Build.Attributes;
 using LevelImposter.Core.Models;
 using LevelImposter.Core.Utils;
 using UnityEngine;
 
 namespace LevelImposter.Builders.Util;
 
-internal class SabotageOptionsBuilder : IElemBuilder
+internal static class SabotageOptionsBuilder
 {
     private const string SABOTAGE_SOUND_NAME = "sabotageSound";
 
     public static GameObject? TriggerObject { get; private set; }
 
-    public void OnPreBuild()
+    [MapBuilder(Priority = Priority.FIRST)]
+    public static void Reset()
     {
         TriggerObject = null;
     }
 
-    public void OnBuild(LIElement elem, GameObject obj)
+    [ElementBuilder(
+        Target = MapTarget.Game,
+        ElementTypes = ["util-sabotages"]
+    )]
+    public static void Build(ShipStatus shipStatus, LIElement elem, GameObject obj)
     {
-        if (elem.type != "util-sabotages")
-            return;
-
-        // ShipStatus
-        var shipStatus = LIShipStatus.GetShip();
-
         // Singleton
         if (TriggerObject != null)
         {

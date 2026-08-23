@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using LevelImposter.Build;
+using LevelImposter.Build.Attributes;
 using LevelImposter.Builders.Util;
 using LevelImposter.Core.Components;
 using LevelImposter.Core.Models;
@@ -6,24 +8,26 @@ using UnityEngine;
 
 namespace LevelImposter.Builders.Minimap;
 
-public class AdminMapBuilder : IElemBuilder
+internal static class AdminMapBuilder
 {
     private const float ICON_OFFSET = -0.25f;
 
-    private readonly List<CounterArea> _counterAreaDB = [];
-    private PoolableBehavior? _poolPrefab;
+    private static readonly List<CounterArea> _counterAreaDB = [];
+    private static PoolableBehavior? _poolPrefab;
 
-    public void OnPreBuild()
+    [MapBuilder(Priority = Priority.FIRST)]
+    public static void Reset()
     {
         _counterAreaDB.Clear();
         _poolPrefab = null;
     }
 
-    public void OnBuild(LIElement elem, GameObject obj)
+    [ElementBuilder(
+        Priority = Priority.FIRST,
+        ElementTypes = ["util-room"]
+    )]
+    public static void OnBuild(LIElement elem, GameObject obj)
     {
-        if (elem.type != "util-room")
-            return;
-
         // Check Admin
         var isAdminVisible = elem.properties.isRoomAdminVisible ?? true;
         if (!isAdminVisible)
@@ -62,7 +66,8 @@ public class AdminMapBuilder : IElemBuilder
         mapCountOverlay.CountAreas = _counterAreaDB.ToArray();
     }
 
-    public void OnPostBuild()
+    [MapBuilder(Priority = Priority.LAST)]
+    public static void OnPostBuild()
     {
         var mapBehaviour = MinimapBuilder.GetMinimap();
         var mapCountOverlay = mapBehaviour.countOverlay;

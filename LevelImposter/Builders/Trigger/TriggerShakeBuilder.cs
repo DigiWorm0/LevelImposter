@@ -1,26 +1,25 @@
-﻿using LevelImposter.Core.Components;
+﻿using LevelImposter.Build.Attributes;
+using LevelImposter.Core.Components;
 using LevelImposter.Core.Models;
 using UnityEngine;
 
 namespace LevelImposter.Builders.Trigger;
 
-public class TriggerShakeBuilder : IElemBuilder
+public static class TriggerShakeBuilder
 {
-    public void OnBuild(LIElement elem, GameObject obj)
+    [ElementBuilder(ElementTypes = ["util-triggershake"])]
+    public static void Build(LIElement element, GameObject gameObject)
     {
-        if (elem.type != "util-triggershake")
-            return;
-
         // Colliders
-        Collider2D[] colliders = obj.GetComponentsInChildren<Collider2D>();
+        Collider2D[] colliders = gameObject.GetComponentsInChildren<Collider2D>();
         foreach (var collider in colliders)
             collider.isTrigger = true;
 
         // Trigger Area
-        var shakeArea = obj.AddComponent<LIShakeArea>();
+        var shakeArea = gameObject.AddComponent<LIShakeArea>();
         shakeArea.SetParameters(
-            elem.properties.shakeAmount ?? 0.03f,
-            elem.properties.shakePeriod ?? 400.0f
+            element.properties.shakeAmount ?? 0.03f,
+            element.properties.shakePeriod ?? 400.0f
         );
     }
 }

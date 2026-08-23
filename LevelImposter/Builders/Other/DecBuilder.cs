@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using LevelImposter.Build.Attributes;
 using LevelImposter.Core.GarbageCollection;
 using LevelImposter.Core.Models;
 using LevelImposter.Core.Utils;
@@ -7,27 +8,28 @@ using UnityEngine;
 
 namespace LevelImposter.Builders.Other;
 
-public class DecBuilder : IElemBuilder
+internal static class DecBuilder
 {
     private static readonly List<string> TypesToResetPivot = ["room-dropship"];
 
-    public void OnBuild(LIElement elem, GameObject obj)
+    [ElementBuilder]
+    public static void Build(LIElement element, GameObject gameObject)
     {
-        var isDecoration = elem.type.StartsWith("dec-");
-        var isRoom = elem.type.StartsWith("room-");
+        var isDecoration = element.type.StartsWith("dec-");
+        var isRoom = element.type.StartsWith("room-");
         if (!(isDecoration || isRoom))
             return;
 
         // Prefab
-        var prefab = PrefabDB.GetObject(elem.type);
+        var prefab = PrefabDB.GetObject(element.type);
         if (prefab == null)
             return;
 
         // Sprite
-        var spriteRenderer = obj.CloneSprite(prefab);
+        var spriteRenderer = gameObject.CloneSprite(prefab);
 
         // Fixes Pivot Offset Bug
-        if (TypesToResetPivot.Contains(elem.type))
+        if (TypesToResetPivot.Contains(element.type))
         {
             var sprite = Sprite.Create(
                 spriteRenderer.sprite.texture,
@@ -43,6 +45,6 @@ public class DecBuilder : IElemBuilder
         }
 
         if (isRoom)
-            obj.layer = (int)Layer.Ship;
+            gameObject.layer = (int)Layer.Ship;
     }
 }

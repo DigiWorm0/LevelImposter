@@ -1,10 +1,6 @@
-﻿using Il2CppInterop.Runtime.InteropTypes.Arrays;
+﻿using System.Collections.Generic;
+using Il2CppInterop.Runtime.InteropTypes.Arrays;
 using LevelImposter.Builders;
-using LevelImposter.Builders.Generic;
-using LevelImposter.Builders.Lobby;
-using LevelImposter.Builders.Other;
-using LevelImposter.Builders.Trigger;
-using LevelImposter.Builders.Util;
 using LevelImposter.Core.Components;
 using LevelImposter.Core.GarbageCollection;
 using LevelImposter.Core.ModCompatibility;
@@ -18,41 +14,6 @@ namespace LevelImposter.Lobby.Builders;
 
 public static class LobbyMapBuilder
 {
-    private static readonly BuildRouter LobbyBuildRouter = new([
-        new TransformBuilder(),
-        new SpriteBuilder(MapTarget.Lobby),
-        new ColliderBuilder(),
-        new CustomTextBuilder(),
-        new LobbyMapPropertiesBuilder(),
-
-        new DecBuilder(),
-        new PhysicsObjectBuilder(),
-
-        new AmbientSoundBuilder(true),
-        new DisplayBuilder(),
-        new FloatBuilder(),
-        new ScrollBuilder(),
-        new PlayerMoverBuilder(),
-        new RoomBuilder(),
-        new StarfieldBuilder(),
-        new StepSoundBuilder(),
-        new TeleBuilder(),
-        new TeleLinkBuilder(),
-        new ValueBuilder(),
-
-        new LobbySettingsConsoleBuilder(),
-        new LobbyWardrobeConsoleBuilder(),
-        new LobbyMapConsoleBuilder(),
-        new LobbySpawnBuilder(),
-        new LobbyOptionsBuilder(),
-
-        new TriggerAnimBuilder(),
-        new TriggerAreaBuilder(),
-        new TriggerConsoleBuilder(),
-        new TriggerShakeBuilder(),
-        new TriggerStartBuilder()
-    ]);
-
     /// <summary>
     ///     Resets and rebuilds the lobby map based on
     ///     <see cref="GameConfiguration.CurrentLobbyMap" />.
@@ -108,13 +69,19 @@ public static class LobbyMapBuilder
     /// <param name="map">The map file to build from</param>
     private static void BuildMap(LIMap map)
     {
+        var lobbyBehaviour = LILobbyBehaviour.GetLobbyBehaviour();
         LILogger.Info($"Building lobby map from {map}...");
 
         GCHandler.SetDefaultBehavior(GCBehavior.DisposeOnLobbyUnload);
 
-        LobbyBuildRouter.BuildMap(
-            map.elements,
-            LILobbyBehaviour.GetInstance().transform);
+        BuildRouter.BuildMap(
+            map,
+            LILobbyBehaviour.GetInstance(),
+            new Dictionary<string, object>
+            {
+                { "lobbyBehaviour", lobbyBehaviour }
+            }
+        );
 
         LILogger.Info($"Built lobby map from {map}");
     }

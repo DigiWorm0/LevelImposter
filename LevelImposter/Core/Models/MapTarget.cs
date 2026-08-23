@@ -6,5 +6,8 @@
 public enum MapTarget
 {
     Game = 0,
-    Lobby = 1
+    Lobby = 1,
+
+    // Mod-only attribute to indicate this runs on both the game and lobby maps
+    Both = -1
 }

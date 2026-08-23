@@ -1,4 +1,6 @@
 ﻿using System;
+using LevelImposter.Build;
+using LevelImposter.Build.Attributes;
 using LevelImposter.Builders.Generic;
 using LevelImposter.Core.Components;
 using LevelImposter.Core.Models;
@@ -8,27 +10,25 @@ using Object = UnityEngine.Object;
 
 namespace LevelImposter.Builders.Minimap;
 
-public class MinimapBuilder : IElemBuilder
+internal static class MinimapBuilder
 {
     private const float DEFAULT_SCALE = 4.975f;
 
-    private bool _isBuilt;
+    private static bool _isBuilt;
 
-    public int Priority => IElemBuilder.HIGH_PRIORITY; // <-- Ensure other builders can modify the minimap after this
-
-    public void OnPreBuild()
+    [MapBuilder(Priority = Priority.FIRST)]
+    public static void Reset()
     {
         _isBuilt = false;
     }
 
-    public void OnBuild(LIElement elem, GameObject obj)
+    [ElementBuilder(
+        Priority = Priority.FIRST,
+        Target = MapTarget.Game,
+        ElementTypes = ["util-minimap"]
+    )]
+    public static void Build(ShipStatus shipStatus, LIElement element, GameObject gameObject)
     {
-        if (elem.type != "util-minimap")
-            return;
-
-        // ShipStatus
-        var shipStatus = LIShipStatus.GetShip();
-
         // Check Singleton
         if (_isBuilt)
             throw new Exception("Only 1 minimap object should be used per map");
@@ -37,24 +37,24 @@ public class MinimapBuilder : IElemBuilder
         var mapBehaviour = GetMinimap();
 
         // Map Scale
-        var mapScaleVal = elem.properties.minimapScale ?? 1;
+        var mapScaleVal = element.properties.minimapScale ?? 1;
         shipStatus.MapScale = mapScaleVal * DEFAULT_SCALE;
-        var mapOffset = -(obj.transform.localPosition / shipStatus.MapScale);
+        var mapOffset = -(gameObject.transform.localPosition / shipStatus.MapScale);
 
         // Background
         var background = mapBehaviour.ColorControl.gameObject;
         var bgRenderer = background.GetComponent<SpriteRenderer>();
         background.transform.localPosition = background.transform.localPosition;
-        background.transform.localScale = obj.transform.localScale / shipStatus.MapScale;
-        background.transform.localRotation = obj.transform.localRotation;
+        background.transform.localScale = gameObject.transform.localScale / shipStatus.MapScale;
+        background.transform.localRotation = gameObject.transform.localRotation;
 
         // Load Sprite
         SpriteBuilder.OnSpriteLoad += (loadedElem, sprite) =>
         {
-            if (loadedElem.id != elem.id || bgRenderer == null)
+            if (loadedElem.id != element.id || bgRenderer == null)
                 return;
             bgRenderer.sprite = sprite;
-            Object.Destroy(obj);
+            Object.Destroy(gameObject);
         };
 
         // Offsets
@@ -68,7 +68,8 @@ public class MinimapBuilder : IElemBuilder
         _isBuilt = true;
     }
 
-    public void OnPostBuild()
+    [MapBuilder(Priority = Priority.LAST, Target = MapTarget.Game)]
+    public static void OnPostBuild()
     {
         if (_isBuilt)
             return;

@@ -1,129 +1,85 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using LevelImposter.Core.Components;
 using LevelImposter.Core.Models;
-using LevelImposter.Core.Services.Ship;
 using LevelImposter.Core.Utils;
-using LevelImposter.Test;
 using UnityEngine;
 
 namespace LevelImposter.Builders;
 
-/// <summary>
-///     Routes the building of map elements through a stack of IElemBuilders
-/// </summary>
-/// <param name="buildStack">The stack of builders to use when building elements</param>
-public class BuildRouter(IElemBuilder[] buildStack)
+public static class BuildRouter
 {
     /// Time to warn the user (in ms) when an element is taking too long to load
     private const int WARN_MAX_BUILD_DURATION = 200;
 
-    private readonly Stopwatch _buildTimer = new();
+    private static readonly Stopwatch BuildTimer = new();
 
-    private static MapObjectDB MapObjectDB => LIBaseShip.Instance!.MapObjectDB;
-
-    /// <summary>
-    ///     Builds the provided LIElements into GameObjects under the specified parent transform.
-    /// </summary>
-    /// <param name="elements">Elements to build</param>
-    /// <param name="parentTransform">Parent transform for the built GameObjects</param>
-    public void BuildMap(LIElement[] elements, Transform? parentTransform = null)
+    public static void BuildMap(
+        LIMap map,
+        LIBaseShip baseShip,
+        Dictionary<string, object> buildMethodParameters)
     {
-        // Check for LIBaseShip instance
-        if (LIBaseShip.Instance == null)
-            throw new Exception("LIBaseShip instance not found!");
-
         // Create GameObjects
-        foreach (var element in elements)
+        foreach (var element in map.elements)
         {
-            var gameObject = CreateGameObject(element, parentTransform);
-            MapObjectDB.AddObject(element, gameObject);
+            var gameObject = CreateGameObject(element, baseShip.transform);
+            baseShip.MapObjectDB.AddObject(element, gameObject);
         }
 
         // Apply Hierarchy
         // Only AFTER all GameObjects are created
-        foreach (var element in elements)
-            ApplyGameObjectHierarchy(element);
+        foreach (var element in map.elements)
+            ApplyGameObjectHierarchy(element, baseShip);
 
-        // Find all unique priority values (and sort them)
-        var priorityValues = new SortedSet<int>();
-        foreach (var builder in buildStack)
-            priorityValues.Add(builder.Priority);
-
-        // Group builders by priority
-        // Builders with equal priority are grouped together
-        var groupedBuildersByPriority = priorityValues
-            .Reverse() // <-- Higher priority first
-            .Select(buildPriority => buildStack
-                .Where(b => b.Priority == buildPriority)
-                .ToArray());
-
-        // Run Pre-Build hooks
-        foreach (var builder in buildStack)
-        {
-            using var _ = Profiler.Measure(
-                "OnPreBuild",
-                builder.GetType().ToString());
-
-            builder.OnPreBuild();
-        }
+        // Update parameters
+        buildMethodParameters["baseShip"] = baseShip;
+        buildMethodParameters["map"] = map;
 
         // Build elements by priority
-        foreach (var builderGroup in groupedBuildersByPriority)
-        foreach (var element in elements)
-            BuildElement(builderGroup, element);
-
-        // Run Post-Build hooks
-        foreach (var builder in buildStack)
-        {
-            using var _ = Profiler.Measure(
-                "OnPostBuild",
-                builder.GetType().ToString());
-
-            builder.OnPostBuild();
-        }
+        var builderGroups = BuildMethodRegistry.GroupBuildersByPriority();
+        foreach (var buildMethods in builderGroups)
+        foreach (var element in map.elements)
+            RunBuildMethods(element, baseShip, buildMethods, buildMethodParameters);
     }
 
-    /// <summary>
-    ///     Builds a single LIElement using the provided stack of IElemBuilders.
-    /// </summary>
-    /// <param name="targetStack">The stack of builders to use for building the element</param>
-    /// <param name="element">The LIElement to be built</param>
-    private void BuildElement(IElemBuilder[] targetStack, LIElement element)
+    private static void RunBuildMethods(
+        LIElement element,
+        LIBaseShip baseShip,
+        BuildMethod[] buildMethods,
+        Dictionary<string, object> buildMethodParameters)
     {
+        BuildTimer.Restart();
+
         try
         {
-            // Start debug timer
-            _buildTimer.Restart();
-
-            // Check GameObject
-            var gameObject = MapObjectDB.GetObject(element.id);
+            var gameObject = baseShip.MapObjectDB.GetObject(element.id);
             if (gameObject == null)
                 throw new Exception("GameObject is null");
 
-            // Run through build stack
-            foreach (var builder in targetStack)
-            {
-#if PROFILING
-                using var _ = Profiler.Measure(
-                    $"OnBuild.{builder.GetType()}",
-                    element.id.ToString());
-#endif
-                builder.OnBuild(element, gameObject);
-            }
+            buildMethodParameters["element"] = element;
+            buildMethodParameters["gameObject"] = gameObject;
 
-            // Stop debug timer
-            _buildTimer.Stop();
-            if (_buildTimer.ElapsedMilliseconds > WARN_MAX_BUILD_DURATION)
-                LILogger.Warn($"{element} took {_buildTimer.ElapsedMilliseconds}ms to build");
+            foreach (var builder in buildMethods)
+            {
+                // Skip if the element type doesn't match
+                if (!(builder.Attribute.ElementTypes?.Contains(element.type) ?? true))
+                    continue;
+
+                LILogger.Info($"Running {builder.Method.DeclaringType?.Name} on {element.name}");
+
+                builder.Invoke(buildMethodParameters);
+            }
         }
         catch (Exception ex)
         {
             LILogger.Warn($"Error building {element}: {ex}");
             LILogger.LogException(ex);
         }
+
+        BuildTimer.Stop();
+        if (BuildTimer.ElapsedMilliseconds > WARN_MAX_BUILD_DURATION)
+            LILogger.Warn($"{element} took {BuildTimer.ElapsedMilliseconds}ms to build");
     }
 
     /// <summary>
@@ -132,7 +88,7 @@ public class BuildRouter(IElemBuilder[] buildStack)
     /// <param name="element">Element to create GameObject for</param>
     /// <param name="parentTransform">Parent transform to set for the new GameObject</param>
     /// <returns>The created GameObject</returns>
-    private GameObject CreateGameObject(LIElement element, Transform? parentTransform = null)
+    private static GameObject CreateGameObject(LIElement element, Transform? parentTransform = null)
     {
         // Create GameObject
         var gameObjectName = element.name.Replace("\\n", " ");
@@ -150,10 +106,11 @@ public class BuildRouter(IElemBuilder[] buildStack)
     ///     Requires all GameObjects in the map to be created beforehand.
     /// </summary>
     /// <param name="element">Element to apply hierarchy to</param>
-    private void ApplyGameObjectHierarchy(LIElement element)
+    /// <param name="baseShip">Base ship containing the MapObjectDB</param>
+    private static void ApplyGameObjectHierarchy(LIElement element, LIBaseShip baseShip)
     {
         // Get Element Properties
-        var elemObject = MapObjectDB.GetObject(element.id);
+        var elemObject = baseShip.MapObjectDB.GetObject(element.id);
         if (elemObject == null)
             return;
 
@@ -163,12 +120,12 @@ public class BuildRouter(IElemBuilder[] buildStack)
             return;
 
         // Find Parent Object
-        var parentObject = MapObjectDB.GetObject((Guid)parent);
+        var parentObject = baseShip.MapObjectDB.GetObject((Guid)parent);
         if (parentObject == null)
             return;
 
         // Get Parent Element Properties
-        var parentElement = MapObjectDB.GetElement(parentObject);
+        var parentElement = baseShip.MapObjectDB.GetElement(parentObject);
         if (parentElement == null)
             return;
 

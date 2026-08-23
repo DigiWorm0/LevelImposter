@@ -11,7 +11,7 @@ public class LILobbyBehaviour(IntPtr intPtr) : LIBaseShip(intPtr)
 {
     private static LILobbyBehaviour? _instance;
 
-    private LobbyBehaviour? _lobbyBehaviour;
+    public LobbyBehaviour? LobbyBehaviour { get; private set; }
 
     [HideFromIl2Cpp] public IStepWatcher[] AllStepWatchers { get; private set; } = [];
 
@@ -21,7 +21,7 @@ public class LILobbyBehaviour(IntPtr intPtr) : LIBaseShip(intPtr)
 
         // Get LobbyBehaviour component
         _instance = this;
-        _lobbyBehaviour = GetComponent<LobbyBehaviour>();
+        LobbyBehaviour = GetComponent<LobbyBehaviour>();
 
         // Run initialization methods
         LobbyMapConsoleBuilder.Build();
@@ -58,7 +58,7 @@ public class LILobbyBehaviour(IntPtr intPtr) : LIBaseShip(intPtr)
     /// <exception cref="Exception">>If the LobbyBehaviour component is null</exception>
     public static LobbyBehaviour GetLobbyBehaviour()
     {
-        var lobbyBehaviour = GetInstance()._lobbyBehaviour;
+        var lobbyBehaviour = GetInstance().LobbyBehaviour;
         if (lobbyBehaviour == null)
             throw new Exception("LobbyBehaviour component not found on LILobbyBehaviour!");
         return lobbyBehaviour;

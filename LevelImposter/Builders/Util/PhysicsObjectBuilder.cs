@@ -1,3 +1,5 @@
+using LevelImposter.Build;
+using LevelImposter.Build.Attributes;
 using LevelImposter.Core.Components;
 using LevelImposter.Core.GarbageCollection;
 using LevelImposter.Core.Models;
@@ -5,12 +7,13 @@ using UnityEngine;
 
 namespace LevelImposter.Builders.Util;
 
-internal class PhysicsObjectBuilder : IElemBuilder
+internal static class PhysicsObjectBuilder
 {
-    private bool _isCameraFixed;
-    private uint _objectCounter;
+    private static bool _isCameraFixed;
+    private static uint _objectCounter;
 
-    public void OnPreBuild()
+    [MapBuilder(Priority = Priority.FIRST)]
+    public static void Reset()
     {
         _isCameraFixed = false;
         _objectCounter = 0;
@@ -19,42 +22,40 @@ internal class PhysicsObjectBuilder : IElemBuilder
         Physics2D.IgnoreLayerCollision((int)Layer.Physics, (int)Layer.UI);
     }
 
-    public void OnBuild(LIElement elem, GameObject obj)
+    [ElementBuilder(ElementTypes = ["util-physics"])]
+    public static void Build(LIElement element, GameObject gameObject)
     {
-        if (elem.type != "util-physics")
-            return;
-
         // Add Rigidbody2D
-        var rb = obj.AddComponent<Rigidbody2D>();
-        rb.mass = elem.properties.physicsMass ?? 10.0f;
-        rb.drag = elem.properties.physicsDrag ?? 100.0f;
-        rb.angularDrag = elem.properties.physicsAngularDrag ?? 100.0f;
+        var rb = gameObject.AddComponent<Rigidbody2D>();
+        rb.mass = element.properties.physicsMass ?? 10.0f;
+        rb.drag = element.properties.physicsDrag ?? 100.0f;
+        rb.angularDrag = element.properties.physicsAngularDrag ?? 100.0f;
         rb.gravityScale = 0;
 
         // Add Constraints
         var constraints = RigidbodyConstraints2D.None;
-        if (elem.properties.physicsFreezeX ?? false)
+        if (element.properties.physicsFreezeX ?? false)
             constraints |= RigidbodyConstraints2D.FreezePositionX;
-        if (elem.properties.physicsFreezeY ?? false)
+        if (element.properties.physicsFreezeY ?? false)
             constraints |= RigidbodyConstraints2D.FreezePositionY;
-        if (elem.properties.physicsFreezeRotation ?? false)
+        if (element.properties.physicsFreezeRotation ?? false)
             constraints |= RigidbodyConstraints2D.FreezeRotation;
         rb.constraints = constraints;
 
         // Create Physics Material
         var physicsMaterial = new PhysicsMaterial2D
         {
-            bounciness = elem.properties.physicsBounciness ?? 0.6f,
-            friction = elem.properties.physicsFriction ?? 0.6f
+            bounciness = element.properties.physicsBounciness ?? 0.6f,
+            friction = element.properties.physicsFriction ?? 0.6f
         };
         rb.sharedMaterial = physicsMaterial;
         GCHandler.Register(physicsMaterial);
 
         // Set Layer
-        obj.layer = (int)Layer.Physics;
+        gameObject.layer = (int)Layer.Physics;
 
         // Add Physics Object Component
-        var physicsObject = obj.AddComponent<LIPhysicsObject>();
+        var physicsObject = gameObject.AddComponent<LIPhysicsObject>();
         physicsObject.AssignID(++_objectCounter);
 
         // Fix Camera

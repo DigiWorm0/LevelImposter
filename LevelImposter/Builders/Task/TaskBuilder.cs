@@ -1,3 +1,5 @@
+using LevelImposter.Build;
+using LevelImposter.Build.Attributes;
 using LevelImposter.Core.Components;
 using LevelImposter.Core.Models;
 using LevelImposter.Core.Utils;
@@ -7,18 +9,13 @@ using UnityEngine.Events;
 
 namespace LevelImposter.Builders.Task;
 
-public class TaskBuilder : IElemBuilder
+public static class TaskBuilder
 {
-    private readonly TaskConsoleBuilder _consoleBuilder = new();
-    private readonly ShipTaskBuilder _shipBuilder = new();
+    private static readonly ShipTaskBuilder _shipTaskBuilder = new();
+    private static readonly TaskConsoleBuilder _taskConsoleBuilder = new();
 
-    public void OnPreBuild()
-    {
-        _consoleBuilder.OnPreBuild();
-        _shipBuilder.OnPreBuild();
-    }
-
-    public void OnBuild(LIElement elem, GameObject obj)
+    [MapBuilder(Target = MapTarget.Game)]
+    public static void BuildTask(LIBaseShip baseShip, LIElement elem, GameObject obj)
     {
         if (!elem.type.StartsWith("task-"))
             return;
@@ -32,8 +29,8 @@ public class TaskBuilder : IElemBuilder
         obj.CloneSprite(prefab);
 
         // Console
-        var console = _consoleBuilder.Build(elem, obj, prefab);
-        _shipBuilder.Build(elem, console);
+        var console = _taskConsoleBuilder.Build(elem, obj, prefab);
+        _shipTaskBuilder.BuildTask(baseShip, elem, console);
 
         // Button
         var prefabBtn = prefab.GetComponentInChildren<PassiveButton>();
@@ -47,25 +44,15 @@ public class TaskBuilder : IElemBuilder
             var action = console.Use;
             btn.OnClick.AddListener(action);
         }
-
-        // Medscan
-        var isMedscan = elem.type == "task-medscan";
-        if (isMedscan)
-        {
-            // ShipStatus
-            var shipStatus = LIShipStatus.GetShip();
-
-            // MedScanner
-            if (shipStatus.MedScanner != null)
-                LILogger.Warn("Only 1 med scanner can be used per map");
-            var medscan = obj.AddComponent<MedScannerBehaviour>();
-            shipStatus.MedScanner = medscan;
-        }
     }
 
-    public void OnPostBuild()
+
+    [ElementBuilder(ElementTypes = ["task-medscan"])]
+    public static void RegisterMedScanner(GameObject gameObject)
     {
-        _consoleBuilder.OnPostBuild();
-        _shipBuilder.OnPostBuild();
+        if (ShipStatus.Instance.MedScanner != null)
+            throw new MapBuildException("Only 1 med scanner can be used per map");
+
+        ShipStatus.Instance.MedScanner = gameObject.AddComponent<MedScannerBehaviour>();
     }
 }

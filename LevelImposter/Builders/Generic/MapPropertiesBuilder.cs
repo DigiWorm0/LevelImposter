@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using LevelImposter.Build;
+using LevelImposter.Build.Attributes;
 using LevelImposter.Core.Components;
-using LevelImposter.Core.Utils;
+using LevelImposter.Core.Models;
 using LevelImposter.DB;
 using UnityEngine;
 
@@ -10,7 +12,7 @@ namespace LevelImposter.Builders.Generic;
 /// <summary>
 ///     Configures the map properties
 /// </summary>
-public class MapPropertiesBuilder : IElemBuilder
+public static class MapPropertiesBuilder
 {
     private static readonly Dictionary<string, string> ExileIds = new()
     {
@@ -21,27 +23,24 @@ public class MapPropertiesBuilder : IElemBuilder
         { "Fungle", "ss-fungle" }
     };
 
-    public void OnPreBuild()
+    [MapBuilder(Priority = Priority.FIRST)]
+    public static void ApplyMapProperties(LIMap map, LIBaseShip baseShip)
     {
-        // Get Ship Status
-        var shipStatus = LIShipStatus.GetShip();
-        if (shipStatus == null)
-            return;
-
-        // Get Map
-        var map = GameConfiguration.CurrentMap;
-        if (map == null)
-            throw new Exception("No map loaded in GameConfiguration!");
-
         // Set Map Name
-        shipStatus.name = map.name;
+        baseShip.name = map.name;
 
         // Set Background Color
         if (!string.IsNullOrEmpty(map.properties.bgColor) && Camera.main != null)
             if (ColorUtility.TryParseHtmlString(map.properties.bgColor, out var bgColor))
                 Camera.main.backgroundColor = bgColor;
 
-        // Set Exile Animation
+        // Apply Default Exile Cutscene
+        if (map.mapTarget == MapTarget.Game)
+            ApplyExileCutscene(map);
+    }
+
+    private static void ApplyExileCutscene(LIMap map)
+    {
         if (string.IsNullOrEmpty(map.properties.exileID))
             return;
 
@@ -53,6 +52,6 @@ public class MapPropertiesBuilder : IElemBuilder
         if (prefabShipStatus == null)
             throw new Exception($"Exile ShipStatus prefab for ID '{exileID}' not found!");
 
-        shipStatus.ExileCutscenePrefab = prefabShipStatus.ExileCutscenePrefab;
+        ShipStatus.Instance.ExileCutscenePrefab = prefabShipStatus.ExileCutscenePrefab;
     }
 }

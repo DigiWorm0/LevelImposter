@@ -1,17 +1,14 @@
+using LevelImposter.Build.Attributes;
 using LevelImposter.Core.Components;
-using LevelImposter.Core.Models;
 using UnityEngine;
 
 namespace LevelImposter.Builders.Util;
 
-internal class FloatBuilder : IElemBuilder
+internal static class FloatBuilder
 {
-    public void OnBuild(LIElement elem, GameObject obj)
+    [ElementBuilder(ElementTypes = ["util-blankfloat"])]
+    public static void Build(GameObject gameObject)
     {
-        if (elem.type != "util-blankfloat")
-            return;
-
-        // Build Floating Parent
-        obj.AddComponent<LIFloat>();
+        gameObject.AddComponent<LIFloat>();
     }
 }

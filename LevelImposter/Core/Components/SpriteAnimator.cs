@@ -17,12 +17,12 @@ public class SpriteAnimator(IntPtr intPtr) : LIAnimatorBase(intPtr)
 {
     private LISpriteAnimation[]? _allAnimations;
     private LISpriteAnimation? _currentAnimation;
-    private SpriteBuilder? _spriteBuilder;
+    private LIMap? _map;
 
     [HideFromIl2Cpp]
-    public void Init(LIElement element, LISpriteAnimation[] animations, MapTarget mapTarget)
+    public void Init(LIElement element, LISpriteAnimation[] animations, LIMap map)
     {
-        _spriteBuilder = new SpriteBuilder(mapTarget);
+        _map = map;
         _allAnimations = animations;
         SetAnimationType("default");
         Init(element);
@@ -44,11 +44,14 @@ public class SpriteAnimator(IntPtr intPtr) : LIAnimatorBase(intPtr)
 
     protected override Sprite GetFrameSprite(int frameIndex)
     {
+        if (_map == null)
+            throw new InvalidOperationException("Component not initialized");
+
         // Get Frame Data
         var frame = GetFrameData(frameIndex);
 
         // Get Loadable Sprite
-        var loadableSprite = _spriteBuilder?.GetLoadableFromID(frame.spriteID);
+        var loadableSprite = SpriteBuilder.GetLoadableFromID(frame.spriteID, _map);
         if (loadableSprite == null)
             throw new Exception("Animation sprite loadable not found");
 

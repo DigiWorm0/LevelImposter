@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace LevelImposter.Builders.Util;
 
-internal class LayerBuilder : IElemBuilder
+internal static class LayerBuilder
 {
     private static readonly Dictionary<string, Layer> TypeLayers = new()
     {
@@ -12,11 +12,11 @@ internal class LayerBuilder : IElemBuilder
         { "util-binocularscollider", Layer.UICollider }
     };
 
-    public void OnBuild(LIElement elem, GameObject obj)
+    public static void ApplyLayer(LIElement element, GameObject gameObject)
     {
-        if (!TypeLayers.TryGetValue(elem.type, out var layer))
+        if (!TypeLayers.TryGetValue(element.type, out var layer))
             return;
 
-        obj.layer = (int)layer;
+        gameObject.layer = (int)layer;
     }
 }

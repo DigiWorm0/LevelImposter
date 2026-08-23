@@ -1,4 +1,6 @@
 using LevelImposter.AssetLoader.Loaders;
+using LevelImposter.Build;
+using LevelImposter.Build.Attributes;
 using LevelImposter.Core.Components;
 using LevelImposter.Core.Models;
 using LevelImposter.Core.Utils;
@@ -7,23 +9,16 @@ using UnityEngine;
 
 namespace LevelImposter.Builders.Util;
 
-internal class PlatformBuilder : IElemBuilder
+internal static class PlatformBuilder
 {
     private const string MOVE_SOUND_NAME = "platformMove";
 
     // TODO: Support multiple moving platforms in 1 map
     public static MovingPlatformBehaviour? Platform;
 
-    public void OnPreBuild()
+    [ElementBuilder(ElementTypes = ["util-platform"])]
+    public static void Build(LIElement elem, GameObject obj)
     {
-        Platform = null;
-    }
-
-    public void OnBuild(LIElement elem, GameObject obj)
-    {
-        if (elem.type != "util-platform")
-            return;
-
         // Singleton
         if (Platform != null)
         {
@@ -101,7 +96,13 @@ internal class PlatformBuilder : IElemBuilder
         rightConsole.Platform = movingPlatform;
     }
 
-    private Vector3 GetOffsetFromTransform(Transform transform, Vector3 offset)
+    [MapBuilder(Priority = Priority.FIRST)]
+    public static void Reset()
+    {
+        Platform = null;
+    }
+
+    private static Vector3 GetOffsetFromTransform(Transform transform, Vector3 offset)
     {
         return transform.parent.InverseTransformPoint(transform.TransformPoint(offset));
     }

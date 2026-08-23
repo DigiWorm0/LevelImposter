@@ -1,13 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
 using Il2CppInterop.Runtime.InteropTypes.Arrays;
-using Il2CppSystem.Collections.Generic;
-using LevelImposter.Builders.Generic;
-using LevelImposter.Builders.Minimap;
-using LevelImposter.Builders.Other;
-using LevelImposter.Builders.Sab;
-using LevelImposter.Builders.Task;
-using LevelImposter.Builders.Trigger;
-using LevelImposter.Builders.Util;
 using LevelImposter.Core.Components;
 using LevelImposter.Core.GarbageCollection;
 using LevelImposter.Core.Models;
@@ -17,74 +10,12 @@ using LevelImposter.DB;
 using LevelImposter.Shop.Components;
 using UnityEngine;
 using Object = UnityEngine.Object;
+using Il2CppDictionary = Il2CppSystem.Collections.Generic.Dictionary<SystemTypes, ISystemType>;
 
 namespace LevelImposter.Builders;
 
 public static class MapBuilder
 {
-    private static readonly BuildRouter MapBuildRouter = new([
-        new MapPropertiesBuilder(),
-
-        new TransformBuilder(),
-        new SpriteBuilder(),
-        new ColliderBuilder(),
-        new MinigameSpriteBuilder(),
-        new LayerBuilder(),
-
-        new RoomBuilder(),
-        new AdminMapBuilder(),
-        new RoomNameBuilder(),
-
-        new MinimapBuilder(),
-        new DummyBuilder(),
-        new UtilBuilder(),
-        new SpawnBuilder(),
-        new VentBuilder(),
-        new CamBuilder(),
-        new DisplayBuilder(),
-        new TaskBuilder(),
-        new DecBuilder(),
-        new PhysicsObjectBuilder(),
-        new MeetingOptionsBuilder(),
-        new SabotageOptionsBuilder(),
-        new OneWayColliderBuilder(),
-        new DecontaminationBuilder(),
-        new SporeBuilder(),
-        new BinocularsBuilder(),
-        new FilterBuilder(),
-        new EjectBuilder(),
-        new EjectDummyBuilder(),
-        new EjectHandBuilder(),
-        new ValueBuilder(),
-        new PlayerMoverBuilder(),
-
-        new SabBuilder(),
-        new SabMixupBuilder(),
-        new SabConsoleBuilder(),
-        new SabMapBuilder(),
-        new SabDoorBuilder(),
-
-        new MinimapSpriteBuilder(),
-        new LadderBuilder(),
-        new PlatformBuilder(),
-        new StarfieldBuilder(),
-        new FloatBuilder(),
-        new ScrollBuilder(),
-        new AmbientSoundBuilder(),
-        new StepSoundBuilder(),
-        new TeleBuilder(),
-        new TeleLinkBuilder(),
-        new TriggerAreaBuilder(),
-        new TriggerConsoleBuilder(),
-        new TriggerStartBuilder(),
-        new TriggerDeathBuilder(),
-        new TriggerShakeBuilder(),
-        new TriggerAnimBuilder(),
-
-        new CustomTextBuilder(),
-        new ColorBuilder()
-    ]);
-
     public static bool IsBuilding { get; private set; }
 
 
@@ -119,7 +50,7 @@ public static class MapBuilder
         shipStatus.LongTasks = new Il2CppReferenceArray<NormalPlayerTask>(0);
         shipStatus.ShortTasks = new Il2CppReferenceArray<NormalPlayerTask>(0);
         shipStatus.SystemNames = new Il2CppStructArray<StringNames>(0);
-        shipStatus.Systems = new Dictionary<SystemTypes, ISystemType>();
+        shipStatus.Systems = new Il2CppDictionary();
         shipStatus.MedScanner = null;
         shipStatus.Type = (ShipStatus.MapType)MapType.LevelImposter;
         shipStatus.WeaponsImage = null;
@@ -187,7 +118,14 @@ public static class MapBuilder
             LoadingBar.Run();
 
         // Rebuild the map
-        MapBuildRouter.BuildMap(map.elements, LIShipStatus.GetInstance().transform);
+        BuildRouter.BuildMap(
+            map,
+            LIShipStatus.GetInstance(),
+            new Dictionary<string, object>
+            {
+                { "shipStatus", ShipStatus.Instance }
+            }
+        );
 
         // FINISH
         LILogger.Info($"Built map from {map}");

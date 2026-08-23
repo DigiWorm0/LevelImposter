@@ -3,6 +3,7 @@ using BepInEx;
 using BepInEx.Unity.IL2CPP;
 using HarmonyLib;
 using Il2CppInterop.Runtime.Injection;
+using LevelImposter.Builders;
 using LevelImposter.Builders.Generic;
 using LevelImposter.Core.Components;
 using LevelImposter.Core.ModCompatibility;
@@ -47,8 +48,9 @@ public partial class LevelImposter : BasePlugin
         LobbyUIService.Init();
         SpriteBuilder.Init();
 
-        // Load Mod Compatibility
+        // Post-load methods
         IL2CPPChainloader.Instance.Finished += CompatibilityFlags.Init;
+        IL2CPPChainloader.Instance.Finished += BuildMethodRegistry.RegisterAll;
 
         // IUsable Interface
         RegisterTypeOptions usableInterface = new()

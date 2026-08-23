@@ -1,4 +1,6 @@
-﻿using LevelImposter.Core.Models;
+﻿using LevelImposter.Build;
+using LevelImposter.Build.Attributes;
+using LevelImposter.Core.Models;
 using UnityEngine;
 
 namespace LevelImposter.Builders.Generic;
@@ -6,12 +8,13 @@ namespace LevelImposter.Builders.Generic;
 /// <summary>
 ///     Adds color to SpriteRenderers
 /// </summary>
-public class ColorBuilder : IElemBuilder
+internal static class ColorBuilder
 {
-    public void OnBuild(LIElement elem, GameObject obj)
+    [ElementBuilder(Priority = Priority.HIGH)]
+    public static void AddSpriteColor(LIElement element, GameObject gameObject)
     {
-        var spriteRenderer = obj.GetComponent<SpriteRenderer>();
+        var spriteRenderer = gameObject.GetComponent<SpriteRenderer>();
         if (spriteRenderer)
-            spriteRenderer.color = elem.properties.color?.ToUnity() ?? Color.white;
+            spriteRenderer.color = element.properties.color?.ToUnity() ?? Color.white;
     }
 }

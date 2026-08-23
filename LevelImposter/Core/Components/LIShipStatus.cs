@@ -7,10 +7,6 @@ using Reactor.Networking.Extensions;
 
 namespace LevelImposter.Core.Components;
 
-/// <summary>
-///     Component adds additional functionality added to AU's built-in ShipStatus.
-///     Always added to ShipStatus on Awake, but dormant until LoadMap is fired.
-/// </summary>
 public class LIShipStatus(IntPtr intPtr) : LIBaseShip(intPtr)
 {
     private static LIShipStatus? _instance;

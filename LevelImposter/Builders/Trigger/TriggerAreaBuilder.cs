@@ -1,27 +1,26 @@
-﻿using LevelImposter.Core.Components;
+﻿using LevelImposter.Build.Attributes;
+using LevelImposter.Core.Components;
 using LevelImposter.Core.Models;
 using UnityEngine;
 
 namespace LevelImposter.Builders.Trigger;
 
-public class TriggerAreaBuilder : IElemBuilder
+public static class TriggerAreaBuilder
 {
-    public void OnBuild(LIElement elem, GameObject obj)
+    [ElementBuilder(ElementTypes = ["util-triggerarea"])]
+    public static void Build(LIElement element, GameObject gameObject)
     {
-        if (elem.type != "util-triggerarea")
-            return;
-
         // Colliders
-        Collider2D[] colliders = obj.GetComponentsInChildren<Collider2D>();
+        Collider2D[] colliders = gameObject.GetComponentsInChildren<Collider2D>();
         foreach (var collider in colliders)
             collider.isTrigger = true;
 
         // Ghost
-        if (elem.properties.isGhostEnabled ?? false)
-            obj.layer = (int)Layer.Default;
+        if (element.properties.isGhostEnabled ?? false)
+            gameObject.layer = (int)Layer.Default;
 
         // Trigger Area
-        var triggerArea = obj.AddComponent<LITriggerArea>();
-        triggerArea.SetClientSide(elem.properties.triggerClientSide != false);
+        var triggerArea = gameObject.AddComponent<LITriggerArea>();
+        triggerArea.SetClientSide(element.properties.triggerClientSide != false);
     }
 }

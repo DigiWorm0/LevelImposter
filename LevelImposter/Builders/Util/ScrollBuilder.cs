@@ -1,16 +1,14 @@
+using LevelImposter.Build.Attributes;
 using LevelImposter.Core.Components;
-using LevelImposter.Core.Models;
 using UnityEngine;
 
 namespace LevelImposter.Builders.Util;
 
-internal class ScrollBuilder : IElemBuilder
+internal static class ScrollBuilder
 {
-    public void OnBuild(LIElement elem, GameObject obj)
+    [ElementBuilder(ElementTypes = ["util-blankscroll"])]
+    public static void Build(GameObject gameObject)
     {
-        if (elem.type != "util-blankscroll")
-            return;
-
-        obj.AddComponent<LIScroll>();
+        gameObject.AddComponent<LIScroll>();
     }
 }

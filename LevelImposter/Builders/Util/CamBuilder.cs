@@ -1,34 +1,33 @@
-﻿using LevelImposter.Core.Models;
+﻿using LevelImposter.Build.Attributes;
+using LevelImposter.Core.Models;
 using LevelImposter.Core.Utils;
 using LevelImposter.DB;
 using UnityEngine;
 
 namespace LevelImposter.Builders.Util;
 
-public class CamBuilder : IElemBuilder
+internal static class CamBuilder
 {
-    public void OnBuild(LIElement elem, GameObject obj)
+    [ElementBuilder(ElementTypes = ["util-cam"])]
+    public static void Build(LIElement element, GameObject gameObject)
     {
-        if (elem.type != "util-cam")
-            return;
-
         // Prefab
-        var prefab = PrefabDB.GetObject(elem.type);
+        var prefab = PrefabDB.GetObject(element.type);
         if (prefab == null)
             return;
         var prefabCam = prefab.GetComponent<SurvCamera>();
 
         // Sprite
-        obj.CloneSprite(prefab, true);
+        gameObject.CloneSprite(prefab, true);
 
         // Camera
-        var survCam = obj.AddComponent<SurvCamera>();
-        survCam.CamName = elem.name;
+        var survCam = gameObject.AddComponent<SurvCamera>();
+        survCam.CamName = element.name;
         survCam.Offset = new Vector3(
-            elem.properties.camXOffset ?? 0,
-            elem.properties.camYOffset ?? 0
+            element.properties.camXOffset ?? 0,
+            element.properties.camYOffset ?? 0
         );
-        survCam.CamSize = elem.properties.camZoom ?? 3;
+        survCam.CamSize = element.properties.camZoom ?? 3;
         survCam.OnAnim = prefabCam.OnAnim;
         survCam.OffAnim = prefabCam.OffAnim;
     }

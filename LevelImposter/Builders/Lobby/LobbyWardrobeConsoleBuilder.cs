@@ -1,4 +1,5 @@
 ﻿using System;
+using LevelImposter.Build.Attributes;
 using LevelImposter.Core.Models;
 using LevelImposter.Core.Utils;
 using LevelImposter.Lobby.Builders;
@@ -7,13 +8,14 @@ using UnityEngine.Events;
 
 namespace LevelImposter.Builders.Lobby;
 
-public class LobbyWardrobeConsoleBuilder : IElemBuilder
+internal static class LobbyWardrobeConsoleBuilder
 {
-    public void OnBuild(LIElement elem, GameObject gameObject)
+    [ElementBuilder(
+        Target = MapTarget.Lobby,
+        ElementTypes = ["util-lobbywardrobe"]
+    )]
+    public static void Build(GameObject gameObject)
     {
-        if (elem.type != "util-lobbywardrobe")
-            return;
-
         // Load Prefab
         var prefab = LobbyDropshipPrefab.GetObjectFromPrefab("panel_Wardrobe/Console");
         var prefabConsole = prefab.GetComponent<OptionsConsole>();

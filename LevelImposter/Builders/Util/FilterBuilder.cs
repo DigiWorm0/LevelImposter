@@ -1,3 +1,4 @@
+using LevelImposter.Build.Attributes;
 using LevelImposter.Builders.Generic;
 using LevelImposter.Core.Models;
 using LevelImposter.DB;
@@ -5,15 +6,13 @@ using UnityEngine;
 
 namespace LevelImposter.Builders.Util;
 
-internal class FilterBuilder : IElemBuilder
+internal static class FilterBuilder
 {
     private static Sprite? _defaultSquare;
 
-    public void OnBuild(LIElement elem, GameObject obj)
+    [ElementBuilder(ElementTypes = ["util-filter"])]
+    public static void Build(LIElement element, GameObject gameObject)
     {
-        if (elem.type != "util-filter")
-            return;
-
         // Prefab
         var sporePrefab = PrefabDB.GetObject("util-spore");
         if (sporePrefab == null)
@@ -22,21 +21,21 @@ internal class FilterBuilder : IElemBuilder
         var maskPrefabRenderer = maskPrefab.GetComponent<SpriteRenderer>();
 
         // Create Sprite
-        var spriteRenderer = obj.GetComponent<SpriteRenderer>();
+        var spriteRenderer = gameObject.GetComponent<SpriteRenderer>();
         if (spriteRenderer == null)
         {
-            spriteRenderer = obj.AddComponent<SpriteRenderer>();
+            spriteRenderer = gameObject.AddComponent<SpriteRenderer>();
             spriteRenderer.sprite = GetDefaultSquare();
-            spriteRenderer.color = elem.properties.color?.ToUnity() ?? Color.white;
+            spriteRenderer.color = element.properties.color?.ToUnity() ?? Color.white;
         }
 
         // Create Mask
-        var maskObj = Object.Instantiate(obj, obj.transform);
+        var maskObj = Object.Instantiate(gameObject, gameObject.transform);
         maskObj.name = "Mask";
         maskObj.transform.localScale = Vector3.one;
         maskObj.transform.position = new Vector3(
-            obj.transform.position.x,
-            obj.transform.position.y,
+            gameObject.transform.position.x,
+            gameObject.transform.position.y,
             10.0f
         );
         var maskRenderer = maskObj.GetComponent<SpriteRenderer>();
@@ -45,14 +44,14 @@ internal class FilterBuilder : IElemBuilder
         // Update Mask on Sprite Load
         SpriteBuilder.OnSpriteLoad += (loadedElem, _) =>
         {
-            if (loadedElem.id != elem.id || maskRenderer == null)
+            if (loadedElem.id != element.id || maskRenderer == null)
                 return;
             maskRenderer.sprite = spriteRenderer.sprite;
             maskRenderer.color = spriteRenderer.color;
         };
 
         // Set Layer
-        obj.layer = (int)Layer.Ship;
+        gameObject.layer = (int)Layer.Ship;
         maskObj.layer = (int)Layer.Ship;
     }
 

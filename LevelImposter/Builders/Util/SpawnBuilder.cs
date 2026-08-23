@@ -1,47 +1,47 @@
 using System.Collections.Generic;
-using LevelImposter.Core.Components;
+using LevelImposter.Build;
+using LevelImposter.Build.Attributes;
 using LevelImposter.Core.Models;
 using LevelImposter.Core.Utils;
 using UnityEngine;
 
 namespace LevelImposter.Builders.Util;
 
-public class SpawnBuilder : IElemBuilder
+internal static class SpawnBuilder
 {
     private const float DEFAULT_SPAWN_RADIUS = 1.55f;
     private const int DUMMY_SPAWN_COUNT = 15;
 
-    private Vector2 _fallbackSpawn;
-    private bool _hasInitialSpawn;
-    private bool _hasMeetingSpawn;
+    private static Vector2 _fallbackSpawn;
+    private static bool _hasInitialSpawn;
+    private static bool _hasMeetingSpawn;
 
-    public void OnPreBuild()
+    [MapBuilder(Priority = Priority.FIRST)]
+    public static void Reset()
     {
         _hasInitialSpawn = false;
         _hasMeetingSpawn = false;
         _fallbackSpawn = Vector2.zero;
     }
 
-    public void OnBuild(LIElement elem, GameObject obj)
+    [ElementBuilder(
+        Target = MapTarget.Game,
+        ElementTypes = ["util-spawn1", "util-spawn2"]
+    )]
+    public static void Build(ShipStatus shipStatus, LIElement element, GameObject gameObject)
     {
-        if (!elem.type.StartsWith("util-spawn"))
-            return;
-
-        // ShipStatus
-        var shipStatus = LIShipStatus.GetShip();
-
         // Set Spawn Radius
-        shipStatus.SpawnRadius = elem.properties.range ?? DEFAULT_SPAWN_RADIUS;
+        shipStatus.SpawnRadius = element.properties.range ?? DEFAULT_SPAWN_RADIUS;
 
         // Set Spawn Point
-        Vector2 pos = obj.transform.position - new Vector3(0f, 0.3636f, 0f);
+        Vector2 pos = gameObject.transform.position - new Vector3(0f, 0.3636f, 0f);
         _fallbackSpawn = pos;
-        if (elem.type == "util-spawn1")
+        if (element.type == "util-spawn1")
         {
             shipStatus.InitialSpawnCenter = pos;
             _hasInitialSpawn = true;
         }
-        else if (elem.type == "util-spawn2")
+        else if (element.type == "util-spawn2")
         {
             shipStatus.MeetingSpawnCenter = pos;
             shipStatus.MeetingSpawnCenter2 = pos;
@@ -49,11 +49,11 @@ public class SpawnBuilder : IElemBuilder
         }
         else
         {
-            LILogger.Warn($"{elem.name} has an unknown spawn type");
+            LILogger.Warn($"{element.name} has an unknown spawn type");
         }
 
         // Add Dummy Locations
-        var spawnDummies = elem.properties.spawnDummies ?? false;
+        var spawnDummies = element.properties.spawnDummies ?? false;
         if (spawnDummies)
         {
             List<Transform> spawnLocations = new(shipStatus.DummyLocations);
@@ -64,7 +64,7 @@ public class SpawnBuilder : IElemBuilder
                 vector *= shipStatus.SpawnRadius;
 
                 GameObject dummy = new($"Spawn Dummy {i + 1}");
-                dummy.transform.position = obj.transform.position + (Vector3)vector;
+                dummy.transform.position = gameObject.transform.position + (Vector3)vector;
                 spawnLocations.Add(dummy.transform);
             }
 
@@ -72,11 +72,12 @@ public class SpawnBuilder : IElemBuilder
         }
     }
 
-    public void OnPostBuild()
+    [MapBuilder(
+        Target = MapTarget.Game,
+        Priority = Priority.LAST
+    )]
+    public static void AddFallbackSpawn(ShipStatus shipStatus)
     {
-        // ShipStatus
-        var shipStatus = LIShipStatus.GetShip();
-
         if (!_hasMeetingSpawn)
         {
             shipStatus.MeetingSpawnCenter = _fallbackSpawn;

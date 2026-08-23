@@ -1,24 +1,48 @@
+using System;
+using LevelImposter.Build;
+using LevelImposter.Build.Attributes;
 using LevelImposter.Core.Components;
 using LevelImposter.Core.Models;
 using UnityEngine;
 
 namespace LevelImposter.Builders.Util;
 
-internal class TeleBuilder : IElemBuilder
+internal static class TeleBuilder
 {
-    public void OnBuild(LIElement elem, GameObject obj)
+    [ElementBuilder(ElementTypes = ["util-tele"])]
+    public static void Build(LIElement element, GameObject gameObject)
     {
-        if (elem.type != "util-tele")
-            return;
-
         // Colliders
-        Collider2D[] colliders = obj.GetComponentsInChildren<Collider2D>();
+        Collider2D[] colliders = gameObject.GetComponentsInChildren<Collider2D>();
         foreach (var collider in colliders)
             collider.isTrigger = true;
-        if (elem.properties.isGhostEnabled ?? true)
-            obj.layer = (int)Layer.Default;
+        if (element.properties.isGhostEnabled ?? true)
+            gameObject.layer = (int)Layer.Default;
 
         // Teleporter
-        obj.AddComponent<LITeleporter>();
+        gameObject.AddComponent<LITeleporter>();
+    }
+
+    [ElementBuilder(
+        Priority = Priority.LAST,
+        ElementTypes = ["util-tele"]
+    )]
+    public static void LinkTeleporters(LIElement elem, GameObject obj)
+    {
+        // Get Target Teleporter
+        var targetID = elem.properties.teleporter;
+        if (targetID == null)
+            return;
+
+        var targetTeleporterGameObject = LIBaseShip.Instance?.MapObjectDB.GetObject((Guid)targetID);
+        var targetTeleporter = targetTeleporterGameObject?.GetComponent<LITeleporter>();
+
+        // Get Teleporter
+        var teleporter = obj.GetComponent<LITeleporter>();
+        if (teleporter == null || targetTeleporter == null)
+            return;
+
+        // Set Target Teleporter
+        teleporter.SetTargetTeleporter(targetTeleporter);
     }
 }

@@ -1,16 +1,15 @@
-﻿using LevelImposter.Core.Components;
+﻿using LevelImposter.Build.Attributes;
+using LevelImposter.Core.Components;
 using LevelImposter.Core.Models;
 using UnityEngine;
 
 namespace LevelImposter.Builders.Trigger;
 
-public class TriggerAnimBuilder : IElemBuilder
+public static class TriggerAnimBuilder
 {
-    public void OnBuild(LIElement elem, GameObject obj)
+    [ElementBuilder(ElementTypes = ["util-triggeranim"])]
+    public static void Build(LIElement element, GameObject gameObject)
     {
-        if (elem.type != "util-triggeranim")
-            return;
-
-        obj.AddComponent<TriggerAnim>();
+        gameObject.AddComponent<TriggerAnim>();
     }
 }

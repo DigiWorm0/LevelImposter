@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using LevelImposter.AssetLoader;
+using LevelImposter.Build;
+using LevelImposter.Build.Attributes;
 using LevelImposter.Builders.Util;
-using LevelImposter.Core.Components;
 using LevelImposter.Core.Models;
 using LevelImposter.Core.Utils;
 using LevelImposter.DB;
@@ -11,34 +12,30 @@ using UnityEngine;
 
 namespace LevelImposter.Builders.Sab;
 
-public class SabDoorBuilder : IElemBuilder
+internal static class SabDoorBuilder
 {
     private const string OPEN_SOUND_NAME = "doorOpen";
     private const string CLOSE_SOUND_NAME = "doorClose";
 
     private static readonly Dictionary<Guid, PlainDoor> DoorDB = new();
 
-    private int _doorId;
-    private List<Guid>? _specialDoorIDs;
+    private static int _doorId;
+    private static List<Guid>? _specialDoorIDs;
 
-    public void OnPreBuild()
+    [MapBuilder(Priority = Priority.FIRST)]
+    public static void Reset()
     {
         DoorDB.Clear();
         _doorId = 0;
         _specialDoorIDs = null;
     }
 
-    public void OnBuild(LIElement elem, GameObject obj)
+    [ElementBuilder(
+        Target = MapTarget.Game,
+        ElementTypes = ["sab-doorh", "sab-doorv"]
+    )]
+    public static void Build(ShipStatus shipStatus, LIElement element, GameObject gameObject)
     {
-        if (!elem.type.StartsWith("sab-door"))
-            return;
-
-        // ShipStatus
-        var liShipStatus = LIShipStatus.GetInstance();
-        var shipStatus = liShipStatus.ShipStatus;
-        if (shipStatus == null)
-            throw new MissingShipException();
-
         // Special Doors
         if (_specialDoorIDs == null)
         {
@@ -56,24 +53,24 @@ public class SabDoorBuilder : IElemBuilder
             }
         }
 
-        var isSpecialDoor = _specialDoorIDs.Contains(elem.id);
+        var isSpecialDoor = _specialDoorIDs.Contains(element.id);
 
         // Prefab
-        var prefab = PrefabDB.GetObject(elem.type);
+        var prefab = PrefabDB.GetObject(element.type);
         if (prefab == null)
             return;
         var prefabRenderer = prefab.GetComponent<SpriteRenderer>();
         var prefabDoor = prefab.GetComponent<PlainDoor>();
 
         // Default Sprite
-        var spriteRenderer = obj.GetComponent<SpriteRenderer>();
-        var animator = obj.AddComponent<Animator>();
-        var spriteAnim = obj.AddComponent<SpriteAnim>();
-        obj.layer = (int)Layer.ShortObjects; // <-- Required for Decontamination Doors
+        var spriteRenderer = gameObject.GetComponent<SpriteRenderer>();
+        var animator = gameObject.AddComponent<Animator>();
+        var spriteAnim = gameObject.AddComponent<SpriteAnim>();
+        gameObject.layer = (int)Layer.ShortObjects; // <-- Required for Decontamination Doors
         var isSpriteAnim = false;
         if (!spriteRenderer)
         {
-            spriteRenderer = obj.AddComponent<SpriteRenderer>();
+            spriteRenderer = gameObject.AddComponent<SpriteRenderer>();
             spriteRenderer.sprite = prefabRenderer.sprite;
             isSpriteAnim = true;
         }
@@ -87,31 +84,31 @@ public class SabDoorBuilder : IElemBuilder
         spriteRenderer.material = prefabRenderer.material;
 
         // Dummy Components
-        var dummyCollider = obj.AddComponent<BoxCollider2D>();
+        var dummyCollider = gameObject.AddComponent<BoxCollider2D>();
         dummyCollider.isTrigger = true;
         dummyCollider.enabled = false;
 
         // Colliders
-        Collider2D[] colliders = obj.GetComponentsInChildren<Collider2D>();
+        Collider2D[] colliders = gameObject.GetComponentsInChildren<Collider2D>();
         foreach (var collider in colliders)
             collider.enabled = false;
 
         // Door
-        var doorType = elem.properties.doorType;
+        var doorType = element.properties.doorType;
         var isManualDoor = doorType == "polus" || doorType == "airship";
         PlainDoor? doorComponent;
         if (isManualDoor || isSpecialDoor)
         {
-            doorComponent = obj.AddComponent<PlainDoor>();
+            doorComponent = gameObject.AddComponent<PlainDoor>();
             shipStatus.Systems[SystemTypes.Doors] = new DoorsSystemType().Cast<ISystemType>();
         }
         else
         {
-            doorComponent = obj.AddComponent<AutoOpenDoor>();
+            doorComponent = gameObject.AddComponent<AutoOpenDoor>();
             shipStatus.Systems[SystemTypes.Doors] = new AutoDoorsSystemType().Cast<ISystemType>();
         }
 
-        doorComponent.Room = isSpecialDoor ? 0 : RoomBuilder.GetParentOrDefault(elem);
+        doorComponent.Room = isSpecialDoor ? 0 : RoomBuilder.GetParentOrDefault(element);
         doorComponent.Id = _doorId++;
         doorComponent.myCollider = dummyCollider;
         doorComponent.animator = spriteAnim;
@@ -119,18 +116,18 @@ public class SabDoorBuilder : IElemBuilder
         doorComponent.CloseSound = prefabDoor.CloseSound;
 
         // Add to DB
-        DoorDB.Add(elem.id, doorComponent);
+        DoorDB.Add(element.id, doorComponent);
         if (!isSpecialDoor)
             shipStatus.AllDoors = shipStatus.AllDoors.Add(doorComponent);
 
         // Load Sounds
-        var openSound = elem.properties.sounds.FindSound(OPEN_SOUND_NAME);
+        var openSound = element.properties.sounds.FindSound(OPEN_SOUND_NAME);
         if (openSound != null)
             AudioLoader.LoadAsync(
                 openSound.dataID,
                 loadedSound => doorComponent.OpenSound = loadedSound);
 
-        var closeSound = elem.properties.sounds.FindSound(CLOSE_SOUND_NAME);
+        var closeSound = element.properties.sounds.FindSound(CLOSE_SOUND_NAME);
         if (closeSound != null)
             AudioLoader.LoadAsync(
                 closeSound.dataID,
@@ -144,7 +141,7 @@ public class SabDoorBuilder : IElemBuilder
         }
 
         // Console
-        var isInteractable = elem.properties.isDoorInteractable ?? true;
+        var isInteractable = element.properties.isDoorInteractable ?? true;
         if (isManualDoor && isInteractable && !isSpecialDoor)
         {
             // Prefab
@@ -152,8 +149,8 @@ public class SabDoorBuilder : IElemBuilder
             var prefab2Console = prefab2?.GetComponent<DoorConsole>();
 
             // Object
-            var doorConsole = new GameObject(obj.name + "_Console");
-            doorConsole.transform.position = obj.transform.position;
+            var doorConsole = new GameObject(gameObject.name + "_Console");
+            doorConsole.transform.position = gameObject.transform.position;
             doorConsole.layer = (int)Layer.Objects;
 
             // Console
@@ -163,11 +160,11 @@ public class SabDoorBuilder : IElemBuilder
             consoleComponent.Image = spriteRenderer;
 
             // Colliders
-            doorConsole.CreateDefaultColliders(obj);
+            doorConsole.CreateDefaultColliders(gameObject);
         }
 
         // Set Default State
-        var isDoorClosed = elem.properties.isDoorClosed ?? false;
+        var isDoorClosed = element.properties.isDoorClosed ?? false;
 
         doorComponent.Start(); // <-- Run initialization tasks
         doorComponent.SetDoorway(!isDoorClosed);

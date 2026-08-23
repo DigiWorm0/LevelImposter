@@ -1,4 +1,6 @@
 using System;
+using LevelImposter.Build;
+using LevelImposter.Build.Attributes;
 using LevelImposter.Core.Components;
 using LevelImposter.Core.Models;
 using LevelImposter.DB;
@@ -7,25 +9,21 @@ using Object = UnityEngine.Object;
 
 namespace LevelImposter.Builders.Util;
 
-public class EjectBuilder : IElemBuilder
+internal static class EjectBuilder
 {
     public static LIExileController? EjectController { get; private set; }
 
-    public void OnPreBuild()
+    [MapBuilder(Priority = Priority.FIRST, Target = MapTarget.Game)]
+    public static void Reset()
     {
         EjectController = null;
     }
 
-    public void OnBuild(LIElement elem, GameObject obj)
+    [ElementBuilder(ElementTypes = ["util-eject"])]
+    public static void OnBuild(LIBaseShip baseShip, GameObject obj)
     {
-        if (elem.type != "util-eject")
-            return;
-
-        // Create container object (This will be a prefab)
-        var container = new GameObject("EjectContainer");
-        container.transform.SetParent(obj.transform.parent);
-        container.SetActive(false);
-        obj.transform.SetParent(container.transform);
+        // Move to prefab container
+        obj.transform.SetParent(baseShip.Prefabs.Container);
 
         // Get Eject Controller Prefab
         var skeldPrefab = PrefabDB.GetObject("ss-skeld");

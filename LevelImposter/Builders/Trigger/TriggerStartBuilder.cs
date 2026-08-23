@@ -1,19 +1,17 @@
-﻿using LevelImposter.Core.Components;
-using LevelImposter.Core.Models;
+﻿using LevelImposter.Build.Attributes;
+using LevelImposter.Core.Components;
 using UnityEngine;
 
 namespace LevelImposter.Builders.Trigger;
 
-public class TriggerStartBuilder : IElemBuilder
+public static class TriggerStartBuilder
 {
-    public void OnBuild(LIElement elem, GameObject obj)
+    [ElementBuilder(ElementTypes = ["util-triggerstart"])]
+    public static void Build(GameObject gameObject)
     {
-        if (elem.type != "util-triggerstart")
-            return;
-
         // TODO: Add onHideAndSeekStart & onClassicStart
-        var trigger = obj.AddComponent<LITriggerSpawnable>();
-        trigger.SetTrigger(obj, "onStart");
-        obj.SetActive(true);
+        var trigger = gameObject.AddComponent<LITriggerSpawnable>();
+        trigger.SetTrigger(gameObject, "onStart");
+        gameObject.SetActive(true);
     }
 }

@@ -1,4 +1,6 @@
 using System.Collections.Generic;
+using LevelImposter.Build;
+using LevelImposter.Build.Attributes;
 using LevelImposter.Core.Components;
 using LevelImposter.Core.Models;
 using LevelImposter.Core.Utils;
@@ -7,7 +9,7 @@ using UnityEngine;
 
 namespace LevelImposter.Builders.Util;
 
-internal class LadderBuilder : IElemBuilder
+internal static class LadderBuilder
 {
     private const float DEFAULT_LADDER_OFFSET = -0.4f;
 
@@ -19,18 +21,18 @@ internal class LadderBuilder : IElemBuilder
         { "util-ladder2", 1.5f }
     };
 
-    private byte _ladderID;
+    private static byte _ladderID;
 
-    public void OnPreBuild()
+    [MapBuilder(Priority = Priority.FIRST)]
+    public static void Reset()
     {
         AllLadders.Clear();
+        _ladderID = 0;
     }
 
-    public void OnBuild(LIElement elem, GameObject obj)
+    [ElementBuilder(ElementTypes = ["util-ladder1", "util-ladder2"])]
+    public static void Build(LIElement elem, GameObject obj)
     {
-        if (!elem.type.StartsWith("util-ladder"))
-            return;
-
         // Prefab
         var prefab = PrefabDB.GetObject(elem.type);
         if (prefab == null)
@@ -75,7 +77,8 @@ internal class LadderBuilder : IElemBuilder
         AllLadders.Add(bottomConsole);
     }
 
-    public void OnPostBuild()
+    [MapBuilder(Priority = Priority.LAST)]
+    public static void CleanupDestroyedLadders()
     {
         AllLadders.RemoveAll(ladder => ladder == null);
     }
@@ -88,14 +91,7 @@ internal class LadderBuilder : IElemBuilder
     /// <returns>TRUE if found</returns>
     public static bool TryGetLadder(byte id, out Ladder? ladder)
     {
-        foreach (var l in AllLadders)
-            if (l.Id == id)
-            {
-                ladder = l;
-                return true;
-            }
-
-        ladder = null;
-        return false;
+        ladder = AllLadders.Find(l => l.Id == id);
+        return ladder != null;
     }
 }

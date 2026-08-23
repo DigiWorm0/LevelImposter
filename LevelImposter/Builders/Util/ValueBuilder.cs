@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using LevelImposter.Build;
+using LevelImposter.Build.Attributes;
 using LevelImposter.Core.Models;
 using LevelImposter.Core.Utils;
 using LevelImposter.Trigger.Values;
-using UnityEngine;
 
 namespace LevelImposter.Builders.Util;
 
-public class ValueBuilder : IElemBuilder
+internal static class ValueBuilder
 {
     private static Dictionary<Guid, IBoolValue> AllBoolValues { get; } = new();
 
@@ -18,34 +19,38 @@ public class ValueBuilder : IElemBuilder
         { "isDead", new DelegateBoolValue(() => GameState.IsLocalPlayerDead) }
     };
 
-    public void OnPreBuild()
+    [MapBuilder(Priority = Priority.FIRST)]
+    public static void Reset()
     {
         AllBoolValues.Clear();
     }
 
-    public void OnBuild(LIElement elem, GameObject obj)
+    [ElementBuilder(ElementTypes =
+    [
+        "util-valuebool",
+        "util-valueboolpreset",
+        "util-valuecomparator"
+    ])]
+    public static void Build(LIElement element)
     {
-        if (!elem.type.StartsWith("util-value"))
-            return;
-
-        switch (elem.type)
+        switch (element.type)
         {
             case "util-valuebool":
             {
-                var defaultValue = elem.properties.defaultBoolValue ?? false;
-                AllBoolValues.Add(elem.id, new BasicBoolValue(elem.id, defaultValue));
+                var defaultValue = element.properties.defaultBoolValue ?? false;
+                AllBoolValues.Add(element.id, new BasicBoolValue(element.id, defaultValue));
                 break;
             }
             case "util-valueboolpreset":
-                var preset = elem.properties.valuePresetType ?? "";
+                var preset = element.properties.valuePresetType ?? "";
                 if (!PresetBoolValues.TryGetValue(preset, out var value))
                     throw new Exception($"Invalid value preset: {preset}");
 
-                AllBoolValues.Add(elem.id, value);
+                AllBoolValues.Add(element.id, value);
                 break;
             case "util-valuecomparator":
             {
-                var operation = elem.properties.comparatorOperation switch
+                var operation = element.properties.comparatorOperation switch
                 {
                     "xor" => ComparatorValue.Operation.XOR,
                     "or" => ComparatorValue.Operation.OR,
@@ -55,17 +60,17 @@ public class ValueBuilder : IElemBuilder
                 };
 
                 AllBoolValues.Add(
-                    elem.id,
+                    element.id,
                     new ComparatorValue(
-                        elem.properties.comparatorValueID1,
-                        elem.properties.comparatorValueID2,
+                        element.properties.comparatorValueID1,
+                        element.properties.comparatorValueID2,
                         operation
                     )
                 );
                 break;
             }
             default:
-                throw new Exception($"Invalid value type: {elem.type}");
+                throw new Exception($"Invalid value type: {element.type}");
         }
     }
 

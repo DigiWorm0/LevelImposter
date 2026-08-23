@@ -3,6 +3,8 @@ using System.Linq;
 using LevelImposter.AssetLoader;
 using LevelImposter.AssetLoader.Loadables;
 using LevelImposter.AssetLoader.Loaders;
+using LevelImposter.Build;
+using LevelImposter.Build.Attributes;
 using LevelImposter.Core.Components;
 using LevelImposter.Core.GarbageCollection;
 using LevelImposter.Core.Models;
@@ -16,24 +18,20 @@ namespace LevelImposter.Builders.Generic;
 ///     Configures the SpriteRenderer on the GameObject
 /// </summary>
 /// <see cref="MapTarget">Which map target to load assets to/from</see>
-public class SpriteBuilder(MapTarget mapTarget = MapTarget.Game) : IElemBuilder
+internal static class SpriteBuilder
 {
     public delegate void SpriteLoadEvent(LIElement element, Sprite loadedSprite);
 
     public static SpriteLoadEvent? OnSpriteLoad;
 
-    private bool PixelArtMode => mapTarget.GetLoadedMap()?.properties.pixelArtMode ?? false;
-    private MapAssetDB? AssetDB => mapTarget.GetLoadedMap()?.MapAssetDB;
-
-    public int Priority =>
-        IElemBuilder.HIGH_PRIORITY; // <-- Ensure `SpriteRenderer` is added before other builders that may need it
-
-    public void OnPreBuild()
+    [MapBuilder(Priority = Priority.FIRST)]
+    public static void Reset()
     {
         OnSpriteLoad = null; // <-- Clears any previous subscriptions
     }
 
-    public void OnBuild(LIElement elem, GameObject obj)
+    [ElementBuilder(Priority = Priority.FIRST)]
+    public static void Build(LIMap map, LIElement elem, GameObject obj)
     {
         // Load Animations
         if (elem.properties.animations != null)
@@ -43,7 +41,7 @@ public class SpriteBuilder(MapTarget mapTarget = MapTarget.Game) : IElemBuilder
 
             // Add SpriteAnimator
             var spriteAnimator = obj.AddComponent<SpriteAnimator>();
-            spriteAnimator.Init(elem, elem.properties.animations, mapTarget);
+            spriteAnimator.Init(elem, elem.properties.animations, map);
         }
 
         // Load Sprite
@@ -54,7 +52,7 @@ public class SpriteBuilder(MapTarget mapTarget = MapTarget.Game) : IElemBuilder
         var spriteRenderer = obj.GetOrAddComponent<SpriteRenderer>();
 
         // Load Sprite
-        LoadSprite(elem, sprite =>
+        LoadSprite(map, elem, sprite =>
         {
             // Set sprite if no animation is playing
             var animator = obj.GetComponent<LIAnimatorBase>();
@@ -87,10 +85,10 @@ public class SpriteBuilder(MapTarget mapTarget = MapTarget.Game) : IElemBuilder
     /// <param name="elem">Element to load</param>
     /// <param name="onLoad">Callback when the sprite is loaded</param>
     /// <exception cref="Exception">Thrown if the sprite asset is not found in the AssetDB</exception>
-    public void LoadSprite(LIElement elem, Action<SpriteResult> onLoad)
+    public static void LoadSprite(LIMap map, LIElement elem, Action<SpriteResult> onLoad)
     {
         // Get LoadableSprite
-        var loadableSprite = GetLoadableFromID(elem.properties.spriteID);
+        var loadableSprite = GetLoadableFromID(elem.properties.spriteID, map);
         if (loadableSprite == null)
             return;
 
@@ -115,7 +113,7 @@ public class SpriteBuilder(MapTarget mapTarget = MapTarget.Game) : IElemBuilder
     /// </summary>
     /// <param name="spriteID">ID of the sprite</param>
     /// <returns>The LoadableSprite or null if the ID is null</returns>
-    public SpriteInfo? GetLoadableFromID(Guid? spriteID)
+    public static SpriteInfo? GetLoadableFromID(Guid? spriteID, LIMap map)
     {
         // Check for null ID
         if (spriteID == null)
@@ -124,10 +122,10 @@ public class SpriteBuilder(MapTarget mapTarget = MapTarget.Game) : IElemBuilder
         // Get Sprite Atlas
         var spriteAtlas = FindSpriteAtlasOfID(spriteID);
         if (spriteAtlas != null)
-            return GetLoadableFromSpriteAtlas(spriteAtlas);
+            return GetLoadableFromSpriteAtlas(spriteAtlas, map);
 
         // Fallback to normal sprite
-        var asset = AssetDB?.Get(spriteID);
+        var asset = map.MapAssetDB?.Get(spriteID);
         if (asset == null)
         {
             LILogger.Warn($"Could not find asset for sprite {spriteID}");
@@ -135,11 +133,12 @@ public class SpriteBuilder(MapTarget mapTarget = MapTarget.Game) : IElemBuilder
         }
 
         // Create LoadableTexture
+        var mapTarget = map.mapTarget ?? MapTarget.Game;
         var loadableTexture = new TextureInfo(
             $"{spriteID}_{mapTarget}", // <-- Ensures different IDs for different map targets
             asset);
         loadableTexture.Options.GCBehavior = mapTarget.GetGCBehavior();
-        loadableTexture.Options.PixelArt = PixelArtMode;
+        loadableTexture.Options.PixelArt = false; // TODO: FIX ME
 
         // Create LoadableSprite
         return SpriteInfo.FromLoadableTexture(loadableTexture);
@@ -151,11 +150,11 @@ public class SpriteBuilder(MapTarget mapTarget = MapTarget.Game) : IElemBuilder
     /// <param name="spriteAtlas">Sprite atlas to reference</param>
     /// <returns>The LoadableSprite</returns>
     /// <exception cref="Exception">Thrown if the asset is not found in the AssetDB</exception>
-    private SpriteInfo? GetLoadableFromSpriteAtlas(LISpriteAtlas spriteAtlas)
+    private static SpriteInfo? GetLoadableFromSpriteAtlas(LISpriteAtlas spriteAtlas, LIMap map)
     {
         // Get Asset from AssetDB
         var baseAssetID = spriteAtlas.assetID;
-        var baseAsset = AssetDB?.Get(baseAssetID);
+        var baseAsset = map.MapAssetDB?.Get(baseAssetID);
         if (baseAsset == null)
         {
             LILogger.Warn($"Could not find asset for sprite {baseAssetID}");
@@ -163,9 +162,10 @@ public class SpriteBuilder(MapTarget mapTarget = MapTarget.Game) : IElemBuilder
         }
 
         // Create LoadableTexture
+        var mapTarget = map.mapTarget ?? MapTarget.Game;
         var loadableTexture = new TextureInfo($"{baseAssetID}_{mapTarget}", baseAsset);
         loadableTexture.Options.GCBehavior = mapTarget.GetGCBehavior();
-        loadableTexture.Options.PixelArt = PixelArtMode;
+        loadableTexture.Options.PixelArt = false; // TODO: FIX ME
 
         // Create LoadableSprite
         var loadableSprite = new SpriteInfo($"{spriteAtlas.id}_{mapTarget}", loadableTexture);
@@ -199,10 +199,9 @@ public class SpriteBuilder(MapTarget mapTarget = MapTarget.Game) : IElemBuilder
 
         // Start Async Loading
         GCHandler.SetDefaultBehavior(GCBehavior.DisposeOnMapUnload);
-        var spriteBuilder = new SpriteBuilder();
         foreach (var elem in map.elements)
             if (elem.properties.spriteID != null)
-                spriteBuilder.LoadSprite(elem, _ => { });
+                LoadSprite(map, elem, _ => { });
 
         // Show Loading Bar UI
         LoadingBar.Run();

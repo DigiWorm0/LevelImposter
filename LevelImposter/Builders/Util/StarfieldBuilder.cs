@@ -1,3 +1,4 @@
+using LevelImposter.Build.Attributes;
 using LevelImposter.Builders.Generic;
 using LevelImposter.Core.Components;
 using LevelImposter.Core.Models;
@@ -7,13 +8,11 @@ using UnityEngine;
 
 namespace LevelImposter.Builders.Util;
 
-internal class StarfieldBuilder : IElemBuilder
+internal static class StarfieldBuilder
 {
-    public void OnBuild(LIElement elem, GameObject obj)
+    [ElementBuilder(ElementTypes = ["util-starfield"])]
+    public static void Build(LIElement element, GameObject gameObject)
     {
-        if (elem.type != "util-starfield")
-            return;
-
         // Prefab
         var prefab = PrefabDB.GetObject("dec-rock4");
         if (prefab == null)
@@ -21,24 +20,24 @@ internal class StarfieldBuilder : IElemBuilder
         var prefabRenderer = prefab.GetComponent<SpriteRenderer>();
 
         // Sprite
-        var spriteRenderer = obj.GetComponent<SpriteRenderer>();
+        var spriteRenderer = gameObject.GetComponent<SpriteRenderer>();
         if (spriteRenderer == null)
-            LILogger.Warn($"{elem.name} missing a sprite");
+            LILogger.Warn($"{element.name} missing a sprite");
         else
             spriteRenderer.material = prefabRenderer.material;
 
         // Star Prefab
-        var starPrefab = Object.Instantiate(obj);
+        var starPrefab = Object.Instantiate(gameObject);
         starPrefab.transform.localScale = Vector3.one;
         starPrefab.transform.localRotation = Quaternion.identity;
         var prefabComp = starPrefab.AddComponent<LIStar>();
 
-        var count = elem.properties.starfieldCount ?? 20;
+        var count = element.properties.starfieldCount ?? 20;
         var liStars = new LIStar[count];
         for (var i = 0; i < count; i++)
         {
-            var liStar = Object.Instantiate(prefabComp, obj.transform);
-            liStar.Init(elem);
+            var liStar = Object.Instantiate(prefabComp, gameObject.transform);
+            liStar.Init(element);
             liStars[i] = liStar;
         }
 
@@ -47,7 +46,7 @@ internal class StarfieldBuilder : IElemBuilder
         // Load Sprite
         SpriteBuilder.OnSpriteLoad += (loadedElem, _) =>
         {
-            if (loadedElem.id != elem.id)
+            if (loadedElem.id != element.id)
                 return;
 
             foreach (var liStar in liStars)
@@ -59,12 +58,12 @@ internal class StarfieldBuilder : IElemBuilder
         };
 
         // Disable SpriteRenderers
-        SpriteRenderer[] spriteRenderers = obj.GetComponents<SpriteRenderer>();
+        SpriteRenderer[] spriteRenderers = gameObject.GetComponents<SpriteRenderer>();
         foreach (var renderer in spriteRenderers)
             renderer.enabled = false;
 
         // Disable Colliders
-        Collider2D[] colliders = obj.GetComponents<Collider2D>();
+        Collider2D[] colliders = gameObject.GetComponents<Collider2D>();
         foreach (var collider in colliders)
             collider.enabled = false;
     }

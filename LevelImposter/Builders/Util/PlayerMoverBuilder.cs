@@ -1,30 +1,30 @@
-﻿using LevelImposter.Core.Components;
-using LevelImposter.Core.Models;
+﻿using LevelImposter.Build;
+using LevelImposter.Build.Attributes;
+using LevelImposter.Core.Components;
 using UnityEngine;
 
 namespace LevelImposter.Builders.Util;
 
-public class PlayerMoverBuilder : IElemBuilder
+internal static class PlayerMoverBuilder
 {
-    private uint _playerMoverCounter = 1;
+    private static uint _playerMoverCounter = 1;
 
-    public void OnPreBuild()
+    [MapBuilder(Priority = Priority.FIRST)]
+    public static void Reset()
     {
         _playerMoverCounter = 1;
     }
 
-    public void OnBuild(LIElement elem, GameObject obj)
+    [ElementBuilder(ElementTypes = ["util-playermover"])]
+    public static void Build(GameObject gameObject)
     {
-        if (elem.type != "util-playermover")
-            return;
-
         // Colliders
-        Collider2D[] colliders = obj.GetComponentsInChildren<Collider2D>();
+        Collider2D[] colliders = gameObject.GetComponentsInChildren<Collider2D>();
         foreach (var collider in colliders)
             collider.isTrigger = true;
 
         // Add Component
-        var playerMover = obj.AddComponent<LIPlayerMover>();
+        var playerMover = gameObject.AddComponent<LIPlayerMover>();
         playerMover.SetObjectID(_playerMoverCounter++);
     }
 }

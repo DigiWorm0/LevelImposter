@@ -1,4 +1,5 @@
-﻿using LevelImposter.Core.Components;
+﻿using LevelImposter.Build.Attributes;
+using LevelImposter.Core.Components;
 using LevelImposter.Core.Models;
 using UnityEngine;
 
@@ -7,13 +8,14 @@ namespace LevelImposter.Builders.Generic;
 /// <summary>
 ///     Adds the MinigameSprites component (if needed)
 /// </summary>
-public class MinigameSpriteBuilder : IElemBuilder
+public static class MinigameSpriteBuilder
 {
-    public void OnBuild(LIElement elem, GameObject obj)
+    [ElementBuilder]
+    public static void AddMinigameSprites(LIElement element, GameObject gameObject)
     {
-        if (elem.properties.minigames == null && elem.properties.minigameProps == null)
+        if (element.properties.minigames == null && element.properties.minigameProps == null)
             return;
-        var minigameSprites = obj.AddComponent<MinigameSprites>();
-        minigameSprites.Init(elem);
+        var minigameSprites = gameObject.AddComponent<MinigameSprites>();
+        minigameSprites.Init(element);
     }
 }
