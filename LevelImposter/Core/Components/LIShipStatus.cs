@@ -1,5 +1,4 @@
 using System;
-using LevelImposter.Builders;
 using LevelImposter.Core.GarbageCollection;
 using LevelImposter.Core.Models;
 using LevelImposter.Core.Utils;
@@ -24,7 +23,7 @@ public class LIShipStatus(IntPtr intPtr) : LIBaseShip(intPtr)
         // Load Map Data
         if (GameConfiguration.CurrentMap != null)
         {
-            MapBuilder.RebuildMap();
+            ShipMapBuilder.RebuildMap();
             return;
         }
 

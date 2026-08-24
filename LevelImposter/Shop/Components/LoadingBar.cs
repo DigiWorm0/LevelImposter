@@ -2,7 +2,6 @@ using System;
 using System.Collections;
 using Il2CppInterop.Runtime.Attributes;
 using LevelImposter.AssetLoader;
-using LevelImposter.Builders;
 using LevelImposter.Core.Translations;
 using LevelImposter.Core.Utils;
 using LevelImposter.Lobby.Sync;
@@ -127,7 +126,7 @@ public class LoadingBar(IntPtr intPtr) : MonoBehaviour(intPtr)
             // Check if done
             var isSpritesLoading = SpriteLoader.Instance.QueueSize > 0;
             var isDownloading = downloadState != null;
-            var isBuilding = MapBuilder.IsBuilding;
+            var isBuilding = ShipMapBuilder.IsBuilding;
             if (!isSpritesLoading && !isDownloading && !isBuilding)
                 break;
 

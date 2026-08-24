@@ -3,8 +3,8 @@ using BepInEx;
 using BepInEx.Unity.IL2CPP;
 using HarmonyLib;
 using Il2CppInterop.Runtime.Injection;
-using LevelImposter.Builders;
-using LevelImposter.Builders.Generic;
+using LevelImposter.Build.Builders.Generic;
+using LevelImposter.Build.Utils;
 using LevelImposter.Core.Components;
 using LevelImposter.Core.ModCompatibility;
 using LevelImposter.Core.Services;
@@ -50,7 +50,7 @@ public partial class LevelImposter : BasePlugin
 
         // Post-load methods
         IL2CPPChainloader.Instance.Finished += CompatibilityFlags.Init;
-        IL2CPPChainloader.Instance.Finished += BuildMethodRegistry.RegisterAll;
+        IL2CPPChainloader.Instance.Finished += BuilderRegistry.RegisterAll;
 
         // IUsable Interface
         RegisterTypeOptions usableInterface = new()

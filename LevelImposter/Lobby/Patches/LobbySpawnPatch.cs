@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using BepInEx.Unity.IL2CPP.Utils.Collections;
 using HarmonyLib;
-using LevelImposter.Builders.Lobby;
+using LevelImposter.Build.Builders.Lobby;
 using LevelImposter.Core.Utils;
 using UnityEngine;
 using Il2CppIEnumerator = Il2CppSystem.Collections.IEnumerator;

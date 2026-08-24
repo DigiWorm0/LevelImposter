@@ -1,5 +1,5 @@
 ﻿using System;
-using LevelImposter.Builders.Util;
+using LevelImposter.Build.Builders.Util;
 using LevelImposter.Core.Services.Ship;
 using LevelImposter.Trigger.Values;
 

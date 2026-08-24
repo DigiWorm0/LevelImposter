@@ -2,7 +2,7 @@
 using BepInEx.Unity.IL2CPP.Utils.Collections;
 using Il2CppInterop.Runtime.Attributes;
 using Il2CppSystem.Collections;
-using LevelImposter.Builders.Util;
+using LevelImposter.Build.Builders.Util;
 using LevelImposter.Core.Patches.Fixes;
 using LevelImposter.Core.Services.Ship;
 using LevelImposter.Trigger;

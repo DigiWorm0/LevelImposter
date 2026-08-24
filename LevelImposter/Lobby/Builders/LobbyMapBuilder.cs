@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using Il2CppInterop.Runtime.InteropTypes.Arrays;
-using LevelImposter.Builders;
+using LevelImposter.Build;
 using LevelImposter.Core.Components;
 using LevelImposter.Core.GarbageCollection;
 using LevelImposter.Core.ModCompatibility;

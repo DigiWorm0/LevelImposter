@@ -1,6 +1,6 @@
 ﻿using System;
 using Il2CppInterop.Runtime.Attributes;
-using LevelImposter.Builders.Lobby;
+using LevelImposter.Build.Builders.Lobby;
 using LevelImposter.Core.Components;
 using LevelImposter.Core.Utils;
 using LevelImposter.Lobby.Builders;

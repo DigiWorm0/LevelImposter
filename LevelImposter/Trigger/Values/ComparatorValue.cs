@@ -1,5 +1,5 @@
 ﻿using System;
-using LevelImposter.Builders.Util;
+using LevelImposter.Build.Builders.Util;
 
 namespace LevelImposter.Trigger.Values;
 
