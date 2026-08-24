@@ -16,7 +16,7 @@ public class MapBuilderAttribute : Attribute
     }
 
     public BuilderType Type { get; set; } = BuilderType.MapBuilder;
-    public int Priority { get; set; } = 0;
+    public int Priority { get; set; } = Builders.Priority.DEFAULT;
     public MapTarget Target { get; set; } = MapTarget.Both;
     public string[]? ElementTypes { get; set; } = null;
 }

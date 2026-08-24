@@ -1,4 +1,3 @@
-using LevelImposter.Build;
 using LevelImposter.Build.Attributes;
 using LevelImposter.Core.Components;
 using LevelImposter.Core.Models;
@@ -24,7 +23,7 @@ internal static class SabMixupBuilder
         Target = MapTarget.Game,
         ElementTypes = ["sab-btnmixup"]
     )]
-    public static void Build(ShipStatus shipStatus, LIElement element, GameObject gameObject)
+    public static void Build(ShipStatus shipStatus, LIElement element)
     {
         // Check Already Exists
         if (SabotageSystem != null)

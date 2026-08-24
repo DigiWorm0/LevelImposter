@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using LevelImposter.Build;
 using LevelImposter.Build.Attributes;
 using LevelImposter.Builders.Generic;
 using LevelImposter.Builders.Minimap;
@@ -20,9 +19,6 @@ internal static class SabMapBuilder
 
     private static Sprite? _commsBtnSprite;
     private static Sprite? _doorsBtnSprite;
-    private static bool _hasSabButtons;
-
-    private static bool _hasSabConsoles;
     private static Sprite? _lightsBtnSprite;
     private static Sprite? _mixupBtnSprite;
     private static Sprite? _oxygenBtnSprite;
@@ -60,7 +56,7 @@ internal static class SabMapBuilder
             "sab-btnmixup"
         ])
     ]
-    public static void Build(ShipStatus shipStatus, LIElement elem, GameObject obj)
+    public static void Build(ShipStatus shipStatus, LIElement element, GameObject gameObject)
     {
         // Assets
         var mapBehaviour = MinimapBuilder.GetMinimap();
@@ -80,7 +76,7 @@ internal static class SabMapBuilder
         }
 
         // System
-        var systemType = RoomBuilder.GetParentOrDefault(elem);
+        var systemType = RoomBuilder.GetParentOrDefault(element);
 
         // Map Room
         MapRoom mapRoom;
@@ -90,7 +86,7 @@ internal static class SabMapBuilder
         }
         else
         {
-            GameObject roomObj = new(elem.name);
+            GameObject roomObj = new(element.name);
             roomObj.transform.SetParent(infectedOverlay.transform);
             roomObj.transform.localPosition = Vector3.zero;
 
@@ -107,16 +103,16 @@ internal static class SabMapBuilder
 
         // Button
         var mapScale = shipStatus.MapScale;
-        GameObject sabButton = new(elem.name);
+        GameObject sabButton = new(element.name);
         sabButton.layer = (int)Layer.UI;
         sabButton.transform.SetParent(mapRoom.transform);
         sabButton.transform.localPosition = new Vector3(
-            elem.x / mapScale,
-            elem.y / mapScale,
+            element.x / mapScale,
+            element.y / mapScale,
             -25.0f
         );
-        sabButton.transform.localScale = new Vector3(elem.xScale, elem.yScale, 1);
-        sabButton.transform.localRotation = Quaternion.Euler(0, 0, elem.rotation);
+        sabButton.transform.localScale = new Vector3(element.xScale, element.yScale, 1);
+        sabButton.transform.localRotation = Quaternion.Euler(0, 0, element.rotation);
 
         var collider = sabButton.AddComponent<CircleCollider2D>();
         collider.radius = 0.425f;
@@ -129,7 +125,7 @@ internal static class SabMapBuilder
         var button = sabButton.AddComponent<ButtonBehavior>();
         Action btnAction;
         Sprite btnSprite;
-        switch (elem.type)
+        switch (element.type)
         {
             case "sab-btnreactor":
                 btnSprite = _reactorBtnSprite;
@@ -163,7 +159,7 @@ internal static class SabMapBuilder
                 //sabButton.transform.localScale *= 0.8f;
                 break;
             default:
-                LILogger.Warn($"{elem.name} has unknown sabotage button type: {elem.type}");
+                LILogger.Warn($"{element.name} has unknown sabotage button type: {element.type}");
                 return;
         }
 
@@ -172,14 +168,14 @@ internal static class SabMapBuilder
         button.OnClick.AddListener(btnAction);
 
         // Load Sprite
-        var spriteRenderer = obj.GetComponent<SpriteRenderer>();
+        var spriteRenderer = gameObject.GetComponent<SpriteRenderer>();
         SpriteBuilder.OnSpriteLoad += (loadedElem, _) =>
         {
-            if (loadedElem.id != elem.id || btnRenderer == null)
+            if (loadedElem.id != element.id || btnRenderer == null)
                 return;
             btnRenderer.sprite = spriteRenderer.sprite;
             btnRenderer.color = spriteRenderer.color;
-            Object.Destroy(obj);
+            Object.Destroy(gameObject);
         };
     }
 

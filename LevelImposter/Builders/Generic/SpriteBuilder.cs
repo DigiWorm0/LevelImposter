@@ -3,7 +3,6 @@ using System.Linq;
 using LevelImposter.AssetLoader;
 using LevelImposter.AssetLoader.Loadables;
 using LevelImposter.AssetLoader.Loaders;
-using LevelImposter.Build;
 using LevelImposter.Build.Attributes;
 using LevelImposter.Core.Components;
 using LevelImposter.Core.GarbageCollection;
@@ -31,31 +30,31 @@ internal static class SpriteBuilder
     }
 
     [ElementBuilder(Priority = Priority.FIRST)]
-    public static void Build(LIMap map, LIElement elem, GameObject obj)
+    public static void Build(LIMap map, LIElement element, GameObject gameObject)
     {
         // Load Animations
-        if (elem.properties.animations != null)
+        if (element.properties.animations != null)
         {
             // Add SpriteRenderer immediately
-            obj.GetOrAddComponent<SpriteRenderer>();
+            gameObject.GetOrAddComponent<SpriteRenderer>();
 
             // Add SpriteAnimator
-            var spriteAnimator = obj.AddComponent<SpriteAnimator>();
-            spriteAnimator.Init(elem, elem.properties.animations, map);
+            var spriteAnimator = gameObject.AddComponent<SpriteAnimator>();
+            spriteAnimator.Init(element, element.properties.animations, map);
         }
 
         // Load Sprite
-        if (elem.properties.spriteID == null)
+        if (element.properties.spriteID == null)
             return;
 
         // Add SpriteRenderer immediately
-        var spriteRenderer = obj.GetOrAddComponent<SpriteRenderer>();
+        var spriteRenderer = gameObject.GetOrAddComponent<SpriteRenderer>();
 
         // Load Sprite
-        LoadSprite(map, elem, sprite =>
+        LoadSprite(map, element, sprite =>
         {
             // Set sprite if no animation is playing
-            var animator = obj.GetComponent<LIAnimatorBase>();
+            var animator = gameObject.GetComponent<LIAnimatorBase>();
             var animating = animator != null && animator.IsAnimating;
             if (!animating)
                 spriteRenderer.sprite = sprite;
@@ -63,14 +62,14 @@ internal static class SpriteBuilder
             // Check if loaded sprite is a GIF
             if (sprite.TextureResult is GIFLoader.GifTextureResult gifTexture)
             {
-                var gifAnimator = obj.AddComponent<GIFAnimator>();
-                gifAnimator.Init(elem, gifTexture.GIFFile);
+                var gifAnimator = gameObject.AddComponent<GIFAnimator>();
+                gifAnimator.Init(element, gifTexture.GIFFile);
             }
 
             // Invoke Callback
             try
             {
-                OnSpriteLoad?.Invoke(elem, sprite);
+                OnSpriteLoad?.Invoke(element, sprite);
             }
             catch (Exception e)
             {
@@ -133,11 +132,10 @@ internal static class SpriteBuilder
         }
 
         // Create LoadableTexture
-        var mapTarget = map.mapTarget ?? MapTarget.Game;
         var loadableTexture = new TextureInfo(
-            $"{spriteID}_{mapTarget}", // <-- Ensures different IDs for different map targets
+            $"{spriteID}_{map.MapTarget}", // <-- Ensures different IDs for different map targets
             asset);
-        loadableTexture.Options.GCBehavior = mapTarget.GetGCBehavior();
+        loadableTexture.Options.GCBehavior = map.MapTarget.GetGCBehavior();
         loadableTexture.Options.PixelArt = false; // TODO: FIX ME
 
         // Create LoadableSprite
@@ -162,14 +160,13 @@ internal static class SpriteBuilder
         }
 
         // Create LoadableTexture
-        var mapTarget = map.mapTarget ?? MapTarget.Game;
-        var loadableTexture = new TextureInfo($"{baseAssetID}_{mapTarget}", baseAsset);
-        loadableTexture.Options.GCBehavior = mapTarget.GetGCBehavior();
-        loadableTexture.Options.PixelArt = false; // TODO: FIX ME
+        var loadableTexture = new TextureInfo($"{baseAssetID}_{map.MapTarget}", baseAsset);
+        loadableTexture.Options.GCBehavior = map.MapTarget.GetGCBehavior();
+        loadableTexture.Options.PixelArt = map.properties.pixelArtMode ?? false;
 
         // Create LoadableSprite
-        var loadableSprite = new SpriteInfo($"{spriteAtlas.id}_{mapTarget}", loadableTexture);
-        loadableSprite.Options.GCBehavior = mapTarget.GetGCBehavior();
+        var loadableSprite = new SpriteInfo($"{spriteAtlas.id}_{map.MapTarget}", loadableTexture);
+        loadableSprite.Options.GCBehavior = map.MapTarget.GetGCBehavior();
         loadableSprite.Options.Frame = new Rect(
             spriteAtlas.x,
             spriteAtlas.y,

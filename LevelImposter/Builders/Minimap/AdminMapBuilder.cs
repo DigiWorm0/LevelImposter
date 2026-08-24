@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using LevelImposter.Build;
 using LevelImposter.Build.Attributes;
 using LevelImposter.Builders.Util;
 using LevelImposter.Core.Components;
@@ -26,10 +25,10 @@ internal static class AdminMapBuilder
         Priority = Priority.FIRST,
         ElementTypes = ["util-room"]
     )]
-    public static void OnBuild(LIElement elem, GameObject obj)
+    public static void Build(LIElement element)
     {
         // Check Admin
-        var isAdminVisible = elem.properties.isRoomAdminVisible ?? true;
+        var isAdminVisible = element.properties.isRoomAdminVisible ?? true;
         if (!isAdminVisible)
             return;
 
@@ -44,15 +43,15 @@ internal static class AdminMapBuilder
             _poolPrefab = mapCountOverlay.CountAreas[0].pool.Prefab;
 
         // System
-        var systemType = RoomBuilder.GetSystem(elem.id);
+        var systemType = RoomBuilder.GetSystem(element.id);
 
         // Map Room
         var overlayScale = mapCountOverlay.transform.localScale.x * shipStatus.MapScale;
-        GameObject roomObj = new(elem.name);
+        GameObject roomObj = new(element.name);
         roomObj.transform.SetParent(mapCountOverlay.transform);
         roomObj.transform.localPosition = new Vector3(
-            elem.x * (1 / overlayScale),
-            elem.y * (1 / overlayScale) + ICON_OFFSET,
+            element.x * (1 / overlayScale),
+            element.y * (1 / overlayScale) + ICON_OFFSET,
             -25.0f
         );
 

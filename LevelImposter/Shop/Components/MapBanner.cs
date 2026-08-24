@@ -80,7 +80,7 @@ public class MapBanner(IntPtr intPtr) : MonoBehaviour(intPtr)
             // Launch Map in Freeplay
             LaunchMapInFreeplay(map);
         }
-        else if (map.mapTarget == MapTarget.Lobby)
+        else if (map.MapTarget == MapTarget.Lobby)
         {
             var isLobbyChanged = GameConfiguration.CurrentLobbyMap?.id != map.id;
 
@@ -181,7 +181,7 @@ public class MapBanner(IntPtr intPtr) : MonoBehaviour(intPtr)
         SoundManager.Instance.StopAllSound();
 
         // Load map to GameConfiguration
-        var isLobby = map.mapTarget == MapTarget.Lobby;
+        var isLobby = map.MapTarget == MapTarget.Lobby;
         if (isLobby)
             GameConfiguration.SetLobbyMap(map);
         else
@@ -249,7 +249,7 @@ public class MapBanner(IntPtr intPtr) : MonoBehaviour(intPtr)
 
         var isDownloaded = MapFileAPI.Exists(_currentMap.id);
         var isDownloadable = _currentMap.IsInWorkshop && _currentMap.isPublic;
-        var isGameMap = _currentMap.mapTarget != MapTarget.Lobby;
+        var isGameMap = _currentMap.MapTarget == MapTarget.Game;
 
         downloadButton.Value.gameObject.SetActive(!isDownloaded);
         randomButton.Value.gameObject.SetActive(isDownloaded);

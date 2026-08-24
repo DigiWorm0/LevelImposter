@@ -1,10 +1,8 @@
 using System;
 using System.Collections.Generic;
-using LevelImposter.Build;
 using LevelImposter.Build.Attributes;
 using LevelImposter.Core.Models;
 using LevelImposter.Core.Utils;
-using LevelImposter.Lobby.Components;
 using LevelImposter.Lobby.Patches;
 using UnityEngine;
 
@@ -37,11 +35,13 @@ internal static class LobbySpawnBuilder
         lobbyBehaviour.SpawnPositions = lobbyBehaviour.SpawnPositions.Add(gameObject.transform.position);
     }
 
-    [MapBuilder(Priority = Priority.LAST)]
-    public static void OnPostBuild()
+    [MapBuilder(
+        Target = MapTarget.Lobby,
+        Priority = Priority.LAST
+    )]
+    public static void OnPostBuild(LobbyBehaviour lobbyBehaviour)
     {
         // Check if no spawn positions were added
-        var lobbyBehaviour = LILobbyBehaviour.GetLobbyBehaviour();
         if (lobbyBehaviour.SpawnPositions.Length == 0)
             lobbyBehaviour.SpawnPositions = new[] { Vector2.zero };
 

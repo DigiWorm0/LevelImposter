@@ -8,6 +8,7 @@ public static class Priority
     /// SpriteRenderers and Colliders are added at this level
     public const int FIRST = 1000;
 
+    // Rooms are added at this level
     public const int VERY_HIGH = 500;
     public const int HIGH = 100;
     public const int DEFAULT = 0;

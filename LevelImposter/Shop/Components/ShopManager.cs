@@ -164,13 +164,13 @@ public class ShopManager(IntPtr intPtr) : MonoBehaviour(intPtr)
             case ShopTab.DownloadedMaps:
                 LIDeserializerLegacy.ConvertAllLegacyMaps();
                 var maps = MapFileAPI.GetAllMetadata()
-                    .Where(m => m.mapTarget != MapTarget.Lobby)
+                    .Where(m => m.MapTarget == MapTarget.Game)
                     .ToArray();
                 SetMaps(maps);
                 break;
             case ShopTab.DownloadedLobbyMaps:
                 var lobbyMaps = MapFileAPI.GetAllMetadata()
-                    .Where(m => m.mapTarget == MapTarget.Lobby)
+                    .Where(m => m.MapTarget == MapTarget.Lobby)
                     .ToArray();
                 SetMaps(lobbyMaps);
                 break;

@@ -1,5 +1,4 @@
 using LevelImposter.AssetLoader.Loaders;
-using LevelImposter.Build;
 using LevelImposter.Build.Attributes;
 using LevelImposter.Core.Components;
 using LevelImposter.Core.Models;
@@ -17,7 +16,7 @@ internal static class PlatformBuilder
     public static MovingPlatformBehaviour? Platform;
 
     [ElementBuilder(ElementTypes = ["util-platform"])]
-    public static void Build(LIElement elem, GameObject obj)
+    public static void Build(LIElement element, GameObject gameObject)
     {
         // Singleton
         if (Platform != null)
@@ -30,36 +29,36 @@ internal static class PlatformBuilder
         var shipStatus = LIShipStatus.GetInstance().ShipStatus;
 
         // Prefab
-        var prefab = PrefabDB.GetObject(elem.type);
+        var prefab = PrefabDB.GetObject(element.type);
         if (prefab == null)
             return;
         var prefabBehaviour = prefab.GetComponent<MovingPlatformBehaviour>();
 
         // Default Sprite
-        var spriteRenderer = obj.CloneSprite(prefab);
+        var spriteRenderer = gameObject.CloneSprite(prefab);
 
         // Offsets
-        var leftPos = obj.transform.localPosition;
-        var leftUsePos = GetOffsetFromTransform(obj.transform, new Vector3(
-            elem.properties.platformXEntranceOffset ?? -1.5f,
-            elem.properties.platformYEntranceOffset ?? 0,
+        var leftPos = gameObject.transform.localPosition;
+        var leftUsePos = GetOffsetFromTransform(gameObject.transform, new Vector3(
+            element.properties.platformXEntranceOffset ?? -1.5f,
+            element.properties.platformYEntranceOffset ?? 0,
             0
         ));
 
-        var rightPos = GetOffsetFromTransform(obj.transform, new Vector3(
-            elem.properties.platformXOffset ?? 3.0f,
-            elem.properties.platformYOffset ?? 0,
+        var rightPos = GetOffsetFromTransform(gameObject.transform, new Vector3(
+            element.properties.platformXOffset ?? 3.0f,
+            element.properties.platformYOffset ?? 0,
             0
         ));
 
-        var rightUsePos = GetOffsetFromTransform(obj.transform, new Vector3(
-            (elem.properties.platformXExitOffset ?? 1.5f) + (elem.properties.platformXOffset ?? 3.0f),
-            (elem.properties.platformYExitOffset ?? 0) + (elem.properties.platformYOffset ?? 0),
+        var rightUsePos = GetOffsetFromTransform(gameObject.transform, new Vector3(
+            (element.properties.platformXExitOffset ?? 1.5f) + (element.properties.platformXOffset ?? 3.0f),
+            (element.properties.platformYExitOffset ?? 0) + (element.properties.platformYOffset ?? 0),
             0
         ));
 
         // Platform
-        var movingPlatform = obj.AddComponent<MovingPlatformBehaviour>();
+        var movingPlatform = gameObject.AddComponent<MovingPlatformBehaviour>();
         movingPlatform.LeftPosition = leftPos.ScaleZPositionByY();
         movingPlatform.RightPosition = rightPos.ScaleZPositionByY();
         movingPlatform.LeftUsePosition = leftUsePos.ScaleZPositionByY();
@@ -72,18 +71,18 @@ internal static class PlatformBuilder
         shipStatus?.Systems.Add(SystemTypes.GapRoom, movingPlatform.Cast<ISystemType>());
 
         // Sound
-        var moveSound = elem.properties.sounds.FindSound(MOVE_SOUND_NAME);
+        var moveSound = element.properties.sounds.FindSound(MOVE_SOUND_NAME);
         if (moveSound != null)
             movingPlatform.MovingSound = WAVLoader.Load(moveSound);
 
         // Consoles
         GameObject leftObj = new("Left Console");
-        leftObj.transform.SetParent(obj.transform.parent);
+        leftObj.transform.SetParent(gameObject.transform.parent);
         leftObj.transform.localPosition = leftUsePos;
         leftObj.AddComponent<BoxCollider2D>().isTrigger = true;
 
         GameObject rightObj = new("Right Console");
-        rightObj.transform.SetParent(obj.transform.parent);
+        rightObj.transform.SetParent(gameObject.transform.parent);
         rightObj.transform.localPosition = rightUsePos;
         rightObj.AddComponent<BoxCollider2D>().isTrigger = true;
 

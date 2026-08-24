@@ -1,4 +1,3 @@
-using LevelImposter.Build;
 using LevelImposter.Build.Attributes;
 using LevelImposter.Core.Components;
 using LevelImposter.Core.Models;
@@ -14,30 +13,37 @@ public static class TaskBuilder
     private static readonly ShipTaskBuilder _shipTaskBuilder = new();
     private static readonly TaskConsoleBuilder _taskConsoleBuilder = new();
 
-    [MapBuilder(Target = MapTarget.Game)]
-    public static void BuildTask(LIBaseShip baseShip, LIElement elem, GameObject obj)
+    [MapBuilder(Priority = Priority.FIRST)]
+    public static void Reset()
     {
-        if (!elem.type.StartsWith("task-"))
+        _shipTaskBuilder.Reset();
+        _taskConsoleBuilder.Reset();
+    }
+
+    [ElementBuilder(Target = MapTarget.Game)]
+    public static void BuildTask(LIBaseShip baseShip, LIElement element, GameObject gameObject)
+    {
+        if (!element.type.StartsWith("task-"))
             return;
 
         // Prefab 
-        var prefab = PrefabDB.GetObject(elem.type);
+        var prefab = PrefabDB.GetObject(element.type);
         if (prefab == null)
             return;
 
         // Sprite
-        obj.CloneSprite(prefab);
+        gameObject.CloneSprite(prefab);
 
         // Console
-        var console = _taskConsoleBuilder.Build(elem, obj, prefab);
-        _shipTaskBuilder.BuildTask(baseShip, elem, console);
+        var console = _taskConsoleBuilder.Build(element, gameObject, prefab);
+        _shipTaskBuilder.BuildTask(baseShip, element, console);
 
         // Button
         var prefabBtn = prefab.GetComponentInChildren<PassiveButton>();
-        var collider = obj.CreateDefaultColliders(prefab);
+        var collider = gameObject.CreateDefaultColliders(prefab);
         if (prefabBtn != null)
         {
-            var btn = obj.AddComponent<PassiveButton>();
+            var btn = gameObject.AddComponent<PassiveButton>();
             btn.ClickMask = collider;
             btn.OnMouseOver = new UnityEvent();
             btn.OnMouseOut = new UnityEvent();
@@ -48,11 +54,11 @@ public static class TaskBuilder
 
 
     [ElementBuilder(ElementTypes = ["task-medscan"])]
-    public static void RegisterMedScanner(GameObject gameObject)
+    public static void RegisterMedScanner(GameObject gameObject, ShipStatus shipStatus)
     {
-        if (ShipStatus.Instance.MedScanner != null)
+        if (shipStatus.MedScanner != null)
             throw new MapBuildException("Only 1 med scanner can be used per map");
 
-        ShipStatus.Instance.MedScanner = gameObject.AddComponent<MedScannerBehaviour>();
+        shipStatus.MedScanner = gameObject.AddComponent<MedScannerBehaviour>();
     }
 }

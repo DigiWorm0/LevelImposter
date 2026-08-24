@@ -1,5 +1,4 @@
-﻿using LevelImposter.Build;
-using LevelImposter.Build.Attributes;
+﻿using LevelImposter.Build.Attributes;
 using LevelImposter.Core.Models;
 using UnityEngine;
 
@@ -10,7 +9,7 @@ namespace LevelImposter.Builders.Generic;
 /// </summary>
 internal static class ColorBuilder
 {
-    [ElementBuilder(Priority = Priority.HIGH)]
+    [ElementBuilder(Priority = Priority.VERY_HIGH)]
     public static void AddSpriteColor(LIElement element, GameObject gameObject)
     {
         var spriteRenderer = gameObject.GetComponent<SpriteRenderer>();

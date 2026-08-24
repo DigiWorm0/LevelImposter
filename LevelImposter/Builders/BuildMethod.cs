@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Reflection;
 using LevelImposter.Build.Attributes;
+using LevelImposter.Test;
 
 namespace LevelImposter.Builders;
 
@@ -23,8 +24,11 @@ public class BuildMethod(MethodInfo method, MapBuilderAttribute attribute)
             if (parameters.TryGetValue(parameter.Name ?? "", out var value))
                 orderedParameters.Add(value);
             else
-                throw new ArgumentException($"Missing parameter '{parameter.Name}' for method '{Method.Name}'");
+                throw new ArgumentException(
+                    $"Missing parameter '{parameter.Name}' for method '{Method.Name}' (`{Method.DeclaringType?.FullName}`)");
 
+
+        using var _ = Profiler.Measure("BuildMethod.Invoke", $"{Method.DeclaringType?.FullName}.{Method.Name}");
         Method.Invoke(null, orderedParameters.ToArray());
     }
 }

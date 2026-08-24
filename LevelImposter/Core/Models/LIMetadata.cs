@@ -20,7 +20,9 @@ public class LIMetadata
     public string thumbnailURL { get; set; } = "";
 
     public Guid? remixOf { get; set; }
-    public MapTarget? mapTarget { get; set; }
+
+    public MapTarget MapTarget => MapTargetValue ?? MapTarget.Game;
+    [JsonPropertyName("mapTarget")] public MapTarget? MapTargetValue { get; set; }
 
     /// <summary>
     ///     True if the map has a thumbnail available

@@ -1,5 +1,4 @@
 using LevelImposter.AssetLoader.Loaders;
-using LevelImposter.Build;
 using LevelImposter.Build.Attributes;
 using LevelImposter.Core.Models;
 using LevelImposter.Core.Utils;
@@ -23,7 +22,7 @@ internal static class SabotageOptionsBuilder
         Target = MapTarget.Game,
         ElementTypes = ["util-sabotages"]
     )]
-    public static void Build(ShipStatus shipStatus, LIElement elem, GameObject obj)
+    public static void Build(ShipStatus shipStatus, LIElement element, GameObject gameObject)
     {
         // Singleton
         if (TriggerObject != null)
@@ -32,10 +31,10 @@ internal static class SabotageOptionsBuilder
             return;
         }
 
-        TriggerObject = obj;
+        TriggerObject = gameObject;
 
         // Sabotage Sound
-        var sabotageSound = elem.properties.sounds.FindSound(SABOTAGE_SOUND_NAME);
+        var sabotageSound = element.properties.sounds.FindSound(SABOTAGE_SOUND_NAME);
         if (sabotageSound != null)
             shipStatus.SabotageSound = WAVLoader.Load(sabotageSound) ?? shipStatus.SabotageSound;
     }

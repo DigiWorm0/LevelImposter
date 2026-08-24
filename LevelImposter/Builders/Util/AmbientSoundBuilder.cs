@@ -45,7 +45,7 @@ internal static class AmbientSoundBuilder
         }
 
         // Sound Player
-        var isLobby = map.mapTarget == MapTarget.Lobby;
+        var isLobby = map.MapTarget == MapTarget.Lobby;
         if (isAmbient)
         {
             var ambientPlayer = gameObject.AddComponent<AmbientSoundPlayer>();

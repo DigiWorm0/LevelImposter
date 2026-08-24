@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using LevelImposter.Build;
 using LevelImposter.Build.Attributes;
 using LevelImposter.Builders.Generic;
 using LevelImposter.Core.Models;
@@ -28,10 +27,10 @@ internal static class EjectDummyBuilder
     }
 
     [ElementBuilder(ElementTypes = ["util-ejectdummy", "util-ejectdummy2"])]
-    public static void Build(LIElement elem, GameObject obj)
+    public static void Build(LIElement element, GameObject gameObject)
     {
         // Get Type
-        var type = elem.type switch
+        var type = element.type switch
         {
             "util-ejectdummy" => PlayerDummyType.Floating,
             "util-ejectdummy2" => PlayerDummyType.Standing,
@@ -51,7 +50,7 @@ internal static class EjectDummyBuilder
             throw new Exception("Failed to get Player Prefab from Skeld's Eject Controller");
 
         // Clone Prefab to Object
-        var player = Object.Instantiate(playerPrefab, obj.transform);
+        var player = Object.Instantiate(playerPrefab, gameObject.transform);
         if (!player)
             throw new Exception("Failed to clone Player Prefab");
 
@@ -67,10 +66,10 @@ internal static class EjectDummyBuilder
         PlayerDummies.Add(new PlayerDummy(player, type));
 
         // Update Cosmetics on Sprite Load
-        var spriteRenderer = obj.GetComponent<SpriteRenderer>();
+        var spriteRenderer = gameObject.GetComponent<SpriteRenderer>();
         SpriteBuilder.OnSpriteLoad += (loadedElem, _) =>
         {
-            if (loadedElem.id != elem.id || player == null)
+            if (loadedElem.id != element.id || player == null)
                 return;
 
             player.cosmetics.skin.layer.sprite = spriteRenderer.sprite;

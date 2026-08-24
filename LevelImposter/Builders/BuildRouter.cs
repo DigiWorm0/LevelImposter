@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
+using LevelImposter.Build.Attributes;
 using LevelImposter.Core.Components;
 using LevelImposter.Core.Models;
 using LevelImposter.Core.Utils;
@@ -39,8 +41,31 @@ public static class BuildRouter
         // Build elements by priority
         var builderGroups = BuildMethodRegistry.GroupBuildersByPriority();
         foreach (var buildMethods in builderGroups)
-        foreach (var element in map.elements)
-            RunBuildMethods(element, baseShip, buildMethods, buildMethodParameters);
+        {
+            // Filter by MapTarget
+            var targetedBuilders = buildMethods.Where(b =>
+                    b.Attribute.Target == MapTarget.Both ||
+                    b.Attribute.Target == map.MapTarget)
+                .ToArray();
+
+            // Filter by BuilderType
+            var elementBuilders =
+                targetedBuilders.Where(b => b.Attribute.Type == MapBuilderAttribute.BuilderType.ElementBuilder);
+            var mapBuilders =
+                targetedBuilders.Where(b => b.Attribute.Type == MapBuilderAttribute.BuilderType.MapBuilder);
+
+            // Build Map
+            foreach (var builder in mapBuilders)
+                builder.Invoke(buildMethodParameters);
+
+            // Build Elements
+            foreach (var element in map.elements)
+                RunBuildMethods(
+                    element,
+                    baseShip,
+                    buildMethods,
+                    buildMethodParameters);
+        }
     }
 
     private static void RunBuildMethods(
@@ -62,11 +87,13 @@ public static class BuildRouter
 
             foreach (var builder in buildMethods)
             {
+                // Skip if the builder isn't an element builder
+                if (builder.Attribute.Type != MapBuilderAttribute.BuilderType.ElementBuilder)
+                    continue;
+
                 // Skip if the element type doesn't match
                 if (!(builder.Attribute.ElementTypes?.Contains(element.type) ?? true))
                     continue;
-
-                LILogger.Info($"Running {builder.Method.DeclaringType?.Name} on {element.name}");
 
                 builder.Invoke(buildMethodParameters);
             }

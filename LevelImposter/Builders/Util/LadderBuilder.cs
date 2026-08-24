@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using LevelImposter.Build;
 using LevelImposter.Build.Attributes;
 using LevelImposter.Core.Components;
 using LevelImposter.Core.Models;
@@ -31,30 +30,30 @@ internal static class LadderBuilder
     }
 
     [ElementBuilder(ElementTypes = ["util-ladder1", "util-ladder2"])]
-    public static void Build(LIElement elem, GameObject obj)
+    public static void Build(LIElement element, GameObject gameObject)
     {
         // Prefab
-        var prefab = PrefabDB.GetObject(elem.type);
+        var prefab = PrefabDB.GetObject(element.type);
         if (prefab == null)
             return;
         var topPrefab = prefab.transform.FindChild("LadderTop").GetComponent<Ladder>();
         var bottomPrefab = prefab.transform.FindChild("LadderBottom").GetComponent<Ladder>();
 
         // Default Sprite
-        var spriteRenderer = obj.CloneSprite(prefab);
+        var spriteRenderer = gameObject.CloneSprite(prefab);
 
         // Offset
-        var heightOffset = elem.properties.ladderOffset ?? DEFAULT_LADDER_OFFSET;
+        var heightOffset = element.properties.ladderOffset ?? DEFAULT_LADDER_OFFSET;
 
         // Console
-        var ladderHeight = elem.properties.ladderHeight ?? DefaultLadderHeights[elem.type];
+        var ladderHeight = element.properties.ladderHeight ?? DefaultLadderHeights[element.type];
 
         GameObject topObj = new("LadderTop");
-        topObj.transform.SetParent(obj.transform);
+        topObj.transform.SetParent(gameObject.transform);
         topObj.transform.localPosition = new Vector3(0, ladderHeight + heightOffset, 0);
         topObj.AddComponent<BoxCollider2D>().isTrigger = true;
         GameObject bottomObj = new("LadderBottom");
-        bottomObj.transform.SetParent(obj.transform);
+        bottomObj.transform.SetParent(gameObject.transform);
         bottomObj.transform.localPosition = new Vector3(0, -ladderHeight + heightOffset, 0);
         bottomObj.AddComponent<BoxCollider2D>().isTrigger = true;
 
@@ -65,7 +64,7 @@ internal static class LadderBuilder
         topConsole.Destination = bottomConsole;
         topConsole.UseSound = topPrefab.UseSound;
         topConsole.Image = spriteRenderer;
-        topConsole.SetCooldownDuration(elem.properties.ladderCooldown ?? 5.0f);
+        topConsole.SetCooldownDuration(element.properties.ladderCooldown ?? 5.0f);
         AllLadders.Add(topConsole);
 
         bottomConsole.Id = _ladderID++;
@@ -73,7 +72,7 @@ internal static class LadderBuilder
         bottomConsole.Destination = topConsole;
         bottomConsole.UseSound = bottomPrefab.UseSound;
         bottomConsole.Image = spriteRenderer;
-        bottomConsole.SetCooldownDuration(elem.properties.ladderCooldown ?? 5.0f);
+        bottomConsole.SetCooldownDuration(element.properties.ladderCooldown ?? 5.0f);
         AllLadders.Add(bottomConsole);
     }
 

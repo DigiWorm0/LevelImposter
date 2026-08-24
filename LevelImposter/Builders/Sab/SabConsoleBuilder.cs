@@ -34,54 +34,54 @@ internal static class SabConsoleBuilder
             "sab-comms"
         ])
     ]
-    public static void Build(LIElement elem, GameObject obj)
+    public static void Build(LIElement element, GameObject gameObject)
     {
         // Prefab
-        var prefab = PrefabDB.GetObject(elem.type);
+        var prefab = PrefabDB.GetObject(element.type);
         if (prefab == null)
             return;
         var prefabConsole = prefab.GetComponent<Console>();
 
         // Default Sprite
-        var spriteRenderer = obj.CloneSprite(prefab);
+        var spriteRenderer = gameObject.CloneSprite(prefab);
 
         // Parent
-        var systemType = RoomBuilder.GetParentOrDefault(elem);
+        var systemType = RoomBuilder.GetParentOrDefault(element);
         var isFound = SabBuilder.TryGetSabotage(systemType, out var sabotageTask);
         if (!isFound || sabotageTask == null)
         {
-            LILogger.Warn($"SabotageTask not found for {obj.name}");
+            LILogger.Warn($"SabotageTask not found for {gameObject.name}");
             return;
         }
 
-        if (!string.IsNullOrEmpty(elem.properties.description))
-            LIBaseShip.Instance?.Renames.Add(sabotageTask.TaskType, elem.properties.description);
+        if (!string.IsNullOrEmpty(element.properties.description))
+            LIBaseShip.Instance?.Renames.Add(sabotageTask.TaskType, element.properties.description);
 
         // Console
-        var console = obj.AddComponent<Console>();
+        var console = gameObject.AddComponent<Console>();
         console.ConsoleId = 0;
         console.Image = spriteRenderer;
-        console.onlyFromBelow = elem.properties.onlyFromBelow ?? false;
-        console.usableDistance = elem.properties.range ?? 1.0f;
+        console.onlyFromBelow = element.properties.onlyFromBelow ?? false;
+        console.usableDistance = element.properties.range ?? 1.0f;
         console.Room = systemType;
         console.TaskTypes = prefabConsole.TaskTypes;
         console.ValidTasks = prefabConsole.ValidTasks;
         console.AllowImpostor = true;
         console.GhostsIgnored = true;
-        console.checkWalls = elem.properties.checkCollision ?? false;
+        console.checkWalls = element.properties.checkCollision ?? false;
 
-        if (ConsoleIDPairs.ContainsKey(elem.type))
-            console.ConsoleId = ConsoleIDPairs[elem.type];
+        if (ConsoleIDPairs.ContainsKey(element.type))
+            console.ConsoleId = ConsoleIDPairs[element.type];
 
         // Colliders
-        obj.CreateDefaultColliders(prefab);
+        gameObject.CreateDefaultColliders(prefab);
 
         // Button
         var origBtn = prefab.GetComponent<PassiveButton>();
         if (origBtn != null)
         {
-            var btn = obj.AddComponent<PassiveButton>();
-            btn.ClickMask = obj.GetComponent<Collider2D>();
+            var btn = gameObject.AddComponent<PassiveButton>();
+            btn.ClickMask = gameObject.GetComponent<Collider2D>();
             btn.OnMouseOver = new UnityEvent();
             btn.OnMouseOut = new UnityEvent();
             var action = console.Use;
@@ -89,7 +89,7 @@ internal static class SabConsoleBuilder
         }
 
         // Arrow
-        var arrow = MakeArrow(sabotageTask.transform, $"{elem.name} Arrow");
+        var arrow = MakeArrow(sabotageTask.transform, $"{element.name} Arrow");
         if (arrow != null)
             sabotageTask.Arrows = sabotageTask.Arrows.Add(arrow);
     }

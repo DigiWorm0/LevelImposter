@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using LevelImposter.Build;
 using LevelImposter.Build.Attributes;
 using LevelImposter.Core.Components;
 using LevelImposter.Core.Models;
@@ -22,7 +21,7 @@ internal static class RoomBuilder
     }
 
     [ElementBuilder(
-        Priority = Priority.FIRST,
+        Priority = Priority.VERY_HIGH,
         ElementTypes = ["util-room"]
     )]
     public static void Build(LIElement element, GameObject gameObject)

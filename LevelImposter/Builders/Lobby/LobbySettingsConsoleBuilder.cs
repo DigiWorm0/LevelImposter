@@ -14,7 +14,7 @@ internal static class LobbySettingsConsoleBuilder
         Target = MapTarget.Lobby,
         ElementTypes = ["util-lobbysettings"]
     )]
-    public static void Build(LIElement elem, GameObject gameObject)
+    public static void Build(GameObject gameObject)
     {
         // Load Prefab
         var prefab = LobbyDropshipPrefab.GetObjectFromPrefab("SmallBox/Panel");

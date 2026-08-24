@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using LevelImposter.Build;
 using LevelImposter.Build.Attributes;
 using LevelImposter.Core.Components;
 using LevelImposter.Core.Models;
@@ -12,7 +11,7 @@ namespace LevelImposter.Builders.Generic;
 /// <summary>
 ///     Configures the map properties
 /// </summary>
-public static class MapPropertiesBuilder
+internal static class MapPropertiesBuilder
 {
     private static readonly Dictionary<string, string> ExileIds = new()
     {
@@ -24,7 +23,7 @@ public static class MapPropertiesBuilder
     };
 
     [MapBuilder(Priority = Priority.FIRST)]
-    public static void ApplyMapProperties(LIMap map, LIBaseShip baseShip)
+    public static void ApplyMapProperties(LIMap map, LIBaseShip baseShip, ShipStatus shipStatus)
     {
         // Set Map Name
         baseShip.name = map.name;
@@ -35,11 +34,11 @@ public static class MapPropertiesBuilder
                 Camera.main.backgroundColor = bgColor;
 
         // Apply Default Exile Cutscene
-        if (map.mapTarget == MapTarget.Game)
-            ApplyExileCutscene(map);
+        if (map.MapTarget == MapTarget.Game)
+            ApplyExileCutscene(map, shipStatus);
     }
 
-    private static void ApplyExileCutscene(LIMap map)
+    private static void ApplyExileCutscene(LIMap map, ShipStatus shipStatus)
     {
         if (string.IsNullOrEmpty(map.properties.exileID))
             return;
@@ -52,6 +51,6 @@ public static class MapPropertiesBuilder
         if (prefabShipStatus == null)
             throw new Exception($"Exile ShipStatus prefab for ID '{exileID}' not found!");
 
-        ShipStatus.Instance.ExileCutscenePrefab = prefabShipStatus.ExileCutscenePrefab;
+        shipStatus.ExileCutscenePrefab = prefabShipStatus.ExileCutscenePrefab;
     }
 }

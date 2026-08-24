@@ -23,7 +23,13 @@ public class ShipTaskBuilder
 
     private readonly List<string> _builtTypes = [];
 
-    public static SystemTypes[] DivertSystems { get; private set; } = Array.Empty<SystemTypes>();
+    public static SystemTypes[] DivertSystems { get; private set; } = [];
+
+    public void Reset()
+    {
+        _builtTypes.Clear();
+        DivertSystems = [];
+    }
 
     public void BuildTask(LIBaseShip baseShip, LIElement elem, Console console)
     {

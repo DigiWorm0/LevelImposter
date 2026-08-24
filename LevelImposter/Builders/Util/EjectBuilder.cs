@@ -1,5 +1,4 @@
 using System;
-using LevelImposter.Build;
 using LevelImposter.Build.Attributes;
 using LevelImposter.Core.Components;
 using LevelImposter.Core.Models;
@@ -20,10 +19,10 @@ internal static class EjectBuilder
     }
 
     [ElementBuilder(ElementTypes = ["util-eject"])]
-    public static void OnBuild(LIBaseShip baseShip, GameObject obj)
+    public static void Build(LIBaseShip baseShip, GameObject gameObject)
     {
         // Move to prefab container
-        obj.transform.SetParent(baseShip.Prefabs.Container);
+        gameObject.transform.SetParent(baseShip.Prefabs.Container);
 
         // Get Eject Controller Prefab
         var skeldPrefab = PrefabDB.GetObject("ss-skeld");
@@ -33,15 +32,15 @@ internal static class EjectBuilder
             throw new Exception("Failed to get Eject Controller from Skeld's ShipStatus");
 
         // Copy Components from Skeld's Prefab
-        var impostorText = Object.Instantiate(skeldEjectController?.ImpostorText, obj.transform);
-        var text = Object.Instantiate(skeldEjectController?.Text, obj.transform);
-        var judgeText = Object.Instantiate(skeldEjectController?.judgeText, obj.transform);
-        var player = Object.Instantiate(skeldEjectController?.Player, obj.transform);
+        var impostorText = Object.Instantiate(skeldEjectController?.ImpostorText, gameObject.transform);
+        var text = Object.Instantiate(skeldEjectController?.Text, gameObject.transform);
+        var judgeText = Object.Instantiate(skeldEjectController?.judgeText, gameObject.transform);
+        var player = Object.Instantiate(skeldEjectController?.Player, gameObject.transform);
 
         // TODO: Hide Player
 
         // Create Eject Controller
-        EjectController = obj.AddComponent<LIExileController>();
+        EjectController = gameObject.AddComponent<LIExileController>();
         EjectController.ImpostorText = impostorText;
         EjectController.Text = text;
         EjectController.judgeText = judgeText;

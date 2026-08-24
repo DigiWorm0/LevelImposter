@@ -123,7 +123,7 @@ public static class MapBuilder
             LIShipStatus.GetInstance(),
             new Dictionary<string, object>
             {
-                { "shipStatus", ShipStatus.Instance }
+                { "shipStatus", LIShipStatus.GetShip() }
             }
         );
 

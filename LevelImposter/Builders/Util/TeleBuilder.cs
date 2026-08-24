@@ -1,5 +1,4 @@
 using System;
-using LevelImposter.Build;
 using LevelImposter.Build.Attributes;
 using LevelImposter.Core.Components;
 using LevelImposter.Core.Models;
@@ -27,10 +26,10 @@ internal static class TeleBuilder
         Priority = Priority.LAST,
         ElementTypes = ["util-tele"]
     )]
-    public static void LinkTeleporters(LIElement elem, GameObject obj)
+    public static void LinkTeleporters(LIElement element, GameObject gameObject)
     {
         // Get Target Teleporter
-        var targetID = elem.properties.teleporter;
+        var targetID = element.properties.teleporter;
         if (targetID == null)
             return;
 
@@ -38,7 +37,7 @@ internal static class TeleBuilder
         var targetTeleporter = targetTeleporterGameObject?.GetComponent<LITeleporter>();
 
         // Get Teleporter
-        var teleporter = obj.GetComponent<LITeleporter>();
+        var teleporter = gameObject.GetComponent<LITeleporter>();
         if (teleporter == null || targetTeleporter == null)
             return;
 
