@@ -1,5 +1,8 @@
 ﻿using HarmonyLib;
 using LevelImposter.Shop;
+using LevelImposter.Core.Models;
+using LevelImposter.Core.Components;
+using LevelImposter.Core.Utils;
 using System.Linq;
 
 namespace LevelImposter.Core;
@@ -18,24 +21,26 @@ public static class DummyPatch
             return;
         if (!GameState.IsInFreeplay)
             return;
-        if(MapLoader.CurrentMap == null)
+        if (GameConfiguration.CurrentMap == null)
             return;
 
         // Since the game is in freeplay, removing the local player just leaves all the dummy PlayerControls
-        var dummyPlayers = PlayerControl.AllPlayerControls.ToArray().Where(p => p != PlayerControl.LocalPlayer).ToArray();
+        var dummyPlayers = PlayerControl.AllPlayerControls.ToArray()
+            .Where(p => p != PlayerControl.LocalPlayer)
+            .ToArray();
 
-        // Finds a dummy element that has a corresponding location index (see DummyBuilder)
-        // which matches this DummyBehaviour's PlayerControl
-        foreach (var elem in MapLoader.CurrentMap.elements)
+        // Match custom dummy elements to freeplay dummy players by build/order index.
+        var dummyElements = GameConfiguration.CurrentMap.elements
+            .Where(e => e.type == "util-dummy")
+            .ToArray();
+
+        for (var index = 0; index < dummyElements.Length && index < dummyPlayers.Length; index++)
         {
-            if(elem.type != "util-dummy")
-                continue;
-            if (!LIShipStatus.GetInstance().DummyIndex.TryGetValue(elem.id, out int index))
-                continue;
             if (__instance.myPlayer != dummyPlayers[index])
                 continue;
 
-            CustomizeDummy(__instance, elem);
+            CustomizeDummy(__instance, dummyElements[index]);
+            break;
         }
     }
 
