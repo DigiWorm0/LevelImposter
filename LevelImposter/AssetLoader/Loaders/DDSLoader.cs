@@ -30,7 +30,7 @@ public static class DDSLoader
         using var _ = Profiler.Measure("DDSLoader.Load", loadable.ID);
 
         // Rent buffers from the pool
-        var imgData = loadable.DataStore.LoadToMemory();
+        using var imgData = loadable.DataStore.LoadToSharedMemory();
 
         // Create Texture
         var texture = ImageDataToTexture2D(
@@ -151,7 +151,7 @@ public static class DDSLoader
             throw new Exception("DDS texture data is too large to load.");
 
         // Load texture data from pointer
-        texture.LoadRawTextureData(textureDataPtr, (int)textureDataSize);
+        texture.LoadRawTextureData(textureDataPtr, textureDataSize);
 
         // Remove texture data from CPU memory
         texture.Apply(false, true);

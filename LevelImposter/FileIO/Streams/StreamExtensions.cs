@@ -50,20 +50,39 @@ public static class StreamExtensions
     /// </summary>
     /// <param name="stream">The stream to read from.</param>
     /// <param name="length">
-    ///     The length of data to read from the stream. Negative values will result in stream.Length being
-    ///     used.
+    ///     The length of data to read from the stream.
+    ///     Negative values will result in stream.Length being used.
     /// </param>
     /// <returns>An IL2CPP MemoryBlock containing the data.</returns>
-    public static unsafe MemoryBlock ToIl2CppArray(this Stream stream, long length = -1)
+    public static MemoryBlock ToIl2CppArray(this Stream stream, long length = -1)
+    {
+        if (length < 0)
+            length = stream.Length;
+        
+        var memoryBlock = new MemoryBlock((int)length);
+        stream.CopyTo(memoryBlock, length);
+        return memoryBlock;
+    }
+
+    /// <summary>
+    ///     Copies the contents of a managed stream into an IL2CPP MemoryBlock.
+    /// </summary>
+    /// <param name="stream">The stream to read from.</param>
+    /// <param name="memoryBlock">The memory to copy into.</param>
+    /// <param name="length">
+    ///     The length of data to read from the stream.
+    ///     Negative values will result in stream.Length being used.
+    /// </param>
+    /// <exception cref="ArgumentOutOfRangeException">Called if the stream is too large to fit in the given MemoryBlock.</exception>
+    public static unsafe void CopyTo(this Stream stream, MemoryBlock memoryBlock, long length = -1)
     {
         // Validate length
         if (length < 0)
             length = stream.Length;
-        if (length > int.MaxValue)
-            throw new ArgumentOutOfRangeException(nameof(stream), "Stream is too large to fit in a MemoryBlock.");
-
-        // Allocate IL2CPP memory
-        var memoryBlock = new MemoryBlock((int)length);
+        if (length > memoryBlock.Length)
+            throw new ArgumentOutOfRangeException(
+                nameof(memoryBlock),
+                "MemoryBlock is too small to hold the stream data.");
 
         // Read stream one chunk at a time
         var totalRead = 0;
@@ -85,7 +104,5 @@ public static class StreamExtensions
             // Increment Read Head
             totalRead += bytesRead;
         }
-
-        return memoryBlock;
     }
 }

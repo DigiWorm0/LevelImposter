@@ -8,9 +8,9 @@ public class BuilderGroup(Builder[] buildMethods)
 {
     public Builder[] Slice(MapTarget mapTarget, MapBuilderAttribute.BuilderType builderType)
     {
-        return buildMethods.Where(b => (b.Attribute.Type == builderType &&
-                                        b.Attribute.Target == mapTarget) ||
-                                       b.Attribute.Target == MapTarget.Both)
+        return buildMethods
+            .Where(b => b.Attribute.Type == builderType &&
+                        (b.Attribute.Target == mapTarget || b.Attribute.Target == MapTarget.Both))
             .ToArray();
     }
 }

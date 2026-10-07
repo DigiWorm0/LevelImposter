@@ -49,10 +49,10 @@ public static class WAVLoader
         GCBehavior? gcBehavior = null)
     {
         // Load data into managed memory
-        var wavData = dataStore.LoadToManagedMemory();
+        using var wavData = dataStore.LoadToSharedMemory();
 
         // Load the WAV from the stream
-        using var stream = new MemoryStream(wavData);
+        using var stream = wavData.OpenStream();
         return Load(stream, name, gcBehavior);
     }
 

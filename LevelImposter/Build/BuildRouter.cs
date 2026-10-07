@@ -45,6 +45,17 @@ public static class BuildRouter
                 map.MapTarget,
                 MapBuilderAttribute.BuilderType.ElementBuilder);
 
+            LILogger.Info($"Map Builders: {mapBuilders.Length}");
+            foreach (var builder in mapBuilders)
+                LILogger.Info(
+                    $"Builder:  {builder.Method.DeclaringType?.FullName}.{builder.Method.Name} ({builder.Attribute.Type})");
+
+            LILogger.Info($"ElementBuilders: {elementBuilders.Length}");
+            foreach (var builder in elementBuilders)
+                LILogger.Info(
+                    $"Builder:  {builder.Method.DeclaringType?.FullName}.{builder.Method.Name} ({builder.Attribute.Type})");
+
+
             // Build Map
             foreach (var builder in mapBuilders)
                 builder.Invoke(buildMethodParameters);

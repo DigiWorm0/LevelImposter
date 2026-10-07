@@ -17,10 +17,13 @@ public class FileStore(string filePath) : IDataStore
         return stream.ToIl2CppArray();
     }
 
-    public byte[] LoadToManagedMemory()
+    public MemoryPool.SharedMemoryBlock LoadToSharedMemory()
     {
         using var stream = OpenStream();
-        return stream.ToManagedArray();
+
+        var sharedMemory = MemoryPool.Shared.Rent((int)stream.Length);
+        stream.CopyTo(sharedMemory);
+        return sharedMemory;
     }
 
     public byte[] Peek(int count)
