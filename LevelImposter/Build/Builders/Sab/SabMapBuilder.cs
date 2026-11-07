@@ -30,7 +30,10 @@ internal static class SabMapBuilder
         MapRoomDB.Clear();
     }
 
-    [MapBuilder(Priority = Priority.LAST)]
+    [MapBuilder(
+        Priority = Priority.LAST,
+        Target = MapTarget.Game
+    )]
     public static void CleanupInfectedOverlay()
     {
         // TODO: Re-implement sabotage button check

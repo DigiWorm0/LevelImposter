@@ -58,7 +58,10 @@ internal static class RoomNameBuilder
         rectTransform.sizeDelta = new Vector2(10, 0);
     }
 
-    [MapBuilder(Priority = Priority.LAST)]
+    [MapBuilder(
+        Priority = Priority.LAST,
+        Target = MapTarget.Game
+    )]
     public static void CleanupMapChildren()
     {
         var mapBehaviour = MinimapBuilder.GetMinimap();

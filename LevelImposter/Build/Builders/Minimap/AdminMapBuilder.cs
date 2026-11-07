@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using LevelImposter.Build.Attributes;
 using LevelImposter.Build.Builders.Util;
-using LevelImposter.Core.Components;
 using LevelImposter.Core.Models;
 using UnityEngine;
 
@@ -23,7 +22,8 @@ internal static class AdminMapBuilder
 
     [ElementBuilder(
         Priority = Priority.FIRST,
-        ElementTypes = ["util-room"]
+        ElementTypes = ["util-room"],
+        Target = MapTarget.Game
     )]
     public static void Build(ShipStatus shipStatus, LIElement element)
     {
@@ -63,7 +63,7 @@ internal static class AdminMapBuilder
         mapCountOverlay.CountAreas = CounterAreaDB.ToArray();
     }
 
-    [MapBuilder(Priority = Priority.LAST)]
+    [MapBuilder(Priority = Priority.LAST, Target = MapTarget.Game)]
     public static void OnPostBuild()
     {
         var mapBehaviour = MinimapBuilder.GetMinimap();
