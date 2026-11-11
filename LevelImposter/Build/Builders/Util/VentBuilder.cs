@@ -1,0 +1,205 @@
+using System;
+using System.Collections.Generic;
+using Il2CppInterop.Runtime.InteropTypes.Arrays;
+using LevelImposter.AssetLoader.Loaders;
+using LevelImposter.Build.Attributes;
+using LevelImposter.Core.Models;
+using LevelImposter.Core.Utils;
+using LevelImposter.DB;
+using UnityEngine;
+using UnityEngine.Events;
+
+namespace LevelImposter.Build.Builders.Util;
+
+internal static class VentBuilder
+{
+    private const string OPEN_SOUND_NAME = "ventOpen";
+    private const string MOVE_SOUND_NAME = "ventMove";
+
+    private static readonly Dictionary<Guid, Vent> VentComponentDb = new();
+    private static readonly Dictionary<int, LIElement> VentElementDb = new();
+
+    private static bool _hasVentSound;
+    private static int _ventID;
+
+    [MapBuilder(Priority = Priority.FIRST)]
+    public static void Reset()
+    {
+        VentComponentDb.Clear();
+        VentElementDb.Clear();
+
+        _hasVentSound = false;
+        _ventID = 0;
+    }
+
+    [ElementBuilder(
+        Target = MapTarget.Game,
+        ElementTypes =
+        [
+            "util-vent1",
+            "util-vent2",
+            "util-vent3"
+        ]
+    )]
+    public static void Build(ShipStatus shipStatus, LIElement element, GameObject gameObject)
+    {
+        // Prefab
+        var prefab = PrefabDB.GetObject(element.type);
+        if (prefab == null)
+            return;
+        var prefabConsole = prefab.GetComponent<VentCleaningConsole>();
+        var prefabVent = prefab.GetComponent<Vent>();
+        var prefabArrow = prefab.transform.FindChild("Arrow").gameObject;
+
+        // Default Sprite
+        var isAnim = element.type == "util-vent1" || element.type == "util-vent3";
+        var spriteRenderer = gameObject.CloneSprite(prefab, isAnim);
+
+        // Console
+        if (prefabConsole != null)
+        {
+            var console = gameObject.AddComponent<VentCleaningConsole>();
+            console.Image = spriteRenderer;
+            console.ImpostorDiscoveredSound = prefabConsole.ImpostorDiscoveredSound;
+            console.TaskTypes = prefabConsole.TaskTypes;
+            console.ValidTasks = prefabConsole.ValidTasks;
+            if (element.properties.range != null)
+                console.usableDistance = (float)element.properties.range;
+        }
+
+        // Vent
+        var vent = gameObject.AddComponent<Vent>();
+        vent.EnterVentAnim = prefabVent.EnterVentAnim;
+        vent.ExitVentAnim = prefabVent.ExitVentAnim;
+        vent.spreadAmount = prefabVent.spreadAmount;
+        vent.spreadShift = prefabVent.spreadShift;
+        vent.Offset = prefabVent.Offset;
+        vent.Buttons = new Il2CppReferenceArray<ButtonBehavior>(3);
+        vent.CleaningIndicators = new Il2CppReferenceArray<GameObject>(0);
+        vent.Id = _ventID;
+
+        // Arrows
+        var arrowParent = new GameObject($"{gameObject.name}_arrows");
+        arrowParent.transform.SetParent(gameObject.transform);
+        arrowParent.transform.localPosition = Vector3.zero;
+        for (var i = 0; i < vent.Buttons.Length; i++)
+            GenerateArrow(prefabArrow, vent, i).transform.SetParent(arrowParent.transform);
+
+        // Sounds
+        if (!_hasVentSound)
+        {
+            _hasVentSound = true;
+
+            var openSound = element.properties.sounds.FindSound(OPEN_SOUND_NAME);
+            if (openSound != null)
+                shipStatus.VentEnterSound = WAVLoader.Load(openSound);
+
+            var moveSound = element.properties.sounds.FindSound(MOVE_SOUND_NAME);
+            if (moveSound != null)
+            {
+                var moveSoundClip = WAVLoader.Load(moveSound);
+                if (moveSoundClip != null)
+                    shipStatus.VentMoveSounds = new Il2CppReferenceArray<AudioClip>([moveSoundClip]);
+            }
+        }
+
+        // Colliders
+        gameObject.CreateDefaultColliders(prefab);
+
+        // DB
+        VentElementDb.Add(_ventID, element);
+        VentComponentDb.Add(element.id, vent);
+        _ventID++;
+    }
+
+    [MapBuilder(Priority = Priority.LAST)]
+    public static void LinkVents()
+    {
+        foreach (var currentVent in VentElementDb)
+        {
+            var ventComponent = GetVentComponent(currentVent.Value.id);
+            if (ventComponent == null)
+                continue;
+            if (currentVent.Value.properties.leftVent != null)
+                ventComponent.Left = GetVentComponent((Guid)currentVent.Value.properties.leftVent);
+            if (currentVent.Value.properties.middleVent != null)
+                ventComponent.Center = GetVentComponent((Guid)currentVent.Value.properties.middleVent);
+            if (currentVent.Value.properties.rightVent != null)
+                ventComponent.Right = GetVentComponent((Guid)currentVent.Value.properties.rightVent);
+        }
+    }
+
+    /// <summary>
+    ///     Gets a vent component from the vent component db
+    /// </summary>
+    /// <param name="id">GUID of the vent</param>
+    /// <returns>Vent component or null if not found</returns>
+    private static Vent? GetVentComponent(Guid id)
+    {
+        VentComponentDb.TryGetValue(id, out var ventComponent);
+        return ventComponent;
+    }
+
+    /// <summary>
+    ///     Generates the vent arrow buttons
+    /// </summary>
+    /// <param name="arrowPrefab">Prefab to steal from</param>
+    /// <param name="vent">Vent target</param>
+    /// <param name="dir">Direction to point arrow</param>
+    private static GameObject GenerateArrow(GameObject arrowPrefab, Vent vent, int dir)
+    {
+        var cleaningClone = arrowPrefab.transform.FindChild("CleaningIndicator").GetComponent<SpriteRenderer>();
+        var arrowCloneSprite = arrowPrefab.GetComponent<SpriteRenderer>();
+        var arrowCloneBox = arrowPrefab.GetComponent<BoxCollider2D>();
+        GameObject arrowObj = new("Arrow-" + dir);
+
+        // Sprite
+        var arrowSprite = arrowObj.AddComponent<SpriteRenderer>();
+        arrowSprite.sprite = arrowCloneSprite.sprite;
+        arrowSprite.material = arrowCloneSprite.material;
+        arrowObj.layer = (int)Layer.UI;
+
+        // Box Collider
+        var arrowBox = arrowObj.AddComponent<BoxCollider2D>();
+        arrowBox.size = arrowCloneBox.size;
+        arrowBox.offset = arrowCloneBox.offset;
+        arrowBox.isTrigger = true;
+
+        // Button
+        var arrowBtn = arrowObj.AddComponent<ButtonBehavior>();
+        arrowBtn.OnMouseOver = new UnityEvent();
+        arrowBtn.OnMouseOut = new UnityEvent();
+
+        Action action = dir switch
+        {
+            0 => vent.ClickRight,
+            1 => vent.ClickLeft,
+            _ => vent.ClickCenter
+        };
+        arrowBtn.OnClick.AddListener(action);
+
+        // Transform
+        vent.Buttons[dir] = arrowBtn;
+        arrowObj.transform.localScale = new Vector3(
+            0.4f,
+            0.4f,
+            1.0f
+        );
+        arrowObj.active = false;
+
+        // Cleaning Indicator
+        var cleaningIndicator = new GameObject("CleaningIndicator");
+        cleaningIndicator.transform.SetParent(arrowObj.transform);
+        cleaningIndicator.transform.localScale = new Vector3(0.45f, 0.45f, 1.0f);
+        cleaningIndicator.transform.localPosition = new Vector3(-0.012f, 0, -0.02f);
+        cleaningIndicator.layer = (int)Layer.UI;
+
+        var cleaningIndicatorSprite = cleaningIndicator.AddComponent<SpriteRenderer>();
+        cleaningIndicatorSprite.sprite = cleaningClone.sprite;
+        cleaningIndicatorSprite.material = cleaningClone.material;
+        cleaningIndicator.active = false;
+        vent.CleaningIndicators = vent.CleaningIndicators.Add(cleaningIndicator);
+
+        return arrowObj;
+    }
+}

@@ -1,5 +1,5 @@
 using HarmonyLib;
-using LevelImposter.Builders.Sab;
+using LevelImposter.Build.Builders.Sab;
 using LevelImposter.Core.Components;
 
 namespace LevelImposter.Core.Patches.Ship;

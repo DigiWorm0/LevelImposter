@@ -1,5 +1,4 @@
-﻿using System.IO;
-using LevelImposter.AssetLoader.FileContainers;
+﻿using LevelImposter.AssetLoader.FileContainers;
 using LevelImposter.AssetLoader.Loadables;
 using LevelImposter.Test;
 
@@ -20,10 +19,10 @@ public static class GIFLoader
         var gifFile = new GIFFile(loadable.ID);
 
         // Load data into managed memory
-        var imgData = loadable.DataStore.LoadToManagedMemory();
+        using var imgData = loadable.DataStore.LoadToSharedMemory();
 
         // Load the GIF file from the stream
-        using var imgStream = new MemoryStream(imgData);
+        using var imgStream = imgData.OpenStream();
         gifFile.Load(imgStream, loadable.Options.GCBehavior);
 
         // Return the GIF file

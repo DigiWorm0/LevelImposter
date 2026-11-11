@@ -21,7 +21,7 @@ public static class PNGLoader
         using var _ = Profiler.Measure("PNGLoader.Load", loadable.ID);
 
         // Read all image data into memory
-        var imgData = loadable.DataStore.LoadToMemory();
+        using var imgData = loadable.DataStore.LoadToSharedMemory();
 
         // Create Texture
         var texture = ImageDataToTexture2D(

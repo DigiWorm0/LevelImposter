@@ -2,7 +2,6 @@ using System;
 using System.Collections;
 using BepInEx.Unity.IL2CPP.Utils.Collections;
 using Il2CppInterop.Runtime.Attributes;
-using LevelImposter.Builders;
 using LevelImposter.Core.Utils;
 using LevelImposter.Shop.Components;
 using LevelImposter.Trigger;
@@ -51,7 +50,7 @@ public class LITriggerSpawnable(IntPtr intPtr) : MonoBehaviour(intPtr)
     private IEnumerator CoFireTrigger()
     {
         while (PlayerControl.LocalPlayer == null
-               || MapBuilder.IsBuilding
+               || ShipMapBuilder.IsBuilding
                || LoadingBar.IsVisible
                || (!GameManager.Instance.GameHasStarted && GameManager.Instance.ShouldCheckForGameEnd)
                || !LagLimiter.ShouldContinue(30))

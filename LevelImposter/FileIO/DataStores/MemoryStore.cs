@@ -15,15 +15,15 @@ public class MemoryStore(MemoryBlock memoryBlock) : IDataStore
         return memoryBlock;
     }
 
-    public byte[] LoadToManagedMemory()
+    public MemoryPool.SharedMemoryBlock LoadToSharedMemory()
     {
-        return memoryBlock.ToManagedArray();
+        return new MemoryPool.SharedMemoryBlock(memoryBlock);
     }
 
     public byte[] Peek(int count)
     {
         var managedArray = new byte[count];
-        Buffer.BlockCopy(memoryBlock.Data, 0, managedArray, 0, (int)Math.Min(count, memoryBlock.Length));
+        Buffer.BlockCopy(memoryBlock.Data, 0, managedArray, 0, Math.Min(count, memoryBlock.Length));
         return managedArray;
     }
 }

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
-using Il2CppInterop.Runtime.InteropTypes.Arrays;
 using LevelImposter.Core.Models;
 using LevelImposter.Core.Utils;
 using LevelImposter.FileIO.API;
@@ -34,7 +33,7 @@ public static class LIDeserializerLegacy
     /// <param name="data1">The first byte array</param>
     /// <param name="data2">The second byte array</param>
     /// <returns>True if the byte arrays match, false otherwise.</returns>
-    private static bool CompareData(Il2CppStructArray<byte>? data1, Il2CppStructArray<byte>? data2)
+    private static bool CompareData(MemoryBlock? data1, MemoryBlock? data2)
     {
         if (data1 == null || data2 == null)
             return false;
@@ -50,18 +49,21 @@ public static class LIDeserializerLegacy
     ///     Finds asset data in the assetDB or adds it if it doesn't exist
     /// </summary>
     /// <param name="assetDB">AssetDB to search or add</param>
-    /// <param name="data">Data to search for or add</param>
+    /// <param name="newAssetData">Data to search for or add</param>
     /// <returns>The resulting asset ID</returns>
-    private static Guid FindOrAddAsset(MapAssetDB assetDB, Il2CppStructArray<byte> data)
+    private static Guid FindOrAddAsset(MapAssetDB assetDB, MemoryBlock newAssetData)
     {
         // Find Asset
         foreach (var asset in assetDB.DB)
-            if (CompareData(asset.Value.LoadToMemory().Data, data))
+        {
+            using var assetData = asset.Value.LoadToSharedMemory();
+            if (CompareData(assetData, newAssetData))
                 return asset.Key;
+        }
 
         // Create Asset
         var assetID = Guid.NewGuid();
-        assetDB.Add(assetID, new MemoryBlock(data));
+        assetDB.Add(assetID, newAssetData);
         return assetID;
     }
 
@@ -116,10 +118,10 @@ public static class LIDeserializerLegacy
             }
     }
 
-    private static byte[] ParseBase64(string base64)
+    private static MemoryBlock ParseBase64(string base64)
     {
         var sub64 = base64.Substring(base64.IndexOf(",", StringComparison.Ordinal) + 1);
-        return Convert.FromBase64String(sub64);
+        return new MemoryBlock(Convert.FromBase64String(sub64));
     }
 
 #pragma warning disable CS0618 // Handles legacy properties

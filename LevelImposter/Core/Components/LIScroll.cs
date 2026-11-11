@@ -1,5 +1,5 @@
 ﻿using System;
-using LevelImposter.Builders.Generic;
+using LevelImposter.Build.Builders.Generic;
 using LevelImposter.Core.Services.Ship;
 using UnityEngine;
 

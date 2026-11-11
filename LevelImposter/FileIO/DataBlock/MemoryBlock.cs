@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using ByteArray = Il2CppInterop.Runtime.InteropTypes.Arrays.Il2CppStructArray<byte>;
 
 namespace LevelImposter.FileIO.DataBlock;
@@ -16,6 +17,7 @@ public class MemoryBlock
     public MemoryBlock(int length)
     {
         Data = new ByteArray(length);
+        Length = length;
     }
 
     /// <summary>
@@ -28,6 +30,22 @@ public class MemoryBlock
         if (data == null)
             throw new ArgumentNullException(nameof(data));
         Data = data;
+        Length = data.Length;
+    }
+
+    /// <summary>
+    ///     Makes a new MemoryBlock wrapping an existing IL2CPP byte array.
+    ///     Passing a managed byte array will automatically convert it to an IL2CPP array.
+    ///     In addition, length is clamped to the provided value.
+    /// </summary>
+    /// <param name="data">The existing IL2CPP byte array.</param>
+    /// <param name="length">The size to clamp the IL2CPP byte array.</param>
+    public MemoryBlock(ByteArray data, int length)
+    {
+        if (data == null)
+            throw new ArgumentNullException(nameof(data));
+        Data = data;
+        Length = Math.Min(length, data.Length);
     }
 
     /// <summary>
@@ -48,7 +66,7 @@ public class MemoryBlock
     /// <summary>
     ///     The length of the memory block.
     /// </summary>
-    public long Length => Data.Length;
+    public int Length { get; }
 
     /// <summary>
     ///     Pointer to the start of the actual array data in IL2CPP memory.
@@ -56,13 +74,21 @@ public class MemoryBlock
     public IntPtr BasePointer => IntPtr.Add(Data.Pointer, 4 * IntPtr.Size);
 
     /// <summary>
-    ///     Copies the data in this memory block to a managed byte array.
+    ///     Creates a span over the data in this memory block.
+    ///     No data is copied or cloned, utilizes the existing IL2CPP memory.
     /// </summary>
-    /// <returns>The managed byte array containing the data.</returns>
-    public byte[] ToManagedArray()
+    /// <returns>A span over the data in this memory block.</returns>
+    public Span<byte> ToSpan()
     {
-        var managedArray = new byte[Data.Length];
-        Buffer.BlockCopy(Data, 0, managedArray, 0, Data.Length);
-        return managedArray;
+        return new Span<byte>(Data, 0, Length);
+    }
+
+    /// <summary>
+    ///     Opens a MemoryStream that points to the data in IL2CPP memory.
+    /// </summary>
+    /// <returns>Stream that points to the data in IL2CPP memory.</returns>
+    public unsafe Stream OpenStream()
+    {
+        return new UnmanagedMemoryStream((byte*)BasePointer, Length);
     }
 }

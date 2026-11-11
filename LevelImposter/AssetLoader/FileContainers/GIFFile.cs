@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using LevelImposter.Core.GarbageCollection;
 using LevelImposter.Core.Utils;
+using LevelImposter.Test;
 using UnityEngine;
 
 namespace LevelImposter.AssetLoader.FileContainers;

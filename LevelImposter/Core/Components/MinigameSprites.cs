@@ -24,7 +24,7 @@ namespace LevelImposter.Core.Components;
 /// </summary>
 public class MinigameSprites(IntPtr intPtr) : MonoBehaviour(intPtr)
 {
-    private readonly Dictionary<string, int> BURGER_PAPER_TOPPINGS = new()
+    private readonly Dictionary<string, int> _burgerPaperToppings = new()
     {
         { "task-burger_paperbuntop", 0 },
         { "task-burger_paperbunbottom", 1 },
@@ -34,7 +34,7 @@ public class MinigameSprites(IntPtr intPtr) : MonoBehaviour(intPtr)
         { "task-burger_papertomato", 5 }
     };
 
-    private readonly Dictionary<string, Vector2> PIVOTS = new()
+    private readonly Dictionary<string, Vector2> _typeToSpritePivot = new()
     {
         { "task-toilet_plungerup", new Vector2(0.53f, 0.96f) },
         { "task-toilet_plungerdown", new Vector2(0.54f, 0.67f) },
@@ -88,7 +88,7 @@ public class MinigameSprites(IntPtr intPtr) : MonoBehaviour(intPtr)
             foreach (var minigameData in _minigameDataArr)
             {
                 // Get Pivot
-                var hasPivot = PIVOTS.TryGetValue(minigameData.type, out var pivot);
+                var hasPivot = _typeToSpritePivot.TryGetValue(minigameData.type, out var pivot);
 
                 // Get Sprite Stream
                 var mapAssetDB = GameConfiguration.CurrentMap?.MapAssetDB;
@@ -319,7 +319,7 @@ public class MinigameSprites(IntPtr intPtr) : MonoBehaviour(intPtr)
             case "task-burger_papermeat":
             case "task-burger_paperonion":
             case "task-burger_papertomato":
-                var toppingIndex = BURGER_PAPER_TOPPINGS[type];
+                var toppingIndex = _burgerPaperToppings[type];
                 var burgerMinigame = minigame.Cast<BurgerMinigame>();
                 var currentToppingSprite = burgerMinigame.PaperToppings[toppingIndex];
                 // Find & update any symbols

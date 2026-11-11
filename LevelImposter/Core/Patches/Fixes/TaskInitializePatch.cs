@@ -1,7 +1,7 @@
 using System.Linq;
 using HarmonyLib;
 using Il2CppInterop.Runtime.InteropTypes.Arrays;
-using LevelImposter.Builders.Task;
+using LevelImposter.Build.Builders.Task;
 using LevelImposter.Core.Components;
 using LevelImposter.Core.Utils;
 using UnityEngine;

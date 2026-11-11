@@ -40,13 +40,13 @@ public static class LISerializer
             foreach (var mapAsset in mapData.MapAssetDB.DB)
             {
                 // Load Asset to Memory
-                var data = mapAsset.Value.LoadToManagedMemory();
+                using var data = mapAsset.Value.LoadToSharedMemory();
                 var idBytes = Encoding.UTF8.GetBytes(mapAsset.Key.ToString());
 
                 // Write Asset to Stream
                 stream.Write(idBytes);
                 stream.Write(BitConverter.GetBytes(data.Length));
-                stream.Write(data);
+                stream.Write(data.ToSpan());
             }
         }
         catch (Exception ex)
