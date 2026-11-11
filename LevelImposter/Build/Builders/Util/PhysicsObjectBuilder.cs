@@ -16,9 +16,14 @@ internal static class PhysicsObjectBuilder
     {
         _isCameraFixed = false;
         _objectCounter = 0;
+    }
 
-        // Disable collision between physics objects & UI
+    [MapBuilder(Priority = Priority.FIRST)]
+    public static void FixCollisionMatrix()
+    {
+        // Disable collision between physics objects & UI elements
         Physics2D.IgnoreLayerCollision((int)Layer.Physics, (int)Layer.UI);
+        Physics2D.IgnoreLayerCollision((int)Layer.Physics, (int)Layer.UICollider);
     }
 
     [ElementBuilder(ElementTypes = ["util-physics"])]

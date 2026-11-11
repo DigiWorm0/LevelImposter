@@ -30,6 +30,10 @@ public class ModUpdater(IntPtr intPtr) : MonoBehaviour(intPtr)
         if (LevelImposter.IsDevBuild)
             return;
 
+        // Don't check for updates on mobile
+        if (GameState.IsMobile)
+            return;
+
         // Check for updates
         GitHubAPI.GetLatestRelease(OnRelease, OnReleaseError);
     }
