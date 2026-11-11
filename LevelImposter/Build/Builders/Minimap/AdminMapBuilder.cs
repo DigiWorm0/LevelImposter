@@ -21,7 +21,7 @@ internal static class AdminMapBuilder
     }
 
     [ElementBuilder(
-        Priority = Priority.FIRST,
+        Priority = Priority.HIGH,
         ElementTypes = ["util-room"],
         Target = MapTarget.Game
     )]

@@ -22,7 +22,7 @@ internal static class MinimapBuilder
     }
 
     [ElementBuilder(
-        Priority = Priority.FIRST,
+        Priority = Priority.HIGH, // <-- Requires Object Transform
         Target = MapTarget.Game,
         ElementTypes = ["util-minimap"]
     )]
@@ -46,6 +46,7 @@ internal static class MinimapBuilder
         background.transform.localPosition = background.transform.localPosition;
         background.transform.localScale = gameObject.transform.localScale / shipStatus.MapScale;
         background.transform.localRotation = gameObject.transform.localRotation;
+
 
         // Load Sprite
         SpriteBuilder.OnSpriteLoad += (loadedElem, sprite) =>
