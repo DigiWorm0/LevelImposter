@@ -67,7 +67,7 @@ public static class LobbyMapBuilder
     ///     from a LevelImposter map file.
     /// </summary>
     /// <param name="map">The map file to build from</param>
-    private static void BuildMap(LIMap map)
+    private static void BuildMap(MapFile map)
     {
         var lobbyBehaviour = LILobbyBehaviour.GetLobbyBehaviour();
         LILogger.Info($"Building lobby map from {map}...");
@@ -77,7 +77,7 @@ public static class LobbyMapBuilder
         BuildRouter.BuildMap(
             map,
             LILobbyBehaviour.GetInstance(),
-            new Dictionary<string, object>
+            new Dictionary<string, object?>
             {
                 { "lobbyBehaviour", lobbyBehaviour }
             }

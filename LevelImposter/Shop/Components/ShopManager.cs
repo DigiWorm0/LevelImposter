@@ -39,7 +39,7 @@ public class ShopManager(IntPtr intPtr) : MonoBehaviour(intPtr)
     private const string CONTROLLER_OVERLAY_ID = "LIShop";
     private const int MAP_BANNER_POOL_SIZE = 50;
 
-    private readonly Dictionary<ShopTab, LIMetadata[]> _cachedData = new();
+    private readonly Dictionary<ShopTab, MapFileInfo[]> _cachedData = new();
     private readonly MapBannerPool _mapBannerPool = new();
 
     /// If true, re-runs the map randomization when the shop is closed
@@ -155,6 +155,9 @@ public class ShopManager(IntPtr intPtr) : MonoBehaviour(intPtr)
             return;
         }
 
+        // Always refresh local filesystem maps
+        MapFileAPI.AllMaps.Refresh();
+
         // Save a copy of current tab
         // (Prevents content change if the tab changes mid-load)
         var targetTab = CurrentTab;
@@ -163,13 +166,13 @@ public class ShopManager(IntPtr intPtr) : MonoBehaviour(intPtr)
         {
             case ShopTab.DownloadedMaps:
                 LIDeserializerLegacy.ConvertAllLegacyMaps();
-                var maps = MapFileAPI.GetAllMetadata()
+                var maps = MapFileAPI.AllMaps.Get()
                     .Where(m => m.MapTarget == MapTarget.Game)
                     .ToArray();
                 SetMaps(maps);
                 break;
             case ShopTab.DownloadedLobbyMaps:
-                var lobbyMaps = MapFileAPI.GetAllMetadata()
+                var lobbyMaps = MapFileAPI.AllMaps.Get()
                     .Where(m => m.MapTarget == MapTarget.Lobby)
                     .ToArray();
                 SetMaps(lobbyMaps);
@@ -200,7 +203,7 @@ public class ShopManager(IntPtr intPtr) : MonoBehaviour(intPtr)
     }
 
     [HideFromIl2Cpp]
-    private void OnWorkshopLoaded(LIMetadata[] maps, ShopTab targetTab)
+    private void OnWorkshopLoaded(MapFileInfo[] maps, ShopTab targetTab)
     {
         // Cache response
         _cachedData[targetTab] = maps;
@@ -243,7 +246,7 @@ public class ShopManager(IntPtr intPtr) : MonoBehaviour(intPtr)
     /// </summary>
     /// <param name="maps">The maps to display</param>
     [HideFromIl2Cpp]
-    private void SetMaps(LIMetadata[] maps)
+    private void SetMaps(MapFileInfo[] maps)
     {
         // Hide Overlays
         LoadingOverlay.Hide();

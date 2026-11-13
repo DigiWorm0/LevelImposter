@@ -3,13 +3,17 @@ using System.Text.Json.Serialization;
 
 namespace LevelImposter.Core.Models;
 
+/// <summary>
+///     Represents the metadata of a LevelImposter map file.
+/// </summary>
 [Serializable]
-public class LIMetadata
+public class MapFileInfo
 {
+    [JsonPropertyName("id")] public string ID { get; set; } = Guid.NewGuid().ToString();
+    [JsonPropertyName("name")] public string Name { get; set; } = "";
+
     public int v { get; set; } = 0;
-    public string id { get; set; } = Guid.NewGuid().ToString();
     public int? idVersion { get; set; }
-    public string name { get; set; } = "";
     public string description { get; set; } = "";
     public string authorID { get; set; } = "";
     public string authorName { get; set; } = "";
@@ -35,10 +39,20 @@ public class LIMetadata
     ///     (Only maps with a valid GUID as ID are workshop maps)
     /// </summary>
     [JsonIgnore]
-    public bool IsInWorkshop => Guid.TryParse(id, out _) && !string.IsNullOrEmpty(authorID);
+    public bool IsInWorkshop => Guid.TryParse(ID, out _) && !string.IsNullOrEmpty(authorID);
 
+    /// <summary>
+    ///     Returns a string representation of the full file path of this map, if one exists in the filesystem.
+    /// </summary>
+    [JsonIgnore]
+    public string? FilePath { get; set; }
+
+    /// <summary>
+    ///     Converts the map to a string representation in the form of "name[id]"
+    /// </summary>
+    /// <returns>String representation of the map</returns>
     public override string ToString()
     {
-        return $"{name}[{id}]";
+        return $"{Name}[{ID}]";
     }
 }

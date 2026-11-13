@@ -41,7 +41,7 @@ public static class MapInfo
     ///         LevelImposter tries to always have a randomized fallback map loaded for mods that include map randomization.
     ///     </remarks>
     /// </summary>
-    public static string? MapID => GameConfiguration.CurrentMap?.id;
+    public static string? MapID => GameConfiguration.CurrentMap?.ID;
 
     // Fetch a list of GameObjects of the given object type
     // These will return [] until after ShipStatus.Awake (when the GameObjects are created)

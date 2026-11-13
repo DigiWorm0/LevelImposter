@@ -77,14 +77,14 @@ public static class LIDeserializerLegacy
     /// </param>
     /// <exception cref="FileNotFoundException">If the map file wasn't found</exception>
     /// <exception cref="FileLoadException">If the new map already exists</exception>
-    public static LIMap Deserialize(
+    public static MapFile Deserialize(
         Stream dataStream,
         string? filePath = null)
     {
         LILogger.Info($"Converting legacy map file @ {filePath}");
 
         // Read legacy file
-        var mapFile = JsonSerializer.Deserialize<LIMap>(dataStream);
+        var mapFile = JsonSerializer.Deserialize<MapFile>(dataStream);
         if (mapFile == null)
             throw new FileLoadException($"Could not deserialize legacy map file @ {filePath}");
 
@@ -125,12 +125,12 @@ public static class LIDeserializerLegacy
     }
 
 #pragma warning disable CS0618 // Handles legacy properties
-    private static void MigrateMapData(LIMap map)
+    private static void MigrateMapData(MapFile map)
     {
         if (!map.IsLegacy)
             return;
 
-        LILogger.Info($"Converting legacy map data [{map.id}]");
+        LILogger.Info($"Converting legacy map data [{map.ID}]");
 
         // Update Properties
         map.MapAssetDB = new MapAssetDB();
@@ -213,7 +213,7 @@ public static class LIDeserializerLegacy
         }
     }
 
-    private static void MigrateMapFile(LIMap mapData, string filePath)
+    private static void MigrateMapFile(MapFile mapData, string filePath)
     {
         // Legacy >>> .bak
         var backupPath = $"{filePath}.bak";

@@ -38,10 +38,12 @@ public static class ClientJoinSyncPatch
         if (!isRandomized)
         {
             var lastMapID = ConfigAPI.GetLastMapID();
-            var lastMap = lastMapID != null ? MapFileAPI.Get(lastMapID) : null;
-            if (lastMap != null)
+
+            MapFileAPI.AllMaps.Refresh();
+            if (MapFileAPI.AllMaps.TryGetByID(lastMapID, out var mapInfo))
             {
-                GameConfiguration.SetMap(lastMap);
+                var mapData = MapFileAPI.GetMapData(mapInfo);
+                GameConfiguration.SetMap(mapData);
                 LILogger.Info($"Loaded last selected map [{lastMapID}] for host.");
                 return;
             }

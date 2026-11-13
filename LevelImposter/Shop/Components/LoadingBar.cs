@@ -101,7 +101,7 @@ public class LoadingBar(IntPtr intPtr) : MonoBehaviour(intPtr)
                 Instance?.SetTitle(!GameConfiguration.HideMapName
                     ? Translation.Get(
                         "loading.map_by_author",
-                        currentMap?.name ?? "???",
+                        currentMap?.Name ?? "???",
                         currentMap?.authorName ?? "???")
                     : Translation.Get("loading.loading"));
 

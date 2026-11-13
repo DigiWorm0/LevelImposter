@@ -16,7 +16,7 @@ public static class LIDeserializer
     /// <param name="loadAssetDB">If true, the map's assetDB will also be deserialized (expensive operation)</param>
     /// <param name="filePath">The file path of the map file, used to avoid loading asset data into memory when possible</param>
     /// <returns>The deserialized LIMap object, or null if an error occurred</returns>
-    public static LIMap? DeserializeMap(
+    public static MapFile? DeserializeMap(
         Stream dataStream,
         bool loadAssetDB = true,
         string? filePath = null
@@ -38,6 +38,7 @@ public static class LIDeserializer
                     loadAssetDB,
                     filePath)
             };
+            map.FilePath = filePath;
 
             // Migrate map
             MigrateMap(map);
@@ -94,7 +95,7 @@ public static class LIDeserializer
         return MapFormat.LIM2;
     }
 
-    private static void MigrateMap(LIMap map)
+    private static void MigrateMap(MapFile map)
     {
         foreach (var element in map.elements)
         {

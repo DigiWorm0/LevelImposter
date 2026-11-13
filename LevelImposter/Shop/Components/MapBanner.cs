@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics;
+using System.IO;
 using Il2CppInterop.Runtime.Attributes;
 using Il2CppInterop.Runtime.InteropTypes.Fields;
 using InnerNet;
@@ -19,7 +20,7 @@ namespace LevelImposter.Shop.Components;
 
 public class MapBanner(IntPtr intPtr) : MonoBehaviour(intPtr)
 {
-    private LIMetadata? _currentMap;
+    private MapFileInfo? _currentMap;
     private Sprite? _defaultThumbnail;
 
     public Il2CppReferenceField<TextMeshPro> authorText = null!;
@@ -53,7 +54,7 @@ public class MapBanner(IntPtr intPtr) : MonoBehaviour(intPtr)
     {
         Process.Start(new ProcessStartInfo
         {
-            FileName = $"https://levelimposter.net/#/map/{_currentMap?.id}",
+            FileName = $"https://levelimposter.net/#/map/{_currentMap?.ID}",
             UseShellExecute = true
         });
     }
@@ -70,7 +71,7 @@ public class MapBanner(IntPtr intPtr) : MonoBehaviour(intPtr)
 
         // Load map from filesystem
         LILogger.Info($"Launching map {_currentMap}");
-        var map = MapFileAPI.Get(_currentMap.id);
+        var map = MapFileAPI.GetMapData(_currentMap);
         if (map == null)
             throw new InvalidOperationException("Failed to load map from filesystem");
 
@@ -82,7 +83,7 @@ public class MapBanner(IntPtr intPtr) : MonoBehaviour(intPtr)
         }
         else if (map.MapTarget == MapTarget.Lobby)
         {
-            var isLobbyChanged = GameConfiguration.CurrentLobbyMap?.id != map.id;
+            var isLobbyChanged = GameConfiguration.CurrentLobbyMap?.ID != map.ID;
 
             // Load Lobby Map
             GameConfiguration.SetLobbyMap(map);
@@ -90,7 +91,7 @@ public class MapBanner(IntPtr intPtr) : MonoBehaviour(intPtr)
             if (isLobbyChanged)
                 LobbyMapBuilder.Rebuild();
 
-            ConfigAPI.SetLobbyMapID(map.id);
+            ConfigAPI.SetLobbyMapID(map.ID);
             ShopManager.Instance?.CloseShop();
         }
         else
@@ -100,7 +101,7 @@ public class MapBanner(IntPtr intPtr) : MonoBehaviour(intPtr)
             GameConfiguration.SetMapType(MapType.LevelImposter);
             GameConfigurationSync.SendGameConfigurationRPC();
 
-            ConfigAPI.SetLastMapID(map.id);
+            ConfigAPI.SetLastMapID(map.ID);
             ShopManager.Instance?.CloseShop();
         }
     }
@@ -111,7 +112,7 @@ public class MapBanner(IntPtr intPtr) : MonoBehaviour(intPtr)
             throw new InvalidOperationException("Current map is null");
 
         MapsFolderWatcher.IgnoreChanges();
-        MapFileAPI.Delete(_currentMap.id);
+        MapFileAPI.Delete(_currentMap);
         UpdateButtonState();
         ShopManager.Instance?.RandomizeMapOnClose();
     }
@@ -125,22 +126,24 @@ public class MapBanner(IntPtr intPtr) : MonoBehaviour(intPtr)
         // Update UI Overlay
         ShopManager.Instance?.LoadingOverlay.Show(true, true);
         ShopManager.Instance?.LoadingOverlay.SetText(
-            Translation.Get("shop.downloader.title", _currentMap.name),
+            Translation.Get("shop.downloader.title", _currentMap.Name),
             Translation.Get("shop.downloader.looking_for_url"));
 
         // Start Download
         MapFileAPI.DownloadMap(
-            new Guid(_currentMap.id),
+            _currentMap,
             OnMapDownloadProgress,
             OnMapDownloaded,
             OnMapDownloadError);
     }
 
     [HideFromIl2Cpp]
-    private void OnMapDownloaded(FileStore _)
+    private void OnMapDownloaded(FileStore fileStore)
     {
         if (this == null)
             return;
+
+        _currentMap?.FilePath = fileStore.FilePath;
 
         MapsFolderWatcher.IgnoreChanges();
         ShopManager.Instance?.LoadingOverlay.Hide();
@@ -154,7 +157,7 @@ public class MapBanner(IntPtr intPtr) : MonoBehaviour(intPtr)
             return;
 
         ShopManager.Instance?.LoadingOverlay.SetText(
-            Translation.Get("shop.downloader.title", _currentMap?.name ?? "???"),
+            Translation.Get("shop.downloader.title", _currentMap?.Name ?? "???"),
             $"{Mathf.RoundToInt(percent * 100)}%");
 
         ShopManager.Instance?.LoadingOverlay.SetProgress(percent);
@@ -175,7 +178,7 @@ public class MapBanner(IntPtr intPtr) : MonoBehaviour(intPtr)
     /// </summary>
     /// <param name="map">Map to launch</param>
     [HideFromIl2Cpp]
-    private void LaunchMapInFreeplay(LIMap map)
+    private void LaunchMapInFreeplay(MapFile map)
     {
         // Stop background sounds
         SoundManager.Instance.StopAllSound();
@@ -207,11 +210,16 @@ public class MapBanner(IntPtr intPtr) : MonoBehaviour(intPtr)
     /// </summary>
     /// <param name="map">Map metadata to display</param>
     [HideFromIl2Cpp]
-    public void SetMap(LIMetadata map)
+    public void SetMap(MapFileInfo map)
     {
         _currentMap = map;
 
-        randomOverlay.Value.SetMapID(map.id);
+        // Try to find a corresponding map file in the local filesystem
+        if (string.IsNullOrEmpty(_currentMap.FilePath))
+            if (MapFileAPI.AllMaps.TryGetByID(_currentMap.ID, out var mapInfo))
+                _currentMap.FilePath = mapInfo?.FilePath;
+
+        randomOverlay.Value.SetMapID(map.ID);
 
         UpdateText();
         UpdateButtonState();
@@ -226,7 +234,7 @@ public class MapBanner(IntPtr intPtr) : MonoBehaviour(intPtr)
         if (_currentMap == null)
             throw new InvalidOperationException("Current map is null");
 
-        titleText.Value.text = _currentMap.name;
+        titleText.Value.text = _currentMap.Name;
         if (_currentMap.IsInWorkshop)
         {
             authorText.Value.text = Translation.Get("shop.map.author", _currentMap.authorName);
@@ -247,7 +255,7 @@ public class MapBanner(IntPtr intPtr) : MonoBehaviour(intPtr)
         if (_currentMap == null)
             throw new InvalidOperationException("Current map is null");
 
-        var isDownloaded = MapFileAPI.Exists(_currentMap.id);
+        var isDownloaded = File.Exists(_currentMap.FilePath);
         var isDownloadable = _currentMap.IsInWorkshop && _currentMap.isPublic;
         var isGameMap = _currentMap.MapTarget == MapTarget.Game;
 
@@ -277,15 +285,15 @@ public class MapBanner(IntPtr intPtr) : MonoBehaviour(intPtr)
         SetThumbnail(_defaultThumbnail);
 
         // Load thumbnail in the background
-        var mapID = _currentMap.id;
+        var mapID = _currentMap.ID;
         if (_currentMap.HasThumbnail)
-            ThumbnailCache.Get(_currentMap.id, sprite => OnThumbnailLoad(sprite, mapID));
+            ThumbnailCache.Get(_currentMap.ID, sprite => OnThumbnailLoad(sprite, mapID));
     }
 
     private void OnThumbnailLoad(Sprite? sprite, string mapID)
     {
         // Check if the map changed in the time it took for the thumbnail load
-        if (mapID != _currentMap?.id)
+        if (mapID != _currentMap?.ID)
             return;
 
         SetThumbnail(sprite);

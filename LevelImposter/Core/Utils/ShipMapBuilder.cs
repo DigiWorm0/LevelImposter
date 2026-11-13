@@ -100,7 +100,7 @@ public static class ShipMapBuilder
     ///     Replaces the active map with LevelImposter map data
     /// </summary>
     /// <param name="map">Deserialized map data from a <c>.LIM</c> file</param>
-    private static void BuildMap(LIMap map)
+    private static void BuildMap(MapFile map)
     {
         // Check Asset DB
         if (!PrefabDB.IsInit)
@@ -121,7 +121,7 @@ public static class ShipMapBuilder
         BuildRouter.BuildMap(
             map,
             LIShipStatus.GetInstance(),
-            new Dictionary<string, object>
+            new Dictionary<string, object?>
             {
                 { "shipStatus", LIShipStatus.GetShip() }
             }

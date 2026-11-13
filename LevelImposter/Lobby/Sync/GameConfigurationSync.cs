@@ -49,11 +49,11 @@ public static class GameConfigurationSync
             yield return null;
 
         // Get IDs
-        var mapIDStr = GameConfiguration.CurrentMap?.id ?? Guid.Empty.ToString();
+        var mapIDStr = GameConfiguration.CurrentMap?.ID ?? Guid.Empty.ToString();
         if (!Guid.TryParse(mapIDStr, out var mapID))
             throw new Exception($"Invalid map ID [{mapIDStr}]");
 
-        var lobbyMapIDStr = GameConfiguration.CurrentLobbyMap?.id ?? Guid.Empty.ToString();
+        var lobbyMapIDStr = GameConfiguration.CurrentLobbyMap?.ID ?? Guid.Empty.ToString();
         if (!Guid.TryParse(lobbyMapIDStr, out var lobbyMapID))
             throw new Exception($"Invalid lobby map ID [{lobbyMapIDStr}]");
 
@@ -99,7 +99,7 @@ public static class GameConfigurationSync
             LobbyMapDownloader.CancelDownload();
 
         // This map is already loaded
-        if (GameConfiguration.CurrentLobbyMap?.id == mapIDStr)
+        if (GameConfiguration.CurrentLobbyMap?.ID == mapIDStr)
         {
             // No action needed
         }
@@ -141,7 +141,7 @@ public static class GameConfigurationSync
             GameMapDownloader.CancelDownload();
 
         // This map is already loaded
-        if (GameConfiguration.CurrentMap?.id == mapIDStr)
+        if (GameConfiguration.CurrentMap?.ID == mapIDStr)
         {
             // Ensures HideMapName is up-to-date
             GameConfiguration.SetMap(
@@ -161,7 +161,7 @@ public static class GameConfigurationSync
             GameConfiguration.SetMap(null);
             GameMapDownloader.DownloadMap(
                 gameConfig.MapID,
-                map => GameConfiguration.SetMap(map, gameConfig.HideMapName),
+                newMapData => GameConfiguration.SetMap(newMapData, gameConfig.HideMapName),
                 _ => { }
             );
         }
@@ -173,7 +173,7 @@ public static class GameConfigurationSync
     /// <param name="mapID">The map ID to look for.</param>
     /// <param name="map">The found map, or null if not found.</param>
     /// <returns>True if the map was found locally; otherwise, false.</returns>
-    private static bool TryGetMapLocally(string mapID, out LIMap? map)
+    private static bool TryGetMapLocally(string mapID, out MapFile? map)
     {
         // No Map Selected
         if (mapID == Guid.Empty.ToString())
@@ -183,9 +183,10 @@ public static class GameConfigurationSync
         }
 
         // In Local Filesystem
-        if (MapFileAPI.Exists(mapID))
+        MapFileAPI.AllMaps.Refresh();
+        if (MapFileAPI.AllMaps.TryGetByID(mapID, out var mapInfo))
         {
-            map = MapFileAPI.Get(mapID);
+            map = MapFileAPI.GetMapData(mapInfo);
             if (map == null)
                 LILogger.Warn($"Error loading [{mapID}] from filesystem");
             else

@@ -33,7 +33,7 @@ public static class LobbyUIService
             GameConfiguration.CurrentMapType == MapType.LevelImposter)
             DestroyableSingleton<HudManager>.Instance.Notifier.AddSettingsChangeMessage(
                 StringNames.GameMapName,
-                GameConfiguration.HideMapName ? "Random" : GameConfiguration.CurrentMap.name,
+                GameConfiguration.HideMapName ? "Random" : GameConfiguration.CurrentMap.Name,
                 false
             );
     }

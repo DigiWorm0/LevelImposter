@@ -25,7 +25,7 @@ internal static class MeetingOptionsBuilder
     }
 
     [ElementBuilder(ElementTypes = ["util-meeting"])]
-    public static void Build(LIMap map, LIElement element, GameObject gameObject)
+    public static void Build(MapFile map, LIElement element, GameObject gameObject)
     {
         // ShipStatus
         var shipStatus = LIShipStatus.GetShip();

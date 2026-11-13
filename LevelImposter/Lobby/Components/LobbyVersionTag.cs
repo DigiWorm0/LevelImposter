@@ -71,7 +71,7 @@ public class LobbyVersionTag(IntPtr intPtr) : MonoBehaviour(intPtr)
         versionTagBuilder.Append("<font=\"Barlow-Black SDF\" material=\"Barlow-Black Outline\">");
         versionTagBuilder.Append(GameConfiguration.HideMapName
             ? Translation.Get("lobby.random_custom_map")
-            : Translation.Get("lobby.map_by_author", currentMap.name, currentMap.authorName));
+            : Translation.Get("lobby.map_by_author", currentMap.Name, currentMap.authorName));
 
         versionTagBuilder.Append("</font>");
 

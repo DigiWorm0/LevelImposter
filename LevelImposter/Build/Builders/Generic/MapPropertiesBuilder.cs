@@ -23,10 +23,10 @@ internal static class MapPropertiesBuilder
     };
 
     [MapBuilder(Priority = Priority.FIRST)]
-    public static void ApplyMapProperties(LIMap map, LIBaseShip baseShip)
+    public static void ApplyMapProperties(MapFile map, LIBaseShip baseShip)
     {
         // Set Map Name
-        baseShip.name = map.name;
+        baseShip.name = map.Name;
 
         // Set Background Color
         if (string.IsNullOrEmpty(map.properties.bgColor) || Camera.main == null)
@@ -37,7 +37,7 @@ internal static class MapPropertiesBuilder
     }
 
     [MapBuilder(Priority = Priority.FIRST, Target = MapTarget.Game)]
-    private static void ApplyExileCutscene(LIMap map, ShipStatus shipStatus)
+    private static void ApplyExileCutscene(MapFile map, ShipStatus shipStatus)
     {
         if (string.IsNullOrEmpty(map.properties.exileID))
             return;

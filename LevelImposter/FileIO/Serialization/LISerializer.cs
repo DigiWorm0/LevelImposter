@@ -17,7 +17,7 @@ public static class LISerializer
     /// </summary>
     /// <param name="mapData">Map Data to serialize</param>
     /// <param name="stream">Stream to write to</param>
-    public static void SerializeMap(LIMap mapData, Stream stream)
+    public static void SerializeMap(MapFile mapData, Stream stream)
     {
         try
         {

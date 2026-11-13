@@ -11,6 +11,8 @@ namespace LevelImposter.FileIO.DataStores;
 /// <param name="filePath">The path to the file.</param>
 public class FileStore(string filePath) : IDataStore
 {
+    public string FilePath => filePath;
+
     public MemoryBlock LoadToMemory()
     {
         using var stream = OpenStream();

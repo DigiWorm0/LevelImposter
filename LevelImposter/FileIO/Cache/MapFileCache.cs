@@ -40,7 +40,7 @@ public static class MapFileCache
     /// <param name="mapID">Map ID to load</param>
     /// <param name="callback">Callback on success</param>
     [HideFromIl2Cpp]
-    public static LIMap? Get(string mapID)
+    public static MapFile? Get(string mapID)
     {
         // Check if map exists
         if (!Exists(mapID))
@@ -59,7 +59,7 @@ public static class MapFileCache
         // Reassign map ID (just in case)
         if (mapData != null)
         {
-            mapData.id = mapID;
+            mapData.ID = mapID;
             return mapData;
         }
 

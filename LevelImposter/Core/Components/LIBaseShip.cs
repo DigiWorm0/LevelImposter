@@ -21,7 +21,7 @@ public class LIBaseShip(IntPtr intPtr) : MonoBehaviour(intPtr)
     public static LIBaseShip? Instance { get; private set; }
 
     // Subsystems
-    [HideFromIl2Cpp] public LIMap? CurrentMap { get; private set; }
+    [HideFromIl2Cpp] public MapFile? CurrentMap { get; private set; }
     [HideFromIl2Cpp] public TriggerSystem TriggerSystem { get; } = new();
     [HideFromIl2Cpp] public RenameHandler Renames { get; } = new();
     [HideFromIl2Cpp] public MapObjectDB MapObjectDB { get; } = new();
@@ -47,7 +47,7 @@ public class LIBaseShip(IntPtr intPtr) : MonoBehaviour(intPtr)
     }
 
     [HideFromIl2Cpp]
-    public virtual void SetMap(LIMap? map)
+    public virtual void SetMap(MapFile? map)
     {
         CurrentMap = map;
     }

@@ -13,7 +13,7 @@ namespace LevelImposter.Build;
 public static class BuildRouter
 {
     public static void BuildMap(
-        LIMap map,
+        MapFile map,
         LIBaseShip baseShip,
         Dictionary<string, object?> buildMethodParameters)
     {

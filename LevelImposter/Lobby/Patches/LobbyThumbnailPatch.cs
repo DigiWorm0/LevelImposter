@@ -70,7 +70,7 @@ public static class LobbyThumbnailPatch
             __instance.MapImage.enabled = !isThumbnailEnabled;
 
         // Get Map ID
-        var currentMapID = GameConfiguration.CurrentMap?.id;
+        var currentMapID = GameConfiguration.CurrentMap?.ID;
         if (GameConfiguration.HideMapName ||
             GameConfiguration.CurrentMapType != MapType.LevelImposter)
             currentMapID = null;

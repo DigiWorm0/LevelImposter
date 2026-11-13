@@ -17,10 +17,10 @@ public class SpriteAnimator(IntPtr intPtr) : LIAnimatorBase(intPtr)
 {
     private LISpriteAnimation[]? _allAnimations;
     private LISpriteAnimation? _currentAnimation;
-    private LIMap? _map;
+    private MapFile? _map;
 
     [HideFromIl2Cpp]
-    public void Init(LIElement element, LISpriteAnimation[] animations, LIMap map)
+    public void Init(LIElement element, LISpriteAnimation[] animations, MapFile map)
     {
         _map = map;
         _allAnimations = animations;

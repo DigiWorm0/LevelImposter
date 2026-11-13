@@ -11,7 +11,7 @@ namespace LevelImposter.FileIO.Serialization;
 
 public class LIDeserializerLIM
 {
-    public static LIMap DeserializeWithSignature(
+    public static MapFile DeserializeWithSignature(
         Stream dataStream,
         bool spriteDB = true,
         string? filePath = null
@@ -21,7 +21,7 @@ public class LIDeserializerLIM
         return Deserialize(dataStream, spriteDB, filePath);
     }
 
-    public static LIMap Deserialize(
+    public static MapFile Deserialize(
         Stream dataStream,
         bool spriteDB = true,
         string? filePath = null
@@ -36,7 +36,7 @@ public class LIDeserializerLIM
         var mapDataBytes = new byte[mapLength];
         dataStream.Read(mapDataBytes, 0, mapLength);
         var mapDataString = Encoding.UTF8.GetString(mapDataBytes);
-        var mapData = JsonSerializer.Deserialize<LIMap>(mapDataString);
+        var mapData = JsonSerializer.Deserialize<MapFile>(mapDataString);
 
         // Check Map Data
         if (mapData == null)

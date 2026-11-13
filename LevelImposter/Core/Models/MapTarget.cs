@@ -1,7 +1,7 @@
 ﻿namespace LevelImposter.Core.Models;
 
 /// <summary>
-///     Represents the targeted area of <see cref="LIMap" />.
+///     Represents the targeted area of <see cref="MapFile" />.
 /// </summary>
 public enum MapTarget
 {

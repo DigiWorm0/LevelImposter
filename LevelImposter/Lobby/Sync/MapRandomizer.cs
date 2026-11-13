@@ -1,5 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Linq;
 using LevelImposter.Core.Models;
 using LevelImposter.Core.Utils;
 using LevelImposter.FileIO.API;
@@ -23,9 +23,9 @@ public static class MapRandomizer
             return;
 
         // Get random map
-        var map = GetRandomMap();
-        if (map != null)
-            GameConfiguration.SetMap(map, true);
+        var mapData = ChooseRandomMap();
+        if (mapData != null)
+            GameConfiguration.SetMap(mapData, true);
         else
             GameConfiguration.SetMap(null);
 
@@ -38,72 +38,69 @@ public static class MapRandomizer
     }
 
     /// <summary>
-    ///     Attempts to find and load a random map from the filesystem, excluding blacklisted maps.
+    ///     Chooses a valid, random map file from the filesystem.
     /// </summary>
-    /// <param name="blacklistMaps">List of map IDs to exclude from selection</param>
-    /// <returns>Loaded LIMap or null if none could be found</returns>
-    private static LIMap? GetRandomMap(List<string>? blacklistMaps = null)
+    /// <returns>A valid <see cref="MapData" /> object, or null if no valid maps are found.</returns>
+    private static MapFile? ChooseRandomMap()
     {
+        MapFileAPI.AllMaps.Refresh();
+        var remainingMapFiles = MapFileAPI.AllMaps.Get().ToList();
+        remainingMapFiles.RemoveAll(map => !IsMapValid(map));
+
         while (true)
         {
-            // Initialize blacklist
-            blacklistMaps ??= [];
-
             // Find random map ID
-            var mapID = RecursivelyFindRandomMapID(blacklistMaps);
-            if (mapID == null)
+            var mapInfo = ChooseRandomMap(remainingMapFiles);
+            if (mapInfo == null)
                 return null;
 
             // Attempt to load map
-            var map = MapFileAPI.Get(mapID);
+            var map = MapFileAPI.GetMapData(mapInfo);
 
-            // Check if the map loaded successfully
-            if (map == null)
-            {
-                LILogger.Warn($"Map randomizer could not load map [{mapID}] from filesystem.");
-                blacklistMaps.Add(mapID);
-            }
-
-            // Check if the map targets game (non-lobby maps)
-            else if (map.MapTarget == MapTarget.Lobby)
-            {
-                LILogger.Info($"Map randomizer excluded map [{mapID}] because its a lobby map.");
-                blacklistMaps.Add(mapID);
-            }
-
-            // Successfully found a valid map
-            else
-            {
+            // Validate map file data
+            if (map != null)
                 return map;
-            }
+
+            LILogger.Warn($"Failed to load map [{mapInfo.ID}], skipping.");
+            remainingMapFiles.Remove(mapInfo);
         }
     }
 
     /// <summary>
-    ///     Recursively finds a random map ID among the currently installed custom maps (excluding blacklisted and local-only
-    ///     maps).
-    ///     Utilizes map weights from the config.
+    ///     Checks if a given map file is valid for use in a multiplayer game.
     /// </summary>
-    /// <param name="blacklistMaps">List of map IDs to exclude from selection</param>
-    /// <returns></returns>
-    /// <exception cref="Exception">If no valid map could be found</exception>
-    private static string? RecursivelyFindRandomMapID(List<string>? blacklistMaps)
+    /// <param name="map">The map file to validate.</param>
+    /// <returns>True if the map is valid; otherwise, false.</returns>
+    private static bool IsMapValid(MapFileInfo map)
     {
-        // Initialize blacklist
-        blacklistMaps ??= [];
+        if (string.IsNullOrEmpty(map.ID))
+            return false;
 
-        // Get all custom maps
-        var fileIDs = new List<string>(MapFileAPI.ListIDs());
-        var mapIDs = fileIDs.FindAll(id => !blacklistMaps.Contains(id));
-        if (mapIDs.Count <= 0)
-            return null; // <-- No valid maps left
+        if (map.MapTarget == MapTarget.Lobby)
+            return false;
+
+        if (!map.IsInWorkshop)
+            return false;
+
+        return true;
+    }
+
+    /// <summary>
+    ///     Uses the map weights from the Config API to choose a random map from a list of map files.
+    /// </summary>
+    /// <param name="allMaps">The list of map files to choose from.</param>
+    /// <returns>A random map file, or null if no maps are available.</returns>
+    private static MapFileInfo? ChooseRandomMap(List<MapFileInfo> allMaps)
+    {
+        if (allMaps.Count == 0)
+            return null;
 
         // Get map weights
-        var mapWeights = new float[mapIDs.Count];
+        var mapWeights = new float[allMaps.Count];
         var sumOfAllMapWeights = 0.0f;
-        for (var i = 0; i < mapIDs.Count; i++)
+        for (var i = 0; i < allMaps.Count; i++)
         {
-            mapWeights[i] = RoundToPrecision(ConfigAPI.GetMapWeight(mapIDs[i]));
+            mapWeights[i] = RoundToPrecision(ConfigAPI.GetMapWeight(allMaps[i].ID));
             sumOfAllMapWeights += mapWeights[i];
         }
 
@@ -113,22 +110,14 @@ public static class MapRandomizer
 
         // Choose a random map
         var randomValue = Random.Range(0, sumOfAllMapWeights);
-        for (var i = 0; i < mapIDs.Count; i++)
+        for (var i = 0; i < allMaps.Count; i++)
         {
             // Check weight
             randomValue -= mapWeights[i];
             if (randomValue >= 0)
                 continue;
 
-            // Check if map is in workshop
-            var mapID = mapIDs[i];
-            var isInWorkshop = Guid.TryParse(mapID, out _);
-            if (isInWorkshop)
-                return mapID;
-
-            // Blacklist local-only maps and try again
-            blacklistMaps.Add(mapID);
-            return RecursivelyFindRandomMapID(blacklistMaps);
+            return allMaps[i];
         }
 
         // No map found

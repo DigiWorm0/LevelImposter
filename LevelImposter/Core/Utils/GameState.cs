@@ -12,7 +12,7 @@ public static class GameState
     public static bool IsMobile => Application.isMobilePlatform;
 
     // Map
-    public static string MapName => GameConfiguration.CurrentMap?.name ?? Translation.Get("lobby.random_custom_map");
+    public static string MapName => GameConfiguration.CurrentMap?.Name ?? Translation.Get("lobby.random_custom_map");
 
     // Scenes
     public static bool IsInFreeplay => AmongUsClient.Instance?.NetworkMode == NetworkModes.FreePlay;

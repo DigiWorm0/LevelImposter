@@ -19,12 +19,12 @@ public static class GameConfiguration
     /// <summary>
     ///     Represents the currently selected lobby map data.
     /// </summary>
-    public static LIMap? CurrentLobbyMap { get; private set; }
+    public static MapFile? CurrentLobbyMap { get; private set; }
 
     /// <summary>
     ///     Represents the currently active map data.
     /// </summary>
-    public static LIMap? CurrentMap { get; private set; }
+    public static MapFile? CurrentMap { get; private set; }
 
     /// <summary>
     ///     If this is true, the map name is shown as "Random" in the lobby UI.
@@ -42,11 +42,11 @@ public static class GameConfiguration
     /// </summary>
     /// <param name="map">LevelImposter map data or null to clear the map</param>
     /// <param name="hideMapName">If true, the map name is shown as "Random" in the lobby UI</param>
-    public static void SetMap(LIMap? map, bool hideMapName = false)
+    public static void SetMap(MapFile? map, bool hideMapName = false)
     {
         // Wipe cache if map changed
         // (Keeps cache if replaying the same map)
-        if (CurrentMap?.id != map?.id)
+        if (CurrentMap?.ID != map?.ID)
             GCHandler.DisposeAll(GCBehavior.DisposeOnMapUnload);
 
         // Update current map
@@ -62,11 +62,11 @@ public static class GameConfiguration
     ///     Sets the currently selected lobby map data.
     /// </summary>
     /// <param name="map">LevelImposter map data or null to reset to dropship</param>
-    public static void SetLobbyMap(LIMap? map)
+    public static void SetLobbyMap(MapFile? map)
     {
         // Wipe cache if map changed
         // (Keeps cache if replaying the same map)
-        if (CurrentLobbyMap?.id != map?.id)
+        if (CurrentLobbyMap?.ID != map?.ID)
             GCHandler.DisposeAll(GCBehavior.DisposeOnLobbyUnload);
 
         // Update current lobby map

@@ -4,7 +4,7 @@ using System.Text.Json.Serialization;
 namespace LevelImposter.Core.Models;
 
 [Serializable]
-public class LIMap : LIMetadata
+public class MapFile : MapFileInfo
 {
     // LIM2
     [JsonIgnore] public const int LIM_VERSION = 3;

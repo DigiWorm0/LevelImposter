@@ -14,7 +14,7 @@ internal static class AmbientSoundBuilder
     private const string TRIGGER_SOUND_TYPE = "util-triggersound";
 
     [ElementBuilder(ElementTypes = [AMBIENT_SOUND_TYPE, TRIGGER_SOUND_TYPE])]
-    public static void Build(LIMap map, LIElement element, GameObject gameObject)
+    public static void Build(MapFile map, LIElement element, GameObject gameObject)
     {
         var isAmbient = element.type == AMBIENT_SOUND_TYPE;
         var isTrigger = element.type == TRIGGER_SOUND_TYPE;

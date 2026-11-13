@@ -18,7 +18,7 @@ public static class LIDeserializerZIP
     /// <param name="spriteDB">Whether to load the sprite database.</param>
     /// <param name="filePath">File path for loading SpriteDB</param>
     /// <returns>The deserialized LIMap object.</returns>
-    public static LIMap Deserialize(
+    public static MapFile Deserialize(
         Stream stream,
         bool spriteDB = true,
         string? filePath = null
@@ -32,7 +32,7 @@ public static class LIDeserializerZIP
 
         // Deserialize JSON
         using var jsonStream = jsonEntry.Open();
-        var mapData = JsonSerializer.Deserialize<LIMap>(jsonStream);
+        var mapData = JsonSerializer.Deserialize<MapFile>(jsonStream);
         if (mapData == null)
             throw new InvalidDataException("Failed to deserialize map JSON data.");
         if (!spriteDB)

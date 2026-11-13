@@ -48,7 +48,7 @@ public class MapDownloadHelper(bool preventGameStart = false)
     /// <param name="onError">Callback invoked on download error with the error message</param>
     public void DownloadMap(
         Guid mapID,
-        Action<LIMap> onSuccess,
+        Action<MapFile> onSuccess,
         Action<string> onError)
     {
         // Abort if already downloading this map

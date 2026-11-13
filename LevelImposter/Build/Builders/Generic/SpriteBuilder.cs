@@ -31,7 +31,7 @@ internal static class SpriteBuilder
     }
 
     [ElementBuilder(Priority = Priority.FIRST)]
-    public static void AddAnimations(LIMap map, LIElement element, GameObject gameObject)
+    public static void AddAnimations(MapFile map, LIElement element, GameObject gameObject)
     {
         // Load Animations
         if (element.properties.animations == null)
@@ -46,7 +46,7 @@ internal static class SpriteBuilder
     }
 
     [ElementBuilder(Priority = Priority.FIRST)]
-    public static void AddSprites(LIMap map, LIElement element, GameObject gameObject)
+    public static void AddSprites(MapFile map, LIElement element, GameObject gameObject)
     {
         // Load Sprite
         if (element.properties.spriteID == null)
@@ -90,7 +90,7 @@ internal static class SpriteBuilder
     /// <param name="elem">Element to load</param>
     /// <param name="onLoad">Callback when the sprite is loaded</param>
     /// <exception cref="Exception">Thrown if the sprite asset is not found in the AssetDB</exception>
-    public static void LoadSprite(LIMap map, LIElement elem, Action<SpriteResult> onLoad)
+    public static void LoadSprite(MapFile map, LIElement elem, Action<SpriteResult> onLoad)
     {
         // Get LoadableSprite
         var loadableSprite = GetLoadableFromID(elem.properties.spriteID, map);
@@ -119,7 +119,7 @@ internal static class SpriteBuilder
     /// <param name="spriteID">ID of the sprite</param>
     /// <param name="map">Map data this is built on</param>
     /// <returns>The LoadableSprite or null if the ID is null</returns>
-    public static SpriteInfo? GetLoadableFromID(Guid? spriteID, LIMap map)
+    public static SpriteInfo? GetLoadableFromID(Guid? spriteID, MapFile map)
     {
         // Check for null ID
         if (spriteID == null)
@@ -156,7 +156,7 @@ internal static class SpriteBuilder
     /// <param name="map">Map data this is built on</param>
     /// <returns>The LoadableSprite</returns>
     /// <exception cref="Exception">Thrown if the asset is not found in the AssetDB</exception>
-    private static SpriteInfo? GetLoadableFromSpriteAtlas(LISpriteAtlas spriteAtlas, LIMap map)
+    private static SpriteInfo? GetLoadableFromSpriteAtlas(LISpriteAtlas spriteAtlas, MapFile map)
     {
         // Get Asset from AssetDB
         var baseAssetID = spriteAtlas.assetID;
@@ -200,7 +200,7 @@ internal static class SpriteBuilder
             return;
 
         // Log
-        LILogger.Info("Preloading all sprites for " + map.name);
+        LILogger.Info("Preloading all sprites for " + map.Name);
 
         // Start Async Loading
         GCHandler.SetDefaultBehavior(GCBehavior.DisposeOnMapUnload);

@@ -14,6 +14,8 @@ namespace LevelImposter.FileIO.API;
 /// </summary>
 public static class MapFileAPI
 {
+    public static readonly MapFileCache AllMaps = new();
+
     /// <summary>
     ///     Gets the current directory where LevelImposter map files are stored.
     ///     Usually in a LevelImposter folder beside the LevelImposter.dll.
@@ -25,16 +27,6 @@ public static class MapFileAPI
     }
 
     /// <summary>
-    ///     Gets the path where a specific map LIM2 file is stored.
-    /// </summary>
-    /// <param name="mapID">ID of the map file</param>
-    /// <returns>The path where a specific map is stored</returns>
-    public static string GetPath(string mapID)
-    {
-        return Path.Combine(GetDirectory(), mapID + ".lim2");
-    }
-
-    /// <summary>
     ///     Attempts to open the LevelImposter maps folder in whatever file explorer the device has.
     /// </summary>
     public static void OpenInExplorer()
@@ -43,89 +35,61 @@ public static class MapFileAPI
     }
 
     /// <summary>
-    ///     Lists all map file IDs that are located in the LevelImposter folder.
+    ///     Deserializes all map files in the local filesystem.
     /// </summary>
-    /// <returns>Array of map file IDs that are located in the LevelImpsoter folder.</returns>
-    public static string[] ListIDs()
+    /// <returns>A list of all map files in the local filesystem.</returns>
+    public static MapFileInfo[] GetAllMaps()
     {
-        var fileNames = Directory.GetFiles(GetDirectory(), "*.lim2");
-        for (var i = 0; i < fileNames.Length; i++)
-            fileNames[i] = Path.GetFileNameWithoutExtension(fileNames[i]);
-        return fileNames;
-    }
-
-    /// <summary>
-    ///     Gets the metadata of all map files located in the LevelImposter folder.
-    /// </summary>
-    /// <returns>Array of map file metadata located in the LevelImposter folder.</returns>
-    public static LIMetadata[] GetAllMetadata()
-    {
-        return ListIDs().Select(GetMetadata)
-            .OfType<LIMetadata>()
+        return Directory.GetFiles(GetDirectory(), "*.lim2")
+            .Select(ReadMetadataFromPath)
+            .OfType<MapFileInfo>()
             .ToArray();
     }
 
-    /// <summary>
-    ///     Checks the existance of a map file based on ID
-    /// </summary>
-    /// <param name="mapID">Map File ID</param>
-    /// <returns>True if a map file with the cooresponding ID exists</returns>
-    public static bool Exists(string? mapID)
+    private static MapFileInfo? ReadMetadataFromPath(string filePath)
     {
-        if (mapID == null)
-            return false;
-        return File.Exists(GetPath(mapID));
-    }
-
-    /// <summary>
-    ///     Reads and parses a map file into memory.
-    /// </summary>
-    /// <param name="mapID">Map ID to read and parse</param>
-    /// <param name="spriteDB">Whether to load the sprite database into memory</param>
-    /// <returns>Representation of the map file data in the form of a <c>LIMap</c>.</returns>
-    public static LIMap? Get(string mapID, bool spriteDB = true)
-    {
-        // Check if map exists
-        if (!Exists(mapID))
+        try
         {
-            LILogger.Warn($"Could not find map [{mapID}] in filesystem");
+            using var stream = File.OpenRead(filePath);
+            return LIDeserializer.DeserializeMap(stream, false, filePath);
+        }
+        catch (Exception e)
+        {
+            LILogger.Warn($"Failed to read map file [{filePath}]: {e}");
             return null;
         }
-
-        // Get Path
-        var path = GetPath(mapID);
-
-        // Open File
-        using var stream = File.OpenRead(path);
-
-        // Deserialize
-        var mapData = LIDeserializer.DeserializeMap(stream, spriteDB, path);
-        mapData?.id = mapID;
-
-        return mapData;
     }
 
+
     /// <summary>
-    ///     Reads and parses the metadata of a map file into memory.
-    ///     Less memory-intensive than <c>MapFileAPI.Get()</c>.
+    ///     Reads the full map data from a map file located in the LevelImposter folder.
     /// </summary>
-    /// <param name="mapID">Map ID to read and parse</param>
-    /// <returns>Representation of the map file data in the form of a <c>LIMetadata</c>.</returns>
-    public static LIMetadata? GetMetadata(string mapID)
+    /// <param name="metadata">Metadata of the map file</param>
+    /// <returns>Map data of the map file</returns>
+    /// <exception cref="ArgumentNullException">Thrown if the metadata is null</exception>
+    public static MapFile? GetMapData(MapFileInfo? metadata)
     {
-        return Get(mapID, false);
+        if (metadata?.FilePath == null)
+            throw new ArgumentNullException(
+                $"Metadata object does not have a file path. Cannot load map data for {metadata?.ID}");
+
+        using var stream = File.OpenRead(metadata.FilePath);
+        return LIDeserializer.DeserializeMap(stream, true, metadata.FilePath);
     }
 
     /// <summary>
     ///     Deletes a map file from the filesystem.
     /// </summary>
-    /// <param name="mapID">ID of the map to delete</param>
-    public static void Delete(string mapID)
+    /// <param name="map">The map file to delete</param>
+    public static void Delete(MapFileInfo map)
     {
-        LILogger.Info($"Deleting [{mapID}] from filesystem");
-        var mapPath = GetPath(mapID);
-        if (File.Exists(mapPath))
-            File.Delete(mapPath);
+        if (map.FilePath == null)
+            throw new ArgumentNullException(
+                $"Map {map} does not have a file path, cannot delete");
+
+        LILogger.Info($"Deleting {map} from filesystem");
+        if (File.Exists(map.FilePath))
+            File.Delete(map.FilePath);
     }
 
     /// <summary>
@@ -140,23 +104,81 @@ public static class MapFileAPI
     /// <summary>
     ///     Downloads a specific map from the LevelImposter API and saves it to the local filesystem.
     /// </summary>
-    /// <param name="id">ID of the map to download</param>
+    /// <param name="mapInfo">Info about the map file</param>
     /// <param name="onProgress">Callback on download progress</param>
     /// <param name="onSuccess">Callback on success</param>
     /// <param name="onError">Callback on error</param>
     public static void DownloadMap(
-        Guid id,
+        MapFileInfo mapInfo,
         Action<float>? onProgress,
         Action<FileStore> onSuccess,
         Action<string>? onError = null)
     {
+        if (!mapInfo.IsInWorkshop)
+            throw new ArgumentException($"Map {mapInfo} is not a workshop map, cannot download");
+
         Init();
         LevelImposterAPI.DownloadMap(
-            id,
-            GetPath(id.ToString()),
+            new Guid(mapInfo.ID),
+            GetDownloadPath(mapInfo),
             onProgress,
             onSuccess,
             onError
         );
+    }
+
+    private static string GetDownloadPath(MapFileInfo mapInfo)
+    {
+        var iteration = 0;
+        var sanitizedName = SafeFileAPI.Sanitize(mapInfo.Name);
+        var path = Path.Combine(GetDirectory(), $"{sanitizedName}.lim2");
+        while (File.Exists(path))
+        {
+            if (iteration > 100)
+                throw new InvalidOperationException($"Failed to find a valid file path for map {mapInfo}");
+
+            iteration++;
+            path = Path.Combine(GetDirectory(), $"{sanitizedName} {iteration}.lim2");
+        }
+
+        return path;
+    }
+
+    public class MapFileCache
+    {
+        private MapFileInfo[] _cachedMaps = [];
+
+        /// <summary>
+        ///     Gets the cached list of all maps in the local filesystem.
+        /// </summary>
+        /// <returns>A list of all map files in the local filesystem.</returns>
+        public MapFileInfo[] Get()
+        {
+            return _cachedMaps;
+        }
+
+        /// <summary>
+        ///     Refreshes the list of all maps
+        /// </summary>
+        public void Refresh()
+        {
+            _cachedMaps = GetAllMaps();
+        }
+
+        /// <summary>
+        ///     Tries to find and deserialize a map file by its ID.
+        /// </summary>
+        /// <param name="mapID">ID of the map file</param>
+        /// <param name="mapInfo">The deserialized map info object</param>
+        /// <returns>Metadata of the map file</returns>
+        public bool TryGetByID(string? mapID, out MapFileInfo? mapInfo)
+        {
+            mapInfo = null;
+            if (string.IsNullOrEmpty(mapID))
+                return false;
+
+            mapInfo = _cachedMaps.FirstOrDefault(m => m.ID == mapID);
+            return mapInfo != null;
+        }
     }
 }

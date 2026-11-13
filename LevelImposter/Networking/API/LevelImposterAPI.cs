@@ -56,7 +56,7 @@ public static class LevelImposterAPI
     /// </summary>
     /// <param name="onSuccess">Callback on success</param>
     /// <param name="onError">Callback on error</param>
-    public static void GetTop(Action<LIMetadata[]> onSuccess, Action<string> onError)
+    public static void GetTop(Action<MapFileInfo[]> onSuccess, Action<string> onError)
     {
         LILogger.Info("Getting top maps...");
         Request(API_PATH + "/maps/top", onSuccess, onError);
@@ -67,7 +67,7 @@ public static class LevelImposterAPI
     /// </summary>
     /// <param name="onSuccess">Callback on success</param>
     /// <param name="onError">Callback on error</param>
-    public static void GetRecent(Action<LIMetadata[]> onSuccess, Action<string> onError)
+    public static void GetRecent(Action<MapFileInfo[]> onSuccess, Action<string> onError)
     {
         LILogger.Info("Getting recent maps...");
         Request(API_PATH + "/maps/recent", onSuccess, onError);
@@ -78,7 +78,7 @@ public static class LevelImposterAPI
     /// </summary>
     /// <param name="onSuccess">Callback on success</param>
     /// <param name="onError">Callback on error</param>
-    public static void GetFeatured(Action<LIMetadata[]> onSuccess, Action<string> onError)
+    public static void GetFeatured(Action<MapFileInfo[]> onSuccess, Action<string> onError)
     {
         LILogger.Info("Getting verified maps...");
         Request(API_PATH + "/maps/verified", onSuccess, onError);
@@ -90,7 +90,7 @@ public static class LevelImposterAPI
     /// <param name="id">ID of the map to grab</param>
     /// <param name="onSuccess">Callback on success</param>
     /// <param name="onError">Callback on error</param>
-    public static void GetMap(Guid id, Action<LIMetadata> onSuccess, Action<string>? onError)
+    public static void GetMap(Guid id, Action<MapFileInfo> onSuccess, Action<string>? onError)
     {
         LILogger.Info($"Getting map [{id}]...");
         Request(API_PATH + "/map/" + id, onSuccess, onError);
