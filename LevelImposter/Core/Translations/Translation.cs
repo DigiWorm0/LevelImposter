@@ -12,7 +12,9 @@ public static class Translation
         { SupportedLangs.English, new LanguageFile("en-us") },
         { SupportedLangs.Latam, new LanguageFile("es") },
         { SupportedLangs.Spanish, new LanguageFile("es") },
-        { SupportedLangs.Japanese, new LanguageFile("ja") }
+        { SupportedLangs.Japanese, new LanguageFile("ja") },
+        { SupportedLangs.SChinese, new LanguageFile("zh-cn") },
+        { SupportedLangs.TChinese, new LanguageFile("zh-tw") }
     };
 
     private static LanguageFile? _currentLanguage;
