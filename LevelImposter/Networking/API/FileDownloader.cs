@@ -4,10 +4,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
-using System.Net.Security;
+using System.Threading;
 using System.Threading.Tasks;
 using LevelImposter.AssetLoader.Queue;
 using LevelImposter.Core.Utils;
+using LevelImposter.FileIO.API;
 using LevelImposter.FileIO.DataStores;
 using Reactor.Utilities;
 
@@ -157,7 +158,11 @@ public class FileDownloader
         var handler = new HttpClientHandler();
 
         using var httpClient = new HttpClient(handler);
-        using var response = await httpClient.GetAsync(url, HttpCompletionOption.ResponseHeadersRead);
+        using var timeout = new CancellationTokenSource(TimeSpan.FromMinutes(10));
+        using var response = await httpClient.GetAsync(
+            url,
+            HttpCompletionOption.ResponseHeadersRead,
+            timeout.Token);
         response.EnsureSuccessStatusCode();
 
         // Make download buffer
@@ -167,41 +172,55 @@ public class FileDownloader
 
         // Open file stream to a temporary file
         var tempFilePath = Path.GetTempFileName();
-        await using var fileStream = new FileStream(
-            tempFilePath,
-            FileMode.Create,
-            FileAccess.Write,
-            FileShare.None,
-            DOWNLOAD_BUFFER_SIZE,
-            true);
-
-        // Open response stream
-        await using var contentStream = response.Content.ReadAsStreamAsync().Result;
-
-        // Read from response stream
-        int bytesRead;
-        do
+        try
         {
-            // Read chunk
-            bytesRead = await contentStream.ReadAsync(buffer, 0, buffer.Length);
+            await using (var fileStream = new FileStream(
+                             tempFilePath,
+                             FileMode.Create,
+                             FileAccess.Write,
+                             FileShare.None,
+                             DOWNLOAD_BUFFER_SIZE,
+                             true))
+            {
+                // Open response stream
+                await using var contentStream =
+                    await response.Content.ReadAsStreamAsync(timeout.Token);
 
-            // Write to file
-            fileStream.WriteAsync(buffer, 0, bytesRead).Wait();
-            totalBytesRead += bytesRead;
+                // Read from response stream
+                int bytesRead;
+                do
+                {
+                    // Read chunk
+                    bytesRead = await contentStream.ReadAsync(
+                        buffer.AsMemory(0, buffer.Length),
+                        timeout.Token);
 
-            // Report progress
-            //      It's possible totalBytes is 0 if the server doesn't send a Content-Length header.
-            //      In this case, we don't report progress.
-            //      Ideally, LI API would always send Content-Length headers for files.
-            if (totalBytes > 0)
-                onProgress?.Invoke((float)totalBytesRead / totalBytes);
-        } while (bytesRead > 0);
+                    // Write to file
+                    await fileStream.WriteAsync(
+                        buffer.AsMemory(0, bytesRead),
+                        timeout.Token);
+                    totalBytesRead += bytesRead;
 
-        // Move temp file to final location
-        if (File.Exists(filePath))
-            File.Delete(filePath);
-        fileStream.Close(); // <-- Ensure file is closed before moving
-        File.Move(tempFilePath, filePath);
+                    // Report progress
+                    //      It's possible totalBytes is 0 if the server doesn't send a Content-Length header.
+                    //      In this case, we don't report progress.
+                    //      Ideally, LI API would always send Content-Length headers for files.
+                    if (totalBytes > 0)
+                        onProgress?.Invoke((float)totalBytesRead / totalBytes);
+                } while (bytesRead > 0);
+            }
+
+            // Move temp file to final location
+            if (File.Exists(filePath))
+                File.Delete(filePath);
+            File.Move(tempFilePath, filePath);
+        }
+        catch
+        {
+            // Don't leave partially downloaded temp files behind
+            FileAPI.TryDelete(tempFilePath);
+            throw;
+        }
 
         // Return success
         return new DownloadResult(new FileStore(filePath));

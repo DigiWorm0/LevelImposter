@@ -52,6 +52,16 @@ public class GameConfigurationRPC(LevelImposter plugin, uint id) :
 
     public override void Handle(PlayerControl innerNetObject, SerializedGameConfiguration data)
     {
+        // Only the host is authoritative for the game configuration.
+        // Without this check, any client could force map downloads and lobby rebuilds on everyone.
+        if (innerNetObject == null ||
+            AmongUsClient.Instance == null ||
+            innerNetObject.OwnerId != AmongUsClient.Instance.HostId)
+        {
+            LILogger.Warn($"[RPC] Ignoring game configuration from non-host player [{innerNetObject?.name ?? "null"}]");
+            return;
+        }
+
         LILogger.Info($"[RPC] Received game configuration: \n{data.ToString()}");
         GameConfigurationSync.OnGameConfigurationRPC(data);
     }

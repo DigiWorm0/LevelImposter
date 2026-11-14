@@ -13,6 +13,8 @@ namespace LevelImposter.Networking.API;
 /// </summary>
 public static class HTTPHandler
 {
+    private const int REQUEST_TIMEOUT_SECONDS = 30;
+
     /// <summary>
     ///     Sends an asynchronous request over HTTP(S) to the given URL using UnityWebRequest.
     /// </summary>
@@ -35,35 +37,43 @@ public static class HTTPHandler
         // Start the request
         LILogger.Info($"GET: {url}");
         var request = UnityWebRequest.Get(url);
-
-        // Wait for response
-        yield return request.SendWebRequest();
-        LILogger.Info($"RES: {request.responseCode}");
+        request.timeout = REQUEST_TIMEOUT_SECONDS;
 
         try
         {
-            // Throw error on failure
-            if (request.result == UnityWebRequest.Result.ConnectionError ||
-                request.result == UnityWebRequest.Result.ProtocolError)
-                throw new Exception($"HTTP Error {request.responseCode}: {request.error}");
+            // Wait for response
+            yield return request.SendWebRequest();
+            LILogger.Info($"RES: {request.responseCode}");
 
-            // Return response text on success
-            callback?.Invoke(new FetchResult
+            try
             {
-                Data = request.downloadHandler.text,
-                ErrorText = null
-            });
+                // Throw error on failure
+                if (request.result == UnityWebRequest.Result.ConnectionError ||
+                    request.result == UnityWebRequest.Result.ProtocolError)
+                    throw new Exception($"HTTP Error {request.responseCode}: {request.error}");
+
+                // Return response text on success
+                callback?.Invoke(new FetchResult
+                {
+                    Data = request.downloadHandler.text,
+                    ErrorText = null
+                });
+            }
+            catch (Exception e)
+            {
+                LILogger.Error($"HTTP Request Error: {e}");
+
+                // Return error
+                callback?.Invoke(new FetchResult
+                {
+                    Data = null,
+                    ErrorText = e.Message
+                });
+            }
         }
-        catch (Exception e)
+        finally
         {
-            LILogger.Error($"HTTP Request Error: {e}");
-
-            // Return error
-            callback?.Invoke(new FetchResult
-            {
-                Data = null,
-                ErrorText = e.Message
-            });
+            request.Dispose();
         }
     }
 

@@ -21,7 +21,8 @@ public class MapDownloadHelper(bool preventGameStart = false)
     public bool IsDownloadingMap(Guid mapID)
     {
         return CurrentDownloadState != null &&
-               CurrentDownloadState.MapID == mapID;
+               CurrentDownloadState.MapID == mapID &&
+               CurrentDownloadState.Error == null;
     }
 
     /// <summary>
@@ -53,7 +54,8 @@ public class MapDownloadHelper(bool preventGameStart = false)
     {
         // Abort if already downloading this map
         if (CurrentDownloadState != null &&
-            CurrentDownloadState.MapID == mapID)
+            CurrentDownloadState.MapID == mapID &&
+            CurrentDownloadState.Error == null)
             return;
 
         // Cancel any existing download
@@ -117,6 +119,11 @@ public class MapDownloadHelper(bool preventGameStart = false)
                 // Handle Error
                 downloadState.Error = error;
                 LILogger.Error($"Map download failed: {error}");
+
+                // Clear the failed state so the lobby isn't permanently blocked and
+                // a future configuration sync can retry this map.
+                CurrentDownloadState = null;
+                LILogger.Notify($"Failed to download map: {error}");
                 onError(downloadState.Error);
             });
     }

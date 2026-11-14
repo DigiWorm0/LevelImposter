@@ -17,7 +17,7 @@ public static class LISerializer
     /// </summary>
     /// <param name="mapData">Map Data to serialize</param>
     /// <param name="stream">Stream to write to</param>
-    public static void SerializeMap(LIMap mapData, Stream stream)
+    public static bool SerializeMap(LIMap mapData, Stream stream)
     {
         try
         {
@@ -35,7 +35,7 @@ public static class LISerializer
 
             // SpriteDB
             if (mapData.MapAssetDB == null)
-                return;
+                return true;
 
             foreach (var mapAsset in mapData.MapAssetDB.DB)
             {
@@ -48,10 +48,13 @@ public static class LISerializer
                 stream.Write(BitConverter.GetBytes(data.Length));
                 stream.Write(data.ToSpan());
             }
+
+            return true;
         }
         catch (Exception ex)
         {
             LILogger.Error($"Error serializing map data: {ex.Message}");
+            return false;
         }
     }
 }

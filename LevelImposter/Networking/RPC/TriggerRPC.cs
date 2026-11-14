@@ -40,6 +40,10 @@ public class TriggerRPC(LevelImposter plugin, uint id) : PlayerCustomRpc<LevelIm
 
     public override void Handle(PlayerControl orginPlayer, RPCTriggerPacket data)
     {
+        // Ignore malformed packets
+        if (orginPlayer == null)
+            return;
+
         // Log
         if (TriggerSystem.EnableLogging)
             LILogger.Msg($"[RPC] {data.ElemIDString} >>> {data.TriggerID} ({orginPlayer.name})");

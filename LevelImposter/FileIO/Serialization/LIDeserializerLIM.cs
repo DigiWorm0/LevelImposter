@@ -3,7 +3,6 @@ using System.IO;
 using System.Text;
 using System.Text.Json;
 using LevelImposter.Core.Models;
-using LevelImposter.Core.Utils;
 using LevelImposter.FileIO.DataStores;
 using LevelImposter.FileIO.Streams;
 
@@ -17,7 +16,15 @@ public class LIDeserializerLIM
         string? filePath = null
     )
     {
-        dataStream.Position += 4;
+        // Validate the LIM2 signature instead of blindly skipping it
+        var signature = new byte[4];
+        ReadExactly(dataStream, signature, signature.Length);
+        if (signature[0] != 'L' ||
+            signature[1] != 'I' ||
+            signature[2] != 'M' ||
+            signature[3] != '2')
+            throw new Exception("Invalid LIM2 signature");
+
         return Deserialize(dataStream, spriteDB, filePath);
     }
 
@@ -29,12 +36,14 @@ public class LIDeserializerLIM
     {
         // Map Data Length
         var mapLengthBytes = new byte[4];
-        dataStream.Read(mapLengthBytes, 0, 4);
+        ReadExactly(dataStream, mapLengthBytes, mapLengthBytes.Length);
         var mapLength = BitConverter.ToInt32(mapLengthBytes, 0);
+        if (mapLength <= 0 || mapLength > dataStream.Length - dataStream.Position)
+            throw new Exception($"Invalid map data length: {mapLength}");
 
         // Read Map Data
         var mapDataBytes = new byte[mapLength];
-        dataStream.Read(mapDataBytes, 0, mapLength);
+        ReadExactly(dataStream, mapDataBytes, mapLength);
         var mapDataString = Encoding.UTF8.GetString(mapDataBytes);
         var mapData = JsonSerializer.Deserialize<LIMap>(mapDataString);
 
@@ -52,27 +61,21 @@ public class LIDeserializerLIM
         {
             // Read ID
             var idBytes = new byte[36];
-            dataStream.Read(idBytes, 0, 36);
+            ReadExactly(dataStream, idBytes, idBytes.Length);
             var idString = Encoding.UTF8.GetString(idBytes);
             var isValidGUID = Guid.TryParse(idString, out var spriteID);
             if (!isValidGUID)
-            {
-                LILogger.Error($"Failed to parse sprite ID: {idString}");
-                continue;
-            }
+                throw new Exception($"Failed to parse sprite ID: {idString}");
 
             // Read Length
             var lengthBytes = new byte[4];
-            dataStream.Read(lengthBytes, 0, 4);
+            ReadExactly(dataStream, lengthBytes, lengthBytes.Length);
             var dataLength = BitConverter.ToInt32(lengthBytes, 0);
 
             // Check Length
             if (dataLength <= 0 ||
                 dataStream.Position + dataLength > dataStream.Length)
-            {
-                LILogger.Error($"Invalid data length: {dataLength}");
-                continue;
-            }
+                throw new Exception($"Invalid data length: {dataLength}");
 
             // Read Data
             if (filePath != null)
@@ -90,5 +93,20 @@ public class LIDeserializerLIM
         }
 
         return mapData;
+    }
+
+    /// <summary>
+    ///     Reads exactly <paramref name="count" /> bytes, throwing if the stream ends early.
+    /// </summary>
+    private static void ReadExactly(Stream stream, byte[] buffer, int count)
+    {
+        var offset = 0;
+        while (offset < count)
+        {
+            var read = stream.Read(buffer, offset, count - offset);
+            if (read <= 0)
+                throw new EndOfStreamException($"Unexpected end of stream while reading {count} bytes");
+            offset += read;
+        }
     }
 }

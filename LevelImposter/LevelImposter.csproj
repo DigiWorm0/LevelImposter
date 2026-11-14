@@ -51,7 +51,7 @@
         <DefineConstants>$(DefineConstants);PROFILING</DefineConstants>
     </PropertyGroup>
 
-    <Target Name="Copy" AfterTargets="Build" Condition="'$(AmongUs)' != ''">
+    <Target Name="Copy" AfterTargets="Build" Condition="'$(AmongUs)' != '' AND Exists('$(AmongUs)')">
         <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(AmongUs)/BepInEx/plugins/" UseSymboliclinksIfPossible="true"/>
     </Target>
 </Project>

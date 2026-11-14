@@ -8,7 +8,7 @@ using AndroidActivity = LevelImposter.Core.Android.Activity;
 
 namespace LevelImposter.FileIO.API;
 
-public class FileAPI
+public static class FileAPI
 {
     private static string GetAssemblyDataPath()
     {
@@ -19,6 +19,23 @@ public class FileAPI
     private static string GetStarlightDataPath()
     {
         return Environment.GetEnvironmentVariable("STAR_DATA_PATH") ?? ".";
+    }
+
+    /// <summary>
+    ///     Attempts to delete a file from the given path, ignoring any exceptions.
+    ///     This is useful for cleaning up any extra files in the event of an error.
+    /// </summary>
+    /// <param name="path">The path of the file to delete.</param>
+    public static void TryDelete(string path)
+    {
+        try
+        {
+            File.Delete(path);
+        }
+        catch
+        {
+            // Ignore any exceptions
+        }
     }
 
     /// <summary>
@@ -40,8 +57,7 @@ public class FileAPI
     ///     For Starlight, this opens the device's built-in Files app to the starlight root.
     ///     For Desktop, this opens File Explorer (or equivalent on MacOS/Linux) to the provided subfolderName.
     /// </summary>
-    /// <param name="subfolderName">Name of the subfolder to open. Keep empty to open the root LevelImposter folder.</param>
-    public static void OpenInExplorer(string subfolderName = "")
+    public static void OpenInExplorer()
     {
         if (GameState.IsMobile)
             OpenInExplorer_Mobile();

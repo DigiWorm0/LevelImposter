@@ -229,8 +229,14 @@ public static class LIDeserializerLegacy
         if (File.Exists(newPath))
             File.Delete(newPath);
 
-        using var outputFileStream = File.Create(newPath);
-        LISerializer.SerializeMap(mapData, outputFileStream);
+        using (var outputFileStream = File.Create(newPath))
+        {
+            if (LISerializer.SerializeMap(mapData, outputFileStream))
+                return;
+        }
+
+        LILogger.Warn($"Failed to migrate map file [{filePath}] to LIM2");
+        FileAPI.TryDelete(newPath);
     }
 #pragma warning restore CS0618
 }

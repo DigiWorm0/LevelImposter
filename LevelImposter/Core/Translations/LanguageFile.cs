@@ -1,4 +1,5 @@
-﻿using LevelImposter.Core.Utils;
+﻿using System;
+using LevelImposter.Core.Utils;
 using LanguageFileType = System.Collections.Generic.Dictionary<string, string>;
 
 namespace LevelImposter.Core.Translations;
@@ -28,9 +29,18 @@ public class LanguageFile(string languageID)
     public string? Get(string key, params object[] args)
     {
         TryLoadCache();
-        if (_translationsCache?.TryGetValue(key, out var translation) ?? false)
-            return string.Format(translation, args);
+        if (!(_translationsCache?.TryGetValue(key, out var translation) ?? false))
+            return null;
 
-        return null;
+        try
+        {
+            return string.Format(translation, args);
+        }
+        catch (FormatException e)
+        {
+            // A malformed translation should never take down the UI
+            LILogger.Warn($"Invalid translation format for key [{key}]: {e.Message}");
+            return translation;
+        }
     }
 }

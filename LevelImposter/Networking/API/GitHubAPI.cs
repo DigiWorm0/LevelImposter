@@ -96,7 +96,8 @@ public static class GitHubAPI
     [HideFromIl2Cpp]
     public static bool IsCurrent(GitHubRelease release)
     {
-        var versionString = release.Name?.Split(" ")[1];
+        var parts = release.Name?.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+        var versionString = parts is { Length: > 1 } ? parts[1] : null;
         return versionString == LevelImposter.DisplayVersion;
     }
 
@@ -125,9 +126,21 @@ public static class GitHubAPI
             var activeDLLPath = GetDLLDirectory();
             var oldDLLPath = activeDLLPath + ".old";
 
-            // Download DLL
+            // Download DLL (prefer an actual DLL asset over any bundled archives)
             LILogger.Info($"Downloading DLL from {release}");
-            var downloadURL = release.Assets?[0].BrowserDownloadURL ?? "";
+            var asset = Array.Find(
+                release.Assets ?? [],
+                a => a.Name?.EndsWith(".dll", StringComparison.OrdinalIgnoreCase) == true
+            ) ?? release.Assets?[0];
+            var downloadURL = asset?.BrowserDownloadURL;
+            if (string.IsNullOrEmpty(downloadURL))
+            {
+                var noAssetMsg = Translation.Get("main_menu.update_failed.no_release_assets");
+                LILogger.Error(noAssetMsg);
+                onError(noAssetMsg);
+                return;
+            }
+
             FileDownloader.StartDownload(
                 downloadURL,
                 tempDLLPath,
@@ -184,6 +197,11 @@ public static class GitHubAPI
     [Serializable]
     public class GitHubAsset
     {
+        /// <summary>
+        ///     File name of the asset.
+        /// </summary>
+        [JsonPropertyName("name")] public string? Name { get; set; }
+
         /// <summary>
         ///     URL to download the asset from.
         /// </summary>
