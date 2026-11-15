@@ -23,6 +23,20 @@ jobs:
         with:
           dotnet-version: 10.0.x
 
+      - name: Setup Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: 3.x
+
+      - name: Cache map corpus
+        uses: actions/cache@v5
+        with:
+          path: LevelImposter.CoreTests/.cache/maps
+          key: map-corpus-${{ runner.os }}-${{ hashFiles('LevelImposter.CoreTests/Corpus/manifest.json') }}
+
+      - name: Fetch map corpus
+        run: python scripts/fetch-map-corpus.py
+
       - name: Restore
         run: dotnet restore LevelImposter.CoreTests/LevelImposter.CoreTests.csproj
 

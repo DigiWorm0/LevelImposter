@@ -21,6 +21,13 @@ public static class TestPaths
 
     public static string I18nDirectory => Path.Combine(AssetsDirectory, "i18n");
 
+    public static string MapCorpusDirectory => Path.Combine(RepoRoot, "LevelImposter.CoreTests", "Corpus");
+
+    public static string MapCorpusManifestPath => Path.Combine(MapCorpusDirectory, "manifest.json");
+
+    public static string MapCorpusCacheDirectory =>
+        Path.Combine(RepoRoot, "LevelImposter.CoreTests", ".cache", "maps");
+
     private static string FindRepoRoot()
     {
         var configuredRoot = Environment.GetEnvironmentVariable(RepoRootVariable);

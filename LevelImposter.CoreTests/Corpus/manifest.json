@@ -1,0 +1,55 @@
+{
+  "schemaVersion": 1,
+  "maps": [
+    {
+      "id": "aaa800af-c443-4205-a0de-bbb618c98ad6",
+      "fileName": "aaa800af-c443-4205-a0de-bbb618c98ad6.lim2",
+      "name": "RED SUS: Ranzion 64 xmas-v2.3.1",
+      "authorName": "Yusako",
+      "mapVersion": 3,
+      "format": "LIM2_ZIP",
+      "sizeBytes": 17045442,
+      "sha256": "f66d04c2bf6705abfb2e34caeb19bc237fc8ce38a54e520c7e1c626d4d7c26e3"
+    },
+    {
+      "id": "8da5024f-cb2d-4ff9-aa18-adad3921a87d",
+      "fileName": "8da5024f-cb2d-4ff9-aa18-adad3921a87d.lim2",
+      "name": "Lobby Dropship",
+      "authorName": "LevelImposter",
+      "mapVersion": 3,
+      "format": "LIM2_ZIP",
+      "sizeBytes": 154058,
+      "sha256": "cb120a6e0a6e1e861337d8d08e3d37f07412f391c7e6fccaea5f9ccd3f8d7c11"
+    },
+    {
+      "id": "ef1d13ec-64ce-4c2c-a45d-816fc4ff46da",
+      "fileName": "ef1d13ec-64ce-4c2c-a45d-816fc4ff46da.lim",
+      "name": "Foruk v1.0",
+      "authorName": "Flavien Rbts",
+      "mapVersion": 0,
+      "format": "Legacy",
+      "sizeBytes": 24778890,
+      "sha256": "522ea0a504e0482ef283c250b7ae4a1e9c04477fde3332d8d05969c7c2566cfc"
+    },
+    {
+      "id": "6153f4d9-fbc5-4922-8bf1-d6a814e9fa09",
+      "fileName": "6153f4d9-fbc5-4922-8bf1-d6a814e9fa09.lim",
+      "name": "VK  Island v1.1d 正式版",
+      "authorName": "VK",
+      "mapVersion": 0,
+      "format": "Legacy",
+      "sizeBytes": 6407045,
+      "sha256": "b536f8ca251ff1ce93bfbd294cbc1b0232fd81ccdc9f5fe6e3472bf18bf25db9"
+    },
+    {
+      "id": "5a357abe-aa80-4d37-86b3-034ff9674f9f",
+      "fileName": "5a357abe-aa80-4d37-86b3-034ff9674f9f.lim2",
+      "name": "The Onway",
+      "authorName": "p2blu",
+      "mapVersion": 2,
+      "format": "LIM2",
+      "sizeBytes": 4991297,
+      "sha256": "1aa5ff74572df2a1f09421e953db1f8f0c1f23c254155efe456792b6e79eb0df"
+    }
+  ]
+}

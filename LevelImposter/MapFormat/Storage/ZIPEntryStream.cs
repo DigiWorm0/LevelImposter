@@ -18,17 +18,23 @@ public class ZIPEntryStream : Stream
     /// <exception cref="FileNotFoundException">Thrown if the specified ZIP entry is not found.</exception>
     public ZIPEntryStream(string zipFilePath, string zipEntryName)
     {
-        // Open the ZIP archive
-        _zipArchive = ZipFile.OpenRead(zipFilePath);
+        var archive = ZipFile.OpenRead(zipFilePath);
+        try
+        {
+            var entry = archive.GetEntry(zipEntryName);
+            if (entry == null)
+                throw new FileNotFoundException($"ZIP entry '{zipEntryName}' not found in file '{zipFilePath}'");
 
-        // Get the specified entry
-        var zipArchiveEntry = _zipArchive.GetEntry(zipEntryName);
-        if (zipArchiveEntry == null)
-            throw new FileNotFoundException($"ZIP entry '{zipEntryName}' not found in file '{zipFilePath}'");
-        _zipArchiveEntry = zipArchiveEntry;
-
-        // Open the entry stream
-        _baseStream = _zipArchiveEntry.Open();
+            var entryStream = entry.Open();
+            _zipArchive = archive;
+            _zipArchiveEntry = entry;
+            _baseStream = entryStream;
+        }
+        catch
+        {
+            archive.Dispose();
+            throw;
+        }
     }
 
     public override bool CanRead => _baseStream.CanRead;
