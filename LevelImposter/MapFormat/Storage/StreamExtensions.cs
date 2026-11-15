@@ -30,6 +30,27 @@ public static class StreamExtensions
     }
 
     /// <summary>
+    ///     Reads up to <paramref name="count" /> bytes, stopping at the end of the stream.
+    /// </summary>
+    /// <param name="stream">The stream to read from.</param>
+    /// <param name="buffer">The buffer to read into.</param>
+    /// <param name="count">The maximum number of bytes to read.</param>
+    /// <returns>The number of bytes actually read.</returns>
+    public static int ReadUpTo(this Stream stream, byte[] buffer, int count)
+    {
+        var offset = 0;
+        while (offset < count)
+        {
+            var read = stream.Read(buffer, offset, count - offset);
+            if (read <= 0)
+                break;
+            offset += read;
+        }
+
+        return offset;
+    }
+
+    /// <summary>
     ///     Reads exactly <paramref name="count" /> bytes into a new managed array,
     ///     throwing if the stream ends early.
     /// </summary>

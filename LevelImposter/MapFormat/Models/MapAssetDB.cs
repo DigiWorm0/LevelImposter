@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using LevelImposter.Core.Utils;
 using LevelImposter.Logging;
 using LevelImposter.MapFormat.Storage;
 

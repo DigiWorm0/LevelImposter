@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
-using LevelImposter.Core.Utils;
 using LevelImposter.Logging;
 using LevelImposter.MapFormat.Models;
 
@@ -89,6 +88,10 @@ public static class LIDeserializer
         map = null;
         var format = MapFileFormat.Unknown;
 
+        // An unset path means "read assets into managed memory" rather than
+        // lazily streaming them from a file.
+        var filePath = string.IsNullOrEmpty(options.FilePath) ? null : options.FilePath;
+
         try
         {
             // Identify Format
@@ -99,22 +102,22 @@ public static class LIDeserializer
             {
                 MapFileFormat.Legacy => LIDeserializerLegacy.Deserialize(
                     dataStream,
-                    options.FilePath),
+                    filePath),
 
                 MapFileFormat.LIM2_ZIP => LIDeserializerZIP.Deserialize(
                     dataStream,
                     options.LoadAssetDB,
-                    options.FilePath),
+                    filePath),
 
                 MapFileFormat.LIM2 => LIDeserializerLIM.Deserialize(
                     dataStream,
                     options.LoadAssetDB,
-                    options.FilePath),
+                    filePath),
 
                 MapFileFormat.LIM2_Signature => LIDeserializerLIM.DeserializeWithSignature(
                     dataStream,
                     options.LoadAssetDB,
-                    options.FilePath),
+                    filePath),
 
                 _ => throw new InvalidDataException("Unknown map format")
             };

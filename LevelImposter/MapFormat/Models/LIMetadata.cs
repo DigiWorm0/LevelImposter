@@ -21,6 +21,7 @@ public class LIMetadata
 
     public Guid? remixOf { get; set; }
 
+    [JsonIgnore]
     public MapTarget MapTarget => MapTargetValue ?? MapTarget.Game;
     [JsonPropertyName("mapTarget")] public MapTarget? MapTargetValue { get; set; }
 

@@ -13,7 +13,7 @@ public class FileStore(string filePath) : IDataStore
     {
         using var stream = OpenStream();
         var managedArray = new byte[count];
-        stream.Read(managedArray, 0, count);
+        stream.ReadUpTo(managedArray, count);
         return managedArray;
     }
 

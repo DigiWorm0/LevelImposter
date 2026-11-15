@@ -10,6 +10,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.editorconfig = .editorconfig
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LevelImposter.CoreTests", "LevelImposter.CoreTests\LevelImposter.CoreTests.csproj", "{123D95B6-8C97-45ED-9CE1-16B2BDA439BE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		BuildMod|Any CPU = BuildMod|Any CPU
@@ -33,6 +35,20 @@ Global
 		{11FBC798-BAF5-4EE5-9511-BE6DB0592F99}.Release|x86.ActiveCfg = Release|Any CPU
 		{11FBC798-BAF5-4EE5-9511-BE6DB0592F99}.Profiling|Any CPU.ActiveCfg = Profiling|Any CPU
 		{11FBC798-BAF5-4EE5-9511-BE6DB0592F99}.Profiling|Any CPU.Build.0 = Profiling|Any CPU
+		{123D95B6-8C97-45ED-9CE1-16B2BDA439BE}.BuildMod|Any CPU.ActiveCfg = Debug|Any CPU
+		{123D95B6-8C97-45ED-9CE1-16B2BDA439BE}.BuildMod|Any CPU.Build.0 = Debug|Any CPU
+		{123D95B6-8C97-45ED-9CE1-16B2BDA439BE}.BuildMod|x86.ActiveCfg = Debug|Any CPU
+		{123D95B6-8C97-45ED-9CE1-16B2BDA439BE}.BuildMod|x86.Build.0 = Debug|Any CPU
+		{123D95B6-8C97-45ED-9CE1-16B2BDA439BE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{123D95B6-8C97-45ED-9CE1-16B2BDA439BE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{123D95B6-8C97-45ED-9CE1-16B2BDA439BE}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{123D95B6-8C97-45ED-9CE1-16B2BDA439BE}.Debug|x86.Build.0 = Debug|Any CPU
+		{123D95B6-8C97-45ED-9CE1-16B2BDA439BE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{123D95B6-8C97-45ED-9CE1-16B2BDA439BE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{123D95B6-8C97-45ED-9CE1-16B2BDA439BE}.Release|x86.ActiveCfg = Release|Any CPU
+		{123D95B6-8C97-45ED-9CE1-16B2BDA439BE}.Release|x86.Build.0 = Release|Any CPU
+		{123D95B6-8C97-45ED-9CE1-16B2BDA439BE}.Profiling|Any CPU.ActiveCfg = Debug|Any CPU
+		{123D95B6-8C97-45ED-9CE1-16B2BDA439BE}.Profiling|Any CPU.Build.0 = Debug|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

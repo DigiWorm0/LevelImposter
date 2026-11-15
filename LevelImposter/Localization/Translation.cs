@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using LevelImposter.Core.Utils;
 using LevelImposter.Logging;
 
 namespace LevelImposter.Localization;

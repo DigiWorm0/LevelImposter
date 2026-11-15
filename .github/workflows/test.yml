@@ -1,0 +1,40 @@
+name: Tests
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: tests-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  offline:
+    name: Offline suite (L1)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Restore
+        run: dotnet restore LevelImposter.CoreTests/LevelImposter.CoreTests.csproj
+
+      - name: Build
+        run: dotnet build LevelImposter.CoreTests/LevelImposter.CoreTests.csproj --no-restore
+
+      - name: Test
+        run: dotnet test --project LevelImposter.CoreTests/LevelImposter.CoreTests.csproj --no-build -- --report-xunit-trx
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: test-results
+          path: TestResults/**/*.trx

@@ -1,0 +1,42 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net10.0</TargetFramework>
+        <OutputType>Exe</OutputType>
+        <LangVersion>latest</LangVersion>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <IsPackable>false</IsPackable>
+        <RootNamespace>LevelImposter.CoreTests</RootNamespace>
+        <TestingPlatformDotnetTestSupport>true</TestingPlatformDotnetTestSupport>
+        <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    </PropertyGroup>
+
+    <!--
+        The Unity-free map core is compiled into the test assembly from shared source
+        instead of referencing LevelImposter.dll, which links against Unity and IL2CPP.
+    -->
+    <ItemGroup>
+        <Compile Include="..\LevelImposter\MapFormat\**\*.cs"
+                 Exclude="..\LevelImposter\MapFormat\**\*.Unity.cs"
+                 LinkBase="LevelImposter\MapFormat" />
+        <Compile Include="..\LevelImposter\Localization\**\*.cs"
+                 LinkBase="LevelImposter\Localization" />
+        <Compile Include="..\LevelImposter\Logging\LILogger.cs"
+                 LinkBase="LevelImposter\Logging" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="xunit.v3" Version="4.0.3" />
+        <PackageReference Include="Shouldly" Version="4.3.0" />
+        <PackageReference Include="FsCheck.Xunit.v3" Version="3.6.0" />
+        <!-- 33.x added a time-bounded SponsorCheck build gate; 32.0.0 is the last ungated release. -->
+        <PackageReference Include="Verify.XunitV3" Version="32.0.0" />
+        <PackageReference Include="System.Reflection.MetadataLoadContext" Version="10.0.15" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <Using Include="Xunit" />
+        <Using Include="Shouldly" />
+    </ItemGroup>
+</Project>

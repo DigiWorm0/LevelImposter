@@ -13,7 +13,7 @@ public class FileChunkStore(string filePath, long offset, long length) : IDataSt
     {
         using var stream = OpenStream();
         var managedArray = new byte[count];
-        stream.Read(managedArray, 0, (int)Math.Min(count, length));
+        stream.ReadUpTo(managedArray, count);
         return managedArray;
     }
 
