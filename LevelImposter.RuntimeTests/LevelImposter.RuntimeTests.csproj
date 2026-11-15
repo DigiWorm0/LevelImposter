@@ -1,0 +1,39 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <TargetFramework>net6.0</TargetFramework>
+        <AssemblyName>LevelImposter.RuntimeTests</AssemblyName>
+        <RootNamespace>LevelImposter.RuntimeTests</RootNamespace>
+        <Version>0.1.0</Version>
+        <LangVersion>latest</LangVersion>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+        <IsPackable>false</IsPackable>
+        <Configurations>Debug;Release</Configurations>
+        <Platforms>AnyCPU</Platforms>
+    </PropertyGroup>
+
+    <PropertyGroup>
+        <AmongUs>C:\Program Files (x86)\Steam\steamapps\common\Among Us</AmongUs>
+        <GameVersion>2026.9.29</GameVersion>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="BepInEx.Unity.IL2CPP" Version="6.0.0-be.735" PrivateAssets="all" />
+        <PackageReference Include="AmongUs.GameLibs.Steam" Version="$(GameVersion)" PrivateAssets="all" />
+        <PackageReference Include="BepInEx.IL2CPP.MSBuild" Version="2.1.0-rc.1" PrivateAssets="all" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\LevelImposter\LevelImposter.csproj">
+            <Private>false</Private>
+        </ProjectReference>
+    </ItemGroup>
+
+    <Target Name="CopyRuntimeTests" AfterTargets="Build"
+            Condition="'$(AmongUs)' != '' AND Exists('$(AmongUs)')">
+        <Copy SourceFiles="$(TargetPath)"
+              DestinationFolder="$(AmongUs)/BepInEx/plugins/"
+              UseSymboliclinksIfPossible="true" />
+    </Target>
+</Project>

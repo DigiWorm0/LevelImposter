@@ -7,16 +7,16 @@ using LevelImposter.CoreTests.Infrastructure;
 using LevelImposter.MapFormat.Serialization;
 using LevelImposter.MapFormat.Storage;
 
-namespace LevelImposter.CoreTests.Corpus;
+namespace LevelImposter.CoreTests.Workshop;
 
-public class WorkshopMapCorpusTests
+public class WorkshopMapTests
 {
-    public static TheoryData<string> Maps
+    public static TheoryData<string> WorkshopMaps
     {
         get
         {
             var data = new TheoryData<string>();
-            foreach (var map in MapCorpusManifest.Load().Maps)
+            foreach (var map in WorkshopManifest.Load().Maps)
                 data.Add(map.Id);
             return data;
         }
@@ -25,7 +25,7 @@ public class WorkshopMapCorpusTests
     [Fact]
     public void Manifest_ShouldContainValidPinnedMaps()
     {
-        var manifest = MapCorpusManifest.Load();
+        var manifest = WorkshopManifest.Load();
 
         manifest.SchemaVersion.ShouldBe(1);
         manifest.Maps.ShouldNotBeEmpty();
@@ -34,7 +34,7 @@ public class WorkshopMapCorpusTests
         foreach (var entry in manifest.Maps)
         {
             Guid.TryParse(entry.Id, out var id).ShouldBeTrue(entry.Id);
-            ids.Add(id).ShouldBeTrue($"Duplicate map ID in corpus manifest: {entry.Id}");
+            ids.Add(id).ShouldBeTrue($"Duplicate map ID in workshop manifest: {entry.Id}");
 
             Path.GetFileName(entry.FileName).ShouldBe(entry.FileName);
             entry.FileName.ShouldStartWith(entry.Id);
@@ -47,10 +47,10 @@ public class WorkshopMapCorpusTests
     }
 
     [Theory]
-    [MemberData(nameof(Maps))]
+    [MemberData(nameof(WorkshopMaps))]
     public void CachedWorkshopMap_ShouldSatisfyStructuralInvariants(string mapID)
     {
-        var entry = MapCorpusManifest.Load().Maps.Single(map => map.Id == mapID);
+        var entry = WorkshopManifest.Load().Maps.Single(map => map.Id == mapID);
         if (!File.Exists(entry.CachePath))
             Assert.Skip($"Map {entry.Id} is not cached. Run scripts/fetch-map-corpus.py.");
 
@@ -59,7 +59,7 @@ public class WorkshopMapCorpusTests
         if (baselineStale)
             Console.WriteLine(
                 $"WARNING baseline-stale for {entry.Id}: cached SHA-256 {actualSha} differs from manifest {entry.Sha256}. " +
-                "Running structural invariants only.");
+                "Running workshop structural invariants only.");
         else
             new FileInfo(entry.CachePath).Length.ShouldBe(entry.SizeBytes!.Value);
 

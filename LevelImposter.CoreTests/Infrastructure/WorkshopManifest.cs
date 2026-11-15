@@ -6,20 +6,20 @@ using System.Text.Json.Serialization;
 
 namespace LevelImposter.CoreTests.Infrastructure;
 
-public sealed class MapCorpusManifest
+public sealed class WorkshopManifest
 {
     [JsonPropertyName("schemaVersion")] public int SchemaVersion { get; init; }
-    [JsonPropertyName("maps")] public List<MapCorpusEntry> Maps { get; init; } = [];
+    [JsonPropertyName("maps")] public List<WorkshopMapEntry> Maps { get; init; } = [];
 
-    public static MapCorpusManifest Load()
+    public static WorkshopManifest Load()
     {
-        var json = File.ReadAllText(TestPaths.MapCorpusManifestPath);
-        return JsonSerializer.Deserialize<MapCorpusManifest>(json) ??
-               throw new InvalidDataException("Failed to deserialize map corpus manifest.");
+        var json = File.ReadAllText(TestPaths.WorkshopManifestPath);
+        return JsonSerializer.Deserialize<WorkshopManifest>(json) ??
+               throw new InvalidDataException("Failed to deserialize workshop map manifest.");
     }
 }
 
-public sealed class MapCorpusEntry
+public sealed class WorkshopMapEntry
 {
     [JsonPropertyName("id")] public string Id { get; init; } = "";
     [JsonPropertyName("fileName")] public string FileName { get; init; } = "";
@@ -30,5 +30,5 @@ public sealed class MapCorpusEntry
     [JsonPropertyName("sizeBytes")] public long? SizeBytes { get; init; }
     [JsonPropertyName("sha256")] public string? Sha256 { get; init; }
 
-    public string CachePath => Path.Combine(TestPaths.MapCorpusCacheDirectory, FileName);
+    public string CachePath => Path.Combine(TestPaths.WorkshopCacheDirectory, FileName);
 }

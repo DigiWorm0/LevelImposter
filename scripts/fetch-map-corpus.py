@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Fetch and verify the workshop-map corpus used by LevelImposter.CoreTests."""
+"""Fetch and verify workshop maps used by LevelImposter.CoreTests."""
 
 from __future__ import annotations
 
@@ -16,10 +16,10 @@ from pathlib import Path
 
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
-DEFAULT_MANIFEST = REPO_ROOT / "LevelImposter.CoreTests" / "Corpus" / "manifest.json"
+DEFAULT_MANIFEST = REPO_ROOT / "LevelImposter.CoreTests" / "Workshop" / "manifest.json"
 DEFAULT_CACHE = REPO_ROOT / "LevelImposter.CoreTests" / ".cache" / "maps"
 API_ROOT = "https://api.levelimposter.net"
-USER_AGENT = "LevelImposter-CoreTests/1.0 (workshop corpus fetcher)"
+USER_AGENT = "LevelImposter-CoreTests/1.0 (workshop map fetcher)"
 
 
 def read_json(url: str) -> dict:
@@ -70,7 +70,7 @@ def download_file(url: str, destination: Path) -> None:
 def warn_stale(map_entry: dict, message: str) -> None:
     print(
         f"WARNING baseline-stale for {map_entry['id']}: {message}. "
-        "Structural corpus checks will still run; use --refresh-baseline to accept a new baseline.",
+        "Workshop structural checks will still run; use --refresh-baseline to accept a new baseline.",
         file=sys.stderr,
     )
 
@@ -100,7 +100,7 @@ def main() -> int:
     manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
     maps = manifest.get("maps")
     if not isinstance(maps, list) or not maps:
-        raise RuntimeError(f"Corpus manifest contains no maps: {manifest_path}")
+        raise RuntimeError(f"Workshop manifest contains no maps: {manifest_path}")
 
     cache_dir.mkdir(parents=True, exist_ok=True)
     manifest_changed = False

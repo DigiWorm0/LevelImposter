@@ -1,6 +1,3 @@
-using System;
-using System.IO;
-
 namespace LevelImposter.CoreTests.Infrastructure;
 
 /// <summary>
@@ -23,9 +20,9 @@ public static class TestPaths
 
     public static string MapCorpusDirectory => Path.Combine(RepoRoot, "LevelImposter.CoreTests", "Corpus");
 
-    public static string MapCorpusManifestPath => Path.Combine(MapCorpusDirectory, "manifest.json");
+    public static string WorkshopManifestPath => Path.Combine(MapCorpusDirectory, "manifest.json");
 
-    public static string MapCorpusCacheDirectory =>
+    public static string WorkshopCacheDirectory =>
         Path.Combine(RepoRoot, "LevelImposter.CoreTests", ".cache", "maps");
 
     private static string FindRepoRoot()
@@ -37,10 +34,8 @@ public static class TestPaths
         for (var directory = new DirectoryInfo(AppContext.BaseDirectory);
              directory != null;
              directory = directory.Parent)
-        {
             if (IsRepoRoot(directory.FullName))
                 return directory.FullName;
-        }
 
         throw new InvalidOperationException(
             $"Could not locate LevelImposter.sln above {AppContext.BaseDirectory}. " +

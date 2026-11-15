@@ -11,7 +11,7 @@ concurrency:
 
 jobs:
   offline:
-    name: Offline suite (L1)
+    name: LevelImposter Core Tests (L1)
     runs-on: ubuntu-latest
     timeout-minutes: 15
 
@@ -28,13 +28,13 @@ jobs:
         with:
           python-version: 3.x
 
-      - name: Cache map corpus
+      - name: Cache workshop maps
         uses: actions/cache@v5
         with:
           path: LevelImposter.CoreTests/.cache/maps
-          key: map-corpus-${{ runner.os }}-${{ hashFiles('LevelImposter.CoreTests/Corpus/manifest.json') }}
+          key: workshop-maps-${{ runner.os }}-${{ hashFiles('LevelImposter.CoreTests/Workshop/manifest.json') }}
 
-      - name: Fetch map corpus
+      - name: Fetch workshop maps
         run: python scripts/fetch-map-corpus.py
 
       - name: Restore
