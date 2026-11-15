@@ -1,5 +1,5 @@
-﻿using System;
-using LevelImposter.Core.Models;
+using System;
+using LevelImposter.MapFormat.Models;
 using PowerTools;
 using UnityEngine;
 

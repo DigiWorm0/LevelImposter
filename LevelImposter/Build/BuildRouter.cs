@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using LevelImposter.Build.Attributes;
 using LevelImposter.Build.Utils;
 using LevelImposter.Core.Components;
-using LevelImposter.Core.Models;
+using LevelImposter.MapFormat.Models;
 using LevelImposter.Core.Services.Ship;
 using LevelImposter.Core.Utils;
 using UnityEngine;

@@ -1,7 +1,6 @@
 ﻿using LevelImposter.AssetLoader.Queue;
 using LevelImposter.Core.GarbageCollection;
-using LevelImposter.FileIO.DataBlock;
-using LevelImposter.FileIO.DataStores;
+using LevelImposter.MapFormat.Storage;
 
 namespace LevelImposter.AssetLoader.Loadables;
 
@@ -30,7 +29,7 @@ public readonly struct TextureInfo(string id, IDataStore dataStore) : IIdentifia
     /// <param name="id">Unique identifier to be used in caching.</param>
     /// <param name="data">Byte array containing the image data.</param>
     /// <returns>A LoadableTexture instance.</returns>
-    public static TextureInfo FromMemory(string id, MemoryBlock data)
+    public static TextureInfo FromMemory(string id, byte[] data)
     {
         var store = new MemoryStore(data);
         return new TextureInfo(id, store);

@@ -1,0 +1,81 @@
+﻿using System;
+using System.IO;
+using System.Runtime.InteropServices;
+using LevelImposter.FileIO.DataBlock;
+
+namespace LevelImposter.FileIO.Streams;
+
+/// <summary>
+///     A set of extension methods for <see cref="Stream" />.
+/// </summary>
+public static class StreamExtensions
+{
+    /// <summary>
+    ///     The buffer size to use when reading from streams.
+    ///     This much memory will be allocated in managed memory during the read operation.
+    /// </summary>
+    private const int STREAM_BUFFER_SIZE = 1024 * 1024; // 1 MB
+
+    private static readonly IntPtr ChunkBuffer = Marshal.AllocHGlobal(STREAM_BUFFER_SIZE);
+
+    /// <summary>
+    ///     Reads a managed stream into an IL2CPP MemoryBlock.
+    /// </summary>
+    /// <param name="stream">The stream to read from.</param>
+    /// <param name="length">
+    ///     The length of data to read from the stream.
+    ///     Negative values will result in stream.Length being used.
+    /// </param>
+    /// <returns>An IL2CPP MemoryBlock containing the data.</returns>
+    public static MemoryBlock ToIl2CppArray(this Stream stream, long length = -1)
+    {
+        if (length < 0)
+            length = stream.Length;
+
+        var memoryBlock = new MemoryBlock((int)length);
+        stream.CopyTo(memoryBlock, length);
+        return memoryBlock;
+    }
+
+    /// <summary>
+    ///     Copies the contents of a managed stream into an IL2CPP MemoryBlock.
+    /// </summary>
+    /// <param name="stream">The stream to read from.</param>
+    /// <param name="memoryBlock">The memory to copy into.</param>
+    /// <param name="length">
+    ///     The length of data to read from the stream.
+    ///     Negative values will result in stream.Length being used.
+    /// </param>
+    /// <exception cref="ArgumentOutOfRangeException">Called if the stream is too large to fit in the given MemoryBlock.</exception>
+    public static unsafe void CopyTo(this Stream stream, MemoryBlock memoryBlock, long length = -1)
+    {
+        // Validate length
+        if (length < 0)
+            length = stream.Length;
+        if (length > memoryBlock.Length)
+            throw new ArgumentOutOfRangeException(
+                nameof(memoryBlock),
+                "MemoryBlock is too small to hold the stream data.");
+
+        // Read stream one chunk at a time
+        var totalRead = 0;
+        while (totalRead < length)
+        {
+            // Calculate how many bytes to read
+            var toRead = (int)Math.Min(STREAM_BUFFER_SIZE, length - totalRead);
+
+            // Read into ChunkBuffer
+            var span = new Span<byte>((void*)ChunkBuffer, toRead);
+            var bytesRead = stream.Read(span);
+            if (bytesRead == 0)
+                break;
+
+            // Use Buffer.MemoryCopy to copy memory from Managed to IL2CPP
+            var destPtr = IntPtr.Add(memoryBlock.BasePointer, totalRead);
+            Buffer.MemoryCopy((void*)ChunkBuffer, (void*)destPtr, memoryBlock.Length - totalRead, bytesRead);
+
+            // Increment Read Head
+            totalRead += bytesRead;
+        }
+    }
+}

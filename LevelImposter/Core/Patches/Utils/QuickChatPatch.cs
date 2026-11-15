@@ -2,7 +2,7 @@ using System.Linq;
 using AmongUs.QuickChat;
 using HarmonyLib;
 using LevelImposter.Core.Components;
-using LevelImposter.Core.Models;
+using LevelImposter.MapFormat.Models;
 
 namespace LevelImposter.Core.Patches.Utils;
 

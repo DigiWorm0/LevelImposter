@@ -1,8 +1,8 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using Il2CppInterop.Runtime.Attributes;
 using LevelImposter.AssetLoader.FileContainers;
-using LevelImposter.Core.Models;
+using LevelImposter.MapFormat.Models;
 using UnityEngine;
 
 namespace LevelImposter.Core.Components;

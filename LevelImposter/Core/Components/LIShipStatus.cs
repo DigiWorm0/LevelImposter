@@ -1,6 +1,6 @@
 using System;
 using LevelImposter.Core.GarbageCollection;
-using LevelImposter.Core.Models;
+using LevelImposter.MapFormat.Models;
 using LevelImposter.Core.Utils;
 using Reactor.Networking.Extensions;
 

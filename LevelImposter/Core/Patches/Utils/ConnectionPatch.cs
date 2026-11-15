@@ -1,6 +1,6 @@
 using HarmonyLib;
 using Hazel.Udp;
-using LevelImposter.Core.Models;
+using LevelImposter.MapFormat.Models;
 
 namespace LevelImposter.Core.Patches.Utils;
 

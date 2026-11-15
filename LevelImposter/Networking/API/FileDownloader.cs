@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 using LevelImposter.AssetLoader.Queue;
 using LevelImposter.Core.Utils;
 using LevelImposter.FileIO.API;
-using LevelImposter.FileIO.DataStores;
+using LevelImposter.MapFormat.Storage;
 using Reactor.Utilities;
 
 namespace LevelImposter.Networking.API;

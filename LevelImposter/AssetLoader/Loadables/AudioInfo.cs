@@ -1,6 +1,6 @@
-﻿using LevelImposter.AssetLoader.Queue;
+using LevelImposter.AssetLoader.Queue;
 using LevelImposter.Core.GarbageCollection;
-using LevelImposter.FileIO.DataStores;
+using LevelImposter.MapFormat.Storage;
 
 namespace LevelImposter.AssetLoader.Loadables;
 

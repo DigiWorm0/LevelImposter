@@ -1,6 +1,6 @@
-﻿using System;
+using System;
 using System.Text.Json.Serialization;
-using LevelImposter.Core.Models;
+using LevelImposter.MapFormat.Models;
 using LevelImposter.Core.Utils;
 using LevelImposter.DB.Models;
 using UnityEngine;

@@ -1,5 +1,5 @@
-﻿using Hazel;
-using LevelImposter.Core.Models;
+using Hazel;
+using LevelImposter.MapFormat.Models;
 using LevelImposter.Core.Utils;
 using Reactor.Networking.Attributes;
 using Reactor.Networking.Rpc;
@@ -41,7 +41,7 @@ public class ResetPlayerRPC(LevelImposter plugin, uint id) : PlayerCustomRpc<Lev
             return;
         if (ShipStatus.Instance != null) // <-- Prevents NullReferenceException on ExitAllVents
             playerPhysics.ExitAllVents();
-        LILogger.Notify("You've been reset to spawn", false);
+        LINotifier.Notify("You've been reset to spawn", false);
     }
 
     private static Vector2 GetRespawnPosition()

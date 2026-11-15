@@ -1,5 +1,5 @@
-﻿using System;
-using LevelImposter.Core.Translations;
+using System;
+using LevelImposter.Localization;
 using LevelImposter.Core.Utils;
 using TMPro;
 using UnityEngine;

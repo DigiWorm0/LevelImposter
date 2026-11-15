@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using LevelImposter.Core.Models;
+using System.Collections.Generic;
+using LevelImposter.MapFormat.Models;
 using LevelImposter.DB.Models;
 
 namespace LevelImposter.DB.Sub;

@@ -10,13 +10,37 @@ namespace LevelImposter.FileIO.API;
 
 public static class FileAPI
 {
-    private static string GetAssemblyDataPath()
+    private const string DATA_PATH_ENVIRONMENT_VARIABLE = "LI_DATA_PATH";
+
+    /// <summary>
+    ///     Overrides the root data directory. Intended for tests and tooling.
+    ///     When null, <c>LI_DATA_PATH</c> is used, then the platform default.
+    /// </summary>
+    public static string? DataRootOverride { get; set; }
+
+
+    /// <summary>
+    ///     Gets the root data directory, honoring test overrides and <c>LI_DATA_PATH</c>.
+    /// </summary>
+    private static string GetDataRoot()
+    {
+        if (!string.IsNullOrWhiteSpace(DataRootOverride))
+            return DataRootOverride;
+
+        var environmentPath = Environment.GetEnvironmentVariable(DATA_PATH_ENVIRONMENT_VARIABLE);
+        if (!string.IsNullOrWhiteSpace(environmentPath))
+            return environmentPath;
+
+        return GameState.IsMobile ? GetDataRoot_Mobile() : GetDataRoot_Desktop();
+    }
+    
+    private static string GetDataRoot_Desktop()
     {
         var assembly = Assembly.GetAssembly(typeof(LevelImposter));
         return Path.GetDirectoryName(assembly?.Location) ?? ".";
     }
 
-    private static string GetStarlightDataPath()
+    private static string GetDataRoot_Mobile()
     {
         return Environment.GetEnvironmentVariable("STAR_DATA_PATH") ?? ".";
     }
@@ -39,8 +63,7 @@ public static class FileAPI
     }
 
     /// <summary>
-    ///     Gets the full filesystem path of a safe location to store
-    ///     LevelImposter data files.
+    ///     Gets the full filesystem path of a safe location to store LevelImposter data files.
     ///     For Starlight, this is provided by the STAR_DATA_PATH environment variable.
     ///     For Desktop, this is the location of LevelImposter.dll (typically BepInEx/plugins).
     /// </summary>
@@ -48,8 +71,7 @@ public static class FileAPI
     /// <returns>The full filesystem path of a safe location to store LevelImposter data files.</returns>
     public static string GetPath(string subfolderName = "")
     {
-        var dataDirectory = GameState.IsMobile ? GetStarlightDataPath() : GetAssemblyDataPath();
-        return Path.Combine(dataDirectory, "LevelImposter", subfolderName);
+        return Path.Combine(GetDataRoot(), "LevelImposter", subfolderName);
     }
 
     /// <summary>

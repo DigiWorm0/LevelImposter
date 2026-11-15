@@ -1,9 +1,9 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using LevelImposter.Build.Attributes;
 using LevelImposter.Core.Components;
-using LevelImposter.Core.Models;
+using LevelImposter.MapFormat.Models;
 using LevelImposter.Core.Services;
 using LevelImposter.Core.Utils;
 using UnityEngine;

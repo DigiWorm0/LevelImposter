@@ -1,7 +1,7 @@
 using System;
 using LevelImposter.Build.Attributes;
 using LevelImposter.Core.Components;
-using LevelImposter.Core.Models;
+using LevelImposter.MapFormat.Models;
 using LevelImposter.DB;
 using UnityEngine;
 using Object = UnityEngine.Object;

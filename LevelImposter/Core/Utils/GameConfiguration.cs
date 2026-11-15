@@ -1,7 +1,7 @@
 using AmongUs.GameOptions;
 using LevelImposter.Core.GarbageCollection;
 using LevelImposter.Core.ModCompatibility;
-using LevelImposter.Core.Models;
+using LevelImposter.MapFormat.Models;
 
 namespace LevelImposter.Core.Utils;
 

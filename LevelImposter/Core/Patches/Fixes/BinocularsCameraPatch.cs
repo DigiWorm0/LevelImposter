@@ -1,6 +1,6 @@
-﻿using HarmonyLib;
+using HarmonyLib;
 using LevelImposter.Core.Components;
-using LevelImposter.Core.Models;
+using LevelImposter.MapFormat.Models;
 
 namespace LevelImposter.Core.Patches.Fixes;
 

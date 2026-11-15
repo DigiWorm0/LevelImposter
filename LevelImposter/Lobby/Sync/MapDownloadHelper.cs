@@ -1,5 +1,5 @@
 using System;
-using LevelImposter.Core.Models;
+using LevelImposter.MapFormat.Models;
 using LevelImposter.Core.Utils;
 using LevelImposter.FileIO.Cache;
 
@@ -33,7 +33,7 @@ public class MapDownloadHelper(bool preventGameStart = false)
         if (CurrentDownloadState == null)
             return;
 
-        LILogger.Notify("Download cancelled.", false);
+        LINotifier.Notify("Download cancelled.", false);
         CurrentDownloadState = null;
 
         // Allow Game Start
@@ -74,7 +74,7 @@ public class MapDownloadHelper(bool preventGameStart = false)
 
         // Log
         LILogger.Info($"Starting download for map ID [{mapID}]");
-        LILogger.Notify("Downloading map, please wait...", false);
+        LINotifier.Notify("Downloading map, please wait...", false);
 
         // DownloadManager.StartDownload();
         MapFileCache.DownloadMap(
@@ -98,7 +98,7 @@ public class MapDownloadHelper(bool preventGameStart = false)
 
                 // Log
                 LILogger.Info($"Successfully downloaded {map}");
-                LILogger.Notify("Download finished", false);
+                LINotifier.Notify("Download finished", false);
 
                 // Success
                 onSuccess(map);
@@ -123,7 +123,7 @@ public class MapDownloadHelper(bool preventGameStart = false)
                 // Clear the failed state so the lobby isn't permanently blocked and
                 // a future configuration sync can retry this map.
                 CurrentDownloadState = null;
-                LILogger.Notify($"Failed to download map: {error}");
+                LINotifier.Notify($"Failed to download map: {error}");
                 onError(downloadState.Error);
             });
     }

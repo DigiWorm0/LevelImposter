@@ -4,7 +4,7 @@ using Il2CppInterop.Runtime.InteropTypes.Arrays;
 using LevelImposter.Build.Attributes;
 using LevelImposter.Build.Builders.Util;
 using LevelImposter.Core.Components;
-using LevelImposter.Core.Models;
+using LevelImposter.MapFormat.Models;
 using LevelImposter.Core.Utils;
 using LevelImposter.DB;
 using UnityEngine;

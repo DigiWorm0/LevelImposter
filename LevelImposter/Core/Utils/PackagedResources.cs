@@ -8,7 +8,7 @@ using Il2CppInterop.Runtime.InteropTypes;
 using LevelImposter.AssetLoader;
 using LevelImposter.AssetLoader.Loadables;
 using LevelImposter.Core.GarbageCollection;
-using LevelImposter.FileIO.Streams;
+using LevelImposter.MapFormat.Storage;
 using Reactor.Utilities;
 using UnityEngine;
 
@@ -65,7 +65,7 @@ public static class PackagedResources
         using var resourceStream = OpenStream(name);
 
         // Create Loadables
-        var loadableTexture = TextureInfo.FromMemory($"{name}-resource", resourceStream.ToIl2CppArray());
+        var loadableTexture = TextureInfo.FromMemory($"{name}-resource", resourceStream.ToManagedArray());
         loadableTexture.Options.GCBehavior = GCBehavior.NeverDispose;
 
         var loadableSprite = SpriteInfo.FromLoadableTexture(loadableTexture);
@@ -73,6 +73,26 @@ public static class PackagedResources
 
         // Load Sprite (Synchronously)
         return SpriteLoader.Instance.LoadImmediate(loadableSprite);
+    }
+
+    /// <summary>
+    ///     Loads a text file from packaged resources.
+    ///     Used by the portable localization layer through <c>TranslationResources.TextLoader</c>.
+    /// </summary>
+    /// <param name="name">Name of the text file.</param>
+    /// <returns>The text, or null if it could not be loaded.</returns>
+    public static string? LoadText(string name)
+    {
+        try
+        {
+            using var resourceStream = OpenStream(name);
+            return Encoding.UTF8.GetString(resourceStream.ToManagedArray());
+        }
+        catch (Exception e)
+        {
+            LILogger.Error($"Failed to load text resource {name}: {e.Message}");
+            return null;
+        }
     }
 
     /// <summary>

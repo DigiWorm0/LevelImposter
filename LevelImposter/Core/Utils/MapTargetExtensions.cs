@@ -1,5 +1,5 @@
-﻿using LevelImposter.Core.GarbageCollection;
-using LevelImposter.Core.Models;
+using LevelImposter.Core.GarbageCollection;
+using LevelImposter.MapFormat.Models;
 
 namespace LevelImposter.Core.Utils;
 

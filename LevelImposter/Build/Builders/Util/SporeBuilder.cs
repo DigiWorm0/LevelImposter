@@ -1,6 +1,6 @@
-﻿using Il2CppSystem.Collections.Generic;
+using Il2CppSystem.Collections.Generic;
 using LevelImposter.Build.Attributes;
-using LevelImposter.Core.Models;
+using LevelImposter.MapFormat.Models;
 using LevelImposter.Core.Utils;
 using LevelImposter.DB;
 using PowerTools;

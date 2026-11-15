@@ -1,7 +1,7 @@
 using System;
 using System.Text;
-using LevelImposter.Core.Models;
-using LevelImposter.Core.Translations;
+using LevelImposter.MapFormat.Models;
+using LevelImposter.Localization;
 using LevelImposter.Core.Utils;
 using TMPro;
 using UnityEngine;

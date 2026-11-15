@@ -1,5 +1,5 @@
-﻿using LevelImposter.Build.Attributes;
-using LevelImposter.Core.Models;
+using LevelImposter.Build.Attributes;
+using LevelImposter.MapFormat.Models;
 using TMPro;
 using UnityEngine;
 

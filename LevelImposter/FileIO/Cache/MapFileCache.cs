@@ -1,10 +1,10 @@
 using System;
 using System.IO;
 using Il2CppInterop.Runtime.Attributes;
-using LevelImposter.Core.Models;
 using LevelImposter.Core.Utils;
-using LevelImposter.FileIO.DataStores;
-using LevelImposter.FileIO.Serialization;
+using LevelImposter.MapFormat.Models;
+using LevelImposter.MapFormat.Serialization;
+using LevelImposter.MapFormat.Storage;
 using LevelImposter.Networking.API;
 
 namespace LevelImposter.FileIO.Cache;
@@ -54,7 +54,11 @@ public static class MapFileCache
         // Deserialize map file
         var mapPath = GetPath(mapID);
         using var fileStream = File.OpenRead(mapPath);
-        var mapData = LIDeserializer.DeserializeMap(fileStream, true, mapPath);
+        var mapData = LIDeserializer.DeserializeMap(fileStream, new MapLoadOptions
+        {
+            LoadAssetDB = true,
+            FilePath = mapPath
+        });
 
         // Reassign map ID (just in case)
         if (mapData != null)

@@ -12,6 +12,7 @@ using LevelImposter.Core.Utils;
 using LevelImposter.DB;
 using LevelImposter.FileIO.API;
 using LevelImposter.FileIO.Cache;
+using LevelImposter.Localization;
 using LevelImposter.Lobby.Components;
 using LevelImposter.Lobby.Utils;
 using LevelImposter.Shop.Components;
@@ -41,6 +42,7 @@ public partial class LevelImposter : BasePlugin
     {
         // Init Global Subsystems
         LILogger.Init();
+        TranslationResources.TextLoader = PackagedResources.LoadText;
         MapFileAPI.Init();
         ConfigAPI.Load();
         FileCache.Init();

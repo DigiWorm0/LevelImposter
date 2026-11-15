@@ -1,5 +1,5 @@
-﻿using Il2CppSystem.Collections.Generic;
-using LevelImposter.Core.Models;
+using Il2CppSystem.Collections.Generic;
+using LevelImposter.MapFormat.Models;
 using LevelImposter.Core.Utils;
 
 namespace LevelImposter.Shop.Builders;

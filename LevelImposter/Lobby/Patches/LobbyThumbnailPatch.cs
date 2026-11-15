@@ -1,7 +1,7 @@
 using System;
 using HarmonyLib;
 using LevelImposter.Core.ModCompatibility;
-using LevelImposter.Core.Models;
+using LevelImposter.MapFormat.Models;
 using LevelImposter.Core.Utils;
 using LevelImposter.FileIO.Cache;
 using UnityEngine;

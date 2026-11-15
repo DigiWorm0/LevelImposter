@@ -1,4 +1,4 @@
-﻿using LevelImposter.Core.Models;
+using LevelImposter.MapFormat.Models;
 using LevelImposter.Core.Utils;
 using LevelImposter.Lobby.Components;
 

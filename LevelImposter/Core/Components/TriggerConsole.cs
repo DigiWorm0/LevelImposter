@@ -1,6 +1,7 @@
-﻿using System;
+using System;
 using Il2CppInterop.Runtime.Attributes;
-using LevelImposter.Core.Models;
+using LevelImposter.Core.Utils;
+using LevelImposter.MapFormat.Models;
 using LevelImposter.Trigger;
 using UnityEngine;
 

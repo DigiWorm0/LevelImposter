@@ -1,6 +1,6 @@
-﻿using System;
+using System;
 using Il2CppInterop.Runtime.InteropTypes.Fields;
-using LevelImposter.Core.Translations;
+using LevelImposter.Localization;
 using TMPro;
 using UnityEngine;
 using Random = UnityEngine.Random;

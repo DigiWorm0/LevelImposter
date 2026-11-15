@@ -1,7 +1,7 @@
-﻿using System;
+using System;
 using Hazel;
 using LevelImposter.Core.Components;
-using LevelImposter.Core.Models;
+using LevelImposter.MapFormat.Models;
 using LevelImposter.Core.Utils;
 using LevelImposter.Trigger;
 using Reactor.Networking.Attributes;

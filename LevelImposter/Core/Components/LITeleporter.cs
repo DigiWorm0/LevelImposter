@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using LevelImposter.Core.Models;
+using LevelImposter.MapFormat.Models;
 using LevelImposter.Core.Services.Ship;
 using UnityEngine;
 

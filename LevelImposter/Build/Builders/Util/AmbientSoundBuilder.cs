@@ -2,7 +2,7 @@ using System;
 using LevelImposter.AssetLoader;
 using LevelImposter.Build.Attributes;
 using LevelImposter.Core.Components;
-using LevelImposter.Core.Models;
+using LevelImposter.MapFormat.Models;
 using LevelImposter.Core.Utils;
 using UnityEngine;
 

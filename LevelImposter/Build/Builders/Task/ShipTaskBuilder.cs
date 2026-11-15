@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using LevelImposter.Build.Builders.Util;
 using LevelImposter.Core.Components;
-using LevelImposter.Core.Models;
+using LevelImposter.MapFormat.Models;
 using LevelImposter.Core.Utils;
 using LevelImposter.DB;
 using LevelImposter.DB.Models;

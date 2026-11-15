@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using LevelImposter.Build.Attributes;
 using LevelImposter.Build.Builders.Util;
-using LevelImposter.Core.Models;
+using LevelImposter.MapFormat.Models;
 using UnityEngine;
 
 namespace LevelImposter.Build.Builders.Minimap;

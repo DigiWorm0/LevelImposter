@@ -3,7 +3,7 @@ using LevelImposter.AssetLoader;
 using LevelImposter.AssetLoader.Loadables;
 using LevelImposter.Core.GarbageCollection;
 using LevelImposter.Core.Utils;
-using LevelImposter.FileIO.DataStores;
+using LevelImposter.MapFormat.Storage;
 using LevelImposter.Networking.API;
 using UnityEngine;
 

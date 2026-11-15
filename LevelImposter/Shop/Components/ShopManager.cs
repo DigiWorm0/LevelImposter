@@ -3,15 +3,16 @@ using System.Collections.Generic;
 using System.Linq;
 using Il2CppInterop.Runtime.Attributes;
 using Il2CppInterop.Runtime.InteropTypes.Fields;
-using LevelImposter.Core.Models;
-using LevelImposter.Core.Translations;
+using LevelImposter.MapFormat.Models;
+using LevelImposter.Localization;
 using LevelImposter.Core.Utils;
 using LevelImposter.DB;
 using LevelImposter.FileIO.API;
-using LevelImposter.FileIO.Serialization;
+using LevelImposter.MapFormat.Serialization;
 using LevelImposter.Lobby.Sync;
 using LevelImposter.Networking.API;
 using LevelImposter.Shop.Transitions;
+using LevelImposter.Test;
 using LevelImposter.Shop.Utils;
 using TMPro;
 using UnityEngine;
@@ -68,7 +69,8 @@ public class ShopManager(IntPtr intPtr) : MonoBehaviour(intPtr)
 
         _shopTabButtons = GetComponentsInChildren<ShopTabButton>(true);
 
-        gameObject.AddComponent<MapsFolderWatcher>();
+        if (!TestMode.Enabled)
+            gameObject.AddComponent<MapsFolderWatcher>();
 
         ControllerManager.Instance.OpenOverlayMenu(CONTROLLER_OVERLAY_ID, null);
     }
@@ -162,7 +164,7 @@ public class ShopManager(IntPtr intPtr) : MonoBehaviour(intPtr)
         switch (CurrentTab)
         {
             case ShopTab.DownloadedMaps:
-                LIDeserializerLegacy.ConvertAllLegacyMaps();
+                LIDeserializerLegacy.ConvertAllLegacyMaps(MapFileAPI.GetDirectory());
                 var maps = MapFileAPI.GetAllMetadata()
                     .Where(m => m.MapTarget == MapTarget.Game)
                     .ToArray();

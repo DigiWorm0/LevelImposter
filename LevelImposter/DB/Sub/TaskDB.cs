@@ -1,8 +1,8 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.Text.Json.Serialization;
 using Il2CppInterop.Runtime.InteropTypes.Arrays;
-using LevelImposter.Core.Models;
+using LevelImposter.MapFormat.Models;
 using LevelImposter.Core.Utils;
 using LevelImposter.DB.Models;
 

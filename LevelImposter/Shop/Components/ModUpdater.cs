@@ -1,9 +1,10 @@
-﻿using System;
+using System;
 using Il2CppInterop.Runtime.Attributes;
 using Il2CppInterop.Runtime.InteropTypes.Fields;
-using LevelImposter.Core.Translations;
+using LevelImposter.Localization;
 using LevelImposter.Core.Utils;
 using LevelImposter.Networking.API;
+using LevelImposter.Test;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -32,6 +33,10 @@ public class ModUpdater(IntPtr intPtr) : MonoBehaviour(intPtr)
 
         // Don't check for updates on mobile
         if (GameState.IsMobile)
+            return;
+
+        // Don't perform network calls during automated tests
+        if (TestMode.Enabled)
             return;
 
         // Check for updates

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using LevelImposter.AssetLoader;
 using LevelImposter.AssetLoader.Loadables;
@@ -6,7 +6,7 @@ using LevelImposter.AssetLoader.Loaders;
 using LevelImposter.Build.Attributes;
 using LevelImposter.Core.Components;
 using LevelImposter.Core.GarbageCollection;
-using LevelImposter.Core.Models;
+using LevelImposter.MapFormat.Models;
 using LevelImposter.Core.Utils;
 using LevelImposter.Shop.Components;
 using UnityEngine;

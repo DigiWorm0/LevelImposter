@@ -1,6 +1,6 @@
-﻿using System.Linq;
+using System.Linq;
 using LevelImposter.Build.Attributes;
-using LevelImposter.Core.Models;
+using LevelImposter.MapFormat.Models;
 
 namespace LevelImposter.Build.Utils;
 

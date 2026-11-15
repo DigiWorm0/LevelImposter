@@ -1,10 +1,10 @@
 using System;
 using System.IO;
 using System.Linq;
-using LevelImposter.Core.Models;
 using LevelImposter.Core.Utils;
-using LevelImposter.FileIO.DataStores;
-using LevelImposter.FileIO.Serialization;
+using LevelImposter.MapFormat.Models;
+using LevelImposter.MapFormat.Serialization;
+using LevelImposter.MapFormat.Storage;
 using LevelImposter.Networking.API;
 
 namespace LevelImposter.FileIO.API;
@@ -14,6 +14,11 @@ namespace LevelImposter.FileIO.API;
 /// </summary>
 public static class MapFileAPI
 {
+    /// <summary>
+    ///     The file extension used by current map files.
+    /// </summary>
+    public const string MAP_EXTENSION = ".lim2";
+
     /// <summary>
     ///     Gets the current directory where LevelImposter map files are stored.
     ///     Usually in a LevelImposter folder beside the LevelImposter.dll.
@@ -31,7 +36,7 @@ public static class MapFileAPI
     /// <returns>The path where a specific map is stored</returns>
     public static string GetPath(string mapID)
     {
-        return Path.Combine(GetDirectory(), mapID + ".lim2");
+        return Path.Combine(GetDirectory(), mapID + MAP_EXTENSION);
     }
 
     /// <summary>
@@ -48,7 +53,7 @@ public static class MapFileAPI
     /// <returns>Array of map file IDs that are located in the LevelImpsoter folder.</returns>
     public static string[] ListIDs()
     {
-        var fileNames = Directory.GetFiles(GetDirectory(), "*.lim2");
+        var fileNames = Directory.GetFiles(GetDirectory(), "*" + MAP_EXTENSION);
         for (var i = 0; i < fileNames.Length; i++)
             fileNames[i] = Path.GetFileNameWithoutExtension(fileNames[i]);
         return fileNames;
@@ -92,17 +97,51 @@ public static class MapFileAPI
             return null;
         }
 
-        // Get Path
-        var path = GetPath(mapID);
-
-        // Open File
-        using var stream = File.OpenRead(path);
-
         // Deserialize
-        var mapData = LIDeserializer.DeserializeMap(stream, spriteDB, path);
+        var mapData = GetFromPath(GetPath(mapID), spriteDB);
         mapData?.id = mapID;
 
         return mapData;
+    }
+
+    /// <summary>
+    ///     Reads and parses a map file from an arbitrary path.
+    ///     Used by tests and tooling that operate outside the managed maps folder.
+    /// </summary>
+    /// <param name="filePath">Path to the map file.</param>
+    /// <param name="loadAssetDB">Whether to load the asset DB.</param>
+    /// <returns>Representation of the map file data, or null if it could not be loaded.</returns>
+    public static LIMap? GetFromPath(string filePath, bool loadAssetDB = true)
+    {
+        if (!File.Exists(filePath))
+        {
+            LILogger.Warn($"Could not find map file @ {filePath}");
+            return null;
+        }
+
+        using var stream = File.OpenRead(filePath);
+        return LIDeserializer.DeserializeMap(stream, new MapLoadOptions
+        {
+            LoadAssetDB = loadAssetDB,
+            FilePath = filePath
+        });
+    }
+
+    /// <summary>
+    ///     Serializes a map to an arbitrary path.
+    ///     Used by tests and tooling that operate outside the managed maps folder.
+    /// </summary>
+    /// <param name="mapData">The map to serialize.</param>
+    /// <param name="filePath">Path to write the map file to.</param>
+    /// <returns>True if the map was written successfully.</returns>
+    public static bool SaveToPath(LIMap mapData, string filePath)
+    {
+        var directory = Path.GetDirectoryName(filePath);
+        if (!string.IsNullOrEmpty(directory))
+            Directory.CreateDirectory(directory);
+
+        using var stream = File.Create(filePath);
+        return LISerializer.SerializeMap(mapData, stream);
     }
 
     /// <summary>

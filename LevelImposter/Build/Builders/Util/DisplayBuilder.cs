@@ -2,7 +2,7 @@ using System;
 using LevelImposter.Build.Attributes;
 using LevelImposter.Core.Components;
 using LevelImposter.Core.GarbageCollection;
-using LevelImposter.Core.Models;
+using LevelImposter.MapFormat.Models;
 using LevelImposter.Core.Utils;
 using LevelImposter.DB;
 using UnityEngine;

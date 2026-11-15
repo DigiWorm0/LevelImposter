@@ -1,7 +1,7 @@
-﻿using System.Linq;
+using System.Linq;
 using Il2CppSystem.Collections.Generic;
 using LevelImposter.Build.Attributes;
-using LevelImposter.Core.Models;
+using LevelImposter.MapFormat.Models;
 using UnityEngine;
 
 namespace LevelImposter.Build.Builders.Generic;

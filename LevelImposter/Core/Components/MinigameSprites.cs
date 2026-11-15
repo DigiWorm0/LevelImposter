@@ -6,7 +6,7 @@ using Il2CppInterop.Runtime.Attributes;
 using LevelImposter.AssetLoader;
 using LevelImposter.AssetLoader.Loadables;
 using LevelImposter.Core.GarbageCollection;
-using LevelImposter.Core.Models;
+using LevelImposter.MapFormat.Models;
 using LevelImposter.Core.Utils;
 using LevelImposter.DB;
 using PowerTools;

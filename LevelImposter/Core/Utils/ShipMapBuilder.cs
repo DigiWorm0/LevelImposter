@@ -4,9 +4,9 @@ using Il2CppInterop.Runtime.InteropTypes.Arrays;
 using LevelImposter.Build;
 using LevelImposter.Core.Components;
 using LevelImposter.Core.GarbageCollection;
-using LevelImposter.Core.Models;
 using LevelImposter.Core.Services;
 using LevelImposter.DB;
+using LevelImposter.MapFormat.Models;
 using LevelImposter.Shop.Components;
 using UnityEngine;
 using Object = UnityEngine.Object;
@@ -121,7 +121,7 @@ public static class ShipMapBuilder
         BuildRouter.BuildMap(
             map,
             LIShipStatus.GetInstance(),
-            new Dictionary<string, object>
+            new Dictionary<string, object?>
             {
                 { "shipStatus", LIShipStatus.GetShip() }
             }

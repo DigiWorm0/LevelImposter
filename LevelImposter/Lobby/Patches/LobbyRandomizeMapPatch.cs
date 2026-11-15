@@ -1,5 +1,5 @@
-﻿using HarmonyLib;
-using LevelImposter.Core.Models;
+using HarmonyLib;
+using LevelImposter.MapFormat.Models;
 using LevelImposter.Core.Utils;
 using LevelImposter.Lobby.Sync;
 

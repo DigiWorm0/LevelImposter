@@ -1,10 +1,10 @@
-﻿using System;
+using System;
 using System.Linq;
 using Il2CppInterop.Runtime.Attributes;
 using LevelImposter.AssetLoader;
 using LevelImposter.AssetLoader.Loadables;
 using LevelImposter.Build.Builders.Generic;
-using LevelImposter.Core.Models;
+using LevelImposter.MapFormat.Models;
 using LevelImposter.Core.Utils;
 using UnityEngine;
 

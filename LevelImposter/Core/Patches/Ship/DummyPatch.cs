@@ -1,6 +1,6 @@
-﻿using HarmonyLib;
+using HarmonyLib;
 using LevelImposter.Shop;
-using LevelImposter.Core.Models;
+using LevelImposter.MapFormat.Models;
 using LevelImposter.Core.Components;
 using LevelImposter.Core.Utils;
 using System.Linq;

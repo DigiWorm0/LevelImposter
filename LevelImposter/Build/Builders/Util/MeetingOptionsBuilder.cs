@@ -4,7 +4,7 @@ using LevelImposter.AssetLoader.Loaders;
 using LevelImposter.Build.Attributes;
 using LevelImposter.Build.Builders.Generic;
 using LevelImposter.Core.Components;
-using LevelImposter.Core.Models;
+using LevelImposter.MapFormat.Models;
 using LevelImposter.Core.Utils;
 using UnityEngine;
 using Object = UnityEngine.Object;

@@ -1,5 +1,5 @@
-﻿using LevelImposter.AssetLoader;
-using LevelImposter.Core.Translations;
+using LevelImposter.AssetLoader;
+using LevelImposter.Localization;
 using LevelImposter.Lobby.Components;
 using UnityEngine;
 using UnityEngine.SceneManagement;

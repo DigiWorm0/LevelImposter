@@ -1,6 +1,6 @@
-﻿using System;
+using System;
 using LevelImposter.Build.Attributes;
-using LevelImposter.Core.Models;
+using LevelImposter.MapFormat.Models;
 using LevelImposter.Core.Utils;
 using LevelImposter.Lobby.Builders;
 using LevelImposter.Lobby.Components;
