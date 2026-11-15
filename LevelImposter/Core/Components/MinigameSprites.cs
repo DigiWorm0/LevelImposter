@@ -9,6 +9,7 @@ using LevelImposter.Core.GarbageCollection;
 using LevelImposter.MapFormat.Models;
 using LevelImposter.Core.Utils;
 using LevelImposter.DB;
+using LevelImposter.Logging;
 using PowerTools;
 using QRCoder;
 using QRCoder.Unity;

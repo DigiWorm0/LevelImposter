@@ -6,6 +6,7 @@ using Il2CppInterop.Runtime.Attributes;
 using LevelImposter.Localization;
 using LevelImposter.Core.Utils;
 using LevelImposter.FileIO.Cache;
+using LevelImposter.Logging;
 using UnityEngine;
 
 namespace LevelImposter.Networking.API;

@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using LevelImposter.Core.Utils;
 using LevelImposter.FileIO.API;
+using LevelImposter.Logging;
 
 namespace LevelImposter.FileIO.Cache;
 

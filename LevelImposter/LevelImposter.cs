@@ -15,6 +15,7 @@ using LevelImposter.FileIO.Cache;
 using LevelImposter.Localization;
 using LevelImposter.Lobby.Components;
 using LevelImposter.Lobby.Utils;
+using LevelImposter.Logging;
 using LevelImposter.Shop.Components;
 using Reactor.Networking;
 using Reactor.Networking.Attributes;
@@ -41,7 +42,8 @@ public partial class LevelImposter : BasePlugin
     public override void Load()
     {
         // Init Global Subsystems
-        LILogger.Init();
+        BepInExLogSink.Init();
+        NotifierLogSink.Init();
         TranslationResources.TextLoader = PackagedResources.LoadText;
         MapFileAPI.Init();
         ConfigAPI.Load();

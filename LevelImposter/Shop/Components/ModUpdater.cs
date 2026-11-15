@@ -1,8 +1,9 @@
-using System;
+﻿using System;
 using Il2CppInterop.Runtime.Attributes;
 using Il2CppInterop.Runtime.InteropTypes.Fields;
 using LevelImposter.Localization;
 using LevelImposter.Core.Utils;
+using LevelImposter.Logging;
 using LevelImposter.Networking.API;
 using LevelImposter.Test;
 using TMPro;

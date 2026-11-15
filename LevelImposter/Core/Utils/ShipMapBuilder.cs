@@ -6,6 +6,7 @@ using LevelImposter.Core.Components;
 using LevelImposter.Core.GarbageCollection;
 using LevelImposter.Core.Services;
 using LevelImposter.DB;
+using LevelImposter.Logging;
 using LevelImposter.MapFormat.Models;
 using LevelImposter.Shop.Components;
 using UnityEngine;

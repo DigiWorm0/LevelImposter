@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using LevelImposter.AssetLoader.Queue;
 using LevelImposter.Core.Utils;
 using LevelImposter.FileIO.API;
+using LevelImposter.Logging;
 using LevelImposter.MapFormat.Storage;
 using Reactor.Utilities;
 

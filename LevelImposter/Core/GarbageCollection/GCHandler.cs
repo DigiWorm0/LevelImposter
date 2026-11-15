@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using LevelImposter.Core.Utils;
+using LevelImposter.Logging;
 using Object = UnityEngine.Object;
 
 namespace LevelImposter.Core.GarbageCollection;

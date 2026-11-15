@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
 using LevelImposter.Core.Utils;
+using LevelImposter.Logging;
 
 namespace LevelImposter.FileIO.API;
 

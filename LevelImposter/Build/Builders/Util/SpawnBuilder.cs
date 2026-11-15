@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using LevelImposter.Build.Attributes;
 using LevelImposter.MapFormat.Models;
 using LevelImposter.Core.Utils;
+using LevelImposter.Logging;
 using UnityEngine;
 
 namespace LevelImposter.Build.Builders.Util;

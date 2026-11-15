@@ -1,7 +1,8 @@
-using Hazel;
+﻿using Hazel;
 using LevelImposter.Core.Components;
 using LevelImposter.MapFormat.Models;
 using LevelImposter.Core.Utils;
+using LevelImposter.Logging;
 using Reactor.Networking.Attributes;
 using Reactor.Networking.Rpc;
 

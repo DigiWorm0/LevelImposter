@@ -4,6 +4,7 @@ using System.Linq;
 using LevelImposter.Core.Components;
 using LevelImposter.Core.Services.Ship;
 using LevelImposter.Core.Utils;
+using LevelImposter.Logging;
 using LevelImposter.Networking.RPC;
 using LevelImposter.Trigger.Handles;
 using Reactor.Networking.Rpc;

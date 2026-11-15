@@ -8,6 +8,7 @@ using Il2CppInterop.Runtime.InteropTypes;
 using LevelImposter.AssetLoader;
 using LevelImposter.AssetLoader.Loadables;
 using LevelImposter.Core.GarbageCollection;
+using LevelImposter.Logging;
 using LevelImposter.MapFormat.Storage;
 using Reactor.Utilities;
 using UnityEngine;

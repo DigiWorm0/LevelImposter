@@ -3,6 +3,7 @@ using System.Linq;
 using System.Reflection;
 using LevelImposter.Build.Attributes;
 using LevelImposter.Core.Utils;
+using LevelImposter.Logging;
 
 namespace LevelImposter.Build.Utils;
 

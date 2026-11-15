@@ -3,6 +3,7 @@ using LevelImposter.MapFormat.Models;
 using LevelImposter.Core.Utils;
 using LevelImposter.FileIO.API;
 using LevelImposter.Lobby.Sync;
+using LevelImposter.Logging;
 
 namespace LevelImposter.Lobby.Patches;
 

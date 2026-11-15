@@ -3,6 +3,7 @@ using System.Text.Json.Serialization;
 using LevelImposter.MapFormat.Models;
 using LevelImposter.Core.Utils;
 using LevelImposter.DB.Models;
+using LevelImposter.Logging;
 using UnityEngine;
 
 namespace LevelImposter.DB.Sub;

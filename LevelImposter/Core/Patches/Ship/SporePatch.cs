@@ -3,6 +3,7 @@ using Hazel;
 using LevelImposter.Build.Builders.Util;
 using LevelImposter.Core.Components;
 using LevelImposter.Core.Utils;
+using LevelImposter.Logging;
 using LevelImposter.Trigger;
 
 namespace LevelImposter.Core.Patches.Ship;

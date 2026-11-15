@@ -5,6 +5,7 @@ using Il2CppInterop.Runtime.InteropTypes.Arrays;
 using LevelImposter.MapFormat.Models;
 using LevelImposter.Core.Utils;
 using LevelImposter.DB.Models;
+using LevelImposter.Logging;
 
 namespace LevelImposter.DB.Sub;
 

@@ -4,6 +4,7 @@ using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using LevelImposter.Core.Utils;
+using LevelImposter.Logging;
 using LevelImposter.MapFormat.Models;
 
 namespace LevelImposter.MapFormat.Serialization;

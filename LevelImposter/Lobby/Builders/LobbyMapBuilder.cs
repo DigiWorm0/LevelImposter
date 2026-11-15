@@ -6,6 +6,7 @@ using LevelImposter.Core.GarbageCollection;
 using LevelImposter.Core.ModCompatibility;
 using LevelImposter.Core.Utils;
 using LevelImposter.Lobby.Components;
+using LevelImposter.Logging;
 using LevelImposter.MapFormat.Models;
 using UnityEngine;
 using Object = UnityEngine.Object;

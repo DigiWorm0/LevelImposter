@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text.Json;
 using LevelImposter.Core.Utils;
+using LevelImposter.Logging;
 using LevelImposter.MapFormat.Models;
 using LevelImposter.MapFormat.Storage;
 

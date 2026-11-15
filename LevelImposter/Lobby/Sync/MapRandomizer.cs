@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using LevelImposter.MapFormat.Models;
 using LevelImposter.Core.Utils;
 using LevelImposter.FileIO.API;
+using LevelImposter.Logging;
 using UnityEngine;
 using Random = UnityEngine.Random;
 

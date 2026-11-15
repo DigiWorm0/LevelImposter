@@ -2,6 +2,7 @@ using HarmonyLib;
 using LevelImposter.Core.Components;
 using LevelImposter.MapFormat.Models;
 using LevelImposter.Core.Utils;
+using LevelImposter.Logging;
 
 namespace LevelImposter.Core.Patches.Ship;
 

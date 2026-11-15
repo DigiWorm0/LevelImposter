@@ -6,6 +6,7 @@ using LevelImposter.Build.Builders.Generic;
 using LevelImposter.Core.Components;
 using LevelImposter.MapFormat.Models;
 using LevelImposter.Core.Utils;
+using LevelImposter.Logging;
 using UnityEngine;
 using Object = UnityEngine.Object;
 

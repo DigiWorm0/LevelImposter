@@ -7,6 +7,7 @@ using LevelImposter.Core.Components;
 using LevelImposter.MapFormat.Models;
 using LevelImposter.Core.Utils;
 using LevelImposter.DB;
+using LevelImposter.Logging;
 using UnityEngine;
 using CollectionExtensions = HarmonyLib.CollectionExtensions;
 

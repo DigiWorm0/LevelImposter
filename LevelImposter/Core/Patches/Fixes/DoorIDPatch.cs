@@ -3,6 +3,7 @@ using HarmonyLib;
 using Hazel;
 using LevelImposter.Core.Components;
 using LevelImposter.Core.Utils;
+using LevelImposter.Logging;
 
 namespace LevelImposter.Core.Patches.Fixes;
 

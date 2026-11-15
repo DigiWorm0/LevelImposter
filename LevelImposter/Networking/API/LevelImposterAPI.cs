@@ -3,6 +3,7 @@ using System.Text.Json.Serialization;
 using Il2CppInterop.Runtime.Attributes;
 using LevelImposter.MapFormat.Models;
 using LevelImposter.Core.Utils;
+using LevelImposter.Logging;
 using LevelImposter.MapFormat.Storage;
 
 namespace LevelImposter.Networking.API;

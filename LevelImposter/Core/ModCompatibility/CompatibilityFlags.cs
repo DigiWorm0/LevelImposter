@@ -1,5 +1,6 @@
 ﻿using BepInEx.Unity.IL2CPP;
 using LevelImposter.Core.Utils;
+using LevelImposter.Logging;
 
 namespace LevelImposter.Core.ModCompatibility;
 

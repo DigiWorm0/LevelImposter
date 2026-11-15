@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Linq;
 using LevelImposter.Core.Utils;
+using LevelImposter.Logging;
 using LevelImposter.MapFormat.Models;
 using LevelImposter.MapFormat.Serialization;
 using LevelImposter.MapFormat.Storage;

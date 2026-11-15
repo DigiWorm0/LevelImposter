@@ -4,6 +4,7 @@ using Il2CppInterop.Runtime.InteropTypes.Arrays;
 using LevelImposter.Build.Builders.Task;
 using LevelImposter.Core.Components;
 using LevelImposter.Core.Utils;
+using LevelImposter.Logging;
 using UnityEngine;
 
 namespace LevelImposter.Core.Patches.Fixes;

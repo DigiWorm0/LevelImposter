@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using LevelImposter.Core.Components;
 using LevelImposter.Core.Utils;
+using LevelImposter.Logging;
 using Reactor.Utilities;
 
 namespace LevelImposter.AssetLoader.Queue;

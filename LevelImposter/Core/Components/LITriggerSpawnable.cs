@@ -3,6 +3,7 @@ using System.Collections;
 using BepInEx.Unity.IL2CPP.Utils.Collections;
 using Il2CppInterop.Runtime.Attributes;
 using LevelImposter.Core.Utils;
+using LevelImposter.Logging;
 using LevelImposter.Shop.Components;
 using LevelImposter.Trigger;
 using UnityEngine;

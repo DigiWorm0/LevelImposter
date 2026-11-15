@@ -12,6 +12,7 @@ using LevelImposter.FileIO.Cache;
 using LevelImposter.MapFormat.Storage;
 using LevelImposter.Lobby.Builders;
 using LevelImposter.Lobby.Sync;
+using LevelImposter.Logging;
 using TMPro;
 using UnityEngine;
 

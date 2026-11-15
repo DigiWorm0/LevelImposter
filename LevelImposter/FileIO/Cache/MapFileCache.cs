@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using Il2CppInterop.Runtime.Attributes;
 using LevelImposter.Core.Utils;
+using LevelImposter.Logging;
 using LevelImposter.MapFormat.Models;
 using LevelImposter.MapFormat.Serialization;
 using LevelImposter.MapFormat.Storage;

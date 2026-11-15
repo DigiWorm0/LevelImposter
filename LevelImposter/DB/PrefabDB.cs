@@ -7,6 +7,7 @@ using LevelImposter.Localization;
 using LevelImposter.Core.Utils;
 using LevelImposter.DB.Models;
 using LevelImposter.DB.Sub;
+using LevelImposter.Logging;
 using UnityEngine;
 using UnityEngine.ResourceManagement.AsyncOperations;
 

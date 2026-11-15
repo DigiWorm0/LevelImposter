@@ -3,6 +3,7 @@ using HarmonyLib;
 using LevelImposter.Core.Components;
 using LevelImposter.Core.ModCompatibility;
 using LevelImposter.Core.Utils;
+using LevelImposter.Logging;
 using UnityEngine.Events;
 
 namespace LevelImposter.Core.Patches.ModCompatibility;
